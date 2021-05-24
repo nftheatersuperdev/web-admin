@@ -1,0 +1,15 @@
+{
+  "baseUrl": "http://tron-admin.herokuapp.com",
+  "viewportHeight": 1920,
+  "viewportWidth": 1080,
+  "retries": 3,
+  "defaultCommandTimeout": 6000,
+  "chromeWebSecurity": false,
+  "screenshotsFolder": "test-results/screenshots",
+  "videosFolder": "test-results/videos",
+  "fixturesFolder": "fixtures",
+  "integrationFolder": "integration",
+  "pluginsFile": "plugins/index.ts",
+  "supportFile": "support/index.ts",
+  "video": false
+}
