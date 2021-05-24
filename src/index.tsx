@@ -2,10 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
-import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
+import GlobalStyles from './GlobalStyles'
 
 if (config.isProductionEnvironment) {
   // eslint-disable-next-line
@@ -27,6 +27,7 @@ if (config.isProductionEnvironment) {
 
 ReactDOM.render(
   <React.StrictMode>
+    <GlobalStyles />
     <App />
   </React.StrictMode>,
   document.getElementById('root')
