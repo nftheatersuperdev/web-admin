@@ -17,6 +17,9 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@material-ui/core": "~4.11.4",
+    "@sentry/browser": "~6.4.1",
+    "@sentry/tracing": "~6.4.1",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
