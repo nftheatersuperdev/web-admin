@@ -1,25 +1,35 @@
 import React from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
+import Header from './components/Header'
+import { User } from './pages/User'
+
+// eslint-disable-next-line
+// @ts-expect-error
+function LayoutRoute({ component: Component, exact, path, noHeader, ...rest }) {
+  return (
+    <Route
+      exact={exact}
+      path={path}
+      render={(props) => (
+        <React.Fragment>
+          <Header />
+          <main>
+            <Component {...props} />
+          </main>
+        </React.Fragment>
+      )}
+    />
+  )
+}
 
 function App(): JSX.Element {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <LayoutRoute noHeader exact path="/" component={User} />
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   )
 }
 

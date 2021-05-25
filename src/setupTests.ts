@@ -1,3 +1,4 @@
+/* eslint-disable jest/require-top-level-describe */
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
@@ -5,7 +6,7 @@
 import '@testing-library/jest-dom'
 import 'jest-styled-components'
 import { format } from 'util'
-import { server } from 'tests/mockServer/server'
+import { server } from './tests/mockServer'
 
 // Fail the tests if we have a console.error or warning
 const error = global.console.error

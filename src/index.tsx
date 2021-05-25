@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
@@ -25,10 +26,14 @@ if (config.isProductionEnvironment) {
   console.info('[Application] Running in development mode.')
 }
 
+const queryClient = new QueryClient()
+
 ReactDOM.render(
   <React.StrictMode>
     <GlobalStyles />
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )
