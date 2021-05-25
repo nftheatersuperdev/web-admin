@@ -9,7 +9,9 @@ import {
   ListItemText,
   Divider,
 } from '@material-ui/core'
-import { Home as HomeIcon } from '@material-ui/icons'
+import { Home as HomeIcon, DirectionsCar as SubscriptionIcon } from '@material-ui/icons'
+// eslint-disable-next-line
+import { ROUTE_PATHS } from '../routes'
 
 const ListContainer = styled.div`
   width: 200px;
@@ -20,6 +22,11 @@ interface SidebarProps {
   setIsSidebarOpen: (isOpen: boolean) => void
   handleOnOpen?: () => void
 }
+
+const SIDEBAR_ITEMS = [
+  { title: 'HOME', path: ROUTE_PATHS.ROOT, icon: <HomeIcon /> },
+  { title: 'SUBSCRIPTION', path: ROUTE_PATHS.SUBSCRIPTION, icon: <SubscriptionIcon /> },
+]
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function Sidebar({ isOpen, setIsSidebarOpen, handleOnOpen = () => {} }: SidebarProps): JSX.Element {
@@ -41,12 +48,12 @@ function Sidebar({ isOpen, setIsSidebarOpen, handleOnOpen = () => {} }: SidebarP
         onKeyDown={handleSidebarEvent}
       >
         <List>
-          <ListItem button component={Link} to="/">
-            <ListItemIcon>
-              <HomeIcon />
-            </ListItemIcon>
-            <ListItemText primary="HOME" />
-          </ListItem>
+          {SIDEBAR_ITEMS.map(({ title, path, icon }) => (
+            <ListItem key={title} button component={Link} to={path}>
+              <ListItemIcon>{icon}</ListItemIcon>
+              <ListItemText primary={title} />
+            </ListItem>
+          ))}
         </List>
         <Divider />
       </ListContainer>

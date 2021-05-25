@@ -3,9 +3,8 @@ import { render, screen } from '@testing-library/react'
 import App from './App'
 
 describe('App', () => {
-  it('should render user page', () => {
+  it('should render correct app header', () => {
     render(<App />)
-    const linkElement = screen.getByText(/user/i)
-    expect(linkElement).toBeInTheDocument()
+    expect(screen.getByText(/EVme/i)).toBeInTheDocument()
   })
 })

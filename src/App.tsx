@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import Header from './components/Header'
-import { User } from './pages/User'
+import { routes, ROUTE_PATHS } from './routes'
 
 // eslint-disable-next-line
 // @ts-expect-error
@@ -12,7 +12,7 @@ function LayoutRoute({ component: Component, exact, path, noHeader, ...rest }) {
       path={path}
       render={(props) => (
         <React.Fragment>
-          <Header />
+          {noHeader ? null : <Header />}
           <main>
             <Component {...props} />
           </main>
@@ -24,12 +24,22 @@ function LayoutRoute({ component: Component, exact, path, noHeader, ...rest }) {
 
 function App(): JSX.Element {
   return (
-    <Router>
-      <Switch>
-        <LayoutRoute noHeader exact path="/" component={User} />
-        <Redirect to="/" />
-      </Switch>
-    </Router>
+    <React.Suspense fallback="TODO">
+      <Router>
+        <Switch>
+          {routes.map(({ noHeader, exact, path, component }) => (
+            <LayoutRoute
+              key={path}
+              exact={exact}
+              noHeader={noHeader}
+              path={path}
+              component={component}
+            />
+          ))}
+          <Redirect to={ROUTE_PATHS.ROOT} />
+        </Switch>
+      </Router>
+    </React.Suspense>
   )
 }
 

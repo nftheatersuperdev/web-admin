@@ -1,5 +1,5 @@
 import React from 'react'
 
-export function Login(): JSX.Element {
+export default function Login(): JSX.Element {
   return <div>login</div>
 }
