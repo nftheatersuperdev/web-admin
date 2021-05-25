@@ -9,7 +9,12 @@ import {
   ListItemText,
   Divider,
 } from '@material-ui/core'
-import { Home as HomeIcon, DirectionsCar as SubscriptionIcon } from '@material-ui/icons'
+import {
+  Home as HomeIcon,
+  ShoppingCart as SubscriptionIcon,
+  DirectionsCar as CarIcon,
+  Person as UserIcon,
+} from '@material-ui/icons'
 // eslint-disable-next-line
 import { ROUTE_PATHS } from '../routes'
 
@@ -25,6 +30,8 @@ interface SidebarProps {
 
 const SIDEBAR_ITEMS = [
   { title: 'HOME', path: ROUTE_PATHS.ROOT, icon: <HomeIcon /> },
+  { title: 'USER', path: ROUTE_PATHS.USER, icon: <UserIcon /> },
+  { title: 'CAR', path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
   { title: 'SUBSCRIPTION', path: ROUTE_PATHS.SUBSCRIPTION, icon: <SubscriptionIcon /> },
 ]
 

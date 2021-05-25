@@ -1,5 +1,11 @@
 import React from 'react'
+// eslint-disable-next-line
+import { Table } from '../components/Table'
 
-export default function Login(): JSX.Element {
-  return <div>login</div>
+export default function Subscription(): JSX.Element {
+  return (
+    <div>
+      <Table />
+    </div>
+  )
 }

@@ -1,4 +1,5 @@
-import { ComponentType, lazy } from 'react'
+import { lazy } from 'react'
+import { LayoutRouteProps } from './layout/LayoutRoute'
 
 export const ROUTE_PATHS = Object.freeze({
   CATCH_ALL: '**',
@@ -6,23 +7,13 @@ export const ROUTE_PATHS = Object.freeze({
   LOGIN: '/login',
   USER: '/user',
   SUBSCRIPTION: '/subscription',
+  CAR: '/car',
 })
 
-export interface RoutesInterface {
-  component: ComponentType
-  exact?: boolean
-  noHeader?: boolean
-  path: string
-}
-
-export const routes: Readonly<RoutesInterface[]> = Object.freeze([
+export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.LOGIN,
     component: lazy(() => import('./pages/Login' /* webpackChunkName: "app" */)),
-  },
-  {
-    path: ROUTE_PATHS.ROOT,
-    component: lazy(() => import('./pages/Home' /* webpackChunkName: "app" */)),
   },
   {
     path: ROUTE_PATHS.USER,
@@ -31,5 +22,14 @@ export const routes: Readonly<RoutesInterface[]> = Object.freeze([
   {
     path: ROUTE_PATHS.SUBSCRIPTION,
     component: lazy(() => import('./pages/Subscription' /* webpackChunkName: "app" */)),
+  },
+  {
+    path: ROUTE_PATHS.CAR,
+    component: lazy(() => import('./pages/Car' /* webpackChunkName: "app" */)),
+  },
+  // The order is important here. This route needs to be at the bottom
+  {
+    path: ROUTE_PATHS.ROOT,
+    component: lazy(() => import('./pages/Home' /* webpackChunkName: "app" */)),
   },
 ])

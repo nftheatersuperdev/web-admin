@@ -1,26 +1,7 @@
 import React from 'react'
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
-import Header from './components/Header'
+import { BrowserRouter as Router, Redirect, Switch } from 'react-router-dom'
 import { routes, ROUTE_PATHS } from './routes'
-
-// eslint-disable-next-line
-// @ts-expect-error
-function LayoutRoute({ component: Component, exact, path, noHeader, ...rest }) {
-  return (
-    <Route
-      exact={exact}
-      path={path}
-      render={(props) => (
-        <React.Fragment>
-          {noHeader ? null : <Header />}
-          <main>
-            <Component {...props} />
-          </main>
-        </React.Fragment>
-      )}
-    />
-  )
-}
+import LayoutRoute from './layout/LayoutRoute'
 
 function App(): JSX.Element {
   return (

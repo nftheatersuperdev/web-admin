@@ -5,8 +5,6 @@ import { Menu as MenuIcon } from '@material-ui/icons'
 import Sidebar from './Sidebar'
 
 const AppBar = styled(MuiAppBar)`
-  position: relative;
-
   #toolbar {
     padding: 0;
   }
@@ -23,7 +21,7 @@ function Header(): JSX.Element {
 
   return (
     <React.Fragment>
-      <AppBar>
+      <AppBar position="sticky">
         <Toolbar id="toolbar">
           <Button color="inherit" aria-label="Home Button" onClick={toggleSidebar}>
             <MenuIcon />
