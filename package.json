@@ -2,11 +2,16 @@
   "name": "evme-admin",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=16",
+    "npm": ">=7"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "build:stats": "npm run build -- --stats && webpack-bundle-analyzer ./build/bundle-stats.json",
     "test": "react-scripts test",
+    "test:coverage": "npm run test -- --coverage --watchAll=false --runInBand",
     "test:e2e": "cypress run",
     "lint": "npm run lint:ts && npm run lint:css",
     "lint:ts": "eslint \"{src,cypress}/**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
@@ -98,5 +103,25 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx,js,jsx}",
+      "!**/tests/*",
+      "!src/index.tsx",
+      "!src/setupTests.ts",
+      "!src/setupProxy.ts",
+      "!src/serviceWorker.ts",
+      "!src/react-app-env.d.ts",
+      "!src/reportWebVitals.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 59,
+        "branches": 6,
+        "functions": 60,
+        "lines": 60
+      }
+    }
   }
 }

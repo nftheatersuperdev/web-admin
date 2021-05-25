@@ -1,0 +1,4 @@
+# More on CODEOWNERS syntax and its benefits can be found here:
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+*   @projecttron/frontend

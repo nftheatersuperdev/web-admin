@@ -12,12 +12,12 @@ import { server } from './tests/mockServer'
 const error = global.console.error
 const warn = global.console.warn
 
-global.console.error = function (...args: any) {
+global.console.error = function (...args: unknown[]) {
   error(...args)
   throw new Error(format(...args))
 }
 
-global.console.warn = function (...args: any) {
+global.console.warn = function (...args: unknown[]) {
   warn(...args)
   throw new Error(format(...args))
 }
