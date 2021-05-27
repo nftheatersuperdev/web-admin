@@ -1,0 +1,10 @@
+{
+  "buildpacks": [
+    {
+      "url": "mars/create-react-app"
+    },
+    {
+      "url": "heroku/heroku-buildpack-static"
+    }
+  ]
+}
