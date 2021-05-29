@@ -1,24 +1,15 @@
-import React from 'react'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-// eslint-disable-next-line
-import { renderComponent } from '../tests/utils'
-import Header from './Header'
+import { noop, renderComponent } from 'tests/utils'
+import Header from 'layout/Header'
 
 describe('Header', () => {
-  it('should show correct home button', () => {
-    renderComponent(<Header />)
-    expect(screen.getByLabelText('Home Button')).toBeInTheDocument()
-  })
-
   it('should show correct title', () => {
-    renderComponent(<Header />)
+    renderComponent(<Header onSidebarToggle={noop} />)
     expect(screen.getByText('EVme')).toBeInTheDocument()
   })
 
-  it('should be able to open sidebar', () => {
-    renderComponent(<Header />)
-    userEvent.click(screen.getByLabelText('Home Button'))
-    expect(screen.getByText('HOME')).toBeInTheDocument()
+  it('should not show sidebar toggle on a desktop device', () => {
+    renderComponent(<Header onSidebarToggle={noop} />)
+    expect(screen.queryByLabelText('Sidebar Toggle')).not.toBeInTheDocument()
   })
 })

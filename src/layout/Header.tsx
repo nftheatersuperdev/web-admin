@@ -1,39 +1,32 @@
-import React, { useState } from 'react'
 import styled from 'styled-components'
-import { AppBar as MuiAppBar, Button, Toolbar, Typography, Box } from '@material-ui/core'
+import { AppBar as MuiAppBar, Button, Hidden, Toolbar, Typography, Box } from '@material-ui/core'
 import { Menu as MenuIcon } from '@material-ui/icons'
-import Sidebar from './Sidebar'
 
 const AppBar = styled(MuiAppBar)`
-  #toolbar {
-    padding: 0;
-  }
+  z-index: ${({ theme }) => theme.zIndex.drawer + 1};
 `
 
-function Header(): JSX.Element {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+export interface HeaderProps {
+  onSidebarToggle: () => void
+}
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
-
+function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
   const title = 'EVme'
 
   return (
-    <React.Fragment>
-      <AppBar position="sticky">
-        <Toolbar id="toolbar">
-          <Button color="inherit" aria-label="Home Button" onClick={toggleSidebar}>
+    <AppBar position="sticky">
+      <Toolbar>
+        <Hidden mdUp>
+          <Button color="inherit" aria-label="Sidebar Toggle" onClick={onSidebarToggle}>
             <MenuIcon />
           </Button>
+        </Hidden>
 
-          <Box marginRight="auto" pl={1}>
-            <Typography variant="h5">{title}</Typography>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Sidebar isOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-    </React.Fragment>
+        <Box marginRight="auto" pl={1}>
+          <Typography variant="h5">{title}</Typography>
+        </Box>
+      </Toolbar>
+    </AppBar>
   )
 }
 

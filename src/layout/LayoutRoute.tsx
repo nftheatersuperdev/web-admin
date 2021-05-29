@@ -1,32 +1,37 @@
-import React, { ComponentType } from 'react'
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { ComponentType, useState } from 'react'
 import { Route } from 'react-router-dom'
 import styled from 'styled-components'
-import Header from './Header'
+import Header from 'layout/Header'
+import Sidebar from './Sidebar'
 
 export interface LayoutRouteProps {
   component: ComponentType
   exact?: boolean
   path: string
-  noHeader?: boolean
 }
 
 const Main = styled.main`
   padding: 20px;
+  margin-left: ${({ theme }) => theme.size.sidebar};
 `
 
-export default function LayoutRoute({
-  component: Component,
-  exact = true,
-  path,
-  noHeader,
-}: LayoutRouteProps): JSX.Element {
+export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
+  const { component: Component, exact = true, path } = props
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+
+  function handleSidebarOpen(state = !isSidebarOpen) {
+    setIsSidebarOpen(state)
+  }
+
   return (
     <Route
       exact={exact}
       path={path}
       render={(props) => (
         <React.Fragment>
-          {noHeader ? null : <Header />}
+          <Header onSidebarToggle={handleSidebarOpen} />
+          <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
           <Main>
             {/* @ts-expect-error TODO */}
             <Component {...props} />

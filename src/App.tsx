@@ -8,14 +8,8 @@ function App(): JSX.Element {
     <React.Suspense fallback="TODO">
       <Router>
         <Switch>
-          {routes.map(({ noHeader, exact, path, component }) => (
-            <LayoutRoute
-              key={path}
-              exact={exact}
-              noHeader={noHeader}
-              path={path}
-              component={component}
-            />
+          {routes.map(({ exact, path, component }) => (
+            <LayoutRoute key={path} exact={exact} path={path} component={component} />
           ))}
           <Redirect to={ROUTE_PATHS.ROOT} />
         </Switch>

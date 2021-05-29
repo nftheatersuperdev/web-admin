@@ -1,11 +1,14 @@
 import { render, RenderOptions, RenderResult } from '@testing-library/react'
+import { theme } from 'GlobalStyles'
 import { createMemoryHistory, History } from 'history'
 import React from 'react'
 import { Route, Router } from 'react-router-dom'
+import { ThemeProvider } from 'styled-components'
 
 interface CustomRenderOptions extends RenderOptions {
   route?: string
   path?: string
+  viewport?: 'xs' | 'sm' | ' md' | ' lg' | ' xl'
   initialStore?: Record<string, string>
   historyState?: Record<string, string>
   history?: History
@@ -22,6 +25,7 @@ export function renderComponent(
     route = '/',
     path,
     historyState,
+    viewport = 'lg',
     history = createMemoryHistory({ initialEntries: [route] }),
     ...remainingOptions
   } = renderConfig
@@ -29,10 +33,14 @@ export function renderComponent(
     history.push(route, historyState)
   }
 
+  const testTheme = { ...theme, props: { MuiWithWidth: { initialWidth: viewport } } }
+
   const view = render(
-    <Router history={history}>
-      <Route path={path}>{children}</Route>
-    </Router>,
+    <ThemeProvider theme={testTheme}>
+      <Router history={history}>
+        <Route path={path}>{children}</Route>
+      </Router>
+    </ThemeProvider>,
     remainingOptions
   )
   // https://github.com/testing-library/react-testing-library/issues/218#issuecomment-436730757
@@ -48,3 +56,6 @@ export function renderComponent(
     history,
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function noop(): void {}

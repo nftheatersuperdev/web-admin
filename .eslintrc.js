@@ -40,7 +40,7 @@ module.exports = {
   },
   rules: {
     'react/jsx-fragments': ['error', 'element'],
-    'react/jsx-props-no-spreading': 0,
+    'react/jsx-props-no-spreading': 'error',
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react/boolean-prop-naming': [
@@ -110,6 +110,8 @@ module.exports = {
     'react/no-unsafe': 'error',
     'react/no-unused-prop-types': 'error',
     'react/no-is-mounted': 'error',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
     'react/prop-types': [
       'error',
       {
@@ -138,7 +140,7 @@ module.exports = {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
         pathGroups: [
           {
-            pattern: '{assets,components,data,pages,routing,services,typings,utilities}/**',
+            pattern: '{assets,components,pages,routes,services,typings,layout,tests,utilities}/**',
             group: 'internal',
             position: 'after',
           },
@@ -299,12 +301,6 @@ module.exports = {
         'jest/valid-expect-in-promise': 'off',
         'jest/no-standalone-expect': 'off',
         'testing-library/prefer-screen-queries': 'off',
-      },
-    },
-    {
-      files: ['src/__tests__/**/*'],
-      rules: {
-        '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
     {

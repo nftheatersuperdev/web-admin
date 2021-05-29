@@ -6,6 +6,7 @@
 import '@testing-library/jest-dom'
 import 'jest-styled-components'
 import { format } from 'util'
+import mediaQuery from 'css-mediaquery'
 import { server } from './tests/mockServer'
 
 // Fail the tests if we have a console.error or warning
@@ -22,7 +23,24 @@ global.console.warn = function (...args: unknown[]) {
   throw new Error(format(...args))
 }
 
+// The following is to support testing Material UI's Hidden component
+// https://material-ui.com/components/use-media-query/#testing
+const createMatchMedia =
+  (width: number) =>
+  (query: string): MediaQueryList => ({
+    matches: mediaQuery.match(query, { width }),
+    media: query,
+    onchange: null,
+    addListener: () => jest.fn(),
+    removeListener: () => jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })
+
 beforeAll(() => {
+  window.matchMedia = createMatchMedia(window.innerWidth)
+
   // If we encounter an un-mocked request in our unit tests,
   // print a warning message to the console.
   // https://mswjs.io/docs/api/setup-server/listen

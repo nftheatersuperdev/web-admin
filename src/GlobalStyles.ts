@@ -1,9 +1,14 @@
-import { createGlobalStyle, css } from 'styled-components'
-import reset from 'styled-reset'
+import { createMuiTheme } from '@material-ui/core'
+import { createGlobalStyle, DefaultTheme } from 'styled-components'
 
-const GlobalStyles = createGlobalStyle`${({ theme }) => css`
-  ${reset}
+export const theme: DefaultTheme = {
+  ...createMuiTheme(),
+  size: {
+    sidebar: '220px',
+  },
+}
 
+const GlobalStyles = createGlobalStyle`
   *,
   *::before,
   *::after {
@@ -29,6 +34,6 @@ const GlobalStyles = createGlobalStyle`${({ theme }) => css`
     width: 100%;
     margin: 0 auto;
   }
-`}`
+`
 
 export default GlobalStyles

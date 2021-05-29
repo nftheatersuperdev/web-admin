@@ -1,13 +1,14 @@
-import React from 'react'
 import { screen } from '@testing-library/react'
-// eslint-disable-next-line
-import { renderComponent } from '../tests/utils'
+import { noop, renderComponent } from 'tests/utils'
 import Sidebar from './Sidebar'
 
 describe('Sidebar', () => {
-  it('should show correct home button', () => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    renderComponent(<Sidebar isOpen={true} setIsSidebarOpen={() => {}} />)
-    expect(screen.getByText('HOME')).toBeInTheDocument()
+  it('should show sidebar items', () => {
+    renderComponent(<Sidebar isOpen={true} onSidebarToggle={noop} />)
+    expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    expect(screen.getByText('Users')).toBeInTheDocument()
+    expect(screen.getByText('Cars')).toBeInTheDocument()
+    expect(screen.getByText('Packages')).toBeInTheDocument()
+    expect(screen.getByText('Subscriptions')).toBeInTheDocument()
   })
 })

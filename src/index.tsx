@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ThemeProvider } from 'styled-components'
+import { StylesProvider, CssBaseline } from '@material-ui/core'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
-import GlobalStyles from './GlobalStyles'
+import GlobalStyles, { theme } from './GlobalStyles'
 
 if (config.isProductionEnvironment) {
   // eslint-disable-next-line
@@ -30,10 +32,15 @@ const queryClient = new QueryClient()
 
 ReactDOM.render(
   <React.StrictMode>
-    <GlobalStyles />
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
+    <StylesProvider injectFirst>
+      <GlobalStyles />
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </StylesProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )
