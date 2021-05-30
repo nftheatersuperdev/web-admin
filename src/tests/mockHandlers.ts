@@ -1,10 +1,11 @@
-import { rest } from 'msw'
+import { graphql } from 'msw'
+import getCars from './mockData/getCars.json'
 
 export const mockHandlers = [
   // ===========================================================================
-  // Auth0
+  // EVme API
   // ===========================================================================
-  rest.get(`firebase-url`, (_req, res, ctx) => {
-    return res(ctx.json({ test: 'hello world' }))
+  graphql.query('GetCars', (_req, res, ctx) => {
+    return res(ctx.data(getCars))
   }),
 ]

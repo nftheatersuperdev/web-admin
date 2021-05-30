@@ -2,6 +2,7 @@ import { render, RenderOptions, RenderResult } from '@testing-library/react'
 import { theme } from 'GlobalStyles'
 import { createMemoryHistory, History } from 'history'
 import React from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Route, Router } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 
@@ -34,12 +35,15 @@ export function renderComponent(
   }
 
   const testTheme = { ...theme, props: { MuiWithWidth: { initialWidth: viewport } } }
+  const queryClient = new QueryClient()
 
   const view = render(
     <ThemeProvider theme={testTheme}>
-      <Router history={history}>
-        <Route path={path}>{children}</Route>
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router history={history}>
+          <Route path={path}>{children}</Route>
+        </Router>
+      </QueryClientProvider>
     </ThemeProvider>,
     remainingOptions
   )

@@ -1,0 +1,61 @@
+{
+  "carModels": {
+    "edges": [
+      {
+        "node": {
+          "brand": "porsche",
+          "model": "program",
+          "cars": {
+            "id": "4d31669d-e07d-480e-acb1-882f6f9c0505",
+            "vin": "keihfg0wmj53119py",
+            "plateNumber": "lazo7"
+          }
+        }
+      },
+      {
+        "node": {
+          "brand": "tesla",
+          "model": "generating",
+          "cars": {
+            "id": "e12c15c6-80ec-4e0c-8d56-2f2620cd6749",
+            "vin": "2mb1tyffbbkz9vpoi",
+            "plateNumber": "9nhcc"
+          }
+        }
+      },
+      {
+        "node": {
+          "brand": "nissan",
+          "model": "Communications",
+          "cars": {
+            "id": "67a09a54-c90c-4863-ac9e-845937ceea8d",
+            "vin": "qu48pz6m4w2ax5lpu",
+            "plateNumber": "j9o6j"
+          }
+        }
+      },
+      {
+        "node": {
+          "brand": "ford",
+          "model": "Agent",
+          "cars": {
+            "id": "4e5fa3f6-8537-4fff-92aa-27c8606e617b",
+            "vin": "7a5cdhf1o08j6e95h",
+            "plateNumber": "ha5p4"
+          }
+        }
+      },
+      {
+        "node": {
+          "brand": "bmw",
+          "model": "Expressway",
+          "cars": {
+            "id": "8fdc3cda-40ed-4487-a22a-17a57ff902dd",
+            "vin": "6hkaxvnhkj6u4uhb0",
+            "plateNumber": "jo6us"
+          }
+        }
+      }
+    ]
+  }
+}

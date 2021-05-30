@@ -1,0 +1,6 @@
+overwrite: true
+schema: "https://api-tron-dev.herokuapp.com/graphql"
+generates:
+  src/services/evme.types.ts:
+    plugins:
+      - typescript

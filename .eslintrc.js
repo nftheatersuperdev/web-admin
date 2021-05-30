@@ -38,6 +38,7 @@ module.exports = {
       version: 'detect',
     },
   },
+  ignorePatterns: ['evme.types.ts'],
   rules: {
     'react/jsx-fragments': ['error', 'element'],
     'react/jsx-props-no-spreading': 'error',
