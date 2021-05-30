@@ -8,16 +8,18 @@ import Sidebar from './Sidebar'
 export interface LayoutRouteProps {
   component: ComponentType
   exact?: boolean
+  isPublic?: boolean
   path: string
 }
 
-const Main = styled.main`
+const Main = styled.main<{ $isPublic?: boolean }>`
   padding: 20px;
-  margin-left: ${({ theme }) => theme.size.sidebar};
+  height: ${({ $isPublic }) => ($isPublic ? '100vh' : 0)};
+  margin-left: ${({ theme, $isPublic }) => ($isPublic ? 0 : theme.size.sidebar)};
 `
 
 export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
-  const { component: Component, exact = true, path } = props
+  const { component: Component, exact = true, path, isPublic } = props
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   function handleSidebarOpen(state = !isSidebarOpen) {
@@ -30,9 +32,9 @@ export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
       path={path}
       render={(props) => (
         <React.Fragment>
-          <Header onSidebarToggle={handleSidebarOpen} />
-          <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
-          <Main>
+          {isPublic ? null : <Header onSidebarToggle={handleSidebarOpen} />}
+          {isPublic ? null : <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />}
+          <Main $isPublic={isPublic}>
             {/* @ts-expect-error TODO */}
             <Component {...props} />
           </Main>
