@@ -1,0 +1,316 @@
+{
+  "subscriptions": {
+    "edges": [
+      {
+        "node": {
+          "id": "ed959dad-44a6-441a-9a95-8464f6f08cf5",
+          "deliveryDate": "2021-08-21T17:38:00.729Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "1-958-759-8902",
+            "email": "Finn.Eichmann@yahoo.com"
+          },
+          "carId": "a887c0a8-846c-464c-8b01-ea9d8da456fc",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 70872,
+              "range": 40651,
+              "acceleration": 30544
+            },
+            "createdAt": "2021-05-28T06:53:11.189Z"
+          },
+          "packagePrice": {
+            "duration": "6m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "1w",
+                "price": 65190
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "74423e13-f5c5-4360-963e-0d4c07276a84",
+          "deliveryDate": "2024-11-01T14:06:03.513Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "(583) 826-9819 x0506",
+            "email": "Petra_Reinger11@hotmail.com"
+          },
+          "carId": "684e0cbe-fb3c-4ad5-8f2a-60afc2ee4038",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 62855,
+              "range": 37721,
+              "acceleration": 2550
+            },
+            "createdAt": "2021-05-28T06:53:12.143Z"
+          },
+          "packagePrice": {
+            "duration": "6m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "1m",
+                "price": 67584
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "a83ff6ad-582c-43c4-ada1-ee590938c4d2",
+          "deliveryDate": "2022-07-02T07:41:33.470Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "247-637-6813",
+            "email": "Britney.Sawayn@gmail.com"
+          },
+          "carId": "949cd88f-9893-4699-a92c-4d87042a775b",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 95278,
+              "range": 71010,
+              "acceleration": 96335
+            },
+            "createdAt": "2021-05-28T06:53:12.957Z"
+          },
+          "packagePrice": {
+            "duration": "9m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "1w",
+                "price": 65190
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "216b7d1f-b0b2-43a0-91d1-f2e7ffc08258",
+          "deliveryDate": "2023-01-09T05:08:30.362Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "961-597-1380",
+            "email": "Colleen_Waelchi78@yahoo.com"
+          },
+          "carId": "276ed345-38cd-427d-a26b-0f9b27930e6a",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 70872,
+              "range": 40651,
+              "acceleration": 30544
+            },
+            "createdAt": "2021-05-28T06:53:11.191Z"
+          },
+          "packagePrice": {
+            "duration": "1w",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "6m",
+                "price": 77554
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "4f53ccfc-ecd3-4ce9-a860-f5c23332d074",
+          "deliveryDate": "2022-02-26T03:09:17.516Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "(583) 826-9819 x0506",
+            "email": "Petra_Reinger11@hotmail.com"
+          },
+          "carId": "4e5fa3f6-8537-4fff-92aa-27c8606e617b",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 62855,
+              "range": 37721,
+              "acceleration": 2550
+            },
+            "createdAt": "2021-05-28T06:53:12.144Z"
+          },
+          "packagePrice": {
+            "duration": "9m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "6m",
+                "price": 34596
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "3a4b2df8-c66b-4ef2-9487-b9cb42a9091b",
+          "deliveryDate": "2022-08-21T08:25:57.081Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "(858) 324-1178 x364",
+            "email": "Enrico.Monahan53@hotmail.com"
+          },
+          "carId": "d97cfde0-71c2-43ba-a0b9-31049571cda8",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 95278,
+              "range": 71010,
+              "acceleration": 96335
+            },
+            "createdAt": "2021-05-28T06:53:12.961Z"
+          },
+          "packagePrice": {
+            "duration": "6m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "6m",
+                "price": 34596
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "ef4e8fa6-b4e4-4138-8d5f-575c48e57327",
+          "deliveryDate": "2024-01-05T16:44:36.045Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "(583) 826-9819 x0506",
+            "email": "Petra_Reinger11@hotmail.com"
+          },
+          "carId": "a0302cbd-8bf2-44fd-abe1-3d0b99a80fb5",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 86454,
+              "range": 50539,
+              "acceleration": 19401
+            },
+            "createdAt": "2021-05-28T06:53:11.189Z"
+          },
+          "packagePrice": {
+            "duration": "6m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "6m",
+                "price": 34596
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "9ec9bce0-53a2-486f-8255-a1f744e42c76",
+          "deliveryDate": "2023-09-20T07:39:53.081Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "(858) 324-1178 x364",
+            "email": "Enrico.Monahan53@hotmail.com"
+          },
+          "carId": "7e9b1bac-120b-4dff-8263-4649872ff45c",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 62855,
+              "range": 37721,
+              "acceleration": 2550
+            },
+            "createdAt": "2021-05-28T06:53:12.146Z"
+          },
+          "packagePrice": {
+            "duration": "3m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "1m",
+                "price": 67584
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "d068da61-38f2-47bc-a2f0-4b0472d9b386",
+          "deliveryDate": "2023-03-06T16:06:18.524Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "961-597-1380",
+            "email": "Colleen_Waelchi78@yahoo.com"
+          },
+          "carId": "982a823d-bc59-4a69-959a-bb774f8815dc",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 95278,
+              "range": 71010,
+              "acceleration": 96335
+            },
+            "createdAt": "2021-05-28T06:53:12.977Z"
+          },
+          "packagePrice": {
+            "duration": "1m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "6m",
+                "price": 34596
+              }
+            }
+          }
+        }
+      },
+      {
+        "node": {
+          "id": "5c5fe6b0-b663-4802-8f67-ce1eaee666cf",
+          "deliveryDate": "2022-05-28T11:42:10.292Z",
+          "kind": "recurring",
+          "user": {
+            "disabled": true,
+            "phoneNumber": "119.878.8425 x992",
+            "email": "Monica_Goldner@yahoo.com"
+          },
+          "carId": "1087b2ac-07aa-4927-8667-37fdfd82db5b",
+          "car": {
+            "carModel": {
+              "fastChargeTime": 70872,
+              "range": 40651,
+              "acceleration": 30544
+            },
+            "createdAt": "2021-05-28T06:53:11.191Z"
+          },
+          "packagePrice": {
+            "duration": "6m",
+            "package": {
+              "active": true,
+              "prices": {
+                "duration": "6m",
+                "price": 34596
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

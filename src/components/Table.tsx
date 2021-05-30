@@ -1,5 +1,4 @@
 import React from 'react'
-import { createStyles, lighten, makeStyles, Theme } from '@material-ui/core/styles'
 import {
   Table as MuiTable,
   TableBody,
@@ -17,41 +16,6 @@ import {
   Tooltip,
 } from '@material-ui/core/'
 import { Delete as DeleteIcon, FilterList as FilterListIcon } from '@material-ui/icons'
-import clsx from 'clsx'
-
-interface Data {
-  calories: number
-  carbs: number
-  fat: number
-  name: string
-  protein: number
-}
-
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number
-): Data {
-  return { name, calories, fat, carbs, protein }
-}
-
-const rows = [
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Donut', 452, 25.0, 51, 4.9),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Honeycomb', 408, 3.2, 87, 6.5),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Jelly Bean', 375, 0.0, 94, 0.0),
-  createData('KitKat', 518, 26.0, 65, 7.0),
-  createData('Lollipop', 392, 0.2, 98, 0.0),
-  createData('Marshmallow', 318, 0, 81, 2.0),
-  createData('Nougat', 360, 19.0, 9, 37.0),
-  createData('Oreo', 437, 18.0, 63, 4.0),
-]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -87,34 +51,29 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
   return stabilizedThis.map((el) => el[0])
 }
 
-interface HeadCell {
+export interface HeadCell {
   disablePadding: boolean
-  id: keyof Data
+  // id: keyof Data
+  id: string
   label: string
   numeric: boolean
 }
 
-const headCells: HeadCell[] = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-  { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-  { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-  { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-  { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
-]
-
 interface EnhancedTableProps {
-  classes: ReturnType<typeof useStyles>
   numSelected: number
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void
+  onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
   order: Order
   orderBy: string
   rowCount: number
+  headCells: HeadCell[]
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props
-  const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells } =
+    props
+
+  const createSortHandler = (property: string) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property)
   }
 
@@ -142,11 +101,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
             </TableSortLabel>
           </TableCell>
         ))}
@@ -155,49 +109,23 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   )
 }
 
-const useToolbarStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
-    },
-    highlight:
-      theme.palette.type === 'light'
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
-    title: {
-      flex: '1 1 100%',
-    },
-  })
-)
-
 interface EnhancedTableToolbarProps {
   numSelected: number
+  title?: string
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const classes = useToolbarStyles()
-  const { numSelected } = props
+  const { numSelected, title = '' } = props
 
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
+    <Toolbar>
       {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+        <Typography color="inherit" variant="subtitle1" component="div">
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Nutrition
+        <Typography variant="h6" id="tableTitle" component="div">
+          {title}
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -217,41 +145,22 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   )
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-    },
-    paper: {
-      width: '100%',
-      marginBottom: theme.spacing(2),
-    },
-    table: {
-      minWidth: 750,
-    },
-    visuallyHidden: {
-      border: 0,
-      clip: 'rect(0 0 0 0)',
-      height: 1,
-      margin: -1,
-      overflow: 'hidden',
-      padding: 0,
-      position: 'absolute',
-      top: 20,
-      width: 1,
-    },
-  })
-)
+interface TableProps {
+  title?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rows: any
+  headCells: HeadCell[]
+}
 
-export function Table(): JSX.Element {
-  const classes = useStyles()
+export function Table(props: TableProps): JSX.Element {
+  const { title, rows, headCells } = props
   const [order, setOrder] = React.useState<Order>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('calories')
+  const [orderBy, setOrderBy] = React.useState('calories')
   const [selected, setSelected] = React.useState<string[]>([])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
-  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof Data) => {
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: string) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
@@ -259,7 +168,8 @@ export function Table(): JSX.Element {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newSelecteds = rows.map((n: any) => n.name)
       setSelected(newSelecteds)
       return
     }
@@ -300,20 +210,16 @@ export function Table(): JSX.Element {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+    <div>
+      <Paper>
+        <EnhancedTableToolbar title={title} numSelected={selected.length} />
+
         <TableContainer>
-          <MuiTable
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size="medium"
-            aria-label="enhanced table"
-          >
+          <MuiTable aria-labelledby="tableTitle" size="medium" aria-label="enhanced table">
             <EnhancedTableHead
-              classes={classes}
               numSelected={selected.length}
               order={order}
+              headCells={headCells}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
@@ -323,17 +229,17 @@ export function Table(): JSX.Element {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name)
+                  const isItemSelected = isSelected(row.id as string)
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, row.id as string)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -342,13 +248,14 @@ export function Table(): JSX.Element {
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.carbs}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      {/* <TableCell component="th" id={labelId} scope="row" padding="none">
+                        {row.id}
+                      </TableCell> */}
+                      {headCells.map((cell) => (
+                        <TableCell key={cell.id} align="right">
+                          {row[cell.id]}
+                        </TableCell>
+                      ))}
                     </TableRow>
                   )
                 })}
