@@ -11,6 +11,7 @@ export const ROUTE_PATHS = Object.freeze({
   PACKAGE: '/package',
   CAR: '/car',
   CHARGING_STATIONS: '/charging-stations',
+  INSURANCE: '/insurance',
 })
 
 export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
@@ -42,6 +43,10 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CHARGING_STATIONS,
     component: lazy(() => import('./pages/ChargingStations' /* webpackChunkName: "app" */)),
+  },
+  {
+    path: ROUTE_PATHS.INSURANCE,
+    component: lazy(() => import('./pages/Insurance' /* webpackChunkName: "app" */)),
   },
   // The order is important here. This route needs to be at the bottom
   {
