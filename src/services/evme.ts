@@ -22,12 +22,23 @@ export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
               edges {
                 node {
                   brand
+                  topSpeed
+                  acceleration
+                  topSpeed
+                  range
+                  totalPower
+                  chargeType
+                  chargeTime
+                  fastChargeTime
+                  bodyTypeId
                   model
                   cars {
                     id
                     vin
                     plateNumber
                   }
+                  createdAt
+                  updatedAt
                 }
               }
             }
@@ -58,6 +69,8 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
                   id
                   startDate
                   endDate
+                  createdAt
+                  updatedAt
                   kind
                   user {
                     phoneNumber
@@ -67,6 +80,9 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
                     carModel {
                       brand
                       model
+                      seats
+                      topSpeed
+                      fastChargeTime
                     }
                   }
                   packagePrice {
@@ -108,7 +124,12 @@ export function usePackages(): UseQueryResult<WithPaginationType<Package>> {
                 node {
                   id
                   createdAt
+                  updatedAt
                   active
+                  prices {
+                    duration
+                    price
+                  }
                 }
               }
             }

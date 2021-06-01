@@ -7,10 +7,4 @@ describe('Car', () => {
     renderComponent(<Car />)
     expect(screen.getByText('New Car')).toBeInTheDocument()
   })
-
-  it('should render cars from our API', async () => {
-    renderComponent(<Car />)
-
-    expect(await screen.findByText('Brand: porsche')).toBeInTheDocument()
-  })
 })

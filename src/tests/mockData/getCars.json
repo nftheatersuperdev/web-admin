@@ -4,56 +4,216 @@
       {
         "node": {
           "brand": "porsche",
+          "topSpeed": 46929,
+          "acceleration": 96335,
+          "range": 71010,
+          "totalPower": 20736,
+          "chargeType": "wall",
+          "chargeTime": 39655,
+          "fastChargeTime": 95278,
+          "bodyTypeId": 5,
           "model": "program",
-          "cars": {
-            "id": "4d31669d-e07d-480e-acb1-882f6f9c0505",
-            "vin": "keihfg0wmj53119py",
-            "plateNumber": "lazo7"
-          }
+          "cars": [
+            {
+              "id": "949cd88f-9893-4699-a92c-4d87042a775b",
+              "vin": "dnnz000rgsjz1w3up",
+              "plateNumber": "vu64p"
+            },
+            {
+              "id": "4d31669d-e07d-480e-acb1-882f6f9c0505",
+              "vin": "keihfg0wmj53119py",
+              "plateNumber": "lazo7"
+            },
+            {
+              "id": "d97cfde0-71c2-43ba-a0b9-31049571cda8",
+              "vin": "vqq1dhbh9rujl3zya",
+              "plateNumber": "m007w"
+            },
+            {
+              "id": "982a823d-bc59-4a69-959a-bb774f8815dc",
+              "vin": "1r5dgozc89dir0uwh",
+              "plateNumber": "xayns"
+            },
+            {
+              "id": "15c091c1-730d-4bc9-91f5-2b2b4896317b",
+              "vin": "jsp294aw0meukhtr4",
+              "plateNumber": "8pqv0"
+            }
+          ],
+          "createdAt": "2021-05-28T06:53:10.304Z",
+          "updatedAt": "2021-05-28T06:53:10.304Z"
         }
       },
       {
         "node": {
           "brand": "tesla",
+          "topSpeed": 73362,
+          "acceleration": 75647,
+          "range": 73829,
+          "totalPower": 9917,
+          "chargeType": "tesla",
+          "chargeTime": 94044,
+          "fastChargeTime": 62339,
+          "bodyTypeId": 4,
           "model": "generating",
-          "cars": {
-            "id": "e12c15c6-80ec-4e0c-8d56-2f2620cd6749",
-            "vin": "2mb1tyffbbkz9vpoi",
-            "plateNumber": "9nhcc"
-          }
+          "cars": [
+            {
+              "id": "cd811345-2e30-4198-94d6-27b816e78863",
+              "vin": "dl7juiz1hsc1drmze",
+              "plateNumber": "g7qyp"
+            },
+            {
+              "id": "062f49b0-57e0-435e-bd89-a5fc9b818792",
+              "vin": "oj13kircqqbll6cc0",
+              "plateNumber": "e4mwv"
+            },
+            {
+              "id": "e8625077-7000-4682-a712-3cadc210477e",
+              "vin": "iabfld1jkamnrxxmb",
+              "plateNumber": "ipnr9"
+            },
+            {
+              "id": "5ccb6afb-3851-427e-bf75-0d60ac5686d2",
+              "vin": "ix77xsfkl61wcai9t",
+              "plateNumber": "1cpvf"
+            },
+            {
+              "id": "e12c15c6-80ec-4e0c-8d56-2f2620cd6749",
+              "vin": "2mb1tyffbbkz9vpoi",
+              "plateNumber": "9nhcc"
+            }
+          ],
+          "createdAt": "2021-05-28T06:53:10.304Z",
+          "updatedAt": "2021-05-28T06:53:10.304Z"
         }
       },
       {
         "node": {
           "brand": "nissan",
+          "topSpeed": 66255,
+          "acceleration": 19401,
+          "range": 50539,
+          "totalPower": 39290,
+          "chargeType": "supercharger",
+          "chargeTime": 30718,
+          "fastChargeTime": 86454,
+          "bodyTypeId": 6,
           "model": "Communications",
-          "cars": {
-            "id": "67a09a54-c90c-4863-ac9e-845937ceea8d",
-            "vin": "qu48pz6m4w2ax5lpu",
-            "plateNumber": "j9o6j"
-          }
+          "cars": [
+            {
+              "id": "b29cac5b-53c8-48ce-9010-cd149db67b5a",
+              "vin": "i3x3n0ildnfsiw7rs",
+              "plateNumber": "ljmjv"
+            },
+            {
+              "id": "a0302cbd-8bf2-44fd-abe1-3d0b99a80fb5",
+              "vin": "kao1rl8ja3x7tzh2x",
+              "plateNumber": "8eckz"
+            },
+            {
+              "id": "82b48a58-5407-4267-9934-264fca460ad8",
+              "vin": "f8b5qpx0x8p7dee7d",
+              "plateNumber": "mlfjb"
+            },
+            {
+              "id": "67a09a54-c90c-4863-ac9e-845937ceea8d",
+              "vin": "qu48pz6m4w2ax5lpu",
+              "plateNumber": "j9o6j"
+            },
+            {
+              "id": "755a274c-604a-4606-8eb6-9f268f524cb2",
+              "vin": "j0m85mudmdmw5n1l8",
+              "plateNumber": "s41i5"
+            }
+          ],
+          "createdAt": "2021-05-28T06:53:10.305Z",
+          "updatedAt": "2021-05-28T06:53:10.305Z"
         }
       },
       {
         "node": {
           "brand": "ford",
+          "topSpeed": 87026,
+          "acceleration": 2550,
+          "range": 37721,
+          "totalPower": 80357,
+          "chargeType": "ccs",
+          "chargeTime": 77953,
+          "fastChargeTime": 62855,
+          "bodyTypeId": 5,
           "model": "Agent",
-          "cars": {
-            "id": "4e5fa3f6-8537-4fff-92aa-27c8606e617b",
-            "vin": "7a5cdhf1o08j6e95h",
-            "plateNumber": "ha5p4"
-          }
+          "cars": [
+            {
+              "id": "ac5af827-907b-40e4-bd87-cc5a111077d1",
+              "vin": "x3mv8shgnje9pgqu0",
+              "plateNumber": "lt0yw"
+            },
+            {
+              "id": "684e0cbe-fb3c-4ad5-8f2a-60afc2ee4038",
+              "vin": "jkrjfs720qrs6laur",
+              "plateNumber": "pgww1"
+            },
+            {
+              "id": "4e5fa3f6-8537-4fff-92aa-27c8606e617b",
+              "vin": "7a5cdhf1o08j6e95h",
+              "plateNumber": "ha5p4"
+            },
+            {
+              "id": "7e9b1bac-120b-4dff-8263-4649872ff45c",
+              "vin": "950yn27h25amx0bpz",
+              "plateNumber": "thovh"
+            },
+            {
+              "id": "a039a733-8914-4910-986a-9bad0cae9c8d",
+              "vin": "ma771u7mc9ua9mwzn",
+              "plateNumber": "ompj3"
+            }
+          ],
+          "createdAt": "2021-05-28T06:53:10.307Z",
+          "updatedAt": "2021-05-28T06:53:10.307Z"
         }
       },
       {
         "node": {
           "brand": "bmw",
+          "topSpeed": 87571,
+          "acceleration": 30544,
+          "range": 40651,
+          "totalPower": 36479,
+          "chargeType": "wall",
+          "chargeTime": 56274,
+          "fastChargeTime": 70872,
+          "bodyTypeId": 5,
           "model": "Expressway",
-          "cars": {
-            "id": "8fdc3cda-40ed-4487-a22a-17a57ff902dd",
-            "vin": "6hkaxvnhkj6u4uhb0",
-            "plateNumber": "jo6us"
-          }
+          "cars": [
+            {
+              "id": "a4d7d5c0-8a06-4baa-8bbc-411ca9078e4d",
+              "vin": "auqavy4ra2m84fcb8",
+              "plateNumber": "icyjd"
+            },
+            {
+              "id": "1087b2ac-07aa-4927-8667-37fdfd82db5b",
+              "vin": "znbbjqyvbut4ft6tc",
+              "plateNumber": "n5pmv"
+            },
+            {
+              "id": "a887c0a8-846c-464c-8b01-ea9d8da456fc",
+              "vin": "m3paida23fcki3nqn",
+              "plateNumber": "wlv0g"
+            },
+            {
+              "id": "8fdc3cda-40ed-4487-a22a-17a57ff902dd",
+              "vin": "6hkaxvnhkj6u4uhb0",
+              "plateNumber": "jo6us"
+            },
+            {
+              "id": "276ed345-38cd-427d-a26b-0f9b27930e6a",
+              "vin": "9wzv1bu0dwons57bc",
+              "plateNumber": "i6yez"
+            }
+          ],
+          "createdAt": "2021-05-28T06:53:10.306Z",
+          "updatedAt": "2021-05-28T06:53:10.306Z"
         }
       }
     ]
