@@ -1,7 +1,11 @@
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { AppBar as MuiAppBar, IconButton, Button, Hidden, Toolbar, Box } from '@material-ui/core'
-import { Menu as MenuIcon, ExitToApp as ExitToAppIcon } from '@material-ui/icons'
+import {
+  Menu as MenuIcon,
+  ExitToApp as ExitToAppIcon,
+  Settings as SettingsIcon,
+} from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 
 const AppBar = styled(MuiAppBar)`
@@ -32,6 +36,10 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
         <Box marginRight="auto" pl={1}>
           <img src={process.env.PUBLIC_URL + '/logo.png'} alt="EVme Logo" />
         </Box>
+
+        <IconButton color="inherit" onClick={() => history.push(ROUTE_PATHS.SETTINGS)}>
+          <SettingsIcon />
+        </IconButton>
 
         <IconButton color="inherit" onClick={() => history.push(ROUTE_PATHS.LOGIN)}>
           <ExitToAppIcon />
