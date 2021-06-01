@@ -14,7 +14,7 @@ export interface LayoutRouteProps {
 
 const Main = styled.main<{ $isPublic?: boolean }>`
   padding: 20px;
-  height: ${({ $isPublic }) => ($isPublic ? '100vh' : 0)};
+  height: ${({ $isPublic }) => ($isPublic ? '100vh' : '100%')};
   margin-left: ${({ theme, $isPublic }) => ($isPublic ? 0 : theme.size.sidebar)};
 `
 

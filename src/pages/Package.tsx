@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button } from '@material-ui/core'
+import { Button, Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
 import { formatDates, formatMoney } from 'utils'
 import PageToolbar from 'layout/PageToolbar'
@@ -96,16 +96,18 @@ export default function Package(): JSX.Element {
         </Button>
       </PageToolbar>
       {rows ? (
-        <DataGrid
-          autoHeight
-          autoPageSize
-          rows={rows}
-          columns={columns}
-          checkboxSelection
-          components={{
-            Toolbar: GridToolbar,
-          }}
-        />
+        <Card>
+          <DataGrid
+            autoHeight
+            autoPageSize
+            rows={rows}
+            columns={columns}
+            checkboxSelection
+            components={{
+              Toolbar: GridToolbar,
+            }}
+          />
+        </Card>
       ) : null}
       <PackageCreateDialog open={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} />
     </div>

@@ -1,3 +1,4 @@
+import { Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
 import { formatDates, renderEmailLink } from 'utils'
 import { useSubscriptions } from 'services/evme'
@@ -75,16 +76,18 @@ export default function Subscription(): JSX.Element {
   return (
     <div>
       {rows ? (
-        <DataGrid
-          autoHeight
-          autoPageSize
-          rows={rows}
-          columns={columns}
-          checkboxSelection
-          components={{
-            Toolbar: GridToolbar,
-          }}
-        />
+        <Card>
+          <DataGrid
+            autoHeight
+            autoPageSize
+            rows={rows}
+            columns={columns}
+            checkboxSelection
+            components={{
+              Toolbar: GridToolbar,
+            }}
+          />
+        </Card>
       ) : null}
     </div>
   )
