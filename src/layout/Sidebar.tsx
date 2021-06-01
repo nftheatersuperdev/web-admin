@@ -17,6 +17,7 @@ import {
   DirectionsCar as CarIcon,
   Group as UserIcon,
   Shop as PackageIcon,
+  BatteryChargingFull as ChargingIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 
@@ -42,6 +43,7 @@ const SIDEBAR_ITEMS = [
   { title: 'Cars', path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
   { title: 'Packages', path: ROUTE_PATHS.PACKAGE, icon: <PackageIcon /> },
   { title: 'Subscriptions', path: ROUTE_PATHS.SUBSCRIPTION, icon: <SubscriptionIcon /> },
+  { title: 'Charging Stations', path: ROUTE_PATHS.CHARGING_STATIONS, icon: <ChargingIcon /> },
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
