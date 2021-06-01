@@ -5,7 +5,7 @@ import Header from 'layout/Header'
 describe('Header', () => {
   it('should show correct title', () => {
     renderComponent(<Header onSidebarToggle={noop} />)
-    expect(screen.getByText('EVme')).toBeInTheDocument()
+    expect(screen.getByAltText('EVme Logo')).toBeInTheDocument()
   })
 
   it('should not show sidebar toggle on a desktop device', () => {

@@ -5,6 +5,6 @@ import App from './App'
 describe('App', () => {
   it('should render correct app header', () => {
     renderComponent(<App />)
-    expect(screen.getByText(/EVme/i)).toBeInTheDocument()
+    expect(screen.getByAltText(/EVme/i)).toBeInTheDocument()
   })
 })

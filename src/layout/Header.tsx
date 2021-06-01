@@ -1,19 +1,16 @@
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import {
-  AppBar as MuiAppBar,
-  IconButton,
-  Button,
-  Hidden,
-  Toolbar,
-  Typography,
-  Box,
-} from '@material-ui/core'
+import { AppBar as MuiAppBar, IconButton, Button, Hidden, Toolbar, Box } from '@material-ui/core'
 import { Menu as MenuIcon, ExitToApp as ExitToAppIcon } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 
 const AppBar = styled(MuiAppBar)`
   z-index: ${({ theme }) => theme.zIndex.drawer + 1};
+  background: #0f0c38;
+
+  img {
+    height: 30px;
+  }
 `
 
 export interface HeaderProps {
@@ -22,7 +19,6 @@ export interface HeaderProps {
 
 function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
   const history = useHistory()
-  const title = 'EVme'
 
   return (
     <AppBar position="sticky">
@@ -34,7 +30,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
         </Hidden>
 
         <Box marginRight="auto" pl={1}>
-          <Typography variant="h5">{title}</Typography>
+          <img src={process.env.PUBLIC_URL + '/logo.png'} alt="EVme Logo" />
         </Box>
 
         <IconButton color="inherit" onClick={() => history.push(ROUTE_PATHS.LOGIN)}>
