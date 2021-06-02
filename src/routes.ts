@@ -8,7 +8,7 @@ export const ROUTE_PATHS = Object.freeze({
   SETTINGS: '/settings',
   USER: '/user',
   SUBSCRIPTION: '/subscription',
-  PACKAGE: '/package',
+  PRICING: '/pricing',
   CAR: '/car',
   CHARGING_STATIONS: '/charging-stations',
   INSURANCE: '/insurance',
@@ -33,8 +33,8 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     component: lazy(() => import('./pages/Subscription' /* webpackChunkName: "app" */)),
   },
   {
-    path: ROUTE_PATHS.PACKAGE,
-    component: lazy(() => import('./pages/Package' /* webpackChunkName: "app" */)),
+    path: ROUTE_PATHS.PRICING,
+    component: lazy(() => import('./pages/Pricing' /* webpackChunkName: "app" */)),
   },
   {
     path: ROUTE_PATHS.CAR,

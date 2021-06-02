@@ -15,9 +15,329 @@ export type Scalars = {
   DateTime: any
 }
 
-export type BooleanFieldComparison = {
-  is?: Maybe<Scalars['Boolean']>
-  isNot?: Maybe<Scalars['Boolean']>
+export type AddAdditionalExpensesToSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddCarModelsToCarBodyTypeInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddCarsToCarModelInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddEventsToPaymentInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddEventsToSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddFilesToAdditionalExpenseInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddPaymentsToSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddPricesToCarModelInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddSubscriptionsToCarInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddSubscriptionsToPackagePriceInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AdditionalExpense = {
+  __typename?: 'AdditionalExpense'
+  id: Scalars['String']
+  subscriptionId: Scalars['String']
+  subscription?: Maybe<Sub>
+  price: Scalars['Float']
+  type: Scalars['String']
+  noticeDate: Scalars['DateTime']
+  status: Scalars['String']
+  note?: Maybe<Scalars['String']>
+  files?: Maybe<Array<AdditionalExpenseFile>>
+  createdAdt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type AdditionalExpenseFilesArgs = {
+  filter?: Maybe<AdditionalExpenseFileFilter>
+  sorting?: Maybe<Array<AdditionalExpenseFileSort>>
+}
+
+export type AdditionalExpenseAggregateGroupBy = {
+  __typename?: 'AdditionalExpenseAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseAvgAggregate = {
+  __typename?: 'AdditionalExpenseAvgAggregate'
+  price?: Maybe<Scalars['Float']>
+}
+
+export type AdditionalExpenseConnection = {
+  __typename?: 'AdditionalExpenseConnection'
+  /** Paging information */
+  pageInfo: PageInfo
+  /** Array of edges. */
+  edges: Array<AdditionalExpenseEdge>
+}
+
+export type AdditionalExpenseCountAggregate = {
+  __typename?: 'AdditionalExpenseCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  subscriptionId?: Maybe<Scalars['Int']>
+  price?: Maybe<Scalars['Int']>
+  type?: Maybe<Scalars['Int']>
+  noticeDate?: Maybe<Scalars['Int']>
+  status?: Maybe<Scalars['Int']>
+}
+
+export type AdditionalExpenseDeleteFilter = {
+  and?: Maybe<Array<AdditionalExpenseDeleteFilter>>
+  or?: Maybe<Array<AdditionalExpenseDeleteFilter>>
+  id?: Maybe<IdFilterComparison>
+  subscriptionId?: Maybe<StringFieldComparison>
+  price?: Maybe<NumberFieldComparison>
+  type?: Maybe<StringFieldComparison>
+  noticeDate?: Maybe<DateFieldComparison>
+  status?: Maybe<StringFieldComparison>
+}
+
+export type AdditionalExpenseDeleteResponse = {
+  __typename?: 'AdditionalExpenseDeleteResponse'
+  id?: Maybe<Scalars['String']>
+  subscriptionId?: Maybe<Scalars['String']>
+  subscription?: Maybe<Sub>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+  note?: Maybe<Scalars['String']>
+  files?: Maybe<Array<AdditionalExpenseFile>>
+  createdAdt?: Maybe<Scalars['DateTime']>
+  updatedAt?: Maybe<Scalars['DateTime']>
+}
+
+export type AdditionalExpenseEdge = {
+  __typename?: 'AdditionalExpenseEdge'
+  /** The node containing the AdditionalExpense */
+  node: AdditionalExpense
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']
+}
+
+export type AdditionalExpenseFile = {
+  __typename?: 'AdditionalExpenseFile'
+  id: Scalars['String']
+  additionalExpenseId: Scalars['String']
+  additionalExpense: AdditionalExpense
+  url: Scalars['String']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type AdditionalExpenseFileAggregateGroupBy = {
+  __typename?: 'AdditionalExpenseFileAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  additionalExpenseId?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseFileConnection = {
+  __typename?: 'AdditionalExpenseFileConnection'
+  /** Paging information */
+  pageInfo: PageInfo
+  /** Array of edges. */
+  edges: Array<AdditionalExpenseFileEdge>
+}
+
+export type AdditionalExpenseFileCountAggregate = {
+  __typename?: 'AdditionalExpenseFileCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  additionalExpenseId?: Maybe<Scalars['Int']>
+}
+
+export type AdditionalExpenseFileDeleteFilter = {
+  and?: Maybe<Array<AdditionalExpenseFileDeleteFilter>>
+  or?: Maybe<Array<AdditionalExpenseFileDeleteFilter>>
+  id?: Maybe<IdFilterComparison>
+  additionalExpenseId?: Maybe<StringFieldComparison>
+}
+
+export type AdditionalExpenseFileDeleteResponse = {
+  __typename?: 'AdditionalExpenseFileDeleteResponse'
+  id?: Maybe<Scalars['String']>
+  additionalExpenseId?: Maybe<Scalars['String']>
+  additionalExpense?: Maybe<AdditionalExpense>
+  url?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
+  updatedAt?: Maybe<Scalars['DateTime']>
+}
+
+export type AdditionalExpenseFileEdge = {
+  __typename?: 'AdditionalExpenseFileEdge'
+  /** The node containing the AdditionalExpenseFile */
+  node: AdditionalExpenseFile
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']
+}
+
+export type AdditionalExpenseFileFilter = {
+  and?: Maybe<Array<AdditionalExpenseFileFilter>>
+  or?: Maybe<Array<AdditionalExpenseFileFilter>>
+  id?: Maybe<IdFilterComparison>
+  additionalExpenseId?: Maybe<StringFieldComparison>
+}
+
+export type AdditionalExpenseFileInput = {
+  additionalExpenseId: Scalars['String']
+  url: Scalars['String']
+}
+
+export type AdditionalExpenseFileMaxAggregate = {
+  __typename?: 'AdditionalExpenseFileMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  additionalExpenseId?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseFileMinAggregate = {
+  __typename?: 'AdditionalExpenseFileMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  additionalExpenseId?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseFileSort = {
+  field: AdditionalExpenseFileSortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum AdditionalExpenseFileSortFields {
+  Id = 'id',
+  AdditionalExpenseId = 'additionalExpenseId',
+}
+
+export type AdditionalExpenseFilter = {
+  and?: Maybe<Array<AdditionalExpenseFilter>>
+  or?: Maybe<Array<AdditionalExpenseFilter>>
+  id?: Maybe<IdFilterComparison>
+  subscriptionId?: Maybe<StringFieldComparison>
+  price?: Maybe<NumberFieldComparison>
+  type?: Maybe<StringFieldComparison>
+  noticeDate?: Maybe<DateFieldComparison>
+  status?: Maybe<StringFieldComparison>
+}
+
+export type AdditionalExpenseInput = {
+  subscriptionId: Scalars['String']
+  price: Scalars['Float']
+  type: Scalars['String']
+  status: Scalars['String']
+  noticeDate: Scalars['DateTime']
+  note?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseMaxAggregate = {
+  __typename?: 'AdditionalExpenseMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseMinAggregate = {
+  __typename?: 'AdditionalExpenseMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type AdditionalExpenseSort = {
+  field: AdditionalExpenseSortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum AdditionalExpenseSortFields {
+  Id = 'id',
+  SubscriptionId = 'subscriptionId',
+  Price = 'price',
+  Type = 'type',
+  NoticeDate = 'noticeDate',
+  Status = 'status',
+}
+
+export type AdditionalExpenseSumAggregate = {
+  __typename?: 'AdditionalExpenseSumAggregate'
+  price?: Maybe<Scalars['Float']>
+}
+
+export type Authorize = {
+  __typename?: 'Authorize'
+  authorizeUri: Scalars['String']
+}
+
+export type AvailableCar = {
+  __typename?: 'AvailableCar'
+  color: Scalars['String']
+  available: Scalars['Boolean']
+  exteriorImages?: Maybe<Array<CarModelImage>>
+  interiorImages?: Maybe<Array<CarModelImage>>
+}
+
+export type AvailableCarInput = {
+  startDate: Scalars['DateTime']
+  endDate: Scalars['DateTime']
 }
 
 export type Car = {
@@ -26,10 +346,16 @@ export type Car = {
   vin: Scalars['String']
   plateNumber: Scalars['String']
   carModelId: Scalars['String']
-  subscriptions?: Maybe<Sub>
+  color: Scalars['String']
+  subscriptions?: Maybe<Array<Sub>>
   carModel?: Maybe<CarModel>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type CarSubscriptionsArgs = {
+  filter?: Maybe<SubFilter>
+  sorting?: Maybe<Array<SubSort>>
 }
 
 export type CarAggregateGroupBy = {
@@ -38,13 +364,19 @@ export type CarAggregateGroupBy = {
   vin?: Maybe<Scalars['String']>
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
+  color?: Maybe<Scalars['String']>
 }
 
 export type CarBodyType = {
   __typename?: 'CarBodyType'
   id: Scalars['Int']
   bodyType: Scalars['String']
-  carModels?: Maybe<CarModel>
+  carModels?: Maybe<Array<CarModel>>
+}
+
+export type CarBodyTypeCarModelsArgs = {
+  filter?: Maybe<CarModelFilter>
+  sorting?: Maybe<Array<CarModelSort>>
 }
 
 export type CarBodyTypeAggregateGroupBy = {
@@ -133,6 +465,7 @@ export type CarCountAggregate = {
   vin?: Maybe<Scalars['Int']>
   plateNumber?: Maybe<Scalars['Int']>
   carModelId?: Maybe<Scalars['Int']>
+  color?: Maybe<Scalars['Int']>
 }
 
 export type CarEdge = {
@@ -150,6 +483,7 @@ export type CarFilter = {
   vin?: Maybe<StringFieldComparison>
   plateNumber?: Maybe<StringFieldComparison>
   carModelId?: Maybe<StringFieldComparison>
+  color?: Maybe<StringFieldComparison>
 }
 
 export type CarInput = {
@@ -163,6 +497,7 @@ export type CarMaxAggregate = {
   vin?: Maybe<Scalars['String']>
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
+  color?: Maybe<Scalars['String']>
 }
 
 export type CarMinAggregate = {
@@ -171,6 +506,7 @@ export type CarMinAggregate = {
   vin?: Maybe<Scalars['String']>
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
+  color?: Maybe<Scalars['String']>
 }
 
 export type CarModel = {
@@ -187,11 +523,28 @@ export type CarModel = {
   chargeTime: Scalars['Float']
   fastChargeTime: Scalars['Float']
   bodyTypeId: Scalars['Float']
-  bodyType?: Maybe<CarBodyType>
-  images: CarModelImage
-  cars?: Maybe<Car>
+  bodyType: CarBodyType
+  cars?: Maybe<Array<Car>>
+  prices: Array<PackagePrice>
+  totalTorque: Scalars['Float']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  logo?: Maybe<CarModelImage>
+  colors: Array<AvailableCar>
+}
+
+export type CarModelCarsArgs = {
+  filter?: Maybe<CarFilter>
+  sorting?: Maybe<Array<CarSort>>
+}
+
+export type CarModelPricesArgs = {
+  filter?: Maybe<PackagePriceFilter>
+  sorting?: Maybe<Array<PackagePriceSort>>
+}
+
+export type CarModelColorsArgs = {
+  input: AvailableCarInput
 }
 
 export type CarModelAggregateGroupBy = {
@@ -230,104 +583,12 @@ export type CarModelImage = {
   __typename?: 'CarModelImage'
   id: Scalars['String']
   carModelId: Scalars['String']
-  color: Scalars['String']
-  carModel?: Maybe<CarModel>
   url: Scalars['String']
-}
-
-export type CarModelImageAggregateGroupBy = {
-  __typename?: 'CarModelImageAggregateGroupBy'
-  id?: Maybe<Scalars['ID']>
-  carModelId?: Maybe<Scalars['String']>
-  color?: Maybe<Scalars['String']>
-}
-
-export type CarModelImageConnection = {
-  __typename?: 'CarModelImageConnection'
-  /** Paging information */
-  pageInfo: PageInfo
-  /** Array of edges. */
-  edges: Array<CarModelImageEdge>
-}
-
-export type CarModelImageCountAggregate = {
-  __typename?: 'CarModelImageCountAggregate'
-  id?: Maybe<Scalars['Int']>
-  carModelId?: Maybe<Scalars['Int']>
-  color?: Maybe<Scalars['Int']>
-}
-
-export type CarModelImageDeleteFilter = {
-  and?: Maybe<Array<CarModelImageDeleteFilter>>
-  or?: Maybe<Array<CarModelImageDeleteFilter>>
-  id?: Maybe<IdFilterComparison>
-  carModelId?: Maybe<StringFieldComparison>
-  color?: Maybe<StringFieldComparison>
-}
-
-export type CarModelImageDeleteResponse = {
-  __typename?: 'CarModelImageDeleteResponse'
-  id?: Maybe<Scalars['String']>
-  carModelId?: Maybe<Scalars['String']>
-  color?: Maybe<Scalars['String']>
-  carModel?: Maybe<CarModel>
-  url?: Maybe<Scalars['String']>
-}
-
-export type CarModelImageEdge = {
-  __typename?: 'CarModelImageEdge'
-  /** The node containing the CarModelImage */
-  node: CarModelImage
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']
-}
-
-export type CarModelImageFilter = {
-  and?: Maybe<Array<CarModelImageFilter>>
-  or?: Maybe<Array<CarModelImageFilter>>
-  id?: Maybe<IdFilterComparison>
-  carModelId?: Maybe<StringFieldComparison>
-  color?: Maybe<StringFieldComparison>
-}
-
-export type CarModelImageInput = {
-  carModelId: Scalars['String']
+  type: Scalars['String']
   color: Scalars['String']
-  url: Scalars['String']
-}
-
-export type CarModelImageMaxAggregate = {
-  __typename?: 'CarModelImageMaxAggregate'
-  id?: Maybe<Scalars['ID']>
-  carModelId?: Maybe<Scalars['String']>
-  color?: Maybe<Scalars['String']>
-}
-
-export type CarModelImageMinAggregate = {
-  __typename?: 'CarModelImageMinAggregate'
-  id?: Maybe<Scalars['ID']>
-  carModelId?: Maybe<Scalars['String']>
-  color?: Maybe<Scalars['String']>
-}
-
-export type CarModelImageSort = {
-  field: CarModelImageSortFields
-  direction: SortDirection
-  nulls?: Maybe<SortNulls>
-}
-
-export enum CarModelImageSortFields {
-  Id = 'id',
-  CarModelId = 'carModelId',
-  Color = 'color',
-}
-
-export type CarModelImageUpdateFilter = {
-  and?: Maybe<Array<CarModelImageUpdateFilter>>
-  or?: Maybe<Array<CarModelImageUpdateFilter>>
-  id?: Maybe<IdFilterComparison>
-  carModelId?: Maybe<StringFieldComparison>
-  color?: Maybe<StringFieldComparison>
+  lightsOn: Scalars['Boolean']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
 }
 
 export type CarModelInput = {
@@ -375,11 +636,22 @@ export enum CarSortFields {
   Vin = 'vin',
   PlateNumber = 'plateNumber',
   CarModelId = 'carModelId',
+  Color = 'color',
 }
 
-export type CreateManyCarModelImagesInput = {
+export type CreateManyAdditionalExpenseFilesInput = {
   /** Array of records to create */
-  carModelImages: Array<CarModelImageInput>
+  additionalExpenseFiles: Array<AdditionalExpenseFileInput>
+}
+
+export type CreateOneAdditionalExpenseFileInput = {
+  /** The record to create */
+  additionalExpenseFile: AdditionalExpenseFileInput
+}
+
+export type CreateOneAdditionalExpenseInput = {
+  /** The record to create */
+  additionalExpense: AdditionalExpenseInput
 }
 
 export type CreateOneCarBodyTypeInput = {
@@ -392,19 +664,9 @@ export type CreateOneCarInput = {
   car: CarInput
 }
 
-export type CreateOneCarModelImageInput = {
-  /** The record to create */
-  carModelImage: CarModelImageInput
-}
-
 export type CreateOneCarModelInput = {
   /** The record to create */
   carModel: CarModelInput
-}
-
-export type CreateOnePackageInput = {
-  /** The record to create */
-  package: PackageInput
 }
 
 export type CreateOnePackagePriceInput = {
@@ -463,9 +725,14 @@ export type DateFieldComparisonBetween = {
   upper: Scalars['DateTime']
 }
 
-export type DeleteManyCarModelImagesInput = {
+export type DeleteManyAdditionalExpenseFilesInput = {
   /** Filter to find records to delete */
-  filter: CarModelImageDeleteFilter
+  filter: AdditionalExpenseFileDeleteFilter
+}
+
+export type DeleteManyAdditionalExpensesInput = {
+  /** Filter to find records to delete */
+  filter: AdditionalExpenseDeleteFilter
 }
 
 export type DeleteManyResponse = {
@@ -474,9 +741,18 @@ export type DeleteManyResponse = {
   deletedCount: Scalars['Int']
 }
 
-export type DeleteOneCarModelImageInput = {
+export type DeleteOneAdditionalExpenseFileInput = {
   /** The id of the record to delete. */
   id: Scalars['ID']
+}
+
+export type DeleteOneAdditionalExpenseInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID']
+}
+
+export type ExtendSubscriptionInputDto = {
+  subscriptionId: Scalars['String']
 }
 
 export type IdFilterComparison = {
@@ -499,41 +775,42 @@ export type IdFilterComparison = {
 export type Mutation = {
   __typename?: 'Mutation'
   signup: User
+  subscribe: Authorize
+  extendSubscription: Sub
   setBodyTypeOnCarModel: CarModel
+  addCarsToCarModel: CarModel
   setCarsOnCarModel: CarModel
-  setImagesOnCarModel: CarModel
-  removeImagesFromCarModel: CarModel
+  addPricesToCarModel: CarModel
+  setPricesOnCarModel: CarModel
   createCarModel: CarModel
   updateCarModel: CarModel
-  setSubscriptionsOnCar: Car
   setCarModelOnCar: Car
+  addSubscriptionsToCar: Car
+  setSubscriptionsOnCar: Car
   createCar: Car
   updateCar: Car
+  addCarModelsToCarBodyType: CarBodyType
   setCarModelsOnCarBodyType: CarBodyType
   createCarBodyType: CarBodyType
   updateCarBodyType: CarBodyType
-  setCarModelOnCarModelImage: CarModelImage
-  createOneCarModelImage: CarModelImage
-  createManyCarModelImages: Array<CarModelImage>
-  updateOneCarModelImage: CarModelImage
-  updateManyCarModelImages: UpdateManyResponse
-  deleteOneCarModelImage: CarModelImageDeleteResponse
-  deleteManyCarModelImages: DeleteManyResponse
-  setEventsOnSub: Sub
   setUserOnSub: Sub
   setPackagePriceOnSub: Sub
-  setPaymentsOnSub: Sub
   setCarOnSub: Sub
-  subscribe: Sub
+  addEventsToSub: Sub
+  setEventsOnSub: Sub
+  addPaymentsToSub: Sub
+  setPaymentsOnSub: Sub
+  addAdditionalExpensesToSub: Sub
+  setAdditionalExpensesOnSub: Sub
+  createSubscription: Sub
   updateSubscription: Sub
-  setPricesOnPackage: Package
-  createPackage: Package
-  updatePackage: Package
+  setCarModelOnPackagePrice: PackagePrice
+  addSubscriptionsToPackagePrice: PackagePrice
   setSubscriptionsOnPackagePrice: PackagePrice
-  setPackageOnPackagePrice: PackagePrice
   createPackagePrice: PackagePrice
   updatePackagePrice: Payment
   setSubscriptionOnPayment: Payment
+  addEventsToPayment: Payment
   setEventsOnPayment: Payment
   createPayment: Payment
   setPaymentOnPaymentEvent: PaymentEvent
@@ -542,22 +819,48 @@ export type Mutation = {
   setSubscriptionOnSubscriptionEvent: SubscriptionEvent
   createSubscriptionEvent: SubscriptionEvent
   updateSubscriptionEvent: SubscriptionEvent
+  setSubscriptionOnAdditionalExpense: AdditionalExpense
+  addFilesToAdditionalExpense: AdditionalExpense
+  setFilesOnAdditionalExpense: AdditionalExpense
+  createAdditionalExpense: AdditionalExpense
+  updateAdditionalExpense: AdditionalExpense
+  deleteOneAdditionalExpense: AdditionalExpenseDeleteResponse
+  deleteManyAdditionalExpenses: DeleteManyResponse
+  setAdditionalExpenseOnAdditionalExpenseFile: AdditionalExpenseFile
+  removeAdditionalExpenseFromAdditionalExpenseFile: AdditionalExpenseFile
+  createAdditionalExpenseFile: AdditionalExpenseFile
+  createAdditionalExpenseFiles: Array<AdditionalExpenseFile>
+  updateAdditionalExpenseFile: AdditionalExpenseFile
+  deleteOneAdditionalExpenseFile: AdditionalExpenseFileDeleteResponse
+  deleteManyAdditionalExpenseFiles: DeleteManyResponse
+}
+
+export type MutationSubscribeArgs = {
+  input: SubscribeInput
+}
+
+export type MutationExtendSubscriptionArgs = {
+  input: ExtendSubscriptionInputDto
 }
 
 export type MutationSetBodyTypeOnCarModelArgs = {
   input: SetBodyTypeOnCarModelInput
 }
 
+export type MutationAddCarsToCarModelArgs = {
+  input: AddCarsToCarModelInput
+}
+
 export type MutationSetCarsOnCarModelArgs = {
   input: SetCarsOnCarModelInput
 }
 
-export type MutationSetImagesOnCarModelArgs = {
-  input: SetImagesOnCarModelInput
+export type MutationAddPricesToCarModelArgs = {
+  input: AddPricesToCarModelInput
 }
 
-export type MutationRemoveImagesFromCarModelArgs = {
-  input: RemoveImagesFromCarModelInput
+export type MutationSetPricesOnCarModelArgs = {
+  input: SetPricesOnCarModelInput
 }
 
 export type MutationCreateCarModelArgs = {
@@ -568,12 +871,16 @@ export type MutationUpdateCarModelArgs = {
   input: UpdateOneCarModelInput
 }
 
-export type MutationSetSubscriptionsOnCarArgs = {
-  input: SetSubscriptionsOnCarInput
-}
-
 export type MutationSetCarModelOnCarArgs = {
   input: SetCarModelOnCarInput
+}
+
+export type MutationAddSubscriptionsToCarArgs = {
+  input: AddSubscriptionsToCarInput
+}
+
+export type MutationSetSubscriptionsOnCarArgs = {
+  input: SetSubscriptionsOnCarInput
 }
 
 export type MutationCreateCarArgs = {
@@ -582,6 +889,10 @@ export type MutationCreateCarArgs = {
 
 export type MutationUpdateCarArgs = {
   input: UpdateOneCarInput
+}
+
+export type MutationAddCarModelsToCarBodyTypeArgs = {
+  input: AddCarModelsToCarBodyTypeInput
 }
 
 export type MutationSetCarModelsOnCarBodyTypeArgs = {
@@ -596,38 +907,6 @@ export type MutationUpdateCarBodyTypeArgs = {
   input: UpdateOneCarBodyTypeInput
 }
 
-export type MutationSetCarModelOnCarModelImageArgs = {
-  input: SetCarModelOnCarModelImageInput
-}
-
-export type MutationCreateOneCarModelImageArgs = {
-  input: CreateOneCarModelImageInput
-}
-
-export type MutationCreateManyCarModelImagesArgs = {
-  input: CreateManyCarModelImagesInput
-}
-
-export type MutationUpdateOneCarModelImageArgs = {
-  input: UpdateOneCarModelImageInput
-}
-
-export type MutationUpdateManyCarModelImagesArgs = {
-  input: UpdateManyCarModelImagesInput
-}
-
-export type MutationDeleteOneCarModelImageArgs = {
-  input: DeleteOneCarModelImageInput
-}
-
-export type MutationDeleteManyCarModelImagesArgs = {
-  input: DeleteManyCarModelImagesInput
-}
-
-export type MutationSetEventsOnSubArgs = {
-  input: SetEventsOnSubInput
-}
-
 export type MutationSetUserOnSubArgs = {
   input: SetUserOnSubInput
 }
@@ -636,15 +915,35 @@ export type MutationSetPackagePriceOnSubArgs = {
   input: SetPackagePriceOnSubInput
 }
 
-export type MutationSetPaymentsOnSubArgs = {
-  input: SetPaymentsOnSubInput
-}
-
 export type MutationSetCarOnSubArgs = {
   input: SetCarOnSubInput
 }
 
-export type MutationSubscribeArgs = {
+export type MutationAddEventsToSubArgs = {
+  input: AddEventsToSubInput
+}
+
+export type MutationSetEventsOnSubArgs = {
+  input: SetEventsOnSubInput
+}
+
+export type MutationAddPaymentsToSubArgs = {
+  input: AddPaymentsToSubInput
+}
+
+export type MutationSetPaymentsOnSubArgs = {
+  input: SetPaymentsOnSubInput
+}
+
+export type MutationAddAdditionalExpensesToSubArgs = {
+  input: AddAdditionalExpensesToSubInput
+}
+
+export type MutationSetAdditionalExpensesOnSubArgs = {
+  input: SetAdditionalExpensesOnSubInput
+}
+
+export type MutationCreateSubscriptionArgs = {
   input: CreateOneSubInput
 }
 
@@ -652,24 +951,16 @@ export type MutationUpdateSubscriptionArgs = {
   input: UpdateOneSubInput
 }
 
-export type MutationSetPricesOnPackageArgs = {
-  input: SetPricesOnPackageInput
+export type MutationSetCarModelOnPackagePriceArgs = {
+  input: SetCarModelOnPackagePriceInput
 }
 
-export type MutationCreatePackageArgs = {
-  input: CreateOnePackageInput
-}
-
-export type MutationUpdatePackageArgs = {
-  input: UpdateOnePackageInput
+export type MutationAddSubscriptionsToPackagePriceArgs = {
+  input: AddSubscriptionsToPackagePriceInput
 }
 
 export type MutationSetSubscriptionsOnPackagePriceArgs = {
   input: SetSubscriptionsOnPackagePriceInput
-}
-
-export type MutationSetPackageOnPackagePriceArgs = {
-  input: SetPackageOnPackagePriceInput
 }
 
 export type MutationCreatePackagePriceArgs = {
@@ -682,6 +973,10 @@ export type MutationUpdatePackagePriceArgs = {
 
 export type MutationSetSubscriptionOnPaymentArgs = {
   input: SetSubscriptionOnPaymentInput
+}
+
+export type MutationAddEventsToPaymentArgs = {
+  input: AddEventsToPaymentInput
 }
 
 export type MutationSetEventsOnPaymentArgs = {
@@ -716,6 +1011,62 @@ export type MutationUpdateSubscriptionEventArgs = {
   input: UpdateOneSubscriptionEventInput
 }
 
+export type MutationSetSubscriptionOnAdditionalExpenseArgs = {
+  input: SetSubscriptionOnAdditionalExpenseInput
+}
+
+export type MutationAddFilesToAdditionalExpenseArgs = {
+  input: AddFilesToAdditionalExpenseInput
+}
+
+export type MutationSetFilesOnAdditionalExpenseArgs = {
+  input: SetFilesOnAdditionalExpenseInput
+}
+
+export type MutationCreateAdditionalExpenseArgs = {
+  input: CreateOneAdditionalExpenseInput
+}
+
+export type MutationUpdateAdditionalExpenseArgs = {
+  input: UpdateOneAdditionalExpenseInput
+}
+
+export type MutationDeleteOneAdditionalExpenseArgs = {
+  input: DeleteOneAdditionalExpenseInput
+}
+
+export type MutationDeleteManyAdditionalExpensesArgs = {
+  input: DeleteManyAdditionalExpensesInput
+}
+
+export type MutationSetAdditionalExpenseOnAdditionalExpenseFileArgs = {
+  input: SetAdditionalExpenseOnAdditionalExpenseFileInput
+}
+
+export type MutationRemoveAdditionalExpenseFromAdditionalExpenseFileArgs = {
+  input: RemoveAdditionalExpenseFromAdditionalExpenseFileInput
+}
+
+export type MutationCreateAdditionalExpenseFileArgs = {
+  input: CreateOneAdditionalExpenseFileInput
+}
+
+export type MutationCreateAdditionalExpenseFilesArgs = {
+  input: CreateManyAdditionalExpenseFilesInput
+}
+
+export type MutationUpdateAdditionalExpenseFileArgs = {
+  input: UpdateOneAdditionalExpenseFileInput
+}
+
+export type MutationDeleteOneAdditionalExpenseFileArgs = {
+  input: DeleteOneAdditionalExpenseFileInput
+}
+
+export type MutationDeleteManyAdditionalExpenseFilesArgs = {
+  input: DeleteManyAdditionalExpenseFilesInput
+}
+
 export type NumberFieldComparison = {
   is?: Maybe<Scalars['Boolean']>
   isNot?: Maybe<Scalars['Boolean']>
@@ -736,80 +1087,27 @@ export type NumberFieldComparisonBetween = {
   upper: Scalars['Float']
 }
 
-export type Package = {
-  __typename?: 'Package'
-  id: Scalars['String']
-  active: Scalars['Boolean']
-  prices?: Maybe<PackagePrice>
-  createdAt: Scalars['DateTime']
-  updatedAt: Scalars['DateTime']
-}
-
-export type PackageAggregateGroupBy = {
-  __typename?: 'PackageAggregateGroupBy'
-  id?: Maybe<Scalars['ID']>
-  active?: Maybe<Scalars['Boolean']>
-}
-
-export type PackageConnection = {
-  __typename?: 'PackageConnection'
-  /** Paging information */
-  pageInfo: PageInfo
-  /** Array of edges. */
-  edges: Array<PackageEdge>
-}
-
-export type PackageCountAggregate = {
-  __typename?: 'PackageCountAggregate'
-  id?: Maybe<Scalars['Int']>
-  active?: Maybe<Scalars['Int']>
-}
-
-export type PackageEdge = {
-  __typename?: 'PackageEdge'
-  /** The node containing the Package */
-  node: Package
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']
-}
-
-export type PackageFilter = {
-  and?: Maybe<Array<PackageFilter>>
-  or?: Maybe<Array<PackageFilter>>
-  id?: Maybe<IdFilterComparison>
-  active?: Maybe<BooleanFieldComparison>
-}
-
-export type PackageInput = {
-  active: Scalars['Boolean']
-}
-
-export type PackageMaxAggregate = {
-  __typename?: 'PackageMaxAggregate'
-  id?: Maybe<Scalars['ID']>
-}
-
-export type PackageMinAggregate = {
-  __typename?: 'PackageMinAggregate'
-  id?: Maybe<Scalars['ID']>
-}
-
 export type PackagePrice = {
   __typename?: 'PackagePrice'
   id: Scalars['String']
-  packageId: Scalars['String']
-  subscriptions?: Maybe<Sub>
-  package?: Maybe<Package>
+  carModelId: Scalars['String']
+  subscriptions?: Maybe<Array<Sub>>
+  carModel?: Maybe<CarModel>
   duration: Scalars['String']
   price: Scalars['Float']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
 
+export type PackagePriceSubscriptionsArgs = {
+  filter?: Maybe<SubFilter>
+  sorting?: Maybe<Array<SubSort>>
+}
+
 export type PackagePriceAggregateGroupBy = {
   __typename?: 'PackagePriceAggregateGroupBy'
   id?: Maybe<Scalars['ID']>
-  packageId?: Maybe<Scalars['String']>
+  carModelId?: Maybe<Scalars['String']>
   duration?: Maybe<Scalars['String']>
   price?: Maybe<Scalars['Float']>
 }
@@ -830,7 +1128,7 @@ export type PackagePriceConnection = {
 export type PackagePriceCountAggregate = {
   __typename?: 'PackagePriceCountAggregate'
   id?: Maybe<Scalars['Int']>
-  packageId?: Maybe<Scalars['Int']>
+  carModelId?: Maybe<Scalars['Int']>
   duration?: Maybe<Scalars['Int']>
   price?: Maybe<Scalars['Int']>
 }
@@ -847,13 +1145,12 @@ export type PackagePriceFilter = {
   and?: Maybe<Array<PackagePriceFilter>>
   or?: Maybe<Array<PackagePriceFilter>>
   id?: Maybe<IdFilterComparison>
-  packageId?: Maybe<StringFieldComparison>
+  carModelId?: Maybe<StringFieldComparison>
   duration?: Maybe<StringFieldComparison>
   price?: Maybe<NumberFieldComparison>
 }
 
 export type PackagePriceInput = {
-  packageId: Scalars['String']
   duration: Scalars['String']
   price: Scalars['Float']
 }
@@ -861,7 +1158,7 @@ export type PackagePriceInput = {
 export type PackagePriceMaxAggregate = {
   __typename?: 'PackagePriceMaxAggregate'
   id?: Maybe<Scalars['ID']>
-  packageId?: Maybe<Scalars['String']>
+  carModelId?: Maybe<Scalars['String']>
   duration?: Maybe<Scalars['String']>
   price?: Maybe<Scalars['Float']>
 }
@@ -869,7 +1166,7 @@ export type PackagePriceMaxAggregate = {
 export type PackagePriceMinAggregate = {
   __typename?: 'PackagePriceMinAggregate'
   id?: Maybe<Scalars['ID']>
-  packageId?: Maybe<Scalars['String']>
+  carModelId?: Maybe<Scalars['String']>
   duration?: Maybe<Scalars['String']>
   price?: Maybe<Scalars['Float']>
 }
@@ -882,7 +1179,7 @@ export type PackagePriceSort = {
 
 export enum PackagePriceSortFields {
   Id = 'id',
-  PackageId = 'packageId',
+  CarModelId = 'carModelId',
   Duration = 'duration',
   Price = 'price',
 }
@@ -890,17 +1187,6 @@ export enum PackagePriceSortFields {
 export type PackagePriceSumAggregate = {
   __typename?: 'PackagePriceSumAggregate'
   price?: Maybe<Scalars['Float']>
-}
-
-export type PackageSort = {
-  field: PackageSortFields
-  direction: SortDirection
-  nulls?: Maybe<SortNulls>
-}
-
-export enum PackageSortFields {
-  Id = 'id',
-  Active = 'active',
 }
 
 export type PageInfo = {
@@ -923,10 +1209,14 @@ export type Payment = {
   amount: Scalars['Float']
   currency: Scalars['String']
   type: Scalars['String']
-  omiseTransactionId: Scalars['String']
-  events?: Maybe<PaymentEvent>
+  events?: Maybe<Array<PaymentEvent>>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type PaymentEventsArgs = {
+  filter?: Maybe<PaymentEventFilter>
+  sorting?: Maybe<Array<PaymentEventSort>>
 }
 
 export type PaymentAggregateGroupBy = {
@@ -934,15 +1224,13 @@ export type PaymentAggregateGroupBy = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   amount?: Maybe<Scalars['Float']>
-  currency?: Maybe<Scalars['Float']>
+  currency?: Maybe<Scalars['String']>
   type?: Maybe<Scalars['String']>
-  omiseTransactionId?: Maybe<Scalars['String']>
 }
 
 export type PaymentAvgAggregate = {
   __typename?: 'PaymentAvgAggregate'
   amount?: Maybe<Scalars['Float']>
-  currency?: Maybe<Scalars['Float']>
 }
 
 export type PaymentConnection = {
@@ -960,7 +1248,6 @@ export type PaymentCountAggregate = {
   amount?: Maybe<Scalars['Int']>
   currency?: Maybe<Scalars['Int']>
   type?: Maybe<Scalars['Int']>
-  omiseTransactionId?: Maybe<Scalars['Int']>
 }
 
 export type PaymentEdge = {
@@ -975,6 +1262,7 @@ export type PaymentEvent = {
   __typename?: 'PaymentEvent'
   id: Scalars['String']
   paymentId: Scalars['String']
+  omiseTransactionId: Scalars['String']
   payment?: Maybe<Payment>
   status: Scalars['String']
   createdAt: Scalars['DateTime']
@@ -985,6 +1273,7 @@ export type PaymentEventAggregateGroupBy = {
   __typename?: 'PaymentEventAggregateGroupBy'
   id?: Maybe<Scalars['ID']>
   paymentId?: Maybe<Scalars['String']>
+  omiseTransactionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
 }
 
@@ -1000,6 +1289,7 @@ export type PaymentEventCountAggregate = {
   __typename?: 'PaymentEventCountAggregate'
   id?: Maybe<Scalars['Int']>
   paymentId?: Maybe<Scalars['Int']>
+  omiseTransactionId?: Maybe<Scalars['Int']>
   status?: Maybe<Scalars['Int']>
 }
 
@@ -1016,11 +1306,13 @@ export type PaymentEventFilter = {
   or?: Maybe<Array<PaymentEventFilter>>
   id?: Maybe<IdFilterComparison>
   paymentId?: Maybe<StringFieldComparison>
+  omiseTransactionId?: Maybe<StringFieldComparison>
   status?: Maybe<StringFieldComparison>
 }
 
 export type PaymentEventInput = {
   paymentId: Scalars['String']
+  omiseTransactionId: Scalars['String']
   status: Scalars['String']
 }
 
@@ -1028,6 +1320,7 @@ export type PaymentEventMaxAggregate = {
   __typename?: 'PaymentEventMaxAggregate'
   id?: Maybe<Scalars['ID']>
   paymentId?: Maybe<Scalars['String']>
+  omiseTransactionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
 }
 
@@ -1035,6 +1328,7 @@ export type PaymentEventMinAggregate = {
   __typename?: 'PaymentEventMinAggregate'
   id?: Maybe<Scalars['ID']>
   paymentId?: Maybe<Scalars['String']>
+  omiseTransactionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
 }
 
@@ -1047,6 +1341,7 @@ export type PaymentEventSort = {
 export enum PaymentEventSortFields {
   Id = 'id',
   PaymentId = 'paymentId',
+  OmiseTransactionId = 'omiseTransactionId',
   Status = 'status',
 }
 
@@ -1056,9 +1351,8 @@ export type PaymentFilter = {
   id?: Maybe<IdFilterComparison>
   subscriptionId?: Maybe<StringFieldComparison>
   amount?: Maybe<NumberFieldComparison>
-  currency?: Maybe<NumberFieldComparison>
+  currency?: Maybe<StringFieldComparison>
   type?: Maybe<StringFieldComparison>
-  omiseTransactionId?: Maybe<StringFieldComparison>
 }
 
 export type PaymentInput = {
@@ -1066,7 +1360,7 @@ export type PaymentInput = {
   amount: Scalars['Float']
   currency: Scalars['String']
   type: Scalars['String']
-  omiseTransactionId: Scalars['String']
+  omiseId: Scalars['String']
 }
 
 export type PaymentMaxAggregate = {
@@ -1074,9 +1368,8 @@ export type PaymentMaxAggregate = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   amount?: Maybe<Scalars['Float']>
-  currency?: Maybe<Scalars['Float']>
+  currency?: Maybe<Scalars['String']>
   type?: Maybe<Scalars['String']>
-  omiseTransactionId?: Maybe<Scalars['String']>
 }
 
 export type PaymentMinAggregate = {
@@ -1084,9 +1377,8 @@ export type PaymentMinAggregate = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   amount?: Maybe<Scalars['Float']>
-  currency?: Maybe<Scalars['Float']>
+  currency?: Maybe<Scalars['String']>
   type?: Maybe<Scalars['String']>
-  omiseTransactionId?: Maybe<Scalars['String']>
 }
 
 export type PaymentSort = {
@@ -1101,13 +1393,11 @@ export enum PaymentSortFields {
   Amount = 'amount',
   Currency = 'currency',
   Type = 'type',
-  OmiseTransactionId = 'omiseTransactionId',
 }
 
 export type PaymentSumAggregate = {
   __typename?: 'PaymentSumAggregate'
   amount?: Maybe<Scalars['Float']>
-  currency?: Maybe<Scalars['Float']>
 }
 
 export type Query = {
@@ -1119,12 +1409,8 @@ export type Query = {
   cars: CarConnection
   carBodyType?: Maybe<CarBodyType>
   carBodyTypes: CarBodyTypeConnection
-  carModelImage?: Maybe<CarModelImage>
-  carModelImages: CarModelImageConnection
   subscription?: Maybe<Sub>
   subscriptions: SubConnection
-  package?: Maybe<Package>
-  packages: PackageConnection
   packagePrice?: Maybe<PackagePrice>
   packagePrices: PackagePriceConnection
   payment?: Maybe<Payment>
@@ -1133,6 +1419,10 @@ export type Query = {
   paymentEvents: PaymentEventConnection
   subscriptionEvent?: Maybe<SubscriptionEvent>
   subscriptionEvents: SubscriptionEventConnection
+  additionalExpense?: Maybe<AdditionalExpense>
+  additionalExpenses: AdditionalExpenseConnection
+  additionalExpenseFile?: Maybe<AdditionalExpenseFile>
+  additionalExpenseFiles: AdditionalExpenseFileConnection
 }
 
 export type QueryCarModelArgs = {
@@ -1165,16 +1455,6 @@ export type QueryCarBodyTypesArgs = {
   sorting?: Maybe<Array<CarBodyTypeSort>>
 }
 
-export type QueryCarModelImageArgs = {
-  id: Scalars['ID']
-}
-
-export type QueryCarModelImagesArgs = {
-  paging?: Maybe<CursorPaging>
-  filter?: Maybe<CarModelImageFilter>
-  sorting?: Maybe<Array<CarModelImageSort>>
-}
-
 export type QuerySubscriptionArgs = {
   id: Scalars['ID']
 }
@@ -1183,16 +1463,6 @@ export type QuerySubscriptionsArgs = {
   paging?: Maybe<CursorPaging>
   filter?: Maybe<SubFilter>
   sorting?: Maybe<Array<SubSort>>
-}
-
-export type QueryPackageArgs = {
-  id: Scalars['ID']
-}
-
-export type QueryPackagesArgs = {
-  paging?: Maybe<CursorPaging>
-  filter?: Maybe<PackageFilter>
-  sorting?: Maybe<Array<PackageSort>>
 }
 
 export type QueryPackagePriceArgs = {
@@ -1235,11 +1505,45 @@ export type QuerySubscriptionEventsArgs = {
   sorting?: Maybe<Array<SubscriptionEventSort>>
 }
 
-export type RemoveImagesFromCarModelInput = {
+export type QueryAdditionalExpenseArgs = {
+  id: Scalars['ID']
+}
+
+export type QueryAdditionalExpensesArgs = {
+  paging?: Maybe<CursorPaging>
+  filter?: Maybe<AdditionalExpenseFilter>
+  sorting?: Maybe<Array<AdditionalExpenseSort>>
+}
+
+export type QueryAdditionalExpenseFileArgs = {
+  id: Scalars['ID']
+}
+
+export type QueryAdditionalExpenseFilesArgs = {
+  paging?: Maybe<CursorPaging>
+  filter?: Maybe<AdditionalExpenseFileFilter>
+  sorting?: Maybe<Array<AdditionalExpenseFileSort>>
+}
+
+export type RemoveAdditionalExpenseFromAdditionalExpenseFileInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The id of relation. */
   relationId: Scalars['ID']
+}
+
+export type SetAdditionalExpenseOnAdditionalExpenseFileInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The id of relation. */
+  relationId: Scalars['ID']
+}
+
+export type SetAdditionalExpensesOnSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetBodyTypeOnCarModelInput = {
@@ -1256,7 +1560,7 @@ export type SetCarModelOnCarInput = {
   relationId: Scalars['ID']
 }
 
-export type SetCarModelOnCarModelImageInput = {
+export type SetCarModelOnPackagePriceInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The id of relation. */
@@ -1266,8 +1570,8 @@ export type SetCarModelOnCarModelImageInput = {
 export type SetCarModelsOnCarBodyTypeInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetCarOnSubInput = {
@@ -1280,36 +1584,29 @@ export type SetCarOnSubInput = {
 export type SetCarsOnCarModelInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetEventsOnPaymentInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetEventsOnSubInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
-export type SetImagesOnCarModelInput = {
+export type SetFilesOnAdditionalExpenseInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
-}
-
-export type SetPackageOnPackagePriceInput = {
-  /** The id of the record. */
-  id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetPackagePriceOnSubInput = {
@@ -1329,11 +1626,18 @@ export type SetPaymentOnPaymentEventInput = {
 export type SetPaymentsOnSubInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
-export type SetPricesOnPackageInput = {
+export type SetPricesOnCarModelInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type SetSubscriptionOnAdditionalExpenseInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The id of relation. */
@@ -1357,15 +1661,15 @@ export type SetSubscriptionOnSubscriptionEventInput = {
 export type SetSubscriptionsOnCarInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetSubscriptionsOnPackagePriceInput = {
   /** The id of the record. */
   id: Scalars['ID']
-  /** The id of relation. */
-  relationId: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetUserOnSubInput = {
@@ -1415,16 +1719,29 @@ export type Sub = {
   packagePrice?: Maybe<PackagePrice>
   startDate: Scalars['DateTime']
   endDate: Scalars['DateTime']
-  deliveryDate: Scalars['DateTime']
-  returnDate: Scalars['DateTime']
-  paymentStartDate: Scalars['DateTime']
   kind: Scalars['String']
   startAddress: Scalars['String']
   endAddress: Scalars['String']
-  events?: Maybe<SubscriptionEvent>
-  payments?: Maybe<Payment>
+  events?: Maybe<Array<SubscriptionEvent>>
+  payments?: Maybe<Array<Payment>>
+  additionalExpenses?: Maybe<Array<AdditionalExpense>>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type SubEventsArgs = {
+  filter?: Maybe<SubscriptionEventFilter>
+  sorting?: Maybe<Array<SubscriptionEventSort>>
+}
+
+export type SubPaymentsArgs = {
+  filter?: Maybe<PaymentFilter>
+  sorting?: Maybe<Array<PaymentSort>>
+}
+
+export type SubAdditionalExpensesArgs = {
+  filter?: Maybe<AdditionalExpenseFilter>
+  sorting?: Maybe<Array<AdditionalExpenseSort>>
 }
 
 export type SubAggregateGroupBy = {
@@ -1435,9 +1752,6 @@ export type SubAggregateGroupBy = {
   carId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
-  deliveryDate?: Maybe<Scalars['DateTime']>
-  returnDate?: Maybe<Scalars['DateTime']>
-  paymentStartDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
 }
 
@@ -1457,9 +1771,6 @@ export type SubCountAggregate = {
   carId?: Maybe<Scalars['Int']>
   startDate?: Maybe<Scalars['Int']>
   endDate?: Maybe<Scalars['Int']>
-  deliveryDate?: Maybe<Scalars['Int']>
-  returnDate?: Maybe<Scalars['Int']>
-  paymentStartDate?: Maybe<Scalars['Int']>
   kind?: Maybe<Scalars['Int']>
 }
 
@@ -1480,9 +1791,6 @@ export type SubFilter = {
   carId?: Maybe<StringFieldComparison>
   startDate?: Maybe<DateFieldComparison>
   endDate?: Maybe<DateFieldComparison>
-  deliveryDate?: Maybe<DateFieldComparison>
-  returnDate?: Maybe<DateFieldComparison>
-  paymentStartDate?: Maybe<DateFieldComparison>
   kind?: Maybe<StringFieldComparison>
 }
 
@@ -1494,9 +1802,6 @@ export type SubMaxAggregate = {
   carId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
-  deliveryDate?: Maybe<Scalars['DateTime']>
-  returnDate?: Maybe<Scalars['DateTime']>
-  paymentStartDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
 }
 
@@ -1508,9 +1813,6 @@ export type SubMinAggregate = {
   carId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
-  deliveryDate?: Maybe<Scalars['DateTime']>
-  returnDate?: Maybe<Scalars['DateTime']>
-  paymentStartDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
 }
 
@@ -1527,10 +1829,16 @@ export enum SubSortFields {
   CarId = 'carId',
   StartDate = 'startDate',
   EndDate = 'endDate',
-  DeliveryDate = 'deliveryDate',
-  ReturnDate = 'returnDate',
-  PaymentStartDate = 'paymentStartDate',
   Kind = 'kind',
+}
+
+export type SubscribeInput = {
+  packagePriceId: Scalars['String']
+  startDate: Scalars['DateTime']
+  tokenCard?: Maybe<Scalars['String']>
+  startAddress: Scalars['String']
+  modelId: Scalars['String']
+  color: Scalars['String']
 }
 
 export type SubscriptionEvent = {
@@ -1618,25 +1926,23 @@ export type SubscriptionInput = {
   packagePriceId: Scalars['String']
   startDate: Scalars['DateTime']
   endDate: Scalars['DateTime']
-  paymentStartDate: Scalars['DateTime']
-  deliveryDate: Scalars['DateTime']
-  returnDate: Scalars['DateTime']
   kind: Scalars['String']
   startAddress: Scalars['String']
   endAddress: Scalars['String']
 }
 
-export type UpdateManyCarModelImagesInput = {
-  /** Filter used to find fields to update */
-  filter: CarModelImageUpdateFilter
-  /** The update to apply to all records found using the filter */
-  update: CarModelImageInput
+export type UpdateOneAdditionalExpenseFileInput = {
+  /** The id of the record to update */
+  id: Scalars['ID']
+  /** The update to apply. */
+  update: AdditionalExpenseFileInput
 }
 
-export type UpdateManyResponse = {
-  __typename?: 'UpdateManyResponse'
-  /** The number of records updated. */
-  updatedCount: Scalars['Int']
+export type UpdateOneAdditionalExpenseInput = {
+  /** The id of the record to update */
+  id: Scalars['ID']
+  /** The update to apply. */
+  update: AdditionalExpenseInput
 }
 
 export type UpdateOneCarBodyTypeInput = {
@@ -1653,25 +1959,11 @@ export type UpdateOneCarInput = {
   update: CarInput
 }
 
-export type UpdateOneCarModelImageInput = {
-  /** The id of the record to update */
-  id: Scalars['ID']
-  /** The update to apply. */
-  update: CarModelImageInput
-}
-
 export type UpdateOneCarModelInput = {
   /** The id of the record to update */
   id: Scalars['ID']
   /** The update to apply. */
   update: CarModelInput
-}
-
-export type UpdateOnePackageInput = {
-  /** The id of the record to update */
-  id: Scalars['ID']
-  /** The update to apply. */
-  update: PackageInput
 }
 
 export type UpdateOnePaymentEventInput = {
@@ -1711,6 +2003,14 @@ export type User = {
   disabled: Scalars['Boolean']
   phoneNumber: Scalars['String']
   email: Scalars['String']
+  omiseId?: Maybe<Scalars['String']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  creditCard?: Maybe<UserCreditCard>
+}
+
+export type UserCreditCard = {
+  __typename?: 'UserCreditCard'
+  brand: Scalars['String']
+  lastDigits: Scalars['String']
 }

@@ -1,6 +1,6 @@
 import { Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
-import { formatDates, renderEmailLink } from 'utils'
+import { formatDates, formatMoney, renderEmailLink } from 'utils'
 import { useSubscriptions } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
 
@@ -9,6 +9,16 @@ const columns: GridColDef[] = [
   { field: 'model', headerName: 'Car Model', description: 'Car Model', flex: 1 },
   { field: 'seats', headerName: 'Car Seats', description: 'Car Seats', flex: 1 },
   { field: 'topSpeed', headerName: 'Top Speed', description: 'Top Speed', flex: 1 },
+  { field: 'plateNumber', headerName: 'Plate Number', description: 'Plate Number', flex: 1 },
+  { field: 'vin', headerName: 'VIN', description: 'Vehicle Identification Number', flex: 1 },
+  {
+    field: 'price',
+    headerName: 'Price',
+    description: 'Price',
+    valueFormatter: formatMoney,
+    flex: 1,
+  },
+  { field: 'duration', headerName: 'Duration', description: 'Duration', flex: 1 },
   {
     field: 'fastChargeTime',
     headerName: 'Fast Charge Time',
@@ -61,8 +71,12 @@ export default function Subscription(): JSX.Element {
   // Transform response into table format
   const rows = data?.edges?.map(({ node }) => ({
     id: node?.id,
+    vin: node?.car?.vin,
+    plateNumber: node?.car?.plateNumber,
     brand: node?.car?.carModel?.brand,
     model: node?.car?.carModel?.model,
+    price: node?.packagePrice?.price,
+    duration: node?.packagePrice?.duration,
     seats: node?.car?.carModel?.seats,
     topSpeed: node?.car?.carModel?.topSpeed,
     fastChargeTime: node?.car?.carModel?.fastChargeTime,

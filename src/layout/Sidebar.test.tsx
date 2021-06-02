@@ -8,7 +8,7 @@ describe('Sidebar', () => {
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
     expect(screen.getByText('Users')).toBeInTheDocument()
     expect(screen.getByText('Cars')).toBeInTheDocument()
-    expect(screen.getByText('Packages')).toBeInTheDocument()
+    expect(screen.getByText('Pricing')).toBeInTheDocument()
     expect(screen.getByText('Subscriptions')).toBeInTheDocument()
   })
 })

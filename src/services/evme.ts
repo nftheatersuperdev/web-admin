@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { useQuery, UseQueryResult } from 'react-query'
 import config from 'config'
-import { CarModel, Package, Sub } from './evme.types'
+import { CarModel, PackagePrice, Sub } from './evme.types'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -77,6 +77,8 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
                     email
                   }
                   car {
+                    vin
+                    plateNumber
                     carModel {
                       brand
                       model
@@ -87,13 +89,7 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
                   }
                   packagePrice {
                     duration
-                    package {
-                      active
-                      prices {
-                        duration
-                        price
-                      }
-                    }
+                    price
                   }
                 }
               }
@@ -112,23 +108,24 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
   )
 }
 
-export function usePackages(): UseQueryResult<WithPaginationType<Package>> {
+export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
   return useQuery(
     ['evme:subscriptions'],
     async () => {
       const response = await gqlClient.request(
         gql`
-          query GetPackages {
-            packages {
+          query GetPricing {
+            packagePrices {
               edges {
                 node {
                   id
                   createdAt
                   updatedAt
-                  active
-                  prices {
-                    duration
-                    price
+                  duration
+                  price
+                  carModel {
+                    brand
+                    model
                   }
                 }
               }
@@ -136,7 +133,7 @@ export function usePackages(): UseQueryResult<WithPaginationType<Package>> {
           }
         `
       )
-      return response.packages
+      return response.packagePrices
     },
     {
       onError: (error: Error) => {

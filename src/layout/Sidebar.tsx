@@ -42,7 +42,7 @@ const SIDEBAR_ITEMS = [
   { title: 'Dashboard', path: ROUTE_PATHS.ROOT, icon: <DashboardIcon /> },
   { title: 'Users', path: ROUTE_PATHS.USER, icon: <UserIcon /> },
   { title: 'Cars', path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
-  { title: 'Packages', path: ROUTE_PATHS.PACKAGE, icon: <PackageIcon /> },
+  { title: 'Pricing', path: ROUTE_PATHS.PRICING, icon: <PackageIcon /> },
   { title: 'Subscriptions', path: ROUTE_PATHS.SUBSCRIPTION, icon: <SubscriptionIcon /> },
   { title: 'Charging Stations', path: ROUTE_PATHS.CHARGING_STATIONS, icon: <ChargingIcon /> },
   { title: 'Insurance', path: ROUTE_PATHS.INSURANCE, icon: <InsuranceIcon /> },
