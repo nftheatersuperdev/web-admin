@@ -4,6 +4,7 @@ interface Config {
   isProductionEnvironment: boolean
   sentry: Record<string, string>
   evme: string
+  googleMapsApiKey: string
 }
 
 const config: Config = {
@@ -15,6 +16,7 @@ const config: Config = {
     environment: process.env.REACT_APP_SENTRY_ENVIRONMENT || '',
   },
   evme: process.env.REACT_APP_EVME_API || '',
+  googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
 }
 
 export default config

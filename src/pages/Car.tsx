@@ -3,6 +3,7 @@ import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
 import { useCars } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
 import { Car as CarType } from 'services/evme.types'
+import { Page } from 'layout/LayoutRoute'
 
 const columns: GridColDef[] = [
   { field: 'brand', headerName: 'Brand', description: 'Brand', flex: 1 },
@@ -74,7 +75,7 @@ export default function Car(): JSX.Element {
   })
 
   return (
-    <div>
+    <Page>
       <PageToolbar>
         <Button color="primary" variant="contained">
           New Car
@@ -95,6 +96,6 @@ export default function Car(): JSX.Element {
           />
         </Card>
       ) : null}
-    </div>
+    </Page>
   )
 }

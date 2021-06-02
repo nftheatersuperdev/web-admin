@@ -1,3 +1,5 @@
+import { Page } from 'layout/LayoutRoute'
+
 export default function Dashboard(): JSX.Element {
-  return <div>Dashboard</div>
+  return <Page>Dashboard</Page>
 }

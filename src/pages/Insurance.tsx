@@ -1,3 +1,5 @@
+import { Page } from 'layout/LayoutRoute'
+
 export default function Insurance(): JSX.Element {
-  return <div>Insurance</div>
+  return <Page>Insurance</Page>
 }

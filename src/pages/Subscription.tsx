@@ -2,6 +2,7 @@ import { Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
 import { formatDates, renderEmailLink } from 'utils'
 import { useSubscriptions } from 'services/evme'
+import { Page } from 'layout/LayoutRoute'
 
 const columns: GridColDef[] = [
   { field: 'brand', headerName: 'Car Brand', description: 'Car Brand', flex: 1 },
@@ -74,7 +75,7 @@ export default function Subscription(): JSX.Element {
   }))
 
   return (
-    <div>
+    <Page>
       {rows ? (
         <Card>
           <DataGrid
@@ -89,6 +90,6 @@ export default function Subscription(): JSX.Element {
           />
         </Card>
       ) : null}
-    </div>
+    </Page>
   )
 }

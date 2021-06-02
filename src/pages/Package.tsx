@@ -5,6 +5,7 @@ import { formatDates, formatMoney } from 'utils'
 import PageToolbar from 'layout/PageToolbar'
 import { usePackages } from 'services/evme'
 import { PackagePrice } from 'services/evme.types'
+import { Page } from 'layout/LayoutRoute'
 import PackageCreateDialog from './PackageCreateDialog'
 
 const columns: GridColDef[] = [
@@ -89,7 +90,7 @@ export default function Package(): JSX.Element {
   }))
 
   return (
-    <div>
+    <Page>
       <PageToolbar>
         <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
           Create Package
@@ -110,6 +111,6 @@ export default function Package(): JSX.Element {
         </Card>
       ) : null}
       <PackageCreateDialog open={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} />
-    </div>
+    </Page>
   )
 }

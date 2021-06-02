@@ -1,3 +1,5 @@
+import { Page } from 'layout/LayoutRoute'
+
 export default function User(): JSX.Element {
-  return <div>user</div>
+  return <Page>user</Page>
 }
