@@ -36,6 +36,10 @@ const GlobalStyles = createGlobalStyle`
     display: flex;
     flex-flow: column;
   }
+
+  a {
+    text-decoration: none;
+  }
 `
 
 export default GlobalStyles

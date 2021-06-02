@@ -54,7 +54,7 @@ export default function Pricing(): JSX.Element {
     <Page>
       <PageToolbar>
         <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
-          Create Package
+          New Price
         </Button>
       </PageToolbar>
       {rows ? (

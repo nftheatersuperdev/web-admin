@@ -1,6 +1,7 @@
-import { Card } from '@material-ui/core'
+import { Card, Button } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
 import { formatDates, formatMoney, renderEmailLink } from 'utils'
+import PageToolbar from 'layout/PageToolbar'
 import { useSubscriptions } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
 
@@ -90,6 +91,13 @@ export default function Subscription(): JSX.Element {
 
   return (
     <Page>
+      <PageToolbar>
+        <a href="https://dashboard.omise.co/" target="_blank" rel="noreferrer">
+          <Button color="primary" variant="contained">
+            Open Omise
+          </Button>
+        </a>
+      </PageToolbar>
       {rows ? (
         <Card>
           <DataGrid

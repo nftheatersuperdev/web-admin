@@ -143,3 +143,48 @@ export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
     }
   )
 }
+
+export function useSubAdditionalExpenses(): UseQueryResult<WithPaginationType<Sub>> {
+  return useQuery(
+    ['evme:subadditionalexpenses'],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query GetSubAdditionalExpenses {
+            subscriptions {
+              edges {
+                node {
+                  id
+                  userId
+                  user {
+                    phoneNumber
+                  }
+                  additionalExpenses {
+                    id
+                    subscriptionId
+                    price
+                    type
+                    noticeDate
+                    status
+                    note
+                    files {
+                      id
+                      url
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `
+      )
+      return response.subscriptions
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve additional expenses, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}

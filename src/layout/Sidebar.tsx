@@ -8,6 +8,7 @@ import {
   List,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
   Hidden,
   Toolbar,
 } from '@material-ui/core'
@@ -19,6 +20,7 @@ import {
   Shop as PackageIcon,
   BatteryChargingFull as ChargingIcon,
   BusinessCenter as InsuranceIcon,
+  MonetizationOn as AdditionalExpenseIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 
@@ -41,11 +43,19 @@ interface SidebarProps {
 const SIDEBAR_ITEMS = [
   { title: 'Dashboard', path: ROUTE_PATHS.ROOT, icon: <DashboardIcon /> },
   { title: 'Users', path: ROUTE_PATHS.USER, icon: <UserIcon /> },
+  { subHeader: 'Vehicle Management' },
   { title: 'Cars', path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
   { title: 'Pricing', path: ROUTE_PATHS.PRICING, icon: <PackageIcon /> },
+  { subHeader: 'Subscription Management' },
   { title: 'Subscriptions', path: ROUTE_PATHS.SUBSCRIPTION, icon: <SubscriptionIcon /> },
-  { title: 'Charging Stations', path: ROUTE_PATHS.CHARGING_STATIONS, icon: <ChargingIcon /> },
+  {
+    title: 'Additional Expense',
+    path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
+    icon: <AdditionalExpenseIcon />,
+  },
   { title: 'Insurance', path: ROUTE_PATHS.INSURANCE, icon: <InsuranceIcon /> },
+  { subHeader: 'Others' },
+  { title: 'Charging Stations', path: ROUTE_PATHS.CHARGING_STATIONS, icon: <ChargingIcon /> },
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -66,24 +76,31 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
     return (
       <List role="presentation" onClick={handleSidebarEvent} onKeyDown={handleSidebarEvent}>
         <List>
-          {SIDEBAR_ITEMS.map(({ title, path, icon }) => (
-            <ListItem
-              key={title}
-              button
-              component={Link}
-              to={path}
-              selected={
-                !!matchPath(location.pathname, {
-                  path,
-                  exact: true,
-                  strict: false,
-                })
-              }
-            >
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={title} />
-            </ListItem>
-          ))}
+          {SIDEBAR_ITEMS.map(({ title, subHeader, path, icon }) => {
+            return subHeader ? (
+              <ListSubheader key={subHeader} component="div">
+                {subHeader}
+              </ListSubheader>
+            ) : (
+              <ListItem
+                key={title}
+                button
+                // @ts-expect-error we want to use the component prop here
+                component={Link}
+                to={path}
+                selected={
+                  !!matchPath(location.pathname, {
+                    path,
+                    exact: true,
+                    strict: false,
+                  })
+                }
+              >
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={title} />
+              </ListItem>
+            )
+          })}
         </List>
       </List>
     )
