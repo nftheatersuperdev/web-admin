@@ -7,11 +7,29 @@ import { Route, Router } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 
 interface CustomRenderOptions extends RenderOptions {
-  route?: string
+  /**
+   * The path that should be pushed to the History object.
+   */
+  historyPath?: string
+  /**
+   * This is the path that react-router should use to render the component.
+   */
   path?: string
+  /**
+   * The simulated viewpoint for Jsdom. Relevant mostly for responsive testing.
+   */
   viewport?: 'xs' | 'sm' | ' md' | ' lg' | ' xl'
+  /**
+   * Used to specify the properties of the initial store.
+   */
   initialStore?: Record<string, string>
+  /**
+   * Used to specify the properties of the initial history state.
+   */
   historyState?: Record<string, string>
+  /**
+   * You can override the History object with a customer version.
+   */
   history?: History
 }
 
@@ -23,15 +41,15 @@ export function renderComponent(
   renderConfig: CustomRenderOptions = {}
 ): RenderResult & { history: History<unknown> } {
   const {
-    route = '/',
+    historyPath = '/',
     path,
     historyState,
     viewport = 'lg',
-    history = createMemoryHistory({ initialEntries: [route] }),
+    history = createMemoryHistory({ initialEntries: [historyPath] }),
     ...remainingOptions
   } = renderConfig
   if (historyState) {
-    history.push(route, historyState)
+    history.push(historyPath, historyState)
   }
 
   const testTheme = { ...theme, props: { MuiWithWidth: { initialWidth: viewport } } }

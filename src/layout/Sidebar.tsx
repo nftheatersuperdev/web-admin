@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, matchPath } from 'react-router-dom'
 import {
   SwipeableDrawer,
   Drawer,
@@ -50,6 +50,8 @@ const SIDEBAR_ITEMS = [
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
+  const location = useLocation()
+
   function handleSidebarEvent(event: React.MouseEvent | React.KeyboardEvent) {
     // Ensure we allow usage of tab and shift to navigate the sidebar without closing it
     // eslint-disable-next-line
@@ -65,7 +67,19 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
       <List role="presentation" onClick={handleSidebarEvent} onKeyDown={handleSidebarEvent}>
         <List>
           {SIDEBAR_ITEMS.map(({ title, path, icon }) => (
-            <ListItem key={title} button component={Link} to={path}>
+            <ListItem
+              key={title}
+              button
+              component={Link}
+              to={path}
+              selected={
+                !!matchPath(location.pathname, {
+                  path,
+                  exact: true,
+                  strict: false,
+                })
+              }
+            >
               <ListItemIcon>{icon}</ListItemIcon>
               <ListItemText primary={title} />
             </ListItem>
