@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { useQuery, UseQueryResult } from 'react-query'
 import config from 'config'
-import { CarModel, PackagePrice, Sub } from './evme.types'
+import { CarModel, PackagePrice, Payment, Sub } from './evme.types'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -138,7 +138,38 @@ export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
     },
     {
       onError: (error: Error) => {
-        console.error(`Unable to retrieve packages, ${error.message}`)
+        console.error(`Unable to retrieve pricing, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}
+
+export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
+  return useQuery(
+    ['evme:payments'],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query GetPayments {
+            payments {
+              edges {
+                node {
+                  amount
+                  createdAt
+                  currency
+                  subscriptionId
+                }
+              }
+            }
+          }
+        `
+      )
+      return response.payments
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve payments, ${error.message}`)
       },
       keepPreviousData: true,
     }
