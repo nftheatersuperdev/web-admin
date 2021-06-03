@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { useQuery, UseQueryResult } from 'react-query'
 import config from 'config'
-import { CarModel, PackagePrice, Payment, Sub } from './evme.types'
+import { CarModel, PackagePrice, Payment, Sub, User } from './evme.types'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -176,9 +176,46 @@ export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
   )
 }
 
+export function useUsers(): UseQueryResult<WithPaginationType<User>> {
+  return useQuery(
+    ['evme:users'],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query GetUsers {
+            users {
+              edges {
+                node {
+                  id
+                  email
+                  phoneNumber
+                  role
+                  disabled
+                  createdAt
+                  updatedAt
+                  subscriptions {
+                    carId
+                  }
+                }
+              }
+            }
+          }
+        `
+      )
+      return response.users
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve users, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}
+
 export function useSubAdditionalExpenses(): UseQueryResult<WithPaginationType<Sub>> {
   return useQuery(
-    ['evme:subadditionalexpenses'],
+    ['evme:additional-expenses'],
     async () => {
       const response = await gqlClient.request(
         gql`
