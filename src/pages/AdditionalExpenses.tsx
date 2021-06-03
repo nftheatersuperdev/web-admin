@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Button, Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar, GridRowData } from '@material-ui/data-grid'
 import { formatDates, formatMoney } from 'utils'
@@ -5,6 +6,7 @@ import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
 import { useSubAdditionalExpenses } from 'services/evme'
 import { AdditionalExpense } from 'services/evme.types'
+import AdditionalExpenseCreateDialog from './AdditionalExpenseCreateDialog'
 
 const columns: GridColDef[] = [
   {
@@ -41,6 +43,7 @@ const columns: GridColDef[] = [
 ]
 
 export default function AdditionalExpenses(): JSX.Element {
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const { data } = useSubAdditionalExpenses()
 
   // Transform response into table format
@@ -52,7 +55,7 @@ export default function AdditionalExpenses(): JSX.Element {
       userId: userId || '-',
       userFullname: user?.phoneNumber || '-',
       noticeDate: expense?.noticeDate || '-',
-      createdAt: expense?.createdAdt || '-',
+      createdAt: expense?.createdAt || '-',
       type: expense?.type || '-',
       status: expense?.status || '-',
       price: expense?.price || '-',
@@ -64,7 +67,7 @@ export default function AdditionalExpenses(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained">
+        <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
           Create Additional Expense
         </Button>
       </PageToolbar>
@@ -82,6 +85,10 @@ export default function AdditionalExpenses(): JSX.Element {
           />
         </Card>
       ) : null}
+      <AdditionalExpenseCreateDialog
+        open={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+      />
     </Page>
   )
 }

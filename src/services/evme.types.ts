@@ -96,7 +96,7 @@ export type AdditionalExpense = {
   status: Scalars['String']
   note?: Maybe<Scalars['String']>
   files?: Maybe<Array<AdditionalExpenseFile>>
-  createdAdt: Scalars['DateTime']
+  createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
 
@@ -160,7 +160,7 @@ export type AdditionalExpenseDeleteResponse = {
   status?: Maybe<Scalars['String']>
   note?: Maybe<Scalars['String']>
   files?: Maybe<Array<AdditionalExpenseFile>>
-  createdAdt?: Maybe<Scalars['DateTime']>
+  createdAt?: Maybe<Scalars['DateTime']>
   updatedAt?: Maybe<Scalars['DateTime']>
 }
 

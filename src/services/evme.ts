@@ -67,6 +67,7 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
               edges {
                 node {
                   id
+                  userId
                   startDate
                   endDate
                   createdAt
