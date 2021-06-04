@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { Button, Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
+import { useQueryClient } from 'react-query'
+import toast from 'react-hot-toast'
 import { formatDates, formatMoney } from 'utils'
+import dayjs from 'dayjs'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
-import { useAdditionalExpenses } from 'services/evme'
-import AdditionalExpenseCreateDialog from './AdditionalExpenseCreateDialog'
+import { useAdditionalExpenses, useCreateAdditionalExpense } from 'services/evme'
+import AdditionalExpenseCreateDialog from 'pages/AdditionalExpenseCreateDialog'
+import { AdditionalExpenseInput } from 'services/evme.types'
 
 const columns: GridColDef[] = [
   {
@@ -51,6 +55,8 @@ const columns: GridColDef[] = [
 export default function AdditionalExpenses(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const { data } = useAdditionalExpenses()
+  const createAdditionalExpense = useCreateAdditionalExpense()
+  const queryClient = useQueryClient()
 
   // Transform response into table format
   const rows = data?.edges?.map(({ node }) => ({
@@ -64,6 +70,31 @@ export default function AdditionalExpenses(): JSX.Element {
     note: node?.note,
     price: node?.price,
   }))
+
+  const onCloseDialog = async (data: AdditionalExpenseInput | null) => {
+    setIsCreateDialogOpen(false)
+    if (!data) {
+      return
+    }
+
+    const { subscriptionId, price, type, status, noticeDate, note } = data
+    try {
+      await createAdditionalExpense.mutateAsync({
+        subscriptionId,
+        price,
+        type,
+        status,
+        noticeDate: dayjs(noticeDate).toISOString(),
+        note,
+      })
+
+      await queryClient.invalidateQueries('evme:additional-expenses')
+      toast.success('Created additional expense successfully!')
+    } catch (error) {
+      console.error('failed to created car', error)
+      toast.error('Failed to create additional expense!')
+    }
+  }
 
   return (
     <Page>
@@ -88,7 +119,7 @@ export default function AdditionalExpenses(): JSX.Element {
       ) : null}
       <AdditionalExpenseCreateDialog
         open={isCreateDialogOpen}
-        onClose={() => setIsCreateDialogOpen(false)}
+        onClose={(data: AdditionalExpenseInput | null) => onCloseDialog(data)}
       />
     </Page>
   )

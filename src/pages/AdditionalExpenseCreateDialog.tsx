@@ -15,34 +15,18 @@ import {
   Button,
 } from '@material-ui/core'
 import { useSubscriptions } from 'services/evme'
+import { AdditionalExpenseInput } from 'services/evme.types'
 
-const EXPENSE_TYPES = ['Type A', 'Type B', 'Type C']
-const EXPENSE_STATUSES = ['Created', 'Informed', 'Pending', 'Paid', 'Cancelled']
+const EXPENSE_TYPES = ['maintenance', 'insurance', 'service', 'repair', 'replacement']
+const EXPENSE_STATUSES = ['created', 'informed', 'pending', 'paid', 'cancelled']
 
 interface AdditionalExpenseDialogProps {
   open: boolean
-  onClose: () => void
-}
-
-interface EvidenceFileProps {
-  id: string
-  url: string
+  onClose: (data: AdditionalExpenseInput | null) => Promise<void>
 }
 
 interface SubscriptionItem {
   id: string
-  userId: string
-}
-
-interface AdditionalExpenseInfo {
-  subscriptionId: string
-  userId: string
-  price: number
-  type: string
-  noticeDate: string
-  status: string
-  note: string
-  files: EvidenceFileProps[]
 }
 
 export default function AdditionalExpenseCreateDialog(
@@ -53,19 +37,19 @@ export default function AdditionalExpenseCreateDialog(
 
   const subscriptionItems = subscriptions?.edges?.map(({ node }) => ({
     id: node?.id,
-    userId: node?.userId,
   }))
 
-  const [expenseInfo, setExpenseInfo] = useState<AdditionalExpenseInfo>({
+  const initialData = {
     subscriptionId: '',
-    userId: '',
     price: 0,
     type: '',
     noticeDate: '',
     status: '',
     note: '',
     files: [],
-  })
+  }
+
+  const [expenseInfo, setExpenseInfo] = useState<AdditionalExpenseInput>(initialData)
 
   const handleExpenseInfoChange = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setExpenseInfo({
@@ -77,11 +61,10 @@ export default function AdditionalExpenseCreateDialog(
   const handleSubscriptionChange = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
-    const { id: subscriptionId, userId } = event.target.value as SubscriptionItem
+    const { id: subscriptionId } = event.target.value as SubscriptionItem
     setExpenseInfo({
       ...expenseInfo,
       subscriptionId,
-      userId,
     })
   }
 
@@ -89,6 +72,13 @@ export default function AdditionalExpenseCreateDialog(
     setExpenseInfo({
       ...expenseInfo,
       type: event.target.value as string,
+    })
+  }
+
+  const handlePriceChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    setExpenseInfo({
+      ...expenseInfo,
+      price: Number(event.target.value) as number,
     })
   }
 
@@ -102,7 +92,7 @@ export default function AdditionalExpenseCreateDialog(
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth aria-labelledby="form-dialog-title">
+    <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Create New Additional Expense</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
@@ -124,20 +114,6 @@ export default function AdditionalExpenseCreateDialog(
                 ))}
               </Select>
             </FormControl>
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="User ID"
-              value={expenseInfo.userId}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
           </Grid>
 
           <Grid item xs={6}>
@@ -175,6 +151,8 @@ export default function AdditionalExpenseCreateDialog(
             <TextField
               fullWidth
               label="Price"
+              onChange={handlePriceChange}
+              value={expenseInfo.price}
               InputProps={{
                 startAdornment: <InputAdornment position="start">฿</InputAdornment>,
               }}
@@ -216,11 +194,18 @@ export default function AdditionalExpenseCreateDialog(
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={() => onClose(null)} color="primary">
           Cancel
         </Button>
 
-        <Button onClick={onClose} color="primary" variant="contained">
+        <Button
+          onClick={() => {
+            onClose(expenseInfo)
+            setExpenseInfo(initialData)
+          }}
+          color="primary"
+          variant="contained"
+        >
           Create
         </Button>
       </DialogActions>

@@ -1,7 +1,15 @@
 import { GraphQLClient, gql } from 'graphql-request'
-import { useQuery, UseQueryResult } from 'react-query'
+import { useMutation, UseMutationResult, useQuery, UseQueryResult } from 'react-query'
 import config from 'config'
-import { CarModel, PackagePrice, Payment, Sub, User, AdditionalExpense } from './evme.types'
+import {
+  CarModel,
+  PackagePrice,
+  Payment,
+  Sub,
+  User,
+  AdditionalExpense,
+  AdditionalExpenseInput,
+} from './evme.types'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -247,4 +255,36 @@ export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<Addit
       keepPreviousData: true,
     }
   )
+}
+
+export function useCreateAdditionalExpense(): UseMutationResult<
+  AdditionalExpense,
+  unknown,
+  AdditionalExpenseInput,
+  unknown
+> {
+  return useMutation(async ({ subscriptionId, price, type, status, noticeDate, note }) => {
+    const response = await gqlClient.request(
+      gql`
+        mutation createAdditionalExpense($input: CreateOneAdditionalExpenseInput!) {
+          createAdditionalExpense(input: $input) {
+            id
+          }
+        }
+      `,
+      {
+        input: {
+          additionalExpense: {
+            subscriptionId,
+            price,
+            type,
+            status,
+            noticeDate,
+            note,
+          },
+        },
+      }
+    )
+    return response.createAdditionalExpense
+  })
 }

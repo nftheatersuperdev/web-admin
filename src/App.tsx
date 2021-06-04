@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Redirect, Switch } from 'react-router-dom'
 import { Box, CircularProgress } from '@material-ui/core'
+import { Toaster } from 'react-hot-toast'
 import { routes, ROUTE_PATHS } from './routes'
 import LayoutRoute from './layout/LayoutRoute'
 
@@ -20,6 +21,7 @@ function App(): JSX.Element {
       }
     >
       <Router>
+        <Toaster />
         <Switch>
           {routes.map(({ exact, path, component, isPublic }) => (
             <LayoutRoute
