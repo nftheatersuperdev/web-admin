@@ -1,6 +1,11 @@
 import { GraphQLClient, gql } from 'graphql-request'
-import { useMutation, UseMutationResult, useQuery, UseQueryResult } from 'react-query'
+import { useQuery, UseQueryResult, useMutation, UseMutationResult } from 'react-query'
 import config from 'config'
+import {
+  IAddCarToCarModelParam,
+  ICreateCarMutationResponse,
+  ICreateCarMutationResItem,
+} from 'helper/car.helper'
 import {
   CarModel,
   PackagePrice,
@@ -9,6 +14,7 @@ import {
   User,
   AdditionalExpense,
   AdditionalExpenseInput,
+  CarInput,
 } from './evme.types'
 
 const gqlClient = new GraphQLClient(config.evme)
@@ -17,6 +23,64 @@ export interface WithPaginationType<P> {
   edges: {
     node: P
   }[]
+}
+export function useCreateCar(): UseMutationResult<
+  ICreateCarMutationResItem,
+  unknown,
+  CarInput,
+  unknown
+> {
+  return useMutation(async ({ vin, plateNumber, carModelId }: CarInput) => {
+    const response: ICreateCarMutationResponse = await gqlClient.request(
+      gql`
+        mutation createCar($input: CreateOneCarInput!) {
+          createCar(input: $input) {
+            vin
+            plateNumber
+            carModelId
+          }
+        }
+      `,
+      {
+        input: {
+          car: {
+            vin,
+            plateNumber,
+            carModelId,
+          },
+        },
+      }
+    )
+    return response.createCar
+  })
+}
+
+export function useAddCarsToCarModel(): UseMutationResult<
+  unknown,
+  unknown,
+  IAddCarToCarModelParam,
+  unknown
+> {
+  return useMutation(async ({ carId, carModelId }: IAddCarToCarModelParam) => {
+    const response = await gqlClient.request(
+      gql`
+        mutation addCarsToCarModel($input: AddCarsToCarModelInput!) {
+          addCarsToCarModel(input: $input) {
+            id
+            brand
+            model
+          }
+        }
+      `,
+      {
+        input: {
+          id: carId,
+          relationsId: [carModelId],
+        },
+      }
+    )
+    return response
+  })
 }
 
 export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
@@ -29,6 +93,7 @@ export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
             carModels {
               edges {
                 node {
+                  id
                   brand
                   topSpeed
                   acceleration

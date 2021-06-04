@@ -30,6 +30,13 @@ if (config.isProductionEnvironment) {
 
 const queryClient = new QueryClient()
 
+// INFO: using es6 import here since require() is forbidden by eslint
+if (process.env.MSW === 'true') {
+  import('./tests/mockWorker').then(({ worker }) => {
+    worker.start()
+  })
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <StylesProvider injectFirst>

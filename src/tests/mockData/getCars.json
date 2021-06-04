@@ -3,217 +3,709 @@
     "edges": [
       {
         "node": {
-          "brand": "porsche",
-          "topSpeed": 46929,
-          "acceleration": 96335,
-          "range": 71010,
-          "totalPower": 20736,
-          "chargeType": "wall",
-          "chargeTime": 39655,
-          "fastChargeTime": 95278,
-          "bodyTypeId": 5,
-          "model": "program",
-          "cars": [
-            {
-              "id": "949cd88f-9893-4699-a92c-4d87042a775b",
-              "vin": "dnnz000rgsjz1w3up",
-              "plateNumber": "vu64p"
-            },
-            {
-              "id": "4d31669d-e07d-480e-acb1-882f6f9c0505",
-              "vin": "keihfg0wmj53119py",
-              "plateNumber": "lazo7"
-            },
-            {
-              "id": "d97cfde0-71c2-43ba-a0b9-31049571cda8",
-              "vin": "vqq1dhbh9rujl3zya",
-              "plateNumber": "m007w"
-            },
-            {
-              "id": "982a823d-bc59-4a69-959a-bb774f8815dc",
-              "vin": "1r5dgozc89dir0uwh",
-              "plateNumber": "xayns"
-            },
-            {
-              "id": "15c091c1-730d-4bc9-91f5-2b2b4896317b",
-              "vin": "jsp294aw0meukhtr4",
-              "plateNumber": "8pqv0"
-            }
-          ],
-          "createdAt": "2021-05-28T06:53:10.304Z",
-          "updatedAt": "2021-05-28T06:53:10.304Z"
-        }
-      },
-      {
-        "node": {
-          "brand": "tesla",
-          "topSpeed": 73362,
-          "acceleration": 75647,
-          "range": 73829,
-          "totalPower": 9917,
-          "chargeType": "tesla",
-          "chargeTime": 94044,
-          "fastChargeTime": 62339,
-          "bodyTypeId": 4,
-          "model": "generating",
-          "cars": [
-            {
-              "id": "cd811345-2e30-4198-94d6-27b816e78863",
-              "vin": "dl7juiz1hsc1drmze",
-              "plateNumber": "g7qyp"
-            },
-            {
-              "id": "062f49b0-57e0-435e-bd89-a5fc9b818792",
-              "vin": "oj13kircqqbll6cc0",
-              "plateNumber": "e4mwv"
-            },
-            {
-              "id": "e8625077-7000-4682-a712-3cadc210477e",
-              "vin": "iabfld1jkamnrxxmb",
-              "plateNumber": "ipnr9"
-            },
-            {
-              "id": "5ccb6afb-3851-427e-bf75-0d60ac5686d2",
-              "vin": "ix77xsfkl61wcai9t",
-              "plateNumber": "1cpvf"
-            },
-            {
-              "id": "e12c15c6-80ec-4e0c-8d56-2f2620cd6749",
-              "vin": "2mb1tyffbbkz9vpoi",
-              "plateNumber": "9nhcc"
-            }
-          ],
-          "createdAt": "2021-05-28T06:53:10.304Z",
-          "updatedAt": "2021-05-28T06:53:10.304Z"
-        }
-      },
-      {
-        "node": {
-          "brand": "nissan",
-          "topSpeed": 66255,
-          "acceleration": 19401,
-          "range": 50539,
-          "totalPower": 39290,
-          "chargeType": "supercharger",
-          "chargeTime": 30718,
-          "fastChargeTime": 86454,
-          "bodyTypeId": 6,
-          "model": "Communications",
-          "cars": [
-            {
-              "id": "b29cac5b-53c8-48ce-9010-cd149db67b5a",
-              "vin": "i3x3n0ildnfsiw7rs",
-              "plateNumber": "ljmjv"
-            },
-            {
-              "id": "a0302cbd-8bf2-44fd-abe1-3d0b99a80fb5",
-              "vin": "kao1rl8ja3x7tzh2x",
-              "plateNumber": "8eckz"
-            },
-            {
-              "id": "82b48a58-5407-4267-9934-264fca460ad8",
-              "vin": "f8b5qpx0x8p7dee7d",
-              "plateNumber": "mlfjb"
-            },
-            {
-              "id": "67a09a54-c90c-4863-ac9e-845937ceea8d",
-              "vin": "qu48pz6m4w2ax5lpu",
-              "plateNumber": "j9o6j"
-            },
-            {
-              "id": "755a274c-604a-4606-8eb6-9f268f524cb2",
-              "vin": "j0m85mudmdmw5n1l8",
-              "plateNumber": "s41i5"
-            }
-          ],
-          "createdAt": "2021-05-28T06:53:10.305Z",
-          "updatedAt": "2021-05-28T06:53:10.305Z"
-        }
-      },
-      {
-        "node": {
-          "brand": "ford",
-          "topSpeed": 87026,
-          "acceleration": 2550,
-          "range": 37721,
-          "totalPower": 80357,
+          "id": "f8bfa765-0cf2-4fc8-91c1-6b7003672708",
+          "brand": "Tesla",
+          "topSpeed": 233,
+          "acceleration": 4.2,
+          "range": 580,
+          "totalPower": 319,
           "chargeType": "ccs",
-          "chargeTime": 77953,
-          "fastChargeTime": 62855,
-          "bodyTypeId": 5,
-          "model": "Agent",
+          "chargeTime": 500,
+          "fastChargeTime": 300,
+          "bodyTypeId": 4,
+          "model": "Model 3",
           "cars": [
             {
-              "id": "ac5af827-907b-40e4-bd87-cc5a111077d1",
-              "vin": "x3mv8shgnje9pgqu0",
-              "plateNumber": "lt0yw"
+              "id": "4a6a8518-382f-4510-b4a4-d810e6492a64",
+              "vin": "r6zlqglzj9kc3kzhb",
+              "plateNumber": "8auhf"
             },
             {
-              "id": "684e0cbe-fb3c-4ad5-8f2a-60afc2ee4038",
-              "vin": "jkrjfs720qrs6laur",
-              "plateNumber": "pgww1"
+              "id": "8a980323-c604-444b-8a96-62dbf61c12b4",
+              "vin": "ggsz5wwkz503bh37t",
+              "plateNumber": "flyw1"
             },
             {
-              "id": "4e5fa3f6-8537-4fff-92aa-27c8606e617b",
-              "vin": "7a5cdhf1o08j6e95h",
-              "plateNumber": "ha5p4"
+              "id": "ff4d966e-607e-44b1-ad54-9fb628ef643c",
+              "vin": "mht0c9t9rjunerszq",
+              "plateNumber": "37q8s"
             },
             {
-              "id": "7e9b1bac-120b-4dff-8263-4649872ff45c",
-              "vin": "950yn27h25amx0bpz",
-              "plateNumber": "thovh"
+              "id": "87b9e289-8a2a-45b9-8ded-e0e93da7c0ea",
+              "vin": "sbxo48xgddtj30opq",
+              "plateNumber": "ys4b9"
             },
             {
-              "id": "a039a733-8914-4910-986a-9bad0cae9c8d",
-              "vin": "ma771u7mc9ua9mwzn",
-              "plateNumber": "ompj3"
+              "id": "5673638e-d83f-4791-9b01-4f61f94f42eb",
+              "vin": "vy8nzqxjnux6mufcd",
+              "plateNumber": "jz2gj"
+            },
+            {
+              "id": "4e87117e-1139-486f-9516-a88867151a8c",
+              "vin": "0n27qcxqometxsczy",
+              "plateNumber": "7oalt"
+            },
+            {
+              "id": "18ce80a0-bad0-4636-af4e-32963ae5d783",
+              "vin": "9q0nltqbkuepz73pu",
+              "plateNumber": "1xu1y"
+            },
+            {
+              "id": "050d5d84-d254-4deb-98a8-0ff642775ec9",
+              "vin": "w36c7xegvm6tbfr26",
+              "plateNumber": "ukfgq"
+            },
+            {
+              "id": "384d997e-887f-46b8-bcf6-02da8e973eb1",
+              "vin": "oyr749gck1gncd9e7",
+              "plateNumber": "pjwnb"
+            },
+            {
+              "id": "740a20e3-6321-4a27-8c05-b536eb7fc2f7",
+              "vin": "en9g122jawtzhc44u",
+              "plateNumber": "6pylh"
+            },
+            {
+              "id": "bd612f05-8347-42a6-b133-aa86227ae692",
+              "vin": "ee02g39vo63fl8302",
+              "plateNumber": "0n06k"
+            },
+            {
+              "id": "2b0b821c-c115-4da4-b69e-0bb327cac1ad",
+              "vin": "0phm3i42hv1c175ku",
+              "plateNumber": "olzii"
+            },
+            {
+              "id": "f5de6bfa-1cc6-48a6-a34f-01fc2a101753",
+              "vin": "bgh7omd333y8ukikv",
+              "plateNumber": "3gm1k"
+            },
+            {
+              "id": "14cbccc0-d459-44ae-a026-9a1d74fb5f72",
+              "vin": "b5tnxg5auiq3uq6x8",
+              "plateNumber": "ed7np"
+            },
+            {
+              "id": "6604e6af-abba-4c6e-b511-9586928dffc0",
+              "vin": "b3zelmfydsmwq2oi8",
+              "plateNumber": "s3czl"
             }
           ],
-          "createdAt": "2021-05-28T06:53:10.307Z",
-          "updatedAt": "2021-05-28T06:53:10.307Z"
+          "createdAt": "2021-06-02T13:45:30.340Z",
+          "updatedAt": "2021-06-02T13:45:30.340Z"
         }
       },
       {
         "node": {
-          "brand": "bmw",
-          "topSpeed": 87571,
-          "acceleration": 30544,
-          "range": 40651,
-          "totalPower": 36479,
-          "chargeType": "wall",
-          "chargeTime": 56274,
-          "fastChargeTime": 70872,
+          "id": "f5b71aaf-586a-43e3-8f96-18cb6ab12a55",
+          "brand": "Hyundai",
+          "topSpeed": 155,
+          "acceleration": 9.7,
+          "range": 312,
+          "totalPower": 100,
+          "chargeType": "ccs",
+          "chargeTime": 500,
+          "fastChargeTime": 200,
           "bodyTypeId": 5,
-          "model": "Expressway",
+          "model": "Kona",
           "cars": [
             {
-              "id": "a4d7d5c0-8a06-4baa-8bbc-411ca9078e4d",
-              "vin": "auqavy4ra2m84fcb8",
-              "plateNumber": "icyjd"
+              "id": "e1bde2c8-d10f-4806-a60c-ccaa6d89b8fc",
+              "vin": "rzhrybdrgmwxl2yn0",
+              "plateNumber": "37dk4"
             },
             {
-              "id": "1087b2ac-07aa-4927-8667-37fdfd82db5b",
-              "vin": "znbbjqyvbut4ft6tc",
-              "plateNumber": "n5pmv"
+              "id": "656dbf5e-319e-4d6a-bb5a-847f8a6cfed9",
+              "vin": "jr7z5ml22s5oyb5y6",
+              "plateNumber": "qycyr"
             },
             {
-              "id": "a887c0a8-846c-464c-8b01-ea9d8da456fc",
-              "vin": "m3paida23fcki3nqn",
-              "plateNumber": "wlv0g"
+              "id": "7f102899-d378-43b1-96bd-505f9ab5bca1",
+              "vin": "50wpef8mkb6q9wqib",
+              "plateNumber": "bz7ir"
             },
             {
-              "id": "8fdc3cda-40ed-4487-a22a-17a57ff902dd",
-              "vin": "6hkaxvnhkj6u4uhb0",
-              "plateNumber": "jo6us"
+              "id": "67be89b4-f4d4-4df2-86d7-7183a2e0cbf8",
+              "vin": "9xl9fwotrpxf96khp",
+              "plateNumber": "jhcie"
             },
             {
-              "id": "276ed345-38cd-427d-a26b-0f9b27930e6a",
-              "vin": "9wzv1bu0dwons57bc",
-              "plateNumber": "i6yez"
+              "id": "cc8ff0a9-4b69-4f51-9bab-9c48492c489c",
+              "vin": "aozanydv01ribxl48",
+              "plateNumber": "g83n7"
+            },
+            {
+              "id": "dbaf4634-ad5c-4174-985c-63939e0e7f2b",
+              "vin": "ruksrbzd9fd5ktp9y",
+              "plateNumber": "euceb"
+            },
+            {
+              "id": "e3e09561-5016-4e56-af9a-41f127137f33",
+              "vin": "1323vjtcxl3p1kms7",
+              "plateNumber": "7f598"
+            },
+            {
+              "id": "1ec0c380-b005-45ee-9605-73fc89698d4e",
+              "vin": "hthglf5m7800hxyrd",
+              "plateNumber": "em3rv"
             }
           ],
-          "createdAt": "2021-05-28T06:53:10.306Z",
-          "updatedAt": "2021-05-28T06:53:10.306Z"
+          "createdAt": "2021-06-02T13:45:48.951Z",
+          "updatedAt": "2021-06-02T13:45:48.951Z"
+        }
+      },
+      {
+        "node": {
+          "id": "da9a9d64-e547-4831-947f-cbbb2540a0ae",
+          "brand": "MG",
+          "topSpeed": 185,
+          "acceleration": 8.8,
+          "range": 380,
+          "totalPower": 120,
+          "chargeType": "ccs",
+          "chargeTime": 200,
+          "fastChargeTime": 100,
+          "bodyTypeId": 2,
+          "model": "EP",
+          "cars": [
+            {
+              "id": "b8ac46aa-5c25-43a6-9b80-b93c22fe32ea",
+              "vin": "idx44owaemn44zcrs",
+              "plateNumber": "70mhg"
+            },
+            {
+              "id": "7b984c5c-4a1b-4088-878b-0a66d3d156d3",
+              "vin": "brzh3vgsq4lxkdwo6",
+              "plateNumber": "jni56"
+            },
+            {
+              "id": "adae2eb1-40f1-43e9-8d71-491be38ba1b5",
+              "vin": "20ytn8g2i1e88ybtn",
+              "plateNumber": "6gnlv"
+            },
+            {
+              "id": "cd490bca-7dad-4e72-ac2c-768dfd36bc76",
+              "vin": "uu6pzm31aspbsogc6",
+              "plateNumber": "wdg0k"
+            },
+            {
+              "id": "32949247-5589-46c2-ac77-e8745542d1c7",
+              "vin": "o5y3vazhs62injkhk",
+              "plateNumber": "lrbw4"
+            },
+            {
+              "id": "f68a38a8-c770-44fe-9e8c-97e30de60b48",
+              "vin": "aw70ukpdlys1q1xmp",
+              "plateNumber": "0jv3c"
+            },
+            {
+              "id": "69fb003b-5de9-49db-95e4-41b3be83bd74",
+              "vin": "nan4yn4smmwysg304",
+              "plateNumber": "mk7ac"
+            },
+            {
+              "id": "e47ad972-24c5-4ef4-8fb9-2d749ac23c59",
+              "vin": "315jeafvg5836hybb",
+              "plateNumber": "b7r8c"
+            },
+            {
+              "id": "114e9528-a862-499c-82da-e421895daa71",
+              "vin": "7wqwqym0txgxmwnhi",
+              "plateNumber": "0lzqd"
+            },
+            {
+              "id": "0f9b2ca4-89d2-4ee3-86c5-d6f5d25ab210",
+              "vin": "phuuvabqhwbx6y7uj",
+              "plateNumber": "qr0iy"
+            },
+            {
+              "id": "a7f02f86-fd27-4af4-a30e-9d02c93ec1cd",
+              "vin": "ia43w9x2cepbkt0et",
+              "plateNumber": "u7nos"
+            },
+            {
+              "id": "6e5b158a-e3bc-4096-a1e8-e75be330b348",
+              "vin": "dyvo7mmgiio4m39mc",
+              "plateNumber": "oj26e"
+            },
+            {
+              "id": "44115c95-0a1b-426e-bac5-b17dd7dd9844",
+              "vin": "vv44xly98vreq013s",
+              "plateNumber": "8cp9y"
+            },
+            {
+              "id": "430bbe63-2ad4-4e40-8a84-97830c66f55b",
+              "vin": "043zk3wl3onwawi03",
+              "plateNumber": "3tv8r"
+            },
+            {
+              "id": "04da213c-8888-4ce8-8185-ab04d0779d2b",
+              "vin": "4gna9ll8q7a1aix2w",
+              "plateNumber": "5on7i"
+            },
+            {
+              "id": "8e879de0-e651-4dfa-8924-443580d42978",
+              "vin": "8kwosx3u6sld5z8dy",
+              "plateNumber": "uk1n8"
+            },
+            {
+              "id": "e4e70c46-4e6c-4d3f-b965-34ccf30efbd0",
+              "vin": "cdlniapbvmnb4i9g5",
+              "plateNumber": "nd05g"
+            },
+            {
+              "id": "3ec497f1-a646-4968-8d57-ccdb43d97064",
+              "vin": "jln7s7mwe2nlexfen",
+              "plateNumber": "egtem"
+            },
+            {
+              "id": "ea7db480-e3f2-4564-bc2f-38b460ee15a9",
+              "vin": "8d78sroapgouobroa",
+              "plateNumber": "1u4rl"
+            },
+            {
+              "id": "2859f6d6-0049-4d40-8a6d-921623a0db6a",
+              "vin": "ogjjvuv5pibhp3mp6",
+              "plateNumber": "1hqjb"
+            },
+            {
+              "id": "2d2ed19c-d5fe-4634-aca0-3e0b32c637a0",
+              "vin": "oppu5q48fghsp763y",
+              "plateNumber": "fib07"
+            },
+            {
+              "id": "95e71d4e-0315-4b64-92d6-2cd38631dce3",
+              "vin": "mbfq4cptwdnatyev5",
+              "plateNumber": "p0bz1"
+            },
+            {
+              "id": "f8cf28fe-9518-4994-b63f-892a57c36bfe",
+              "vin": "vst8f2qaaxssxkcpx",
+              "plateNumber": "hjhje"
+            },
+            {
+              "id": "66a5acb5-1065-481f-b9b9-7d01947b18db",
+              "vin": "5c2mdavvxhf06854q",
+              "plateNumber": "0k74u"
+            },
+            {
+              "id": "2438ca7f-b3f6-442d-a0df-d0d94096559e",
+              "vin": "2qciagcfbsfcqz5m2",
+              "plateNumber": "vj76z"
+            },
+            {
+              "id": "2ced759a-ff4c-48d4-8320-2be55bbb768f",
+              "vin": "6615fcqqd6n5lxxn2",
+              "plateNumber": "55brs"
+            },
+            {
+              "id": "d45e6850-18ce-48c9-825a-d0924d5ec52f",
+              "vin": "ltywcuvd2d6804cff",
+              "plateNumber": "2jv25"
+            },
+            {
+              "id": "f6606a45-c186-4c08-a69f-59045f45be18",
+              "vin": "yfz9t0tr34gyxukhx",
+              "plateNumber": "bzjxd"
+            },
+            {
+              "id": "e437cbaa-32f8-4d9b-bab7-6b78b8e51034",
+              "vin": "ybxg70zch9xde8ld0",
+              "plateNumber": "aas6y"
+            },
+            {
+              "id": "03404635-ddfe-4be6-b0f6-abe4f2040589",
+              "vin": "af7f63jev5727shn7",
+              "plateNumber": "dpbyt"
+            }
+          ],
+          "createdAt": "2021-06-02T13:46:56.167Z",
+          "updatedAt": "2021-06-02T13:46:56.167Z"
+        }
+      },
+      {
+        "node": {
+          "id": "962c4262-3d27-4037-a354-848e8d33dd52",
+          "brand": "Jaguar",
+          "topSpeed": 200,
+          "acceleration": 4.8,
+          "range": 470,
+          "totalPower": 294,
+          "chargeType": "ccs",
+          "chargeTime": 500,
+          "fastChargeTime": 100,
+          "bodyTypeId": 4,
+          "model": "I-Pace",
+          "cars": [
+            {
+              "id": "8520c7e1-d8cb-41e9-a45b-703aecb33891",
+              "vin": "mki2reoxessl42mb5",
+              "plateNumber": "n2jo6"
+            },
+            {
+              "id": "e2c9c9fa-2e81-4a88-a3fd-fcb98d195f71",
+              "vin": "qfh8rtautsa4ii66j",
+              "plateNumber": "jfs15"
+            },
+            {
+              "id": "7de17653-1a27-403f-87c8-659f24c3438b",
+              "vin": "h86avyifh9jtzac9u",
+              "plateNumber": "bayma"
+            },
+            {
+              "id": "48d06f39-404c-4710-ba05-c4fb6439b409",
+              "vin": "n0tuiy4fr09vrc5s7",
+              "plateNumber": "2fcww"
+            }
+          ],
+          "createdAt": "2021-06-02T13:45:18.611Z",
+          "updatedAt": "2021-06-02T13:45:18.611Z"
+        }
+      },
+      {
+        "node": {
+          "id": "418a7fb1-2e9e-414f-b0a4-42e38ce03561",
+          "brand": "Dacia",
+          "topSpeed": 125,
+          "acceleration": 15,
+          "range": 225,
+          "totalPower": 108,
+          "chargeType": "ccs",
+          "chargeTime": 400,
+          "fastChargeTime": 300,
+          "bodyTypeId": 3,
+          "model": "Spring",
+          "cars": [
+            {
+              "id": "0aa6684a-101a-4bd7-88db-e3e9c82733b5",
+              "vin": "pxx43uyoax9mk0foz",
+              "plateNumber": "xdmvg"
+            },
+            {
+              "id": "e055fb54-5c3b-49cc-be7a-02f9db843fd0",
+              "vin": "r8xjoetw456soxeht",
+              "plateNumber": "p6x4r"
+            },
+            {
+              "id": "ba2c7dac-af2f-4601-aa96-c657e7e9ed08",
+              "vin": "67wazctr1zah5jdb7",
+              "plateNumber": "yupsp"
+            },
+            {
+              "id": "b521c8ee-29d5-4fba-9167-5fc7fdd8c080",
+              "vin": "a1qgjgffuv6rribra",
+              "plateNumber": "ieg4b"
+            },
+            {
+              "id": "94ab4ba6-1108-4dbd-9da8-b0cee9d67cd8",
+              "vin": "5bc05r4vcunik05rq",
+              "plateNumber": "y5vuz"
+            },
+            {
+              "id": "7641b075-dcbf-458c-b136-65643b6ac4d4",
+              "vin": "f05z0vvtw2ora1t7n",
+              "plateNumber": "kh96g"
+            }
+          ],
+          "createdAt": "2021-06-02T13:46:48.831Z",
+          "updatedAt": "2021-06-02T13:46:48.831Z"
+        }
+      },
+      {
+        "node": {
+          "id": "3f941d94-0e1f-4178-a87c-a2fdf3edd6d4",
+          "brand": "Nissan",
+          "topSpeed": 140,
+          "acceleration": 7.9,
+          "range": 311,
+          "totalPower": 110,
+          "chargeType": "CHAdeMO",
+          "chargeTime": 700,
+          "fastChargeTime": 400,
+          "bodyTypeId": 1,
+          "model": "Leaf-2",
+          "cars": [
+            {
+              "id": "50d5604f-ae11-4962-9601-5bbb90ec924b",
+              "vin": "9kcif3ywonzp96bbp",
+              "plateNumber": "j8ex6"
+            },
+            {
+              "id": "b4a68907-e01a-4f74-b748-ba667a715571",
+              "vin": "0ikj4vm3887o8nsj9",
+              "plateNumber": "ji5ip"
+            },
+            {
+              "id": "8b39c43e-7882-4d6a-ae6c-9f7921d95e90",
+              "vin": "7erhawvmme7etz9su",
+              "plateNumber": "0ak1w"
+            },
+            {
+              "id": "e162f23b-9989-4c51-bc85-3cef95c3c4fa",
+              "vin": "lib2qsh6up73itapk",
+              "plateNumber": "iitou"
+            },
+            {
+              "id": "37f20012-7326-46e3-baea-acfa5c04fe1c",
+              "vin": "4h16s8qbsnr2bqbgd",
+              "plateNumber": "sav96"
+            },
+            {
+              "id": "139aa211-7a4e-4af2-b3ae-4eca819d05f8",
+              "vin": "2cgb8zkzk7g4u2rld",
+              "plateNumber": "t5v36"
+            },
+            {
+              "id": "879b03ce-761e-4cb7-966f-6219c4f2bbab",
+              "vin": "me91ovp7gfuvuwcof",
+              "plateNumber": "ut3x3"
+            },
+            {
+              "id": "2e621539-3e41-48c8-abc1-fa4d94a2d28f",
+              "vin": "dn2hy3rgdcfgyml34",
+              "plateNumber": "8y37c"
+            },
+            {
+              "id": "c9aa590c-ab38-491a-9d86-d6ae4c51308f",
+              "vin": "kz8rtwmp1m7oxcw75",
+              "plateNumber": "czxfo"
+            },
+            {
+              "id": "81fcea77-21fa-4805-882b-b83d13fa08be",
+              "vin": "212g8c61drrqi3gsx",
+              "plateNumber": "nwurz"
+            },
+            {
+              "id": "09176135-315e-48bf-8e49-ca227afdbe34",
+              "vin": "8lrq3lke6vu23tx88",
+              "plateNumber": "f7ard"
+            },
+            {
+              "id": "c2d9a7c4-c69f-4fb9-9366-7326ecd66342",
+              "vin": "y7k9xf5wl8wlxfbky",
+              "plateNumber": "rbrcb"
+            },
+            {
+              "id": "3b6557ec-95f3-49ae-b5de-248273d48b82",
+              "vin": "l5ac2kzsk91t6ges2",
+              "plateNumber": "c6aw6"
+            },
+            {
+              "id": "afb10676-a1f4-4a7c-b12a-67dc14b8bea1",
+              "vin": "a5xqsbxkx50igrvan",
+              "plateNumber": "h80py"
+            },
+            {
+              "id": "04b4dc72-46b3-4f58-94f0-f565c8bebed2",
+              "vin": "6omckyahyj91nesav",
+              "plateNumber": "9suw8"
+            },
+            {
+              "id": "3097e6f5-752a-4985-8cd6-375582279008",
+              "vin": "4hdaqaocnty9i694p",
+              "plateNumber": "dxrcl"
+            },
+            {
+              "id": "65bc3a5f-e977-4068-ab7c-a0fc01256297",
+              "vin": "e2hcs7mrlmkat0py3",
+              "plateNumber": "iqw0n"
+            },
+            {
+              "id": "09bef3d0-cd2b-454e-9447-92f9667cb189",
+              "vin": "qc1n0zm5xg2zzh49t",
+              "plateNumber": "e36dg"
+            },
+            {
+              "id": "517e9177-ad75-4d1c-81a7-d92667010f96",
+              "vin": "24kui9bpf3zr52ncr",
+              "plateNumber": "cbj5n"
+            },
+            {
+              "id": "634c39c2-3aac-468a-a74c-9e69b355d9d1",
+              "vin": "widxo5c1ju0l0lnzt",
+              "plateNumber": "via2w"
+            },
+            {
+              "id": "0ae60152-bf2f-4b8a-ae17-ca95505d8bc4",
+              "vin": "3y6p5fc7pj5hue88n",
+              "plateNumber": "egagl"
+            },
+            {
+              "id": "f743f9ec-e130-44e6-b4f5-689bd3c1a7d5",
+              "vin": "bsdafhv45y89xhc9h",
+              "plateNumber": "pcvbh"
+            },
+            {
+              "id": "677566c1-2579-42bd-9428-cd92b412be14",
+              "vin": "96wowkwce4ftedc5y",
+              "plateNumber": "3dyye"
+            },
+            {
+              "id": "46543e95-7725-422e-8648-6a7ef02364d5",
+              "vin": "7tb3iy1n4cqfejv2k",
+              "plateNumber": "t15c4"
+            },
+            {
+              "id": "52f0adef-7fce-4c39-87fe-6f18eec22b95",
+              "vin": "oh9rc6waja2nupklb",
+              "plateNumber": "d4era"
+            },
+            {
+              "id": "1119278b-5a83-41fc-9265-47892e8fc442",
+              "vin": "b5jk4flvdqdojuq95",
+              "plateNumber": "uau30"
+            },
+            {
+              "id": "1775c8e1-4d67-4de5-8893-d06ffc56c7e6",
+              "vin": "zvlld3iujiv5vsr86",
+              "plateNumber": "0zebc"
+            },
+            {
+              "id": "3e6fc1a7-cf81-48d8-923e-e4bb0ec92ef5",
+              "vin": "7gbu6buy570urikle",
+              "plateNumber": "mbqp2"
+            },
+            {
+              "id": "c3955ce3-23f2-42e5-af06-83618399cc1f",
+              "vin": "maw1t4g4irqs5ja45",
+              "plateNumber": "999dq"
+            },
+            {
+              "id": "a391078a-7196-4a11-9327-adc6b0ed73f0",
+              "vin": "41pa1bzsmn2e24cwy",
+              "plateNumber": "nc8ti"
+            },
+            {
+              "id": "900754ac-97ba-4c51-94d7-787e3331dc2c",
+              "vin": "tt4din3xa5gerbtcf",
+              "plateNumber": "7grcq"
+            },
+            {
+              "id": "1242b67b-df46-4470-b39c-2ea180f94f48",
+              "vin": "58p06p83wzne1yf08",
+              "plateNumber": "s3vqr"
+            },
+            {
+              "id": "d370b61d-4d5d-4a54-993a-833bf69047b9",
+              "vin": "v7t2i35wj0rqg6taq",
+              "plateNumber": "3dk33"
+            },
+            {
+              "id": "55d09ac3-21bd-4766-a6c5-f20f7e67fe96",
+              "vin": "wryhey3lcnoga5y2p",
+              "plateNumber": "q3g0m"
+            },
+            {
+              "id": "3524df29-9744-449b-a723-526ed9b48a41",
+              "vin": "pmank1rpgnlb3ut95",
+              "plateNumber": "bi5ib"
+            },
+            {
+              "id": "6de73b57-38b9-42bb-ab15-1a5c175f8f74",
+              "vin": "zbi9mez70v6k256sp",
+              "plateNumber": "001vz"
+            },
+            {
+              "id": "cad8fdbf-0529-4dea-b01c-ecd09dbcc24a",
+              "vin": "is6retbxurc6vokcb",
+              "plateNumber": "f8js5"
+            },
+            {
+              "id": "761092d2-699a-402e-b765-161441a175f3",
+              "vin": "jkcm8mgcqc0ifum7r",
+              "plateNumber": "on9de"
+            },
+            {
+              "id": "6b2a5709-498d-4ff2-8044-ac4153283701",
+              "vin": "oxd1eubpp0w7ano2u",
+              "plateNumber": "r1lo8"
+            },
+            {
+              "id": "51b05a1e-958e-4135-a736-04d1e3ab61a1",
+              "vin": "48mymlztqgwdejrv2",
+              "plateNumber": "adk09"
+            }
+          ],
+          "createdAt": "2021-06-02T13:46:05.748Z",
+          "updatedAt": "2021-06-02T13:46:05.748Z"
+        }
+      },
+      {
+        "node": {
+          "id": "020f6e55-4daa-46de-9492-68616fec5ddc",
+          "brand": "Lexus UX",
+          "topSpeed": 150,
+          "acceleration": 7.5,
+          "range": 300,
+          "totalPower": 150,
+          "chargeType": "CHAdeMO",
+          "chargeTime": 500,
+          "fastChargeTime": 100,
+          "bodyTypeId": 4,
+          "model": "300e",
+          "cars": [
+            {
+              "id": "857f61e0-c6c7-41ad-88e4-ca09811c8696",
+              "vin": "k1ugt5bvbvtqsisu1",
+              "plateNumber": "unk3x"
+            },
+            {
+              "id": "4eb380b4-8a29-4550-9ffb-345c93047a3b",
+              "vin": "b2058jgt6nucafq0y",
+              "plateNumber": "uairf"
+            },
+            {
+              "id": "09c3633e-eab2-4362-96ae-6756bb3908c2",
+              "vin": "rr56amjan2o1ja5rj",
+              "plateNumber": "9b3z3"
+            }
+          ],
+          "createdAt": "2021-06-02T13:45:25.306Z",
+          "updatedAt": "2021-06-02T13:45:25.306Z"
+        }
+      },
+      {
+        "node": {
+          "id": "01fc6699-6ebb-4573-8351-6aebe80cc30f",
+          "brand": "Renault",
+          "topSpeed": 135,
+          "acceleration": 9.5,
+          "range": 395,
+          "totalPower": 108,
+          "chargeType": "ccs",
+          "chargeTime": 300,
+          "fastChargeTime": 100,
+          "bodyTypeId": 1,
+          "model": "Zoe",
+          "cars": [
+            {
+              "id": "2a749d66-38d1-4392-b9ef-2155ab65435f",
+              "vin": "g5e5pcmd7wxzh95fa",
+              "plateNumber": "pbg3r"
+            },
+            {
+              "id": "7ad46489-a763-48fd-b4a1-2fbb6abc1e42",
+              "vin": "rb51rfxis0064k7v7",
+              "plateNumber": "jxwdc"
+            },
+            {
+              "id": "d77594a8-d535-46dd-be16-cd8994b54fc0",
+              "vin": "c6548h2u51c5kych1",
+              "plateNumber": "co05s"
+            },
+            {
+              "id": "c8168ee9-ae3b-4633-b011-6dc4b592311a",
+              "vin": "6ecplopp3wffxr7qd",
+              "plateNumber": "iztwj"
+            },
+            {
+              "id": "c426135a-07cf-4b9e-812a-3d902a0b7ee7",
+              "vin": "mdtyvkdhe98ej921y",
+              "plateNumber": "boees"
+            }
+          ],
+          "createdAt": "2021-06-02T13:45:58.494Z",
+          "updatedAt": "2021-06-02T13:45:58.494Z"
         }
       }
     ]

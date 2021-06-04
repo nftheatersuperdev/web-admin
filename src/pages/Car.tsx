@@ -1,9 +1,13 @@
+import { useState } from 'react'
 import { Button, Card } from '@material-ui/core'
 import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
-import { useCars } from 'services/evme'
+import toast from 'react-hot-toast'
+import { useQueryClient } from 'react-query'
+import { useCars, useCreateCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
-import { Car as CarType } from 'services/evme.types'
+import { Car as CarType, CarInput } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
+import CarCreateDialog from './CarCreateDialog'
 
 const columns: GridColDef[] = [
   { field: 'brand', headerName: 'Brand', description: 'Brand', flex: 1 },
@@ -46,13 +50,36 @@ const columns: GridColDef[] = [
 ]
 
 export default function Car(): JSX.Element {
-  const { data } = useCars()
+  const { data: carModelList } = useCars()
+  const [isDialogOpen, openDialog] = useState<boolean>(false)
+  const createCarMutation = useCreateCar()
+  const queryClient = useQueryClient()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rows: any = []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const carModelOptions: any = []
+
+  const onCloseDialog = async (data: CarInput | null) => {
+    openDialog(false)
+    if (!data) {
+      return
+    }
+
+    try {
+      // 1. We create the new car
+      await createCarMutation.mutateAsync(data)
+
+      queryClient.invalidateQueries('evme:cars')
+      toast.success('Created car successfully!')
+    } catch (error) {
+      console.error('failed to created car', error)
+      toast.error('Failed to create car!')
+    }
+  }
 
   // Transform response into table format
-  data?.edges?.forEach(({ node }) => {
+  carModelList?.edges?.forEach(({ node }) => {
     if (node.cars) {
       rows.push(
         ...(node.cars as unknown as CarType[]).map((car: CarType) => ({
@@ -74,15 +101,22 @@ export default function Car(): JSX.Element {
     }
   })
 
+  carModelList?.edges?.forEach(({ node }) => {
+    carModelOptions.push({
+      id: node?.id,
+      modelName: `${node?.brand} - ${node?.model}`,
+    })
+  })
+
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained">
+        <Button color="primary" variant="contained" onClick={() => openDialog(true)}>
           New Car
         </Button>
       </PageToolbar>
 
-      {rows && rows.length > 0 ? (
+      {rows.length > 0 && (
         <Card>
           <DataGrid
             autoHeight
@@ -95,7 +129,12 @@ export default function Car(): JSX.Element {
             }}
           />
         </Card>
-      ) : null}
+      )}
+      <CarCreateDialog
+        open={isDialogOpen}
+        onClose={(data) => onCloseDialog(data)}
+        carModelOptions={carModelOptions}
+      />
     </Page>
   )
 }

@@ -755,6 +755,11 @@ export type CreateManyAdditionalExpenseFilesInput = {
   additionalExpenseFiles: Array<AdditionalExpenseFileInput>
 }
 
+export type CreateManyPackagePricesInput = {
+  /** Array of records to create */
+  packagePrices: Array<PackagePriceInput>
+}
+
 export type CreateOneAdditionalExpenseFileInput = {
   /** The record to create */
   additionalExpenseFile: AdditionalExpenseFileInput
@@ -928,11 +933,12 @@ export type Mutation = {
   addSubscriptionsToPackagePrice: PackagePrice
   setSubscriptionsOnPackagePrice: PackagePrice
   createPackagePrice: PackagePrice
-  updatePackagePrice: Payment
+  createPackagePrices: Array<PackagePrice>
   setSubscriptionOnPayment: Payment
   addEventsToPayment: Payment
   setEventsOnPayment: Payment
   createPayment: Payment
+  updatePackagePrice: Payment
   setPaymentOnPaymentEvent: PaymentEvent
   createPaymentEvent: PaymentEvent
   updatePaymentEvent: PaymentEvent
@@ -1103,8 +1109,8 @@ export type MutationCreatePackagePriceArgs = {
   input: CreateOnePackagePriceInput
 }
 
-export type MutationUpdatePackagePriceArgs = {
-  input: UpdateOnePaymentInput
+export type MutationCreatePackagePricesArgs = {
+  input: CreateManyPackagePricesInput
 }
 
 export type MutationSetSubscriptionOnPaymentArgs = {
@@ -1121,6 +1127,10 @@ export type MutationSetEventsOnPaymentArgs = {
 
 export type MutationCreatePaymentArgs = {
   input: CreateOnePaymentInput
+}
+
+export type MutationUpdatePackagePriceArgs = {
+  input: UpdateOnePaymentInput
 }
 
 export type MutationSetPaymentOnPaymentEventArgs = {
