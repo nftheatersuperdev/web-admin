@@ -183,7 +183,7 @@ export function useUsers(): UseQueryResult<WithPaginationType<User>> {
       const response = await gqlClient.request(
         gql`
           query GetUsers {
-            users {
+            users(paging: { first: 200 }) {
               edges {
                 node {
                   id

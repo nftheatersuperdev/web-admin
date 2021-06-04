@@ -7,7 +7,7 @@ import {
 import { Page } from 'layout/LayoutRoute'
 import CardStatus from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
-import { useCars, usePayments, useSubscriptions } from 'services/evme'
+import { useCars, usePayments, useSubscriptions, useUsers } from 'services/evme'
 
 function _formatMoney(amount: number) {
   const formatter = new Intl.NumberFormat('th-TH', {
@@ -61,6 +61,7 @@ export default function Dashboard(): JSX.Element {
   const { data: cars } = useCars()
   const { data: subscriptions } = useSubscriptions()
   const { data: payments } = usePayments()
+  const { data: users } = useUsers()
 
   const totalCars =
     cars?.edges?.reduce((count, { node }) => count + (node?.cars?.length || 0), 0) || 0
@@ -70,6 +71,8 @@ export default function Dashboard(): JSX.Element {
 
   const totalPaymentAmountToday =
     payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
+
+  const totalUsers = users?.edges?.length || 0
 
   return (
     <Page>
@@ -104,7 +107,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title="Total Users"
-            value="12"
+            value={totalUsers}
             subTitle="Total number of registered users"
             icon={<PeopleIcon />}
           />
