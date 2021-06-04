@@ -1,7 +1,7 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import { useQuery, UseQueryResult } from 'react-query'
 import config from 'config'
-import { CarModel, PackagePrice, Payment, Sub, User } from './evme.types'
+import { CarModel, PackagePrice, Payment, Sub, User, AdditionalExpense } from './evme.types'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -213,41 +213,32 @@ export function useUsers(): UseQueryResult<WithPaginationType<User>> {
   )
 }
 
-export function useSubAdditionalExpenses(): UseQueryResult<WithPaginationType<Sub>> {
+export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<AdditionalExpense>> {
   return useQuery(
     ['evme:additional-expenses'],
     async () => {
       const response = await gqlClient.request(
         gql`
-          query GetSubAdditionalExpenses {
-            subscriptions {
+          query GetExpenses {
+            additionalExpenses {
               edges {
                 node {
                   id
-                  userId
-                  user {
-                    phoneNumber
-                  }
-                  additionalExpenses {
-                    id
-                    subscriptionId
-                    price
-                    type
-                    noticeDate
-                    status
-                    note
-                    files {
-                      id
-                      url
-                    }
-                  }
+                  createdAt
+                  updatedAt
+                  subscriptionId
+                  status
+                  type
+                  note
+                  price
+                  noticeDate
                 }
               }
             }
           }
         `
       )
-      return response.subscriptions
+      return response.additionalExpenses
     },
     {
       onError: (error: Error) => {

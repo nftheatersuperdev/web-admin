@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { Button, Card } from '@material-ui/core'
-import { DataGrid, GridColDef, GridToolbar, GridRowData } from '@material-ui/data-grid'
+import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
 import { formatDates, formatMoney } from 'utils'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
-import { useSubAdditionalExpenses } from 'services/evme'
-import { AdditionalExpense } from 'services/evme.types'
+import { useAdditionalExpenses } from 'services/evme'
 import AdditionalExpenseCreateDialog from './AdditionalExpenseCreateDialog'
 
 const columns: GridColDef[] = [
@@ -15,8 +14,8 @@ const columns: GridColDef[] = [
     description: 'Subscription ID',
     flex: 1,
   },
-  { field: 'userId', headerName: 'User ID', description: 'User ID', flex: 1 },
-  { field: 'userFullname', headerName: 'Full name', description: 'Full name', flex: 1 },
+  { field: 'id', headerName: 'ID', description: 'ID', flex: 1 },
+  { field: 'note', headerName: 'Notes', description: 'Notes', flex: 1 },
   {
     field: 'noticeDate',
     headerName: 'Date of expense notice',
@@ -26,12 +25,19 @@ const columns: GridColDef[] = [
   },
   {
     field: 'createdAt',
-    headerName: 'Created At',
-    description: 'Created At',
+    headerName: 'Date Created',
+    description: 'Date Created',
     valueFormatter: formatDates,
     flex: 1,
   },
-  { field: 'type', headerName: 'Type of expense', description: 'Type of expense', flex: 1 },
+  {
+    field: 'updatedAt',
+    headerName: 'Dated Updated',
+    description: 'Date Updated',
+    valueFormatter: formatDates,
+    flex: 1,
+  },
+  { field: 'type', headerName: 'Type', description: 'Type of Expense', flex: 1 },
   { field: 'status', headerName: 'Status', description: 'Status', flex: 1 },
   {
     field: 'price',
@@ -44,25 +50,20 @@ const columns: GridColDef[] = [
 
 export default function AdditionalExpenses(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const { data } = useSubAdditionalExpenses()
+  const { data } = useAdditionalExpenses()
 
   // Transform response into table format
-  const rows = data?.edges?.reduce((results, { node }) => {
-    const { id, userId, user, additionalExpenses } = node
-
-    const newResults = additionalExpenses?.map((expense: AdditionalExpense) => ({
-      subscriptionId: id || '-',
-      userId: userId || '-',
-      userFullname: user?.phoneNumber || '-',
-      noticeDate: expense?.noticeDate || '-',
-      createdAt: expense?.createdAt || '-',
-      type: expense?.type || '-',
-      status: expense?.status || '-',
-      price: expense?.price || '-',
-    }))
-
-    return [...results, ...(newResults || [])]
-  }, [] as GridRowData[])
+  const rows = data?.edges?.map(({ node }) => ({
+    id: node?.id,
+    subscriptionId: node?.subscriptionId,
+    createdAt: node?.createdAt,
+    updatedAt: node?.updatedAt,
+    noticeDate: node?.noticeDate,
+    type: node?.type,
+    status: node?.status,
+    note: node?.note,
+    price: node?.price,
+  }))
 
   return (
     <Page>
