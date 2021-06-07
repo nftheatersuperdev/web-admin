@@ -1,5 +1,7 @@
 import { graphql } from 'msw'
 import getCars from './mockData/getCars.json'
+import getSubscriptions from './mockData/getSubscriptions.json'
+import getAdditionalExpenses from './mockData/getAdditionalExpenses.json'
 
 export const mockHandlers = [
   // ===========================================================================
@@ -21,6 +23,14 @@ export const mockHandlers = [
         },
       })
     )
+  }),
+
+  graphql.query('GetSubscriptions', (_req, res, ctx) => {
+    return res(ctx.data(getSubscriptions))
+  }),
+
+  graphql.query('GetExpenses', (_req, res, ctx) => {
+    return res(ctx.data(getAdditionalExpenses))
   }),
 
   graphql.mutation('createCar', (_req, res, ctx) => {

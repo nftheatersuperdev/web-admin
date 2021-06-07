@@ -120,6 +120,7 @@ module.exports = {
       },
     ],
     'react/void-dom-elements-no-children': 'error',
+    'react/display-name': 'off',
     // Import rules
     'no-duplicate-imports': 'off',
     'import/prefer-default-export': 0,

@@ -1,5 +1,11 @@
 import { GraphQLClient, gql } from 'graphql-request'
-import { useQuery, UseQueryResult, useMutation, UseMutationResult } from 'react-query'
+import {
+  useQuery,
+  UseQueryResult,
+  useMutation,
+  UseMutationResult,
+  useQueryClient,
+} from 'react-query'
 import config from 'config'
 import {
   IAddCarToCarModelParam,
@@ -14,6 +20,7 @@ import {
   User,
   AdditionalExpense,
   AdditionalExpenseInput,
+  UpdateOneAdditionalExpenseInput,
   CarInput,
 } from './evme.types'
 
@@ -328,10 +335,12 @@ export function useCreateAdditionalExpense(): UseMutationResult<
   AdditionalExpenseInput,
   unknown
 > {
+  const queryClient = useQueryClient()
+
   return useMutation(async ({ subscriptionId, price, type, status, noticeDate, note }) => {
     const response = await gqlClient.request(
       gql`
-        mutation createAdditionalExpense($input: CreateOneAdditionalExpenseInput!) {
+        mutation CreateAdditionalExpense($input: CreateOneAdditionalExpenseInput!) {
           createAdditionalExpense(input: $input) {
             id
           }
@@ -350,6 +359,40 @@ export function useCreateAdditionalExpense(): UseMutationResult<
         },
       }
     )
+
+    await queryClient.invalidateQueries('evme:additional-expenses')
+
     return response.createAdditionalExpense
+  })
+}
+
+export function useUpdateAdditionalExpense(): UseMutationResult<
+  AdditionalExpense,
+  unknown,
+  UpdateOneAdditionalExpenseInput,
+  unknown
+> {
+  const queryClient = useQueryClient()
+
+  return useMutation(async ({ id, update }) => {
+    const response = await gqlClient.request(
+      gql`
+        mutation UpdateAdditionalExpense($input: UpdateOneAdditionalExpenseInput!) {
+          updateAdditionalExpense(input: $input) {
+            id
+          }
+        }
+      `,
+      {
+        input: {
+          id,
+          update,
+        },
+      }
+    )
+
+    await queryClient.invalidateQueries('evme:additional-expenses')
+
+    return response.updateAdditionalExpense
   })
 }
