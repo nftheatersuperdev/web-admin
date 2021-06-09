@@ -329,6 +329,44 @@ export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<Addit
   )
 }
 
+export function useAdditionalExpenseById(id: string): UseQueryResult<AdditionalExpense> {
+  return useQuery(
+    ['evme:additional-expense-by-id', id],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query GetExpenseById($id: ID!) {
+            additionalExpense(id: $id) {
+              id
+              subscriptionId
+              price
+              type
+              noticeDate
+              status
+              note
+              files {
+                id
+                url
+              }
+              createdAt
+              updatedAt
+            }
+          }
+        `,
+        {
+          id,
+        }
+      )
+      return response.additionalExpense
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve additional expense by id: ${id}, ${error.message}`)
+      },
+    }
+  )
+}
+
 export function useCreateAdditionalExpense(): UseMutationResult<
   AdditionalExpense,
   unknown,
@@ -337,33 +375,38 @@ export function useCreateAdditionalExpense(): UseMutationResult<
 > {
   const queryClient = useQueryClient()
 
-  return useMutation(async ({ subscriptionId, price, type, status, noticeDate, note }) => {
-    const response = await gqlClient.request(
-      gql`
-        mutation CreateAdditionalExpense($input: CreateOneAdditionalExpenseInput!) {
-          createAdditionalExpense(input: $input) {
-            id
+  return useMutation(
+    async ({ subscriptionId, price, type, status, noticeDate, note }) => {
+      const response = await gqlClient.request(
+        gql`
+          mutation CreateAdditionalExpense($input: CreateOneAdditionalExpenseInput!) {
+            createAdditionalExpense(input: $input) {
+              id
+            }
           }
-        }
-      `,
-      {
-        input: {
-          additionalExpense: {
-            subscriptionId,
-            price,
-            type,
-            status,
-            noticeDate,
-            note,
+        `,
+        {
+          input: {
+            additionalExpense: {
+              subscriptionId,
+              price,
+              type,
+              status,
+              noticeDate,
+              note,
+            },
           },
-        },
-      }
-    )
-
-    await queryClient.invalidateQueries('evme:additional-expenses')
-
-    return response.createAdditionalExpense
-  })
+        }
+      )
+      return response.createAdditionalExpense
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries('evme:additional-expenses'),
+      onError: () => {
+        console.error('Failed too create an additional expense')
+      },
+    }
+  )
 }
 
 export function useUpdateAdditionalExpense(): UseMutationResult<
@@ -374,25 +417,30 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
 > {
   const queryClient = useQueryClient()
 
-  return useMutation(async ({ id, update }) => {
-    const response = await gqlClient.request(
-      gql`
-        mutation UpdateAdditionalExpense($input: UpdateOneAdditionalExpenseInput!) {
-          updateAdditionalExpense(input: $input) {
-            id
+  return useMutation(
+    async ({ id, update }) => {
+      const response = await gqlClient.request(
+        gql`
+          mutation UpdateAdditionalExpense($input: UpdateOneAdditionalExpenseInput!) {
+            updateAdditionalExpense(input: $input) {
+              id
+            }
           }
+        `,
+        {
+          input: {
+            id,
+            update,
+          },
         }
-      `,
-      {
-        input: {
-          id,
-          update,
-        },
-      }
-    )
-
-    await queryClient.invalidateQueries('evme:additional-expenses')
-
-    return response.updateAdditionalExpense
-  })
+      )
+      return response.updateAdditionalExpense
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries('evme:additional-expenses'),
+      onError: () => {
+        console.error('Failed too update an additional expense')
+      },
+    }
+  )
 }

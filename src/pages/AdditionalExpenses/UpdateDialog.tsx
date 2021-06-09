@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Select,
   Grid,
@@ -14,26 +14,34 @@ import {
   DialogContent,
   Button,
 } from '@material-ui/core'
-import { useSubscriptions } from 'services/evme'
+import toast from 'react-hot-toast'
+import { transformToMutationInput, transformToFormData } from 'pages/AdditionalExpenses/utils'
+import {
+  useSubscriptions,
+  useAdditionalExpenseById,
+  useUpdateAdditionalExpense,
+} from 'services/evme'
 import { AdditionalExpenseInput } from 'services/evme.types'
+import { ExpenseTypes, ExpenseStatuses } from './utils'
 
-const EXPENSE_TYPES = ['maintenance', 'insurance', 'service', 'repair', 'replacement']
-const EXPENSE_STATUSES = ['created', 'informed', 'pending', 'paid', 'cancelled']
-
-interface AdditionalExpenseDialogProps {
+interface AdditionalExpenseUpdateDialogProps {
   open: boolean
-  onClose: (data: AdditionalExpenseInput | null) => Promise<void>
+  onSubmit: () => void
+  onCancel: () => void
+  id: string
 }
 
 interface SubscriptionItem {
   id: string
 }
 
-export default function AdditionalExpenseCreateDialog(
-  props: AdditionalExpenseDialogProps
+export default function AdditionalExpenseUpdateDialog(
+  props: AdditionalExpenseUpdateDialogProps
 ): JSX.Element {
-  const { open, onClose } = props
+  const { open, onSubmit, onCancel, id } = props
   const { data: subscriptions } = useSubscriptions()
+  const { data } = useAdditionalExpenseById(id)
+  const updateAdditionalExpense = useUpdateAdditionalExpense()
 
   const subscriptionItems = subscriptions?.edges?.map(({ node }) => ({
     id: node?.id,
@@ -46,14 +54,23 @@ export default function AdditionalExpenseCreateDialog(
     noticeDate: '',
     status: '',
     note: '',
-    files: [],
   }
 
-  const [expenseInfo, setExpenseInfo] = useState<AdditionalExpenseInput>(initialData)
+  const [additionalExpenseData, setAdditionalExpenseData] =
+    useState<AdditionalExpenseInput>(initialData)
 
-  const handleExpenseInfoChange = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setExpenseInfo({
-      ...expenseInfo,
+  const [isDisableSubmit, setIsDisableSubmit] = useState(false)
+
+  useEffect(() => {
+    if (data) {
+      const formData = transformToFormData(data)
+      setAdditionalExpenseData(formData)
+    }
+  }, [data])
+
+  const handleInputChange = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAdditionalExpenseData({
+      ...additionalExpenseData,
       [key]: event.target.value,
     })
   }
@@ -62,22 +79,22 @@ export default function AdditionalExpenseCreateDialog(
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
     const { id: subscriptionId } = event.target.value as SubscriptionItem
-    setExpenseInfo({
-      ...expenseInfo,
+    setAdditionalExpenseData({
+      ...additionalExpenseData,
       subscriptionId,
     })
   }
 
   const handleExpenseTypeChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    setExpenseInfo({
-      ...expenseInfo,
+    setAdditionalExpenseData({
+      ...additionalExpenseData,
       type: event.target.value as string,
     })
   }
 
   const handlePriceChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    setExpenseInfo({
-      ...expenseInfo,
+    setAdditionalExpenseData({
+      ...additionalExpenseData,
       price: Number(event.target.value) as number,
     })
   }
@@ -85,15 +102,40 @@ export default function AdditionalExpenseCreateDialog(
   const handleExpenseStatusChange = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
-    setExpenseInfo({
-      ...expenseInfo,
+    setAdditionalExpenseData({
+      ...additionalExpenseData,
       status: event.target.value as string,
     })
   }
 
+  const handleSubmit = () => {
+    setIsDisableSubmit(true)
+
+    const update = transformToMutationInput(additionalExpenseData)
+
+    toast.promise(
+      updateAdditionalExpense.mutateAsync({
+        id,
+        update,
+      }),
+      {
+        loading: 'Loading',
+        success: () => {
+          setIsDisableSubmit(false)
+          onSubmit()
+          return 'Updated additional expense successfully!'
+        },
+        error: () => {
+          setIsDisableSubmit(false)
+          return 'Failed to update additional expense!'
+        },
+      }
+    )
+  }
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Create New Additional Expense</DialogTitle>
+      <DialogTitle id="form-dialog-title">Update Additional Expense</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -102,7 +144,7 @@ export default function AdditionalExpenseCreateDialog(
               <Select
                 labelId="subscription"
                 onChange={handleSubscriptionChange}
-                value={expenseInfo.subscriptionId}
+                value={additionalExpenseData.subscriptionId}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 renderValue={(selected: any) => <div>{selected}</div>}
               >
@@ -121,8 +163,8 @@ export default function AdditionalExpenseCreateDialog(
               fullWidth
               label="Date of expense notice"
               type="datetime-local"
-              value={expenseInfo.noticeDate}
-              onChange={handleExpenseInfoChange('noticeDate')}
+              value={additionalExpenseData.noticeDate}
+              onChange={handleInputChange('noticeDate')}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -136,9 +178,9 @@ export default function AdditionalExpenseCreateDialog(
                 labelId="expenseType"
                 onChange={handleExpenseTypeChange}
                 input={<Input />}
-                value={expenseInfo.type}
+                value={additionalExpenseData.type}
               >
-                {EXPENSE_TYPES.map((type) => (
+                {ExpenseTypes.map((type) => (
                   <MenuItem key={type} value={type}>
                     {type}
                   </MenuItem>
@@ -152,7 +194,7 @@ export default function AdditionalExpenseCreateDialog(
               fullWidth
               label="Price"
               onChange={handlePriceChange}
-              value={expenseInfo.price}
+              value={additionalExpenseData.price}
               InputProps={{
                 startAdornment: <InputAdornment position="start">฿</InputAdornment>,
               }}
@@ -166,9 +208,9 @@ export default function AdditionalExpenseCreateDialog(
                 labelId="status"
                 onChange={handleExpenseStatusChange}
                 input={<Input />}
-                value={expenseInfo.status}
+                value={additionalExpenseData.status}
               >
-                {EXPENSE_STATUSES.map((status) => (
+                {ExpenseStatuses.map((status) => (
                   <MenuItem key={status} value={status}>
                     {status}
                   </MenuItem>
@@ -181,10 +223,10 @@ export default function AdditionalExpenseCreateDialog(
             <TextField
               fullWidth
               label="Note"
-              value={expenseInfo.note}
+              value={additionalExpenseData.note}
               multiline
               rows={3}
-              onChange={handleExpenseInfoChange('note')}
+              onChange={handleInputChange('note')}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -194,19 +236,17 @@ export default function AdditionalExpenseCreateDialog(
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={() => onClose(null)} color="primary">
+        <Button onClick={onCancel} color="primary">
           Cancel
         </Button>
 
         <Button
-          onClick={() => {
-            onClose(expenseInfo)
-            setExpenseInfo(initialData)
-          }}
+          onClick={handleSubmit}
           color="primary"
           variant="contained"
+          disabled={isDisableSubmit}
         >
-          Create
+          Update
         </Button>
       </DialogActions>
     </Dialog>

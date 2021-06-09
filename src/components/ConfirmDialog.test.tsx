@@ -13,7 +13,7 @@ describe('ConfirmDialog', () => {
     expect(screen.queryByText('This is a confirmation dialog')).not.toBeInTheDocument()
   })
 
-  it('should currect call the onClick handler when click on confirm button', () => {
+  it('should current call the onClick handler when click on confirm button', () => {
     const handleConfirmClick = jest.fn()
 
     renderComponent(
@@ -25,7 +25,7 @@ describe('ConfirmDialog', () => {
     expect(handleConfirmClick).toHaveBeenCalledTimes(1)
   })
 
-  it('should currect call the onClick handler when click on cancel button', () => {
+  it('should current call the onClick handler when click on cancel button', () => {
     const handleCancelClick = jest.fn()
 
     renderComponent(
