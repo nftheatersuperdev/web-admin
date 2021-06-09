@@ -5,6 +5,8 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Route, Router } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
+import { I18nextProvider } from 'react-i18next'
+import i18n from 'i18n'
 
 interface CustomRenderOptions extends RenderOptions {
   /**
@@ -58,9 +60,11 @@ export function renderComponent(
   const view = render(
     <ThemeProvider theme={testTheme}>
       <QueryClientProvider client={queryClient}>
-        <Router history={history}>
-          <Route path={path}>{children}</Route>
-        </Router>
+        <I18nextProvider i18n={i18n}>
+          <Router history={history}>
+            <Route path={path}>{children}</Route>
+          </Router>
+        </I18nextProvider>
       </QueryClientProvider>
     </ThemeProvider>,
     remainingOptions

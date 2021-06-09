@@ -10,6 +10,9 @@ import reportWebVitals from './reportWebVitals'
 import config from './config'
 import GlobalStyles, { theme } from './GlobalStyles'
 
+// Ensure that internationalization is bundled into app
+import './i18n'
+
 if (config.isProductionEnvironment) {
   // eslint-disable-next-line
   console.info('[Application] Running in production mode.')

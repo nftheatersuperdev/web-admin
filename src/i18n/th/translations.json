@@ -1,0 +1,24 @@
+{
+  "header": {
+    "aria": {
+      "sidebarToggle": "สลับแถบด้านข้าง",
+      "logo": "โลโก้ EVme",
+      "changeLanguage": "เปลี่ยนภาษา",
+      "settings": "ตั้งค่า",
+      "login": "เข้าสู่ระบบ"
+    }
+  },
+  "sidebar": {
+    "dashboard": "แดชบอร์ด",
+    "users": "ผู้ใช้",
+    "cars": "รถยนต์",
+    "pricing": "ตั้งราคา",
+    "vehicleManagement": "การจัดการยานพาหนะ",
+    "subscriptionManagement": "การจัดการการสมัครสมาชิก",
+    "subscriptions": "สมัครสมาชิก",
+    "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
+    "insurance": "ประกัน",
+    "others": "อื่นๆ",
+    "chargingStations": "แท่นชาร์จ"
+  }
+}

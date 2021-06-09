@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Link, useLocation, matchPath } from 'react-router-dom'
 import {
@@ -23,6 +23,7 @@ import {
   MonetizationOn as AdditionalExpenseIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
+import { useTranslation } from 'react-i18next'
 
 const MobileSidebar = styled(SwipeableDrawer)`
   width: ${({ theme }) => theme.size.sidebar};
@@ -40,27 +41,39 @@ interface SidebarProps {
   onSidebarToggle: (isOpen?: boolean) => void
 }
 
-const SIDEBAR_ITEMS = [
-  { title: 'Dashboard', path: ROUTE_PATHS.ROOT, icon: <DashboardIcon /> },
-  { title: 'Users', path: ROUTE_PATHS.USER, icon: <UserIcon /> },
-  { subHeader: 'Vehicle Management' },
-  { title: 'Cars', path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
-  { title: 'Pricing', path: ROUTE_PATHS.PRICING, icon: <PackageIcon /> },
-  { subHeader: 'Subscription Management' },
-  { title: 'Subscriptions', path: ROUTE_PATHS.SUBSCRIPTION, icon: <SubscriptionIcon /> },
-  {
-    title: 'Additional Expense',
-    path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
-    icon: <AdditionalExpenseIcon />,
-  },
-  { title: 'Insurance', path: ROUTE_PATHS.INSURANCE, icon: <InsuranceIcon /> },
-  { subHeader: 'Others' },
-  { title: 'Charging Stations', path: ROUTE_PATHS.CHARGING_STATIONS, icon: <ChargingIcon /> },
-]
-
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
   const location = useLocation()
+  const { t } = useTranslation()
+
+  const SIDEBAR_ITEMS = useMemo(
+    () => [
+      { title: t('sidebar.dashboard'), path: ROUTE_PATHS.ROOT, icon: <DashboardIcon /> },
+      { title: t('sidebar.users'), path: ROUTE_PATHS.USER, icon: <UserIcon /> },
+      { subHeader: t('sidebar.vehicleManagement') },
+      { title: t('sidebar.cars'), path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
+      { title: t('sidebar.pricing'), path: ROUTE_PATHS.PRICING, icon: <PackageIcon /> },
+      { subHeader: t('sidebar.subscriptionManagement') },
+      {
+        title: t('sidebar.subscriptions'),
+        path: ROUTE_PATHS.SUBSCRIPTION,
+        icon: <SubscriptionIcon />,
+      },
+      {
+        title: t('sidebar.additionalExpense'),
+        path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
+        icon: <AdditionalExpenseIcon />,
+      },
+      { title: t('sidebar.insurance'), path: ROUTE_PATHS.INSURANCE, icon: <InsuranceIcon /> },
+      { subHeader: t('sidebar.others') },
+      {
+        title: t('sidebar.chargingStations'),
+        path: ROUTE_PATHS.CHARGING_STATIONS,
+        icon: <ChargingIcon />,
+      },
+    ],
+    [t]
+  )
 
   function handleSidebarEvent(event: React.MouseEvent | React.KeyboardEvent) {
     // Ensure we allow usage of tab and shift to navigate the sidebar without closing it

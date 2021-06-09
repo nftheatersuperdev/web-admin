@@ -7,6 +7,7 @@ import '@testing-library/jest-dom'
 import 'jest-styled-components'
 import { format } from 'util'
 import mediaQuery from 'css-mediaquery'
+import i18n from 'i18n'
 import { server } from './tests/mockServer'
 
 // Fail the tests if we have a console.error or warning
@@ -45,6 +46,12 @@ beforeAll(() => {
   // print a warning message to the console.
   // https://mswjs.io/docs/api/setup-server/listen
   server.listen({ onUnhandledRequest: 'error' })
+})
+
+beforeEach(async () => {
+  // We need to set the language before running the tests
+  // so that i18n.language is defined
+  await i18n.changeLanguage('en')
 })
 
 afterEach(() => {

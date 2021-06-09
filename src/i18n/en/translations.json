@@ -1,0 +1,24 @@
+{
+  "header": {
+    "aria": {
+      "sidebarToggle": "Sidebar Toggle",
+      "logo": "EVme Logo",
+      "changeLanguage": "Change Language",
+      "settings": "Settings",
+      "login": "Login"
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "cars": "Cars",
+    "pricing": "Pricing",
+    "vehicleManagement": "Vehicle Management",
+    "subscriptionManagement": "Subscription Management",
+    "subscriptions": "Subscriptions",
+    "additionalExpense": "Additional Expense",
+    "insurance": "Insurance",
+    "others": "Others",
+    "chargingStations": "Charging Stations"
+  }
+}

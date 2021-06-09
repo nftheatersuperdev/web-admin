@@ -5,8 +5,10 @@ import {
   Menu as MenuIcon,
   ExitToApp as ExitToAppIcon,
   Settings as SettingsIcon,
+  Language as LanguageIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
+import { useTranslation } from 'react-i18next'
 
 const AppBar = styled(MuiAppBar)`
   z-index: ${({ theme }) => theme.zIndex.drawer + 1};
@@ -23,25 +25,51 @@ export interface HeaderProps {
 
 function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
   const history = useHistory()
+  const { t, i18n } = useTranslation()
+
+  const handleLanguageChange = async () => {
+    const newLang = i18n.language === 'en' ? 'th' : 'en'
+    await i18n.changeLanguage(newLang)
+  }
 
   return (
     <AppBar position="sticky">
       <Toolbar>
         <Hidden mdUp>
-          <Button color="inherit" aria-label="Sidebar Toggle" onClick={onSidebarToggle}>
+          <Button
+            color="inherit"
+            aria-label={t('header.aria.sidebarToggle')}
+            onClick={onSidebarToggle}
+          >
             <MenuIcon />
           </Button>
         </Hidden>
 
         <Box marginRight="auto" pl={1}>
-          <img src={process.env.PUBLIC_URL + '/logo.png'} alt="EVme Logo" />
+          <img src={process.env.PUBLIC_URL + '/logo.png'} alt={t('header.aria.logo')} />
         </Box>
 
-        <IconButton color="inherit" onClick={() => history.push(ROUTE_PATHS.SETTINGS)}>
+        <IconButton
+          color="inherit"
+          onClick={handleLanguageChange}
+          aria-label={t('header.aria.changeLanguage')}
+        >
+          <LanguageIcon />
+        </IconButton>
+
+        <IconButton
+          color="inherit"
+          onClick={() => history.push(ROUTE_PATHS.SETTINGS)}
+          aria-label={t('header.aria.settings')}
+        >
           <SettingsIcon />
         </IconButton>
 
-        <IconButton color="inherit" onClick={() => history.push(ROUTE_PATHS.LOGIN)}>
+        <IconButton
+          color="inherit"
+          onClick={() => history.push(ROUTE_PATHS.LOGIN)}
+          aria-label={t('header.aria.login')}
+        >
           <ExitToAppIcon />
         </IconButton>
       </Toolbar>
