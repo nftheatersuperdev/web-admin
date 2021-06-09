@@ -329,6 +329,15 @@ export type AdditionalExpenseSumAggregate = {
   price?: Maybe<Scalars['Float']>
 }
 
+export type AdditionalExpenseUpdateInput = {
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  note?: Maybe<Scalars['String']>
+}
+
 export type Authorize = {
   __typename?: 'Authorize'
   authorizeUri: Scalars['String']
@@ -361,6 +370,7 @@ export type Car = {
   color: Scalars['String']
   subscriptions?: Maybe<Array<Sub>>
   carModel?: Maybe<CarModel>
+  deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -480,6 +490,30 @@ export type CarCountAggregate = {
   color?: Maybe<Scalars['Int']>
 }
 
+export type CarDeleteFilter = {
+  and?: Maybe<Array<CarDeleteFilter>>
+  or?: Maybe<Array<CarDeleteFilter>>
+  id?: Maybe<IdFilterComparison>
+  vin?: Maybe<StringFieldComparison>
+  plateNumber?: Maybe<StringFieldComparison>
+  carModelId?: Maybe<StringFieldComparison>
+  color?: Maybe<StringFieldComparison>
+}
+
+export type CarDeleteResponse = {
+  __typename?: 'CarDeleteResponse'
+  id?: Maybe<Scalars['String']>
+  vin?: Maybe<Scalars['String']>
+  plateNumber?: Maybe<Scalars['String']>
+  carModelId?: Maybe<Scalars['String']>
+  color?: Maybe<Scalars['String']>
+  subscriptions?: Maybe<Array<Sub>>
+  carModel?: Maybe<CarModel>
+  deletedAt?: Maybe<Scalars['DateTime']>
+  createdAt?: Maybe<Scalars['DateTime']>
+  updatedAt?: Maybe<Scalars['DateTime']>
+}
+
 export type CarEdge = {
   __typename?: 'CarEdge'
   /** The node containing the Car */
@@ -500,6 +534,7 @@ export type CarFilter = {
 
 export type CarInput = {
   carModelId: Scalars['String']
+  color: Scalars['String']
   vin: Scalars['String']
   plateNumber: Scalars['String']
 }
@@ -856,6 +891,11 @@ export type DeleteManyAdditionalExpensesInput = {
   filter: AdditionalExpenseDeleteFilter
 }
 
+export type DeleteManyCarsInput = {
+  /** Filter to find records to delete */
+  filter: CarDeleteFilter
+}
+
 export type DeleteManyResponse = {
   __typename?: 'DeleteManyResponse'
   /** The number of records deleted. */
@@ -868,6 +908,11 @@ export type DeleteOneAdditionalExpenseFileInput = {
 }
 
 export type DeleteOneAdditionalExpenseInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID']
+}
+
+export type DeleteOneCarInput = {
   /** The id of the record to delete. */
   id: Scalars['ID']
 }
@@ -914,6 +959,8 @@ export type Mutation = {
   setSubscriptionsOnCar: Car
   createCar: Car
   updateCar: Car
+  deleteCar: CarDeleteResponse
+  deleteCars: DeleteManyResponse
   addCarModelsToCarBodyType: CarBodyType
   setCarModelsOnCarBodyType: CarBodyType
   createCarBodyType: CarBodyType
@@ -957,8 +1004,8 @@ export type Mutation = {
   createAdditionalExpenseFile: AdditionalExpenseFile
   createAdditionalExpenseFiles: Array<AdditionalExpenseFile>
   updateAdditionalExpenseFile: AdditionalExpenseFile
-  deleteOneAdditionalExpenseFile: AdditionalExpenseFileDeleteResponse
-  deleteManyAdditionalExpenseFiles: DeleteManyResponse
+  deleteAdditionalExpenseFile: AdditionalExpenseFileDeleteResponse
+  deleteAdditionalExpenseFiles: DeleteManyResponse
 }
 
 export type MutationSubscribeArgs = {
@@ -1031,6 +1078,14 @@ export type MutationCreateCarArgs = {
 
 export type MutationUpdateCarArgs = {
   input: UpdateOneCarInput
+}
+
+export type MutationDeleteCarArgs = {
+  input: DeleteOneCarInput
+}
+
+export type MutationDeleteCarsArgs = {
+  input: DeleteManyCarsInput
 }
 
 export type MutationAddCarModelsToCarBodyTypeArgs = {
@@ -1205,11 +1260,11 @@ export type MutationUpdateAdditionalExpenseFileArgs = {
   input: UpdateOneAdditionalExpenseFileInput
 }
 
-export type MutationDeleteOneAdditionalExpenseFileArgs = {
+export type MutationDeleteAdditionalExpenseFileArgs = {
   input: DeleteOneAdditionalExpenseFileInput
 }
 
-export type MutationDeleteManyAdditionalExpenseFilesArgs = {
+export type MutationDeleteAdditionalExpenseFilesArgs = {
   input: DeleteManyAdditionalExpenseFilesInput
 }
 
@@ -2113,7 +2168,7 @@ export type UpdateOneAdditionalExpenseInput = {
   /** The id of the record to update */
   id: Scalars['ID']
   /** The update to apply. */
-  update: AdditionalExpenseInput
+  update: AdditionalExpenseUpdateInput
 }
 
 export type UpdateOneCarBodyTypeInput = {

@@ -14,12 +14,6 @@ import * as yup from 'yup'
 import { ICarModelItem } from 'helper/car.helper'
 import { CarInput } from 'services/evme.types'
 
-interface SubscriptionProps {
-  open: boolean
-  onClose: (newCarData: CarInput | null) => void
-  carModelOptions: ICarModelItem[]
-}
-
 const validationSchema = yup.object({
   vin: yup.string().required('Field is required'),
   plateNumber: yup.string().required('Field is required'),
@@ -27,18 +21,40 @@ const validationSchema = yup.object({
   carModel: yup.string().required('Field is required'),
 })
 
-export default function CarCreateDialog({
+export interface ICarInfo {
+  vin: string
+  plateNumber: string
+  carModelId: string
+  color: string
+}
+
+interface SubscriptionProps {
+  open: boolean
+  onClose: (newCarData: CarInput | null) => void
+  carModelOptions: ICarModelItem[]
+  carInfo: ICarInfo
+}
+
+export default function CarUpdateDialog({
   open,
   onClose,
   carModelOptions,
+  carInfo,
 }: SubscriptionProps): JSX.Element {
+  const {
+    vin: originalVin,
+    plateNumber: originalPlate,
+    carModelId: originalModelId,
+    color: originalColor,
+  } = carInfo
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
-      vin: '',
-      plateNumber: '',
-      carColor: '',
-      carModel: '',
+      vin: originalVin,
+      plateNumber: originalPlate,
+      carColor: originalColor,
+      carModel: originalModelId,
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -52,9 +68,18 @@ export default function CarCreateDialog({
     },
   })
 
+  const _selectedCarModel = carModelOptions.find((model: ICarModelItem) => {
+    return model.id === originalModelId
+  })
+
+  const onFormCloseHandler = () => {
+    onClose(null)
+    formik.resetForm()
+  }
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Create New Car</DialogTitle>
+      <DialogTitle id="form-dialog-title">Update Car</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -110,6 +135,7 @@ export default function CarCreateDialog({
                 label="Car Model"
                 id="carModel"
                 name="carModel"
+                defaultValue={_selectedCarModel}
                 value={formik.values.carModel}
                 onChange={formik.handleChange}
                 error={formik.touched.carModel && Boolean(formik.errors.carModel)}
@@ -126,17 +152,11 @@ export default function CarCreateDialog({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={() => {
-            onClose(null)
-            formik.resetForm()
-          }}
-          color="primary"
-        >
+        <Button onClick={onFormCloseHandler} color="primary">
           Cancel
         </Button>
         <Button onClick={() => formik.handleSubmit()} color="primary" variant="contained">
-          Create
+          Update
         </Button>
       </DialogActions>
     </Dialog>

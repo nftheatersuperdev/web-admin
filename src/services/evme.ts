@@ -8,11 +8,6 @@ import {
 } from 'react-query'
 import config from 'config'
 import {
-  IAddCarToCarModelParam,
-  ICreateCarMutationResponse,
-  ICreateCarMutationResItem,
-} from 'helper/car.helper'
-import {
   CarModel,
   PackagePrice,
   Payment,
@@ -22,7 +17,12 @@ import {
   AdditionalExpenseInput,
   UpdateOneAdditionalExpenseInput,
   CarInput,
+  DeleteOneCarInput,
+  UpdateOneCarInput,
+  PackagePriceInput,
 } from './evme.types'
+
+const CARS_QUERY_KEY = 'evme:cars'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -31,20 +31,18 @@ export interface WithPaginationType<P> {
     node: P
   }[]
 }
-export function useCreateCar(): UseMutationResult<
-  ICreateCarMutationResItem,
-  unknown,
-  CarInput,
-  unknown
-> {
-  return useMutation(async ({ vin, plateNumber, carModelId }: CarInput) => {
-    const response: ICreateCarMutationResponse = await gqlClient.request(
+export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, unknown> {
+  const queryClient = useQueryClient()
+
+  return useMutation(async ({ vin, plateNumber, carModelId, color }: CarInput) => {
+    const response = await gqlClient.request(
       gql`
-        mutation createCar($input: CreateOneCarInput!) {
+        mutation CreateCar($input: CreateOneCarInput!) {
           createCar(input: $input) {
             vin
             plateNumber
             carModelId
+            color
           }
         }
       `,
@@ -54,45 +52,73 @@ export function useCreateCar(): UseMutationResult<
             vin,
             plateNumber,
             carModelId,
+            color,
           },
         },
       }
     )
+
+    queryClient.invalidateQueries(CARS_QUERY_KEY)
     return response.createCar
   })
 }
 
-export function useAddCarsToCarModel(): UseMutationResult<
-  unknown,
-  unknown,
-  IAddCarToCarModelParam,
-  unknown
-> {
-  return useMutation(async ({ carId, carModelId }: IAddCarToCarModelParam) => {
+export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCarInput, unknown> {
+  const queryClient = useQueryClient()
+
+  return useMutation(async ({ id, update }: UpdateOneCarInput) => {
     const response = await gqlClient.request(
       gql`
-        mutation addCarsToCarModel($input: AddCarsToCarModelInput!) {
-          addCarsToCarModel(input: $input) {
-            id
-            brand
-            model
+        mutation UpdateCar($input: UpdateOneCarInput!) {
+          updateCar(input: $input) {
+            vin
+            plateNumber
+            carModelId
+            color
           }
         }
       `,
       {
         input: {
-          id: carId,
-          relationsId: [carModelId],
+          id,
+          update,
         },
       }
     )
-    return response
+    queryClient.invalidateQueries(CARS_QUERY_KEY)
+    return response.updateCar
+  })
+}
+
+export function useDeleteCar(): UseMutationResult<CarModel, unknown, DeleteOneCarInput, unknown> {
+  const queryClient = useQueryClient()
+
+  return useMutation(async ({ id }: DeleteOneCarInput) => {
+    const response = await gqlClient.request(
+      gql`
+        mutation DeleteCar($input: DeleteOneCarInput!) {
+          deleteCar(input: $input) {
+            id
+            vin
+            plateNumber
+            color
+          }
+        }
+      `,
+      {
+        input: {
+          id,
+        },
+      }
+    )
+    queryClient.invalidateQueries(CARS_QUERY_KEY)
+    return response.deleteCar
   })
 }
 
 export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
   return useQuery(
-    ['evme:cars'],
+    [CARS_QUERY_KEY],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -116,6 +142,7 @@ export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
                     id
                     vin
                     plateNumber
+                    color
                   }
                   createdAt
                   updatedAt
@@ -207,7 +234,53 @@ export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
                   carModel {
                     brand
                     model
+                    id
                   }
+                }
+              }
+            }
+          }
+        `,
+        {
+          paging: {
+            first: 100,
+          },
+        }
+      )
+      return response.packagePrices
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve pricing, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}
+
+export function usePricingById(
+  carModelId: string | undefined
+): UseQueryResult<WithPaginationType<PackagePrice>> {
+  return useQuery(
+    ['evme:use-pricing-by-id', carModelId],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query PackagePrices {
+            packagePrices(filter: {carModelId: {eq: "${carModelId}"}}) {
+              edges {
+                node {
+                  id
+                  carModelId
+                  carModel {
+                      id
+                      brand
+                      model
+                  }
+                  duration
+                  price
+                  createdAt
+                  updatedAt
                 }
               }
             }
@@ -221,8 +294,40 @@ export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
         console.error(`Unable to retrieve pricing, ${error.message}`)
       },
       keepPreviousData: true,
+      enabled: !!carModelId,
     }
   )
+}
+
+export function useCreatePrices(): UseMutationResult<
+  CarModel,
+  unknown,
+  PackagePriceInput[],
+  unknown
+> {
+  const queryClient = useQueryClient()
+
+  return useMutation(async (packagePrices: PackagePriceInput[]) => {
+    const response = await gqlClient.request(
+      gql`
+        mutation CreatePackagePrices($input: CreateManyPackagePricesInput!) {
+          createPackagePrices(input: $input) {
+            id
+            carModelId
+            duration
+            price
+          }
+        }
+      `,
+      {
+        input: {
+          packagePrices,
+        },
+      }
+    )
+    queryClient.invalidateQueries('evme:subscriptions')
+    return response.createPackagePrices
+  })
 }
 
 export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {

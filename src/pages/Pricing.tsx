@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { Button, Card } from '@material-ui/core'
-import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
+import { DataGrid, GridColDef, GridRowData, GridToolbar } from '@material-ui/data-grid'
 import { formatDates, formatMoney } from 'utils'
+import { ICarModelItem } from 'helper/car.helper'
+import toast from 'react-hot-toast'
 import PageToolbar from 'layout/PageToolbar'
-import { usePricing } from 'services/evme'
+import { useCars, useCreatePrices, usePricing } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
-import PackageCreateDialog from './PackageCreateDialog'
+import { PackagePriceInput } from 'services/evme.types'
+import PricingCreateDialog from './PricingCreateDialog'
+import PricingUpdateDialog from './PricingUpdateDialog'
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', description: 'ID', flex: 1 },
@@ -37,7 +41,11 @@ const columns: GridColDef[] = [
 
 export default function Pricing(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
+  const [updatedModelId, setUpdatedModelId] = useState('')
   const { data } = usePricing()
+  const { data: carModelList } = useCars()
+  const mutationCreatePrice = useCreatePrices()
 
   // Transform response into table format
   const rows = data?.edges?.map(({ node }) => ({
@@ -48,7 +56,50 @@ export default function Pricing(): JSX.Element {
     duration: node?.duration,
     brand: node?.carModel?.brand,
     model: node?.carModel?.model,
+    modelId: node?.carModel?.id,
   }))
+
+  const carModelOptions = [] as ICarModelItem[]
+
+  // INFO: parsing option to display in dialog select element
+  carModelList?.edges?.forEach(({ node }) => {
+    carModelOptions.push({
+      id: node?.id,
+      modelName: `${node?.brand} - ${node?.model}`,
+    })
+  })
+
+  const handleCreatePrice = (data: PackagePriceInput[] | null) => {
+    setIsCreateDialogOpen(false)
+    if (!data) {
+      return
+    }
+
+    toast.promise(mutationCreatePrice.mutateAsync(data), {
+      loading: 'Loading',
+      success: 'Create price successfully!',
+      error: 'Failed to create price! 11',
+    })
+  }
+
+  const handleUpdatePrice = (data: PackagePriceInput[] | null) => {
+    setIsUpdateDialogOpen(false)
+
+    if (!data) {
+      return
+    }
+
+    toast.promise(mutationCreatePrice.mutateAsync(data), {
+      loading: 'Loading',
+      success: 'Update price successfully!',
+      error: 'Failed to update price!',
+    })
+  }
+
+  const handleRowClick = (param: GridRowData) => {
+    setIsUpdateDialogOpen(true)
+    setUpdatedModelId(param.row.modelId)
+  }
 
   return (
     <Page>
@@ -64,14 +115,26 @@ export default function Pricing(): JSX.Element {
             autoPageSize
             rows={rows}
             columns={columns}
-            checkboxSelection
             components={{
               Toolbar: GridToolbar,
             }}
+            onRowClick={handleRowClick}
+            checkboxSelection
+            disableSelectionOnClick
           />
         </Card>
       ) : null}
-      <PackageCreateDialog open={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} />
+      <PricingCreateDialog
+        open={isCreateDialogOpen}
+        onClose={(data) => handleCreatePrice(data)}
+        modelOptions={carModelOptions}
+      />
+      <PricingUpdateDialog
+        open={isUpdateDialogOpen}
+        onClose={(data) => handleUpdatePrice(data)}
+        modelOptions={carModelOptions}
+        modelId={updatedModelId}
+      />
     </Page>
   )
 }
