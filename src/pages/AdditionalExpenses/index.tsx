@@ -26,7 +26,6 @@ export default function AdditionalExpenses(): JSX.Element {
   const { data } = useAdditionalExpenses()
   const updateAdditionalExpense = useUpdateAdditionalExpense()
 
-  // Transform response into table format
   const rows = data?.edges?.map(({ node }) => ({
     id: node?.id,
     subscriptionId: node?.subscriptionId,
@@ -163,16 +162,11 @@ export default function AdditionalExpenses(): JSX.Element {
         </Card>
       ) : null}
 
-      <CreateDialog
-        open={isCreateDialogOpen}
-        onSubmit={() => setIsCreateDialogOpen(false)}
-        onCancel={() => setIsCreateDialogOpen(false)}
-      />
+      <CreateDialog open={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} />
 
       <UpdateDialog
         open={isUpdateDialogOpen}
-        onSubmit={() => setIsUpdateDialogOpen(false)}
-        onCancel={() => setIsUpdateDialogOpen(false)}
+        onClose={() => setIsUpdateDialogOpen(false)}
         id={currentAdditionExpenseId}
       />
 

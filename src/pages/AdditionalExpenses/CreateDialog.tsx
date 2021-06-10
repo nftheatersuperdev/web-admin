@@ -1,11 +1,9 @@
-import React, { useState } from 'react'
 import {
   Select,
   Grid,
   MenuItem,
   FormControl,
   TextField,
-  Input,
   InputLabel,
   InputAdornment,
   Dialog,
@@ -13,224 +11,199 @@ import {
   DialogTitle,
   DialogContent,
   Button,
+  FormHelperText,
 } from '@material-ui/core'
+import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import { transformToMutationInput } from 'pages/AdditionalExpenses/utils'
 import { useSubscriptions, useCreateAdditionalExpense } from 'services/evme'
-import { AdditionalExpenseInput } from 'services/evme.types'
-import { ExpenseTypes, ExpenseStatuses } from './utils'
+import { ExpenseTypes, ExpenseStatuses, transformToMutationInput, validationSchema } from './utils'
 
 interface AdditionalExpenseCreateDialogProps {
   open: boolean
-  onSubmit: () => void
-  onCancel: () => void
-}
-
-interface SubscriptionItem {
-  id: string
+  onClose: () => void
 }
 
 export default function AdditionalExpenseCreateDialog(
   props: AdditionalExpenseCreateDialogProps
 ): JSX.Element {
-  const { open, onSubmit, onCancel } = props
+  const { open, onClose } = props
+
   const { data: subscriptions } = useSubscriptions()
   const createAdditionalExpense = useCreateAdditionalExpense()
 
-  const subscriptionItems = subscriptions?.edges?.map(({ node }) => ({
-    id: node?.id,
-  }))
+  const formik = useFormik({
+    initialValues: {
+      subscriptionId: '',
+      price: 0,
+      type: '',
+      noticeDate: '',
+      status: '',
+      note: '',
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      const input = transformToMutationInput(values)
 
-  const initialData = {
-    subscriptionId: '',
-    price: 0,
-    type: '',
-    noticeDate: '',
-    status: '',
-    note: '',
-  }
+      toast.promise(createAdditionalExpense.mutateAsync(input), {
+        loading: 'Loading',
+        success: () => {
+          formik.resetForm()
+          onClose()
+          return 'Created additional expense successfully!'
+        },
+        error: 'Failed to create additional expense!',
+      })
+    },
+  })
 
-  const [additionalExpenseData, setAdditionalExpenseData] =
-    useState<AdditionalExpenseInput>(initialData)
-
-  const [isDisableSubmit, setIsDisableSubmit] = useState(false)
-
-  const handleInputChange = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAdditionalExpenseData({
-      ...additionalExpenseData,
-      [key]: event.target.value,
-    })
-  }
-
-  const handleSubscriptionChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    const { id: subscriptionId } = event.target.value as SubscriptionItem
-    setAdditionalExpenseData({
-      ...additionalExpenseData,
-      subscriptionId,
-    })
-  }
-
-  const handleExpenseTypeChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    setAdditionalExpenseData({
-      ...additionalExpenseData,
-      type: event.target.value as string,
-    })
-  }
-
-  const handlePriceChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    setAdditionalExpenseData({
-      ...additionalExpenseData,
-      price: Number(event.target.value) as number,
-    })
-  }
-
-  const handleExpenseStatusChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    setAdditionalExpenseData({
-      ...additionalExpenseData,
-      status: event.target.value as string,
-    })
-  }
-
-  const handleSubmit = () => {
-    setIsDisableSubmit(true)
-
-    const input = transformToMutationInput(additionalExpenseData)
-
-    toast.promise(createAdditionalExpense.mutateAsync(input), {
-      loading: 'Loading',
-      success: () => {
-        setAdditionalExpenseData(initialData)
-        setIsDisableSubmit(false)
-        onSubmit()
-        return 'Created additional expense successfully!'
-      },
-      error: () => {
-        setIsDisableSubmit(false)
-        return 'Failed to create additional expense!'
-      },
-    })
-  }
+  const subscriptionItems = subscriptions?.edges?.map(({ node }) => node?.id)
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Create New Additional Expense</DialogTitle>
-      <DialogContent>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <FormControl fullWidth={true}>
-              <InputLabel id="subscription">Subscription ID</InputLabel>
-              <Select
-                labelId="subscription"
-                onChange={handleSubscriptionChange}
-                value={additionalExpenseData.subscriptionId}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                renderValue={(selected: any) => <div>{selected}</div>}
+      <form onSubmit={formik.handleSubmit}>
+        <DialogContent>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <FormControl
+                fullWidth
+                error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
               >
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {(subscriptionItems || []).map((item: any) => (
-                  <MenuItem key={item.id} value={item}>
-                    {item.id}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                <InputLabel id="subscription">Subscription ID</InputLabel>
+                <Select
+                  labelId="subscription"
+                  id="subscriptionId"
+                  name="subscriptionId"
+                  value={formik.values.subscriptionId}
+                  onChange={formik.handleChange}
+                >
+                  {(subscriptionItems || []).map((id) => (
+                    <MenuItem key={id} value={id}>
+                      {id}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId) && (
+                  <FormHelperText>
+                    {formik.touched.subscriptionId && formik.errors.subscriptionId}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="Date of expense notice"
+                type="datetime-local"
+                id="noticeDate"
+                name="noticeDate"
+                value={formik.values.noticeDate}
+                onChange={({ target }) => formik.setFieldValue('noticeDate', target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={formik.touched.noticeDate && Boolean(formik.errors.noticeDate)}
+                helperText={formik.touched.noticeDate && formik.errors.noticeDate}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)}>
+                <InputLabel id="expenseType">Type of expense</InputLabel>
+                <Select
+                  labelId="expenseType"
+                  id="type"
+                  name="type"
+                  value={formik.values.type}
+                  onChange={formik.handleChange}
+                >
+                  {ExpenseTypes.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {type}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formik.touched.type && Boolean(formik.errors.type) && (
+                  <FormHelperText>{formik.touched.type && formik.errors.type}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Price"
+                id="price"
+                name="price"
+                value={formik.values.price}
+                onChange={({ target }) => formik.setFieldValue('price', Number(target.value))}
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                }}
+                error={formik.touched.price && Boolean(formik.errors.price)}
+                helperText={formik.touched.price && formik.errors.price}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
+                <InputLabel id="status">Status</InputLabel>
+                <Select
+                  labelId="status"
+                  id="status"
+                  name="status"
+                  value={formik.values.status}
+                  onChange={formik.handleChange}
+                >
+                  {ExpenseStatuses.map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formik.touched.status && Boolean(formik.errors.status) && (
+                  <FormHelperText>{formik.touched.status && formik.errors.status}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label="Note"
+                id="note"
+                name="note"
+                value={formik.values.note}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={formik.touched.note && Boolean(formik.errors.note)}
+                helperText={formik.touched.note && formik.errors.note}
+              />
+            </Grid>
           </Grid>
+        </DialogContent>
 
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Date of expense notice"
-              type="datetime-local"
-              value={additionalExpenseData.noticeDate}
-              onChange={handleInputChange('noticeDate')}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              formik.resetForm()
+              onClose()
+            }}
+            color="primary"
+          >
+            Cancel
+          </Button>
 
-          <Grid item xs={12}>
-            <FormControl fullWidth={true}>
-              <InputLabel id="expenseType">Type of expense</InputLabel>
-              <Select
-                labelId="expenseType"
-                onChange={handleExpenseTypeChange}
-                input={<Input />}
-                value={additionalExpenseData.type}
-              >
-                {ExpenseTypes.map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {type}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Price"
-              onChange={handlePriceChange}
-              value={additionalExpenseData.price}
-              InputProps={{
-                startAdornment: <InputAdornment position="start">฿</InputAdornment>,
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControl fullWidth={true}>
-              <InputLabel id="status">Status</InputLabel>
-              <Select
-                labelId="status"
-                onChange={handleExpenseStatusChange}
-                input={<Input />}
-                value={additionalExpenseData.status}
-              >
-                {ExpenseStatuses.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Note"
-              value={additionalExpenseData.note}
-              multiline
-              rows={3}
-              onChange={handleInputChange('note')}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-        </Grid>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onCancel} color="primary">
-          Cancel
-        </Button>
-
-        <Button
-          onClick={handleSubmit}
-          color="primary"
-          variant="contained"
-          disabled={isDisableSubmit}
-        >
-          Create
-        </Button>
-      </DialogActions>
+          <Button color="primary" variant="contained" type="submit">
+            Create
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   )
 }
