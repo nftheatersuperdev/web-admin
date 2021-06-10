@@ -6,6 +6,7 @@ import {
   GridToolbar,
   GridCellParams,
   GridRowData,
+  GridRowParams,
 } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
@@ -155,6 +156,11 @@ export default function AdditionalExpenses(): JSX.Element {
             rows={rows}
             columns={columns}
             checkboxSelection
+            disableSelectionOnClick
+            onRowClick={(params: GridRowParams) => {
+              setCurrentAdditionExpenseId(params.row.id)
+              setIsUpdateDialogOpen(true)
+            }}
             components={{
               Toolbar: GridToolbar,
             }}
