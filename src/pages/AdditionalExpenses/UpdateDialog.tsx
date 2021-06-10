@@ -91,6 +91,8 @@ export default function AdditionalExpenseUpdateDialog(
 
       if (!subscriptionIds.includes(subscriptionId)) {
         setSubscriptionItems([subscriptionId, ...subscriptionIds])
+      } else {
+        setSubscriptionItems(subscriptionIds)
       }
     }
   }, [data, subscriptions])
