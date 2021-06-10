@@ -175,6 +175,7 @@ export default function AdditionalExpenseUpdateDialog(
                 label="Price"
                 id="price"
                 name="price"
+                type="number"
                 value={formik.values.price}
                 onChange={({ target }) => formik.setFieldValue('price', Number(target.value))}
                 InputProps={{
