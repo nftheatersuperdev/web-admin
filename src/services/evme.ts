@@ -137,12 +137,16 @@ export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
                   chargeTime
                   fastChargeTime
                   bodyTypeId
+                  bodyType {
+                    bodyType
+                  }
                   model
                   cars {
                     id
                     vin
                     plateNumber
                     color
+                    updatedAt
                   }
                   createdAt
                   updatedAt

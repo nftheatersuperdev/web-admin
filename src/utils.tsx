@@ -6,6 +6,10 @@ export function formatDates(params: GridValueFormatterParams): string {
   return dayjs(params.value as Date).format('DD/MM/YYYY')
 }
 
+export function formatDateWithPattern(params: GridValueFormatterParams, pattern: string): string {
+  return dayjs(params.value as Date).format(pattern || 'DD/MM/YYYY')
+}
+
 export function formatMoney(params: GridValueFormatterParams): string {
   const formatter = new Intl.NumberFormat('th-TH', {
     style: 'currency',

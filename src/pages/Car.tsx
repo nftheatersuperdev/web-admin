@@ -6,9 +6,11 @@ import {
   GridToolbar,
   GridRowData,
   GridCellParams,
+  GridValueFormatterParams,
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
+import { formatDateWithPattern } from 'utils'
 import { ICarModelItem } from 'helper/car.helper'
 import { useCars, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
@@ -17,24 +19,6 @@ import { Page } from 'layout/LayoutRoute'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { ICarInfo } from './CarUpdateDialog'
-
-interface IRowModel {
-  carModelId: string
-  brand: string
-  topSpeed: number
-  acceleration: number
-  range: number
-  totalPower: number
-  chargeType: string
-  chargeTime: number
-  fastChargeTime: number
-  bodyTypeId: number
-  model: string
-  id: string
-  vin: string
-  plateNumber: string
-  color: string
-}
 
 export default function Car(): JSX.Element {
   const { data: carModelList } = useCars()
@@ -47,9 +31,6 @@ export default function Car(): JSX.Element {
   const createCarMutation = useCreateCar()
   const updateCarMutation = useUpdateCar()
   const deleteCarMutation = useDeleteCar()
-
-  const rows = [] as IRowModel[]
-  const carModelOptions = [] as ICarModelItem[]
 
   const onCloseCreateDialog = (data: CarInput | null) => {
     setIsCreateDialogOpen(false)
@@ -83,38 +64,35 @@ export default function Car(): JSX.Element {
     )
   }
 
-  // Transform response into table format
-  carModelList?.edges?.forEach(({ node }) => {
-    if (node.cars) {
-      rows.push(
-        ...(node.cars as unknown as CarType[]).map((car: CarType) => ({
-          carModelId: node?.id,
-          brand: node?.brand,
-          topSpeed: node?.topSpeed,
-          acceleration: node?.acceleration,
-          range: node?.range,
-          totalPower: node?.totalPower,
-          chargeType: node?.chargeType,
-          chargeTime: node?.chargeTime,
-          fastChargeTime: node?.fastChargeTime,
-          bodyTypeId: node?.bodyTypeId,
-          model: node?.model,
-          id: car?.id,
-          vin: car?.vin,
-          plateNumber: car?.plateNumber,
-          color: car?.color,
-        }))
-      )
-    }
-  })
+  const rows =
+    carModelList?.edges?.reduce((prevRows, { node }) => {
+      const currentRows = (node?.cars || []).map((car: CarType) => ({
+        carModelId: node?.id,
+        brand: node?.brand,
+        topSpeed: node?.topSpeed,
+        acceleration: node?.acceleration,
+        range: node?.range,
+        totalPower: node?.totalPower,
+        chargeType: node?.chargeType,
+        chargeTime: node?.chargeTime,
+        fastChargeTime: node?.fastChargeTime,
+        bodyType: node?.bodyType?.bodyType,
+        model: node?.model,
+        id: car?.id,
+        vin: car?.vin,
+        plateNumber: car?.plateNumber,
+        color: car?.color,
+        updatedAt: car?.updatedAt,
+      }))
 
-  // INFO: parsing option to display in dialog select element
-  carModelList?.edges?.forEach(({ node }) => {
-    carModelOptions.push({
+      return [...prevRows, ...currentRows]
+    }, [] as GridRowData[]) || []
+
+  const carModelOptions: ICarModelItem[] =
+    carModelList?.edges?.map(({ node }) => ({
       id: node?.id,
       modelName: `${node?.brand} - ${node?.model}`,
-    })
-  })
+    })) || []
 
   const openEditCarDialog = (param: GridRowData) => {
     setSelectedCarId(param.id)
@@ -129,7 +107,25 @@ export default function Car(): JSX.Element {
   }
 
   const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', description: 'ID', flex: 1 },
     { field: 'brand', headerName: 'Brand', description: 'Brand', flex: 1 },
+    { field: 'model', headerName: 'Model', description: 'Model', flex: 1 },
+    { field: 'color', headerName: 'Color', description: 'Color', flex: 1 },
+    { field: 'plateNumber', headerName: 'Plate Number', description: 'PlateNumber', flex: 1 },
+    {
+      field: 'bodyType',
+      headerName: 'Body Type',
+      description: 'Body Type',
+      flex: 1,
+    },
+    {
+      field: 'updatedAt',
+      headerName: 'Updated Date',
+      description: 'Updated date',
+      valueFormatter: (params: GridValueFormatterParams) =>
+        formatDateWithPattern(params, 'DD/MM/YYYY HH:mm'),
+      flex: 1,
+    },
     { field: 'topSpeed', headerName: 'Top Speed', description: 'Top Speed', flex: 1, hide: true },
     {
       field: 'acceleration',
@@ -138,9 +134,21 @@ export default function Car(): JSX.Element {
       flex: 1,
       hide: true,
     },
-    { field: 'range', headerName: 'Range', description: 'Range', flex: 1 },
-    { field: 'totalPower', headerName: 'Total Power', description: 'Total Power', flex: 1 },
-    { field: 'chargeType', headerName: 'Charge Type', description: 'Charge Type', flex: 1 },
+    { field: 'range', headerName: 'Range', description: 'Range', flex: 1, hide: true },
+    {
+      field: 'totalPower',
+      headerName: 'Total Power',
+      description: 'Total Power',
+      flex: 1,
+      hide: true,
+    },
+    {
+      field: 'chargeType',
+      headerName: 'Charge Type',
+      description: 'Charge Type',
+      flex: 1,
+      hide: true,
+    },
     {
       field: 'chargeTime',
       headerName: 'Charge Time',
@@ -155,17 +163,7 @@ export default function Car(): JSX.Element {
       flex: 1,
       hide: true,
     },
-    {
-      field: 'bodyTypeId',
-      headerName: 'Body Type ID',
-      description: 'Body Type Id',
-      flex: 1,
-      hide: true,
-    },
-    { field: 'model', headerName: 'Model', description: 'Model', flex: 1 },
-    { field: 'id', headerName: 'ID', description: 'ID', flex: 1 },
     { field: 'vin', headerName: 'VIN', description: 'VIN', flex: 1 },
-    { field: 'plateNumber', headerName: 'Plate Number', description: 'PlateNumber', flex: 1 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -235,17 +233,20 @@ export default function Car(): JSX.Element {
           />
         </Card>
       ) : null}
+
       <CarCreateDialog
         open={isCreateDialogOpen}
         onClose={onCloseCreateDialog}
         carModelOptions={carModelOptions}
       />
+
       <CarUpdateDialog
         open={isUpdateDialogOpen}
         onClose={(data) => onCloseEditDialog(data)}
         carModelOptions={carModelOptions}
         carInfo={carInfo}
       />
+
       <ConfirmDialog
         open={isDeleteDialogOpen}
         title="Delete Car"
