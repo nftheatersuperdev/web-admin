@@ -93,8 +93,8 @@ export default function CarsReturn(): JSX.Element {
               name="fromDate"
               format="DD/MM/YYYY HH:mm"
               value={fromDate}
-              onChange={(date: unknown) => {
-                setFromDate(date as Date)
+              onChange={(date) => {
+                date && setFromDate(date.toDate())
               }}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
@@ -109,8 +109,8 @@ export default function CarsReturn(): JSX.Element {
               name="toDate"
               format="DD/MM/YYYY HH:mm"
               value={toDate}
-              onChange={(date: unknown) => {
-                setToDate(date as Date)
+              onChange={(date) => {
+                date && setToDate(date.toDate())
               }}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
