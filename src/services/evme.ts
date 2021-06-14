@@ -495,14 +495,21 @@ export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<Addit
               edges {
                 node {
                   id
-                  createdAt
-                  updatedAt
                   subscriptionId
+                  subscription {
+                    userId
+                    user {
+                      firstName
+                      lastName
+                    }
+                  }
                   status
                   type
                   note
                   price
                   noticeDate
+                  createdAt
+                  updatedAt
                 }
               }
             }

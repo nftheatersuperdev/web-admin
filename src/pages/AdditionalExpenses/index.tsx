@@ -40,17 +40,23 @@ export default function AdditionalExpenses(): JSX.Element {
 
   const updateAdditionalExpense = useUpdateAdditionalExpense()
 
-  const rows = data?.edges?.map(({ node }) => ({
-    id: node?.id,
-    subscriptionId: node?.subscriptionId,
-    createdAt: node?.createdAt,
-    updatedAt: node?.updatedAt,
-    noticeDate: node?.noticeDate,
-    type: node?.type,
-    status: node?.status,
-    note: node?.note,
-    price: node?.price,
-  }))
+  const rows = data?.edges?.map(({ node }) => {
+    const { userId, user } = node.subscription || {}
+    const userFullName = `${user?.firstName || ''} ${user?.lastName || ''}`
+    return {
+      id: node?.id,
+      subscriptionId: node?.subscriptionId,
+      userId,
+      userFullName,
+      noticeDate: node?.noticeDate,
+      type: node?.type,
+      price: node?.price,
+      status: node?.status,
+      note: node?.note,
+      createdAt: node?.createdAt,
+      updatedAt: node?.updatedAt,
+    }
+  })
 
   const handleSubmitDelete = (rowData?: GridRowData) => {
     if (!rowData) {
@@ -90,7 +96,18 @@ export default function AdditionalExpenses(): JSX.Element {
       description: 'Subscription ID',
       flex: 1,
     },
-    { field: 'note', headerName: 'Notes', description: 'Notes', flex: 1 },
+    {
+      field: 'userId',
+      headerName: 'User ID',
+      description: 'User ID',
+      flex: 1,
+    },
+    {
+      field: 'userFullName',
+      headerName: 'User full name',
+      description: 'User full name',
+      flex: 1,
+    },
     {
       field: 'noticeDate',
       headerName: 'Date of expense notice',
@@ -98,12 +115,23 @@ export default function AdditionalExpenses(): JSX.Element {
       valueFormatter: formatDates,
       flex: 1,
     },
+    { field: 'type', headerName: 'Type of expense', description: 'Type of expense', flex: 1 },
+    {
+      field: 'price',
+      headerName: 'Price',
+      description: 'Price',
+      valueFormatter: formatMoney,
+      flex: 1,
+    },
+    { field: 'status', headerName: 'Status', description: 'Status', flex: 1 },
+    { field: 'note', headerName: 'Notes', description: 'Notes', flex: 1 },
     {
       field: 'createdAt',
       headerName: 'Date Created',
       description: 'Date Created',
       valueFormatter: formatDates,
       flex: 1,
+      hide: true,
     },
     {
       field: 'updatedAt',
@@ -111,15 +139,7 @@ export default function AdditionalExpenses(): JSX.Element {
       description: 'Date Updated',
       valueFormatter: formatDates,
       flex: 1,
-    },
-    { field: 'type', headerName: 'Type', description: 'Type of Expense', flex: 1 },
-    { field: 'status', headerName: 'Status', description: 'Status', flex: 1 },
-    {
-      field: 'price',
-      headerName: 'Price',
-      description: 'Price',
-      valueFormatter: formatMoney,
-      flex: 1,
+      hide: true,
     },
     {
       field: 'actions',
