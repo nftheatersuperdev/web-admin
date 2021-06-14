@@ -373,11 +373,16 @@ export type Car = {
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  available: Scalars['Boolean']
 }
 
 export type CarSubscriptionsArgs = {
   filter?: Maybe<SubFilter>
   sorting?: Maybe<Array<SubSort>>
+}
+
+export type CarAvailableArgs = {
+  input: AvailableCarInput
 }
 
 export type CarAggregateGroupBy = {
@@ -917,7 +922,8 @@ export type DeleteOneCarInput = {
   id: Scalars['ID']
 }
 
-export type ExtendSubscriptionInputDto = {
+export type ExtendSubscriptionInput = {
+  packagePriceId: Scalars['String']
   subscriptionId: Scalars['String']
 }
 
@@ -941,10 +947,14 @@ export type IdFilterComparison = {
 export type Mutation = {
   __typename?: 'Mutation'
   signup: User
+  updateProfile: User
+  updateCreditCard: Authorize
   subscribe: Authorize
   extendSubscription: Sub
+  setDefaultAddressOnUser: User
   addSubscriptionsToUser: User
   setSubscriptionsOnUser: User
+  removeDefaultAddressFromUser: User
   createUser: User
   updateUser: User
   setBodyTypeOnCarModel: CarModel
@@ -966,6 +976,8 @@ export type Mutation = {
   createCarBodyType: CarBodyType
   updateCarBodyType: CarBodyType
   setUserOnSub: Sub
+  setStartAddressOnSub: Sub
+  setEndAddressOnSub: Sub
   setPackagePriceOnSub: Sub
   setCarOnSub: Sub
   addEventsToSub: Sub
@@ -1008,12 +1020,24 @@ export type Mutation = {
   deleteAdditionalExpenseFiles: DeleteManyResponse
 }
 
+export type MutationUpdateProfileArgs = {
+  input: UserInputUpdate
+}
+
+export type MutationUpdateCreditCardArgs = {
+  tokenCard: Scalars['String']
+}
+
 export type MutationSubscribeArgs = {
   input: SubscribeInput
 }
 
 export type MutationExtendSubscriptionArgs = {
-  input: ExtendSubscriptionInputDto
+  input: ExtendSubscriptionInput
+}
+
+export type MutationSetDefaultAddressOnUserArgs = {
+  input: SetDefaultAddressOnUserInput
 }
 
 export type MutationAddSubscriptionsToUserArgs = {
@@ -1022,6 +1046,10 @@ export type MutationAddSubscriptionsToUserArgs = {
 
 export type MutationSetSubscriptionsOnUserArgs = {
   input: SetSubscriptionsOnUserInput
+}
+
+export type MutationRemoveDefaultAddressFromUserArgs = {
+  input: RemoveDefaultAddressFromUserInput
 }
 
 export type MutationCreateUserArgs = {
@@ -1106,6 +1134,14 @@ export type MutationUpdateCarBodyTypeArgs = {
 
 export type MutationSetUserOnSubArgs = {
   input: SetUserOnSubInput
+}
+
+export type MutationSetStartAddressOnSubArgs = {
+  input: SetStartAddressOnSubInput
+}
+
+export type MutationSetEndAddressOnSubArgs = {
+  input: SetEndAddressOnSubInput
 }
 
 export type MutationSetPackagePriceOnSubArgs = {
@@ -1751,6 +1787,13 @@ export type RemoveAdditionalExpenseFromAdditionalExpenseFileInput = {
   relationId: Scalars['ID']
 }
 
+export type RemoveDefaultAddressFromUserInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The id of relation. */
+  relationId: Scalars['ID']
+}
+
 export type SetAdditionalExpenseOnAdditionalExpenseFileInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -1807,6 +1850,20 @@ export type SetCarsOnCarModelInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type SetDefaultAddressOnUserInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The id of relation. */
+  relationId: Scalars['ID']
+}
+
+export type SetEndAddressOnSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The id of relation. */
+  relationId: Scalars['ID']
+}
+
 export type SetEventsOnPaymentInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -1854,6 +1911,13 @@ export type SetPricesOnCarModelInput = {
   id: Scalars['ID']
   /** The ids of the relations. */
   relationIds: Array<Scalars['ID']>
+}
+
+export type SetStartAddressOnSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The id of relation. */
+  relationId: Scalars['ID']
 }
 
 export type SetSubscriptionOnAdditionalExpenseInput = {
@@ -1938,7 +2002,7 @@ export type Sub = {
   __typename?: 'Sub'
   id: Scalars['String']
   userId: Scalars['String']
-  user?: Maybe<User>
+  user: User
   packagePriceId: Scalars['String']
   carId: Scalars['String']
   car?: Maybe<Car>
@@ -1946,8 +2010,8 @@ export type Sub = {
   startDate: Scalars['DateTime']
   endDate: Scalars['DateTime']
   kind: Scalars['String']
-  startAddress: Scalars['String']
-  endAddress: Scalars['String']
+  startAddress: UserAddress
+  endAddress?: Maybe<UserAddress>
   events?: Maybe<Array<SubscriptionEvent>>
   payments?: Maybe<Array<Payment>>
   additionalExpenses?: Maybe<Array<AdditionalExpense>>
@@ -2062,7 +2126,8 @@ export type SubscribeInput = {
   packagePriceId: Scalars['String']
   startDate: Scalars['DateTime']
   tokenCard?: Maybe<Scalars['String']>
-  startAddress: Scalars['String']
+  startAddress: UserAddressInput
+  endAddress?: Maybe<UserAddressInput>
   modelId: Scalars['String']
   color: Scalars['String']
 }
@@ -2153,8 +2218,8 @@ export type SubscriptionInput = {
   startDate: Scalars['DateTime']
   endDate: Scalars['DateTime']
   kind: Scalars['String']
-  startAddress: Scalars['String']
-  endAddress: Scalars['String']
+  startAddressId: Scalars['String']
+  endAddressId: Scalars['String']
 }
 
 export type UpdateOneAdditionalExpenseFileInput = {
@@ -2231,12 +2296,15 @@ export type User = {
   __typename?: 'User'
   id: Scalars['String']
   firebaseId: Scalars['String']
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
   role: Scalars['String']
   subscriptions?: Maybe<Array<Sub>>
   disabled: Scalars['Boolean']
   phoneNumber: Scalars['String']
   email: Scalars['String']
   omiseId?: Maybe<Scalars['String']>
+  defaultAddress?: Maybe<UserAddress>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   creditCard?: Maybe<UserCreditCard>
@@ -2247,10 +2315,31 @@ export type UserSubscriptionsArgs = {
   sorting?: Maybe<Array<SubSort>>
 }
 
+export type UserAddress = {
+  __typename?: 'UserAddress'
+  id: Scalars['String']
+  full: Scalars['String']
+  latitude: Scalars['Float']
+  longitude: Scalars['Float']
+  remark: Scalars['String']
+  user: User
+}
+
+export type UserAddressInput = {
+  id?: Maybe<Scalars['String']>
+  userId?: Maybe<Scalars['String']>
+  full?: Maybe<Scalars['String']>
+  latitude?: Maybe<Scalars['Float']>
+  longitude?: Maybe<Scalars['Float']>
+  remark?: Maybe<Scalars['String']>
+}
+
 export type UserAggregateGroupBy = {
   __typename?: 'UserAggregateGroupBy'
   id?: Maybe<Scalars['String']>
   firebaseId?: Maybe<Scalars['String']>
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
   role?: Maybe<Scalars['String']>
   disabled?: Maybe<Scalars['Boolean']>
   phoneNumber?: Maybe<Scalars['String']>
@@ -2271,6 +2360,8 @@ export type UserCountAggregate = {
   __typename?: 'UserCountAggregate'
   id?: Maybe<Scalars['Int']>
   firebaseId?: Maybe<Scalars['Int']>
+  firstName?: Maybe<Scalars['Int']>
+  lastName?: Maybe<Scalars['Int']>
   role?: Maybe<Scalars['Int']>
   disabled?: Maybe<Scalars['Int']>
   phoneNumber?: Maybe<Scalars['Int']>
@@ -2283,6 +2374,9 @@ export type UserCreditCard = {
   __typename?: 'UserCreditCard'
   brand: Scalars['String']
   lastDigits: Scalars['String']
+  expirationMonth: Scalars['Float']
+  expirationYear: Scalars['Float']
+  name: Scalars['String']
 }
 
 export type UserEdge = {
@@ -2298,6 +2392,8 @@ export type UserFilter = {
   or?: Maybe<Array<UserFilter>>
   id?: Maybe<StringFieldComparison>
   firebaseId?: Maybe<StringFieldComparison>
+  firstName?: Maybe<StringFieldComparison>
+  lastName?: Maybe<StringFieldComparison>
   role?: Maybe<StringFieldComparison>
   disabled?: Maybe<BooleanFieldComparison>
   phoneNumber?: Maybe<StringFieldComparison>
@@ -2308,16 +2404,29 @@ export type UserFilter = {
 
 export type UserInput = {
   firebaseId: Scalars['String']
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
   phoneNumber: Scalars['String']
   email: Scalars['String']
   omiseId: Scalars['String']
   disabled: Scalars['Boolean']
+  defaultAddress: UserAddressInput
+}
+
+export type UserInputUpdate = {
+  phoneNumber?: Maybe<Scalars['String']>
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+  defaultAddress?: Maybe<UserAddressInput>
 }
 
 export type UserMaxAggregate = {
   __typename?: 'UserMaxAggregate'
   id?: Maybe<Scalars['String']>
   firebaseId?: Maybe<Scalars['String']>
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
   role?: Maybe<Scalars['String']>
   phoneNumber?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
@@ -2329,6 +2438,8 @@ export type UserMinAggregate = {
   __typename?: 'UserMinAggregate'
   id?: Maybe<Scalars['String']>
   firebaseId?: Maybe<Scalars['String']>
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
   role?: Maybe<Scalars['String']>
   phoneNumber?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
@@ -2345,6 +2456,8 @@ export type UserSort = {
 export enum UserSortFields {
   Id = 'id',
   FirebaseId = 'firebaseId',
+  FirstName = 'firstName',
+  LastName = 'lastName',
   Role = 'role',
   Disabled = 'disabled',
   PhoneNumber = 'phoneNumber',

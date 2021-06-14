@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useMemo, ChangeEvent } from 'react'
 import {
   Select,
   Grid,
@@ -17,38 +17,46 @@ import {
 import dayjs from 'dayjs'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import {
-  useSubscriptions,
-  useAdditionalExpenseById,
-  useUpdateAdditionalExpense,
-} from 'services/evme'
+import { useSubscriptions, useUpdateAdditionalExpense } from 'services/evme'
+import { AdditionalExpense } from 'services/evme.types'
 import { ExpenseTypes, ExpenseStatuses, transformToMutationInput, validationSchema } from './utils'
 
 interface AdditionalExpenseUpdateDialogProps {
   open: boolean
   onClose: () => void
-  id: string
+  initialData?: AdditionalExpense
 }
 
 export default function AdditionalExpenseUpdateDialog(
   props: AdditionalExpenseUpdateDialogProps
 ): JSX.Element {
-  const { open, onClose, id } = props
+  const { open, onClose, initialData } = props
+  const {
+    id = '',
+    subscriptionId,
+    subscription,
+    price,
+    type,
+    noticeDate,
+    status,
+    note,
+  } = initialData || {}
+
   const { data: subscriptions } = useSubscriptions()
-  const { data } = useAdditionalExpenseById(id)
   const updateAdditionalExpense = useUpdateAdditionalExpense()
 
-  const [initialValues, setInitialValues] = useState({
-    subscriptionId: '',
-    price: 0,
-    type: '',
-    noticeDate: '',
-    status: '',
-    note: '',
-  })
-
   const formik = useFormik({
-    initialValues,
+    initialValues: {
+      subscriptionId: subscriptionId || '',
+      userId: subscription?.userId || '',
+      firstName: subscription?.user?.firstName || '',
+      lastName: subscription?.user?.lastName || '',
+      price: price || 0,
+      type: type || '',
+      noticeDate: noticeDate ? dayjs(noticeDate).format('YYYY-MM-DDTHH:mm:ss') : '',
+      status: status || '',
+      note: note || '',
+    },
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -72,30 +80,40 @@ export default function AdditionalExpenseUpdateDialog(
     },
   })
 
-  const [subscriptionItems, setSubscriptionItems] = useState<string[]>([])
+  const subscriptionItems = useMemo(() => {
+    const subscriptionList =
+      subscriptions?.edges?.map(({ node: { id, userId, user } }) => ({
+        id,
+        userId,
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+      })) || []
 
-  useEffect(() => {
-    if (data) {
-      const { subscriptionId, price, type, noticeDate, status, note } = data
+    const isExist = subscriptionList.find(({ id }) => id === subscriptionId)
 
-      setInitialValues({
-        subscriptionId,
-        price,
-        type,
-        noticeDate: noticeDate ? dayjs(noticeDate).format('YYYY-MM-DDTHH:mm:ss') : '',
-        status,
-        note: note || '',
-      })
-
-      const subscriptionIds = subscriptions?.edges?.map(({ node }) => node?.id) || []
-
-      if (!subscriptionIds.includes(subscriptionId)) {
-        setSubscriptionItems([subscriptionId, ...subscriptionIds])
-      } else {
-        setSubscriptionItems(subscriptionIds)
-      }
+    if (subscriptionId && !isExist) {
+      return [
+        {
+          id: subscriptionId,
+          userId: subscription?.userId || '',
+          firstName: subscription?.user?.firstName || '',
+          lastName: subscription?.user?.lastName || '',
+        },
+        ...subscriptionList,
+      ]
     }
-  }, [data, subscriptions])
+
+    return subscriptionList
+  }, [subscriptionId, subscription, subscriptions])
+
+  const handleSubscriptionChange = ({ target }: ChangeEvent<{ name?: string; value: unknown }>) => {
+    formik.setFieldValue('subscriptionId', target.value)
+
+    const subItem = subscriptionItems.find(({ id }) => id === target.value)
+    formik.setFieldValue('userId', subItem?.userId)
+    formik.setFieldValue('firstName', subItem?.firstName)
+    formik.setFieldValue('lastName', subItem?.lastName)
+  }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -114,11 +132,11 @@ export default function AdditionalExpenseUpdateDialog(
                   id="subscriptionId"
                   name="subscriptionId"
                   value={formik.values.subscriptionId}
-                  onChange={formik.handleChange}
+                  onChange={handleSubscriptionChange}
                 >
-                  {(subscriptionItems || []).map((id) => (
-                    <MenuItem key={id} value={id}>
-                      {id}
+                  {(subscriptionItems || []).map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.id}
                     </MenuItem>
                   ))}
                 </Select>
@@ -128,6 +146,34 @@ export default function AdditionalExpenseUpdateDialog(
                   </FormHelperText>
                 )}
               </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="User ID"
+                id="userId"
+                name="userId"
+                value={formik.values.userId}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="User Full Name"
+                id="fullName"
+                name="fullName"
+                value={`${formik.values.firstName} ${formik.values.lastName}`}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled
+              />
             </Grid>
 
             <Grid item xs={6}>
@@ -147,7 +193,7 @@ export default function AdditionalExpenseUpdateDialog(
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)}>
                 <InputLabel id="expenseType">Type of expense</InputLabel>
                 <Select
@@ -169,7 +215,7 @@ export default function AdditionalExpenseUpdateDialog(
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Price"
@@ -186,7 +232,7 @@ export default function AdditionalExpenseUpdateDialog(
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
                 <InputLabel id="status">Status</InputLabel>
                 <Select
@@ -212,7 +258,7 @@ export default function AdditionalExpenseUpdateDialog(
               <TextField
                 fullWidth
                 multiline
-                rows={3}
+                rows={2}
                 label="Note"
                 id="note"
                 name="note"

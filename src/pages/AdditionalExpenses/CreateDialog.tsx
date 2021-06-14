@@ -1,3 +1,4 @@
+import { useMemo, ChangeEvent } from 'react'
 import {
   Select,
   Grid,
@@ -23,6 +24,18 @@ interface AdditionalExpenseCreateDialogProps {
   onClose: () => void
 }
 
+const initialValues = {
+  subscriptionId: '',
+  userId: '',
+  firstName: '',
+  lastName: '',
+  price: 0,
+  type: '',
+  noticeDate: '',
+  status: '',
+  note: '',
+}
+
 export default function AdditionalExpenseCreateDialog(
   props: AdditionalExpenseCreateDialogProps
 ): JSX.Element {
@@ -32,14 +45,7 @@ export default function AdditionalExpenseCreateDialog(
   const createAdditionalExpense = useCreateAdditionalExpense()
 
   const formik = useFormik({
-    initialValues: {
-      subscriptionId: '',
-      price: 0,
-      type: '',
-      noticeDate: '',
-      status: '',
-      note: '',
-    },
+    initialValues,
     validationSchema,
     onSubmit: (values) => {
       const input = transformToMutationInput(values)
@@ -56,7 +62,25 @@ export default function AdditionalExpenseCreateDialog(
     },
   })
 
-  const subscriptionItems = subscriptions?.edges?.map(({ node }) => node?.id)
+  const subscriptionItems = useMemo(() => {
+    return (
+      subscriptions?.edges?.map(({ node: { id, userId, user } }) => ({
+        id,
+        userId,
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+      })) || []
+    )
+  }, [subscriptions])
+
+  const handleSubscriptionChange = ({ target }: ChangeEvent<{ name?: string; value: unknown }>) => {
+    formik.setFieldValue('subscriptionId', target.value)
+
+    const subItem = subscriptionItems.find(({ id }) => id === target.value)
+    formik.setFieldValue('userId', subItem?.userId)
+    formik.setFieldValue('firstName', subItem?.firstName)
+    formik.setFieldValue('lastName', subItem?.lastName)
+  }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -75,11 +99,11 @@ export default function AdditionalExpenseCreateDialog(
                   id="subscriptionId"
                   name="subscriptionId"
                   value={formik.values.subscriptionId}
-                  onChange={formik.handleChange}
+                  onChange={handleSubscriptionChange}
                 >
-                  {(subscriptionItems || []).map((id) => (
-                    <MenuItem key={id} value={id}>
-                      {id}
+                  {(subscriptionItems || []).map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.id}
                     </MenuItem>
                   ))}
                 </Select>
@@ -89,6 +113,34 @@ export default function AdditionalExpenseCreateDialog(
                   </FormHelperText>
                 )}
               </FormControl>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="User ID"
+                id="userId"
+                name="userId"
+                value={formik.values.userId}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="User Full Name"
+                id="fullName"
+                name="fullName"
+                value={`${formik.values.firstName} ${formik.values.lastName}`}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled
+              />
             </Grid>
 
             <Grid item xs={6}>
@@ -108,7 +160,7 @@ export default function AdditionalExpenseCreateDialog(
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)}>
                 <InputLabel id="expenseType">Type of expense</InputLabel>
                 <Select
@@ -130,7 +182,7 @@ export default function AdditionalExpenseCreateDialog(
               </FormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Price"
@@ -147,7 +199,7 @@ export default function AdditionalExpenseCreateDialog(
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
                 <InputLabel id="status">Status</InputLabel>
                 <Select
@@ -173,7 +225,7 @@ export default function AdditionalExpenseCreateDialog(
               <TextField
                 fullWidth
                 multiline
-                rows={3}
+                rows={2}
                 label="Note"
                 id="note"
                 name="note"

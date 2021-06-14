@@ -5,6 +5,7 @@ import {
   useMutation,
   UseMutationResult,
   useQueryClient,
+  UseQueryOptions,
 } from 'react-query'
 import config from 'config'
 import {
@@ -188,6 +189,8 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
                   updatedAt
                   kind
                   user {
+                    firstName
+                    lastName
                     phoneNumber
                     email
                   }
@@ -517,7 +520,10 @@ export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<Addit
   )
 }
 
-export function useAdditionalExpenseById(id: string): UseQueryResult<AdditionalExpense> {
+export function useAdditionalExpenseById(
+  id: string,
+  options?: UseQueryOptions<unknown, unknown, AdditionalExpense>
+): UseQueryResult<AdditionalExpense> {
   return useQuery(
     ['evme:additional-expense-by-id', id],
     async () => {
@@ -527,6 +533,13 @@ export function useAdditionalExpenseById(id: string): UseQueryResult<AdditionalE
             additionalExpense(id: $id) {
               id
               subscriptionId
+              subscription {
+                userId
+                user {
+                  firstName
+                  lastName
+                }
+              }
               price
               type
               noticeDate
@@ -547,11 +560,7 @@ export function useAdditionalExpenseById(id: string): UseQueryResult<AdditionalE
       )
       return response.additionalExpense
     },
-    {
-      onError: (error: Error) => {
-        console.error(`Unable to retrieve additional expense by id: ${id}, ${error.message}`)
-      },
-    }
+    options
   )
 }
 

@@ -13,7 +13,11 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { formatDates, formatMoney } from 'utils'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
-import { useAdditionalExpenses, useUpdateAdditionalExpense } from 'services/evme'
+import {
+  useAdditionalExpenses,
+  useAdditionalExpenseById,
+  useUpdateAdditionalExpense,
+} from 'services/evme'
 import CreateDialog from 'pages/AdditionalExpenses/CreateDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import UpdateDialog from './UpdateDialog'
@@ -23,8 +27,17 @@ export default function AdditionalExpenses(): JSX.Element {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentRowData, setCurrentRowData] = useState<GridRowData>()
-  const [currentAdditionExpenseId, setCurrentAdditionExpenseId] = useState<string>('')
+  const [currentExpenseId, setCurrentExpenseId] = useState<string>('')
+
   const { data } = useAdditionalExpenses()
+
+  const { data: currentExpenseData, isLoading } = useAdditionalExpenseById(currentExpenseId, {
+    enabled: !!currentExpenseId,
+    onError: () => {
+      console.error(`Unable to retrieve additional expense by id: ${currentExpenseId}`)
+    },
+  })
+
   const updateAdditionalExpense = useUpdateAdditionalExpense()
 
   const rows = data?.edges?.map(({ node }) => ({
@@ -120,7 +133,7 @@ export default function AdditionalExpenses(): JSX.Element {
           <IconButton
             aria-label="edit"
             onClick={() => {
-              setCurrentAdditionExpenseId(params.row.id)
+              setCurrentExpenseId(params.row.id)
               setIsUpdateDialogOpen(true)
             }}
           >
@@ -158,7 +171,7 @@ export default function AdditionalExpenses(): JSX.Element {
             checkboxSelection
             disableSelectionOnClick
             onRowClick={(params: GridRowParams) => {
-              setCurrentAdditionExpenseId(params.row.id)
+              setCurrentExpenseId(params.row.id)
               setIsUpdateDialogOpen(true)
             }}
             components={{
@@ -171,9 +184,9 @@ export default function AdditionalExpenses(): JSX.Element {
       <CreateDialog open={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} />
 
       <UpdateDialog
-        open={isUpdateDialogOpen}
+        open={isUpdateDialogOpen && !isLoading}
         onClose={() => setIsUpdateDialogOpen(false)}
-        id={currentAdditionExpenseId}
+        initialData={currentExpenseData}
       />
 
       <ConfirmDialog
