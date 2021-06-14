@@ -20,6 +20,9 @@ import {
   DeleteOneCarInput,
   UpdateOneCarInput,
   PackagePriceInput,
+  CursorPaging,
+  SubFilter,
+  SubSort,
 } from './evme.types'
 
 const CARS_QUERY_KEY = 'evme:cars'
@@ -208,6 +211,82 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
             }
           }
         `
+      )
+      return response.subscriptions
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve subscriptions, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}
+
+export function useSearchSubscriptions(
+  queryKey?: string,
+  paging?: CursorPaging,
+  filter?: SubFilter,
+  sorting?: SubSort[]
+): UseQueryResult<WithPaginationType<Sub>> {
+  return useQuery(
+    ['evme:search-subscriptions', queryKey],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query SearchSubscriptions(
+            $paging: CursorPaging
+            $filter: SubFilter
+            $sorting: [SubSort!]
+          ) {
+            subscriptions(paging: $paging, filter: $filter, sorting: $sorting) {
+              edges {
+                node {
+                  id
+                  userId
+                  startDate
+                  endDate
+                  createdAt
+                  updatedAt
+                  kind
+                  user {
+                    firstName
+                    lastName
+                    phoneNumber
+                    email
+                  }
+                  car {
+                    vin
+                    plateNumber
+                    color
+                    carModel {
+                      brand
+                      model
+                      seats
+                      topSpeed
+                      fastChargeTime
+                    }
+                  }
+                  packagePrice {
+                    duration
+                    price
+                  }
+                  startAddress {
+                    full
+                  }
+                  endAddress {
+                    full
+                  }
+                }
+              }
+            }
+          }
+        `,
+        {
+          paging,
+          filter,
+          sorting,
+        }
       )
       return response.subscriptions
     },

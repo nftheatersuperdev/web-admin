@@ -8,6 +8,8 @@ import { Page } from 'layout/LayoutRoute'
 import CardStatus from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
 import { useCars, usePayments, useSubscriptions, useUsers } from 'services/evme'
+import CarsDelivery from './CarsDelivery'
+import CarsReturn from './CarsReturn'
 
 function _formatMoney(amount: number) {
   const formatter = new Intl.NumberFormat('th-TH', {
@@ -112,6 +114,15 @@ export default function Dashboard(): JSX.Element {
             icon={<PeopleIcon />}
           />
         </Grid>
+
+        <Grid item xs={6}>
+          <CarsDelivery />
+        </Grid>
+
+        <Grid item xs={6}>
+          <CarsReturn />
+        </Grid>
+
         <Grid item xs={12}>
           <Typography variant="h5" color="textSecondary">
             Quick Links

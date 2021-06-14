@@ -5,6 +5,8 @@ import { Integrations } from '@sentry/tracing'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DayjsUtils from '@date-io/dayjs'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
@@ -47,7 +49,9 @@ ReactDOM.render(
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <App />
+          <MuiPickersUtilsProvider utils={DayjsUtils}>
+            <App />
+          </MuiPickersUtilsProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </StylesProvider>
