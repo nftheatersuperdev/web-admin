@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
   DataGrid,
@@ -7,7 +7,7 @@ import {
   GridRowData,
   GridCellParams,
 } from '@material-ui/data-grid'
-import DeleteIcon from '@material-ui/icons/Delete'
+import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
 import { ICarModelItem } from 'helper/car.helper'
 import { useCars, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
@@ -174,9 +174,19 @@ export default function Car(): JSX.Element {
       disableClickEventBubbling: true,
       width: 140,
       renderCell: (params: GridCellParams) => (
-        <IconButton aria-label="delete" onClick={() => handleDeleteIconClick(params.row)}>
-          <DeleteIcon />
-        </IconButton>
+        <Fragment>
+          <IconButton
+            aria-label="edit"
+            onClick={() => {
+              openEditCarDialog(params)
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton aria-label="delete" onClick={() => handleDeleteIconClick(params.row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Fragment>
       ),
     },
   ]
@@ -239,7 +249,7 @@ export default function Car(): JSX.Element {
       <ConfirmDialog
         open={isDeleteDialogOpen}
         title="Delete Car"
-        message={`Are you sure that you want to delete this ID: ${currentRowData.id} ?`}
+        message={`Are you sure that you want to delete this: ${currentRowData.brand} - ${currentRowData.model}, ${currentRowData.color}, ${currentRowData.plateNumber} ?`}
         onConfirm={() => handleConfirmDelete(currentRowData)}
         onCancel={() => setIsDeleteDialogOpen(false)}
       />
