@@ -5,10 +5,9 @@ import {
   Menu as MenuIcon,
   ExitToApp as ExitToAppIcon,
   Settings as SettingsIcon,
-  Language as LanguageIcon,
 } from '@material-ui/icons'
-import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
+import { ROUTE_PATHS } from 'routes'
 
 const AppBar = styled(MuiAppBar)`
   z-index: ${({ theme }) => theme.zIndex.drawer + 1};
@@ -54,7 +53,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
           onClick={handleLanguageChange}
           aria-label={t('header.aria.changeLanguage')}
         >
-          <LanguageIcon />
+          {i18n.language === 'en' ? '🇺🇸' : '🇹🇭'}
         </IconButton>
 
         <IconButton
