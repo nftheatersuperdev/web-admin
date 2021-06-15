@@ -1,13 +1,20 @@
 import { useState } from 'react'
 import { Button, Card } from '@material-ui/core'
-import { DataGrid, GridColDef, GridRowData, GridToolbar } from '@material-ui/data-grid'
+import {
+  DataGrid,
+  GridColDef,
+  GridPageChangeParams,
+  GridRowData,
+  GridToolbar,
+} from '@material-ui/data-grid'
 import { formatDates, formatMoney } from 'utils'
 import { ICarModelItem } from 'helper/car.helper'
 import toast from 'react-hot-toast'
+import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { useCars, useCreatePrices, usePricing } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
-import { PackagePriceInput } from 'services/evme.types'
+import { PackagePriceInput, PackagePriceSortFields, SortDirection } from 'services/evme.types'
 import PricingCreateDialog from './PricingCreateDialog'
 import PricingUpdateDialog from './PricingUpdateDialog'
 
@@ -43,12 +50,35 @@ export default function Pricing(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [updatedModelId, setUpdatedModelId] = useState('')
-  const { data } = usePricing()
+  const [pageSize, setPageSize] = useState(10)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const { data, fetchNextPage, fetchPreviousPage } = usePricing(pageSize, [
+    {
+      field: PackagePriceSortFields.CarModelId,
+      direction: SortDirection.Desc,
+    },
+  ])
   const { data: carModelList } = useCars()
   const mutationCreatePrice = useCreatePrices()
 
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handlePageChange = (params: GridPageChangeParams) => {
+    // If we navigate FORWARD in our pages, i.e. the new page number is higher than current page
+    if (params.page > currentPageIndex) {
+      fetchNextPage()
+    }
+    // If we navigate BACKWARD in our pages, i.e. the new page number is lower than current page
+    else {
+      fetchPreviousPage()
+    }
+    setCurrentPageIndex(params.page)
+  }
+
   // Transform response into table format
-  const rows = data?.edges?.map(({ node }) => ({
+  const rows = data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
     id: node?.id,
     createdAt: node?.createdAt,
     updatedAt: node?.updatedAt,
@@ -112,7 +142,14 @@ export default function Pricing(): JSX.Element {
         <Card>
           <DataGrid
             autoHeight
-            autoPageSize
+            pagination
+            pageSize={pageSize}
+            page={currentPageIndex}
+            rowCount={data?.pages[currentPageIndex]?.totalCount}
+            paginationMode="server"
+            rowsPerPageOptions={config.tableRowsPerPageOptions}
+            onPageSizeChange={handlePageSizeChange}
+            onPageChange={handlePageChange}
             rows={rows}
             columns={columns}
             components={{

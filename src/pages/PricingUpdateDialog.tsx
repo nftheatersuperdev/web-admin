@@ -49,7 +49,9 @@ export default function PricingUpdateDialog({
   })
   const [isPriceUpdated, setIsPriceUpdate] = useState(false)
 
-  const { data } = usePricingById(modelId)
+  const { data } = usePricingById({
+    carModelId: modelId,
+  })
 
   useEffect(() => {
     const selectedModel = modelOptions.find((model) => {

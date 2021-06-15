@@ -47,7 +47,9 @@ export default function PricingCreateDialog({
     modelOptions.find((model) => {
       return model.modelName === selectedCarModel
     })?.id || ''
-  const { data } = usePricingById(selectedId)
+  const { data } = usePricingById({
+    carModelId: selectedId,
+  })
 
   useEffect(() => {
     const priceSnapshot = {

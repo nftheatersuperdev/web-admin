@@ -26,9 +26,12 @@ import {
   CursorPaging,
   SubFilter,
   SubSort,
+  PackagePriceSort,
 } from './evme.types'
 
 const CARS_QUERY_KEY = 'evme:cars'
+const PRICING_BY_MODEL_ID_KEY = 'evme:use-pricing-by-id'
+const PRICING_QUERY_KEY = 'evme:pricing'
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -311,14 +314,28 @@ export function useSearchSubscriptions(
   )
 }
 
-export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
-  return useQuery(
-    ['evme:subscriptions'],
-    async () => {
+export function usePricing(
+  pageSize = 10,
+  sorting: PackagePriceSort[]
+): UseInfiniteQueryResult<WithPaginationType<PackagePrice>> {
+  return useInfiniteQuery(
+    [PRICING_QUERY_KEY, pageSize],
+    async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetPricing {
-            packagePrices {
+          query GetPricing(
+            $pageSize: Int!
+            $after: ConnectionCursor
+            $sorting: [PackagePriceSort!]
+          ) {
+            packagePrices(paging: { first: $pageSize, after: $after }, sorting: $sorting) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
               edges {
                 node {
                   id
@@ -337,14 +354,15 @@ export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
           }
         `,
         {
-          paging: {
-            first: 100,
-          },
+          pageSize,
+          after: pageParam,
+          sorting,
         }
       )
       return response.packagePrices
     },
     {
+      getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
         console.error(`Unable to retrieve pricing, ${error.message}`)
       },
@@ -353,16 +371,20 @@ export function usePricing(): UseQueryResult<WithPaginationType<PackagePrice>> {
   )
 }
 
-export function usePricingById(
+export function usePricingById({
+  carModelId,
+  isDisabled = false,
+}: {
   carModelId: string | undefined
-): UseQueryResult<WithPaginationType<PackagePrice>> {
+  isDisabled?: boolean
+}): UseQueryResult<WithPaginationType<PackagePrice>> {
   return useQuery(
-    ['evme:use-pricing-by-id', carModelId],
+    [PRICING_BY_MODEL_ID_KEY, carModelId],
     async () => {
       const response = await gqlClient.request(
         gql`
           query PackagePrices {
-            packagePrices(filter: {carModelId: {eq: "${carModelId}"}}) {
+            packagePrices(filter: {carModelId: {eq: "${carModelId}"}, disabled: {is: ${isDisabled}}}) {
               edges {
                 node {
                   id
@@ -420,7 +442,8 @@ export function useCreatePrices(): UseMutationResult<
         },
       }
     )
-    queryClient.invalidateQueries('evme:subscriptions')
+    queryClient.invalidateQueries(PRICING_QUERY_KEY)
+    queryClient.invalidateQueries(PRICING_BY_MODEL_ID_KEY)
     return response.createPackagePrices
   })
 }
