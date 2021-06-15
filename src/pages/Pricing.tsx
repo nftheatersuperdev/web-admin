@@ -108,7 +108,7 @@ export default function Pricing(): JSX.Element {
     toast.promise(mutationCreatePrice.mutateAsync(data), {
       loading: 'Loading',
       success: 'Create price successfully!',
-      error: 'Failed to create price! 11',
+      error: 'Failed to create price!',
     })
   }
 
