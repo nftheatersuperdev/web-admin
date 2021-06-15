@@ -6,6 +6,8 @@ import {
   UseMutationResult,
   useQueryClient,
   UseQueryOptions,
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
 } from 'react-query'
 import config from 'config'
 import {
@@ -31,6 +33,13 @@ const CARS_QUERY_KEY = 'evme:cars'
 const gqlClient = new GraphQLClient(config.evme)
 
 export interface WithPaginationType<P> {
+  totalCount?: number
+  pageInfo?: {
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+    startCursor: string
+    endCursor: string
+  }
   edges: {
     node: P
   }[]
@@ -447,14 +456,21 @@ export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
   )
 }
 
-export function useUsers(): UseQueryResult<WithPaginationType<User>> {
-  return useQuery(
-    ['evme:users'],
-    async () => {
+export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationType<User>> {
+  return useInfiniteQuery(
+    ['evme:users', pageSize],
+    async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetUsers {
-            users(paging: { first: 200 }) {
+          query GetUsers($pageSize: Int!, $after: ConnectionCursor) {
+            users(paging: { first: $pageSize, after: $after }) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
               edges {
                 node {
                   id
@@ -471,11 +487,17 @@ export function useUsers(): UseQueryResult<WithPaginationType<User>> {
               }
             }
           }
-        `
+        `,
+        {
+          pageSize,
+          after: pageParam,
+        }
       )
+
       return response.users
     },
     {
+      getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
         console.error(`Unable to retrieve users, ${error.message}`)
       },

@@ -74,7 +74,7 @@ export default function Dashboard(): JSX.Element {
   const totalPaymentAmountToday =
     payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
 
-  const totalUsers = users?.edges?.length || 0
+  const totalUsers = users?.pages[0]?.totalCount || 0
 
   return (
     <Page>
