@@ -1,4 +1,4 @@
-import { useMemo, ChangeEvent } from 'react'
+import { useMemo, useState, useEffect, ChangeEvent, Fragment } from 'react'
 import {
   Select,
   Grid,
@@ -14,17 +14,32 @@ import {
   Button,
   FormHelperText,
 } from '@material-ui/core'
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import dayjs from 'dayjs'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import { useSubscriptions, useUpdateAdditionalExpense } from 'services/evme'
+import { useSearchSubscriptions, useUpdateAdditionalExpense } from 'services/evme'
 import { AdditionalExpense } from 'services/evme.types'
-import { ExpenseTypes, ExpenseStatuses, transformToMutationInput, validationSchema } from './utils'
+import {
+  ExpenseTypes,
+  ExpenseStatuses,
+  transformToMutationInput,
+  validationSchema,
+  getSubFilterByKeyword,
+} from './utils'
 
 interface AdditionalExpenseUpdateDialogProps {
   open: boolean
   onClose: () => void
   initialData?: AdditionalExpense
+}
+
+interface SubItem {
+  id: string
+  userId: string
+  firstName: string
+  lastName: string
+  plateNumber: string
 }
 
 export default function AdditionalExpenseUpdateDialog(
@@ -42,7 +57,24 @@ export default function AdditionalExpenseUpdateDialog(
     note,
   } = initialData || {}
 
-  const { data: subscriptions } = useSubscriptions()
+  const [subscriptionKeyword, setSubscriptionKeyword] = useState<string | null>()
+
+  const {
+    data: subscriptions,
+    isLoading: isLoadingSubscriptions,
+    refetch: refetchSubscriptions,
+  } = useSearchSubscriptions(
+    'update-expense',
+    {
+      first: 50,
+    },
+    getSubFilterByKeyword(subscriptionKeyword)
+  )
+
+  useEffect(() => {
+    refetchSubscriptions()
+  }, [subscriptionKeyword, refetchSubscriptions])
+
   const updateAdditionalExpense = useUpdateAdditionalExpense()
 
   const formik = useFormik({
@@ -51,6 +83,7 @@ export default function AdditionalExpenseUpdateDialog(
       userId: subscription?.userId || '',
       firstName: subscription?.user?.firstName || '',
       lastName: subscription?.user?.lastName || '',
+      plateNumber: subscription?.car?.plateNumber || '',
       price: price || 0,
       type: type || '',
       noticeDate: noticeDate ? dayjs(noticeDate).format('YYYY-MM-DDTHH:mm:ss') : '',
@@ -81,38 +114,25 @@ export default function AdditionalExpenseUpdateDialog(
   })
 
   const subscriptionItems = useMemo(() => {
-    const subscriptionList =
-      subscriptions?.edges?.map(({ node: { id, userId, user } }) => ({
-        id,
-        userId,
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
-      })) || []
+    return (
+      subscriptions?.edges?.map(({ node: { id, userId, user, car } }) => {
+        return {
+          id,
+          userId,
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          plateNumber: car?.plateNumber || '',
+        }
+      }) || ([] as SubItem[])
+    )
+  }, [subscriptions])
 
-    const isExist = subscriptionList.find(({ id }) => id === subscriptionId)
-
-    if (subscriptionId && !isExist) {
-      return [
-        {
-          id: subscriptionId,
-          userId: subscription?.userId || '',
-          firstName: subscription?.user?.firstName || '',
-          lastName: subscription?.user?.lastName || '',
-        },
-        ...subscriptionList,
-      ]
-    }
-
-    return subscriptionList
-  }, [subscriptionId, subscription, subscriptions])
-
-  const handleSubscriptionChange = ({ target }: ChangeEvent<{ name?: string; value: unknown }>) => {
-    formik.setFieldValue('subscriptionId', target.value)
-
-    const subItem = subscriptionItems.find(({ id }) => id === target.value)
-    formik.setFieldValue('userId', subItem?.userId)
-    formik.setFieldValue('firstName', subItem?.firstName)
-    formik.setFieldValue('lastName', subItem?.lastName)
+  const handleSubscriptionChange = (_event: ChangeEvent<unknown>, value: SubItem | null) => {
+    formik.setFieldValue('subscriptionId', value?.id || '')
+    formik.setFieldValue('userId', value?.userId || '')
+    formik.setFieldValue('firstName', value?.firstName || '')
+    formik.setFieldValue('lastName', value?.lastName || '')
+    formik.setFieldValue('plateNumber', value?.plateNumber || '')
   }
 
   return (
@@ -122,30 +142,52 @@ export default function AdditionalExpenseUpdateDialog(
         <DialogContent>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <FormControl
-                fullWidth
-                error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
-              >
-                <InputLabel id="subscription">Subscription ID</InputLabel>
-                <Select
-                  labelId="subscription"
-                  id="subscriptionId"
-                  name="subscriptionId"
-                  value={formik.values.subscriptionId}
-                  onChange={handleSubscriptionChange}
-                >
-                  {(subscriptionItems || []).map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {item.id}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId) && (
-                  <FormHelperText>
-                    {formik.touched.subscriptionId && formik.errors.subscriptionId}
-                  </FormHelperText>
+              <Autocomplete
+                id="subscriptionId"
+                defaultValue={{
+                  id: formik.values.subscriptionId,
+                  userId: formik.values.userId,
+                  firstName: formik.values.firstName,
+                  lastName: formik.values.lastName,
+                  plateNumber: formik.values.plateNumber,
+                }}
+                options={subscriptionItems}
+                getOptionLabel={({ id, firstName, plateNumber }) =>
+                  `${id}${firstName ? ` - ${firstName}` : ''}${
+                    plateNumber ? ` - ${plateNumber}` : ''
+                  }`
+                }
+                loading={isLoadingSubscriptions}
+                onChange={handleSubscriptionChange}
+                onInputChange={(_event: ChangeEvent<unknown>, value: string | null) => {
+                  setSubscriptionKeyword(value)
+                }}
+                renderOption={(option) => (
+                  <Fragment>
+                    <span>{option.id}</span>
+                    {option.firstName && <span>&nbsp;-&nbsp;{option.firstName}</span>}
+                    {option.plateNumber && <span>&nbsp;-&nbsp;{option.plateNumber}</span>}
+                  </Fragment>
                 )}
-              </FormControl>
+                renderInput={(params) => (
+                  <TextField
+                    /* eslint-disable react/jsx-props-no-spreading */
+                    {...params}
+                    fullWidth
+                    label='Subscription ID (Typing "User first name" or "Car plate no.")'
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: <div>{params.InputProps.endAdornment}</div>,
+                    }}
+                    InputLabelProps={{
+                      ...params.InputLabelProps,
+                      shrink: true,
+                    }}
+                    error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
+                    helperText={formik.touched.subscriptionId && formik.errors.subscriptionId}
+                  />
+                )}
+              />
             </Grid>
 
             <Grid item xs={12}>

@@ -1,4 +1,4 @@
-import { useMemo, ChangeEvent } from 'react'
+import { useMemo, useState, useEffect, ChangeEvent, Fragment } from 'react'
 import {
   Select,
   Grid,
@@ -14,14 +14,29 @@ import {
   Button,
   FormHelperText,
 } from '@material-ui/core'
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import { useSubscriptions, useCreateAdditionalExpense } from 'services/evme'
-import { ExpenseTypes, ExpenseStatuses, transformToMutationInput, validationSchema } from './utils'
+import { useSearchSubscriptions, useCreateAdditionalExpense } from 'services/evme'
+import {
+  ExpenseTypes,
+  ExpenseStatuses,
+  transformToMutationInput,
+  validationSchema,
+  getSubFilterByKeyword,
+} from './utils'
 
 interface AdditionalExpenseCreateDialogProps {
   open: boolean
   onClose: () => void
+}
+
+interface SubItem {
+  id: string
+  userId: string
+  firstName: string
+  lastName: string
+  plateNumber: string
 }
 
 const initialValues = {
@@ -41,7 +56,24 @@ export default function AdditionalExpenseCreateDialog(
 ): JSX.Element {
   const { open, onClose } = props
 
-  const { data: subscriptions } = useSubscriptions()
+  const [subscriptionKeyword, setSubscriptionKeyword] = useState<string | null>()
+
+  const {
+    data: subscriptions,
+    isLoading: isLoadingSubscriptions,
+    refetch: refetchSubscriptions,
+  } = useSearchSubscriptions(
+    'create-expense',
+    {
+      first: 50,
+    },
+    getSubFilterByKeyword(subscriptionKeyword)
+  )
+
+  useEffect(() => {
+    refetchSubscriptions()
+  }, [subscriptionKeyword, refetchSubscriptions])
+
   const createAdditionalExpense = useCreateAdditionalExpense()
 
   const formik = useFormik({
@@ -64,22 +96,23 @@ export default function AdditionalExpenseCreateDialog(
 
   const subscriptionItems = useMemo(() => {
     return (
-      subscriptions?.edges?.map(({ node: { id, userId, user } }) => ({
-        id,
-        userId,
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
-      })) || []
+      subscriptions?.edges?.map(({ node: { id, userId, user, car } }) => {
+        return {
+          id,
+          userId,
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          plateNumber: car?.plateNumber || '',
+        }
+      }) || ([] as SubItem[])
     )
   }, [subscriptions])
 
-  const handleSubscriptionChange = ({ target }: ChangeEvent<{ name?: string; value: unknown }>) => {
-    formik.setFieldValue('subscriptionId', target.value)
-
-    const subItem = subscriptionItems.find(({ id }) => id === target.value)
-    formik.setFieldValue('userId', subItem?.userId)
-    formik.setFieldValue('firstName', subItem?.firstName)
-    formik.setFieldValue('lastName', subItem?.lastName)
+  const handleSubscriptionChange = (_event: ChangeEvent<unknown>, value: SubItem | null) => {
+    formik.setFieldValue('subscriptionId', value?.id || '')
+    formik.setFieldValue('userId', value?.userId || '')
+    formik.setFieldValue('firstName', value?.firstName || '')
+    formik.setFieldValue('lastName', value?.lastName || '')
   }
 
   return (
@@ -89,30 +122,46 @@ export default function AdditionalExpenseCreateDialog(
         <DialogContent>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <FormControl
-                fullWidth
-                error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
-              >
-                <InputLabel id="subscription">Subscription ID</InputLabel>
-                <Select
-                  labelId="subscription"
-                  id="subscriptionId"
-                  name="subscriptionId"
-                  value={formik.values.subscriptionId}
-                  onChange={handleSubscriptionChange}
-                >
-                  {(subscriptionItems || []).map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {item.id}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId) && (
-                  <FormHelperText>
-                    {formik.touched.subscriptionId && formik.errors.subscriptionId}
-                  </FormHelperText>
+              <Autocomplete
+                id="subscriptionId"
+                options={subscriptionItems}
+                getOptionSelected={(option, value) => option.id === value.id}
+                getOptionLabel={({ id, firstName, plateNumber }) =>
+                  `${id}${firstName ? ` - ${firstName}` : ''}${
+                    plateNumber ? ` - ${plateNumber}` : ''
+                  }`
+                }
+                loading={isLoadingSubscriptions}
+                onChange={handleSubscriptionChange}
+                onInputChange={(_event: ChangeEvent<unknown>, value: string | null) => {
+                  setSubscriptionKeyword(value)
+                }}
+                renderOption={(option) => (
+                  <Fragment>
+                    <span>{option.id}</span>
+                    {option.firstName && <span>&nbsp;-&nbsp;{option.firstName}</span>}
+                    {option.plateNumber && <span>&nbsp;-&nbsp;{option.plateNumber}</span>}
+                  </Fragment>
                 )}
-              </FormControl>
+                renderInput={(params) => (
+                  <TextField
+                    /* eslint-disable react/jsx-props-no-spreading */
+                    {...params}
+                    fullWidth
+                    label='Subscription ID (Typing "User first name" or "Car plate no.")'
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: <div>{params.InputProps.endAdornment}</div>,
+                    }}
+                    InputLabelProps={{
+                      ...params.InputLabelProps,
+                      shrink: true,
+                    }}
+                    error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
+                    helperText={formik.touched.subscriptionId && formik.errors.subscriptionId}
+                  />
+                )}
+              />
             </Grid>
 
             <Grid item xs={12}>

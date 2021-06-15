@@ -71,20 +71,6 @@ export type AddPricesToCarModelInput = {
   relationIds: Array<Scalars['ID']>
 }
 
-export type AddSubscriptionsToCarInput = {
-  /** The id of the record. */
-  id: Scalars['ID']
-  /** The ids of the relations. */
-  relationIds: Array<Scalars['ID']>
-}
-
-export type AddSubscriptionsToPackagePriceInput = {
-  /** The id of the record. */
-  id: Scalars['ID']
-  /** The ids of the relations. */
-  relationIds: Array<Scalars['ID']>
-}
-
 export type AddSubscriptionsToUserInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -112,6 +98,17 @@ export type AdditionalExpenseFilesArgs = {
   sorting?: Maybe<Array<AdditionalExpenseFileSort>>
 }
 
+export type AdditionalExpenseAggregateFilter = {
+  and?: Maybe<Array<AdditionalExpenseAggregateFilter>>
+  or?: Maybe<Array<AdditionalExpenseAggregateFilter>>
+  id?: Maybe<IdFilterComparison>
+  subscriptionId?: Maybe<StringFieldComparison>
+  price?: Maybe<NumberFieldComparison>
+  type?: Maybe<StringFieldComparison>
+  noticeDate?: Maybe<DateFieldComparison>
+  status?: Maybe<StringFieldComparison>
+}
+
 export type AdditionalExpenseAggregateGroupBy = {
   __typename?: 'AdditionalExpenseAggregateGroupBy'
   id?: Maybe<Scalars['ID']>
@@ -133,6 +130,8 @@ export type AdditionalExpenseConnection = {
   pageInfo: PageInfo
   /** Array of edges. */
   edges: Array<AdditionalExpenseEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
 }
 
 export type AdditionalExpenseCountAggregate = {
@@ -346,7 +345,7 @@ export type Authorize = {
 export type AvailableCar = {
   __typename?: 'AvailableCar'
   color: Scalars['String']
-  available: Scalars['Boolean']
+  available?: Maybe<Scalars['Boolean']>
   exteriorImages?: Maybe<Array<CarModelImage>>
   interiorImages?: Maybe<Array<CarModelImage>>
 }
@@ -368,17 +367,12 @@ export type Car = {
   plateNumber: Scalars['String']
   carModelId: Scalars['String']
   color: Scalars['String']
-  subscriptions?: Maybe<Array<Sub>>
   carModel?: Maybe<CarModel>
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   available: Scalars['Boolean']
-}
-
-export type CarSubscriptionsArgs = {
-  filter?: Maybe<SubFilter>
-  sorting?: Maybe<Array<SubSort>>
+  images: ImageByCarDto
 }
 
 export type CarAvailableArgs = {
@@ -484,6 +478,8 @@ export type CarConnection = {
   pageInfo: PageInfo
   /** Array of edges. */
   edges: Array<CarEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
 }
 
 export type CarCountAggregate = {
@@ -512,7 +508,6 @@ export type CarDeleteResponse = {
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
   color?: Maybe<Scalars['String']>
-  subscriptions?: Maybe<Array<Sub>>
   carModel?: Maybe<CarModel>
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt?: Maybe<Scalars['DateTime']>
@@ -597,7 +592,7 @@ export type CarModelPricesArgs = {
 }
 
 export type CarModelColorsArgs = {
-  input: AvailableCarInput
+  input?: Maybe<AvailableCarInput>
 }
 
 export type CarModelAggregateGroupBy = {
@@ -636,6 +631,8 @@ export type CarModelConnection = {
   pageInfo: PageInfo
   /** Array of edges. */
   edges: Array<CarModelEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
 }
 
 export type CarModelCountAggregate = {
@@ -944,6 +941,12 @@ export type IdFilterComparison = {
   notIn?: Maybe<Array<Scalars['ID']>>
 }
 
+export type ImageByCarDto = {
+  __typename?: 'ImageByCarDTO'
+  exteriorImages?: Maybe<Array<CarModelImage>>
+  interiorImages?: Maybe<Array<CarModelImage>>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   signup: User
@@ -965,8 +968,6 @@ export type Mutation = {
   createCarModel: CarModel
   updateCarModel: CarModel
   setCarModelOnCar: Car
-  addSubscriptionsToCar: Car
-  setSubscriptionsOnCar: Car
   createCar: Car
   updateCar: Car
   deleteCar: CarDeleteResponse
@@ -989,8 +990,6 @@ export type Mutation = {
   createSubscription: Sub
   updateSubscription: Sub
   setCarModelOnPackagePrice: PackagePrice
-  addSubscriptionsToPackagePrice: PackagePrice
-  setSubscriptionsOnPackagePrice: PackagePrice
   createPackagePrice: PackagePrice
   createPackagePrices: Array<PackagePrice>
   setSubscriptionOnPayment: Payment
@@ -1092,14 +1091,6 @@ export type MutationSetCarModelOnCarArgs = {
   input: SetCarModelOnCarInput
 }
 
-export type MutationAddSubscriptionsToCarArgs = {
-  input: AddSubscriptionsToCarInput
-}
-
-export type MutationSetSubscriptionsOnCarArgs = {
-  input: SetSubscriptionsOnCarInput
-}
-
 export type MutationCreateCarArgs = {
   input: CreateOneCarInput
 }
@@ -1186,14 +1177,6 @@ export type MutationUpdateSubscriptionArgs = {
 
 export type MutationSetCarModelOnPackagePriceArgs = {
   input: SetCarModelOnPackagePriceInput
-}
-
-export type MutationAddSubscriptionsToPackagePriceArgs = {
-  input: AddSubscriptionsToPackagePriceInput
-}
-
-export type MutationSetSubscriptionsOnPackagePriceArgs = {
-  input: SetSubscriptionsOnPackagePriceInput
 }
 
 export type MutationCreatePackagePriceArgs = {
@@ -1328,18 +1311,12 @@ export type PackagePrice = {
   __typename?: 'PackagePrice'
   id: Scalars['String']
   carModelId: Scalars['String']
-  subscriptions?: Maybe<Array<Sub>>
   carModel?: Maybe<CarModel>
   duration: Scalars['String']
   disabled: Scalars['Boolean']
   price: Scalars['Float']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-}
-
-export type PackagePriceSubscriptionsArgs = {
-  filter?: Maybe<SubFilter>
-  sorting?: Maybe<Array<SubSort>>
 }
 
 export type PackagePriceAggregateGroupBy = {
@@ -1455,11 +1432,26 @@ export type Payment = {
   events?: Maybe<Array<PaymentEvent>>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  eventsAggregate: Array<PaymentEventsAggregateResponse>
 }
 
 export type PaymentEventsArgs = {
   filter?: Maybe<PaymentEventFilter>
   sorting?: Maybe<Array<PaymentEventSort>>
+}
+
+export type PaymentEventsAggregateArgs = {
+  filter?: Maybe<PaymentEventAggregateFilter>
+}
+
+export type PaymentAggregateFilter = {
+  and?: Maybe<Array<PaymentAggregateFilter>>
+  or?: Maybe<Array<PaymentAggregateFilter>>
+  id?: Maybe<IdFilterComparison>
+  subscriptionId?: Maybe<StringFieldComparison>
+  amount?: Maybe<NumberFieldComparison>
+  currency?: Maybe<StringFieldComparison>
+  type?: Maybe<StringFieldComparison>
 }
 
 export type PaymentAggregateGroupBy = {
@@ -1469,6 +1461,16 @@ export type PaymentAggregateGroupBy = {
   amount?: Maybe<Scalars['Float']>
   currency?: Maybe<Scalars['String']>
   type?: Maybe<Scalars['String']>
+}
+
+export type PaymentAggregateResponse = {
+  __typename?: 'PaymentAggregateResponse'
+  groupBy?: Maybe<PaymentAggregateGroupBy>
+  count?: Maybe<PaymentCountAggregate>
+  sum?: Maybe<PaymentSumAggregate>
+  avg?: Maybe<PaymentAvgAggregate>
+  min?: Maybe<PaymentMinAggregate>
+  max?: Maybe<PaymentMaxAggregate>
 }
 
 export type PaymentAvgAggregate = {
@@ -1510,6 +1512,15 @@ export type PaymentEvent = {
   status: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type PaymentEventAggregateFilter = {
+  and?: Maybe<Array<PaymentEventAggregateFilter>>
+  or?: Maybe<Array<PaymentEventAggregateFilter>>
+  id?: Maybe<IdFilterComparison>
+  paymentId?: Maybe<StringFieldComparison>
+  omiseTransactionId?: Maybe<StringFieldComparison>
+  status?: Maybe<StringFieldComparison>
 }
 
 export type PaymentEventAggregateGroupBy = {
@@ -1588,6 +1599,46 @@ export enum PaymentEventSortFields {
   Status = 'status',
 }
 
+export type PaymentEventsAggregateGroupBy = {
+  __typename?: 'PaymentEventsAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  paymentId?: Maybe<Scalars['String']>
+  omiseTransactionId?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type PaymentEventsAggregateResponse = {
+  __typename?: 'PaymentEventsAggregateResponse'
+  groupBy?: Maybe<PaymentEventsAggregateGroupBy>
+  count?: Maybe<PaymentEventsCountAggregate>
+  min?: Maybe<PaymentEventsMinAggregate>
+  max?: Maybe<PaymentEventsMaxAggregate>
+}
+
+export type PaymentEventsCountAggregate = {
+  __typename?: 'PaymentEventsCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  paymentId?: Maybe<Scalars['Int']>
+  omiseTransactionId?: Maybe<Scalars['Int']>
+  status?: Maybe<Scalars['Int']>
+}
+
+export type PaymentEventsMaxAggregate = {
+  __typename?: 'PaymentEventsMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  paymentId?: Maybe<Scalars['String']>
+  omiseTransactionId?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type PaymentEventsMinAggregate = {
+  __typename?: 'PaymentEventsMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  paymentId?: Maybe<Scalars['String']>
+  omiseTransactionId?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+}
+
 export type PaymentFilter = {
   and?: Maybe<Array<PaymentFilter>>
   or?: Maybe<Array<PaymentFilter>>
@@ -1646,6 +1697,7 @@ export type PaymentSumAggregate = {
 export type Query = {
   __typename?: 'Query'
   me: User
+  userAggregate: Array<UserAggregateResponse>
   user?: Maybe<User>
   users: UserConnection
   carModel?: Maybe<CarModel>
@@ -1654,10 +1706,12 @@ export type Query = {
   cars: CarConnection
   carBodyType?: Maybe<CarBodyType>
   carBodyTypes: CarBodyTypeConnection
+  subAggregate: Array<SubAggregateResponse>
   subscription?: Maybe<Sub>
   subscriptions: SubConnection
   packagePrice?: Maybe<PackagePrice>
   packagePrices: PackagePriceConnection
+  paymentAggregate: Array<PaymentAggregateResponse>
   payment?: Maybe<Payment>
   payments: PaymentConnection
   paymentEvent?: Maybe<PaymentEvent>
@@ -1668,6 +1722,10 @@ export type Query = {
   additionalExpenses: AdditionalExpenseConnection
   additionalExpenseFile?: Maybe<AdditionalExpenseFile>
   additionalExpenseFiles: AdditionalExpenseFileConnection
+}
+
+export type QueryUserAggregateArgs = {
+  filter?: Maybe<UserAggregateFilter>
 }
 
 export type QueryUserArgs = {
@@ -1710,6 +1768,10 @@ export type QueryCarBodyTypesArgs = {
   sorting?: Maybe<Array<CarBodyTypeSort>>
 }
 
+export type QuerySubAggregateArgs = {
+  filter?: Maybe<SubAggregateFilter>
+}
+
 export type QuerySubscriptionArgs = {
   id: Scalars['ID']
 }
@@ -1728,6 +1790,10 @@ export type QueryPackagePricesArgs = {
   paging?: Maybe<CursorPaging>
   filter?: Maybe<PackagePriceFilter>
   sorting?: Maybe<Array<PackagePriceSort>>
+}
+
+export type QueryPaymentAggregateArgs = {
+  filter?: Maybe<PaymentAggregateFilter>
 }
 
 export type QueryPaymentArgs = {
@@ -1941,20 +2007,6 @@ export type SetSubscriptionOnSubscriptionEventInput = {
   relationId: Scalars['ID']
 }
 
-export type SetSubscriptionsOnCarInput = {
-  /** The id of the record. */
-  id: Scalars['ID']
-  /** The ids of the relations. */
-  relationIds: Array<Scalars['ID']>
-}
-
-export type SetSubscriptionsOnPackagePriceInput = {
-  /** The id of the record. */
-  id: Scalars['ID']
-  /** The ids of the relations. */
-  relationIds: Array<Scalars['ID']>
-}
-
 export type SetSubscriptionsOnUserInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -2017,6 +2069,9 @@ export type Sub = {
   additionalExpenses?: Maybe<Array<AdditionalExpense>>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  eventsAggregate: Array<SubEventsAggregateResponse>
+  paymentsAggregate: Array<SubPaymentsAggregateResponse>
+  additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>
 }
 
 export type SubEventsArgs = {
@@ -2034,6 +2089,90 @@ export type SubAdditionalExpensesArgs = {
   sorting?: Maybe<Array<AdditionalExpenseSort>>
 }
 
+export type SubEventsAggregateArgs = {
+  filter?: Maybe<SubscriptionEventAggregateFilter>
+}
+
+export type SubPaymentsAggregateArgs = {
+  filter?: Maybe<PaymentAggregateFilter>
+}
+
+export type SubAdditionalExpensesAggregateArgs = {
+  filter?: Maybe<AdditionalExpenseAggregateFilter>
+}
+
+export type SubAdditionalExpensesAggregateGroupBy = {
+  __typename?: 'SubAdditionalExpensesAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type SubAdditionalExpensesAggregateResponse = {
+  __typename?: 'SubAdditionalExpensesAggregateResponse'
+  groupBy?: Maybe<SubAdditionalExpensesAggregateGroupBy>
+  count?: Maybe<SubAdditionalExpensesCountAggregate>
+  sum?: Maybe<SubAdditionalExpensesSumAggregate>
+  avg?: Maybe<SubAdditionalExpensesAvgAggregate>
+  min?: Maybe<SubAdditionalExpensesMinAggregate>
+  max?: Maybe<SubAdditionalExpensesMaxAggregate>
+}
+
+export type SubAdditionalExpensesAvgAggregate = {
+  __typename?: 'SubAdditionalExpensesAvgAggregate'
+  price?: Maybe<Scalars['Float']>
+}
+
+export type SubAdditionalExpensesCountAggregate = {
+  __typename?: 'SubAdditionalExpensesCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  subscriptionId?: Maybe<Scalars['Int']>
+  price?: Maybe<Scalars['Int']>
+  type?: Maybe<Scalars['Int']>
+  noticeDate?: Maybe<Scalars['Int']>
+  status?: Maybe<Scalars['Int']>
+}
+
+export type SubAdditionalExpensesMaxAggregate = {
+  __typename?: 'SubAdditionalExpensesMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type SubAdditionalExpensesMinAggregate = {
+  __typename?: 'SubAdditionalExpensesMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  price?: Maybe<Scalars['Float']>
+  type?: Maybe<Scalars['String']>
+  noticeDate?: Maybe<Scalars['DateTime']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type SubAdditionalExpensesSumAggregate = {
+  __typename?: 'SubAdditionalExpensesSumAggregate'
+  price?: Maybe<Scalars['Float']>
+}
+
+export type SubAggregateFilter = {
+  and?: Maybe<Array<SubAggregateFilter>>
+  or?: Maybe<Array<SubAggregateFilter>>
+  id?: Maybe<IdFilterComparison>
+  userId?: Maybe<StringFieldComparison>
+  packagePriceId?: Maybe<StringFieldComparison>
+  carId?: Maybe<StringFieldComparison>
+  startDate?: Maybe<DateFieldComparison>
+  endDate?: Maybe<DateFieldComparison>
+  kind?: Maybe<StringFieldComparison>
+}
+
 export type SubAggregateGroupBy = {
   __typename?: 'SubAggregateGroupBy'
   id?: Maybe<Scalars['ID']>
@@ -2045,12 +2184,22 @@ export type SubAggregateGroupBy = {
   kind?: Maybe<Scalars['String']>
 }
 
+export type SubAggregateResponse = {
+  __typename?: 'SubAggregateResponse'
+  groupBy?: Maybe<SubAggregateGroupBy>
+  count?: Maybe<SubCountAggregate>
+  min?: Maybe<SubMinAggregate>
+  max?: Maybe<SubMaxAggregate>
+}
+
 export type SubConnection = {
   __typename?: 'SubConnection'
   /** Paging information */
   pageInfo: PageInfo
   /** Array of edges. */
   edges: Array<SubEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
 }
 
 export type SubCountAggregate = {
@@ -2072,6 +2221,42 @@ export type SubEdge = {
   cursor: Scalars['ConnectionCursor']
 }
 
+export type SubEventsAggregateGroupBy = {
+  __typename?: 'SubEventsAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type SubEventsAggregateResponse = {
+  __typename?: 'SubEventsAggregateResponse'
+  groupBy?: Maybe<SubEventsAggregateGroupBy>
+  count?: Maybe<SubEventsCountAggregate>
+  min?: Maybe<SubEventsMinAggregate>
+  max?: Maybe<SubEventsMaxAggregate>
+}
+
+export type SubEventsCountAggregate = {
+  __typename?: 'SubEventsCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  subscriptionId?: Maybe<Scalars['Int']>
+  status?: Maybe<Scalars['Int']>
+}
+
+export type SubEventsMaxAggregate = {
+  __typename?: 'SubEventsMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+}
+
+export type SubEventsMinAggregate = {
+  __typename?: 'SubEventsMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  status?: Maybe<Scalars['String']>
+}
+
 export type SubFilter = {
   and?: Maybe<Array<SubFilter>>
   or?: Maybe<Array<SubFilter>>
@@ -2082,6 +2267,44 @@ export type SubFilter = {
   startDate?: Maybe<DateFieldComparison>
   endDate?: Maybe<DateFieldComparison>
   kind?: Maybe<StringFieldComparison>
+  car?: Maybe<SubFilterCarFilter>
+  packagePrice?: Maybe<SubFilterPackagePriceFilter>
+  user?: Maybe<SubFilterUserFilter>
+}
+
+export type SubFilterCarFilter = {
+  and?: Maybe<Array<SubFilterCarFilter>>
+  or?: Maybe<Array<SubFilterCarFilter>>
+  id?: Maybe<IdFilterComparison>
+  vin?: Maybe<StringFieldComparison>
+  plateNumber?: Maybe<StringFieldComparison>
+  carModelId?: Maybe<StringFieldComparison>
+  color?: Maybe<StringFieldComparison>
+}
+
+export type SubFilterPackagePriceFilter = {
+  and?: Maybe<Array<SubFilterPackagePriceFilter>>
+  or?: Maybe<Array<SubFilterPackagePriceFilter>>
+  id?: Maybe<IdFilterComparison>
+  carModelId?: Maybe<StringFieldComparison>
+  duration?: Maybe<StringFieldComparison>
+  disabled?: Maybe<BooleanFieldComparison>
+  price?: Maybe<NumberFieldComparison>
+}
+
+export type SubFilterUserFilter = {
+  and?: Maybe<Array<SubFilterUserFilter>>
+  or?: Maybe<Array<SubFilterUserFilter>>
+  id?: Maybe<StringFieldComparison>
+  firebaseId?: Maybe<StringFieldComparison>
+  firstName?: Maybe<StringFieldComparison>
+  lastName?: Maybe<StringFieldComparison>
+  role?: Maybe<StringFieldComparison>
+  disabled?: Maybe<BooleanFieldComparison>
+  phoneNumber?: Maybe<StringFieldComparison>
+  email?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
+  updatedAt?: Maybe<DateFieldComparison>
 }
 
 export type SubMaxAggregate = {
@@ -2104,6 +2327,62 @@ export type SubMinAggregate = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+}
+
+export type SubPaymentsAggregateGroupBy = {
+  __typename?: 'SubPaymentsAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  amount?: Maybe<Scalars['Float']>
+  currency?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
+}
+
+export type SubPaymentsAggregateResponse = {
+  __typename?: 'SubPaymentsAggregateResponse'
+  groupBy?: Maybe<SubPaymentsAggregateGroupBy>
+  count?: Maybe<SubPaymentsCountAggregate>
+  sum?: Maybe<SubPaymentsSumAggregate>
+  avg?: Maybe<SubPaymentsAvgAggregate>
+  min?: Maybe<SubPaymentsMinAggregate>
+  max?: Maybe<SubPaymentsMaxAggregate>
+}
+
+export type SubPaymentsAvgAggregate = {
+  __typename?: 'SubPaymentsAvgAggregate'
+  amount?: Maybe<Scalars['Float']>
+}
+
+export type SubPaymentsCountAggregate = {
+  __typename?: 'SubPaymentsCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  subscriptionId?: Maybe<Scalars['Int']>
+  amount?: Maybe<Scalars['Int']>
+  currency?: Maybe<Scalars['Int']>
+  type?: Maybe<Scalars['Int']>
+}
+
+export type SubPaymentsMaxAggregate = {
+  __typename?: 'SubPaymentsMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  amount?: Maybe<Scalars['Float']>
+  currency?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
+}
+
+export type SubPaymentsMinAggregate = {
+  __typename?: 'SubPaymentsMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  subscriptionId?: Maybe<Scalars['String']>
+  amount?: Maybe<Scalars['Float']>
+  currency?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
+}
+
+export type SubPaymentsSumAggregate = {
+  __typename?: 'SubPaymentsSumAggregate'
+  amount?: Maybe<Scalars['Float']>
 }
 
 export type SubSort = {
@@ -2140,6 +2419,14 @@ export type SubscriptionEvent = {
   status: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+}
+
+export type SubscriptionEventAggregateFilter = {
+  and?: Maybe<Array<SubscriptionEventAggregateFilter>>
+  or?: Maybe<Array<SubscriptionEventAggregateFilter>>
+  id?: Maybe<IdFilterComparison>
+  subscriptionId?: Maybe<StringFieldComparison>
+  status?: Maybe<StringFieldComparison>
 }
 
 export type SubscriptionEventAggregateGroupBy = {
@@ -2308,11 +2595,16 @@ export type User = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   creditCard?: Maybe<UserCreditCard>
+  subscriptionsAggregate: Array<UserSubscriptionsAggregateResponse>
 }
 
 export type UserSubscriptionsArgs = {
   filter?: Maybe<SubFilter>
   sorting?: Maybe<Array<SubSort>>
+}
+
+export type UserSubscriptionsAggregateArgs = {
+  filter?: Maybe<SubAggregateFilter>
 }
 
 export type UserAddress = {
@@ -2334,6 +2626,21 @@ export type UserAddressInput = {
   remark?: Maybe<Scalars['String']>
 }
 
+export type UserAggregateFilter = {
+  and?: Maybe<Array<UserAggregateFilter>>
+  or?: Maybe<Array<UserAggregateFilter>>
+  id?: Maybe<StringFieldComparison>
+  firebaseId?: Maybe<StringFieldComparison>
+  firstName?: Maybe<StringFieldComparison>
+  lastName?: Maybe<StringFieldComparison>
+  role?: Maybe<StringFieldComparison>
+  disabled?: Maybe<BooleanFieldComparison>
+  phoneNumber?: Maybe<StringFieldComparison>
+  email?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
+  updatedAt?: Maybe<DateFieldComparison>
+}
+
 export type UserAggregateGroupBy = {
   __typename?: 'UserAggregateGroupBy'
   id?: Maybe<Scalars['String']>
@@ -2348,12 +2655,22 @@ export type UserAggregateGroupBy = {
   updatedAt?: Maybe<Scalars['DateTime']>
 }
 
+export type UserAggregateResponse = {
+  __typename?: 'UserAggregateResponse'
+  groupBy?: Maybe<UserAggregateGroupBy>
+  count?: Maybe<UserCountAggregate>
+  min?: Maybe<UserMinAggregate>
+  max?: Maybe<UserMaxAggregate>
+}
+
 export type UserConnection = {
   __typename?: 'UserConnection'
   /** Paging information */
   pageInfo: PageInfo
   /** Array of edges. */
   edges: Array<UserEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
 }
 
 export type UserCountAggregate = {
@@ -2464,4 +2781,56 @@ export enum UserSortFields {
   Email = 'email',
   CreatedAt = 'createdAt',
   UpdatedAt = 'updatedAt',
+}
+
+export type UserSubscriptionsAggregateGroupBy = {
+  __typename?: 'UserSubscriptionsAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  userId?: Maybe<Scalars['String']>
+  packagePriceId?: Maybe<Scalars['String']>
+  carId?: Maybe<Scalars['String']>
+  startDate?: Maybe<Scalars['DateTime']>
+  endDate?: Maybe<Scalars['DateTime']>
+  kind?: Maybe<Scalars['String']>
+}
+
+export type UserSubscriptionsAggregateResponse = {
+  __typename?: 'UserSubscriptionsAggregateResponse'
+  groupBy?: Maybe<UserSubscriptionsAggregateGroupBy>
+  count?: Maybe<UserSubscriptionsCountAggregate>
+  min?: Maybe<UserSubscriptionsMinAggregate>
+  max?: Maybe<UserSubscriptionsMaxAggregate>
+}
+
+export type UserSubscriptionsCountAggregate = {
+  __typename?: 'UserSubscriptionsCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  userId?: Maybe<Scalars['Int']>
+  packagePriceId?: Maybe<Scalars['Int']>
+  carId?: Maybe<Scalars['Int']>
+  startDate?: Maybe<Scalars['Int']>
+  endDate?: Maybe<Scalars['Int']>
+  kind?: Maybe<Scalars['Int']>
+}
+
+export type UserSubscriptionsMaxAggregate = {
+  __typename?: 'UserSubscriptionsMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  userId?: Maybe<Scalars['String']>
+  packagePriceId?: Maybe<Scalars['String']>
+  carId?: Maybe<Scalars['String']>
+  startDate?: Maybe<Scalars['DateTime']>
+  endDate?: Maybe<Scalars['DateTime']>
+  kind?: Maybe<Scalars['String']>
+}
+
+export type UserSubscriptionsMinAggregate = {
+  __typename?: 'UserSubscriptionsMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  userId?: Maybe<Scalars['String']>
+  packagePriceId?: Maybe<Scalars['String']>
+  carId?: Maybe<Scalars['String']>
+  startDate?: Maybe<Scalars['DateTime']>
+  endDate?: Maybe<Scalars['DateTime']>
+  kind?: Maybe<Scalars['String']>
 }

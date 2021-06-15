@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import * as Yup from 'yup'
 import { FormikValues } from 'formik'
-import { AdditionalExpenseInput } from 'services/evme.types'
+import { AdditionalExpenseInput, SubFilter } from 'services/evme.types'
 
 export const transformToMutationInput = (data: FormikValues): AdditionalExpenseInput => {
   const { subscriptionId, price, type, status, noticeDate, note } = data
@@ -26,3 +26,24 @@ export const validationSchema = Yup.object({
   status: Yup.string().required('Status is required'),
   note: Yup.string().notRequired(),
 })
+
+export const getSubFilterByKeyword = (keyword: string | null | undefined): SubFilter => {
+  if (!keyword) {
+    return {}
+  }
+
+  return {
+    or: [
+      {
+        user: {
+          firstName: { iLike: `${keyword}%` },
+        },
+      },
+      {
+        car: {
+          plateNumber: { iLike: `${keyword}%` },
+        },
+      },
+    ],
+  }
+}

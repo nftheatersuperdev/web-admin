@@ -591,6 +591,10 @@ export function useAdditionalExpenseById(
                   firstName
                   lastName
                 }
+                car {
+                  vin
+                  plateNumber
+                }
               }
               price
               type
