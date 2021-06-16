@@ -191,6 +191,7 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
         gql`
           query GetSubscriptions {
             subscriptions {
+              totalCount
               edges {
                 node {
                   id

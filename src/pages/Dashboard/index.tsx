@@ -68,9 +68,6 @@ export default function Dashboard(): JSX.Element {
   const totalCars =
     cars?.edges?.reduce((count, { node }) => count + (node?.cars?.length || 0), 0) || 0
 
-  // TODO: once API is ready we can filter for active subscriptions
-  const totalSubscriptions = subscriptions?.edges.length || 0
-
   const totalPaymentAmountToday =
     payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
 
@@ -91,7 +88,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title="Total Subscriptions"
-            value={totalSubscriptions}
+            value={subscriptions?.totalCount || 0}
             subTitle="Number of currently active subscriptions"
             icon={<PeopleIcon />}
             iconColor="purple"
