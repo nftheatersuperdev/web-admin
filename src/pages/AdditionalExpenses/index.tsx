@@ -7,10 +7,12 @@ import {
   GridCellParams,
   GridRowData,
   GridRowParams,
+  GridPageChangeParams,
 } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { formatDates, formatMoney } from 'utils'
+import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
 import {
@@ -29,7 +31,15 @@ export default function AdditionalExpenses(): JSX.Element {
   const [currentRowData, setCurrentRowData] = useState<GridRowData>()
   const [currentExpenseId, setCurrentExpenseId] = useState<string>('')
 
-  const { data } = useAdditionalExpenses()
+  const [pageSize, setPageSize] = useState(5)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+
+  const {
+    data,
+    fetchNextPage,
+    fetchPreviousPage,
+    isLoading: isLoadingExpenses,
+  } = useAdditionalExpenses(pageSize)
 
   const { data: currentExpenseData, isLoading } = useAdditionalExpenseById(currentExpenseId, {
     enabled: !!currentExpenseId,
@@ -40,7 +50,20 @@ export default function AdditionalExpenses(): JSX.Element {
 
   const updateAdditionalExpense = useUpdateAdditionalExpense()
 
-  const rows = data?.edges?.map(({ node }) => {
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handlePageChange = (params: GridPageChangeParams) => {
+    if (params.page > currentPageIndex) {
+      fetchNextPage()
+    } else {
+      fetchPreviousPage()
+    }
+    setCurrentPageIndex(params.page)
+  }
+
+  const rows = data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
     const { userId, user } = node.subscription || {}
     const userFullName = `${user?.firstName || ''} ${user?.lastName || ''}`
     return {
@@ -185,7 +208,15 @@ export default function AdditionalExpenses(): JSX.Element {
         <Card>
           <DataGrid
             autoHeight
-            autoPageSize
+            pagination
+            pageSize={pageSize}
+            page={currentPageIndex}
+            rowCount={data?.pages[currentPageIndex]?.totalCount}
+            paginationMode="server"
+            rowsPerPageOptions={config.tableRowsPerPageOptions}
+            onPageSizeChange={handlePageSizeChange}
+            onPageChange={handlePageChange}
+            loading={isLoadingExpenses}
             rows={rows}
             columns={columns}
             checkboxSelection

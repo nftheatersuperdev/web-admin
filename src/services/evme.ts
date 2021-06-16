@@ -530,14 +530,23 @@ export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationTy
   )
 }
 
-export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<AdditionalExpense>> {
-  return useQuery(
-    ['evme:additional-expenses'],
-    async () => {
+export function useAdditionalExpenses(
+  pageSize = 10
+): UseInfiniteQueryResult<WithPaginationType<AdditionalExpense>> {
+  return useInfiniteQuery(
+    ['evme:additional-expenses', pageSize],
+    async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetExpenses {
-            additionalExpenses {
+          query GetExpenses($pageSize: Int!, $after: ConnectionCursor) {
+            additionalExpenses(paging: { first: $pageSize, after: $after }) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
               edges {
                 node {
                   id
@@ -560,11 +569,17 @@ export function useAdditionalExpenses(): UseQueryResult<WithPaginationType<Addit
               }
             }
           }
-        `
+        `,
+        {
+          pageSize,
+          after: pageParam,
+        }
       )
+
       return response.additionalExpenses
     },
     {
+      getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
         console.error(`Unable to retrieve additional expenses, ${error.message}`)
       },
