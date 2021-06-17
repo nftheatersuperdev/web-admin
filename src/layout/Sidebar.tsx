@@ -67,8 +67,8 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
       { title: t('sidebar.insurance'), path: ROUTE_PATHS.INSURANCE, icon: <InsuranceIcon /> },
       { subHeader: t('sidebar.others') },
       {
-        title: t('sidebar.chargingStations'),
-        path: ROUTE_PATHS.CHARGING_STATIONS,
+        title: t('sidebar.chargingLocations'),
+        path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
       },
     ],

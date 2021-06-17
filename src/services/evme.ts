@@ -28,6 +28,7 @@ import {
   SubFilter,
   SubSort,
   PackagePriceSort,
+  ChargingLocation,
 } from './evme.types'
 
 const CARS_QUERY_KEY = 'evme:cars'
@@ -773,6 +774,40 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
       onError: () => {
         console.error('Failed too update an additional expense')
       },
+    }
+  )
+}
+
+export function useChargingLocations(): UseQueryResult<WithPaginationType<ChargingLocation>> {
+  return useQuery(
+    ['evme:charging-locations'],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query GetChargingLocations {
+            chargingLocations(paging: { first: 10000 }) {
+              edges {
+                node {
+                  id
+                  name
+                  address
+                  latitude
+                  longitude
+                  provider
+                }
+              }
+            }
+          }
+        `
+      )
+
+      return response.chargingLocations
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve charging locations, ${error.message}`)
+      },
+      keepPreviousData: true,
     }
   )
 }
