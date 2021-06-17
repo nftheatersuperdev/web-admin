@@ -15,9 +15,12 @@ import {
   FormHelperText,
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
+import { KeyboardDateTimePicker } from '@material-ui/pickers'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import { useSearchSubscriptions, useCreateAdditionalExpense } from 'services/evme'
+import { DEFAULT_DATE_FORMAT } from 'utils'
+import { useSearchSubscriptions, useUpdateAdditionalExpense } from 'services/evme'
+import { AdditionalExpense } from 'services/evme.types'
 import {
   ExpenseTypes,
   ExpenseStatuses,
@@ -26,9 +29,10 @@ import {
   getSubFilterByKeyword,
 } from './utils'
 
-interface AdditionalExpenseCreateDialogProps {
+interface AdditionalExpenseUpdateDialogProps {
   open: boolean
   onClose: () => void
+  initialData?: AdditionalExpense
 }
 
 interface SubItem {
@@ -39,22 +43,20 @@ interface SubItem {
   plateNumber: string
 }
 
-const initialValues = {
-  subscriptionId: '',
-  userId: '',
-  firstName: '',
-  lastName: '',
-  price: 0,
-  type: '',
-  noticeDate: '',
-  status: '',
-  note: '',
-}
-
-export default function AdditionalExpenseCreateDialog(
-  props: AdditionalExpenseCreateDialogProps
+export default function AdditionalExpenseUpdateDialog(
+  props: AdditionalExpenseUpdateDialogProps
 ): JSX.Element {
-  const { open, onClose } = props
+  const { open, onClose, initialData } = props
+  const {
+    id = '',
+    subscriptionId,
+    subscription,
+    price,
+    type,
+    noticeDate,
+    status,
+    note,
+  } = initialData || {}
 
   const [subscriptionKeyword, setSubscriptionKeyword] = useState<string | null>()
 
@@ -63,7 +65,7 @@ export default function AdditionalExpenseCreateDialog(
     isLoading: isLoadingSubscriptions,
     refetch: refetchSubscriptions,
   } = useSearchSubscriptions(
-    'create-expense',
+    'update-expense',
     {
       first: 50,
     },
@@ -74,23 +76,41 @@ export default function AdditionalExpenseCreateDialog(
     refetchSubscriptions()
   }, [subscriptionKeyword, refetchSubscriptions])
 
-  const createAdditionalExpense = useCreateAdditionalExpense()
+  const updateAdditionalExpense = useUpdateAdditionalExpense()
 
   const formik = useFormik({
-    initialValues,
+    initialValues: {
+      subscriptionId: subscriptionId || '',
+      userId: subscription?.userId || '',
+      firstName: subscription?.user?.firstName || '',
+      lastName: subscription?.user?.lastName || '',
+      plateNumber: subscription?.car?.plateNumber || '',
+      price: price || 0,
+      type: type || '',
+      noticeDate,
+      status: status || '',
+      note: note || '',
+    },
     validationSchema,
+    enableReinitialize: true,
     onSubmit: (values) => {
-      const input = transformToMutationInput(values)
+      const update = transformToMutationInput(values)
 
-      toast.promise(createAdditionalExpense.mutateAsync(input), {
-        loading: 'Loading',
-        success: () => {
-          formik.resetForm()
-          onClose()
-          return 'Created additional expense successfully!'
-        },
-        error: 'Failed to create additional expense!',
-      })
+      toast.promise(
+        updateAdditionalExpense.mutateAsync({
+          id,
+          update,
+        }),
+        {
+          loading: 'Loading',
+          success: () => {
+            formik.resetForm()
+            onClose()
+            return 'Updated additional expense successfully!'
+          },
+          error: 'Failed to update additional expense!',
+        }
+      )
     },
   })
 
@@ -113,19 +133,26 @@ export default function AdditionalExpenseCreateDialog(
     formik.setFieldValue('userId', value?.userId || '')
     formik.setFieldValue('firstName', value?.firstName || '')
     formik.setFieldValue('lastName', value?.lastName || '')
+    formik.setFieldValue('plateNumber', value?.plateNumber || '')
   }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Create New Additional Expense</DialogTitle>
+      <DialogTitle id="form-dialog-title">Update Additional Expense</DialogTitle>
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Autocomplete
                 id="subscriptionId"
+                defaultValue={{
+                  id: formik.values.subscriptionId,
+                  userId: formik.values.userId,
+                  firstName: formik.values.firstName,
+                  lastName: formik.values.lastName,
+                  plateNumber: formik.values.plateNumber,
+                }}
                 options={subscriptionItems}
-                getOptionSelected={(option, value) => option.id === value.id}
                 getOptionLabel={({ id, firstName, plateNumber }) =>
                   `${id}${firstName ? ` - ${firstName}` : ''}${
                     plateNumber ? ` - ${plateNumber}` : ''
@@ -193,14 +220,18 @@ export default function AdditionalExpenseCreateDialog(
             </Grid>
 
             <Grid item xs={6}>
-              <TextField
+              <KeyboardDateTimePicker
                 fullWidth
+                ampm={false}
                 label="Date of expense notice"
-                type="datetime-local"
                 id="noticeDate"
                 name="noticeDate"
+                format={DEFAULT_DATE_FORMAT}
                 value={formik.values.noticeDate}
-                onChange={({ target }) => formik.setFieldValue('noticeDate', target.value)}
+                onChange={(date) => date && formik.setFieldValue('noticeDate', date.toDate())}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -302,7 +333,7 @@ export default function AdditionalExpenseCreateDialog(
           </Button>
 
           <Button color="primary" variant="contained" type="submit">
-            Create
+            Update
           </Button>
         </DialogActions>
       </form>

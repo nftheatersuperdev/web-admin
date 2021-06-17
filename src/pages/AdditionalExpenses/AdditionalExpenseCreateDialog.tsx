@@ -15,11 +15,11 @@ import {
   FormHelperText,
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import dayjs from 'dayjs'
+import { KeyboardDateTimePicker } from '@material-ui/pickers'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import { useSearchSubscriptions, useUpdateAdditionalExpense } from 'services/evme'
-import { AdditionalExpense } from 'services/evme.types'
+import { DEFAULT_DATE_FORMAT } from 'utils'
+import { useSearchSubscriptions, useCreateAdditionalExpense } from 'services/evme'
 import {
   ExpenseTypes,
   ExpenseStatuses,
@@ -28,10 +28,9 @@ import {
   getSubFilterByKeyword,
 } from './utils'
 
-interface AdditionalExpenseUpdateDialogProps {
+interface AdditionalExpenseCreateDialogProps {
   open: boolean
   onClose: () => void
-  initialData?: AdditionalExpense
 }
 
 interface SubItem {
@@ -42,20 +41,22 @@ interface SubItem {
   plateNumber: string
 }
 
-export default function AdditionalExpenseUpdateDialog(
-  props: AdditionalExpenseUpdateDialogProps
+const initialValues = {
+  subscriptionId: '',
+  userId: '',
+  firstName: '',
+  lastName: '',
+  price: 0,
+  type: '',
+  noticeDate: null,
+  status: '',
+  note: '',
+}
+
+export default function AdditionalExpenseCreateDialog(
+  props: AdditionalExpenseCreateDialogProps
 ): JSX.Element {
-  const { open, onClose, initialData } = props
-  const {
-    id = '',
-    subscriptionId,
-    subscription,
-    price,
-    type,
-    noticeDate,
-    status,
-    note,
-  } = initialData || {}
+  const { open, onClose } = props
 
   const [subscriptionKeyword, setSubscriptionKeyword] = useState<string | null>()
 
@@ -64,7 +65,7 @@ export default function AdditionalExpenseUpdateDialog(
     isLoading: isLoadingSubscriptions,
     refetch: refetchSubscriptions,
   } = useSearchSubscriptions(
-    'update-expense',
+    'create-expense',
     {
       first: 50,
     },
@@ -75,41 +76,23 @@ export default function AdditionalExpenseUpdateDialog(
     refetchSubscriptions()
   }, [subscriptionKeyword, refetchSubscriptions])
 
-  const updateAdditionalExpense = useUpdateAdditionalExpense()
+  const createAdditionalExpense = useCreateAdditionalExpense()
 
   const formik = useFormik({
-    initialValues: {
-      subscriptionId: subscriptionId || '',
-      userId: subscription?.userId || '',
-      firstName: subscription?.user?.firstName || '',
-      lastName: subscription?.user?.lastName || '',
-      plateNumber: subscription?.car?.plateNumber || '',
-      price: price || 0,
-      type: type || '',
-      noticeDate: noticeDate ? dayjs(noticeDate).format('YYYY-MM-DDTHH:mm:ss') : '',
-      status: status || '',
-      note: note || '',
-    },
+    initialValues,
     validationSchema,
-    enableReinitialize: true,
     onSubmit: (values) => {
-      const update = transformToMutationInput(values)
+      const input = transformToMutationInput(values)
 
-      toast.promise(
-        updateAdditionalExpense.mutateAsync({
-          id,
-          update,
-        }),
-        {
-          loading: 'Loading',
-          success: () => {
-            formik.resetForm()
-            onClose()
-            return 'Updated additional expense successfully!'
-          },
-          error: 'Failed to update additional expense!',
-        }
-      )
+      toast.promise(createAdditionalExpense.mutateAsync(input), {
+        loading: 'Loading',
+        success: () => {
+          formik.resetForm()
+          onClose()
+          return 'Created additional expense successfully!'
+        },
+        error: 'Failed to create additional expense!',
+      })
     },
   })
 
@@ -132,26 +115,19 @@ export default function AdditionalExpenseUpdateDialog(
     formik.setFieldValue('userId', value?.userId || '')
     formik.setFieldValue('firstName', value?.firstName || '')
     formik.setFieldValue('lastName', value?.lastName || '')
-    formik.setFieldValue('plateNumber', value?.plateNumber || '')
   }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Update Additional Expense</DialogTitle>
+      <DialogTitle id="form-dialog-title">Create New Additional Expense</DialogTitle>
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Autocomplete
                 id="subscriptionId"
-                defaultValue={{
-                  id: formik.values.subscriptionId,
-                  userId: formik.values.userId,
-                  firstName: formik.values.firstName,
-                  lastName: formik.values.lastName,
-                  plateNumber: formik.values.plateNumber,
-                }}
                 options={subscriptionItems}
+                getOptionSelected={(option, value) => option.id === value.id}
                 getOptionLabel={({ id, firstName, plateNumber }) =>
                   `${id}${firstName ? ` - ${firstName}` : ''}${
                     plateNumber ? ` - ${plateNumber}` : ''
@@ -219,14 +195,18 @@ export default function AdditionalExpenseUpdateDialog(
             </Grid>
 
             <Grid item xs={6}>
-              <TextField
+              <KeyboardDateTimePicker
                 fullWidth
+                ampm={false}
                 label="Date of expense notice"
-                type="datetime-local"
                 id="noticeDate"
                 name="noticeDate"
+                format={DEFAULT_DATE_FORMAT}
                 value={formik.values.noticeDate}
-                onChange={({ target }) => formik.setFieldValue('noticeDate', target.value)}
+                onChange={(date) => date && formik.setFieldValue('noticeDate', date.toDate())}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -328,7 +308,7 @@ export default function AdditionalExpenseUpdateDialog(
           </Button>
 
           <Button color="primary" variant="contained" type="submit">
-            Update
+            Create
           </Button>
         </DialogActions>
       </form>

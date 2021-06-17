@@ -106,10 +106,11 @@ export default function CarsDelivery(): JSX.Element {
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <KeyboardDateTimePicker
+              ampm={false}
               label="From"
               id="fromDate"
               name="fromDate"
-              format="DD/MM/YYYY HH:mm"
+              format={DEFAULT_DATE_FORMAT}
               value={fromDate}
               onChange={(date) => {
                 date && setFromDate(date.toDate())
@@ -122,10 +123,11 @@ export default function CarsDelivery(): JSX.Element {
 
           <Grid item xs={6}>
             <KeyboardDateTimePicker
+              ampm={false}
               label="To"
               id="toDate"
               name="toDate"
-              format="DD/MM/YYYY HH:mm"
+              format={DEFAULT_DATE_FORMAT}
               value={toDate}
               onChange={(date) => {
                 date && setToDate(date.toDate())

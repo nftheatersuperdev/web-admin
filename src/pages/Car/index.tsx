@@ -11,7 +11,7 @@ import {
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
-import { formatDateWithPattern } from 'utils'
+import { formatDateWithPattern, DEFAULT_DATE_FORMAT } from 'utils'
 import config from 'config'
 import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
@@ -160,7 +160,7 @@ export default function Car(): JSX.Element {
       headerName: 'Updated Date',
       description: 'Updated date',
       valueFormatter: (params: GridValueFormatterParams) =>
-        formatDateWithPattern(params, 'DD/MM/YYYY HH:mm'),
+        formatDateWithPattern(params, DEFAULT_DATE_FORMAT),
       flex: 1,
     },
     { field: 'topSpeed', headerName: 'Top Speed', description: 'Top Speed', flex: 1, hide: true },

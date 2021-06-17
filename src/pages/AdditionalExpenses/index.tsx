@@ -20,9 +20,9 @@ import {
   useAdditionalExpenseById,
   useUpdateAdditionalExpense,
 } from 'services/evme'
-import CreateDialog from 'pages/AdditionalExpenses/CreateDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
-import UpdateDialog from './UpdateDialog'
+import CreateDialog from './AdditionalExpenseCreateDialog'
+import UpdateDialog from './AdditionalExpenseUpdateDialog'
 
 export default function AdditionalExpenses(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)

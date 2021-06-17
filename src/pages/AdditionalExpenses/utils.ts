@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import * as Yup from 'yup'
 import { FormikValues } from 'formik'
 import { AdditionalExpenseInput, SubFilter } from 'services/evme.types'
@@ -10,7 +9,7 @@ export const transformToMutationInput = (data: FormikValues): AdditionalExpenseI
     price,
     type,
     status,
-    noticeDate: noticeDate ? dayjs(noticeDate).toISOString() : null,
+    noticeDate: noticeDate ? noticeDate.toISOString() : null,
     note,
   }
 }
@@ -22,7 +21,7 @@ export const validationSchema = Yup.object({
   subscriptionId: Yup.string().required('Subscription ID is required'),
   price: Yup.number().positive('Price must be positive number').required('Price is required'),
   type: Yup.string().required('Type of expense is required'),
-  noticeDate: Yup.string().required('Date of expense notice is required'),
+  noticeDate: Yup.date().required('Date of expense notice is required'),
   status: Yup.string().required('Status is required'),
   note: Yup.string().notRequired(),
 })
