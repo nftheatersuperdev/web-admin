@@ -8,11 +8,10 @@ import {
   GridToolbar,
 } from '@material-ui/data-grid'
 import { formatDates, formatMoney } from 'utils'
-import { ICarModelItem } from 'helper/car.helper'
 import toast from 'react-hot-toast'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
-import { useCars, useCreatePrices, usePricing } from 'services/evme'
+import { useCarModels, useCreatePrices, usePricing } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
 import { PackagePriceInput, PackagePriceSortFields, SortDirection } from 'services/evme.types'
 import PricingCreateDialog from './PricingCreateDialog'
@@ -58,7 +57,7 @@ export default function Pricing(): JSX.Element {
       direction: SortDirection.Desc,
     },
   ])
-  const { data: carModelList } = useCars()
+  const { data: carModels } = useCarModels()
   const mutationCreatePrice = useCreatePrices()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
@@ -92,15 +91,14 @@ export default function Pricing(): JSX.Element {
     [data, currentPageIndex]
   )
 
-  const carModelOptions = [] as ICarModelItem[]
-
-  // INFO: parsing option to display in dialog select element
-  carModelList?.edges?.forEach(({ node }) => {
-    carModelOptions.push({
-      id: node?.id,
-      modelName: `${node?.brand} - ${node?.model}`,
-    })
-  })
+  const carModelOptions = useMemo(
+    () =>
+      carModels?.edges?.map(({ node }) => ({
+        id: node?.id,
+        modelName: `${node?.brand} - ${node?.model}`,
+      })) || [],
+    [carModels]
+  )
 
   const handleCreatePrice = (data: PackagePriceInput[] | null) => {
     setIsCreateDialogOpen(false)

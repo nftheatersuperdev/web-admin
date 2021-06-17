@@ -7,26 +7,21 @@ import {
   GridRowData,
   GridCellParams,
   GridValueFormatterParams,
+  GridPageChangeParams,
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
 import { formatDateWithPattern } from 'utils'
-import { ICarModelItem } from 'helper/car.helper'
-import { useCars, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
+import config from 'config'
+import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
-import { Car as CarType, CarInput, CarModel } from 'services/evme.types'
+import { CarInput } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { ICarInfo } from './CarUpdateDialog'
 
-type RowType = Partial<CarModel> &
-  Partial<CarType> & {
-    carModelId: string // INFO: because both CarModel and CarType has id field, so we need on extra field for that overlap
-  }
-
 export default function Car(): JSX.Element {
-  const { data: carModelList } = useCars()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [selectedCarId, setSelectedCarId] = useState('')
@@ -36,6 +31,25 @@ export default function Car(): JSX.Element {
   const createCarMutation = useCreateCar()
   const updateCarMutation = useUpdateCar()
   const deleteCarMutation = useDeleteCar()
+
+  const [pageSize, setPageSize] = useState(5)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+
+  const { data: cars, fetchNextPage, fetchPreviousPage, isFetching } = useCars(pageSize)
+  const { data: carModels } = useCarModels()
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handlePageChange = (params: GridPageChangeParams) => {
+    if (params.page > currentPageIndex) {
+      fetchNextPage()
+    } else {
+      fetchPreviousPage()
+    }
+    setCurrentPageIndex(params.page)
+  }
 
   const onCloseCreateDialog = (data: CarInput | null) => {
     setIsCreateDialogOpen(false)
@@ -68,45 +82,56 @@ export default function Car(): JSX.Element {
       }
     )
   }
-  const { rows, carModelOptions } = useMemo(() => {
-    // Transform response into table format
-    const _rows = [] as RowType[]
-    carModelList?.edges?.forEach(({ node }) => {
-      node?.cars?.forEach((car) =>
-        _rows.push({
-          carModelId: node?.id,
-          brand: node?.brand,
-          topSpeed: node?.topSpeed,
-          acceleration: node?.acceleration,
-          range: node?.range,
-          totalPower: node?.totalPower,
-          chargeType: node?.chargeType,
-          chargeTime: node?.chargeTime,
-          fastChargeTime: node?.fastChargeTime,
-          bodyTypeId: node?.bodyTypeId,
-          model: node?.model,
-          id: car?.id,
-          vin: car?.vin,
-          plateNumber: car?.plateNumber,
-          color: car?.color,
-        })
-      )
-    })
 
-    const _carModelOptions = [] as ICarModelItem[]
+  const rows = useMemo(
+    () =>
+      cars?.pages[currentPageIndex]?.edges?.map(({ node }) => {
+        const { id, vin, plateNumber, color, carModelId, carModel, updatedAt } = node || {}
 
-    // INFO: parsing option to display in dialog select element
-    carModelList?.edges?.forEach(({ node }) => {
-      _carModelOptions.push({
+        const {
+          brand,
+          model,
+          acceleration,
+          topSpeed,
+          range,
+          totalPower,
+          connectorType,
+          chargeTime,
+          fastChargeTime,
+        } = carModel || {}
+
+        const { description: chargeType } = connectorType || {}
+
+        return {
+          carModelId,
+          brand,
+          topSpeed,
+          acceleration,
+          range,
+          totalPower,
+          chargeType,
+          chargeTime,
+          fastChargeTime,
+          bodyType: carModel?.bodyType?.bodyType,
+          model,
+          id,
+          vin,
+          plateNumber,
+          color,
+          updatedAt,
+        }
+      }) || [],
+    [cars, currentPageIndex]
+  )
+
+  const carModelOptions = useMemo(
+    () =>
+      carModels?.edges?.map(({ node }) => ({
         id: node?.id,
         modelName: `${node?.brand} - ${node?.model}`,
-      })
-    })
-    return {
-      rows: _rows,
-      carModelOptions: _carModelOptions,
-    }
-  }, [carModelList])
+      })) || [],
+    [carModels]
+  )
 
   const openEditCarDialog = (param: GridRowData) => {
     setSelectedCarId(param.id)
@@ -231,22 +256,28 @@ export default function Car(): JSX.Element {
         </Button>
       </PageToolbar>
 
-      {rows.length > 0 ? (
-        <Card>
-          <DataGrid
-            autoHeight
-            autoPageSize
-            rows={rows}
-            columns={columns}
-            checkboxSelection
-            disableSelectionOnClick
-            onRowClick={openEditCarDialog}
-            components={{
-              Toolbar: GridToolbar,
-            }}
-          />
-        </Card>
-      ) : null}
+      <Card>
+        <DataGrid
+          autoHeight
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={cars?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          rowsPerPageOptions={config.tableRowsPerPageOptions}
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
+          loading={isFetching}
+          rows={rows}
+          columns={columns}
+          checkboxSelection
+          disableSelectionOnClick
+          onRowClick={openEditCarDialog}
+          components={{
+            Toolbar: GridToolbar,
+          }}
+        />
+      </Card>
 
       <CarCreateDialog
         open={isCreateDialogOpen}

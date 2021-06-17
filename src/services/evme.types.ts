@@ -22,6 +22,13 @@ export type AddAdditionalExpensesToSubInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type AddAmenitiesToChargingLocationInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type AddCarModelsToCarBodyTypeInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -51,6 +58,20 @@ export type AddEventsToSubInput = {
 }
 
 export type AddFilesToAdditionalExpenseInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddLocationsToLocationAmenityInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddOutletsToChargingLocationInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The ids of the relations. */
@@ -472,6 +493,31 @@ export type CarBodyTypeSumAggregate = {
   id?: Maybe<Scalars['Float']>
 }
 
+export type CarChargeType = {
+  __typename?: 'CarChargeType'
+  id: Scalars['String']
+  description: Scalars['String']
+  carModels: Array<CarModel>
+}
+
+export type CarChargeTypeFilter = {
+  and?: Maybe<Array<CarChargeTypeFilter>>
+  or?: Maybe<Array<CarChargeTypeFilter>>
+  id?: Maybe<IdFilterComparison>
+  description?: Maybe<StringFieldComparison>
+}
+
+export type CarChargeTypeSort = {
+  field: CarChargeTypeSortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum CarChargeTypeSortFields {
+  Id = 'id',
+  Description = 'description',
+}
+
 export type CarConnection = {
   __typename?: 'CarConnection'
   /** Paging information */
@@ -567,7 +613,8 @@ export type CarModel = {
   topSpeed: Scalars['Float']
   range: Scalars['Float']
   totalPower: Scalars['Float']
-  chargeType: Scalars['String']
+  connectorTypeId: Scalars['String']
+  connectorType: CarChargeType
   chargeTime: Scalars['Float']
   fastChargeTime: Scalars['Float']
   bodyTypeId: Scalars['Float']
@@ -605,7 +652,7 @@ export type CarModelAggregateGroupBy = {
   topSpeed?: Maybe<Scalars['Float']>
   range?: Maybe<Scalars['Float']>
   totalPower?: Maybe<Scalars['Float']>
-  chargeType?: Maybe<Scalars['String']>
+  connectorTypeId?: Maybe<Scalars['String']>
   chargeTime?: Maybe<Scalars['Float']>
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
@@ -645,7 +692,7 @@ export type CarModelCountAggregate = {
   topSpeed?: Maybe<Scalars['Int']>
   range?: Maybe<Scalars['Int']>
   totalPower?: Maybe<Scalars['Int']>
-  chargeType?: Maybe<Scalars['Int']>
+  connectorTypeId?: Maybe<Scalars['Int']>
   chargeTime?: Maybe<Scalars['Int']>
   fastChargeTime?: Maybe<Scalars['Int']>
   bodyTypeId?: Maybe<Scalars['Int']>
@@ -671,7 +718,7 @@ export type CarModelFilter = {
   topSpeed?: Maybe<NumberFieldComparison>
   range?: Maybe<NumberFieldComparison>
   totalPower?: Maybe<NumberFieldComparison>
-  chargeType?: Maybe<StringFieldComparison>
+  connectorTypeId?: Maybe<StringFieldComparison>
   chargeTime?: Maybe<NumberFieldComparison>
   fastChargeTime?: Maybe<NumberFieldComparison>
   bodyTypeId?: Maybe<NumberFieldComparison>
@@ -698,7 +745,7 @@ export type CarModelInput = {
   topSpeed: Scalars['Float']
   range: Scalars['Float']
   totalPower: Scalars['Float']
-  chargeType: Scalars['String']
+  connectorType: Scalars['String']
   chargeTime: Scalars['Float']
   fastChargeTime: Scalars['String']
   bodyTypeId: Scalars['String']
@@ -714,7 +761,7 @@ export type CarModelMaxAggregate = {
   topSpeed?: Maybe<Scalars['Float']>
   range?: Maybe<Scalars['Float']>
   totalPower?: Maybe<Scalars['Float']>
-  chargeType?: Maybe<Scalars['String']>
+  connectorTypeId?: Maybe<Scalars['String']>
   chargeTime?: Maybe<Scalars['Float']>
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
@@ -731,7 +778,7 @@ export type CarModelMinAggregate = {
   topSpeed?: Maybe<Scalars['Float']>
   range?: Maybe<Scalars['Float']>
   totalPower?: Maybe<Scalars['Float']>
-  chargeType?: Maybe<Scalars['String']>
+  connectorTypeId?: Maybe<Scalars['String']>
   chargeTime?: Maybe<Scalars['Float']>
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
@@ -753,7 +800,7 @@ export enum CarModelSortFields {
   TopSpeed = 'topSpeed',
   Range = 'range',
   TotalPower = 'totalPower',
-  ChargeType = 'chargeType',
+  ConnectorTypeId = 'connectorTypeId',
   ChargeTime = 'chargeTime',
   FastChargeTime = 'fastChargeTime',
   BodyTypeId = 'bodyTypeId',
@@ -785,6 +832,111 @@ export enum CarSortFields {
   PlateNumber = 'plateNumber',
   CarModelId = 'carModelId',
   Color = 'color',
+}
+
+export type ChargingLocation = {
+  __typename?: 'ChargingLocation'
+  id: Scalars['String']
+  provider: Scalars['String']
+  address: Scalars['String']
+  name: Scalars['String']
+  externalId: Scalars['String']
+  latitude: Scalars['Float']
+  longitude: Scalars['Float']
+  amenities: Array<LocationAmenity>
+  outlets: Array<CarChargeType>
+}
+
+export type ChargingLocationAmenitiesArgs = {
+  filter?: Maybe<LocationAmenityFilter>
+  sorting?: Maybe<Array<LocationAmenitySort>>
+}
+
+export type ChargingLocationOutletsArgs = {
+  filter?: Maybe<CarChargeTypeFilter>
+  sorting?: Maybe<Array<CarChargeTypeSort>>
+}
+
+export type ChargingLocationAggregateGroupBy = {
+  __typename?: 'ChargingLocationAggregateGroupBy'
+  id?: Maybe<Scalars['String']>
+  provider?: Maybe<Scalars['String']>
+  address?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+}
+
+export type ChargingLocationConnection = {
+  __typename?: 'ChargingLocationConnection'
+  /** Paging information */
+  pageInfo: PageInfo
+  /** Array of edges. */
+  edges: Array<ChargingLocationEdge>
+}
+
+export type ChargingLocationCountAggregate = {
+  __typename?: 'ChargingLocationCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  provider?: Maybe<Scalars['Int']>
+  address?: Maybe<Scalars['Int']>
+  name?: Maybe<Scalars['Int']>
+  externalId?: Maybe<Scalars['Int']>
+}
+
+export type ChargingLocationEdge = {
+  __typename?: 'ChargingLocationEdge'
+  /** The node containing the ChargingLocation */
+  node: ChargingLocation
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']
+}
+
+export type ChargingLocationFilter = {
+  and?: Maybe<Array<ChargingLocationFilter>>
+  or?: Maybe<Array<ChargingLocationFilter>>
+  id?: Maybe<StringFieldComparison>
+  provider?: Maybe<StringFieldComparison>
+  address?: Maybe<StringFieldComparison>
+  name?: Maybe<StringFieldComparison>
+  externalId?: Maybe<StringFieldComparison>
+}
+
+export type ChargingLocationMaxAggregate = {
+  __typename?: 'ChargingLocationMaxAggregate'
+  id?: Maybe<Scalars['String']>
+  provider?: Maybe<Scalars['String']>
+  address?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+}
+
+export type ChargingLocationMinAggregate = {
+  __typename?: 'ChargingLocationMinAggregate'
+  id?: Maybe<Scalars['String']>
+  provider?: Maybe<Scalars['String']>
+  address?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+}
+
+export type ChargingLocationSort = {
+  field: ChargingLocationSortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum ChargingLocationSortFields {
+  Id = 'id',
+  Provider = 'provider',
+  Address = 'address',
+  Name = 'name',
+  ExternalId = 'externalId',
+}
+
+export type CreateLocationAmenity = {
+  id?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+  plugshareId?: Maybe<Scalars['Float']>
 }
 
 export type CreateManyAdditionalExpenseFilesInput = {
@@ -820,6 +972,11 @@ export type CreateOneCarInput = {
 export type CreateOneCarModelInput = {
   /** The record to create */
   carModel: CarModelInput
+}
+
+export type CreateOneLocationAmenityInput = {
+  /** The record to create */
+  locationAmenity: CreateLocationAmenity
 }
 
 export type CreateOnePackagePriceInput = {
@@ -947,6 +1104,87 @@ export type ImageByCarDto = {
   interiorImages?: Maybe<Array<CarModelImage>>
 }
 
+export type LocationAmenity = {
+  __typename?: 'LocationAmenity'
+  id: Scalars['String']
+  description: Scalars['String']
+  plugshareId?: Maybe<Scalars['Float']>
+  locations: Array<ChargingLocation>
+}
+
+export type LocationAmenityLocationsArgs = {
+  filter?: Maybe<ChargingLocationFilter>
+  sorting?: Maybe<Array<ChargingLocationSort>>
+}
+
+export type LocationAmenityAggregateGroupBy = {
+  __typename?: 'LocationAmenityAggregateGroupBy'
+  id?: Maybe<Scalars['String']>
+  plugshareId?: Maybe<Scalars['Float']>
+}
+
+export type LocationAmenityAvgAggregate = {
+  __typename?: 'LocationAmenityAvgAggregate'
+  plugshareId?: Maybe<Scalars['Float']>
+}
+
+export type LocationAmenityConnection = {
+  __typename?: 'LocationAmenityConnection'
+  /** Paging information */
+  pageInfo: PageInfo
+  /** Array of edges. */
+  edges: Array<LocationAmenityEdge>
+}
+
+export type LocationAmenityCountAggregate = {
+  __typename?: 'LocationAmenityCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  plugshareId?: Maybe<Scalars['Int']>
+}
+
+export type LocationAmenityEdge = {
+  __typename?: 'LocationAmenityEdge'
+  /** The node containing the LocationAmenity */
+  node: LocationAmenity
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']
+}
+
+export type LocationAmenityFilter = {
+  and?: Maybe<Array<LocationAmenityFilter>>
+  or?: Maybe<Array<LocationAmenityFilter>>
+  id?: Maybe<StringFieldComparison>
+  plugshareId?: Maybe<NumberFieldComparison>
+}
+
+export type LocationAmenityMaxAggregate = {
+  __typename?: 'LocationAmenityMaxAggregate'
+  id?: Maybe<Scalars['String']>
+  plugshareId?: Maybe<Scalars['Float']>
+}
+
+export type LocationAmenityMinAggregate = {
+  __typename?: 'LocationAmenityMinAggregate'
+  id?: Maybe<Scalars['String']>
+  plugshareId?: Maybe<Scalars['Float']>
+}
+
+export type LocationAmenitySort = {
+  field: LocationAmenitySortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum LocationAmenitySortFields {
+  Id = 'id',
+  PlugshareId = 'plugshareId',
+}
+
+export type LocationAmenitySumAggregate = {
+  __typename?: 'LocationAmenitySumAggregate'
+  plugshareId?: Maybe<Scalars['Float']>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   signup: User
@@ -961,6 +1199,7 @@ export type Mutation = {
   createUser: User
   updateUser: User
   setBodyTypeOnCarModel: CarModel
+  setConnectorTypeOnCarModel: CarModel
   addCarsToCarModel: CarModel
   setCarsOnCarModel: CarModel
   addPricesToCarModel: CarModel
@@ -1017,6 +1256,17 @@ export type Mutation = {
   updateAdditionalExpenseFile: AdditionalExpenseFile
   deleteAdditionalExpenseFile: AdditionalExpenseFileDeleteResponse
   deleteAdditionalExpenseFiles: DeleteManyResponse
+  addAmenitiesToChargingLocation: ChargingLocation
+  setAmenitiesOnChargingLocation: ChargingLocation
+  addOutletsToChargingLocation: ChargingLocation
+  setOutletsOnChargingLocation: ChargingLocation
+  removeAmenitiesFromChargingLocation: ChargingLocation
+  removeOutletsFromChargingLocation: ChargingLocation
+  addLocationsToLocationAmenity: LocationAmenity
+  setLocationsOnLocationAmenity: LocationAmenity
+  removeLocationsFromLocationAmenity: LocationAmenity
+  createLocationAmenity: LocationAmenity
+  updateLocationAmenity: LocationAmenity
 }
 
 export type MutationUpdateProfileArgs = {
@@ -1061,6 +1311,10 @@ export type MutationUpdateUserArgs = {
 
 export type MutationSetBodyTypeOnCarModelArgs = {
   input: SetBodyTypeOnCarModelInput
+}
+
+export type MutationSetConnectorTypeOnCarModelArgs = {
+  input: SetConnectorTypeOnCarModelInput
 }
 
 export type MutationAddCarsToCarModelArgs = {
@@ -1287,6 +1541,50 @@ export type MutationDeleteAdditionalExpenseFilesArgs = {
   input: DeleteManyAdditionalExpenseFilesInput
 }
 
+export type MutationAddAmenitiesToChargingLocationArgs = {
+  input: AddAmenitiesToChargingLocationInput
+}
+
+export type MutationSetAmenitiesOnChargingLocationArgs = {
+  input: SetAmenitiesOnChargingLocationInput
+}
+
+export type MutationAddOutletsToChargingLocationArgs = {
+  input: AddOutletsToChargingLocationInput
+}
+
+export type MutationSetOutletsOnChargingLocationArgs = {
+  input: SetOutletsOnChargingLocationInput
+}
+
+export type MutationRemoveAmenitiesFromChargingLocationArgs = {
+  input: RemoveAmenitiesFromChargingLocationInput
+}
+
+export type MutationRemoveOutletsFromChargingLocationArgs = {
+  input: RemoveOutletsFromChargingLocationInput
+}
+
+export type MutationAddLocationsToLocationAmenityArgs = {
+  input: AddLocationsToLocationAmenityInput
+}
+
+export type MutationSetLocationsOnLocationAmenityArgs = {
+  input: SetLocationsOnLocationAmenityInput
+}
+
+export type MutationRemoveLocationsFromLocationAmenityArgs = {
+  input: RemoveLocationsFromLocationAmenityInput
+}
+
+export type MutationCreateLocationAmenityArgs = {
+  input: CreateOneLocationAmenityInput
+}
+
+export type MutationUpdateLocationAmenityArgs = {
+  input: UpdateOneLocationAmenityInput
+}
+
 export type NumberFieldComparison = {
   is?: Maybe<Scalars['Boolean']>
   isNot?: Maybe<Scalars['Boolean']>
@@ -1339,6 +1637,8 @@ export type PackagePriceConnection = {
   pageInfo: PageInfo
   /** Array of edges. */
   edges: Array<PackagePriceEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
 }
 
 export type PackagePriceCountAggregate = {
@@ -1722,6 +2022,10 @@ export type Query = {
   additionalExpenses: AdditionalExpenseConnection
   additionalExpenseFile?: Maybe<AdditionalExpenseFile>
   additionalExpenseFiles: AdditionalExpenseFileConnection
+  chargingLocation?: Maybe<ChargingLocation>
+  chargingLocations: ChargingLocationConnection
+  locationAmenity?: Maybe<LocationAmenity>
+  locationAmenities: LocationAmenityConnection
 }
 
 export type QueryUserAggregateArgs = {
@@ -1846,6 +2150,26 @@ export type QueryAdditionalExpenseFilesArgs = {
   sorting?: Maybe<Array<AdditionalExpenseFileSort>>
 }
 
+export type QueryChargingLocationArgs = {
+  id: Scalars['ID']
+}
+
+export type QueryChargingLocationsArgs = {
+  paging?: Maybe<CursorPaging>
+  filter?: Maybe<ChargingLocationFilter>
+  sorting?: Maybe<Array<ChargingLocationSort>>
+}
+
+export type QueryLocationAmenityArgs = {
+  id: Scalars['ID']
+}
+
+export type QueryLocationAmenitiesArgs = {
+  paging?: Maybe<CursorPaging>
+  filter?: Maybe<LocationAmenityFilter>
+  sorting?: Maybe<Array<LocationAmenitySort>>
+}
+
 export type RemoveAdditionalExpenseFromAdditionalExpenseFileInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -1853,11 +2177,32 @@ export type RemoveAdditionalExpenseFromAdditionalExpenseFileInput = {
   relationId: Scalars['ID']
 }
 
+export type RemoveAmenitiesFromChargingLocationInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type RemoveDefaultAddressFromUserInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The id of relation. */
   relationId: Scalars['ID']
+}
+
+export type RemoveLocationsFromLocationAmenityInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type RemoveOutletsFromChargingLocationInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
 }
 
 export type SetAdditionalExpenseOnAdditionalExpenseFileInput = {
@@ -1868,6 +2213,13 @@ export type SetAdditionalExpenseOnAdditionalExpenseFileInput = {
 }
 
 export type SetAdditionalExpensesOnSubInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type SetAmenitiesOnChargingLocationInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The ids of the relations. */
@@ -1916,6 +2268,13 @@ export type SetCarsOnCarModelInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type SetConnectorTypeOnCarModelInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The id of relation. */
+  relationId: Scalars['ID']
+}
+
 export type SetDefaultAddressOnUserInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -1945,6 +2304,20 @@ export type SetEventsOnSubInput = {
 }
 
 export type SetFilesOnAdditionalExpenseInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type SetLocationsOnLocationAmenityInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type SetOutletsOnChargingLocationInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The ids of the relations. */
@@ -2509,6 +2882,12 @@ export type SubscriptionInput = {
   endAddressId: Scalars['String']
 }
 
+export type UpdateLocationAmenity = {
+  id?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+  plugshareId?: Maybe<Scalars['Float']>
+}
+
 export type UpdateOneAdditionalExpenseFileInput = {
   /** The id of the record to update */
   id: Scalars['ID']
@@ -2542,6 +2921,13 @@ export type UpdateOneCarModelInput = {
   id: Scalars['ID']
   /** The update to apply. */
   update: CarModelInput
+}
+
+export type UpdateOneLocationAmenityInput = {
+  /** The id of the record to update */
+  id: Scalars['ID']
+  /** The update to apply. */
+  update: UpdateLocationAmenity
 }
 
 export type UpdateOnePaymentEventInput = {
@@ -2613,7 +2999,7 @@ export type UserAddress = {
   full: Scalars['String']
   latitude: Scalars['Float']
   longitude: Scalars['Float']
-  remark: Scalars['String']
+  remark?: Maybe<Scalars['String']>
   user: User
 }
 

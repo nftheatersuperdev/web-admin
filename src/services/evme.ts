@@ -11,6 +11,7 @@ import {
 } from 'react-query'
 import config from 'config'
 import {
+  Car,
   CarModel,
   PackagePrice,
   Payment,
@@ -30,6 +31,7 @@ import {
 } from './evme.types'
 
 const CARS_QUERY_KEY = 'evme:cars'
+const CAR_MODELS_QUERY_KEY = 'evme:car-models'
 const PRICING_BY_MODEL_ID_KEY = 'evme:use-pricing-by-id'
 const PRICING_QUERY_KEY = 'evme:pricing'
 
@@ -47,6 +49,7 @@ export interface WithPaginationType<P> {
     node: P
   }[]
 }
+
 export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, unknown> {
   const queryClient = useQueryClient()
 
@@ -132,40 +135,34 @@ export function useDeleteCar(): UseMutationResult<CarModel, unknown, DeleteOneCa
   })
 }
 
-export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
+export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
   return useQuery(
-    [CARS_QUERY_KEY],
+    [CAR_MODELS_QUERY_KEY],
     async () => {
       const response = await gqlClient.request(
         gql`
-          query GetCars {
+          query GetCarModels {
             carModels {
+              totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
               edges {
                 node {
                   id
                   brand
-                  topSpeed
+                  model
+                  seats
                   acceleration
                   topSpeed
                   range
                   totalPower
-                  chargeType
+                  totalTorque
                   chargeTime
                   fastChargeTime
-                  bodyTypeId
-                  bodyType {
-                    bodyType
-                  }
-                  model
-                  cars {
-                    id
-                    vin
-                    plateNumber
-                    color
-                    updatedAt
-                  }
-                  createdAt
-                  updatedAt
                 }
               }
             }
@@ -175,6 +172,70 @@ export function useCars(): UseQueryResult<WithPaginationType<CarModel>> {
       return response.carModels
     },
     {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve car models, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}
+
+export function useCars(pageSize = 10): UseInfiniteQueryResult<WithPaginationType<Car>> {
+  return useInfiniteQuery(
+    [CARS_QUERY_KEY, pageSize],
+    async ({ pageParam = '' }) => {
+      const response = await gqlClient.request(
+        gql`
+          query GetCars($pageSize: Int!, $after: ConnectionCursor) {
+            cars(paging: { first: $pageSize, after: $after }) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
+              edges {
+                node {
+                  id
+                  vin
+                  plateNumber
+                  color
+                  createdAt
+                  updatedAt
+                  carModelId
+                  carModel {
+                    brand
+                    model
+                    acceleration
+                    topSpeed
+                    range
+                    totalPower
+                    totalTorque
+                    connectorType {
+                      description
+                    }
+                    chargeTime
+                    fastChargeTime
+                    bodyType {
+                      bodyType
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        {
+          pageSize,
+          after: pageParam,
+        }
+      )
+
+      return response.cars
+    },
+    {
+      getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
         console.error(`Unable to retrieve cars, ${error.message}`)
       },

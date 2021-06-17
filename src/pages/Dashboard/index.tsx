@@ -65,8 +65,7 @@ export default function Dashboard(): JSX.Element {
   const { data: payments } = usePayments()
   const { data: users } = useUsers()
 
-  const totalCars =
-    cars?.edges?.reduce((count, { node }) => count + (node?.cars?.length || 0), 0) || 0
+  const totalCars = cars?.pages[0]?.totalCount || 0
 
   const totalPaymentAmountToday =
     payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
