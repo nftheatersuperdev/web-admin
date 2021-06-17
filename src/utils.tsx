@@ -25,3 +25,5 @@ export function renderEmailLink(params: GridCellParams): JSX.Element {
     </Link>
   )
 }
+
+export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY HH:mm'

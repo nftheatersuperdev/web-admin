@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Card, CardContent, CardHeader, Grid } from '@material-ui/core'
-import { DataGrid, GridColDef, GridToolbar } from '@material-ui/data-grid'
+import { DataGrid, GridColDef, GridRowData, GridToolbar } from '@material-ui/data-grid'
 import { KeyboardDateTimePicker } from '@material-ui/pickers'
-import { formatDateWithPattern } from 'utils'
+import { DEFAULT_DATE_FORMAT, formatDateWithPattern } from 'utils'
 import { useSearchSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
+import CarDeliveryDialog from './CarDeliveryDialog'
+import { IDeliveryModelData, MISSING_VALUE } from './utils'
 
 const START_DAYS = 1
 const NEXT_DAYS = 7
@@ -18,6 +20,8 @@ const initToDate = dayjs(new Date())
 export default function CarsDelivery(): JSX.Element {
   const [fromDate, setFromDate] = useState(initFromDate)
   const [toDate, setToDate] = useState(initToDate)
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [dialogData, setDialogData] = useState({} as IDeliveryModelData)
 
   const { data, refetch } = useSearchSubscriptions(
     'cars-delivery',
@@ -57,19 +61,18 @@ export default function CarsDelivery(): JSX.Element {
       field: 'startDate',
       headerName: 'Delivery Date',
       description: 'Delivery Date',
-      valueFormatter: (params) => formatDateWithPattern(params, 'DD/MM/YYYY HH:mm'),
+      valueFormatter: (params) => formatDateWithPattern(params, DEFAULT_DATE_FORMAT),
       flex: 1,
     },
   ]
 
   const rows =
     data?.edges?.map(({ node }) => {
-      const { id, car, startDate } = node
-      // todo: need update graphql types
-      // const { firstName = '', lastName } = user || {}
+      const { id, car, startDate, user, startAddress } = node
       const { plateNumber, color, carModel } = car || {}
       const { brand, model } = carModel || {}
-      const userName = ''
+      const userName =
+        user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
       const carDisplayName = `${brand}-${model} (${color})`
       return {
         id,
@@ -77,8 +80,23 @@ export default function CarsDelivery(): JSX.Element {
         carDisplayName,
         plateNumber,
         startDate,
+        user,
+        remark: startAddress?.remark,
       }
     }) || []
+
+  const handleRowClick = (param: GridRowData) => {
+    setIsDetailDialogOpen(true)
+    setDialogData({
+      user: param.row.user,
+      startDate: param.row.startDate,
+      remark: param.row.remark,
+    })
+  }
+
+  const handleDialogClose = () => {
+    setIsDetailDialogOpen(false)
+  }
 
   return (
     <Card>
@@ -122,11 +140,17 @@ export default function CarsDelivery(): JSX.Element {
         <DataGrid
           autoHeight
           autoPageSize
+          onRowClick={handleRowClick}
           rows={rows}
           columns={columns}
           components={{
             Toolbar: GridToolbar,
           }}
+        />
+        <CarDeliveryDialog
+          open={isDetailDialogOpen}
+          onClose={handleDialogClose}
+          modelData={dialogData}
         />
       </CardContent>
     </Card>

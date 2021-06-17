@@ -350,9 +350,11 @@ export function useSearchSubscriptions(
                   }
                   startAddress {
                     full
+                    remark
                   }
                   endAddress {
                     full
+                    remark
                   }
                 }
               }
