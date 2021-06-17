@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Button, Card } from '@material-ui/core'
 import {
   DataGrid,
@@ -52,7 +52,7 @@ export default function Pricing(): JSX.Element {
   const [updatedModelId, setUpdatedModelId] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const { data, fetchNextPage, fetchPreviousPage } = usePricing(pageSize, [
+  const { data, fetchNextPage, fetchPreviousPage, isFetching } = usePricing(pageSize, [
     {
       field: PackagePriceSortFields.CarModelId,
       direction: SortDirection.Desc,
@@ -77,17 +77,20 @@ export default function Pricing(): JSX.Element {
     setCurrentPageIndex(params.page)
   }
 
-  // Transform response into table format
-  const rows = data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
-    id: node?.id,
-    createdAt: node?.createdAt,
-    updatedAt: node?.updatedAt,
-    price: node?.price,
-    duration: node?.duration,
-    brand: node?.carModel?.brand,
-    model: node?.carModel?.model,
-    modelId: node?.carModel?.id,
-  }))
+  const rows = useMemo(
+    () =>
+      data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
+        id: node?.id,
+        createdAt: node?.createdAt,
+        updatedAt: node?.updatedAt,
+        price: node?.price,
+        duration: node?.duration,
+        brand: node?.carModel?.brand,
+        model: node?.carModel?.model,
+        modelId: node?.carModel?.id,
+      })) || [],
+    [data, currentPageIndex]
+  )
 
   const carModelOptions = [] as ICarModelItem[]
 
@@ -138,34 +141,36 @@ export default function Pricing(): JSX.Element {
           New Price
         </Button>
       </PageToolbar>
-      {rows ? (
-        <Card>
-          <DataGrid
-            autoHeight
-            pagination
-            pageSize={pageSize}
-            page={currentPageIndex}
-            rowCount={data?.pages[currentPageIndex]?.totalCount}
-            paginationMode="server"
-            rowsPerPageOptions={config.tableRowsPerPageOptions}
-            onPageSizeChange={handlePageSizeChange}
-            onPageChange={handlePageChange}
-            rows={rows}
-            columns={columns}
-            components={{
-              Toolbar: GridToolbar,
-            }}
-            onRowClick={handleRowClick}
-            checkboxSelection
-            disableSelectionOnClick
-          />
-        </Card>
-      ) : null}
+
+      <Card>
+        <DataGrid
+          autoHeight
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          rowsPerPageOptions={config.tableRowsPerPageOptions}
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
+          loading={isFetching}
+          rows={rows}
+          columns={columns}
+          components={{
+            Toolbar: GridToolbar,
+          }}
+          onRowClick={handleRowClick}
+          checkboxSelection
+          disableSelectionOnClick
+        />
+      </Card>
+
       <PricingCreateDialog
         open={isCreateDialogOpen}
         onClose={(data) => handleCreatePrice(data)}
         modelOptions={carModelOptions}
       />
+
       <PricingUpdateDialog
         open={isUpdateDialogOpen}
         onClose={(data) => handleUpdatePrice(data)}
