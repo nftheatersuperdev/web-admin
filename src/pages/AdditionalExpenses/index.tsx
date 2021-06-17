@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, useMemo, Fragment } from 'react'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
   DataGrid,
@@ -34,12 +34,7 @@ export default function AdditionalExpenses(): JSX.Element {
   const [pageSize, setPageSize] = useState(5)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const {
-    data,
-    fetchNextPage,
-    fetchPreviousPage,
-    isLoading: isLoadingExpenses,
-  } = useAdditionalExpenses(pageSize)
+  const { data, fetchNextPage, fetchPreviousPage, isFetching } = useAdditionalExpenses(pageSize)
 
   const { data: currentExpenseData, isLoading } = useAdditionalExpenseById(currentExpenseId, {
     enabled: !!currentExpenseId,
@@ -63,23 +58,27 @@ export default function AdditionalExpenses(): JSX.Element {
     setCurrentPageIndex(params.page)
   }
 
-  const rows = data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-    const { userId, user } = node.subscription || {}
-    const userFullName = `${user?.firstName || ''} ${user?.lastName || ''}`
-    return {
-      id: node?.id,
-      subscriptionId: node?.subscriptionId,
-      userId,
-      userFullName,
-      noticeDate: node?.noticeDate,
-      type: node?.type,
-      price: node?.price,
-      status: node?.status,
-      note: node?.note,
-      createdAt: node?.createdAt,
-      updatedAt: node?.updatedAt,
-    }
-  })
+  const rows = useMemo(
+    () =>
+      data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
+        const { userId, user } = node.subscription || {}
+        const userFullName = `${user?.firstName || ''} ${user?.lastName || ''}`
+        return {
+          id: node?.id,
+          subscriptionId: node?.subscriptionId,
+          userId,
+          userFullName,
+          noticeDate: node?.noticeDate,
+          type: node?.type,
+          price: node?.price,
+          status: node?.status,
+          note: node?.note,
+          createdAt: node?.createdAt,
+          updatedAt: node?.updatedAt,
+        }
+      }) || [],
+    [data, currentPageIndex]
+  )
 
   const handleSubmitDelete = (rowData?: GridRowData) => {
     if (!rowData) {
@@ -204,33 +203,31 @@ export default function AdditionalExpenses(): JSX.Element {
         </Button>
       </PageToolbar>
 
-      {rows ? (
-        <Card>
-          <DataGrid
-            autoHeight
-            pagination
-            pageSize={pageSize}
-            page={currentPageIndex}
-            rowCount={data?.pages[currentPageIndex]?.totalCount}
-            paginationMode="server"
-            rowsPerPageOptions={config.tableRowsPerPageOptions}
-            onPageSizeChange={handlePageSizeChange}
-            onPageChange={handlePageChange}
-            loading={isLoadingExpenses}
-            rows={rows}
-            columns={columns}
-            checkboxSelection
-            disableSelectionOnClick
-            onRowClick={(params: GridRowParams) => {
-              setCurrentExpenseId(params.row.id)
-              setIsUpdateDialogOpen(true)
-            }}
-            components={{
-              Toolbar: GridToolbar,
-            }}
-          />
-        </Card>
-      ) : null}
+      <Card>
+        <DataGrid
+          autoHeight
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          rowsPerPageOptions={config.tableRowsPerPageOptions}
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
+          loading={isFetching}
+          rows={rows}
+          columns={columns}
+          checkboxSelection
+          disableSelectionOnClick
+          onRowClick={(params: GridRowParams) => {
+            setCurrentExpenseId(params.row.id)
+            setIsUpdateDialogOpen(true)
+          }}
+          components={{
+            Toolbar: GridToolbar,
+          }}
+        />
+      </Card>
 
       <CreateDialog open={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} />
 

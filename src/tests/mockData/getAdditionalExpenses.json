@@ -1,134 +1,31 @@
 {
   "additionalExpenses": {
+    "totalCount": 1,
+    "pageInfo": {
+      "hasNextPage": false,
+      "hasPreviousPage": false,
+      "startCursor": "YXJyYXljb25uZWN0aW9uOjA=",
+      "endCursor": "YXJyYXljb25uZWN0aW9uOjA="
+    },
     "edges": [
       {
         "node": {
-          "id": "f598c96b-adda-44c4-aca3-c9068ee92b9c",
-          "createdAt": "2021-06-04T00:19:20.738Z",
-          "updatedAt": "2021-06-04T00:19:20.738Z",
-          "subscriptionId": "1efe519e-2d0f-42c5-8121-3fca16aa08bb",
-          "status": "pending",
-          "type": "service",
-          "note": "One note",
-          "price": 33333,
-          "noticeDate": "2025-03-30T19:52:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "96400ca4-fb76-4377-b0a5-767413e3265b",
-          "createdAt": "2021-06-04T00:19:49.132Z",
-          "updatedAt": "2021-06-04T00:19:49.132Z",
-          "subscriptionId": "1efe519e-2d0f-42c5-8121-3fca16aa08bb",
-          "status": "pending",
-          "type": "service",
-          "note": "One note",
-          "price": 33333,
-          "noticeDate": "2025-03-30T19:52:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "64b24e60-0a95-45ce-87b9-70217ced78c4",
-          "createdAt": "2021-06-04T00:31:13.405Z",
-          "updatedAt": "2021-06-04T00:31:13.405Z",
-          "subscriptionId": "1efe519e-2d0f-42c5-8121-3fca16aa08bb",
-          "status": "informed",
-          "type": "service",
-          "note": "3333",
-          "price": 333,
-          "noticeDate": "2025-03-23T15:22:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "7a25d75f-e21d-4e06-8645-f48df78eb104",
-          "createdAt": "2021-06-04T01:44:48.940Z",
-          "updatedAt": "2021-06-04T01:44:48.940Z",
-          "subscriptionId": "fa398cd5-5971-4653-a4f3-db0b248bcb35",
-          "status": "created",
-          "type": "insurance",
-          "note": "Accident",
-          "price": 2000,
-          "noticeDate": "2021-06-16T01:44:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "7520c622-affb-4433-8ae9-aab065513abd",
-          "createdAt": "2021-06-04T01:57:53.163Z",
-          "updatedAt": "2021-06-04T01:57:53.163Z",
-          "subscriptionId": "fa398cd5-5971-4653-a4f3-db0b248bcb35",
-          "status": "informed",
-          "type": "insurance",
-          "note": "Jeremy needs to pay for all his Apple services 😊",
-          "price": 100000,
-          "noticeDate": "2021-06-17T01:57:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "1a00edae-c921-4211-9378-d77e7ccd6f06",
-          "createdAt": "2021-06-04T04:45:32.661Z",
-          "updatedAt": "2021-06-04T04:45:32.661Z",
-          "subscriptionId": "fa398cd5-5971-4653-a4f3-db0b248bcb35",
-          "status": "informed",
-          "type": "maintenance",
-          "note": "Bow test",
-          "price": 990,
-          "noticeDate": "2021-06-06T05:45:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "27434367-ca5a-475f-8b15-e96a16b937fb",
-          "createdAt": "2021-06-04T05:45:22.117Z",
-          "updatedAt": "2021-06-04T05:45:22.117Z",
-          "subscriptionId": "bdff616a-3fb1-405e-a817-d34bf0807b0f",
-          "status": "created",
-          "type": "insurance",
-          "note": "",
-          "price": 100000,
-          "noticeDate": "2021-06-19T05:45:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "251d0557-5be2-4083-8dc1-cbaee8ed8a19",
-          "createdAt": "2021-06-04T06:28:37.297Z",
-          "updatedAt": "2021-06-04T06:28:37.297Z",
-          "subscriptionId": "fa398cd5-5971-4653-a4f3-db0b248bcb35",
-          "status": "created",
-          "type": "insurance",
-          "note": "",
-          "price": 0,
-          "noticeDate": "2021-05-30T06:28:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "f5a6fcbb-9709-4c8d-be0f-3a62a454dac5",
-          "createdAt": "2021-06-04T06:29:43.037Z",
-          "updatedAt": "2021-06-04T06:29:43.037Z",
-          "subscriptionId": "fa398cd5-5971-4653-a4f3-db0b248bcb35",
+          "id": "a347554a-dc97-4119-91fd-34bd30263840",
+          "subscriptionId": "ecaf8c18-b513-498f-b4b9-1822521b450e",
+          "subscription": {
+            "userId": "027382b1-0b3b-4784-bba8-863daa7634de",
+            "user": {
+              "firstName": null,
+              "lastName": null
+            }
+          },
           "status": "created",
           "type": "repair",
-          "note": "",
-          "price": 0,
-          "noticeDate": "2021-06-01T06:29:00.000Z"
-        }
-      },
-      {
-        "node": {
-          "id": "f6043feb-5871-4920-bbb5-4c60a82f369f",
-          "createdAt": "2021-06-04T06:30:44.269Z",
-          "updatedAt": "2021-06-04T06:30:44.269Z",
-          "subscriptionId": "fa398cd5-5971-4653-a4f3-db0b248bcb35",
-          "status": "created",
-          "type": "replacement",
-          "note": "1",
-          "price": 0,
-          "noticeDate": "2021-06-01T06:30:00.000Z"
+          "note": "test",
+          "price": 5000,
+          "noticeDate": "2021-06-17T17:36:00.000Z",
+          "createdAt": "2021-06-16T16:37:13.423Z",
+          "updatedAt": "2021-06-16T16:37:13.423Z"
         }
       }
     ]

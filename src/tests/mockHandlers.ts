@@ -31,7 +31,7 @@ export const mockHandlers = [
     return res(ctx.data(getSubscriptions))
   }),
 
-  graphql.query('GetExpenses', (_req, res, ctx) => {
+  graphql.query('GetAdditionalExpenses', (_req, res, ctx) => {
     return res(ctx.data(getAdditionalExpenses))
   }),
 

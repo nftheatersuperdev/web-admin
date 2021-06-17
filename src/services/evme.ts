@@ -538,7 +538,7 @@ export function useAdditionalExpenses(
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetExpenses($pageSize: Int!, $after: ConnectionCursor) {
+          query GetAdditionalExpenses($pageSize: Int!, $after: ConnectionCursor) {
             additionalExpenses(paging: { first: $pageSize, after: $after }) {
               totalCount
               pageInfo {
