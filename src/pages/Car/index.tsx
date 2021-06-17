@@ -100,8 +100,6 @@ export default function Car(): JSX.Element {
           fastChargeTime,
         } = carModel || {}
 
-        const { description: chargeType } = connectorType || {}
-
         return {
           carModelId,
           brand,
@@ -109,7 +107,7 @@ export default function Car(): JSX.Element {
           acceleration,
           range,
           totalPower,
-          chargeType,
+          connectorType: connectorType?.description,
           chargeTime,
           fastChargeTime,
           bodyType: carModel?.bodyType?.bodyType,
@@ -182,9 +180,9 @@ export default function Car(): JSX.Element {
       hide: true,
     },
     {
-      field: 'chargeType',
-      headerName: 'Charge Type',
-      description: 'Charge Type',
+      field: 'connectorType',
+      headerName: 'Connector Type',
+      description: 'Connector Type',
       flex: 1,
       hide: true,
     },

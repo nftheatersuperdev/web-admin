@@ -493,31 +493,6 @@ export type CarBodyTypeSumAggregate = {
   id?: Maybe<Scalars['Float']>
 }
 
-export type CarChargeType = {
-  __typename?: 'CarChargeType'
-  id: Scalars['String']
-  description: Scalars['String']
-  carModels: Array<CarModel>
-}
-
-export type CarChargeTypeFilter = {
-  and?: Maybe<Array<CarChargeTypeFilter>>
-  or?: Maybe<Array<CarChargeTypeFilter>>
-  id?: Maybe<IdFilterComparison>
-  description?: Maybe<StringFieldComparison>
-}
-
-export type CarChargeTypeSort = {
-  field: CarChargeTypeSortFields
-  direction: SortDirection
-  nulls?: Maybe<SortNulls>
-}
-
-export enum CarChargeTypeSortFields {
-  Id = 'id',
-  Description = 'description',
-}
-
 export type CarConnection = {
   __typename?: 'CarConnection'
   /** Paging information */
@@ -526,6 +501,31 @@ export type CarConnection = {
   edges: Array<CarEdge>
   /** Fetch total count of records */
   totalCount: Scalars['Int']
+}
+
+export type CarConnectorType = {
+  __typename?: 'CarConnectorType'
+  id: Scalars['String']
+  description: Scalars['String']
+  carModels: Array<CarModel>
+}
+
+export type CarConnectorTypeFilter = {
+  and?: Maybe<Array<CarConnectorTypeFilter>>
+  or?: Maybe<Array<CarConnectorTypeFilter>>
+  id?: Maybe<IdFilterComparison>
+  description?: Maybe<StringFieldComparison>
+}
+
+export type CarConnectorTypeSort = {
+  field: CarConnectorTypeSortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum CarConnectorTypeSortFields {
+  Id = 'id',
+  Description = 'description',
 }
 
 export type CarCountAggregate = {
@@ -614,7 +614,7 @@ export type CarModel = {
   range: Scalars['Float']
   totalPower: Scalars['Float']
   connectorTypeId: Scalars['String']
-  connectorType: CarChargeType
+  connectorType: CarConnectorType
   chargeTime: Scalars['Float']
   fastChargeTime: Scalars['Float']
   bodyTypeId: Scalars['Float']
@@ -843,8 +843,9 @@ export type ChargingLocation = {
   externalId: Scalars['String']
   latitude: Scalars['Float']
   longitude: Scalars['Float']
+  extraFields: ChargingLocationExtra
   amenities: Array<LocationAmenity>
-  outlets: Array<CarChargeType>
+  outlets: Array<CarConnectorType>
 }
 
 export type ChargingLocationAmenitiesArgs = {
@@ -853,8 +854,8 @@ export type ChargingLocationAmenitiesArgs = {
 }
 
 export type ChargingLocationOutletsArgs = {
-  filter?: Maybe<CarChargeTypeFilter>
-  sorting?: Maybe<Array<CarChargeTypeSort>>
+  filter?: Maybe<CarConnectorTypeFilter>
+  sorting?: Maybe<Array<CarConnectorTypeSort>>
 }
 
 export type ChargingLocationAggregateGroupBy = {
@@ -889,6 +890,87 @@ export type ChargingLocationEdge = {
   node: ChargingLocation
   /** Cursor for this node. */
   cursor: Scalars['ConnectionCursor']
+}
+
+export type ChargingLocationExtra = {
+  __typename?: 'ChargingLocationExtra'
+  url?: Maybe<Scalars['String']>
+  cost?: Maybe<Scalars['Boolean']>
+  icon?: Maybe<Scalars['String']>
+  hours?: Maybe<Scalars['String']>
+  phone?: Maybe<Scalars['String']>
+  access?: Maybe<Scalars['Float']>
+  locale?: Maybe<Scalars['String']>
+  locked?: Maybe<Scalars['Boolean']>
+  enabled?: Maybe<Scalars['Boolean']>
+  open247?: Maybe<Scalars['Boolean']>
+  poi_name?: Maybe<Scalars['String']>
+  stations?: Maybe<Array<ChargingLocationExtraStation>>
+  icon_type?: Maybe<Scalars['String']>
+  all_promos?: Maybe<Array<ChargingLocationExtraPromo>>
+  confidence?: Maybe<Scalars['Float']>
+  created_at?: Maybe<Scalars['DateTime']>
+  updated_at?: Maybe<Scalars['DateTime']>
+  description?: Maybe<Scalars['String']>
+  nissan_nctc?: Maybe<Scalars['Boolean']>
+  custom_ports?: Maybe<Scalars['String']>
+  opening_date?: Maybe<Scalars['String']>
+  total_photos?: Maybe<Scalars['Float']>
+  under_repair?: Maybe<Scalars['Boolean']>
+  total_reviews?: Maybe<Scalars['Float']>
+  compass_bearing?: Maybe<Scalars['Float']>
+  distance_meters?: Maybe<Scalars['Float']>
+  cost_description?: Maybe<Scalars['String']>
+  e164_phone_number?: Maybe<Scalars['String']>
+  parking_type_name?: Maybe<Scalars['String']>
+  formatted_phone_number?: Maybe<Scalars['String']>
+}
+
+export type ChargingLocationExtraNetwork = {
+  __typename?: 'ChargingLocationExtraNetwork'
+  id?: Maybe<Scalars['Float']>
+  url?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  phone?: Maybe<Scalars['String']>
+  action_url?: Maybe<Scalars['String']>
+  action_name?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+  e164_phone_number?: Maybe<Scalars['String']>
+  formatted_phone_number?: Maybe<Scalars['String']>
+}
+
+export type ChargingLocationExtraOutlet = {
+  __typename?: 'ChargingLocationExtraOutlet'
+  id?: Maybe<Scalars['Float']>
+  power?: Maybe<Scalars['Float']>
+  connector?: Maybe<Scalars['Float']>
+  connector_name?: Maybe<Scalars['String']>
+  connector_type?: Maybe<Scalars['Float']>
+}
+
+export type ChargingLocationExtraPromo = {
+  __typename?: 'ChargingLocationExtraPromo'
+  id?: Maybe<Scalars['Float']>
+  name?: Maybe<Scalars['String']>
+}
+
+export type ChargingLocationExtraStation = {
+  __typename?: 'ChargingLocationExtraStation'
+  id?: Maybe<Scalars['Float']>
+  cost?: Maybe<Scalars['Float']>
+  hours?: Maybe<Scalars['String']>
+  model?: Maybe<Scalars['String']>
+  promos?: Maybe<Array<ChargingLocationExtraPromo>>
+  network?: Maybe<ChargingLocationExtraNetwork>
+  outlets?: Maybe<Array<ChargingLocationExtraOutlet>>
+  available?: Maybe<Scalars['Float']>
+  created_at?: Maybe<Scalars['DateTime']>
+  network_id?: Maybe<Scalars['Float']>
+  location_id?: Maybe<Scalars['Float']>
+  nissan_nctc?: Maybe<Scalars['Boolean']>
+  manufacturer?: Maybe<Scalars['String']>
+  cost_description?: Maybe<Scalars['String']>
+  requiresAccessCard?: Maybe<Scalars['Boolean']>
 }
 
 export type ChargingLocationFilter = {
