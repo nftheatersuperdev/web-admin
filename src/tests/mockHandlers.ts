@@ -3,6 +3,7 @@ import getCars from './mockData/getCars.json'
 import getSubscriptions from './mockData/getSubscriptions.json'
 import getAdditionalExpenses from './mockData/getAdditionalExpenses.json'
 import getAdditionalExpenseById from './mockData/getAdditionalExpenseById.json'
+import searchSubscriptions from './mockData/searchSubscriptions.json'
 
 export const mockHandlers = [
   // ===========================================================================
@@ -36,6 +37,10 @@ export const mockHandlers = [
 
   graphql.query('GetExpenseById', (_req, res, ctx) => {
     return res(ctx.data(getAdditionalExpenseById))
+  }),
+
+  graphql.query('SearchSubscriptions', (_req, res, ctx) => {
+    return res(ctx.data(searchSubscriptions))
   }),
 
   graphql.mutation('createCar', (_req, res, ctx) => {
