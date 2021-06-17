@@ -60,7 +60,7 @@ export default function PricingUpdateDialog({
       return model.id === modelId
     })?.modelName
     selectedModel && setSelectedCarModelsId(selectedModel)
-  }, [modelId, modelOptions])
+  }, [modelId, modelOptions, open])
 
   useEffect(() => {
     const priceSnapshot = {

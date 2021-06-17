@@ -35,7 +35,7 @@ export default function Car(): JSX.Element {
   const [pageSize, setPageSize] = useState(5)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const { data: cars, fetchNextPage, fetchPreviousPage, isFetching } = useCars(pageSize)
+  const { data: cars, fetchNextPage, fetchPreviousPage } = useCars(pageSize)
   const { data: carModels } = useCarModels()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
@@ -265,7 +265,7 @@ export default function Car(): JSX.Element {
           rowsPerPageOptions={config.tableRowsPerPageOptions}
           onPageSizeChange={handlePageSizeChange}
           onPageChange={handlePageChange}
-          loading={isFetching}
+          // loading={isFetching}
           rows={rows}
           columns={columns}
           checkboxSelection

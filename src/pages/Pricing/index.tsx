@@ -51,7 +51,7 @@ export default function Pricing(): JSX.Element {
   const [updatedModelId, setUpdatedModelId] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const { data, fetchNextPage, fetchPreviousPage, isFetching } = usePricing(pageSize, [
+  const { data, fetchNextPage, fetchPreviousPage } = usePricing(pageSize, [
     {
       field: PackagePriceSortFields.CarModelId,
       direction: SortDirection.Desc,
@@ -151,7 +151,7 @@ export default function Pricing(): JSX.Element {
           rowsPerPageOptions={config.tableRowsPerPageOptions}
           onPageSizeChange={handlePageSizeChange}
           onPageChange={handlePageChange}
-          loading={isFetching}
+          // loading={isFetching}
           rows={rows}
           columns={columns}
           components={{
