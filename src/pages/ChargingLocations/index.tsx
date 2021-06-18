@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
+import { GoogleMap, Marker, MarkerClusterer, useJsApiLoader } from '@react-google-maps/api'
 import config from 'config'
 import styled from 'styled-components'
 import { Page as BasePage } from 'layout/LayoutRoute'
@@ -36,19 +36,29 @@ export default function ChargingLocations(): JSX.Element {
     setActiveLocation(location)
   }
 
+  const options = {
+    imagePath:
+      'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', // so you must have m1.png, m2.png, m3.png, m4.png, m5.png and m6.png in that folder
+  }
+
   return (
     <Page>
       {isLoaded ? (
         <GoogleMap id="google-map" center={center} zoom={10}>
-          {chargingLocations?.edges
-            ? chargingLocations?.edges.map(({ node: location }) => (
-                <Marker
-                  key={location.id}
-                  position={{ lat: location.latitude, lng: location.longitude }}
-                  onClick={() => handleDialogOpen(location)}
-                />
-              ))
-            : null}
+          <MarkerClusterer options={options}>
+            {(cluster) => {
+              return chargingLocations?.edges
+                ? chargingLocations?.edges.map(({ node: location }) => (
+                    <Marker
+                      key={location.id}
+                      position={{ lat: location.latitude, lng: location.longitude }}
+                      onClick={() => handleDialogOpen(location)}
+                      clusterer={cluster}
+                    />
+                  ))
+                : null
+            }}
+          </MarkerClusterer>
         </GoogleMap>
       ) : null}
 

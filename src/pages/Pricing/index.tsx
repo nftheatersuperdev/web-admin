@@ -56,6 +56,10 @@ export default function Pricing(): JSX.Element {
       field: PackagePriceSortFields.CarModelId,
       direction: SortDirection.Desc,
     },
+    {
+      field: PackagePriceSortFields.Duration,
+      direction: SortDirection.Desc,
+    },
   ])
   const { data: carModels } = useCarModels()
   const mutationCreatePrice = useCreatePrices()

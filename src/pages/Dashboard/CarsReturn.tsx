@@ -25,7 +25,7 @@ export default function CarsReturn(): JSX.Element {
 
   const { data, refetch } = useSearchSubscriptions(
     'cars-return',
-    { first: 10 },
+    { first: 5 },
     {
       and: [
         {
@@ -48,7 +48,13 @@ export default function CarsReturn(): JSX.Element {
   }, [fromDate, toDate, refetch])
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Subscription ID', description: 'Subscription ID', flex: 1 },
+    {
+      field: 'id',
+      headerName: 'Subscription ID',
+      description: 'Subscription ID',
+      flex: 1,
+      hide: true,
+    },
     {
       field: 'userName',
       headerName: 'User Name',

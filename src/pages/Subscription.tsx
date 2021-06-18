@@ -9,9 +9,21 @@ const columns: GridColDef[] = [
   { field: 'brand', headerName: 'Car Brand', description: 'Car Brand', flex: 1 },
   { field: 'model', headerName: 'Car Model', description: 'Car Model', flex: 1 },
   { field: 'seats', headerName: 'Car Seats', description: 'Car Seats', flex: 1 },
-  { field: 'topSpeed', headerName: 'Top Speed', description: 'Top Speed', flex: 1 },
-  { field: 'plateNumber', headerName: 'Plate Number', description: 'Plate Number', flex: 1 },
-  { field: 'vin', headerName: 'VIN', description: 'Vehicle Identification Number', flex: 1 },
+  { field: 'topSpeed', headerName: 'Top Speed', description: 'Top Speed', flex: 1, hide: true },
+  {
+    field: 'plateNumber',
+    headerName: 'Plate Number',
+    description: 'Plate Number',
+    flex: 1,
+    hide: true,
+  },
+  {
+    field: 'vin',
+    headerName: 'VIN',
+    description: 'Vehicle Identification Number',
+    flex: 1,
+    hide: true,
+  },
   {
     field: 'price',
     headerName: 'Price',
@@ -25,6 +37,7 @@ const columns: GridColDef[] = [
     headerName: 'Fast Charge Time',
     description: 'Fast Charge Time',
     flex: 1,
+    hide: true,
   },
   {
     field: 'startDate',

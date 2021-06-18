@@ -29,6 +29,7 @@ import {
   SubSort,
   PackagePriceSort,
   ChargingLocation,
+  CarSort,
 } from './evme.types'
 
 const CARS_QUERY_KEY = 'evme:cars'
@@ -181,14 +182,17 @@ export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
   )
 }
 
-export function useCars(pageSize = 10): UseInfiniteQueryResult<WithPaginationType<Car>> {
+export function useCars(
+  pageSize = 10,
+  sorting = [] as CarSort[]
+): UseInfiniteQueryResult<WithPaginationType<Car>> {
   return useInfiniteQuery(
     [CARS_QUERY_KEY, pageSize],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetCars($pageSize: Int!, $after: ConnectionCursor) {
-            cars(paging: { first: $pageSize, after: $after }) {
+          query GetCars($pageSize: Int!, $after: ConnectionCursor, $sorting: [CarSort!]) {
+            cars(paging: { first: $pageSize, after: $after }, sorting: $sorting) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -230,6 +234,7 @@ export function useCars(pageSize = 10): UseInfiniteQueryResult<WithPaginationTyp
         {
           pageSize,
           after: pageParam,
+          sorting,
         }
       )
 

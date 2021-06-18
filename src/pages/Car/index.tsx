@@ -15,7 +15,7 @@ import { formatDateWithPattern, DEFAULT_DATE_FORMAT } from 'utils'
 import config from 'config'
 import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
-import { CarInput } from 'services/evme.types'
+import { CarInput, CarSortFields, SortDirection } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
@@ -32,10 +32,19 @@ export default function Car(): JSX.Element {
   const updateCarMutation = useUpdateCar()
   const deleteCarMutation = useDeleteCar()
 
-  const [pageSize, setPageSize] = useState(5)
+  const [pageSize, setPageSize] = useState(10)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const { data: cars, fetchNextPage, fetchPreviousPage } = useCars(pageSize)
+  const {
+    data: cars,
+    fetchNextPage,
+    fetchPreviousPage,
+  } = useCars(pageSize, [
+    {
+      field: CarSortFields.CarModelId,
+      direction: SortDirection.Desc,
+    },
+  ])
   const { data: carModels } = useCarModels()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {

@@ -111,7 +111,7 @@ export default function AdditionalExpenses(): JSX.Element {
   }
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', description: 'ID', flex: 1 },
+    { field: 'id', headerName: 'ID', description: 'ID', flex: 1, hide: true },
     {
       field: 'subscriptionId',
       headerName: 'Subscription ID',
@@ -123,6 +123,7 @@ export default function AdditionalExpenses(): JSX.Element {
       headerName: 'User ID',
       description: 'User ID',
       flex: 1,
+      hide: true,
     },
     {
       field: 'userFullName',

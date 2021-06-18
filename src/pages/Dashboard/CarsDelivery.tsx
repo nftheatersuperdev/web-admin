@@ -48,7 +48,13 @@ export default function CarsDelivery(): JSX.Element {
   }, [fromDate, toDate, refetch])
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Subscription ID', description: 'Subscription ID', flex: 1 },
+    {
+      field: 'id',
+      headerName: 'Subscription ID',
+      description: 'Subscription ID',
+      flex: 1,
+      hide: true,
+    },
     {
       field: 'userName',
       headerName: 'User Name',
