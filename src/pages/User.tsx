@@ -1,37 +1,40 @@
 import { useState } from 'react'
 import { Card } from '@material-ui/core'
-import { DataGrid, GridColDef, GridPageChangeParams, GridToolbar } from '@material-ui/data-grid'
+import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
+import { useTranslation } from 'react-i18next'
 import { formatDates } from 'utils'
 import config from 'config'
 import { useUsers } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
-
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', description: 'ID', flex: 1, hide: true },
-  { field: 'email', headerName: 'E-mail', description: 'E-mail', flex: 1 },
-  { field: 'phoneNumber', headerName: 'Phone Number', description: 'Phone Number', flex: 1 },
-  { field: 'role', headerName: 'Role', description: 'Role', flex: 1 },
-  { field: 'disabled', headerName: 'Disabled', description: 'Disabled', flex: 1 },
-  {
-    field: 'createdAt',
-    headerName: 'Date Created',
-    description: 'Date Created',
-    valueFormatter: formatDates,
-    flex: 1,
-  },
-  {
-    field: 'updatedAt',
-    headerName: 'Date Updated',
-    description: 'Date Updated',
-    valueFormatter: formatDates,
-    flex: 1,
-  },
-]
+import DataGridLocale from 'components/DataGridLocale'
 
 export default function User(): JSX.Element {
-  const [pageSize, setPageSize] = useState(5)
+  const { t } = useTranslation()
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const { data, fetchNextPage, fetchPreviousPage } = useUsers(pageSize)
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: t('user.id'), description: t('user.id'), flex: 1, hide: true },
+    { field: 'email', headerName: t('user.email'), description: t('user.email'), flex: 1 },
+    { field: 'phoneNumber', headerName: t('user.phone'), description: t('user.phone'), flex: 1 },
+    { field: 'role', headerName: t('user.role'), description: t('user.role'), flex: 1 },
+    { field: 'disabled', headerName: t('user.disabled'), description: t('user.disabled'), flex: 1 },
+    {
+      field: 'createdAt',
+      headerName: t('user.createdDate'),
+      description: t('user.createdDate'),
+      valueFormatter: formatDates,
+      flex: 1,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('user.updatedDate'),
+      description: t('user.updatedDate'),
+      valueFormatter: formatDates,
+      flex: 1,
+    },
+  ]
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -49,31 +52,25 @@ export default function User(): JSX.Element {
     setCurrentPageIndex(params.page)
   }
 
-  const rows = data?.pages[currentPageIndex]?.edges?.map(({ node }) => node)
+  const rows = data?.pages[currentPageIndex]?.edges?.map(({ node }) => node) || []
 
   return (
     <Page>
-      {rows && rows.length > 0 ? (
-        <Card>
-          <DataGrid
-            autoHeight
-            pagination
-            pageSize={pageSize}
-            page={currentPageIndex}
-            rowCount={data?.pages[currentPageIndex]?.totalCount}
-            paginationMode="server"
-            rowsPerPageOptions={config.tableRowsPerPageOptions}
-            onPageSizeChange={handlePageSizeChange}
-            onPageChange={handlePageChange}
-            rows={rows}
-            columns={columns}
-            checkboxSelection
-            components={{
-              Toolbar: GridToolbar,
-            }}
-          />
-        </Card>
-      ) : null}
+      <Card>
+        <DataGridLocale
+          autoHeight
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
+          rows={rows}
+          columns={columns}
+          checkboxSelection
+        />
+      </Card>
     </Page>
   )
 }

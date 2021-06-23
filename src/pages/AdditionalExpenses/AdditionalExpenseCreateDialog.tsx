@@ -15,10 +15,11 @@ import {
   FormHelperText,
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import { KeyboardDateTimePicker } from '@material-ui/pickers'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT } from 'utils'
+import DateTimePicker from 'components/DateTimePicker'
 import { useSearchSubscriptions, useCreateAdditionalExpense } from 'services/evme'
 import {
   ExpenseTypes,
@@ -58,6 +59,8 @@ export default function AdditionalExpenseCreateDialog(
 ): JSX.Element {
   const { open, onClose } = props
 
+  const { t } = useTranslation()
+
   const [subscriptionKeyword, setSubscriptionKeyword] = useState<string | null>()
 
   const {
@@ -85,13 +88,13 @@ export default function AdditionalExpenseCreateDialog(
       const input = transformToMutationInput(values)
 
       toast.promise(createAdditionalExpense.mutateAsync(input), {
-        loading: 'Loading',
+        loading: t('toast.loading'),
         success: () => {
           formik.resetForm()
           onClose()
-          return 'Created additional expense successfully!'
+          return t('additionalExpense.createDialog.success')
         },
-        error: 'Failed to create additional expense!',
+        error: t('additionalExpense.createDialog.error'),
       })
     },
   })
@@ -119,7 +122,7 @@ export default function AdditionalExpenseCreateDialog(
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Create New Additional Expense</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('additionalExpense.createDialog.title')}</DialogTitle>
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <Grid container spacing={3}>
@@ -147,10 +150,10 @@ export default function AdditionalExpenseCreateDialog(
                 )}
                 renderInput={(params) => (
                   <TextField
-                    /* eslint-disable react/jsx-props-no-spreading */
+                    // eslint-disable-next-line react/jsx-props-no-spreading
                     {...params}
                     fullWidth
-                    label='Subscription ID (Typing "User first name" or "Car plate no.")'
+                    label={t('additionalExpense.autoCompleteSubscription')}
                     InputProps={{
                       ...params.InputProps,
                       endAdornment: <div>{params.InputProps.endAdornment}</div>,
@@ -169,7 +172,7 @@ export default function AdditionalExpenseCreateDialog(
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="User ID"
+                label={t('additionalExpense.userId')}
                 id="userId"
                 name="userId"
                 value={formik.values.userId}
@@ -183,7 +186,7 @@ export default function AdditionalExpenseCreateDialog(
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="User Full Name"
+                label={t('additionalExpense.userFullName')}
                 id="fullName"
                 name="fullName"
                 value={`${formik.values.firstName} ${formik.values.lastName}`}
@@ -195,10 +198,10 @@ export default function AdditionalExpenseCreateDialog(
             </Grid>
 
             <Grid item xs={6}>
-              <KeyboardDateTimePicker
+              <DateTimePicker
                 fullWidth
                 ampm={false}
-                label="Date of expense notice"
+                label={t('additionalExpense.noticeDate')}
                 id="noticeDate"
                 name="noticeDate"
                 format={DEFAULT_DATE_FORMAT}
@@ -217,7 +220,7 @@ export default function AdditionalExpenseCreateDialog(
 
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)}>
-                <InputLabel id="expenseType">Type of expense</InputLabel>
+                <InputLabel id="expenseType">{t('additionalExpense.type')}</InputLabel>
                 <Select
                   labelId="expenseType"
                   id="type"
@@ -240,7 +243,7 @@ export default function AdditionalExpenseCreateDialog(
             <Grid item xs={6}>
               <TextField
                 fullWidth
-                label="Price"
+                label={t('additionalExpense.price')}
                 id="price"
                 name="price"
                 type="number"
@@ -256,7 +259,7 @@ export default function AdditionalExpenseCreateDialog(
 
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
-                <InputLabel id="status">Status</InputLabel>
+                <InputLabel id="status">{t('additionalExpense.status')}</InputLabel>
                 <Select
                   labelId="status"
                   id="status"
@@ -281,7 +284,7 @@ export default function AdditionalExpenseCreateDialog(
                 fullWidth
                 multiline
                 rows={2}
-                label="Note"
+                label={t('additionalExpense.note')}
                 id="note"
                 name="note"
                 value={formik.values.note}
@@ -304,11 +307,11 @@ export default function AdditionalExpenseCreateDialog(
             }}
             color="primary"
           >
-            Cancel
+            {t('button.cancel')}
           </Button>
 
           <Button color="primary" variant="contained" type="submit">
-            Create
+            {t('button.create')}
           </Button>
         </DialogActions>
       </form>

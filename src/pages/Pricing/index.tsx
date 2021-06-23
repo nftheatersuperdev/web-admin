@@ -1,55 +1,24 @@
 import { useState, useMemo } from 'react'
 import { Button, Card } from '@material-ui/core'
-import {
-  DataGrid,
-  GridColDef,
-  GridPageChangeParams,
-  GridRowData,
-  GridToolbar,
-} from '@material-ui/data-grid'
-import { formatDates, formatMoney } from 'utils'
+import { GridColDef, GridPageChangeParams, GridRowData } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
+import { formatDates, formatMoney } from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { useCarModels, useCreatePrices, usePricing } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
+import DataGridLocale from 'components/DataGridLocale'
 import { PackagePriceInput, PackagePriceSortFields, SortDirection } from 'services/evme.types'
 import PricingCreateDialog from './PricingCreateDialog'
 import PricingUpdateDialog from './PricingUpdateDialog'
 
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', description: 'ID', flex: 1 },
-  { field: 'duration', headerName: 'Duration', description: 'Duration', flex: 1 },
-  { field: 'brand', headerName: 'Car Brand', description: 'Car Brand', flex: 1 },
-  { field: 'model', headerName: 'Model', description: 'Model', flex: 1 },
-  {
-    field: 'price',
-    headerName: 'Price',
-    description: 'Price',
-    valueFormatter: formatMoney,
-    flex: 1,
-  },
-  {
-    field: 'createdAt',
-    headerName: 'Created At',
-    description: 'Created At',
-    valueFormatter: formatDates,
-    flex: 1,
-  },
-  {
-    field: 'updatedAt',
-    headerName: 'Updated At',
-    description: 'Updated At',
-    valueFormatter: formatDates,
-    flex: 1,
-  },
-]
-
 export default function Pricing(): JSX.Element {
+  const { t } = useTranslation()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [updatedModelId, setUpdatedModelId] = useState('')
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const { data, fetchNextPage, fetchPreviousPage } = usePricing(pageSize, [
     {
@@ -80,21 +49,6 @@ export default function Pricing(): JSX.Element {
     setCurrentPageIndex(params.page)
   }
 
-  const rows = useMemo(
-    () =>
-      data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
-        id: node?.id,
-        createdAt: node?.createdAt,
-        updatedAt: node?.updatedAt,
-        price: node?.price,
-        duration: node?.duration,
-        brand: node?.carModel?.brand,
-        model: node?.carModel?.model,
-        modelId: node?.carModel?.id,
-      })) || [],
-    [data, currentPageIndex]
-  )
-
   const carModelOptions = useMemo(
     () =>
       carModels?.edges?.map(({ node }) => ({
@@ -111,9 +65,9 @@ export default function Pricing(): JSX.Element {
     }
 
     toast.promise(mutationCreatePrice.mutateAsync(data), {
-      loading: 'Loading',
-      success: 'Create price successfully!',
-      error: 'Failed to create price!',
+      loading: t('toast.loading'),
+      success: t('pricing.createDialog.success'),
+      error: t('pricing.createDialog.error'),
     })
   }
 
@@ -125,9 +79,9 @@ export default function Pricing(): JSX.Element {
     }
 
     toast.promise(mutationCreatePrice.mutateAsync(data), {
-      loading: 'Loading',
-      success: 'Update price successfully!',
-      error: 'Failed to update price!',
+      loading: t('toast.loading'),
+      success: t('pricing.updateDialog.success'),
+      error: t('pricing.updateDialog.error'),
     })
   }
 
@@ -136,31 +90,74 @@ export default function Pricing(): JSX.Element {
     setUpdatedModelId(param.row.modelId)
   }
 
+  const rows = useMemo(
+    () =>
+      data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
+        id: node?.id,
+        createdAt: node?.createdAt,
+        updatedAt: node?.updatedAt,
+        price: node?.price,
+        duration: node?.duration,
+        brand: node?.carModel?.brand,
+        model: node?.carModel?.model,
+        modelId: node?.carModel?.id,
+      })) || [],
+    [data, currentPageIndex]
+  )
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: t('pricing.id'), description: t('pricing.id'), flex: 1 },
+    {
+      field: 'duration',
+      headerName: t('pricing.duration'),
+      description: t('pricing.duration'),
+      flex: 1,
+    },
+    { field: 'brand', headerName: t('pricing.brand'), description: t('pricing.brand'), flex: 1 },
+    { field: 'model', headerName: t('pricing.model'), description: t('pricing.model'), flex: 1 },
+    {
+      field: 'price',
+      headerName: t('pricing.price'),
+      description: t('pricing.price'),
+      valueFormatter: formatMoney,
+      flex: 1,
+    },
+    {
+      field: 'createdAt',
+      headerName: t('pricing.createdDate'),
+      description: t('pricing.createdDate'),
+      valueFormatter: formatDates,
+      flex: 1,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('pricing.updatedDate'),
+      description: t('pricing.updatedDate'),
+      valueFormatter: formatDates,
+      flex: 1,
+    },
+  ]
+
   return (
     <Page>
       <PageToolbar>
         <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
-          New Price
+          {t('pricing.createButton')}
         </Button>
       </PageToolbar>
 
       <Card>
-        <DataGrid
+        <DataGridLocale
           autoHeight
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
           rowCount={data?.pages[currentPageIndex]?.totalCount}
           paginationMode="server"
-          rowsPerPageOptions={config.tableRowsPerPageOptions}
           onPageSizeChange={handlePageSizeChange}
           onPageChange={handlePageChange}
-          // loading={isFetching}
           rows={rows}
           columns={columns}
-          components={{
-            Toolbar: GridToolbar,
-          }}
           onRowClick={handleRowClick}
           checkboxSelection
           disableSelectionOnClick

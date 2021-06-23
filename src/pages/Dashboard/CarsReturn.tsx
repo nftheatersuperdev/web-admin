@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Card, CardContent, CardHeader, Grid } from '@material-ui/core'
-import { DataGrid, GridColDef, GridRowData, GridToolbar } from '@material-ui/data-grid'
-import { KeyboardDateTimePicker } from '@material-ui/pickers'
+import { GridColDef, GridRowData } from '@material-ui/data-grid'
+import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT, formatDateWithPattern } from 'utils'
+import DataGridLocale from 'components/DataGridLocale'
+import DateTimePicker from 'components/DateTimePicker'
 import { useSearchSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
 import CarReturnDialog from './CarReturnDialog'
@@ -22,6 +24,7 @@ export default function CarsReturn(): JSX.Element {
   const [toDate, setToDate] = useState(initToDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
   const [dialogData, setDialogData] = useState({} as IReturnModelData)
+  const { t } = useTranslation()
 
   const { data, refetch } = useSearchSubscriptions(
     'cars-return',
@@ -50,23 +53,33 @@ export default function CarsReturn(): JSX.Element {
   const columns: GridColDef[] = [
     {
       field: 'id',
-      headerName: 'Subscription ID',
-      description: 'Subscription ID',
+      headerName: t('dashboard.subscriptionId'),
+      description: t('dashboard.subscriptionId'),
       flex: 1,
       hide: true,
     },
     {
       field: 'userName',
-      headerName: 'User Name',
-      description: 'User Name',
+      headerName: t('dashboard.userName'),
+      description: t('dashboard.userName'),
       flex: 1,
     },
-    { field: 'carDisplayName', headerName: 'Car', description: 'Car', flex: 1 },
-    { field: 'plateNumber', headerName: 'Plate Number', description: 'Plate Number', flex: 1 },
+    {
+      field: 'carDisplayName',
+      headerName: t('dashboard.carDisplayName'),
+      description: t('dashboard.carDisplayName'),
+      flex: 1,
+    },
+    {
+      field: 'plateNumber',
+      headerName: t('dashboard.plateNumber'),
+      description: t('dashboard.plateNumber'),
+      flex: 1,
+    },
     {
       field: 'endDate',
-      headerName: 'Return Date',
-      description: 'Return Date',
+      headerName: t('dashboard.returnDate'),
+      description: t('dashboard.returnDate'),
       valueFormatter: (params) => formatDateWithPattern(params, DEFAULT_DATE_FORMAT),
       flex: 1,
     },
@@ -106,14 +119,14 @@ export default function CarsReturn(): JSX.Element {
 
   return (
     <Card>
-      <CardHeader title="Upcoming Cars Return" />
+      <CardHeader title={t('dashboard.carReturn.title')} />
 
       <CardContent>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <KeyboardDateTimePicker
+            <DateTimePicker
               ampm={false}
-              label="From"
+              label={t('dashboard.fromDate')}
               id="fromDate"
               name="fromDate"
               format={DEFAULT_DATE_FORMAT}
@@ -128,9 +141,9 @@ export default function CarsReturn(): JSX.Element {
           </Grid>
 
           <Grid item xs={6}>
-            <KeyboardDateTimePicker
+            <DateTimePicker
               ampm={false}
-              label="To"
+              label={t('dashboard.toDate')}
               id="toDate"
               name="toDate"
               format={DEFAULT_DATE_FORMAT}
@@ -145,16 +158,14 @@ export default function CarsReturn(): JSX.Element {
           </Grid>
         </Grid>
 
-        <DataGrid
+        <DataGridLocale
           autoHeight
           autoPageSize
           rows={rows}
           columns={columns}
-          components={{
-            Toolbar: GridToolbar,
-          }}
           onRowClick={handleRowClick}
         />
+
         <CarReturnDialog
           open={isDetailDialogOpen}
           onClose={handleDialogClose}

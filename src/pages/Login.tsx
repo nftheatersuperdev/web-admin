@@ -2,10 +2,12 @@ import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { Box, Button, Container, TextField, Typography } from '@material-ui/core'
+import { useTranslation } from 'react-i18next'
 import { ROUTE_PATHS } from 'routes'
 
 export default function Login(): JSX.Element {
   const history = useHistory()
+  const { t } = useTranslation()
 
   return (
     <Box
@@ -37,17 +39,17 @@ export default function Login(): JSX.Element {
             <form onSubmit={handleSubmit}>
               <Box mb={3}>
                 <Typography color="textPrimary" variant="h2">
-                  Sign in
+                  {t('login.title')}
                 </Typography>
                 <Typography color="textSecondary" gutterBottom variant="body2">
-                  Sign in to the EVme admin portal
+                  {t('login.subTitle')}
                 </Typography>
               </Box>
               <TextField
                 error={Boolean(touched.email && errors.email)}
                 fullWidth
                 helperText={touched.email && errors.email}
-                label="Email Address"
+                label={t('login.email')}
                 margin="normal"
                 name="email"
                 onBlur={handleBlur}
@@ -60,7 +62,7 @@ export default function Login(): JSX.Element {
                 error={Boolean(touched.password && errors.password)}
                 fullWidth
                 helperText={touched.password && errors.password}
-                label="Password"
+                label={t('login.password')}
                 margin="normal"
                 name="password"
                 onBlur={handleBlur}
@@ -78,7 +80,7 @@ export default function Login(): JSX.Element {
                   type="submit"
                   variant="contained"
                 >
-                  Sign in now
+                  {t('button.signIn')}
                 </Button>
               </Box>
             </form>

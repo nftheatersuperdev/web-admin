@@ -20,5 +20,195 @@
     "insurance": "Insurance",
     "others": "Others",
     "chargingLocations": "Charging Locations"
+  },
+  "button": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm"
+  },
+  "datetimePicker": {
+    "invalidDateMessage": "Invalid Date Format",
+    "invalidLabel": "unknown",
+    "cancelLabel": "Cancel",
+    "clearLabel": "Clear",
+    "okLabel": "OK",
+    "todayLabel": "Today"
+  },
+  "toast": {
+    "loading": "Loading..."
+  },
+  "login": {
+    "title": "EVme",
+    "subTitle": "Admin Portal",
+    "email": "Email Address",
+    "password": "Password"
+  },
+  "dashboard": {
+    "totalCars": {
+      "title": "Total Cars",
+      "subTitle": "Number of cars currently available"
+    },
+    "totalSubscriptions": {
+      "title": "Total Subscriptions",
+      "subTitle": "Number of currently active subscriptions"
+    },
+    "totalPayments": {
+      "title": "Total Payments",
+      "subTitle": "Total amount of payments today"
+    },
+    "totalUsers": {
+      "title": "Total Users",
+      "subTitle": "Total number of registered users"
+    },
+    "quickLinks": "Quick Links",
+    "carDelivery": {
+      "title": "Upcoming Cars Delivery",
+      "dialogTitle": "Delivery Detail"
+    },
+    "carReturn": {
+      "title": "Upcoming Cars Return",
+      "dialogTitle": "Return Detail"
+    },
+    "fromDate": "From date",
+    "toDate": "To date",
+    "subscriptionId": "Subscription ID",
+    "userName": "User Name",
+    "carDisplayName": "Car",
+    "plateNumber": "Plate Number",
+    "deliveryDate": "Delivery Date",
+    "returnDate": "Return Date",
+    "email": "Email",
+    "phone": "Phone Number",
+    "remark": "Remark"
+  },
+  "user": {
+    "id": "ID",
+    "email": "Email",
+    "phone": "Phone Number",
+    "role": "Role",
+    "disabled": "Disabled",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date"
+  },
+  "car": {
+    "id": "ID",
+    "brand": "Brand",
+    "model": "Model",
+    "color": "Color",
+    "plateNumber": "Disabled",
+    "bodyType": "Body Type",
+    "topSpeed": "Top Speed",
+    "acceleration": "Acceleration",
+    "range": "Range",
+    "totalPower": "Total Power",
+    "connectorType": "Connector Type",
+    "chargeTime": "Charge Time",
+    "fastChargeTime": "Fast Charge Time",
+    "vin": "VIN",
+    "actions": "Actions",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "createButton": "New Car",
+    "createDialog": {
+      "title": "Create New Car",
+      "success": "Created car successfully",
+      "error": "Failed to create car"
+    },
+    "updateDialog": {
+      "title": "Update Car",
+      "success": "Updated car successfully",
+      "error": "Failed to update car"
+    },
+    "deleteDialog": {
+      "title": "Delete Car",
+      "message": "Are you sure that you want to delete this",
+      "success": "Deleted car successfully",
+      "error": "Failed to delete car"
+    }
+  },
+  "pricing": {
+    "id": "ID",
+    "duration": "Duration",
+    "brand": "Car Brand",
+    "model": "Car Model",
+    "price": "Price",
+    "pricePerOneWeek": "Price per 1 week",
+    "pricePerOneMonth": "Price per 1 month",
+    "pricePerThreeMonths": "Price per 3 months",
+    "pricePerSixMonths": "Price per 6 months",
+    "pricePerNineMonths": "Price per 9 months",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "createButton": "New Price",
+    "createDialog": {
+      "title": "Create New Price",
+      "success": "Created car successfully",
+      "error": "Failed to create car"
+    },
+    "updateDialog": {
+      "title": "Update Car",
+      "success": "Updated car successfully",
+      "error": "Failed to update car"
+    }
+  },
+  "subscription": {
+    "brand": "Car Brand",
+    "model": "Car Model",
+    "seats": "Seats",
+    "topSpeed": "Top Speed",
+    "plateNumber": "Plate Number",
+    "vin": "VIN",
+    "price": "Price",
+    "duration": "Duration",
+    "fastChargeTime": "Fast Charge Time",
+    "email": "Email",
+    "phone": "Phone Number",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "omiseButton": "Open Omise"
+  },
+  "additionalExpense": {
+    "id": "ID",
+    "subscriptionId": "Subscription ID",
+    "userId": "User ID",
+    "userFullName": "User full name",
+    "noticeDate": "Date of expense notice",
+    "type": "Type of expense",
+    "price": "Price",
+    "status": "Status",
+    "note": "Notes",
+    "actions": "Actions",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "createButton": "Create Additional Expense",
+    "findByIdError": "Unable to retrieve additional expense by id",
+    "autoCompleteSubscription": "Subscription ID (Typing \"User first name\" or \"Car plate no.\")",
+    "createDialog": {
+      "title": "Create New Additional Expense",
+      "success": "Created additional expense successfully",
+      "error": "Failed to create additional expense"
+    },
+    "updateDialog": {
+      "title": "Update Additional Expense",
+      "success": "Updated additional expense successfully",
+      "error": "Failed to update additional expense"
+    },
+    "deleteDialog": {
+      "title": "Delete Additional Expense",
+      "message": "Are you sure that you want to delete this ID",
+      "success": "Deleted additional expense successfully",
+      "error": "Failed to delete additional expense"
+    }
+  },
+  "chargingLocations": {
+    "provider": "Provider",
+    "address": "Address"
   }
 }

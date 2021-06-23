@@ -4,6 +4,7 @@ import {
   DirectionsCar as CarIcon,
   Money as MoneyIcon,
 } from '@material-ui/icons'
+import { useTranslation } from 'react-i18next'
 import { Page } from 'layout/LayoutRoute'
 import CardStatus from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
@@ -60,6 +61,7 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
+  const { t } = useTranslation()
   const { data: cars } = useCars()
   const { data: subscriptions } = useSubscriptions()
   const { data: payments } = usePayments()
@@ -77,36 +79,36 @@ export default function Dashboard(): JSX.Element {
       <Grid container spacing={3}>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
-            title="Available Cars"
+            title={t('dashboard.totalCars.title')}
             value={totalCars}
-            subTitle="Number of cars currently available"
+            subTitle={t('dashboard.totalCars.subTitle')}
             icon={<CarIcon />}
             iconColor="red"
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
-            title="Total Subscriptions"
+            title={t('dashboard.totalSubscriptions.title')}
             value={subscriptions?.totalCount || 0}
-            subTitle="Number of currently active subscriptions"
+            subTitle={t('dashboard.totalSubscriptions.subTitle')}
             icon={<PeopleIcon />}
             iconColor="purple"
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
-            title="Total Payments"
+            title={t('dashboard.totalPayments.title')}
             value={_formatMoney(totalPaymentAmountToday)}
-            subTitle="Total amount of payments today"
+            subTitle={t('dashboard.totalPayments.subTitle')}
             icon={<MoneyIcon />}
             iconColor="green"
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
-            title="Total Users"
+            title={t('dashboard.totalUsers.title')}
             value={totalUsers}
-            subTitle="Total number of registered users"
+            subTitle={t('dashboard.totalUsers.subTitle')}
             icon={<PeopleIcon />}
           />
         </Grid>
@@ -121,7 +123,7 @@ export default function Dashboard(): JSX.Element {
 
         <Grid item xs={12}>
           <Typography variant="h5" color="textSecondary">
-            Quick Links
+            {t('dashboard.quickLinks')}
           </Typography>
         </Grid>
 

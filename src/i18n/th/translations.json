@@ -14,11 +14,201 @@
     "cars": "รถยนต์",
     "pricing": "ตั้งราคา",
     "vehicleManagement": "การจัดการยานพาหนะ",
-    "subscriptionManagement": "การจัดการการสมัครสมาชิก",
-    "subscriptions": "สมัครสมาชิก",
+    "subscriptionManagement": "การจัดการการจอง",
+    "subscriptions": "ข้อมูลการจอง",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "insurance": "ประกัน",
     "others": "อื่นๆ",
-    "chargingLocations": "แท่นชาร์จ"
+    "chargingLocations": "สถานีชาร์จ"
+  },
+  "button": {
+    "signIn": "เข้าสู่ระบบ",
+    "signOut": "ออกจากระบบ",
+    "create": "สร้าง",
+    "update": "แก้ไข",
+    "delete": "ลบ",
+    "cancel": "ยกเลิก",
+    "close": "ปิด",
+    "confirm": "ยืนยัน"
+  },
+  "datetimePicker": {
+    "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
+    "invalidLabel": "เกิดข้อผิดพลาด",
+    "cancelLabel": "ยกเลิก",
+    "clearLabel": "เคลียร์",
+    "okLabel": "ตกลง",
+    "todayLabel": "วันนี้"
+  },
+  "toast": {
+    "loading": "กำลังดำเนินการ..."
+  },
+  "login": {
+    "title": "EVme",
+    "subTitle": "Admin Portal",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน"
+  },
+  "dashboard": {
+    "totalCars": {
+      "title": "รถยนต์",
+      "subTitle": "จำนวนรถยนต์ทั้งหมด"
+    },
+    "totalSubscriptions": {
+      "title": "ข้อมูลการจอง",
+      "subTitle": "จำนวนการจองทั้งหมด"
+    },
+    "totalPayments": {
+      "title": "ยอดชำระเงิน",
+      "subTitle": "ยอดชำระเงินรวมวันนี้"
+    },
+    "totalUsers": {
+      "title": "สมาชิก",
+      "subTitle": "จำนวนสมาชิกทั้งหมด"
+    },
+    "quickLinks": "ควิกลิงค์",
+    "carDelivery": {
+      "title": "รถยนต์ที่ต้องจัดส่ง",
+      "dialogTitle": "รายละเอียดการจัดส่ง"
+    },
+    "carReturn": {
+      "title": "รถยนต์ที่ต้องรับคืน",
+      "dialogTitle": "รายละเอียดการรับคืน"
+    },
+    "fromDate": "ตั้งแต่วันที่",
+    "toDate": "ถึงวันที่",
+    "subscriptionId": "หมายเลขการจอง",
+    "userName": "ชื่อสมาชิก",
+    "carDisplayName": "รถยนต์",
+    "plateNumber": "เลขทะเบียน",
+    "deliveryDate": "วันที่จัดส่ง",
+    "returnDate": "วันที่รับคืน",
+    "email": "อีเมล",
+    "phone": "หมายเลขโทรศัพท์",
+    "remark": "หมายเหตุ"
+  },
+  "user": {
+    "id": "เลขไอดี",
+    "email": "อีเมล",
+    "phone": "เบอร์โทรศัพท์",
+    "role": "บทบาท",
+    "disabled": "ปิดการใช้งาน",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข"
+  },
+  "car": {
+    "id": "เลขไอดี",
+    "brand": "ยี่ห้อ",
+    "model": "รุ่น",
+    "color": "สี",
+    "plateNumber": "เลขทะเบียน",
+    "bodyType": "ประเภท",
+    "topSpeed": "ความเร็วสูงสุด",
+    "acceleration": "อัตราเร่ง",
+    "range": "ระยะทาง",
+    "totalPower": "แรงม้า",
+    "connectorType": "ประเภทหัวชาร์จ",
+    "chargeTime": "ระยะเวลาชาร์จปกติ",
+    "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
+    "vin": "หมายเลขตัวถัง",
+    "actions": "ดำเนินการ",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "createButton": "สร้างข้อมูลรถยนต์",
+    "createDialog": {
+      "title": "สร้างข้อมูลรถยนต์ใหม่",
+      "success": "สร้างข้อมูลรถยนต์สำเร็จ",
+      "error": "สร้างข้อมูลรถยนต์ไม่สำเร็จ"
+    },
+    "updateDialog": {
+      "title": "แก้ไขข้อมูลรถยนต์",
+      "success": "แก้ไขข้อมูลรถยนต์สำเร็จ",
+      "error": "แก้ไขข้อมูลรถยนต์ไม่สำเร็จ"
+    },
+    "deleteDialog": {
+      "title": "ลบข้อมูลรถยนต์",
+      "message": "คุณแน่ใจหรือว่าต้องการลบข้อมูลรายการนี้",
+      "success": "ลบข้อมูลรถยนต์สำเร็จ",
+      "error": "ลบข้อมูลรถยนต์ไม่สำเร็จ"
+    }
+  },
+  "pricing": {
+    "id": "เลขไอดี",
+    "duration": "ระยะเวลา",
+    "brand": "ยี่ห้อรถยนต์",
+    "model": "รุ่นรถยนต์",
+    "price": "ราคา",
+    "pricePerOneWeek": "ราคาต่อ 1 สัปดาห์",
+    "pricePerOneMonth": "ราคาต่อ 1 เดือน",
+    "pricePerThreeMonths": "ราคาต่อ 3 เดือน",
+    "pricePerSixMonths": "ราคาต่อ 6 เดือน",
+    "pricePerNineMonths": "ราคาต่อ 9 เดือน",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "createButton": "สร้างราคาใหม่",
+    "createDialog": {
+      "title": "สร้างราคา",
+      "success": "สร้างราคาสำเร็จ",
+      "error": "สร้างราคาไม่สำเร็จ"
+    },
+    "updateDialog": {
+      "title": "แก้ไขราคา",
+      "success": "แก้ไขราคาสำเร็จ",
+      "error": "แก้ไขราคาไม่สำเร็จ"
+    }
+  },
+  "subscription": {
+    "brand": "ยี่ห้อรถยนต์",
+    "model": "รุ่นรถยนต์",
+    "seats": "จำนวนที่นั่ง",
+    "topSpeed": "ความเร็วสูงสุด",
+    "plateNumber": "เลขทะเบียน",
+    "vin": "หมายเลขตัวถัง",
+    "price": "ราคา",
+    "duration": "ระยะเวลาการจอง",
+    "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
+    "email": "อีเมล",
+    "phone": "เบอร์โทรศัพท์",
+    "startDate": "วันที่เริ่มต้น",
+    "endDate": "วันที่สิ้นสุด",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "omiseButton": "เปิด Omise"
+  },
+  "additionalExpense": {
+    "id": "ไอดี",
+    "subscriptionId": "หมายเลขการจอง",
+    "userId": "ไอดีผู้ใช้",
+    "userFullName": "ชื่อนามสกุลผู้ใช้",
+    "noticeDate": "วันที่แจ้ง",
+    "type": "ประเภทค่าใช้จ่าย",
+    "price": "ราคา",
+    "status": "สถานะ",
+    "note": "บันทึกเพิ่มเติม",
+    "actions": "ดำเนินการ",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "createButton": "สร้างค่าใช้จ่ายใหม่",
+    "findByIdError": "ไม่สามารถโหลดข้อมูลค่าใช้จ่าย",
+    "autoCompleteSubscription": "ไอดีการจอง (พิมพ์ \"ชื่อผู้ใช้\" หรือ \"เลขทะเบียน\")",
+    "createDialog": {
+      "title": "สร้างค่าใช้จ่ายใหม่",
+      "success": "สร้างค่าใช้จ่ายใหม่สำเร็จ",
+      "error": "สร้างค่าใช้จ่ายใหม่ไม่สำเร็จ"
+    },
+    "updateDialog": {
+      "title": "แก้ไขค่าใช้จ่าย",
+      "success": "แก้ไขค่าใช้จ่ายสำเร็จ",
+      "error": "แก้ไขค่าใช้จ่ายไม่สำเร็จ"
+    },
+    "deleteDialog": {
+      "title": "ลบค่าใช้จ่าย",
+      "message": "คุณแน่ใจหรือว่าต้องการลบข้อมูลรายการนี้",
+      "success": "ลบค่าใช้จ่ายสำเร็จ",
+      "error": "ลบค่าใช้จ่ายไม่สำเร็จ"
+    }
+  },
+  "chargingLocations": {
+    "provider": "ผู้ให้บริการ",
+    "address": "ที่อยู่"
   }
 }

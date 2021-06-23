@@ -1,9 +1,7 @@
 import { useState, useMemo, Fragment } from 'react'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
-  DataGrid,
   GridColDef,
-  GridToolbar,
   GridCellParams,
   GridRowData,
   GridRowParams,
@@ -11,6 +9,7 @@ import {
 } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
+import { useTranslation } from 'react-i18next'
 import { formatDates, formatMoney } from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
@@ -20,26 +19,28 @@ import {
   useAdditionalExpenseById,
   useUpdateAdditionalExpense,
 } from 'services/evme'
+import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CreateDialog from './AdditionalExpenseCreateDialog'
 import UpdateDialog from './AdditionalExpenseUpdateDialog'
 
 export default function AdditionalExpenses(): JSX.Element {
+  const { t } = useTranslation()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentRowData, setCurrentRowData] = useState<GridRowData>()
   const [currentExpenseId, setCurrentExpenseId] = useState<string>('')
 
-  const [pageSize, setPageSize] = useState(5)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const { data, fetchNextPage, fetchPreviousPage, isFetching } = useAdditionalExpenses(pageSize)
+  const { data, fetchNextPage, fetchPreviousPage } = useAdditionalExpenses(pageSize)
 
   const { data: currentExpenseData, isLoading } = useAdditionalExpenseById(currentExpenseId, {
     enabled: !!currentExpenseId,
     onError: () => {
-      console.error(`Unable to retrieve additional expense by id: ${currentExpenseId}`)
+      console.error(`${t('additionalExpense.findByIdError')}: ${currentExpenseId}`)
     },
   })
 
@@ -101,9 +102,9 @@ export default function AdditionalExpenses(): JSX.Element {
         },
       }),
       {
-        loading: 'Loading',
-        success: 'Deleted additional expense successfully!',
-        error: 'Failed to delete additional expense!',
+        loading: t('toast.loading'),
+        success: t('additionalExpense.deleteDialog.success'),
+        error: t('additionalExpense.deleteDialog.error'),
       }
     )
 
@@ -111,64 +112,85 @@ export default function AdditionalExpenses(): JSX.Element {
   }
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', description: 'ID', flex: 1, hide: true },
+    {
+      field: 'id',
+      headerName: t('additionalExpense.id'),
+      description: t('additionalExpense.id'),
+      flex: 1,
+      hide: true,
+    },
     {
       field: 'subscriptionId',
-      headerName: 'Subscription ID',
-      description: 'Subscription ID',
+      headerName: t('additionalExpense.subscriptionId'),
+      description: t('additionalExpense.subscriptionId'),
       flex: 1,
     },
     {
       field: 'userId',
-      headerName: 'User ID',
-      description: 'User ID',
+      headerName: t('additionalExpense.userId'),
+      description: t('additionalExpense.userId'),
       flex: 1,
       hide: true,
     },
     {
       field: 'userFullName',
-      headerName: 'User full name',
-      description: 'User full name',
+      headerName: t('additionalExpense.userFullName'),
+      description: t('additionalExpense.userFullName'),
       flex: 1,
     },
     {
       field: 'noticeDate',
-      headerName: 'Date of expense notice',
-      description: 'Date of expense notice',
+      headerName: t('additionalExpense.noticeDate'),
+      description: t('additionalExpense.noticeDate'),
       valueFormatter: formatDates,
       flex: 1,
     },
-    { field: 'type', headerName: 'Type of expense', description: 'Type of expense', flex: 1 },
+    {
+      field: 'type',
+      headerName: t('additionalExpense.type'),
+      description: t('additionalExpense.type'),
+      flex: 1,
+    },
     {
       field: 'price',
-      headerName: 'Price',
-      description: 'Price',
+      headerName: t('additionalExpense.price'),
+      description: t('additionalExpense.price'),
       valueFormatter: formatMoney,
       flex: 1,
     },
-    { field: 'status', headerName: 'Status', description: 'Status', flex: 1 },
-    { field: 'note', headerName: 'Notes', description: 'Notes', flex: 1 },
+    {
+      field: 'status',
+      headerName: t('additionalExpense.status'),
+      description: t('additionalExpense.status'),
+      flex: 1,
+    },
+    {
+      field: 'note',
+      headerName: t('additionalExpense.note'),
+      description: t('additionalExpense.note'),
+      flex: 1,
+    },
     {
       field: 'createdAt',
-      headerName: 'Date Created',
-      description: 'Date Created',
+      headerName: t('additionalExpense.createdDate'),
+      description: t('additionalExpense.createdDate'),
       valueFormatter: formatDates,
       flex: 1,
       hide: true,
     },
     {
       field: 'updatedAt',
-      headerName: 'Dated Updated',
-      description: 'Date Updated',
+      headerName: t('additionalExpense.updatedDate'),
+      description: t('additionalExpense.updatedDate'),
       valueFormatter: formatDates,
       flex: 1,
       hide: true,
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: t('additionalExpense.actions'),
+      description: t('additionalExpense.actions'),
       sortable: false,
-      description: 'Record actions',
       disableClickEventBubbling: true,
       width: 140,
       renderCell: (params: GridCellParams) => (
@@ -200,22 +222,20 @@ export default function AdditionalExpenses(): JSX.Element {
     <Page>
       <PageToolbar>
         <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
-          Create Additional Expense
+          {t('additionalExpense.createButton')}
         </Button>
       </PageToolbar>
 
       <Card>
-        <DataGrid
+        <DataGridLocale
           autoHeight
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
           rowCount={data?.pages[currentPageIndex]?.totalCount}
           paginationMode="server"
-          rowsPerPageOptions={config.tableRowsPerPageOptions}
           onPageSizeChange={handlePageSizeChange}
           onPageChange={handlePageChange}
-          loading={isFetching}
           rows={rows}
           columns={columns}
           checkboxSelection
@@ -223,9 +243,6 @@ export default function AdditionalExpenses(): JSX.Element {
           onRowClick={(params: GridRowParams) => {
             setCurrentExpenseId(params.row.id)
             setIsUpdateDialogOpen(true)
-          }}
-          components={{
-            Toolbar: GridToolbar,
           }}
         />
       </Card>
@@ -240,8 +257,8 @@ export default function AdditionalExpenses(): JSX.Element {
 
       <ConfirmDialog
         open={isDeleteDialogOpen}
-        title="Delete Additional Expense"
-        message={`Are you sure that you want to delete this ID: ${currentRowData?.id} ?`}
+        title={t('additionalExpense.deleteDialog.title')}
+        message={`t('additionalExpense.deleteDialog.message'): ${currentRowData?.id} ?`}
         onConfirm={() => handleSubmitDelete(currentRowData)}
         onCancel={() => setIsDeleteDialogOpen(false)}
       />

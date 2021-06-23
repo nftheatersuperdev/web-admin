@@ -10,6 +10,7 @@ import {
   DialogContent,
   Button,
 } from '@material-ui/core'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ICarModelItem } from 'helper/car.helper'
 import { usePricingById } from 'services/evme'
@@ -34,6 +35,7 @@ export default function PricingUpdateDialog({
   modelOptions = [],
   modelId,
 }: SubscriptionProps): JSX.Element {
+  const { t } = useTranslation()
   const [selectedCarModel, setSelectedCarModelsId] = useState('')
   const [carModelPrices, setCarModelPrices] = useState({
     price1w: 0,
@@ -194,12 +196,13 @@ export default function PricingUpdateDialog({
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Update Price</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('pricing.updateDialog.title')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <FormControl fullWidth={true}>
-              <h2 id="car-model">{selectedCarModel}</h2>
+              <label id="car-model">{t('pricing.model')}</label>
+              <h3 id="car-model">{selectedCarModel}</h3>
             </FormControl>
           </Grid>
 
@@ -208,7 +211,7 @@ export default function PricingUpdateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 1 week"
+                  label={t('pricing.pricePerOneWeek')}
                   type="number"
                   value={carModelPrices.price1w}
                   onChange={(event) => handlePriceChange('price1w', event)}
@@ -221,7 +224,7 @@ export default function PricingUpdateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 1 month"
+                  label={t('pricing.pricePerOneMonth')}
                   type="number"
                   onChange={(event) => handlePriceChange('price1m', event)}
                   value={carModelPrices.price1m}
@@ -234,7 +237,7 @@ export default function PricingUpdateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 3 months"
+                  label={t('pricing.pricePerThreeMonths')}
                   value={carModelPrices.price3m}
                   type="number"
                   onChange={(event) => handlePriceChange('price3m', event)}
@@ -247,7 +250,7 @@ export default function PricingUpdateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 6 months"
+                  label={t('pricing.pricePerSixMonths')}
                   value={carModelPrices.price6m}
                   type="number"
                   onChange={(event) => handlePriceChange('price6m', event)}
@@ -259,7 +262,7 @@ export default function PricingUpdateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 9 months"
+                  label={t('pricing.pricePerNineMonths')}
                   value={carModelPrices.price9m}
                   type="number"
                   onChange={(event) => handlePriceChange('price9m', event)}
@@ -276,7 +279,7 @@ export default function PricingUpdateDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancelUpdateCar} color="primary">
-          Cancel
+          {t('button.cancel')}
         </Button>
         <Button
           onClick={handleUpdateCar}
@@ -284,7 +287,7 @@ export default function PricingUpdateDialog({
           variant="contained"
           disabled={!isPriceUpdated}
         >
-          Update
+          {t('button.update')}
         </Button>
       </DialogActions>
     </Dialog>

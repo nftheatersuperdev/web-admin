@@ -7,6 +7,7 @@ import {
   TextField,
   Grid,
 } from '@material-ui/core'
+import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import { DEFAULT_DATE_FORMAT } from 'utils'
 import { IDeliveryModelData, MISSING_VALUE } from './utils'
@@ -18,6 +19,8 @@ interface ModalProps {
 }
 
 export default function CarDeliveryDialog({ open, onClose, modelData }: ModalProps): JSX.Element {
+  const { t } = useTranslation()
+
   const nameDisplay =
     modelData?.user?.firstName || modelData?.user?.lastName
       ? `${modelData?.user?.firstName} ${modelData?.user?.lastName}`
@@ -26,15 +29,16 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
   const deliveryDate = dayjs(modelData?.startDate).isValid()
     ? dayjs(modelData?.startDate).format(DEFAULT_DATE_FORMAT)
     : MISSING_VALUE
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Delivery detail</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('dashboard.carDelivery.dialogTitle')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Delivery Date"
+              label={t('dashboard.deliveryDate')}
               id="date"
               name="date"
               value={deliveryDate}
@@ -46,7 +50,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Name"
+              label={t('dashboard.userName')}
               id="name"
               name="name"
               value={nameDisplay}
@@ -58,7 +62,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Email"
+              label={t('dashboard.email')}
               id="email"
               name="email"
               value={modelData?.user?.email || MISSING_VALUE}
@@ -70,7 +74,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Phone Number"
+              label={t('dashboard.phone')}
               id="phone"
               name="phone"
               value={modelData?.user?.phoneNumber || MISSING_VALUE}
@@ -82,7 +86,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Remark"
+              label={t('dashboard.remark')}
               id="remark"
               name="remark"
               value={modelData?.remark || MISSING_VALUE}
@@ -95,7 +99,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
       </DialogContent>
       <DialogActions>
         <Button color="primary" onClick={onClose}>
-          Close
+          {t('button.close')}
         </Button>
       </DialogActions>
     </Dialog>

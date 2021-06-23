@@ -7,6 +7,7 @@ import {
   DialogContent,
   Button,
 } from '@material-ui/core'
+import { useTranslation } from 'react-i18next'
 import { ChargingLocation } from 'services/evme.types'
 
 interface ChargingLocationsDialogProps {
@@ -17,6 +18,9 @@ interface ChargingLocationsDialogProps {
 
 export default function ChargingLocationsDialog(props: ChargingLocationsDialogProps): JSX.Element {
   const { open, onClose, location } = props
+
+  const { t } = useTranslation()
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{location.name}</DialogTitle>
@@ -24,13 +28,13 @@ export default function ChargingLocationsDialog(props: ChargingLocationsDialogPr
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Typography variant="body1">
-              <strong>Provider: </strong>
+              <strong>{t('chargingLocations.provider')}: </strong>
               {location.provider}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1">
-              <strong>Address: </strong>
+              <strong>{t('chargingLocations.address')}: </strong>
               {location.address}
             </Typography>
           </Grid>
@@ -38,7 +42,7 @@ export default function ChargingLocationsDialog(props: ChargingLocationsDialogPr
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
-          Close
+          {t('button.close')}
         </Button>
       </DialogActions>
     </Dialog>

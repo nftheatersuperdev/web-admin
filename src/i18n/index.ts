@@ -1,8 +1,19 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
+import { GridLocaleText } from '@material-ui/data-grid'
 import translationEn from './en/translations.json'
 import translationTh from './th/translations.json'
+import muiEn from './en/mui'
+import muiTh from './th/mui'
+
+// INFO: follow setup from: https://react.i18next.com/latest/typescript#create-a-declaration-file
+declare module 'react-i18next' {
+  interface Resources {
+    ns1: typeof translationEn
+    ns2: typeof translationTh
+  }
+}
 
 i18n
   // detect user language
@@ -29,3 +40,12 @@ i18n
   })
 
 export default i18n
+
+interface MuiLocale {
+  gridLocaleText: Partial<GridLocaleText>
+}
+
+export const muiLocales: { [key: string]: MuiLocale } = {
+  en: muiEn,
+  th: muiTh,
+}

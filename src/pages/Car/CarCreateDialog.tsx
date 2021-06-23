@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { useTranslation } from 'react-i18next'
 import { ICarModelItem } from 'helper/car.helper'
 import { CarInput } from 'services/evme.types'
 
@@ -32,6 +33,8 @@ export default function CarCreateDialog({
   onClose,
   carModelOptions,
 }: SubscriptionProps): JSX.Element {
+  const { t } = useTranslation()
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
@@ -54,13 +57,13 @@ export default function CarCreateDialog({
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Create New Car</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('car.createDialog.title')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="VIN"
+              label={t('car.vin')}
               id="vin"
               name="vin"
               value={formik.values.vin}
@@ -75,7 +78,7 @@ export default function CarCreateDialog({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Plate Number"
+              label={t('car.plateNumber')}
               id="plateNumber"
               name="plateNumber"
               value={formik.values.plateNumber}
@@ -90,7 +93,7 @@ export default function CarCreateDialog({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Color"
+              label={t('car.color')}
               id="carColor"
               name="carColor"
               value={formik.values.carColor}
@@ -107,7 +110,7 @@ export default function CarCreateDialog({
               <TextField
                 fullWidth
                 select
-                label="Car Model"
+                label={t('car.model')}
                 id="carModel"
                 name="carModel"
                 value={formik.values.carModel}
@@ -133,10 +136,10 @@ export default function CarCreateDialog({
           }}
           color="primary"
         >
-          Cancel
+          {t('button.cancel')}
         </Button>
         <Button onClick={() => formik.handleSubmit()} color="primary" variant="contained">
-          Create
+          {t('button.create')}
         </Button>
       </DialogActions>
     </Dialog>

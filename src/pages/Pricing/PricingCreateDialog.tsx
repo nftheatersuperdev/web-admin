@@ -13,6 +13,7 @@ import {
   DialogContent,
   Button,
 } from '@material-ui/core'
+import { useTranslation } from 'react-i18next'
 import { ICarModelItem } from 'helper/car.helper'
 import { usePricingById } from 'services/evme'
 import { PackagePriceInput } from 'services/evme.types'
@@ -28,6 +29,7 @@ export default function PricingCreateDialog({
   onClose,
   modelOptions = [],
 }: SubscriptionProps): JSX.Element {
+  const { t } = useTranslation()
   const [selectedCarModel, setSelectedCarModelsId] = useState('')
   const [carModelPrices, setCarModelPrices] = useState({
     price1w: 0,
@@ -189,12 +191,12 @@ export default function PricingCreateDialog({
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Create New Price</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('pricing.createDialog.title')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <FormControl fullWidth={true}>
-              <InputLabel id="car-model">Car Model IDs</InputLabel>
+              <InputLabel id="car-model">{t('pricing.model')}</InputLabel>
               <Select labelId="car-model" onChange={handleCarModelsChange} value={selectedCarModel}>
                 {modelOptions.map((model) => (
                   <MenuItem key={model.id} value={model.modelName}>
@@ -210,7 +212,7 @@ export default function PricingCreateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 1 week"
+                  label={t('pricing.pricePerOneWeek')}
                   type="number"
                   value={carModelPrices.price1w}
                   onChange={(event) => handlePriceChange('price1w', event)}
@@ -223,7 +225,7 @@ export default function PricingCreateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 1 month"
+                  label={t('pricing.pricePerOneMonth')}
                   type="number"
                   onChange={(event) => handlePriceChange('price1m', event)}
                   value={carModelPrices.price1m}
@@ -236,7 +238,7 @@ export default function PricingCreateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 3 months"
+                  label={t('pricing.pricePerThreeMonths')}
                   value={carModelPrices.price3m}
                   type="number"
                   onChange={(event) => handlePriceChange('price3m', event)}
@@ -249,7 +251,7 @@ export default function PricingCreateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 6 months"
+                  label={t('pricing.pricePerSixMonths')}
                   value={carModelPrices.price6m}
                   type="number"
                   onChange={(event) => handlePriceChange('price6m', event)}
@@ -261,7 +263,7 @@ export default function PricingCreateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Price per 9 months"
+                  label={t('pricing.pricePerNineMonths')}
                   value={carModelPrices.price9m}
                   type="number"
                   onChange={(event) => handlePriceChange('price9m', event)}
@@ -276,7 +278,7 @@ export default function PricingCreateDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancelCreateCar} color="primary">
-          Cancel
+          {t('button.cancel')}
         </Button>
         <Button
           onClick={handleCreateCar}
@@ -284,7 +286,7 @@ export default function PricingCreateDialog({
           variant="contained"
           disabled={!isPriceUpdated}
         >
-          Create
+          {t('button.create')}
         </Button>
       </DialogActions>
     </Dialog>

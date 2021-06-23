@@ -50,6 +50,7 @@ export function renderComponent(
     history = createMemoryHistory({ initialEntries: [historyPath] }),
     ...remainingOptions
   } = renderConfig
+
   if (historyState) {
     history.push(historyPath, historyState)
   }

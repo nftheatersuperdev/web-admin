@@ -15,10 +15,11 @@ import {
   FormHelperText,
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import { KeyboardDateTimePicker } from '@material-ui/pickers'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT } from 'utils'
+import DateTimePicker from 'components/DateTimePicker'
 import { useSearchSubscriptions, useUpdateAdditionalExpense } from 'services/evme'
 import { AdditionalExpense } from 'services/evme.types'
 import {
@@ -57,6 +58,8 @@ export default function AdditionalExpenseUpdateDialog(
     status,
     note,
   } = initialData || {}
+
+  const { t } = useTranslation()
 
   const [subscriptionKeyword, setSubscriptionKeyword] = useState<string | null>()
 
@@ -102,13 +105,13 @@ export default function AdditionalExpenseUpdateDialog(
           update,
         }),
         {
-          loading: 'Loading',
+          loading: t('toast.loading'),
           success: () => {
             formik.resetForm()
             onClose()
-            return 'Updated additional expense successfully!'
+            return t('additionalExpense.updateDialog.success')
           },
-          error: 'Failed to update additional expense!',
+          error: t('additionalExpense.updateDialog.error'),
         }
       )
     },
@@ -138,7 +141,7 @@ export default function AdditionalExpenseUpdateDialog(
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Update Additional Expense</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('additionalExpense.updateDialog.title')}</DialogTitle>
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <Grid container spacing={3}>
@@ -172,10 +175,10 @@ export default function AdditionalExpenseUpdateDialog(
                 )}
                 renderInput={(params) => (
                   <TextField
-                    /* eslint-disable react/jsx-props-no-spreading */
+                    // eslint-disable-next-line react/jsx-props-no-spreading
                     {...params}
                     fullWidth
-                    label='Subscription ID (Typing "User first name" or "Car plate no.")'
+                    label={t('additionalExpense.autoCompleteSubscription')}
                     InputProps={{
                       ...params.InputProps,
                       endAdornment: <div>{params.InputProps.endAdornment}</div>,
@@ -194,7 +197,7 @@ export default function AdditionalExpenseUpdateDialog(
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="User ID"
+                label={t('additionalExpense.userId')}
                 id="userId"
                 name="userId"
                 value={formik.values.userId}
@@ -208,7 +211,7 @@ export default function AdditionalExpenseUpdateDialog(
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="User Full Name"
+                label={t('additionalExpense.userFullName')}
                 id="fullName"
                 name="fullName"
                 value={`${formik.values.firstName} ${formik.values.lastName}`}
@@ -220,10 +223,10 @@ export default function AdditionalExpenseUpdateDialog(
             </Grid>
 
             <Grid item xs={6}>
-              <KeyboardDateTimePicker
+              <DateTimePicker
                 fullWidth
                 ampm={false}
-                label="Date of expense notice"
+                label={t('additionalExpense.noticeDate')}
                 id="noticeDate"
                 name="noticeDate"
                 format={DEFAULT_DATE_FORMAT}
@@ -242,7 +245,7 @@ export default function AdditionalExpenseUpdateDialog(
 
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)}>
-                <InputLabel id="expenseType">Type of expense</InputLabel>
+                <InputLabel id="expenseType">{t('additionalExpense.type')}</InputLabel>
                 <Select
                   labelId="expenseType"
                   id="type"
@@ -265,7 +268,7 @@ export default function AdditionalExpenseUpdateDialog(
             <Grid item xs={6}>
               <TextField
                 fullWidth
-                label="Price"
+                label={t('additionalExpense.price')}
                 id="price"
                 name="price"
                 type="number"
@@ -281,7 +284,7 @@ export default function AdditionalExpenseUpdateDialog(
 
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
-                <InputLabel id="status">Status</InputLabel>
+                <InputLabel id="status">{t('additionalExpense.status')}</InputLabel>
                 <Select
                   labelId="status"
                   id="status"
@@ -306,7 +309,7 @@ export default function AdditionalExpenseUpdateDialog(
                 fullWidth
                 multiline
                 rows={2}
-                label="Note"
+                label={t('additionalExpense.note')}
                 id="note"
                 name="note"
                 value={formik.values.note}
@@ -329,11 +332,11 @@ export default function AdditionalExpenseUpdateDialog(
             }}
             color="primary"
           >
-            Cancel
+            {t('button.cancel')}
           </Button>
 
           <Button color="primary" variant="contained" type="submit">
-            Update
+            {t('button.update')}
           </Button>
         </DialogActions>
       </form>

@@ -1,6 +1,7 @@
 interface Config {
   appName: string
   appVersion: string
+  tableRowsDefaultPageSize: number
   tableRowsPerPageOptions: number[]
   isProductionEnvironment: boolean
   sentry: Record<string, string>
@@ -11,6 +12,7 @@ interface Config {
 const config: Config = {
   appName: process.env.REACT_APP_NAME || 'evme-admin',
   appVersion: process.env.npm_package_version || '0.0.0',
+  tableRowsDefaultPageSize: 10,
   tableRowsPerPageOptions: [10, 20, 50],
   isProductionEnvironment: process.env.REACT_APP_ENVIRONMENT === 'production',
   sentry: {

@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { useTranslation } from 'react-i18next'
 import { ICarModelItem } from 'helper/car.helper'
 import { CarInput } from 'services/evme.types'
 
@@ -48,6 +49,8 @@ export default function CarUpdateDialog({
     color: originalColor,
   } = carInfo
 
+  const { t } = useTranslation()
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
@@ -79,13 +82,13 @@ export default function CarUpdateDialog({
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Update Car</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('car.updateDialog.title')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="VIN"
+              label={t('car.vin')}
               id="vin"
               name="vin"
               value={formik.values.vin}
@@ -100,7 +103,7 @@ export default function CarUpdateDialog({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Plate Number"
+              label={t('car.plateNumber')}
               id="plateNumber"
               name="plateNumber"
               value={formik.values.plateNumber}
@@ -115,7 +118,7 @@ export default function CarUpdateDialog({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Color"
+              label={t('car.color')}
               id="carColor"
               name="carColor"
               value={formik.values.carColor}
@@ -132,7 +135,7 @@ export default function CarUpdateDialog({
               <TextField
                 fullWidth
                 select
-                label="Car Model"
+                label={t('car.model')}
                 id="carModel"
                 name="carModel"
                 defaultValue={_selectedCarModel}
@@ -153,10 +156,10 @@ export default function CarUpdateDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onFormCloseHandler} color="primary">
-          Cancel
+          {t('button.cancel')}
         </Button>
         <Button onClick={() => formik.handleSubmit()} color="primary" variant="contained">
-          Update
+          {t('button.update')}
         </Button>
       </DialogActions>
     </Dialog>
