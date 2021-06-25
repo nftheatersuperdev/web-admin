@@ -26,8 +26,8 @@ const gridLocaleText: Partial<GridLocaleText> = {
     count !== 1 ? `เปิดใช้งาน ${count} ตัวกรอง` : `เปิดใช้งาน ${count} ตัวกรอง`,
 
   // Export selector toolbar button text
-  toolbarExport: 'นำออก',
-  toolbarExportLabel: 'นำออก',
+  toolbarExport: 'โหลดไฟล์',
+  toolbarExportLabel: 'โหลดไฟล์',
   toolbarExportCSV: 'ดาวน์โหลดไฟล์ CSV',
 
   // Columns panel text
@@ -48,7 +48,7 @@ const gridLocaleText: Partial<GridLocaleText> = {
   filterPanelInputPlaceholder: 'ตัวกรองค่า',
 
   // Filter operators text
-  filterOperatorContains: 'มีอยู่',
+  filterOperatorContains: 'ประกอบด้วย',
   filterOperatorEquals: 'เท่ากับ',
   filterOperatorStartsWith: 'เริ่มต้นด้วย',
   filterOperatorEndsWith: 'ลงท้ายด้วย',
