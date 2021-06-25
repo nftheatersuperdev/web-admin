@@ -63,11 +63,13 @@ const quickLinks = [
 export default function Dashboard(): JSX.Element {
   const { t } = useTranslation()
   const { data: cars } = useCars()
-  const { data: subscriptions } = useSubscriptions()
+  const { data: subscriptions } = useSubscriptions(10, 'total-count')
   const { data: payments } = usePayments()
   const { data: users } = useUsers()
 
   const totalCars = cars?.pages[0]?.totalCount || 0
+
+  const totalSubscriptions = subscriptions?.pages[0]?.totalCount || 0
 
   const totalPaymentAmountToday =
     payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
@@ -89,7 +91,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title={t('dashboard.totalSubscriptions.title')}
-            value={subscriptions?.totalCount || 0}
+            value={totalSubscriptions}
             subTitle={t('dashboard.totalSubscriptions.subTitle')}
             icon={<PeopleIcon />}
             iconColor="purple"

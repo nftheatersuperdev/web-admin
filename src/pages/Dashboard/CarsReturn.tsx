@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Card, CardContent, CardHeader, Grid } from '@material-ui/core'
-import { GridColDef, GridRowData } from '@material-ui/data-grid'
+import { GridColDef, GridRowData, GridPageChangeParams } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT, formatDateWithPattern } from 'utils'
 import DataGridLocale from 'components/DataGridLocale'
 import DateTimePicker from 'components/DateTimePicker'
-import { useSearchSubscriptions } from 'services/evme'
+import { useSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
 import CarReturnDialog from './CarReturnDialog'
 import { IReturnModelData, MISSING_VALUE } from './utils'
@@ -26,9 +26,12 @@ export default function CarsReturn(): JSX.Element {
   const [dialogData, setDialogData] = useState({} as IReturnModelData)
   const { t } = useTranslation()
 
-  const { data, refetch } = useSearchSubscriptions(
+  const [pageSize, setPageSize] = useState(5)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+
+  const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(
+    pageSize,
     'cars-return',
-    { first: 5 },
     {
       and: [
         {
@@ -49,6 +52,19 @@ export default function CarsReturn(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [fromDate, toDate, refetch])
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handlePageChange = (params: GridPageChangeParams) => {
+    if (params.page > currentPageIndex) {
+      fetchNextPage()
+    } else {
+      fetchPreviousPage()
+    }
+    setCurrentPageIndex(params.page)
+  }
 
   const columns: GridColDef[] = [
     {
@@ -86,7 +102,7 @@ export default function CarsReturn(): JSX.Element {
   ]
 
   const rows =
-    data?.edges?.map(({ node }) => {
+    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
       const { id, car, endDate, user, endAddress } = node
       const { plateNumber, color, carModel } = car || {}
       const { brand, model } = carModel || {}
@@ -160,7 +176,13 @@ export default function CarsReturn(): JSX.Element {
 
         <DataGridLocale
           autoHeight
-          autoPageSize
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
           rows={rows}
           columns={columns}
           onRowClick={handleRowClick}

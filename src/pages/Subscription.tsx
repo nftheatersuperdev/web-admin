@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Card, Button } from '@material-ui/core'
-import { GridColDef } from '@material-ui/data-grid'
+import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { formatDates, formatMoney, renderEmailLink } from 'utils'
+import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import DataGridLocale from 'components/DataGridLocale'
 import { useSubscriptions } from 'services/evme'
@@ -9,10 +11,27 @@ import { Page } from 'layout/LayoutRoute'
 
 export default function Subscription(): JSX.Element {
   const { t } = useTranslation()
-  const { data } = useSubscriptions()
+
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+
+  const { data, fetchNextPage, fetchPreviousPage } = useSubscriptions(pageSize)
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handlePageChange = (params: GridPageChangeParams) => {
+    if (params.page > currentPageIndex) {
+      fetchNextPage()
+    } else {
+      fetchPreviousPage()
+    }
+    setCurrentPageIndex(params.page)
+  }
 
   const rows =
-    data?.edges?.map(({ node }) => ({
+    data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
       id: node?.id,
       vin: node?.car?.vin,
       plateNumber: node?.car?.plateNumber,
@@ -147,7 +166,19 @@ export default function Subscription(): JSX.Element {
       </PageToolbar>
 
       <Card>
-        <DataGridLocale autoHeight autoPageSize rows={rows} columns={columns} checkboxSelection />
+        <DataGridLocale
+          autoHeight
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
+          rows={rows}
+          columns={columns}
+          checkboxSelection
+        />
       </Card>
     </Page>
   )

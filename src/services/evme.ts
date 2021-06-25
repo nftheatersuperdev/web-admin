@@ -250,15 +250,35 @@ export function useCars(
   )
 }
 
-export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
-  return useQuery(
-    ['evme:subscriptions'],
-    async () => {
+export function useSubscriptions(
+  pageSize = 10,
+  queryKey?: string,
+  filter?: SubFilter,
+  sorting?: SubSort[]
+): UseInfiniteQueryResult<WithPaginationType<Sub>> {
+  return useInfiniteQuery(
+    ['evme:subscriptions', pageSize, queryKey],
+    async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetSubscriptions {
-            subscriptions {
+          query GetSubscriptions(
+            $pageSize: Int!
+            $after: ConnectionCursor
+            $filter: SubFilter
+            $sorting: [SubSort!]
+          ) {
+            subscriptions(
+              paging: { first: $pageSize, after: $after }
+              filter: $filter
+              sorting: $sorting
+            ) {
               totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
               edges {
                 node {
                   id
@@ -293,11 +313,18 @@ export function useSubscriptions(): UseQueryResult<WithPaginationType<Sub>> {
               }
             }
           }
-        `
+        `,
+        {
+          pageSize,
+          after: pageParam,
+          filter,
+          sorting,
+        }
       )
       return response.subscriptions
     },
     {
+      getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
         console.error(`Unable to retrieve subscriptions, ${error.message}`)
       },

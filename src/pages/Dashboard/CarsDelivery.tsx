@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Card, CardContent, CardHeader, Grid } from '@material-ui/core'
-import { GridColDef, GridRowData } from '@material-ui/data-grid'
+import { GridColDef, GridRowData, GridPageChangeParams } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT, formatDateWithPattern } from 'utils'
 import DataGridLocale from 'components/DataGridLocale'
 import DateTimePicker from 'components/DateTimePicker'
-import { useSearchSubscriptions } from 'services/evme'
+import { useSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
 import CarDeliveryDialog from './CarDeliveryDialog'
 import { IDeliveryModelData, MISSING_VALUE } from './utils'
@@ -26,9 +26,12 @@ export default function CarsDelivery(): JSX.Element {
   const [dialogData, setDialogData] = useState({} as IDeliveryModelData)
   const { t } = useTranslation()
 
-  const { data, refetch } = useSearchSubscriptions(
+  const [pageSize, setPageSize] = useState(5)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+
+  const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(
+    pageSize,
     'cars-delivery',
-    { first: 10 },
     {
       and: [
         {
@@ -49,6 +52,19 @@ export default function CarsDelivery(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [fromDate, toDate, refetch])
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handlePageChange = (params: GridPageChangeParams) => {
+    if (params.page > currentPageIndex) {
+      fetchNextPage()
+    } else {
+      fetchPreviousPage()
+    }
+    setCurrentPageIndex(params.page)
+  }
 
   const columns: GridColDef[] = [
     {
@@ -86,7 +102,7 @@ export default function CarsDelivery(): JSX.Element {
   ]
 
   const rows =
-    data?.edges?.map(({ node }) => {
+    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
       const { id, car, startDate, user, startAddress } = node
       const { plateNumber, color, carModel } = car || {}
       const { brand, model } = carModel || {}
@@ -160,7 +176,13 @@ export default function CarsDelivery(): JSX.Element {
 
         <DataGridLocale
           autoHeight
-          autoPageSize
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          paginationMode="server"
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
           onRowClick={handleRowClick}
           rows={rows}
           columns={columns}
