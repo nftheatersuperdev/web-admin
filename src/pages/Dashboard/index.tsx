@@ -63,7 +63,7 @@ const quickLinks = [
 export default function Dashboard(): JSX.Element {
   const { t } = useTranslation()
   const { data: cars } = useCars()
-  const { data: subscriptions } = useSubscriptions(10, 'total-count')
+  const { data: subscriptions } = useSubscriptions()
   const { data: payments } = usePayments()
   const { data: users } = useUsers()
 

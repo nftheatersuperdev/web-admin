@@ -31,7 +31,6 @@ export default function CarsDelivery(): JSX.Element {
 
   const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(
     pageSize,
-    'cars-delivery',
     {
       and: [
         {

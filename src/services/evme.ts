@@ -252,12 +252,11 @@ export function useCars(
 
 export function useSubscriptions(
   pageSize = 10,
-  queryKey?: string,
   filter?: SubFilter,
   sorting?: SubSort[]
 ): UseInfiniteQueryResult<WithPaginationType<Sub>> {
   return useInfiniteQuery(
-    ['evme:subscriptions', pageSize, queryKey],
+    ['evme:subscriptions', { pageSize, filter, sorting }],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
@@ -334,13 +333,12 @@ export function useSubscriptions(
 }
 
 export function useSearchSubscriptions(
-  queryKey?: string,
   paging?: CursorPaging,
   filter?: SubFilter,
   sorting?: SubSort[]
 ): UseQueryResult<WithPaginationType<Sub>> {
   return useQuery(
-    ['evme:search-subscriptions', queryKey],
+    ['evme:search-subscriptions', { paging, filter, sorting }],
     async () => {
       const response = await gqlClient.request(
         gql`

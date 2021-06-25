@@ -68,7 +68,6 @@ export default function AdditionalExpenseUpdateDialog(
     isLoading: isLoadingSubscriptions,
     refetch: refetchSubscriptions,
   } = useSearchSubscriptions(
-    'update-expense',
     {
       first: 50,
     },
