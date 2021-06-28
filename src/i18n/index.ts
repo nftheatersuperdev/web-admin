@@ -45,7 +45,17 @@ interface MuiLocale {
   gridLocaleText: Partial<GridLocaleText>
 }
 
-export const muiLocales: { [key: string]: MuiLocale } = {
-  en: muiEn,
-  th: muiTh,
+export const getMuiLocales = (lang?: string): MuiLocale => {
+  switch (lang) {
+    case 'en-US':
+    case 'en':
+      return muiEn
+
+    case 'th-TH':
+    case 'th':
+      return muiTh
+
+    default:
+      return muiEn
+  }
 }

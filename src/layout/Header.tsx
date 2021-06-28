@@ -27,7 +27,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
   const { t, i18n } = useTranslation()
 
   const handleLanguageChange = async () => {
-    const newLang = i18n.language === 'en' ? 'th' : 'en'
+    const newLang = ['en-US', 'en'].includes(i18n.language) ? 'th' : 'en'
     await i18n.changeLanguage(newLang)
   }
 
@@ -53,7 +53,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
           onClick={handleLanguageChange}
           aria-label={t('header.aria.changeLanguage')}
         >
-          {i18n.language === 'en' ? '🇺🇸' : '🇹🇭'}
+          {i18n.language === 'th' ? '🇹🇭' : '🇺🇸'}
         </IconButton>
 
         <IconButton
