@@ -108,6 +108,8 @@ export default function CarsReturn(): JSX.Element {
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
       const carDisplayName = `${brand}-${model} (${color})`
+      const { full, latitude, longitude, remark } = endAddress || {}
+
       return {
         id,
         userName,
@@ -115,7 +117,10 @@ export default function CarsReturn(): JSX.Element {
         plateNumber,
         endDate,
         user,
-        remark: endAddress?.remark,
+        remark,
+        address: full,
+        latitude,
+        longitude,
       }
     }) || []
 
@@ -125,6 +130,9 @@ export default function CarsReturn(): JSX.Element {
       user: param.row.user,
       endDate: param.row.endDate,
       remark: param.row.remark,
+      address: param.row.address,
+      latitude: param.row.latitude,
+      longitude: param.row.longitude,
     })
   }
 

@@ -308,6 +308,18 @@ export function useSubscriptions(
                     duration
                     price
                   }
+                  startAddress {
+                    full
+                    latitude
+                    longitude
+                    remark
+                  }
+                  endAddress {
+                    full
+                    latitude
+                    longitude
+                    remark
+                  }
                 }
               }
             }
