@@ -42,6 +42,12 @@ const QUERY_KEYS = {
   PRICING_BY_MODEL_ID: 'evme:use-pricing-by-id',
   PRICING: 'evme:pricing',
   SUBSCRIPTIONS: 'evme:subscriptions',
+  SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
+  USERS: 'evme:users',
+  PAYMENTS: 'evme:payments',
+  ADDITIONAL_EXPENSES: 'evme:additional-expenses',
+  ADDITIONAL_EXPENSE_BY_ID: 'evme:additional-expense-by-id',
+  CHARGING_LOCATIONS: 'evme:charging-locations',
 }
 
 const gqlClient = new GraphQLClient(config.evme)
@@ -313,7 +319,7 @@ export function useSubscriptions(
   sorting?: SubSort[]
 ): UseInfiniteQueryResult<WithPaginationType<Sub>> {
   return useInfiniteQuery(
-    ['evme:subscriptions', { pageSize, filter, sorting }],
+    [QUERY_KEYS.SUBSCRIPTIONS, { pageSize, filter, sorting }],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
@@ -442,7 +448,7 @@ export function useSearchSubscriptions(
   sorting?: SubSort[]
 ): UseQueryResult<WithPaginationType<Sub>> {
   return useQuery(
-    ['evme:search-subscriptions', { paging, filter, sorting }],
+    [QUERY_KEYS.SEARCH_SUBSCRIPTIONS, { paging, filter, sorting }],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -649,7 +655,7 @@ export function useCreatePrices(): UseMutationResult<
 
 export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
   return useQuery(
-    ['evme:payments'],
+    [QUERY_KEYS.PAYMENTS],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -680,7 +686,7 @@ export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
 
 export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationType<User>> {
   return useInfiniteQuery(
-    ['evme:users', pageSize],
+    [QUERY_KEYS.USERS, pageSize],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
@@ -732,7 +738,7 @@ export function useAdditionalExpenses(
   pageSize = 10
 ): UseInfiniteQueryResult<WithPaginationType<AdditionalExpense>> {
   return useInfiniteQuery(
-    ['evme:additional-expenses', pageSize],
+    [QUERY_KEYS.ADDITIONAL_EXPENSES, pageSize],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
@@ -791,7 +797,7 @@ export function useAdditionalExpenseById(
   options?: UseQueryOptions<unknown, unknown, AdditionalExpense>
 ): UseQueryResult<AdditionalExpense> {
   return useQuery(
-    ['evme:additional-expense-by-id', id],
+    [QUERY_KEYS.ADDITIONAL_EXPENSE_BY_ID, id],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -868,7 +874,7 @@ export function useCreateAdditionalExpense(): UseMutationResult<
       return response.createAdditionalExpense
     },
     {
-      onSuccess: () => queryClient.invalidateQueries('evme:additional-expenses'),
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.ADDITIONAL_EXPENSES),
       onError: () => {
         console.error('Failed too create an additional expense')
       },
@@ -904,7 +910,7 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
       return response.updateAdditionalExpense
     },
     {
-      onSuccess: () => queryClient.invalidateQueries('evme:additional-expenses'),
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.ADDITIONAL_EXPENSES),
       onError: () => {
         console.error('Failed too update an additional expense')
       },
@@ -914,7 +920,7 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
 
 export function useChargingLocations(): UseQueryResult<WithPaginationType<ChargingLocation>> {
   return useQuery(
-    ['evme:charging-locations'],
+    [QUERY_KEYS.CHARGING_LOCATIONS],
     async () => {
       const response = await gqlClient.request(
         gql`
