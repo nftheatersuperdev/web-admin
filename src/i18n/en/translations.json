@@ -168,11 +168,19 @@
     "fastChargeTime": "Fast Charge Time",
     "email": "Email",
     "phone": "Phone Number",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "startDate": "Start Date",
     "endDate": "End Date",
+    "startAddress": "Start Address",
+    "endAddress": "End Address",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
-    "omiseButton": "Open Omise"
+    "omiseButton": "Open Omise",
+    "carDetails": "Car Details",
+    "updateSubscriptionDetails": "Update Subscription Details",
+    "bookingDetails": "Booking Details",
+    "subscriptionId": "Subscription ID"
   },
   "additionalExpense": {
     "id": "ID",

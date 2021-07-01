@@ -30,12 +30,19 @@ import {
   PackagePriceSort,
   ChargingLocation,
   CarSort,
+  UpdateOneSubInput,
+  CarFilter,
+  AvailableCarInput,
 } from './evme.types'
 
-const CARS_QUERY_KEY = 'evme:cars'
-const CAR_MODELS_QUERY_KEY = 'evme:car-models'
-const PRICING_BY_MODEL_ID_KEY = 'evme:use-pricing-by-id'
-const PRICING_QUERY_KEY = 'evme:pricing'
+const QUERY_KEYS = {
+  CARS: 'evme:cars',
+  CAR_MODELS: 'evme:car-models',
+  CAR_MODEL_BY_ID: 'evme:car-model',
+  PRICING_BY_MODEL_ID: 'evme:use-pricing-by-id',
+  PRICING: 'evme:pricing',
+  SUBSCRIPTIONS: 'evme:subscriptions',
+}
 
 const gqlClient = new GraphQLClient(config.evme)
 
@@ -79,7 +86,7 @@ export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, u
       }
     )
 
-    queryClient.invalidateQueries(CARS_QUERY_KEY)
+    queryClient.invalidateQueries(QUERY_KEYS.CARS)
     return response.createCar
   })
 }
@@ -106,7 +113,7 @@ export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCa
         },
       }
     )
-    queryClient.invalidateQueries(CARS_QUERY_KEY)
+    queryClient.invalidateQueries(QUERY_KEYS.CARS)
     return response.updateCar
   })
 }
@@ -132,14 +139,14 @@ export function useDeleteCar(): UseMutationResult<CarModel, unknown, DeleteOneCa
         },
       }
     )
-    queryClient.invalidateQueries(CARS_QUERY_KEY)
+    queryClient.invalidateQueries(QUERY_KEYS.CARS)
     return response.deleteCar
   })
 }
 
 export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
   return useQuery(
-    [CAR_MODELS_QUERY_KEY],
+    [QUERY_KEYS.CAR_MODELS],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -182,12 +189,62 @@ export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
   )
 }
 
+/**
+ * Query a specific car model by its ID.
+ * You can also provide different filters to e.g., only retrieve all cars with a specific color.
+ */
+export function useCarModelById({
+  carModelId,
+  carFilter,
+  availableFilter,
+}: {
+  carModelId: string
+  carFilter?: CarFilter
+  availableFilter?: AvailableCarInput
+}): UseQueryResult<CarModel> {
+  return useQuery(
+    [QUERY_KEYS.CAR_MODEL_BY_ID, carModelId],
+    async () => {
+      const response = await gqlClient.request(
+        gql`
+          query CarModel(
+            $carModelId: ID!
+            $carFilter: CarFilter
+            $availableFilter: AvailableCarInput!
+          ) {
+            carModel(id: $carModelId) {
+              cars(filter: $carFilter) {
+                id
+                vin
+                plateNumber
+                available(input: $availableFilter)
+              }
+            }
+          }
+        `,
+        {
+          carModelId,
+          carFilter,
+          availableFilter,
+        }
+      )
+      return response.carModel
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve car model, ${error.message}`)
+      },
+      keepPreviousData: true,
+    }
+  )
+}
+
 export function useCars(
   pageSize = 10,
   sorting = [] as CarSort[]
 ): UseInfiniteQueryResult<WithPaginationType<Car>> {
   return useInfiniteQuery(
-    [CARS_QUERY_KEY, pageSize],
+    [QUERY_KEYS.CARS, pageSize],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
@@ -296,7 +353,9 @@ export function useSubscriptions(
                   car {
                     vin
                     plateNumber
+                    color
                     carModel {
+                      id
                       brand
                       model
                       seats
@@ -342,6 +401,39 @@ export function useSubscriptions(
       keepPreviousData: true,
     }
   )
+}
+
+/**
+ * Returns the mutation function to update a subscription.
+ * For example, this is used in the subscription update details page,
+ * where we can update an existing subscription with a new vehicle.
+ */
+export function useUpdateSubscription(): UseMutationResult<
+  Sub,
+  unknown,
+  UpdateOneSubInput,
+  unknown
+> {
+  const queryClient = useQueryClient()
+  return useMutation(async ({ id, update }: UpdateOneSubInput) => {
+    const response = await gqlClient.request(
+      gql`
+        mutation UpdateSubscription($input: UpdateOneCarInput!) {
+          updateSubscription(input: $input) {
+            id
+          }
+        }
+      `,
+      {
+        input: {
+          id,
+          update,
+        },
+      }
+    )
+    queryClient.invalidateQueries(QUERY_KEYS.SUBSCRIPTIONS)
+    return response.updateSuscription
+  })
 }
 
 export function useSearchSubscriptions(
@@ -426,7 +518,7 @@ export function usePricing(
   sorting: PackagePriceSort[]
 ): UseInfiniteQueryResult<WithPaginationType<PackagePrice>> {
   return useInfiniteQuery(
-    [PRICING_QUERY_KEY, pageSize],
+    [QUERY_KEYS.PRICING, pageSize],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
@@ -486,7 +578,7 @@ export function usePricingById({
   isDisabled?: boolean
 }): UseQueryResult<WithPaginationType<PackagePrice>> {
   return useQuery(
-    [PRICING_BY_MODEL_ID_KEY, carModelId],
+    [QUERY_KEYS.PRICING_BY_MODEL_ID, carModelId],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -549,8 +641,8 @@ export function useCreatePrices(): UseMutationResult<
         },
       }
     )
-    queryClient.invalidateQueries(PRICING_QUERY_KEY)
-    queryClient.invalidateQueries(PRICING_BY_MODEL_ID_KEY)
+    queryClient.invalidateQueries(QUERY_KEYS.PRICING)
+    queryClient.invalidateQueries(QUERY_KEYS.PRICING_BY_MODEL_ID)
     return response.createPackagePrices
   })
 }

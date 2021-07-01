@@ -2,8 +2,15 @@ import { GridValueFormatterParams, GridCellParams } from '@material-ui/data-grid
 import { Link } from '@material-ui/core'
 import dayjs from 'dayjs'
 
+export function functionFormatRawDate(dateStr: string | undefined): string {
+  if (!dateStr) {
+    return '-'
+  }
+  return dayjs(dateStr).format('DD/MM/YYYY')
+}
+
 export function formatDates(params: GridValueFormatterParams): string {
-  return dayjs(params.value as Date).format('DD/MM/YYYY')
+  return functionFormatRawDate(params.value as string)
 }
 
 export function formatDateWithPattern(params: GridValueFormatterParams, pattern: string): string {

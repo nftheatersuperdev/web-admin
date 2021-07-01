@@ -36,6 +36,13 @@ export type AddCarModelsToCarBodyTypeInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type AddCarModelsToCarConnectorTypeInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type AddCarsToCarModelInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -57,7 +64,21 @@ export type AddEventsToSubInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type AddFavoriteChargingLocationsToUserInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type AddFilesToAdditionalExpenseInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type AddLocationsToCarConnectorTypeInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The ids of the relations. */
@@ -360,6 +381,7 @@ export type AdditionalExpenseUpdateInput = {
 
 export type Authorize = {
   __typename?: 'Authorize'
+  subscriptionId: Scalars['String']
   authorizeUri: Scalars['String']
 }
 
@@ -367,6 +389,7 @@ export type AvailableCar = {
   __typename?: 'AvailableCar'
   color: Scalars['String']
   available?: Maybe<Scalars['Boolean']>
+  availabilityPercentage?: Maybe<Scalars['Float']>
   exteriorImages?: Maybe<Array<CarModelImage>>
   interiorImages?: Maybe<Array<CarModelImage>>
 }
@@ -379,6 +402,10 @@ export type AvailableCarInput = {
 export type BooleanFieldComparison = {
   is?: Maybe<Scalars['Boolean']>
   isNot?: Maybe<Scalars['Boolean']>
+}
+
+export type CancelSubscriptionInput = {
+  subscriptionId: Scalars['String']
 }
 
 export type Car = {
@@ -507,7 +534,46 @@ export type CarConnectorType = {
   __typename?: 'CarConnectorType'
   id: Scalars['String']
   description: Scalars['String']
-  carModels: Array<CarModel>
+  carModels?: Maybe<Array<CarModel>>
+  locations?: Maybe<Array<CarModel>>
+}
+
+export type CarConnectorTypeCarModelsArgs = {
+  filter?: Maybe<CarModelFilter>
+  sorting?: Maybe<Array<CarModelSort>>
+}
+
+export type CarConnectorTypeLocationsArgs = {
+  filter?: Maybe<CarModelFilter>
+  sorting?: Maybe<Array<CarModelSort>>
+}
+
+export type CarConnectorTypeAggregateGroupBy = {
+  __typename?: 'CarConnectorTypeAggregateGroupBy'
+  id?: Maybe<Scalars['ID']>
+  description?: Maybe<Scalars['String']>
+}
+
+export type CarConnectorTypeConnection = {
+  __typename?: 'CarConnectorTypeConnection'
+  /** Paging information */
+  pageInfo: PageInfo
+  /** Array of edges. */
+  edges: Array<CarConnectorTypeEdge>
+}
+
+export type CarConnectorTypeCountAggregate = {
+  __typename?: 'CarConnectorTypeCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  description?: Maybe<Scalars['Int']>
+}
+
+export type CarConnectorTypeEdge = {
+  __typename?: 'CarConnectorTypeEdge'
+  /** The node containing the CarConnectorType */
+  node: CarConnectorType
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']
 }
 
 export type CarConnectorTypeFilter = {
@@ -515,6 +581,18 @@ export type CarConnectorTypeFilter = {
   or?: Maybe<Array<CarConnectorTypeFilter>>
   id?: Maybe<IdFilterComparison>
   description?: Maybe<StringFieldComparison>
+}
+
+export type CarConnectorTypeMaxAggregate = {
+  __typename?: 'CarConnectorTypeMaxAggregate'
+  id?: Maybe<Scalars['ID']>
+  description?: Maybe<Scalars['String']>
+}
+
+export type CarConnectorTypeMinAggregate = {
+  __typename?: 'CarConnectorTypeMinAggregate'
+  id?: Maybe<Scalars['ID']>
+  description?: Maybe<Scalars['String']>
 }
 
 export type CarConnectorTypeSort = {
@@ -858,6 +936,16 @@ export type ChargingLocationOutletsArgs = {
   sorting?: Maybe<Array<CarConnectorTypeSort>>
 }
 
+export type ChargingLocationAggregateFilter = {
+  and?: Maybe<Array<ChargingLocationAggregateFilter>>
+  or?: Maybe<Array<ChargingLocationAggregateFilter>>
+  id?: Maybe<StringFieldComparison>
+  provider?: Maybe<StringFieldComparison>
+  address?: Maybe<StringFieldComparison>
+  name?: Maybe<StringFieldComparison>
+  externalId?: Maybe<StringFieldComparison>
+}
+
 export type ChargingLocationAggregateGroupBy = {
   __typename?: 'ChargingLocationAggregateGroupBy'
   id?: Maybe<Scalars['String']>
@@ -1091,6 +1179,18 @@ export type CreateOneUserInput = {
   user: UserInput
 }
 
+export type CreateOneWaitingListInput = {
+  /** The record to create */
+  waitingList: CreateWaitingList
+}
+
+export type CreateWaitingList = {
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+}
+
 export type CursorPaging = {
   /** Paginate before opaque cursor */
   before?: Maybe<Scalars['ConnectionCursor']>
@@ -1274,12 +1374,23 @@ export type Mutation = {
   updateCreditCard: Authorize
   subscribe: Authorize
   extendSubscription: Sub
+  updateMySubscription: Sub
+  cancelSubscription: Sub
+  setDeliveredStatus: Sub
+  createWaitingList: WaitingList
   setDefaultAddressOnUser: User
   addSubscriptionsToUser: User
   setSubscriptionsOnUser: User
+  addFavoriteChargingLocationsToUser: User
+  setFavoriteChargingLocationsOnUser: User
   removeDefaultAddressFromUser: User
+  removeFavoriteChargingLocationsFromUser: User
   createUser: User
   updateUser: User
+  addCarModelsToCarConnectorType: CarConnectorType
+  setCarModelsOnCarConnectorType: CarConnectorType
+  addLocationsToCarConnectorType: CarConnectorType
+  setLocationsOnCarConnectorType: CarConnectorType
   setBodyTypeOnCarModel: CarModel
   setConnectorTypeOnCarModel: CarModel
   addCarsToCarModel: CarModel
@@ -1351,6 +1462,10 @@ export type Mutation = {
   updateLocationAmenity: LocationAmenity
 }
 
+export type MutationSignupArgs = {
+  input?: Maybe<UserInputSignup>
+}
+
 export type MutationUpdateProfileArgs = {
   input: UserInputUpdate
 }
@@ -1367,6 +1482,22 @@ export type MutationExtendSubscriptionArgs = {
   input: ExtendSubscriptionInput
 }
 
+export type MutationUpdateMySubscriptionArgs = {
+  input: SubscriptionUpdateInput
+}
+
+export type MutationCancelSubscriptionArgs = {
+  input: CancelSubscriptionInput
+}
+
+export type MutationSetDeliveredStatusArgs = {
+  input: SetSubscriptionStatusInput
+}
+
+export type MutationCreateWaitingListArgs = {
+  input: CreateOneWaitingListInput
+}
+
 export type MutationSetDefaultAddressOnUserArgs = {
   input: SetDefaultAddressOnUserInput
 }
@@ -1379,8 +1510,20 @@ export type MutationSetSubscriptionsOnUserArgs = {
   input: SetSubscriptionsOnUserInput
 }
 
+export type MutationAddFavoriteChargingLocationsToUserArgs = {
+  input: AddFavoriteChargingLocationsToUserInput
+}
+
+export type MutationSetFavoriteChargingLocationsOnUserArgs = {
+  input: SetFavoriteChargingLocationsOnUserInput
+}
+
 export type MutationRemoveDefaultAddressFromUserArgs = {
   input: RemoveDefaultAddressFromUserInput
+}
+
+export type MutationRemoveFavoriteChargingLocationsFromUserArgs = {
+  input: RemoveFavoriteChargingLocationsFromUserInput
 }
 
 export type MutationCreateUserArgs = {
@@ -1389,6 +1532,22 @@ export type MutationCreateUserArgs = {
 
 export type MutationUpdateUserArgs = {
   input: UpdateOneUserInput
+}
+
+export type MutationAddCarModelsToCarConnectorTypeArgs = {
+  input: AddCarModelsToCarConnectorTypeInput
+}
+
+export type MutationSetCarModelsOnCarConnectorTypeArgs = {
+  input: SetCarModelsOnCarConnectorTypeInput
+}
+
+export type MutationAddLocationsToCarConnectorTypeArgs = {
+  input: AddLocationsToCarConnectorTypeInput
+}
+
+export type MutationSetLocationsOnCarConnectorTypeArgs = {
+  input: SetLocationsOnCarConnectorTypeInput
 }
 
 export type MutationSetBodyTypeOnCarModelArgs = {
@@ -2079,9 +2238,13 @@ export type PaymentSumAggregate = {
 export type Query = {
   __typename?: 'Query'
   me: User
+  whitelisted: Scalars['Boolean']
+  waitingList: WaitingListConnection
   userAggregate: Array<UserAggregateResponse>
   user?: Maybe<User>
   users: UserConnection
+  carConnector?: Maybe<CarConnectorType>
+  carConnectors: CarConnectorTypeConnection
   carModel?: Maybe<CarModel>
   carModels: CarModelConnection
   car?: Maybe<Car>
@@ -2110,6 +2273,16 @@ export type Query = {
   locationAmenities: LocationAmenityConnection
 }
 
+export type QueryWhitelistedArgs = {
+  email: Scalars['String']
+}
+
+export type QueryWaitingListArgs = {
+  paging?: Maybe<CursorPaging>
+  filter?: Maybe<WaitingListFilter>
+  sorting?: Maybe<Array<WaitingListSort>>
+}
+
 export type QueryUserAggregateArgs = {
   filter?: Maybe<UserAggregateFilter>
 }
@@ -2122,6 +2295,16 @@ export type QueryUsersArgs = {
   paging?: Maybe<CursorPaging>
   filter?: Maybe<UserFilter>
   sorting?: Maybe<Array<UserSort>>
+}
+
+export type QueryCarConnectorArgs = {
+  id: Scalars['ID']
+}
+
+export type QueryCarConnectorsArgs = {
+  paging?: Maybe<CursorPaging>
+  filter?: Maybe<CarConnectorTypeFilter>
+  sorting?: Maybe<Array<CarConnectorTypeSort>>
 }
 
 export type QueryCarModelArgs = {
@@ -2273,6 +2456,13 @@ export type RemoveDefaultAddressFromUserInput = {
   relationId: Scalars['ID']
 }
 
+export type RemoveFavoriteChargingLocationsFromUserInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type RemoveLocationsFromLocationAmenityInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -2336,6 +2526,13 @@ export type SetCarModelsOnCarBodyTypeInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type SetCarModelsOnCarConnectorTypeInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type SetCarOnSubInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -2385,7 +2582,21 @@ export type SetEventsOnSubInput = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type SetFavoriteChargingLocationsOnUserInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
 export type SetFilesOnAdditionalExpenseInput = {
+  /** The id of the record. */
+  id: Scalars['ID']
+  /** The ids of the relations. */
+  relationIds: Array<Scalars['ID']>
+}
+
+export type SetLocationsOnCarConnectorTypeInput = {
   /** The id of the record. */
   id: Scalars['ID']
   /** The ids of the relations. */
@@ -2462,6 +2673,11 @@ export type SetSubscriptionOnSubscriptionEventInput = {
   relationId: Scalars['ID']
 }
 
+export type SetSubscriptionStatusInput = {
+  subscriptionId: Scalars['String']
+  status: Scalars['String']
+}
+
 export type SetSubscriptionsOnUserInput = {
   /** The id of the record. */
   id: Scalars['ID']
@@ -2512,6 +2728,7 @@ export type Sub = {
   user: User
   packagePriceId: Scalars['String']
   carId: Scalars['String']
+  parentId?: Maybe<Scalars['String']>
   car?: Maybe<Car>
   packagePrice?: Maybe<PackagePrice>
   startDate: Scalars['DateTime']
@@ -2623,6 +2840,7 @@ export type SubAggregateFilter = {
   userId?: Maybe<StringFieldComparison>
   packagePriceId?: Maybe<StringFieldComparison>
   carId?: Maybe<StringFieldComparison>
+  parentId?: Maybe<StringFieldComparison>
   startDate?: Maybe<DateFieldComparison>
   endDate?: Maybe<DateFieldComparison>
   kind?: Maybe<StringFieldComparison>
@@ -2634,6 +2852,7 @@ export type SubAggregateGroupBy = {
   userId?: Maybe<Scalars['String']>
   packagePriceId?: Maybe<Scalars['String']>
   carId?: Maybe<Scalars['String']>
+  parentId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
@@ -2663,6 +2882,7 @@ export type SubCountAggregate = {
   userId?: Maybe<Scalars['Int']>
   packagePriceId?: Maybe<Scalars['Int']>
   carId?: Maybe<Scalars['Int']>
+  parentId?: Maybe<Scalars['Int']>
   startDate?: Maybe<Scalars['Int']>
   endDate?: Maybe<Scalars['Int']>
   kind?: Maybe<Scalars['Int']>
@@ -2719,6 +2939,7 @@ export type SubFilter = {
   userId?: Maybe<StringFieldComparison>
   packagePriceId?: Maybe<StringFieldComparison>
   carId?: Maybe<StringFieldComparison>
+  parentId?: Maybe<StringFieldComparison>
   startDate?: Maybe<DateFieldComparison>
   endDate?: Maybe<DateFieldComparison>
   kind?: Maybe<StringFieldComparison>
@@ -2768,6 +2989,7 @@ export type SubMaxAggregate = {
   userId?: Maybe<Scalars['String']>
   packagePriceId?: Maybe<Scalars['String']>
   carId?: Maybe<Scalars['String']>
+  parentId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
@@ -2779,6 +3001,7 @@ export type SubMinAggregate = {
   userId?: Maybe<Scalars['String']>
   packagePriceId?: Maybe<Scalars['String']>
   carId?: Maybe<Scalars['String']>
+  parentId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
@@ -2851,6 +3074,7 @@ export enum SubSortFields {
   UserId = 'userId',
   PackagePriceId = 'packagePriceId',
   CarId = 'carId',
+  ParentId = 'parentId',
   StartDate = 'startDate',
   EndDate = 'endDate',
   Kind = 'kind',
@@ -2964,6 +3188,25 @@ export type SubscriptionInput = {
   endAddressId: Scalars['String']
 }
 
+export type SubscriptionPartialUpdateInput = {
+  userId?: Maybe<Scalars['String']>
+  carId?: Maybe<Scalars['String']>
+  packagePriceId?: Maybe<Scalars['String']>
+  startDate?: Maybe<Scalars['DateTime']>
+  endDate?: Maybe<Scalars['DateTime']>
+  kind?: Maybe<Scalars['String']>
+  startAddressId?: Maybe<Scalars['String']>
+  endAddressId?: Maybe<Scalars['String']>
+}
+
+export type SubscriptionUpdateInput = {
+  subscriptionId: Scalars['String']
+  startDate?: Maybe<Scalars['DateTime']>
+  endDate?: Maybe<Scalars['DateTime']>
+  startAddress?: Maybe<UserAddressInput>
+  endAddress?: Maybe<UserAddressInput>
+}
+
 export type UpdateLocationAmenity = {
   id?: Maybe<Scalars['String']>
   description?: Maybe<Scalars['String']>
@@ -3030,7 +3273,7 @@ export type UpdateOneSubInput = {
   /** The id of the record to update */
   id: Scalars['ID']
   /** The update to apply. */
-  update: SubscriptionInput
+  update: SubscriptionPartialUpdateInput
 }
 
 export type UpdateOneSubscriptionEventInput = {
@@ -3056,14 +3299,17 @@ export type User = {
   role: Scalars['String']
   subscriptions?: Maybe<Array<Sub>>
   disabled: Scalars['Boolean']
-  phoneNumber: Scalars['String']
+  phoneNumber?: Maybe<Scalars['String']>
   email: Scalars['String']
   omiseId?: Maybe<Scalars['String']>
   defaultAddress?: Maybe<UserAddress>
+  favoriteChargingLocations?: Maybe<Array<ChargingLocation>>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   creditCard?: Maybe<UserCreditCard>
+  tokenKyc?: Maybe<Scalars['String']>
   subscriptionsAggregate: Array<UserSubscriptionsAggregateResponse>
+  favoriteChargingLocationsAggregate: Array<UserFavoriteChargingLocationsAggregateResponse>
 }
 
 export type UserSubscriptionsArgs = {
@@ -3071,8 +3317,17 @@ export type UserSubscriptionsArgs = {
   sorting?: Maybe<Array<SubSort>>
 }
 
+export type UserFavoriteChargingLocationsArgs = {
+  filter?: Maybe<ChargingLocationFilter>
+  sorting?: Maybe<Array<ChargingLocationSort>>
+}
+
 export type UserSubscriptionsAggregateArgs = {
   filter?: Maybe<SubAggregateFilter>
+}
+
+export type UserFavoriteChargingLocationsAggregateArgs = {
+  filter?: Maybe<ChargingLocationAggregateFilter>
 }
 
 export type UserAddress = {
@@ -3172,6 +3427,50 @@ export type UserEdge = {
   cursor: Scalars['ConnectionCursor']
 }
 
+export type UserFavoriteChargingLocationsAggregateGroupBy = {
+  __typename?: 'UserFavoriteChargingLocationsAggregateGroupBy'
+  id?: Maybe<Scalars['String']>
+  provider?: Maybe<Scalars['String']>
+  address?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+}
+
+export type UserFavoriteChargingLocationsAggregateResponse = {
+  __typename?: 'UserFavoriteChargingLocationsAggregateResponse'
+  groupBy?: Maybe<UserFavoriteChargingLocationsAggregateGroupBy>
+  count?: Maybe<UserFavoriteChargingLocationsCountAggregate>
+  min?: Maybe<UserFavoriteChargingLocationsMinAggregate>
+  max?: Maybe<UserFavoriteChargingLocationsMaxAggregate>
+}
+
+export type UserFavoriteChargingLocationsCountAggregate = {
+  __typename?: 'UserFavoriteChargingLocationsCountAggregate'
+  id?: Maybe<Scalars['Int']>
+  provider?: Maybe<Scalars['Int']>
+  address?: Maybe<Scalars['Int']>
+  name?: Maybe<Scalars['Int']>
+  externalId?: Maybe<Scalars['Int']>
+}
+
+export type UserFavoriteChargingLocationsMaxAggregate = {
+  __typename?: 'UserFavoriteChargingLocationsMaxAggregate'
+  id?: Maybe<Scalars['String']>
+  provider?: Maybe<Scalars['String']>
+  address?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+}
+
+export type UserFavoriteChargingLocationsMinAggregate = {
+  __typename?: 'UserFavoriteChargingLocationsMinAggregate'
+  id?: Maybe<Scalars['String']>
+  provider?: Maybe<Scalars['String']>
+  address?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+}
+
 export type UserFilter = {
   and?: Maybe<Array<UserFilter>>
   or?: Maybe<Array<UserFilter>>
@@ -3196,6 +3495,12 @@ export type UserInput = {
   omiseId: Scalars['String']
   disabled: Scalars['Boolean']
   defaultAddress: UserAddressInput
+}
+
+export type UserInputSignup = {
+  phoneNumber?: Maybe<Scalars['String']>
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
 }
 
 export type UserInputUpdate = {
@@ -3257,6 +3562,7 @@ export type UserSubscriptionsAggregateGroupBy = {
   userId?: Maybe<Scalars['String']>
   packagePriceId?: Maybe<Scalars['String']>
   carId?: Maybe<Scalars['String']>
+  parentId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
@@ -3276,6 +3582,7 @@ export type UserSubscriptionsCountAggregate = {
   userId?: Maybe<Scalars['Int']>
   packagePriceId?: Maybe<Scalars['Int']>
   carId?: Maybe<Scalars['Int']>
+  parentId?: Maybe<Scalars['Int']>
   startDate?: Maybe<Scalars['Int']>
   endDate?: Maybe<Scalars['Int']>
   kind?: Maybe<Scalars['Int']>
@@ -3287,6 +3594,7 @@ export type UserSubscriptionsMaxAggregate = {
   userId?: Maybe<Scalars['String']>
   packagePriceId?: Maybe<Scalars['String']>
   carId?: Maybe<Scalars['String']>
+  parentId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
@@ -3298,7 +3606,88 @@ export type UserSubscriptionsMinAggregate = {
   userId?: Maybe<Scalars['String']>
   packagePriceId?: Maybe<Scalars['String']>
   carId?: Maybe<Scalars['String']>
+  parentId?: Maybe<Scalars['String']>
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+}
+
+export type WaitingList = {
+  __typename?: 'WaitingList'
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  email: Scalars['String']
+}
+
+export type WaitingListAggregateGroupBy = {
+  __typename?: 'WaitingListAggregateGroupBy'
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+}
+
+export type WaitingListConnection = {
+  __typename?: 'WaitingListConnection'
+  /** Paging information */
+  pageInfo: PageInfo
+  /** Array of edges. */
+  edges: Array<WaitingListEdge>
+  /** Fetch total count of records */
+  totalCount: Scalars['Int']
+}
+
+export type WaitingListCountAggregate = {
+  __typename?: 'WaitingListCountAggregate'
+  firstName?: Maybe<Scalars['Int']>
+  lastName?: Maybe<Scalars['Int']>
+  phoneNumber?: Maybe<Scalars['Int']>
+  email?: Maybe<Scalars['Int']>
+}
+
+export type WaitingListEdge = {
+  __typename?: 'WaitingListEdge'
+  /** The node containing the WaitingList */
+  node: WaitingList
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']
+}
+
+export type WaitingListFilter = {
+  and?: Maybe<Array<WaitingListFilter>>
+  or?: Maybe<Array<WaitingListFilter>>
+  firstName?: Maybe<StringFieldComparison>
+  lastName?: Maybe<StringFieldComparison>
+  phoneNumber?: Maybe<StringFieldComparison>
+  email?: Maybe<StringFieldComparison>
+}
+
+export type WaitingListMaxAggregate = {
+  __typename?: 'WaitingListMaxAggregate'
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+}
+
+export type WaitingListMinAggregate = {
+  __typename?: 'WaitingListMinAggregate'
+  firstName?: Maybe<Scalars['String']>
+  lastName?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+}
+
+export type WaitingListSort = {
+  field: WaitingListSortFields
+  direction: SortDirection
+  nulls?: Maybe<SortNulls>
+}
+
+export enum WaitingListSortFields {
+  FirstName = 'firstName',
+  LastName = 'lastName',
+  PhoneNumber = 'phoneNumber',
+  Email = 'email',
 }

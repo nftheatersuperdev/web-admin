@@ -31,7 +31,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   },
   {
     path: ROUTE_PATHS.SUBSCRIPTION,
-    component: lazy(() => import('./pages/Subscription' /* webpackChunkName: "app" */)),
+    component: lazy(() => import('./pages/Subscriptions' /* webpackChunkName: "app" */)),
   },
   {
     path: ROUTE_PATHS.PRICING,

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Card, Button } from '@material-ui/core'
-import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
+import { GridColDef, GridPageChangeParams, GridRowData } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { formatDates, formatMoney, renderEmailLink } from 'utils'
 import config from 'config'
@@ -8,14 +8,21 @@ import PageToolbar from 'layout/PageToolbar'
 import DataGridLocale from 'components/DataGridLocale'
 import { useSubscriptions } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
+import UpdateDialog from './UpdateDialog'
 
 export default function Subscription(): JSX.Element {
-  const { t } = useTranslation()
-
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
+  const [selectedSubscription, setSelectedSubscription] = useState()
 
+  const { t } = useTranslation()
   const { data, fetchNextPage, fetchPreviousPage } = useSubscriptions(pageSize)
+
+  const handleRowClick = (data: GridRowData) => {
+    setUpdateDialogOpen(true)
+    setSelectedSubscription(data.row)
+  }
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -44,10 +51,17 @@ export default function Subscription(): JSX.Element {
       fastChargeTime: node?.car?.carModel?.fastChargeTime,
       startDate: node?.startDate,
       endDate: node?.endDate,
+      startAddress: node?.startAddress?.full,
+      endAddress: node?.endAddress?.full,
       createdAt: node?.createdAt,
       updatedAt: node?.updatedAt,
       email: node?.user?.email,
       phoneNumber: node?.user?.phoneNumber,
+      firstName: node?.user?.firstName,
+      lastName: node?.user?.lastName,
+      // not shown in table
+      color: node?.car?.color,
+      modelId: node?.car?.carModel?.id,
     })) || []
 
   const columns: GridColDef[] = [
@@ -64,10 +78,17 @@ export default function Subscription(): JSX.Element {
       flex: 1,
     },
     {
+      field: 'modelId',
+      headerName: t('subscription.model'),
+      description: t('subscription.model'),
+      flex: 1,
+    },
+    {
       field: 'seats',
       headerName: t('subscription.seats'),
       description: t('subscription.seats'),
       flex: 1,
+      hide: true,
     },
     {
       field: 'topSpeed',
@@ -120,9 +141,25 @@ export default function Subscription(): JSX.Element {
     {
       field: 'endDate',
       headerName: t('subscription.endDate'),
-      description: 'End Date',
+      description: t('subscription.endDate'),
       valueFormatter: formatDates,
       flex: 1,
+    },
+    {
+      field: 'startAddress',
+      headerName: t('subscription.startAddress'),
+      description: t('subscription.startAddress'),
+      valueFormatter: formatDates,
+      flex: 1,
+      hide: true,
+    },
+    {
+      field: 'endAddress',
+      headerName: t('subscription.endAddress'),
+      description: t('subscription.endAddress'),
+      valueFormatter: formatDates,
+      flex: 1,
+      hide: true,
     },
     {
       field: 'createdAt',
@@ -153,6 +190,18 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.phone'),
       flex: 1,
     },
+    {
+      field: 'firstName',
+      headerName: t('subscription.firstName'),
+      description: t('subscription.firstName'),
+      flex: 1,
+    },
+    {
+      field: 'lastName',
+      headerName: t('subscription.lastName'),
+      description: t('subscription.lastName'),
+      flex: 1,
+    },
   ]
 
   return (
@@ -175,11 +224,18 @@ export default function Subscription(): JSX.Element {
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={handlePageChange}
+          onRowClick={handleRowClick}
           rows={rows}
           columns={columns}
           checkboxSelection
         />
       </Card>
+
+      <UpdateDialog
+        open={isUpdateDialogOpen}
+        onClose={() => setUpdateDialogOpen(false)}
+        subscription={selectedSubscription}
+      />
     </Page>
   )
 }

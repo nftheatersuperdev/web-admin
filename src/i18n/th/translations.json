@@ -168,11 +168,19 @@
     "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
+    "firstName": "ชื่อจริง",
+    "lastName": "นามสกุล",
     "startDate": "วันที่เริ่มต้น",
     "endDate": "วันที่สิ้นสุด",
+    "startAddress": "ที่อยู่เริ่มต้น",
+    "endAddress": "ที่อยู่ปลายทาง",
     "createdDate": "วันที่กดจอง",
     "updatedDate": "วันที่แก้ไข",
-    "omiseButton": "เปิด Omise"
+    "omiseButton": "เปิด Omise",
+    "carDetails": "รายละเอียดรถ",
+    "updateSubscriptionDetails": "อัพเดทรายละเอียดการสมัครสมาชิก",
+    "bookingDetails": "รายละเอียดการจอง",
+    "subscriptionId": "หมายเลขการจอง"
   },
   "additionalExpense": {
     "id": "เลขไอดี",
