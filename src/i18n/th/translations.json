@@ -29,7 +29,9 @@
     "delete": "ลบ",
     "cancel": "ยกเลิก",
     "close": "ปิด",
-    "confirm": "ยืนยัน"
+    "confirm": "ยืนยัน",
+    "search": "ค้นหา",
+    "clear": "เคลียร์"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -65,6 +67,18 @@
       "title": "สมาชิก",
       "subTitle": "จำนวนสมาชิกทั้งหมด"
     },
+    "totalRequestedCases": {
+      "title": "ได้รับเอกสาร",
+      "subTitle": "จำนวนได้รับเอกสาร"
+    },
+    "totalApprovedCases": {
+      "title": "ผ่านการตรวจสอบ",
+      "subTitle": "จำนวนผ่านการตรวจสอบ"
+    },
+    "totalRejectedCases": {
+      "title": "ไม่ผ่านการตรวจสอบ",
+      "subTitle": "จำนวนไม่ผ่านการตรวจสอบ"
+    },
     "quickLinks": "ควิกลิงค์",
     "carDelivery": {
       "title": "รถยนต์ที่ต้องจัดส่ง",
@@ -73,6 +87,10 @@
     "carReturn": {
       "title": "รถยนต์ที่ต้องรับคืน",
       "dialogTitle": "รายละเอียดการรับคืน"
+    },
+    "reportOfUserRegistration": {
+      "title": "รายงานการตรวจสอบความถูกต้องของบุคคล",
+      "periodDate": "ประจำวันที่"
     },
     "fromDate": "ตั้งแต่วันที่",
     "toDate": "ถึงวันที่",
@@ -93,7 +111,12 @@
     "role": "สถานะ",
     "disabled": "ปิดการใช้งาน",
     "createdDate": "วันที่สมัคร",
-    "updatedDate": "วันที่แก้ไข"
+    "updatedDate": "วันที่แก้ไข",
+    "fullName": "ชื่อ-นามสกุล",
+    "status": "สถานะ",
+    "verifyDate": "วันที่ตรวจสอบ",
+    "note": "โน๊ต",
+    "rejectedReason": "เหตุผลของการปฏิเสธ"
   },
   "car": {
     "id": "เลขไอดี",

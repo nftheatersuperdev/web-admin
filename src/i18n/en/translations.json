@@ -29,7 +29,9 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "close": "Close",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "search": "Search",
+    "clear": "Clear"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -65,6 +67,18 @@
       "title": "Total Users",
       "subTitle": "Total number of registered users"
     },
+    "totalRequestedCases": {
+      "title": "Total Requested Cases",
+      "subTitle": "Number of requested cases"
+    },
+    "totalApprovedCases": {
+      "title": "Total Approved Cases",
+      "subTitle": "Number of approved cases"
+    },
+    "totalRejectedCases": {
+      "title": "Total Rejected Cases",
+      "subTitle": "Number of rejected cases"
+    },
     "quickLinks": "Quick Links",
     "carDelivery": {
       "title": "Upcoming Cars Delivery",
@@ -73,6 +87,10 @@
     "carReturn": {
       "title": "Upcoming Cars Return",
       "dialogTitle": "Return Detail"
+    },
+    "reportOfUserRegistration": {
+      "title": "Reports of User Registration",
+      "periodDate": "Period Date"
     },
     "fromDate": "From date",
     "toDate": "To date",
@@ -93,7 +111,12 @@
     "role": "Role",
     "disabled": "Disabled",
     "createdDate": "Created Date",
-    "updatedDate": "Updated Date"
+    "updatedDate": "Updated Date",
+    "fullName": "Full Name",
+    "status": "Status",
+    "verifyDate": "Verify Date",
+    "note": "Note",
+    "rejectedReason": "Reason of rejection"
   },
   "car": {
     "id": "ID",

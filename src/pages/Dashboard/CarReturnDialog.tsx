@@ -11,7 +11,7 @@ import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import config from 'config'
-import { DEFAULT_DATE_FORMAT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import styled from 'styled-components'
 import { IReturnModelData, MISSING_VALUE } from './utils'
 
@@ -44,7 +44,7 @@ export default function CarReturnDialog({ open, onClose, modelData }: ModalProps
       : MISSING_VALUE
 
   const returnDate = dayjs(modelData?.endDate).isValid()
-    ? dayjs(modelData?.endDate).format(DEFAULT_DATE_FORMAT)
+    ? dayjs(modelData?.endDate).format(DEFAULT_DATETIME_FORMAT)
     : MISSING_VALUE
 
   const { latitude: lat = 0, longitude: lng = 0, address } = modelData || {}

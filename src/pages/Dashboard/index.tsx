@@ -3,6 +3,7 @@ import {
   PeopleOutlined as PeopleIcon,
   DirectionsCar as CarIcon,
   Money as MoneyIcon,
+  CardMembership as SubscriptionIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { Page } from 'layout/LayoutRoute'
@@ -11,6 +12,7 @@ import CardQuickLink from 'components/CardQuickLink'
 import { useCars, usePayments, useSubscriptions, useUsers } from 'services/evme'
 import CarsDelivery from './CarsDelivery'
 import CarsReturn from './CarsReturn'
+import UserRegistration from './UserRegistration'
 
 function _formatMoney(amount: number) {
   const formatter = new Intl.NumberFormat('th-TH', {
@@ -88,15 +90,17 @@ export default function Dashboard(): JSX.Element {
             iconColor="red"
           />
         </Grid>
+
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title={t('dashboard.totalSubscriptions.title')}
             value={totalSubscriptions}
             subTitle={t('dashboard.totalSubscriptions.subTitle')}
-            icon={<PeopleIcon />}
+            icon={<SubscriptionIcon />}
             iconColor="purple"
           />
         </Grid>
+
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title={t('dashboard.totalPayments.title')}
@@ -106,20 +110,26 @@ export default function Dashboard(): JSX.Element {
             iconColor="green"
           />
         </Grid>
+
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title={t('dashboard.totalUsers.title')}
             value={totalUsers}
             subTitle={t('dashboard.totalUsers.subTitle')}
             icon={<PeopleIcon />}
+            iconColor="#5d4037"
           />
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item xs={12}>
+          <UserRegistration />
+        </Grid>
+
+        <Grid item xs={12} lg={6}>
           <CarsDelivery />
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item xs={12} lg={6}>
           <CarsReturn />
         </Grid>
 

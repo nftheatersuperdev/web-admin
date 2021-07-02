@@ -18,7 +18,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATE_FORMAT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import DateTimePicker from 'components/DateTimePicker'
 import { useSearchSubscriptions, useCreateAdditionalExpense } from 'services/evme'
 import {
@@ -203,7 +203,7 @@ export default function AdditionalExpenseCreateDialog(
                 label={t('additionalExpense.noticeDate')}
                 id="noticeDate"
                 name="noticeDate"
-                format={DEFAULT_DATE_FORMAT}
+                format={DEFAULT_DATETIME_FORMAT}
                 value={formik.values.noticeDate}
                 onChange={(date) => date && formik.setFieldValue('noticeDate', date.toDate())}
                 KeyboardButtonProps={{

@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
-import { Card, CardContent, CardHeader, Grid } from '@material-ui/core'
+import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import { GridColDef, GridRowData, GridPageChangeParams } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATE_FORMAT, formatDateWithPattern } from 'utils'
+import { DEFAULT_DATETIME_FORMAT, formatDateWithPattern } from 'utils'
+import styled from 'styled-components'
 import DataGridLocale from 'components/DataGridLocale'
 import DateTimePicker from 'components/DateTimePicker'
 import { useSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
 import CarDeliveryDialog from './CarDeliveryDialog'
 import { IDeliveryModelData, MISSING_VALUE } from './utils'
+
+const GridInputItem = styled(Grid)`
+  margin-bottom: 10px;
+`
 
 const START_DAYS = 1
 const NEXT_DAYS = 7
@@ -95,7 +100,7 @@ export default function CarsDelivery(): JSX.Element {
       field: 'startDate',
       headerName: t('dashboard.deliveryDate'),
       description: t('dashboard.deliveryDate'),
-      valueFormatter: (params) => formatDateWithPattern(params, DEFAULT_DATE_FORMAT),
+      valueFormatter: (params) => formatDateWithPattern(params, DEFAULT_DATETIME_FORMAT),
       flex: 1,
     },
   ]
@@ -142,17 +147,21 @@ export default function CarsDelivery(): JSX.Element {
 
   return (
     <Card>
-      <CardHeader title={t('dashboard.carDelivery.title')} />
-
       <CardContent>
         <Grid container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
+            <Typography color="textSecondary" gutterBottom variant="h6">
+              {t('dashboard.carDelivery.title')}
+            </Typography>
+          </Grid>
+
+          <GridInputItem item xs={6}>
             <DateTimePicker
               ampm={false}
               label={t('dashboard.fromDate')}
               id="fromDate"
               name="fromDate"
-              format={DEFAULT_DATE_FORMAT}
+              format={DEFAULT_DATETIME_FORMAT}
               value={fromDate}
               onChange={(date) => {
                 date && setFromDate(date.toDate())
@@ -161,15 +170,15 @@ export default function CarsDelivery(): JSX.Element {
                 'aria-label': 'change date',
               }}
             />
-          </Grid>
+          </GridInputItem>
 
-          <Grid item xs={6}>
+          <GridInputItem item xs={6}>
             <DateTimePicker
               ampm={false}
               label={t('dashboard.toDate')}
               id="toDate"
               name="toDate"
-              format={DEFAULT_DATE_FORMAT}
+              format={DEFAULT_DATETIME_FORMAT}
               value={toDate}
               onChange={(date) => {
                 date && setToDate(date.toDate())
@@ -178,7 +187,7 @@ export default function CarsDelivery(): JSX.Element {
                 'aria-label': 'change date',
               }}
             />
-          </Grid>
+          </GridInputItem>
         </Grid>
 
         <DataGridLocale

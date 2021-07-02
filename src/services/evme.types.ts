@@ -703,6 +703,7 @@ export type CarModel = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   logo?: Maybe<CarModelImage>
+  availabilityPercentage: Scalars['Float']
   colors: Array<AvailableCar>
 }
 
@@ -714,6 +715,10 @@ export type CarModelCarsArgs = {
 export type CarModelPricesArgs = {
   filter?: Maybe<PackagePriceFilter>
   sorting?: Maybe<Array<PackagePriceSort>>
+}
+
+export type CarModelAvailabilityPercentageArgs = {
+  input: AvailableCarInput
 }
 
 export type CarModelColorsArgs = {
@@ -2979,6 +2984,7 @@ export type SubFilterUserFilter = {
   disabled?: Maybe<BooleanFieldComparison>
   phoneNumber?: Maybe<StringFieldComparison>
   email?: Maybe<StringFieldComparison>
+  kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
 }
@@ -3304,6 +3310,7 @@ export type User = {
   omiseId?: Maybe<Scalars['String']>
   defaultAddress?: Maybe<UserAddress>
   favoriteChargingLocations?: Maybe<Array<ChargingLocation>>
+  kycStatus: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   creditCard?: Maybe<UserCreditCard>
@@ -3360,6 +3367,7 @@ export type UserAggregateFilter = {
   disabled?: Maybe<BooleanFieldComparison>
   phoneNumber?: Maybe<StringFieldComparison>
   email?: Maybe<StringFieldComparison>
+  kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
 }
@@ -3374,6 +3382,7 @@ export type UserAggregateGroupBy = {
   disabled?: Maybe<Scalars['Boolean']>
   phoneNumber?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
+  kycStatus?: Maybe<Scalars['String']>
   createdAt?: Maybe<Scalars['DateTime']>
   updatedAt?: Maybe<Scalars['DateTime']>
 }
@@ -3406,6 +3415,7 @@ export type UserCountAggregate = {
   disabled?: Maybe<Scalars['Int']>
   phoneNumber?: Maybe<Scalars['Int']>
   email?: Maybe<Scalars['Int']>
+  kycStatus?: Maybe<Scalars['Int']>
   createdAt?: Maybe<Scalars['Int']>
   updatedAt?: Maybe<Scalars['Int']>
 }
@@ -3482,6 +3492,7 @@ export type UserFilter = {
   disabled?: Maybe<BooleanFieldComparison>
   phoneNumber?: Maybe<StringFieldComparison>
   email?: Maybe<StringFieldComparison>
+  kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
 }
@@ -3520,6 +3531,7 @@ export type UserMaxAggregate = {
   role?: Maybe<Scalars['String']>
   phoneNumber?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
+  kycStatus?: Maybe<Scalars['String']>
   createdAt?: Maybe<Scalars['DateTime']>
   updatedAt?: Maybe<Scalars['DateTime']>
 }
@@ -3533,6 +3545,7 @@ export type UserMinAggregate = {
   role?: Maybe<Scalars['String']>
   phoneNumber?: Maybe<Scalars['String']>
   email?: Maybe<Scalars['String']>
+  kycStatus?: Maybe<Scalars['String']>
   createdAt?: Maybe<Scalars['DateTime']>
   updatedAt?: Maybe<Scalars['DateTime']>
 }
@@ -3552,6 +3565,7 @@ export enum UserSortFields {
   Disabled = 'disabled',
   PhoneNumber = 'phoneNumber',
   Email = 'email',
+  KycStatus = 'kycStatus',
   CreatedAt = 'createdAt',
   UpdatedAt = 'updatedAt',
 }

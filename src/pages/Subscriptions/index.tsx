@@ -232,6 +232,7 @@ export default function Subscription(): JSX.Element {
           rows={rows}
           columns={columns}
           checkboxSelection
+          disableSelectionOnClick
         />
       </Card>
 

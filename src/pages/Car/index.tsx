@@ -10,7 +10,7 @@ import {
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { formatDateWithPattern, DEFAULT_DATE_FORMAT } from 'utils'
+import { formatDateWithPattern, DEFAULT_DATETIME_FORMAT } from 'utils'
 // import config from 'config'
 import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
@@ -195,7 +195,7 @@ export default function Car(): JSX.Element {
       headerName: t('car.updatedDate'),
       description: t('car.updatedDate'),
       valueFormatter: (params: GridValueFormatterParams) =>
-        formatDateWithPattern(params, DEFAULT_DATE_FORMAT),
+        formatDateWithPattern(params, DEFAULT_DATETIME_FORMAT),
       flex: 1,
     },
     {

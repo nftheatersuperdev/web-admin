@@ -30,9 +30,13 @@ import {
   PackagePriceSort,
   ChargingLocation,
   CarSort,
+  UserFilter,
+  UserSort,
   UpdateOneSubInput,
   CarFilter,
   AvailableCarInput,
+  UserAggregateFilter,
+  UserAggregateResponse,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -44,6 +48,7 @@ const QUERY_KEYS = {
   SUBSCRIPTIONS: 'evme:subscriptions',
   SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
   USERS: 'evme:users',
+  USER_AGGREGATE: 'evme:user-aggregate',
   PAYMENTS: 'evme:payments',
   ADDITIONAL_EXPENSES: 'evme:additional-expenses',
   ADDITIONAL_EXPENSE_BY_ID: 'evme:additional-expense-by-id',
@@ -684,14 +689,23 @@ export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
   )
 }
 
-export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationType<User>> {
+export function useUsers(
+  pageSize = 10,
+  filter?: UserFilter,
+  sorting?: UserSort[]
+): UseInfiniteQueryResult<WithPaginationType<User>> {
   return useInfiniteQuery(
     [QUERY_KEYS.USERS, pageSize],
     async ({ pageParam = '' }) => {
       const response = await gqlClient.request(
         gql`
-          query GetUsers($pageSize: Int!, $after: ConnectionCursor) {
-            users(paging: { first: $pageSize, after: $after }) {
+          query GetUsers(
+            $pageSize: Int!
+            $after: ConnectionCursor
+            $filter: UserFilter
+            $sorting: [UserSort!]
+          ) {
+            users(paging: { first: $pageSize, after: $after }, filter: $filter, sorting: $sorting) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -702,6 +716,8 @@ export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationTy
               edges {
                 node {
                   id
+                  firstName
+                  lastName
                   email
                   phoneNumber
                   role
@@ -711,6 +727,7 @@ export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationTy
                   subscriptions {
                     carId
                   }
+                  kycStatus
                 }
               }
             }
@@ -719,9 +736,10 @@ export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationTy
         {
           pageSize,
           after: pageParam,
+          filter,
+          sorting,
         }
       )
-
       return response.users
     },
     {
@@ -732,6 +750,28 @@ export function useUsers(pageSize = 10): UseInfiniteQueryResult<WithPaginationTy
       keepPreviousData: true,
     }
   )
+}
+
+export function useUserAggregate(
+  filter: UserAggregateFilter
+): UseQueryResult<UserAggregateResponse[]> {
+  return useQuery([QUERY_KEYS.USER_AGGREGATE, filter], async () => {
+    const response = await gqlClient.request(
+      gql`
+        query GetUserAggregate($filter: UserAggregateFilter) {
+          userAggregate(filter: $filter) {
+            count {
+              id
+            }
+          }
+        }
+      `,
+      {
+        filter,
+      }
+    )
+    return response.userAggregate
+  })
 }
 
 export function useAdditionalExpenses(

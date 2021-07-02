@@ -14,7 +14,7 @@ export function formatDates(params: GridValueFormatterParams): string {
 }
 
 export function formatDateWithPattern(params: GridValueFormatterParams, pattern: string): string {
-  return dayjs(params.value as Date).format(pattern || 'DD/MM/YYYY')
+  return params.value ? dayjs(params.value as Date).format(pattern || 'DD/MM/YYYY') : ''
 }
 
 export function formatMoney(params: GridValueFormatterParams): string {
@@ -33,4 +33,5 @@ export function renderEmailLink(params: GridCellParams): JSX.Element {
   )
 }
 
-export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY HH:mm'
+export const DEFAULT_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm'
+export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY'
