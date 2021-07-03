@@ -60,6 +60,12 @@ const quickLinks = [
     link: 'https://console.firebase.google.com/u/0/project/evme-dev',
     description: 'Used for analytics, authentication and more',
   },
+  {
+    logo: '/images/sumsub.png',
+    title: 'SumSub',
+    link: 'https://api.sumsub.com',
+    description: 'Know Your Customer (KYC)',
+  },
 ]
 
 export default function Dashboard(): JSX.Element {

@@ -22,6 +22,7 @@ import { UserFilter, SortDirection, UserSortFields } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import DatePicker from 'components/DatePicker'
+import PageToolbar from 'layout/PageToolbar'
 
 const CardInputContainer = styled(Card)`
   margin-bottom: 10px;
@@ -187,6 +188,14 @@ export default function User(): JSX.Element {
 
   return (
     <Page>
+      <PageToolbar>
+        <a href="https://api.sumsub.com/" target="_blank" rel="noreferrer">
+          <Button color="primary" variant="contained">
+            SumSub
+          </Button>
+        </a>
+      </PageToolbar>
+
       <CardInputContainer>
         <CardContent>
           <Grid container spacing={3}>
