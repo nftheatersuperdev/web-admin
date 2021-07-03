@@ -43,9 +43,9 @@ const quickLinks = [
     description: 'Log monitoring & error management',
   },
   {
-    logo: '/images/drvr.png',
-    title: 'DRVR',
-    link: 'https://drvrapp.drvr.co/',
+    logo: '/images/cartrack.png',
+    title: 'Cartrack',
+    link: 'https://www.cartrack.us',
     description: 'Fleet Management',
   },
   {
