@@ -114,6 +114,7 @@
     "updatedDate": "วันที่แก้ไข",
     "fullName": "ชื่อ-นามสกุล",
     "status": "สถานะ",
+    "kycStatus": "สถานะ KYC",
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ"

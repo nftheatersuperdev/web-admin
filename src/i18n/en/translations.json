@@ -114,6 +114,7 @@
     "updatedDate": "Updated Date",
     "fullName": "Full Name",
     "status": "Status",
+    "kycStatus": "KYC Status",
     "verifyDate": "Verify Date",
     "note": "Note",
     "rejectedReason": "Reason of rejection"

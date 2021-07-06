@@ -31,14 +31,14 @@ const CardInputContainer = styled(Card)`
 interface InputFilter {
   email?: string
   phoneNumber?: string
-  status: string
+  kycStatus: string
   submitDate?: Date | null
 }
 
 const kycStatuses = ['pending', 'verified', 'rejected']
 
 const transformToUserFilter = (inputFilter: InputFilter): UserFilter => {
-  const { email, phoneNumber, status, submitDate } = inputFilter
+  const { email, phoneNumber, kycStatus, submitDate } = inputFilter
 
   const userFilter: UserFilter = {}
 
@@ -50,8 +50,8 @@ const transformToUserFilter = (inputFilter: InputFilter): UserFilter => {
     userFilter.phoneNumber = { iLike: `%${phoneNumber}%` }
   }
 
-  if (status) {
-    userFilter.kycStatus = { eq: status }
+  if (kycStatus) {
+    userFilter.kycStatus = { eq: kycStatus }
   }
 
   if (submitDate) {
@@ -74,7 +74,7 @@ export default function User(): JSX.Element {
   const [filter, setFilter] = useState<InputFilter>({
     email: '',
     phoneNumber: '',
-    status: '',
+    kycStatus: '',
     submitDate: null,
   })
 
@@ -115,7 +115,7 @@ export default function User(): JSX.Element {
     setFilter({
       email: '',
       phoneNumber: '',
-      status: '',
+      kycStatus: '',
       submitDate: null,
     })
   }
@@ -133,9 +133,9 @@ export default function User(): JSX.Element {
     { field: 'email', headerName: t('user.email'), description: t('user.email'), flex: 1 },
     { field: 'phoneNumber', headerName: t('user.phone'), description: t('user.phone'), flex: 1 },
     {
-      field: 'status',
-      headerName: t('user.status'),
-      description: t('user.status'),
+      field: 'kycStatus',
+      headerName: t('user.kycStatus'),
+      description: t('user.kycStatus'),
       flex: 1,
     },
     {
@@ -176,7 +176,7 @@ export default function User(): JSX.Element {
         fullName: `${node?.firstName || ''} ${node?.lastName || ''}`,
         email: node?.email,
         phoneNumber: node?.phoneNumber,
-        status: node?.kycStatus,
+        kycStatus: node?.kycStatus,
         // verify date not support from backend
         verifyDate: null,
         note: '',
@@ -245,27 +245,27 @@ export default function User(): JSX.Element {
 
             <Grid item xs={2}>
               <FormControl fullWidth>
-                <InputLabel id="status">{t('user.status')}</InputLabel>
+                <InputLabel id="kycStatus">{t('user.kycStatus')}</InputLabel>
                 <Select
-                  labelId="status"
-                  id="status"
-                  name="status"
+                  labelId="kycStatus"
+                  id="kycStatus"
+                  name="kycStatus"
                   displayEmpty
-                  value={filter.status}
+                  value={filter.kycStatus}
                   onChange={(
                     event: React.ChangeEvent<{ name?: string; value: unknown }>,
                     _child: React.ReactNode
                   ) => {
                     setFilter((prevFilter) => ({
                       ...prevFilter,
-                      status: event.target.value ? (event.target.value as string) : '',
+                      kycStatus: event.target.value ? (event.target.value as string) : '',
                     }))
                   }}
                 >
                   <MenuItem value="">&nbsp;</MenuItem>
-                  {kycStatuses.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
+                  {kycStatuses.map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
                     </MenuItem>
                   ))}
                 </Select>
