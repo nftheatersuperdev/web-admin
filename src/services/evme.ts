@@ -553,6 +553,7 @@ export function usePricing(
                   updatedAt
                   duration
                   price
+                  description
                   carModel {
                     brand
                     model

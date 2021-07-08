@@ -388,6 +388,8 @@ export type Authorize = {
 export type AvailableCar = {
   __typename?: 'AvailableCar'
   color: Scalars['String']
+  /** Displaying color in the app */
+  colorHex: Scalars['String']
   available?: Maybe<Scalars['Boolean']>
   availabilityPercentage?: Maybe<Scalars['Float']>
   exteriorImages?: Maybe<Array<CarModelImage>>
@@ -415,6 +417,8 @@ export type Car = {
   plateNumber: Scalars['String']
   carModelId: Scalars['String']
   color: Scalars['String']
+  /** Displaying color in the app */
+  colorHex: Scalars['String']
   carModel?: Maybe<CarModel>
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
@@ -632,6 +636,8 @@ export type CarDeleteResponse = {
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
   color?: Maybe<Scalars['String']>
+  /** Displaying color in the app */
+  colorHex?: Maybe<Scalars['String']>
   carModel?: Maybe<CarModel>
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt?: Maybe<Scalars['DateTime']>
@@ -659,6 +665,8 @@ export type CarFilter = {
 export type CarInput = {
   carModelId: Scalars['String']
   color: Scalars['String']
+  /** Displaying color in the app */
+  colorHex: Scalars['String']
   vin: Scalars['String']
   plateNumber: Scalars['String']
 }
@@ -1859,6 +1867,7 @@ export type PackagePrice = {
   duration: Scalars['String']
   disabled: Scalars['Boolean']
   price: Scalars['Float']
+  description?: Maybe<Scalars['String']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -1918,6 +1927,7 @@ export type PackagePriceInput = {
   carModelId: Scalars['String']
   duration: Scalars['String']
   price: Scalars['Float']
+  description?: Maybe<Scalars['String']>
 }
 
 export type PackagePriceMaxAggregate = {
@@ -2746,6 +2756,8 @@ export type Sub = {
   additionalExpenses?: Maybe<Array<AdditionalExpense>>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
+  started: Scalars['Boolean']
+  completed: Scalars['Boolean']
   eventsAggregate: Array<SubEventsAggregateResponse>
   paymentsAggregate: Array<SubPaymentsAggregateResponse>
   additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>

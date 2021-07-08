@@ -104,12 +104,13 @@ export default function Car(): JSX.Element {
 
   const openEditCarDialog = (param: GridRowData) => {
     setSelectedCarId(param.id)
-    const { vin, plateNumber, carModelId, color } = param.row
+    const { vin, plateNumber, carModelId, color, colorHex } = param.row
     setCarInfo({
       vin,
       plateNumber,
       carModelId,
       color,
+      colorHex,
     })
     setIsUpdateDialogOpen(true)
   }
@@ -137,7 +138,8 @@ export default function Car(): JSX.Element {
   const rows = useMemo(
     () =>
       cars?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-        const { id, vin, plateNumber, color, carModelId, carModel, updatedAt } = node || {}
+        const { id, vin, plateNumber, color, colorHex, carModelId, carModel, updatedAt } =
+          node || {}
 
         const {
           brand,
@@ -167,6 +169,7 @@ export default function Car(): JSX.Element {
           vin,
           plateNumber,
           color,
+          colorHex,
           updatedAt,
         }
       }) || [],

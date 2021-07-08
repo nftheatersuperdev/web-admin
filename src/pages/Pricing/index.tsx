@@ -13,6 +13,13 @@ import { PackagePriceInput, PackagePriceSortFields, SortDirection } from 'servic
 import PricingCreateDialog from './PricingCreateDialog'
 import PricingUpdateDialog from './PricingUpdateDialog'
 
+/**
+ * The Pricing page contains all functionality for administering pricing information in EVme.
+ *
+ * For example, you can perform the following actions:
+ * - 1. Create a price for a vehicle, which will directly reflect in the application
+ * - 2. Add a price description, which will show as the second row of the price in the application
+ */
 export default function Pricing(): JSX.Element {
   const { t } = useTranslation()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -98,6 +105,7 @@ export default function Pricing(): JSX.Element {
         updatedAt: node?.updatedAt,
         price: node?.price,
         duration: node?.duration,
+        description: node?.description,
         brand: node?.carModel?.brand,
         model: node?.carModel?.model,
         modelId: node?.carModel?.id,
@@ -111,6 +119,12 @@ export default function Pricing(): JSX.Element {
       field: 'duration',
       headerName: t('pricing.duration'),
       description: t('pricing.duration'),
+      flex: 1,
+    },
+    {
+      field: 'description',
+      headerName: t('pricing.description'),
+      description: t('pricing.description'),
       flex: 1,
     },
     { field: 'brand', headerName: t('pricing.brand'), description: t('pricing.brand'), flex: 1 },

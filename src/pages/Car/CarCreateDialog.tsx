@@ -42,6 +42,7 @@ export default function CarCreateDialog({
       plateNumber: '',
       carColor: '',
       carModel: '',
+      carColorHex: '',
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -50,6 +51,7 @@ export default function CarCreateDialog({
         carModelId: values.carModel,
         plateNumber: values.plateNumber,
         color: values.carColor,
+        colorHex: values.carColorHex,
       })
       formik.resetForm()
     },
@@ -103,6 +105,21 @@ export default function CarCreateDialog({
               }}
               error={formik.touched.carColor && Boolean(formik.errors.carColor)}
               helperText={formik.touched.carColor && formik.errors.carColor}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label={t('car.colorHex')}
+              id="carColorHex"
+              name="carColorHex"
+              value={formik.values.carColorHex}
+              onChange={formik.handleChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={formik.touched.carColorHex && Boolean(formik.errors.carColorHex)}
+              helperText={formik.touched.carColorHex && formik.errors.carColorHex}
             />
           </Grid>
           <Grid item xs={12}>
