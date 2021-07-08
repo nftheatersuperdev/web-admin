@@ -23,6 +23,8 @@ import CarUpdateDialog, { ICarInfo } from './CarUpdateDialog'
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
+  const [pageSize, setPageSize] = useState(10)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [selectedCarId, setSelectedCarId] = useState('')
@@ -32,9 +34,6 @@ export default function Car(): JSX.Element {
   const createCarMutation = useCreateCar()
   const updateCarMutation = useUpdateCar()
   const deleteCarMutation = useDeleteCar()
-
-  const [pageSize, setPageSize] = useState(10)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
   const {
     data: cars,
@@ -50,15 +49,6 @@ export default function Car(): JSX.Element {
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
-  }
-
-  const handlePageChange = (params: GridPageChangeParams) => {
-    if (params.page > currentPageIndex) {
-      fetchNextPage()
-    } else {
-      fetchPreviousPage()
-    }
-    setCurrentPageIndex(params.page)
   }
 
   const onCloseCreateDialog = (data: CarInput | null) => {
@@ -293,7 +283,9 @@ export default function Car(): JSX.Element {
           rowCount={cars?.pages[currentPageIndex]?.totalCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={handlePageChange}
+          onFetchNextPage={fetchNextPage}
+          onFetchPreviousPage={fetchPreviousPage}
+          onPageChange={setCurrentPageIndex}
           rows={rows}
           columns={columns}
           checkboxSelection

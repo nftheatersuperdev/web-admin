@@ -92,18 +92,6 @@ export default function User(): JSX.Element {
     setPageSize(params.pageSize)
   }
 
-  const handlePageChange = (params: GridPageChangeParams) => {
-    // If we navigate FORWARD in our pages, i.e. the new page number is higher than current page
-    if (params.page > currentPageIndex) {
-      fetchNextPage()
-    }
-    // If we navigate BACKWARD in our pages, i.e. the new page number is lower than current page
-    else {
-      fetchPreviousPage()
-    }
-    setCurrentPageIndex(params.page)
-  }
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
@@ -295,7 +283,9 @@ export default function User(): JSX.Element {
           rowCount={data?.pages[currentPageIndex]?.totalCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={handlePageChange}
+          onFetchNextPage={fetchNextPage}
+          onFetchPreviousPage={fetchPreviousPage}
+          onPageChange={setCurrentPageIndex}
           rows={rows}
           columns={columns}
           checkboxSelection

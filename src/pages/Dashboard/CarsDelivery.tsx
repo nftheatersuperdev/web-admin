@@ -61,15 +61,6 @@ export default function CarsDelivery(): JSX.Element {
     setPageSize(params.pageSize)
   }
 
-  const handlePageChange = (params: GridPageChangeParams) => {
-    if (params.page > currentPageIndex) {
-      fetchNextPage()
-    } else {
-      fetchPreviousPage()
-    }
-    setCurrentPageIndex(params.page)
-  }
-
   const columns: GridColDef[] = [
     {
       field: 'id',
@@ -198,7 +189,9 @@ export default function CarsDelivery(): JSX.Element {
           rowCount={data?.pages[currentPageIndex]?.totalCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={handlePageChange}
+          onFetchNextPage={fetchNextPage}
+          onFetchPreviousPage={fetchPreviousPage}
+          onPageChange={setCurrentPageIndex}
           onRowClick={handleRowClick}
           rows={rows}
           columns={columns}

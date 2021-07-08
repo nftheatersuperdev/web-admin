@@ -28,15 +28,6 @@ export default function Subscription(): JSX.Element {
     setPageSize(params.pageSize)
   }
 
-  const handlePageChange = (params: GridPageChangeParams) => {
-    if (params.page > currentPageIndex) {
-      fetchNextPage()
-    } else {
-      fetchPreviousPage()
-    }
-    setCurrentPageIndex(params.page)
-  }
-
   const rows =
     data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
       id: node?.id,
@@ -227,7 +218,9 @@ export default function Subscription(): JSX.Element {
           rowCount={data?.pages[currentPageIndex]?.totalCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={handlePageChange}
+          onFetchNextPage={fetchNextPage}
+          onFetchPreviousPage={fetchPreviousPage}
+          onPageChange={setCurrentPageIndex}
           onRowClick={handleRowClick}
           rows={rows}
           columns={columns}
