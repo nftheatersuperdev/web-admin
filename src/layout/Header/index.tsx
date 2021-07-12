@@ -1,13 +1,8 @@
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
 import { AppBar as MuiAppBar, IconButton, Button, Hidden, Toolbar, Box } from '@material-ui/core'
-import {
-  Menu as MenuIcon,
-  ExitToApp as ExitToAppIcon,
-  Settings as SettingsIcon,
-} from '@material-ui/icons'
+import { Menu as MenuIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { ROUTE_PATHS } from 'routes'
+import LoggedInUser from './LoggedInUser'
 
 const AppBar = styled(MuiAppBar)`
   z-index: ${({ theme }) => theme.zIndex.drawer + 1};
@@ -23,7 +18,6 @@ export interface HeaderProps {
 }
 
 function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
-  const history = useHistory()
   const { t, i18n } = useTranslation()
 
   const handleLanguageChange = async () => {
@@ -56,21 +50,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
           {i18n.language === 'th' ? '🇹🇭' : '🇺🇸'}
         </IconButton>
 
-        <IconButton
-          color="inherit"
-          onClick={() => history.push(ROUTE_PATHS.SETTINGS)}
-          aria-label={t('header.aria.settings')}
-        >
-          <SettingsIcon />
-        </IconButton>
-
-        <IconButton
-          color="inherit"
-          onClick={() => history.push(ROUTE_PATHS.LOGIN)}
-          aria-label={t('header.aria.login')}
-        >
-          <ExitToAppIcon />
-        </IconButton>
+        <LoggedInUser />
       </Toolbar>
     </AppBar>
   )

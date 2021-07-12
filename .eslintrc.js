@@ -277,6 +277,17 @@ module.exports = {
     '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     '@typescript-eslint/no-redeclare': 'error',
     '@typescript-eslint/method-signature-style': ['error', 'property'],
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'interface',
+        format: ['PascalCase'],
+        custom: {
+          regex: '^I[A-Z]',
+          match: false,
+        },
+      },
+    ],
     // TODO: turn on once parserOptions are working
     // '@typescript-eslint/prefer-includes': 'error',
     // '@typescript-eslint/no-throw-literal': 'error',

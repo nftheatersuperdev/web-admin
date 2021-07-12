@@ -19,7 +19,7 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
-import CarUpdateDialog, { ICarInfo } from './CarUpdateDialog'
+import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
@@ -28,7 +28,7 @@ export default function Car(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [selectedCarId, setSelectedCarId] = useState('')
-  const [carInfo, setCarInfo] = useState({} as ICarInfo)
+  const [carInfo, setCarInfo] = useState({} as CarInfo)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentRowData, setCurrentRowData] = useState({} as GridRowData)
   const createCarMutation = useCreateCar()

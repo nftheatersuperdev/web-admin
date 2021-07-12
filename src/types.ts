@@ -1,4 +1,4 @@
-export interface ICarModelItem {
+export interface CarModelItem {
   id: string
   modelName: string
 }

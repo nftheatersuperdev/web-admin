@@ -6,6 +6,10 @@
       "changeLanguage": "Change Language",
       "settings": "Settings",
       "login": "Login"
+    },
+    "menu": {
+      "profile": "Profile",
+      "logout": "Logout"
     }
   },
   "sidebar": {
@@ -43,6 +47,20 @@
   },
   "toast": {
     "loading": "Loading..."
+  },
+  "authentication": {
+    "success": "Login successful",
+    "error": {
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "invalidEmail": "Email is invalid",
+      "invalidPassword": "Password is invalid",
+      "invalidUserToken": "Token is invalid",
+      "userNotFound": "User not found",
+      "userDisabled": "User is disabled",
+      "userTokenExpired": "Token has expired",
+      "unknownError": "An unknown authentication error occurred, Please contact operation support"
+    }
   },
   "login": {
     "title": "EVme",

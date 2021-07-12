@@ -12,14 +12,14 @@ import {
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { ICarModelItem } from 'helper/car.helper'
+import { CarModelItem } from 'types'
 import { usePricingById } from 'services/evme'
 import { PackagePriceInput } from 'services/evme.types'
 
 interface SubscriptionProps {
   open: boolean
   onClose: (data: PackagePriceInput[] | null) => void
-  modelOptions: ICarModelItem[]
+  modelOptions: CarModelItem[]
   modelId: string
 }
 

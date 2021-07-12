@@ -13,7 +13,7 @@ import dayjs from 'dayjs'
 import config from 'config'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import styled from 'styled-components'
-import { IDeliveryModelData, MISSING_VALUE } from './utils'
+import { DeliveryModelData, MISSING_VALUE } from './utils'
 
 const MapWrapper = styled.div`
   display: flex;
@@ -28,7 +28,7 @@ const MapWrapper = styled.div`
 interface ModalProps {
   open: boolean
   onClose: () => void
-  modelData?: IDeliveryModelData
+  modelData?: DeliveryModelData
 }
 
 export default function CarDeliveryDialog({ open, onClose, modelData }: ModalProps): JSX.Element {

@@ -6,6 +6,10 @@
       "changeLanguage": "เปลี่ยนภาษา",
       "settings": "ตั้งค่า",
       "login": "เข้าสู่ระบบ"
+    },
+    "menu": {
+      "profile": "โปรไฟล์",
+      "logout": "ออกจากระบบ"
     }
   },
   "sidebar": {
@@ -43,6 +47,20 @@
   },
   "toast": {
     "loading": "กำลังดำเนินการ..."
+  },
+  "authentication": {
+    "success": "เข้าสู่ระบบสำเร็จ",
+    "error": {
+      "emailRequired": "ระบุอีเมล",
+      "passwordRequired": "ระบุรหัสผ่าน",
+      "invalidEmail": "อีเมลไม่ถูกต้อง",
+      "invalidPassword": "รหัสผ่านไม่ถูกต้อง",
+      "invalidUserToken": "รหัส Token ไม่ถูกต้อง",
+      "userNotFound": "ไม่มีผู้ใช้นี้ในระบบ",
+      "userDisabled": "ผู้ใช้นี้ไม่สามารถใช้งานได้",
+      "userTokenExpired": "รหัส Token หมดอายุ",
+      "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ"
+    }
   },
   "login": {
     "title": "EVme",

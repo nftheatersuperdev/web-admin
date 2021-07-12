@@ -12,7 +12,7 @@ import {
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { ICarModelItem } from 'helper/car.helper'
+import { CarModelItem } from 'types'
 import { CarInput } from 'services/evme.types'
 
 const validationSchema = yup.object({
@@ -22,7 +22,7 @@ const validationSchema = yup.object({
   carModel: yup.string().required('Field is required'),
 })
 
-export interface ICarInfo {
+export interface CarInfo {
   vin: string
   plateNumber: string
   carModelId: string
@@ -33,8 +33,8 @@ export interface ICarInfo {
 interface SubscriptionProps {
   open: boolean
   onClose: (newCarData: CarInput | null) => void
-  carModelOptions: ICarModelItem[]
-  carInfo: ICarInfo
+  carModelOptions: CarModelItem[]
+  carInfo: CarInfo
 }
 
 export default function CarUpdateDialog({
@@ -75,7 +75,7 @@ export default function CarUpdateDialog({
     },
   })
 
-  const _selectedCarModel = carModelOptions.find((model: ICarModelItem) => {
+  const _selectedCarModel = carModelOptions.find((model: CarModelItem) => {
     return model.id === originalModelId
   })
 

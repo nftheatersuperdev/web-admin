@@ -10,7 +10,7 @@ import DateTimePicker from 'components/DateTimePicker'
 import { useSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
 import CarReturnDialog from './CarReturnDialog'
-import { IReturnModelData, MISSING_VALUE } from './utils'
+import { ReturnModelData, MISSING_VALUE } from './utils'
 
 const GridInputItem = styled(Grid)`
   margin-bottom: 10px;
@@ -28,7 +28,7 @@ export default function CarsReturn(): JSX.Element {
   const [fromDate, setFromDate] = useState(initFromDate)
   const [toDate, setToDate] = useState(initToDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
-  const [dialogData, setDialogData] = useState({} as IReturnModelData)
+  const [dialogData, setDialogData] = useState({} as ReturnModelData)
   const { t } = useTranslation()
 
   const [pageSize, setPageSize] = useState(5)

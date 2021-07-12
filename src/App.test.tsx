@@ -3,8 +3,8 @@ import { renderComponent } from 'tests/utils'
 import App from './App'
 
 describe('App', () => {
-  it('should render correct app header', () => {
+  it('should show login page if user is not authenticated', async () => {
     renderComponent(<App />)
-    expect(screen.getByAltText(/EVme/i)).toBeInTheDocument()
+    expect(await screen.findByText(/sign in/i)).toBeInTheDocument()
   })
 })

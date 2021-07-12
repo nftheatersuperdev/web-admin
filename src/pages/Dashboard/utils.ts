@@ -2,7 +2,7 @@ import { User } from 'services/evme.types'
 
 export type DeliveryAndReturnUser = Pick<User, 'email' | 'firstName' | 'lastName' | 'phoneNumber'>
 
-export interface IDeliveryModelData {
+export interface DeliveryModelData {
   remark: string
   startDate: string
   user: DeliveryAndReturnUser
@@ -11,7 +11,7 @@ export interface IDeliveryModelData {
   longitude: number
 }
 
-export interface IReturnModelData {
+export interface ReturnModelData {
   remark: string
   endDate: string
   user: DeliveryAndReturnUser

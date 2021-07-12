@@ -12,13 +12,13 @@ import {
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { ICarModelItem } from 'helper/car.helper'
+import { CarModelItem } from 'types'
 import { CarInput } from 'services/evme.types'
 
 interface SubscriptionProps {
   open: boolean
   onClose: (newCarData: CarInput | null) => void
-  carModelOptions: ICarModelItem[]
+  carModelOptions: CarModelItem[]
 }
 
 const validationSchema = yup.object({
