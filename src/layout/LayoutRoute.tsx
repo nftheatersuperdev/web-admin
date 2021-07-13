@@ -11,13 +11,6 @@ export const Page = styled.div`
   width: 100%;
 `
 
-export interface LayoutRouteProps {
-  component: ComponentType
-  exact?: boolean
-  isPublic?: boolean
-  path: string
-}
-
 const Main = styled.main<{ $isPublic?: boolean }>`
   display: flex;
   flex: 1 1 auto;
@@ -29,10 +22,71 @@ const Main = styled.main<{ $isPublic?: boolean }>`
   }
 `
 
+export interface LayoutRouteProps {
+  component: ComponentType
+  exact?: boolean
+  isPublic?: boolean
+  path: string
+}
+
+interface AuthenticatedRouteProps extends LayoutRouteProps {
+  isSidebarOpen: boolean
+  handleSidebarOpen: (state?: boolean) => void
+}
+
+function PublicRoute({
+  component: Component,
+  exact,
+  path,
+}: Partial<LayoutRouteProps>): JSX.Element {
+  return (
+    <Route
+      exact={exact}
+      path={path}
+      render={(props) => (
+        <Main $isPublic>
+          {/* @ts-expect-error TODO */}
+          <Component {...props} />
+        </Main>
+      )}
+    />
+  )
+}
+
+function PrivateRoute({
+  component: Component,
+  exact,
+  path,
+  isSidebarOpen,
+  handleSidebarOpen,
+}: AuthenticatedRouteProps): JSX.Element {
+  const { currentUser } = useAuthContext()
+
+  return (
+    <Route
+      exact={exact}
+      path={path}
+      render={(props) =>
+        currentUser ? (
+          <React.Fragment>
+            <Header onSidebarToggle={handleSidebarOpen} />
+            <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
+            <Main>
+              {/* @ts-expect-error TODO */}
+              <Component {...props} />
+            </Main>
+          </React.Fragment>
+        ) : (
+          <Redirect to={{ pathname: ROUTE_PATHS.LOGIN, state: { from: props.location } }} />
+        )
+      }
+    />
+  )
+}
+
 export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
   const { component: Component, exact = true, path, isPublic } = props
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const auth = useAuthContext()
 
   function handleSidebarOpen(state = !isSidebarOpen) {
     setIsSidebarOpen(state)
@@ -40,42 +94,18 @@ export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
 
   // Renders unauthenticated routes such as our login page
   if (isPublic) {
-    return (
-      <Route
-        exact={exact}
-        path={path}
-        render={(props) => (
-          <Main $isPublic={isPublic}>
-            {/* @ts-expect-error TODO */}
-            <Component {...props} />
-          </Main>
-        )}
-      />
-    )
+    return <PublicRoute component={Component} exact={exact} path={path} />
   }
 
   // Otherwise, we want to render authenticated pages or show the login page
   // depending on whether the user is signed in already
-  return auth.isLoggedIn ? (
-    <Route
+  return (
+    <PrivateRoute
+      component={Component}
       exact={exact}
       path={path}
-      render={(props) => (
-        <React.Fragment>
-          <Header onSidebarToggle={handleSidebarOpen} />
-          <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
-          <Main $isPublic={isPublic}>
-            {/* @ts-expect-error TODO */}
-            <Component {...props} />
-          </Main>
-        </React.Fragment>
-      )}
-    />
-  ) : (
-    <Redirect
-      to={{
-        pathname: ROUTE_PATHS.LOGIN,
-      }}
+      isSidebarOpen={isSidebarOpen}
+      handleSidebarOpen={handleSidebarOpen}
     />
   )
 }

@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 export default function LoggedInUser(): JSX.Element | null {
   const { t } = useTranslation()
   const history = useHistory()
-  const auth = useAuthContext()
+  const { currentUser, signOut } = useAuthContext()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -21,12 +21,12 @@ export default function LoggedInUser(): JSX.Element | null {
     setAnchorEl(null)
   }
 
-  if (!auth.isLoggedIn) {
+  if (!currentUser) {
     return null
   }
 
-  const lastSignIn = auth.authState.metadata?.lastSignInTime
-    ? dayjs(auth.authState.metadata?.lastSignInTime).format('DD/MM/YYYY HH:mm')
+  const lastSignIn = currentUser?.metadata?.lastSignInTime
+    ? dayjs(currentUser?.metadata?.lastSignInTime).format('DD/MM/YYYY HH:mm')
     : ''
 
   return (
@@ -58,13 +58,13 @@ export default function LoggedInUser(): JSX.Element | null {
         onClose={handleClose}
       >
         <MenuItem button={false}>
-          <ListItemText primary={auth.authState.userInfo?.email} secondary={lastSignIn} />
+          <ListItemText primary={currentUser?.email} secondary={lastSignIn} />
         </MenuItem>
         <Divider />
 
         <MenuItem
           onClick={async () => {
-            await auth.signOut()
+            await signOut()
             history.push(ROUTE_PATHS.LOGIN)
           }}
         >

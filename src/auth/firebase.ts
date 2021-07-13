@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import config from 'config'
-import { AuthState, AUTHENTICATED, UNAUTHENTICATED } from './utils'
 
 export class Firebase {
   auth!: firebase.auth.Auth
@@ -19,43 +18,27 @@ export class Firebase {
     }
   }
 
-  subscribeAuthStateChanged(
-    setAuthState: Dispatch<SetStateAction<AuthState>>
+  onAuthStateChanged(
+    setCurrentUser: Dispatch<SetStateAction<firebase.User | null>>,
+    setIsLoading: Dispatch<SetStateAction<boolean>>
   ): firebase.Unsubscribe {
-    return this.auth.onAuthStateChanged(async (user) => {
-      if (user && !user.isAnonymous) {
-        const token = await user.getIdToken()
-        setAuthState({
-          status: AUTHENTICATED,
-          userInfo: {
-            displayName: user.displayName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            photoURL: user.photoURL,
-            providerId: user.providerId,
-            uid: user.uid,
-          },
-          metadata: {
-            creationTime: user.metadata.creationTime,
-            lastSignInTime: user.metadata.lastSignInTime,
-          },
-          token,
-        })
-      } else {
-        setAuthState({
-          status: UNAUTHENTICATED,
-          userInfo: undefined,
-          metadata: undefined,
-          token: undefined,
-        })
-      }
+    return this.auth.onAuthStateChanged((user) => {
+      setCurrentUser(user)
+      setIsLoading(false)
     })
   }
 
-  signInWithEmailAndPassword(
+  async signInWithEmailAndPassword(
     email: string,
-    password: string
+    password: string,
+    isRememberMe = false
   ): Promise<firebase.auth.UserCredential> {
+    const persistence = isRememberMe
+      ? firebase.auth.Auth.Persistence.LOCAL
+      : firebase.auth.Auth.Persistence.SESSION
+
+    await this.auth.setPersistence(persistence)
+
     return this.auth.signInWithEmailAndPassword(email, password)
   }
 

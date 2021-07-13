@@ -1,7 +1,17 @@
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
-import { Box, Button, Container, IconButton, TextField, Typography } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  TextField,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+} from '@material-ui/core'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { ROUTE_PATHS } from 'routes'
@@ -19,6 +29,7 @@ export default function Login(): JSX.Element {
   const history = useHistory()
   const { t, i18n } = useTranslation()
   const auth = useAuthContext()
+  const [isRememberMe, setIsRememberMe] = useState(true)
 
   const {
     values,
@@ -42,7 +53,7 @@ export default function Login(): JSX.Element {
       password: Yup.string().max(255).required(t('authentication.error.passwordRequired')),
     }),
     onSubmit: (values, actions) => {
-      toast.promise(auth.signInWithEmailAndPassword(values.email, values.password), {
+      toast.promise(auth.signInWithEmailAndPassword(values.email, values.password, isRememberMe), {
         loading: t('toast.loading'),
         success: () => {
           actions.setSubmitting(false)
@@ -120,6 +131,20 @@ export default function Login(): JSX.Element {
             type="password"
             value={values.password}
             variant="outlined"
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isRememberMe}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setIsRememberMe(event.target.checked)
+                }}
+                name="isRememberMe"
+                color="primary"
+              />
+            }
+            label={t('login.rememberMe')}
           />
 
           <Box py={2}>

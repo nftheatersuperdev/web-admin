@@ -1,5 +1,5 @@
-import { ReactElement, createContext, useContext, useState, useEffect } from 'react'
-import { UNAUTHENTICATED, AUTHENTICATED, AuthState } from './utils'
+import { ReactElement, createContext, useContext, useState, useEffect, Fragment } from 'react'
+import firebase from 'firebase/app'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 
@@ -9,39 +9,43 @@ interface AuthContextProviderProps {
 }
 
 interface AuthContextProps {
-  authState: AuthState
-  signInWithEmailAndPassword: (email: string, password: string) => Promise<void>
+  currentUser: firebase.User | null
+  signInWithEmailAndPassword: (
+    email: string,
+    password: string,
+    isRememberMe: boolean
+  ) => Promise<void>
   signOut: () => Promise<void>
-  isLoggedIn: boolean
 }
 
 const AuthContext = createContext<AuthContextProps>({
-  authState: {
-    status: UNAUTHENTICATED,
-  },
-  signInWithEmailAndPassword: (_email: string, _password: string) => Promise.resolve(undefined),
+  currentUser: null,
+  signInWithEmailAndPassword: (_email: string, _password: string, _isRememberMe: boolean) =>
+    Promise.resolve(undefined),
   signOut: () => Promise.resolve(undefined),
-  isLoggedIn: false,
 })
 
 export function AuthContextProvider({
   firebaseInstance,
   children,
 }: AuthContextProviderProps): JSX.Element {
-  const [authState, setAuthState] = useState<AuthState>({
-    status: UNAUTHENTICATED,
-  })
+  const [currentUser, setCurrentUser] = useState<firebase.User | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
   const errorMessage = useErrorMessage()
 
   useEffect(() => {
-    const subscribeAuthStateChanged = firebaseInstance.subscribeAuthStateChanged(setAuthState)
-    // unsubscribe observed auth state
-    return () => subscribeAuthStateChanged?.()
+    const unsubscribe = firebaseInstance.onAuthStateChanged(setCurrentUser, setIsLoading)
+    return () => unsubscribe()
   }, [firebaseInstance])
 
-  const signInWithEmailAndPassword = async (email: string, password: string): Promise<void> => {
+  const signInWithEmailAndPassword = async (
+    email: string,
+    password: string,
+    isRememberMe = false
+  ): Promise<void> => {
     try {
-      await firebaseInstance.signInWithEmailAndPassword(email, password)
+      await firebaseInstance.signInWithEmailAndPassword(email, password, isRememberMe)
     } catch (error) {
       const message = errorMessage(error.code)
       throw new Error(message)
@@ -57,15 +61,16 @@ export function AuthContextProvider({
     }
   }
 
-  const isLoggedIn = authState.status === AUTHENTICATED
+  if (isLoading) {
+    return <Fragment>Loading...</Fragment>
+  }
 
   return (
     <AuthContext.Provider
       value={{
-        authState,
+        currentUser,
         signInWithEmailAndPassword,
         signOut,
-        isLoggedIn,
       }}
     >
       {children}
