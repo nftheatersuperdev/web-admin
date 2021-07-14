@@ -2,7 +2,7 @@
 import React, { ComponentType, useState } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
-import { useAuthContext } from 'auth/AuthContext'
+import { useAuth } from 'auth/AuthContext'
 import { ROUTE_PATHS } from 'routes'
 import Header from 'layout/Header'
 import Sidebar from './Sidebar'
@@ -60,7 +60,7 @@ function PrivateRoute({
   isSidebarOpen,
   handleSidebarOpen,
 }: AuthenticatedRouteProps): JSX.Element {
-  const { currentUser } = useAuthContext()
+  const { currentUser } = useAuth()
 
   return (
     <Route

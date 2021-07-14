@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { GraphQLClient } from 'graphql-request'
 import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
-import { AuthContextProvider } from 'auth/AuthContext'
+import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
+import { GraphQLClientProvider } from 'hooks/GraphQLClientContext'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
@@ -49,9 +51,11 @@ ReactDOM.render(
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <AuthContextProvider firebaseInstance={new Firebase()}>
-            <App />
-          </AuthContextProvider>
+          <AuthProvider fb={new Firebase()}>
+            <GraphQLClientProvider gqlClient={new GraphQLClient(config.evme)}>
+              <App />
+            </GraphQLClientProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </StylesProvider>

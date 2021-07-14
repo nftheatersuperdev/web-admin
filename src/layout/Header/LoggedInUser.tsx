@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useAuthContext } from 'auth/AuthContext'
+import { useAuth } from 'auth/AuthContext'
 import { Menu, IconButton, MenuItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core'
 import { PowerSettingsNew as LogOutIcon, AccountCircle } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 export default function LoggedInUser(): JSX.Element | null {
   const { t } = useTranslation()
   const history = useHistory()
-  const { currentUser, signOut } = useAuthContext()
+  const { currentUser, signOut } = useAuth()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {

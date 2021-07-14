@@ -15,7 +15,7 @@ import {
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { ROUTE_PATHS } from 'routes'
-import { useAuthContext } from 'auth/AuthContext'
+import { useAuth } from 'auth/AuthContext'
 import styled from 'styled-components'
 
 const LoginHeader = styled.div`
@@ -28,7 +28,7 @@ const LoginHeader = styled.div`
 export default function Login(): JSX.Element {
   const history = useHistory()
   const { t, i18n } = useTranslation()
-  const auth = useAuthContext()
+  const auth = useAuth()
   const [isRememberMe, setIsRememberMe] = useState(true)
 
   const {

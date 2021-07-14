@@ -3,12 +3,12 @@ import firebase from 'firebase/app'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 
-interface AuthContextProviderProps {
-  firebaseInstance: Firebase
+interface AuthProviderProps {
+  fb: Firebase
   children: ReactElement
 }
 
-interface AuthContextProps {
+interface AuthProps {
   currentUser: firebase.User | null
   signInWithEmailAndPassword: (
     email: string,
@@ -16,28 +16,27 @@ interface AuthContextProps {
     isRememberMe: boolean
   ) => Promise<void>
   signOut: () => Promise<void>
+  getToken: () => Promise<string>
 }
 
-const AuthContext = createContext<AuthContextProps>({
+const Auth = createContext<AuthProps>({
   currentUser: null,
   signInWithEmailAndPassword: (_email: string, _password: string, _isRememberMe: boolean) =>
     Promise.resolve(undefined),
   signOut: () => Promise.resolve(undefined),
+  getToken: () => Promise.resolve(''),
 })
 
-export function AuthContextProvider({
-  firebaseInstance,
-  children,
-}: AuthContextProviderProps): JSX.Element {
+export function AuthProvider({ fb, children }: AuthProviderProps): JSX.Element {
   const [currentUser, setCurrentUser] = useState<firebase.User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const errorMessage = useErrorMessage()
 
   useEffect(() => {
-    const unsubscribe = firebaseInstance.onAuthStateChanged(setCurrentUser, setIsLoading)
+    const unsubscribe = fb.onAuthStateChanged(setCurrentUser, setIsLoading)
     return () => unsubscribe()
-  }, [firebaseInstance])
+  }, [fb])
 
   const signInWithEmailAndPassword = async (
     email: string,
@@ -45,7 +44,7 @@ export function AuthContextProvider({
     isRememberMe = false
   ): Promise<void> => {
     try {
-      await firebaseInstance.signInWithEmailAndPassword(email, password, isRememberMe)
+      await fb.signInWithEmailAndPassword(email, password, isRememberMe)
     } catch (error) {
       const message = errorMessage(error.code)
       throw new Error(message)
@@ -54,11 +53,15 @@ export function AuthContextProvider({
 
   const signOut = async (): Promise<void> => {
     try {
-      await firebaseInstance.signOut()
+      await fb.signOut()
     } catch (error) {
       const message = errorMessage(error.code)
       throw new Error(message)
     }
+  }
+
+  const getToken = (): Promise<string> => {
+    return currentUser ? currentUser.getIdToken() : Promise.resolve('')
   }
 
   if (isLoading) {
@@ -66,16 +69,17 @@ export function AuthContextProvider({
   }
 
   return (
-    <AuthContext.Provider
+    <Auth.Provider
       value={{
         currentUser,
         signInWithEmailAndPassword,
         signOut,
+        getToken,
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </Auth.Provider>
   )
 }
 
-export const useAuthContext = (): AuthContextProps => useContext<AuthContextProps>(AuthContext)
+export const useAuth = (): AuthProps => useContext<AuthProps>(Auth)

@@ -1,4 +1,4 @@
-import { GraphQLClient, gql } from 'graphql-request'
+import { gql } from 'graphql-request'
 import {
   useQuery,
   UseQueryResult,
@@ -9,7 +9,7 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryResult,
 } from 'react-query'
-import config from 'config'
+import { useGraphQLClient } from 'hooks/GraphQLClientContext'
 import {
   Car,
   CarModel,
@@ -55,8 +55,6 @@ const QUERY_KEYS = {
   CHARGING_LOCATIONS: 'evme:charging-locations',
 }
 
-const gqlClient = new GraphQLClient(config.evme)
-
 export interface WithPaginationType<P> {
   totalCount?: number
   pageInfo?: {
@@ -72,6 +70,7 @@ export interface WithPaginationType<P> {
 
 export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, unknown> {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
 
   return useMutation(async ({ vin, plateNumber, carModelId, color }: CarInput) => {
     const response = await gqlClient.request(
@@ -104,6 +103,7 @@ export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, u
 
 export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCarInput, unknown> {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
 
   return useMutation(async ({ id, update }: UpdateOneCarInput) => {
     const response = await gqlClient.request(
@@ -131,6 +131,7 @@ export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCa
 
 export function useDeleteCar(): UseMutationResult<CarModel, unknown, DeleteOneCarInput, unknown> {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
 
   return useMutation(async ({ id }: DeleteOneCarInput) => {
     const response = await gqlClient.request(
@@ -156,6 +157,8 @@ export function useDeleteCar(): UseMutationResult<CarModel, unknown, DeleteOneCa
 }
 
 export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.CAR_MODELS],
     async () => {
@@ -213,6 +216,8 @@ export function useCarModelById({
   carFilter?: CarFilter
   availableFilter?: AvailableCarInput
 }): UseQueryResult<CarModel> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.CAR_MODEL_BY_ID, carModelId],
     async () => {
@@ -254,6 +259,8 @@ export function useCars(
   pageSize = 10,
   sorting = [] as CarSort[]
 ): UseInfiniteQueryResult<WithPaginationType<Car>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useInfiniteQuery(
     [QUERY_KEYS.CARS, pageSize],
     async ({ pageParam = '' }) => {
@@ -323,6 +330,8 @@ export function useSubscriptions(
   filter?: SubFilter,
   sorting?: SubSort[]
 ): UseInfiniteQueryResult<WithPaginationType<Sub>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useInfiniteQuery(
     [QUERY_KEYS.SUBSCRIPTIONS, { pageSize, filter, sorting }],
     async ({ pageParam = '' }) => {
@@ -426,6 +435,8 @@ export function useUpdateSubscription(): UseMutationResult<
   unknown
 > {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
+
   return useMutation(async ({ id, update }: UpdateOneSubInput) => {
     const response = await gqlClient.request(
       gql`
@@ -452,6 +463,8 @@ export function useSearchSubscriptions(
   filter?: SubFilter,
   sorting?: SubSort[]
 ): UseQueryResult<WithPaginationType<Sub>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.SEARCH_SUBSCRIPTIONS, { paging, filter, sorting }],
     async () => {
@@ -528,6 +541,8 @@ export function usePricing(
   pageSize = 10,
   sorting: PackagePriceSort[]
 ): UseInfiniteQueryResult<WithPaginationType<PackagePrice>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useInfiniteQuery(
     [QUERY_KEYS.PRICING, pageSize],
     async ({ pageParam = '' }) => {
@@ -589,6 +604,8 @@ export function usePricingById({
   carModelId: string | undefined
   isDisabled?: boolean
 }): UseQueryResult<WithPaginationType<PackagePrice>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.PRICING_BY_MODEL_ID, carModelId],
     async () => {
@@ -634,6 +651,7 @@ export function useCreatePrices(): UseMutationResult<
   unknown
 > {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
 
   return useMutation(async (packagePrices: PackagePriceInput[]) => {
     const response = await gqlClient.request(
@@ -660,6 +678,8 @@ export function useCreatePrices(): UseMutationResult<
 }
 
 export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.PAYMENTS],
     async () => {
@@ -695,10 +715,12 @@ export function useUsers(
   filter?: UserFilter,
   sorting?: UserSort[]
 ): UseInfiniteQueryResult<WithPaginationType<User>> {
+  const { gqlClient: client } = useGraphQLClient()
+
   return useInfiniteQuery(
     [QUERY_KEYS.USERS, pageSize],
     async ({ pageParam = '' }) => {
-      const response = await gqlClient.request(
+      const response = await client?.request(
         gql`
           query GetUsers(
             $pageSize: Int!
@@ -756,6 +778,8 @@ export function useUsers(
 export function useUserAggregate(
   filter: UserAggregateFilter
 ): UseQueryResult<UserAggregateResponse[]> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery([QUERY_KEYS.USER_AGGREGATE, filter], async () => {
     const response = await gqlClient.request(
       gql`
@@ -778,6 +802,8 @@ export function useUserAggregate(
 export function useAdditionalExpenses(
   pageSize = 10
 ): UseInfiniteQueryResult<WithPaginationType<AdditionalExpense>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useInfiniteQuery(
     [QUERY_KEYS.ADDITIONAL_EXPENSES, pageSize],
     async ({ pageParam = '' }) => {
@@ -837,6 +863,8 @@ export function useAdditionalExpenseById(
   id: string,
   options?: UseQueryOptions<unknown, unknown, AdditionalExpense>
 ): UseQueryResult<AdditionalExpense> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.ADDITIONAL_EXPENSE_BY_ID, id],
     async () => {
@@ -888,6 +916,7 @@ export function useCreateAdditionalExpense(): UseMutationResult<
   unknown
 > {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
 
   return useMutation(
     async ({ subscriptionId, price, type, status, noticeDate, note }) => {
@@ -930,6 +959,7 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
   unknown
 > {
   const queryClient = useQueryClient()
+  const { gqlClient } = useGraphQLClient()
 
   return useMutation(
     async ({ id, update }) => {
@@ -960,6 +990,8 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
 }
 
 export function useChargingLocations(): UseQueryResult<WithPaginationType<ChargingLocation>> {
+  const { gqlClient } = useGraphQLClient()
+
   return useQuery(
     [QUERY_KEYS.CHARGING_LOCATIONS],
     async () => {
