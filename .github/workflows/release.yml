@@ -1,28 +1,16 @@
-name: Semantic Release
+name: Release to Production
 
 on:
   push:
-    branches: [main]
-
-jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm install
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+    branches:
+      - main
+  name: release-please
+  jobs:
+    release-please:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: GoogleCloudPlatform/release-please-action@v2
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            release-type: node
+            package-name: release-please-action
