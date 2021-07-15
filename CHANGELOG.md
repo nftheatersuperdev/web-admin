@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.4](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.3...v1.0.4) (2021-07-15)
+
+
+### Bug Fixes
+
+* use created release to deploy to prod ([108d202](https://www.github.com/projecttron/tron-admin-web/commit/108d2022391a997f7959cddb0654a819c550b039))
+
 ### [1.0.3](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.2...v1.0.3) (2021-07-15)
 
 
