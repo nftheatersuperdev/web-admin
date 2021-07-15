@@ -3,7 +3,7 @@ name: Deploy Production
 on:
   push:
     tags:
-      - '*'
+      - v*  
 env:
   aws_default_region: ap-southeast-1
   aws_amplify_app_id: "dwhh556zskn2a"
