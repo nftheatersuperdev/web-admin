@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.0...v1.0.1) (2021-07-15)
+
+
+### Bug Fixes
+
+* update readme to trigger new release ([62b3645](https://www.github.com/projecttron/tron-admin-web/commit/62b3645c901efa5c9814c8c201d495c85feaf6c0))
+
 ## 1.0.0 (2021-07-15)
 
 
