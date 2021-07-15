@@ -2,7 +2,10 @@ name: Deploy Production
 
 on:
   release:
-    types: [published,released]
+    types:
+      - created
+      - published
+      - released
 
 env:
   aws_default_region: ap-southeast-1
