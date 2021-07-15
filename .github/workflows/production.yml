@@ -8,9 +8,8 @@ env:
   aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:prod/webadmin-evme-prod-secret-VkxdfF
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
 
 jobs:
   release-to-amplify:
@@ -30,10 +29,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
       # - name: Get latest tag
       #   id: get-latest-tag
       #   uses: actions-ecosystem/action-get-latest-tag@v1
