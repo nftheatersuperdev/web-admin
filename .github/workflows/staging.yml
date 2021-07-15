@@ -1,4 +1,4 @@
-name: Deploy Admin Website (Dev)
+name: Deploy Staging
 
 env:
   aws_default_region: ap-southeast-1
@@ -10,7 +10,7 @@ env:
 on:
   push:
     branches:
-    - staging
+    - main
 
 jobs:
   deploy:

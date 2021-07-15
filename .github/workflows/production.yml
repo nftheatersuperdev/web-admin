@@ -1,12 +1,9 @@
-name: Release to Production
+name: Deploy Production
 
-# on:
-#   push:
-#     branches: [main]
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 env:
   aws_default_region: ap-southeast-1
   aws_amplify_app_id: "dwhh556zskn2a"
@@ -15,15 +12,9 @@ env:
   aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:prod/webadmin-evme-prod-secret-VkxdfF
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: node
-          package-name: release-please-action
   release-to-amplify:
+    # We only want to deploy to PROD if we have a tag on the "main" branch
+    if: github.event.base_ref == 'refs/heads/main'
     name: Release
     runs-on: ubuntu-latest
     strategy:
