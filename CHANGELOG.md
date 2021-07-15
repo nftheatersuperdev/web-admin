@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.7](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.6...v1.0.7) (2021-07-15)
+
+
+### Bug Fixes
+
+* production deployments and remove semantic-release ([d1444d5](https://www.github.com/projecttron/tron-admin-web/commit/d1444d5598eff34490afcefeefecf682c4455e0f))
+
 ### [1.0.6](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.5...v1.0.6) (2021-07-15)
 
 
