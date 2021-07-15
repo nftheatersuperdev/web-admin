@@ -1,18 +1,18 @@
 name: Deploy Production
 
-on:
-  release:
-    types:
-      - created
-      - published
-      - released
-
 env:
   aws_default_region: ap-southeast-1
   aws_amplify_app_id: "dwhh556zskn2a"
   aws_amplify_branch: prod
   aws_amplify_s3_source: s3://evme-webadmin-prod
   aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:prod/webadmin-evme-prod-secret-VkxdfF
+
+on:
+  release:
+    types:
+      - created
+      - published
+      - released
 
 jobs:
   release-to-amplify:
