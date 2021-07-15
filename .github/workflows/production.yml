@@ -8,11 +8,9 @@ env:
   aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:prod/webadmin-evme-prod-secret-VkxdfF
 
 on:
-  release:
-    types:
-      - created
-      - published
-      - released
+  push:
+    tags:
+      - '*'
 
 jobs:
   release-to-amplify:
