@@ -1,16 +1,75 @@
 name: Release to Production
 
+# on:
+#   push:
+#     branches: [main]
 on:
   push:
     branches:
       - main
-  name: release-please
-  jobs:
-    release-please:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: GoogleCloudPlatform/release-please-action@v2
-          with:
-            token: ${{ secrets.GITHUB_TOKEN }}
-            release-type: node
-            package-name: release-please-action
+env:
+  aws_default_region: ap-southeast-1
+  aws_amplify_app_id: "dwhh556zskn2a"
+  aws_amplify_branch: prod
+  aws_amplify_s3_source: s3://evme-webadmin-prod
+  aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:prod/webadmin-evme-prod-secret-VkxdfF
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: GoogleCloudPlatform/release-please-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+          package-name: release-please-action
+  release-to-amplify:
+    name: Release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+      # - name: Get latest tag
+      #   id: get-latest-tag
+      #   uses: actions-ecosystem/action-get-latest-tag@v1
+      - name: Get latest tag # Change this action to get the semantic version instead
+        id: get-latest-tag
+        run: echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+      - name: Read secrets from AWS Secrets Manager into environment variables
+        uses: say8425/aws-secrets-manager-actions@v2
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.aws_default_region }}
+          SECRET_NAME: ${{ env.aws_secret_arn }}
+          OUTPUT_PATH: '.env'
+      - name: Build the web
+        run: npm run build
+      - name: Zip and upload to S3 then deploy to AWS Amplify
+        uses: ./.github/actions/deploy-aws-amplify
+        id: deploy
+        with:
+          region: ${{ env.aws_default_region }}
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          version: ${{ steps.get-latest-tag.outputs.tag }}
+          s3-uri: ${{ env.aws_amplify_s3_source }}
+          app-id: ${{ env.aws_amplify_app_id }}
+          branch: ${{ env.aws_amplify_branch }}
+          static-web-folder: ./build
+      
