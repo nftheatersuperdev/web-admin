@@ -12,11 +12,13 @@ import {
   DialogTitle,
   DialogContent,
   Button,
+  Typography,
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import { CarModelItem } from 'types'
-import { usePricingById } from 'services/evme'
+import { usePricingByCarModelId } from 'services/evme'
 import { PackagePriceInput } from 'services/evme.types'
+import { CarModelPrices, Period, defaultCarModelPrices, getPriceChanges } from './utils'
 
 interface SubscriptionProps {
   open: boolean
@@ -30,71 +32,76 @@ export default function PricingCreateDialog({
   modelOptions = [],
 }: SubscriptionProps): JSX.Element {
   const { t } = useTranslation()
-  const [selectedCarModel, setSelectedCarModelsId] = useState('')
-  const [carModelPrices, setCarModelPrices] = useState({
-    price1w: 0,
-    price1m: 0,
-    price3m: 0,
-    price6m: 0,
-    price9m: 0,
-  })
-  const carModelPricesRef = useRef({
-    price1w: 0,
-    price1m: 0,
-    price3m: 0,
-    price6m: 0,
-    price9m: 0,
-  })
+  const [selectedCarModel, setSelectedCarModelsId] = useState<string>('')
+  const [carModelPrices, setCarModelPrices] = useState<CarModelPrices>({ ...defaultCarModelPrices })
+  const carModelPricesRef = useRef<CarModelPrices>({ ...defaultCarModelPrices })
   const [isPriceUpdated, setIsPriceUpdate] = useState(false)
 
   const selectedId =
     modelOptions.find((model) => {
       return model.modelName === selectedCarModel
     })?.id || ''
-  const { data } = usePricingById({
+
+  const { data } = usePricingByCarModelId({
     carModelId: selectedId,
   })
 
   useEffect(() => {
-    const priceSnapshot = {
-      price1w: 0,
-      price1m: 0,
-      price3m: 0,
-      price6m: 0,
-      price9m: 0,
-    }
-    data?.edges?.forEach((edge) => {
-      switch (edge?.node?.duration) {
+    const priceSnapshot = { ...defaultCarModelPrices }
+
+    data?.edges?.forEach(({ node }) => {
+      const { duration, price, fullPrice, description } = node || {}
+
+      switch (duration) {
         case '1w':
-          priceSnapshot.price1w = edge?.node?.price
+          priceSnapshot.price1w = {
+            price,
+            fullPrice: fullPrice || 0,
+            description: description || '',
+          }
           break
         case '1m':
-          priceSnapshot.price1m = edge?.node?.price
+          priceSnapshot.price1m = {
+            price,
+            fullPrice: fullPrice || 0,
+            description: description || '',
+          }
           break
         case '3m':
-          priceSnapshot.price3m = edge?.node?.price
+          priceSnapshot.price3m = {
+            price,
+            fullPrice: fullPrice || 0,
+            description: description || '',
+          }
           break
         case '6m':
-          priceSnapshot.price6m = edge?.node?.price
+          priceSnapshot.price6m = {
+            price,
+            fullPrice: fullPrice || 0,
+            description: description || '',
+          }
           break
         case '9m':
-          priceSnapshot.price9m = edge?.node?.price
+          priceSnapshot.price9m = {
+            price,
+            fullPrice: fullPrice || 0,
+            description: description || '',
+          }
           break
         default:
           break
       }
     })
+
     carModelPricesRef.current = priceSnapshot
+
     setCarModelPrices(priceSnapshot)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, open]) // INFO: need to add "open" to the dependency list to render data when close/open dialog without change other param
 
   useEffect(() => {
-    const isPrice1WChange = carModelPrices.price1w !== carModelPricesRef.current.price1w
-    const isPrice1MChange = carModelPrices.price1m !== carModelPricesRef.current.price1m
-    const isPrice3MChange = carModelPrices.price3m !== carModelPricesRef.current.price3m
-    const isPrice6MChange = carModelPrices.price6m !== carModelPricesRef.current.price6m
-    const isPrice9MChange = carModelPrices.price9m !== carModelPricesRef.current.price9m
+    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice9MChange } =
+      getPriceChanges(carModelPrices, carModelPricesRef.current)
 
     if (
       isPrice1WChange ||
@@ -110,58 +117,93 @@ export default function PricingCreateDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [carModelPrices])
 
-  const handleCarModelsChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedCarModelsId(event.target.value as string)
-  }
-
   const handlePriceChange = (
-    period: string,
+    period: Period,
+    key: string,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    const prevCarModelPrice = carModelPrices[period]
+
     setCarModelPrices({
       ...carModelPrices,
-      [period]: parseInt(event.target.value),
+      [period]: {
+        ...prevCarModelPrice,
+        [key]: parseInt(event.target.value),
+      },
+    })
+  }
+
+  const handleDescriptionChange = (
+    period: Period,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const prevCarModelPrice = carModelPrices[period]
+
+    setCarModelPrices({
+      ...carModelPrices,
+      [period]: {
+        ...prevCarModelPrice,
+        description: event.target.value,
+      },
     })
   }
 
   const handleCreateCar = () => {
     const changePrices = [] as PackagePriceInput[]
     const { price1w, price1m, price3m, price6m, price9m } = carModelPrices
-    if (price1w !== carModelPricesRef.current.price1w) {
+    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice9MChange } =
+      getPriceChanges(carModelPrices, carModelPricesRef.current)
+
+    if (isPrice1WChange) {
       changePrices.push({
         duration: '1w',
-        price: price1w,
+        price: price1w.price,
+        fullPrice: price1w.fullPrice,
+        description: price1w.description,
         carModelId: selectedId,
       })
     }
-    if (price1m !== carModelPricesRef.current.price1m) {
+
+    if (isPrice1MChange) {
       changePrices.push({
         duration: '1m',
-        price: price1m,
+        price: price1m.price,
+        fullPrice: price1m.fullPrice,
+        description: price1m.description,
         carModelId: selectedId,
       })
     }
-    if (price3m !== carModelPricesRef.current.price3m) {
+
+    if (isPrice3MChange) {
       changePrices.push({
         duration: '3m',
-        price: price3m,
+        price: price3m.price,
+        fullPrice: price3m.fullPrice,
+        description: price3m.description,
         carModelId: selectedId,
       })
     }
-    if (price6m !== carModelPricesRef.current.price6m) {
+
+    if (isPrice6MChange) {
       changePrices.push({
         duration: '6m',
-        price: price6m,
+        price: price6m.price,
+        fullPrice: price6m.fullPrice,
+        description: price6m.description,
         carModelId: selectedId,
       })
     }
-    if (price9m !== carModelPricesRef.current.price9m) {
+
+    if (isPrice9MChange) {
       changePrices.push({
         duration: '9m',
-        price: price9m,
+        price: price9m.price,
+        fullPrice: price9m.fullPrice,
+        description: price9m.description,
         carModelId: selectedId,
       })
     }
+
     onClose(changePrices)
     resetDialogState()
   }
@@ -173,20 +215,8 @@ export default function PricingCreateDialog({
 
   const resetDialogState = () => {
     setSelectedCarModelsId('')
-    setCarModelPrices({
-      price1w: 0,
-      price1m: 0,
-      price3m: 0,
-      price6m: 0,
-      price9m: 0,
-    })
-    carModelPricesRef.current = {
-      price1w: 0,
-      price1m: 0,
-      price3m: 0,
-      price6m: 0,
-      price9m: 0,
-    }
+    setCarModelPrices({ ...defaultCarModelPrices })
+    carModelPricesRef.current = { ...defaultCarModelPrices }
   }
 
   return (
@@ -197,7 +227,13 @@ export default function PricingCreateDialog({
           <Grid item xs={12}>
             <FormControl fullWidth={true}>
               <InputLabel id="car-model">{t('pricing.model')}</InputLabel>
-              <Select labelId="car-model" onChange={handleCarModelsChange} value={selectedCarModel}>
+              <Select
+                labelId="car-model"
+                onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                  setSelectedCarModelsId(event.target.value as string)
+                }}
+                value={selectedCarModel}
+              >
                 {modelOptions.map((model) => (
                   <MenuItem key={model.id} value={model.modelName}>
                     {model.modelName}
@@ -209,52 +245,156 @@ export default function PricingCreateDialog({
 
           {selectedCarModel && (
             <Grid container item xs={12} spacing={3}>
+              <Grid item xs={12} md={12}>
+                <Typography variant="subtitle1">{t('pricing.pricePerOneWeek')}</Typography>
+              </Grid>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label={t('pricing.pricePerOneWeek')}
+                  label={t('pricing.price')}
                   type="number"
-                  value={carModelPrices.price1w}
-                  onChange={(event) => handlePriceChange('price1w', event)}
+                  id="price1w.price"
+                  name="price1w.price"
+                  value={carModelPrices.price1w.price}
+                  onChange={(event) => handlePriceChange('price1w', 'price', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.fullPrice')}
+                  type="number"
+                  id="price1w.fullPrice"
+                  name="price1w.fullPrice"
+                  value={carModelPrices.price1w.fullPrice}
+                  onChange={(event) => handlePriceChange('price1w', 'fullPrice', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  label={t('pricing.description')}
+                  id="price1w.description"
+                  name="price1w.description"
+                  value={carModelPrices.price1w.description}
+                  onChange={(event) => handleDescriptionChange('price1w', event)}
+                  InputLabelProps={{
+                    shrink: true,
                   }}
                 />
               </Grid>
 
+              <Grid item xs={12} md={12}>
+                <Typography variant="subtitle1">{t('pricing.pricePerOneMonth')}</Typography>
+              </Grid>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label={t('pricing.pricePerOneMonth')}
+                  label={t('pricing.price')}
                   type="number"
-                  onChange={(event) => handlePriceChange('price1m', event)}
-                  value={carModelPrices.price1m}
+                  id="price1m.price"
+                  name="price1m.price"
+                  value={carModelPrices.price1m.price}
+                  onChange={(event) => handlePriceChange('price1m', 'price', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.fullPrice')}
+                  type="number"
+                  id="price1m.fullPrice"
+                  name="price1m.fullPrice"
+                  value={carModelPrices.price1m.fullPrice}
+                  onChange={(event) => handlePriceChange('price1m', 'fullPrice', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  label={t('pricing.description')}
+                  id="price1m.description"
+                  name="price1m.description"
+                  value={carModelPrices.price1m.description}
+                  onChange={(event) => handleDescriptionChange('price1m', event)}
+                  InputLabelProps={{
+                    shrink: true,
                   }}
                 />
               </Grid>
 
+              <Grid item xs={12} md={12}>
+                <Typography variant="subtitle1">{t('pricing.pricePerThreeMonths')}</Typography>
+              </Grid>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label={t('pricing.pricePerThreeMonths')}
-                  value={carModelPrices.price3m}
+                  label={t('pricing.price')}
                   type="number"
-                  onChange={(event) => handlePriceChange('price3m', event)}
+                  id="price3m.price"
+                  name="price3m.price"
+                  value={carModelPrices.price3m.price}
+                  onChange={(event) => handlePriceChange('price3m', 'price', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.fullPrice')}
+                  type="number"
+                  id="price3m.fullPrice"
+                  name="price3m.fullPrice"
+                  value={carModelPrices.price3m.fullPrice}
+                  onChange={(event) => handlePriceChange('price3m', 'fullPrice', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  label={t('pricing.description')}
+                  id="price3m.description"
+                  name="price3m.description"
+                  value={carModelPrices.price3m.description}
+                  onChange={(event) => handleDescriptionChange('price3m', event)}
+                  InputLabelProps={{
+                    shrink: true,
                   }}
                 />
               </Grid>
 
+              <Grid item xs={12} md={12}>
+                <Typography variant="subtitle1">{t('pricing.pricePerSixMonths')}</Typography>
+              </Grid>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label={t('pricing.pricePerSixMonths')}
-                  value={carModelPrices.price6m}
+                  label={t('pricing.price')}
                   type="number"
-                  onChange={(event) => handlePriceChange('price6m', event)}
+                  id="price6m.price"
+                  name="price6m.price"
+                  value={carModelPrices.price6m.price}
+                  onChange={(event) => handlePriceChange('price6m', 'price', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
                   }}
@@ -263,12 +403,74 @@ export default function PricingCreateDialog({
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label={t('pricing.pricePerNineMonths')}
-                  value={carModelPrices.price9m}
+                  label={t('pricing.fullPrice')}
                   type="number"
-                  onChange={(event) => handlePriceChange('price9m', event)}
+                  id="price6m.fullPrice"
+                  name="price6m.fullPrice"
+                  value={carModelPrices.price6m.fullPrice}
+                  onChange={(event) => handlePriceChange('price6m', 'fullPrice', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  label={t('pricing.description')}
+                  id="price6m.description"
+                  name="price6m.description"
+                  value={carModelPrices.price6m.description}
+                  onChange={(event) => handleDescriptionChange('price6m', event)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={12}>
+                <Typography variant="subtitle1">{t('pricing.pricePerNineMonths')}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.price')}
+                  type="number"
+                  id="price9m.price"
+                  name="price9m.price"
+                  value={carModelPrices.price9m.price}
+                  onChange={(event) => handlePriceChange('price9m', 'price', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.fullPrice')}
+                  type="number"
+                  id="price9m.fullPrice"
+                  name="price9m.fullPrice"
+                  value={carModelPrices.price9m.fullPrice}
+                  onChange={(event) => handlePriceChange('price9m', 'fullPrice', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  label={t('pricing.description')}
+                  id="price9m.description"
+                  name="price9m.description"
+                  value={carModelPrices.price9m.description}
+                  onChange={(event) => handleDescriptionChange('price9m', event)}
+                  InputLabelProps={{
+                    shrink: true,
                   }}
                 />
               </Grid>

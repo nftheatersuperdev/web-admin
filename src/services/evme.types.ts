@@ -408,18 +408,20 @@ export type BooleanFieldComparison = {
 
 export type CancelSubscriptionInput = {
   subscriptionId: Scalars['String']
+  pickupDate?: Maybe<Scalars['DateTime']>
 }
 
 export type Car = {
   __typename?: 'Car'
   id: Scalars['String']
-  vin: Scalars['String']
+  vin?: Maybe<Scalars['String']>
   plateNumber: Scalars['String']
-  carModelId: Scalars['String']
+  carModelId?: Maybe<Scalars['String']>
   color: Scalars['String']
   /** Displaying color in the app */
-  colorHex: Scalars['String']
+  colorHex?: Maybe<Scalars['String']>
   carModel?: Maybe<CarModel>
+  carTrackId: Scalars['String']
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
@@ -438,6 +440,7 @@ export type CarAggregateGroupBy = {
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
   color?: Maybe<Scalars['String']>
+  carTrackId?: Maybe<Scalars['String']>
 }
 
 export type CarBodyType = {
@@ -617,6 +620,7 @@ export type CarCountAggregate = {
   plateNumber?: Maybe<Scalars['Int']>
   carModelId?: Maybe<Scalars['Int']>
   color?: Maybe<Scalars['Int']>
+  carTrackId?: Maybe<Scalars['Int']>
 }
 
 export type CarDeleteFilter = {
@@ -627,6 +631,7 @@ export type CarDeleteFilter = {
   plateNumber?: Maybe<StringFieldComparison>
   carModelId?: Maybe<StringFieldComparison>
   color?: Maybe<StringFieldComparison>
+  carTrackId?: Maybe<StringFieldComparison>
 }
 
 export type CarDeleteResponse = {
@@ -639,6 +644,7 @@ export type CarDeleteResponse = {
   /** Displaying color in the app */
   colorHex?: Maybe<Scalars['String']>
   carModel?: Maybe<CarModel>
+  carTrackId?: Maybe<Scalars['String']>
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt?: Maybe<Scalars['DateTime']>
   updatedAt?: Maybe<Scalars['DateTime']>
@@ -660,6 +666,7 @@ export type CarFilter = {
   plateNumber?: Maybe<StringFieldComparison>
   carModelId?: Maybe<StringFieldComparison>
   color?: Maybe<StringFieldComparison>
+  carTrackId?: Maybe<StringFieldComparison>
 }
 
 export type CarInput = {
@@ -678,6 +685,7 @@ export type CarMaxAggregate = {
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
   color?: Maybe<Scalars['String']>
+  carTrackId?: Maybe<Scalars['String']>
 }
 
 export type CarMinAggregate = {
@@ -687,6 +695,7 @@ export type CarMinAggregate = {
   plateNumber?: Maybe<Scalars['String']>
   carModelId?: Maybe<Scalars['String']>
   color?: Maybe<Scalars['String']>
+  carTrackId?: Maybe<Scalars['String']>
 }
 
 export type CarModel = {
@@ -708,6 +717,8 @@ export type CarModel = {
   cars?: Maybe<Array<Car>>
   prices: Array<PackagePrice>
   totalTorque: Scalars['Float']
+  horsePower?: Maybe<Scalars['Float']>
+  modelYear?: Maybe<Scalars['Float']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   logo?: Maybe<CarModelImage>
@@ -748,6 +759,8 @@ export type CarModelAggregateGroupBy = {
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
   totalTorque?: Maybe<Scalars['Float']>
+  horsePower?: Maybe<Scalars['Float']>
+  modelYear?: Maybe<Scalars['Float']>
 }
 
 export type CarModelAvgAggregate = {
@@ -761,6 +774,8 @@ export type CarModelAvgAggregate = {
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
   totalTorque?: Maybe<Scalars['Float']>
+  horsePower?: Maybe<Scalars['Float']>
+  modelYear?: Maybe<Scalars['Float']>
 }
 
 export type CarModelConnection = {
@@ -788,6 +803,8 @@ export type CarModelCountAggregate = {
   fastChargeTime?: Maybe<Scalars['Int']>
   bodyTypeId?: Maybe<Scalars['Int']>
   totalTorque?: Maybe<Scalars['Int']>
+  horsePower?: Maybe<Scalars['Int']>
+  modelYear?: Maybe<Scalars['Int']>
 }
 
 export type CarModelEdge = {
@@ -814,6 +831,8 @@ export type CarModelFilter = {
   fastChargeTime?: Maybe<NumberFieldComparison>
   bodyTypeId?: Maybe<NumberFieldComparison>
   totalTorque?: Maybe<NumberFieldComparison>
+  horsePower?: Maybe<NumberFieldComparison>
+  modelYear?: Maybe<NumberFieldComparison>
 }
 
 export type CarModelImage = {
@@ -823,7 +842,7 @@ export type CarModelImage = {
   url: Scalars['String']
   type: Scalars['String']
   color: Scalars['String']
-  lightsOn: Scalars['Boolean']
+  lightsOn?: Maybe<Scalars['Boolean']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -857,6 +876,8 @@ export type CarModelMaxAggregate = {
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
   totalTorque?: Maybe<Scalars['Float']>
+  horsePower?: Maybe<Scalars['Float']>
+  modelYear?: Maybe<Scalars['Float']>
 }
 
 export type CarModelMinAggregate = {
@@ -874,6 +895,8 @@ export type CarModelMinAggregate = {
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
   totalTorque?: Maybe<Scalars['Float']>
+  horsePower?: Maybe<Scalars['Float']>
+  modelYear?: Maybe<Scalars['Float']>
 }
 
 export type CarModelSort = {
@@ -896,6 +919,8 @@ export enum CarModelSortFields {
   FastChargeTime = 'fastChargeTime',
   BodyTypeId = 'bodyTypeId',
   TotalTorque = 'totalTorque',
+  HorsePower = 'horsePower',
+  ModelYear = 'modelYear',
 }
 
 export type CarModelSumAggregate = {
@@ -909,6 +934,8 @@ export type CarModelSumAggregate = {
   fastChargeTime?: Maybe<Scalars['Float']>
   bodyTypeId?: Maybe<Scalars['Float']>
   totalTorque?: Maybe<Scalars['Float']>
+  horsePower?: Maybe<Scalars['Float']>
+  modelYear?: Maybe<Scalars['Float']>
 }
 
 export type CarSort = {
@@ -923,6 +950,7 @@ export enum CarSortFields {
   PlateNumber = 'plateNumber',
   CarModelId = 'carModelId',
   Color = 'color',
+  CarTrackId = 'carTrackId',
 }
 
 export type ChargingLocation = {
@@ -1868,6 +1896,7 @@ export type PackagePrice = {
   disabled: Scalars['Boolean']
   price: Scalars['Float']
   description?: Maybe<Scalars['String']>
+  fullPrice?: Maybe<Scalars['Float']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
 }
@@ -1928,6 +1957,7 @@ export type PackagePriceInput = {
   duration: Scalars['String']
   price: Scalars['Float']
   description?: Maybe<Scalars['String']>
+  fullPrice?: Maybe<Scalars['Float']>
 }
 
 export type PackagePriceMaxAggregate = {
@@ -2973,6 +3003,7 @@ export type SubFilterCarFilter = {
   plateNumber?: Maybe<StringFieldComparison>
   carModelId?: Maybe<StringFieldComparison>
   color?: Maybe<StringFieldComparison>
+  carTrackId?: Maybe<StringFieldComparison>
 }
 
 export type SubFilterPackagePriceFilter = {
@@ -3320,6 +3351,7 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>
   email: Scalars['String']
   omiseId?: Maybe<Scalars['String']>
+  carTrackId?: Maybe<Scalars['String']>
   defaultAddress?: Maybe<UserAddress>
   favoriteChargingLocations?: Maybe<Array<ChargingLocation>>
   kycStatus: Scalars['String']
@@ -3516,6 +3548,7 @@ export type UserInput = {
   phoneNumber: Scalars['String']
   email: Scalars['String']
   omiseId: Scalars['String']
+  carTrackId: Scalars['String']
   disabled: Scalars['Boolean']
   defaultAddress: UserAddressInput
 }

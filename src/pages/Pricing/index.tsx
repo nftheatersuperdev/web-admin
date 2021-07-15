@@ -55,6 +55,7 @@ export default function Pricing(): JSX.Element {
 
   const handleCreatePrice = (data: PackagePriceInput[] | null) => {
     setIsCreateDialogOpen(false)
+
     if (!data) {
       return
     }
@@ -94,6 +95,7 @@ export default function Pricing(): JSX.Element {
         price: node?.price,
         duration: node?.duration,
         description: node?.description,
+        fullPrice: node?.fullPrice,
         brand: node?.carModel?.brand,
         model: node?.carModel?.model,
         modelId: node?.carModel?.id,
@@ -121,6 +123,13 @@ export default function Pricing(): JSX.Element {
       field: 'price',
       headerName: t('pricing.price'),
       description: t('pricing.price'),
+      valueFormatter: formatMoney,
+      flex: 1,
+    },
+    {
+      field: 'fullPrice',
+      headerName: t('pricing.fullPrice'),
+      description: t('pricing.fullPrice'),
       valueFormatter: formatMoney,
       flex: 1,
     },

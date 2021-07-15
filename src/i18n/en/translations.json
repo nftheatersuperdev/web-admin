@@ -181,6 +181,7 @@
     "brand": "Car Brand",
     "model": "Car Model",
     "price": "Price",
+    "fullPrice": "Full Price",
     "description": "Description",
     "pricePerOneWeek": "Price per 1 week",
     "pricePerOneMonth": "Price per 1 month",

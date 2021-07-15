@@ -181,6 +181,7 @@
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
     "price": "ราคา",
+    "fullPrice": "ราคาปกติ",
     "description": "คำอธิบาย",
     "pricePerOneWeek": "ราคาต่อ 1 สัปดาห์",
     "pricePerOneMonth": "ราคาต่อ 1 เดือน",

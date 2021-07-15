@@ -43,7 +43,7 @@ const QUERY_KEYS = {
   CARS: 'evme:cars',
   CAR_MODELS: 'evme:car-models',
   CAR_MODEL_BY_ID: 'evme:car-model',
-  PRICING_BY_MODEL_ID: 'evme:use-pricing-by-id',
+  PRICING_BY_CAR_MODEL_ID: 'evme:use-pricing-by-car-model-id',
   PRICING: 'evme:pricing',
   SUBSCRIPTIONS: 'evme:subscriptions',
   SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
@@ -569,6 +569,7 @@ export function usePricing(
                   duration
                   price
                   description
+                  fullPrice
                   carModel {
                     brand
                     model
@@ -597,7 +598,7 @@ export function usePricing(
   )
 }
 
-export function usePricingById({
+export function usePricingByCarModelId({
   carModelId,
   isDisabled = false,
 }: {
@@ -607,7 +608,7 @@ export function usePricingById({
   const { gqlClient } = useGraphQLClient()
 
   return useQuery(
-    [QUERY_KEYS.PRICING_BY_MODEL_ID, carModelId],
+    [QUERY_KEYS.PRICING_BY_CAR_MODEL_ID, carModelId],
     async () => {
       const response = await gqlClient.request(
         gql`
@@ -624,6 +625,8 @@ export function usePricingById({
                   }
                   duration
                   price
+                  fullPrice
+                  description
                   createdAt
                   updatedAt
                 }
@@ -662,6 +665,8 @@ export function useCreatePrices(): UseMutationResult<
             carModelId
             duration
             price
+            fullPrice
+            description
           }
         }
       `,
@@ -672,7 +677,7 @@ export function useCreatePrices(): UseMutationResult<
       }
     )
     queryClient.invalidateQueries(QUERY_KEYS.PRICING)
-    queryClient.invalidateQueries(QUERY_KEYS.PRICING_BY_MODEL_ID)
+    queryClient.invalidateQueries(QUERY_KEYS.PRICING_BY_CAR_MODEL_ID)
     return response.createPackagePrices
   })
 }
