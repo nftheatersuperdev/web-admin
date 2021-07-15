@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.5](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.4...v1.0.5) (2021-07-15)
+
+
+### Bug Fixes
+
+* move env above on script for prod deployments ([6c4f10f](https://www.github.com/projecttron/tron-admin-web/commit/6c4f10fa913a74381b541a0ef9fcb9106e1f7e0f))
+
 ### [1.0.4](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.3...v1.0.4) (2021-07-15)
 
 
