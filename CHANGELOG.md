@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.2](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.1...v1.0.2) (2021-07-15)
+
+
+### Bug Fixes
+
+* production release mechanism ([d904fbd](https://www.github.com/projecttron/tron-admin-web/commit/d904fbd2c4ce6f4122beb4056d29a6e07f8c5d57))
+
 ### [1.0.1](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.0...v1.0.1) (2021-07-15)
 
 
