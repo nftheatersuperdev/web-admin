@@ -4,7 +4,7 @@
 
 ### Getting started
 
-First, install all npm dependencies:
+First, install all NPM dependencies:
 
 ```sh
 npm install
