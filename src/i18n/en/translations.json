@@ -35,7 +35,8 @@
     "close": "Close",
     "confirm": "Confirm",
     "search": "Search",
-    "clear": "Clear"
+    "clear": "Clear",
+    "back": "Back"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -59,6 +60,8 @@
       "userNotFound": "User not found",
       "userDisabled": "User is disabled",
       "userTokenExpired": "Token has expired",
+      "authenticationFailed": "Login failed",
+      "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support"
     }
   },
@@ -68,6 +71,15 @@
     "email": "Email Address",
     "password": "Password",
     "rememberMe": "Remember Me"
+  },
+  "home": {
+    "title": "Welcome to EVme Admin Portal"
+  },
+  "forbidden": {
+    "title": "403 - Forbidden: Access is denied"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found"
   },
   "dashboard": {
     "totalCars": {

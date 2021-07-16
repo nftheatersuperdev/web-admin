@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 export default function LoggedInUser(): JSX.Element | null {
   const { t } = useTranslation()
   const history = useHistory()
-  const { currentUser, signOut } = useAuth()
+  const { firebaseUser, signOut } = useAuth()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -21,12 +21,12 @@ export default function LoggedInUser(): JSX.Element | null {
     setAnchorEl(null)
   }
 
-  if (!currentUser) {
+  if (!firebaseUser) {
     return null
   }
 
-  const lastSignIn = currentUser?.metadata?.lastSignInTime
-    ? dayjs(currentUser?.metadata?.lastSignInTime).format('DD/MM/YYYY HH:mm')
+  const lastSignIn = firebaseUser?.metadata?.lastSignInTime
+    ? dayjs(firebaseUser?.metadata?.lastSignInTime).format('DD/MM/YYYY HH:mm')
     : ''
 
   return (
@@ -58,7 +58,7 @@ export default function LoggedInUser(): JSX.Element | null {
         onClose={handleClose}
       >
         <MenuItem button={false}>
-          <ListItemText primary={currentUser?.email} secondary={lastSignIn} />
+          <ListItemText primary={firebaseUser?.email} secondary={lastSignIn} />
         </MenuItem>
         <Divider />
 
