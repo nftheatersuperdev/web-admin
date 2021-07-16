@@ -35,7 +35,8 @@
     "close": "ปิด",
     "confirm": "ยืนยัน",
     "search": "ค้นหา",
-    "clear": "เคลียร์"
+    "clear": "เคลียร์",
+    "back": "กลับ"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -59,6 +60,8 @@
       "userNotFound": "ไม่มีผู้ใช้นี้ในระบบ",
       "userDisabled": "ผู้ใช้นี้ไม่สามารถใช้งานได้",
       "userTokenExpired": "รหัส Token หมดอายุ",
+      "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
+      "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
       "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ"
     }
   },
@@ -68,6 +71,15 @@
     "email": "อีเมล",
     "password": "รหัสผ่าน",
     "rememberMe": "จำรหัสผ่านของฉัน"
+  },
+  "home": {
+    "title": "ยินดีต้อนรับเข้าสู่ EVme Admin Portal"
+  },
+  "forbidden": {
+    "title": "403 - คุณไม่มีสิทธิ์ในการเข้าถึง"
+  },
+  "notFound": {
+    "title": "404 - ไม่พบหน้า"
   },
   "dashboard": {
     "totalCars": {

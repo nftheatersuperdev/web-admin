@@ -23,16 +23,17 @@ function App(): JSX.Element {
       <Router>
         <Toaster />
         <Switch>
-          {routes.map(({ exact, path, component, isPublic }) => (
+          {routes.map(({ exact, path, component, isPublic, allowedRoles }) => (
             <LayoutRoute
               key={path}
               exact={exact}
               path={path}
               component={component}
               isPublic={isPublic}
+              allowedRoles={allowedRoles}
             />
           ))}
-          <Redirect to={ROUTE_PATHS.ROOT} />
+          <Redirect to={ROUTE_PATHS.NOT_FOUND} />
         </Switch>
       </Router>
     </React.Suspense>

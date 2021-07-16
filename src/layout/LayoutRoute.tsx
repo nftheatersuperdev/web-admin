@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { ComponentType, useState } from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import { Route, Redirect, RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 import { useAuth } from 'auth/AuthContext'
+import { Role, hasAllowedRole } from 'auth/roles'
 import { ROUTE_PATHS } from 'routes'
 import Header from 'layout/Header'
 import Sidebar from './Sidebar'
@@ -27,6 +28,7 @@ export interface LayoutRouteProps {
   exact?: boolean
   isPublic?: boolean
   path: string
+  allowedRoles?: Role[]
 }
 
 interface AuthenticatedRouteProps extends LayoutRouteProps {
@@ -39,16 +41,23 @@ function PublicRoute({
   exact,
   path,
 }: Partial<LayoutRouteProps>): JSX.Element {
+  const { getToken } = useAuth()
+  const isAuthenticated = !!getToken()
+
   return (
     <Route
       exact={exact}
       path={path}
-      render={(props) => (
-        <Main $isPublic>
-          {/* @ts-expect-error TODO */}
-          <Component {...props} />
-        </Main>
-      )}
+      render={(props) =>
+        path === ROUTE_PATHS.LOGIN && isAuthenticated ? (
+          <Redirect to={{ pathname: ROUTE_PATHS.ROOT }} />
+        ) : (
+          <Main $isPublic>
+            {/* @ts-expect-error TODO */}
+            <Component {...props} />
+          </Main>
+        )
+      }
     />
   )
 }
@@ -59,33 +68,38 @@ function PrivateRoute({
   path,
   isSidebarOpen,
   handleSidebarOpen,
+  allowedRoles,
 }: AuthenticatedRouteProps): JSX.Element {
-  const { currentUser } = useAuth()
+  const { getToken, getRole } = useAuth()
+  const isAuthenticated = !!getToken()
+  const role = getRole()
 
-  return (
-    <Route
-      exact={exact}
-      path={path}
-      render={(props) =>
-        currentUser ? (
-          <React.Fragment>
-            <Header onSidebarToggle={handleSidebarOpen} />
-            <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
-            <Main>
-              {/* @ts-expect-error TODO */}
-              <Component {...props} />
-            </Main>
-          </React.Fragment>
-        ) : (
-          <Redirect to={{ pathname: ROUTE_PATHS.LOGIN, state: { from: props.location } }} />
-        )
-      }
-    />
-  )
+  const render = (props: RouteComponentProps): React.ReactNode => {
+    if (!isAuthenticated) {
+      return <Redirect to={{ pathname: ROUTE_PATHS.LOGIN, state: { from: props.location } }} />
+    }
+
+    if (!hasAllowedRole(role, allowedRoles)) {
+      return <Redirect to={{ pathname: ROUTE_PATHS.FORBIDDEN }} />
+    }
+
+    return (
+      <React.Fragment>
+        <Header onSidebarToggle={handleSidebarOpen} />
+        <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
+        <Main>
+          {/* @ts-expect-error TODO */}
+          <Component {...props} />
+        </Main>
+      </React.Fragment>
+    )
+  }
+
+  return <Route exact={exact} path={path} render={render} />
 }
 
 export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
-  const { component: Component, exact = true, path, isPublic } = props
+  const { component: Component, exact = true, path, isPublic, allowedRoles = [] } = props
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   function handleSidebarOpen(state = !isSidebarOpen) {
@@ -106,6 +120,7 @@ export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
       path={path}
       isSidebarOpen={isSidebarOpen}
       handleSidebarOpen={handleSidebarOpen}
+      allowedRoles={allowedRoles}
     />
   )
 }

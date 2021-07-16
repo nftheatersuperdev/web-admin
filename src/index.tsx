@@ -8,7 +8,7 @@ import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
-import { GraphQLClientProvider } from 'hooks/GraphQLClientContext'
+import { GraphQLRequestProvider } from 'hooks/GraphQLRequestContext'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
@@ -36,6 +36,7 @@ if (config.isProductionEnvironment) {
 }
 
 const queryClient = new QueryClient()
+const gqlClient = new GraphQLClient(config.evme)
 
 // INFO: using es6 import here since require() is forbidden by eslint
 if (process.env.MSW === 'true') {
@@ -51,10 +52,10 @@ ReactDOM.render(
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider fb={new Firebase()}>
-            <GraphQLClientProvider gqlClient={new GraphQLClient(config.evme)}>
+          <AuthProvider fbase={new Firebase()} gqlClient={gqlClient}>
+            <GraphQLRequestProvider gqlClient={gqlClient}>
               <App />
-            </GraphQLClientProvider>
+            </GraphQLRequestProvider>
           </AuthProvider>
         </QueryClientProvider>
       </ThemeProvider>

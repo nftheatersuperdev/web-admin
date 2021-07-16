@@ -24,6 +24,8 @@ import {
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from 'auth/AuthContext'
+import { ROLES, hasAllowedRole } from 'auth/roles'
 
 const MobileSidebar = styled(SwipeableDrawer)`
   width: ${({ theme }) => theme.size.sidebar};
@@ -48,28 +50,65 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
 
   const SIDEBAR_ITEMS = useMemo(
     () => [
-      { title: t('sidebar.dashboard'), path: ROUTE_PATHS.ROOT, icon: <DashboardIcon /> },
-      { title: t('sidebar.users'), path: ROUTE_PATHS.USER, icon: <UserIcon /> },
-      { subHeader: t('sidebar.vehicleManagement') },
-      { title: t('sidebar.cars'), path: ROUTE_PATHS.CAR, icon: <CarIcon /> },
-      { title: t('sidebar.pricing'), path: ROUTE_PATHS.PRICING, icon: <PackageIcon /> },
-      { subHeader: t('sidebar.subscriptionManagement') },
+      {
+        title: t('sidebar.dashboard'),
+        path: ROUTE_PATHS.DASHBOARD,
+        icon: <DashboardIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+      {
+        title: t('sidebar.users'),
+        path: ROUTE_PATHS.USER,
+        icon: <UserIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+
+      {
+        subHeader: t('sidebar.vehicleManagement'),
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+      },
+      {
+        title: t('sidebar.cars'),
+        path: ROUTE_PATHS.CAR,
+        icon: <CarIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+      },
+      {
+        title: t('sidebar.pricing'),
+        path: ROUTE_PATHS.PRICING,
+        icon: <PackageIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+
+      {
+        subHeader: t('sidebar.subscriptionManagement'),
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+      },
       {
         title: t('sidebar.subscriptions'),
         path: ROUTE_PATHS.SUBSCRIPTION,
         icon: <SubscriptionIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
       },
       {
         title: t('sidebar.additionalExpense'),
         path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
         icon: <AdditionalExpenseIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
-      { title: t('sidebar.insurance'), path: ROUTE_PATHS.INSURANCE, icon: <InsuranceIcon /> },
-      { subHeader: t('sidebar.others') },
+      {
+        title: t('sidebar.insurance'),
+        path: ROUTE_PATHS.INSURANCE,
+        icon: <InsuranceIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+
+      { subHeader: t('sidebar.others'), allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
       {
         title: t('sidebar.chargingLocations'),
         path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
       },
     ],
     [t]
@@ -86,10 +125,17 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
   }
 
   function SidebarList(): JSX.Element {
+    const { getRole } = useAuth()
+    const currentRole = getRole()
+
     return (
       <List role="presentation" onClick={handleSidebarEvent} onKeyDown={handleSidebarEvent}>
         <List>
-          {SIDEBAR_ITEMS.map(({ title, subHeader, path, icon }) => {
+          {SIDEBAR_ITEMS.map(({ title, subHeader, path, icon, allowedRoles }) => {
+            if (!hasAllowedRole(currentRole, allowedRoles)) {
+              return null
+            }
+
             return subHeader ? (
               <ListSubheader key={subHeader} component="div">
                 {subHeader}

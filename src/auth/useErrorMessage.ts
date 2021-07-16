@@ -1,13 +1,41 @@
 import { useTranslation } from 'react-i18next'
+import { ClientError } from 'graphql-request'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import { EVmeAuthError, ERROR_CODES } from './errors'
 
 interface ErrorMessage {
-  (errorCode: string): string
+  (error: firebase.auth.Error | ClientError | EVmeAuthError | Error): string
 }
 
 function useErrorMessage(): ErrorMessage {
   const { t } = useTranslation()
 
-  const errorMessage = (errorCode: string): string => {
+  const errorMessage = (
+    error: firebase.auth.Error | ClientError | EVmeAuthError | Error
+  ): string => {
+    let errorCode = ''
+
+    if (error instanceof ClientError) {
+      const { response } = error as ClientError
+      const { errors } = response
+
+      if (errors?.length) {
+        errorCode = ERROR_CODES.AUTHENTICATION_FAILED
+        console.error('GraphQL error:', errors[0].message)
+      }
+    } else if (error instanceof EVmeAuthError) {
+      const { code, message } = error as EVmeAuthError
+      console.error('Auth error:', message)
+      errorCode = code
+    } else if ((error as firebase.auth.Error).code) {
+      const { code, message } = error as firebase.auth.Error
+      errorCode = code
+      console.error('Firebase error:', message)
+    } else {
+      return error.message
+    }
+
     switch (errorCode) {
       case 'auth/invalid-email':
         return t('authentication.error.invalidEmail')
@@ -16,11 +44,17 @@ function useErrorMessage(): ErrorMessage {
       case 'auth/invalid-user-token':
         return t('authentication.error.invalidUserToken')
       case 'auth/user-not-found':
+      case ERROR_CODES.USER_NOT_FOUND:
         return t('authentication.error.userNotFound')
       case 'auth/user-disabled':
+      case ERROR_CODES.USER_DISABLED:
         return t('authentication.error.userDisabled')
       case 'auth/user-token-expired':
         return t('authentication.error.userTokenExpired')
+      case ERROR_CODES.AUTHENTICATION_FAILED:
+        return t('authentication.error.authenticationFailed')
+      case ERROR_CODES.PERMISSION_NOT_ALLOWED:
+        return t('authentication.error.permissionNotAllowed')
       default:
         return t('authentication.error.unknownError')
     }
