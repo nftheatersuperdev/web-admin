@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.7...v1.1.0) (2021-07-16)
+
+
+### Features
+
+* role access control ([#85](https://www.github.com/projecttron/tron-admin-web/issues/85)) ([81703f1](https://www.github.com/projecttron/tron-admin-web/commit/81703f17a9360dd2e343c8f01934b13f367af4da))
+
 ### [1.0.7](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.6...v1.0.7) (2021-07-15)
 
 
