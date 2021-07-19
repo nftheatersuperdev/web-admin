@@ -156,7 +156,7 @@
     "model": "Model",
     "color": "Color",
     "colorHex": "Color (Hex)",
-    "plateNumber": "Disabled",
+    "plateNumber": "Plate Number",
     "bodyType": "Body Type",
     "topSpeed": "Top Speed",
     "acceleration": "Acceleration",
