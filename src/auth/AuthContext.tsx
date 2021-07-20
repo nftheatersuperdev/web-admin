@@ -29,6 +29,7 @@ interface AuthProps {
   signOut: () => Promise<void>
   setToken: (token: string) => void
   getToken: () => string | null | undefined
+  refreshPersistentToken: () => Promise<void>
   setRole: (role: Role) => void
   getRole: () => string | null | undefined
 }
@@ -40,6 +41,7 @@ const Auth = createContext<AuthProps>({
   signOut: () => Promise.resolve(undefined),
   setToken: (_token: string) => undefined,
   getToken: () => undefined,
+  refreshPersistentToken: () => Promise.resolve(undefined),
   setRole: (_role: Role) => undefined,
   getRole: () => undefined,
 })
@@ -63,6 +65,13 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
 
   const getToken = (): string | null | undefined => {
     return ls.get<string | null | undefined>(STORAGE_KEYS.TOKEN)
+  }
+
+  const refreshPersistentToken = async (): Promise<void> => {
+    if (firebaseUser) {
+      const newToken = await firebaseUser.getIdToken(true)
+      setToken(newToken)
+    }
   }
 
   const setRole = (role: Role) => {
@@ -145,6 +154,7 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
         signOut,
         setToken,
         getToken,
+        refreshPersistentToken,
         setRole,
         getRole,
       }}
