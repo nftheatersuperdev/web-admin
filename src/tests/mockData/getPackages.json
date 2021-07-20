@@ -17,7 +17,7 @@
               "price": 68026
             },
             {
-              "duration": "9m",
+              "duration": "12m",
               "price": 36370
             },
             {
@@ -47,7 +47,7 @@
               "price": 9197
             },
             {
-              "duration": "9m",
+              "duration": "12m",
               "price": 29927
             },
             {
@@ -85,7 +85,7 @@
               "price": 20647
             },
             {
-              "duration": "9m",
+              "duration": "12m",
               "price": 58153
             }
           ]
@@ -111,7 +111,7 @@
               "price": 64234
             },
             {
-              "duration": "9m",
+              "duration": "12m",
               "price": 18092
             },
             {
@@ -129,7 +129,7 @@
           "active": true,
           "prices": [
             {
-              "duration": "9m",
+              "duration": "12m",
               "price": 38118
             },
             {

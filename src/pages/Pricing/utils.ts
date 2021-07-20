@@ -1,6 +1,6 @@
 import { PackagePriceInput } from 'services/evme.types'
 
-export type Period = 'price1w' | 'price1m' | 'price3m' | 'price6m' | 'price9m'
+export type Period = 'price1w' | 'price1m' | 'price3m' | 'price6m' | 'price12m'
 
 export type CarModelPrice = Pick<PackagePriceInput, 'price' | 'fullPrice' | 'description'>
 
@@ -9,7 +9,7 @@ export interface CarModelPrices {
   price1m: CarModelPrice
   price3m: CarModelPrice
   price6m: CarModelPrice
-  price9m: CarModelPrice
+  price12m: CarModelPrice
 }
 
 export const defaultCarModelPrices = {
@@ -33,7 +33,7 @@ export const defaultCarModelPrices = {
     fullPrice: 0,
     description: '',
   },
-  price9m: {
+  price12m: {
     price: 0,
     fullPrice: 0,
     description: '',
@@ -45,20 +45,20 @@ interface PriceChangeResult {
   isPrice1MChange: boolean
   isPrice3MChange: boolean
   isPrice6MChange: boolean
-  isPrice9MChange: boolean
+  isPrice12MChange: boolean
 }
 
 export const getPriceChanges = (
   carModelPrices: CarModelPrices,
   refCarModelPrices: CarModelPrices
 ): PriceChangeResult => {
-  const { price1w, price1m, price3m, price6m, price9m } = carModelPrices
+  const { price1w, price1m, price3m, price6m, price12m } = carModelPrices
   const {
     price1w: refPrice1w,
     price1m: refPrice1m,
     price3m: refPrice3m,
     price6m: refPrice6m,
-    price9m: refPrice9m,
+    price12m: refPrice12m,
   } = refCarModelPrices
 
   return {
@@ -78,9 +78,9 @@ export const getPriceChanges = (
       price6m.price !== refPrice6m.price ||
       price6m.fullPrice !== refPrice6m.fullPrice ||
       price6m.description !== refPrice6m.description,
-    isPrice9MChange:
-      price9m.price !== refPrice9m.price ||
-      price9m.fullPrice !== refPrice9m.fullPrice ||
-      price9m.description !== refPrice9m.description,
+    isPrice12MChange:
+      price12m.price !== refPrice12m.price ||
+      price12m.fullPrice !== refPrice12m.fullPrice ||
+      price12m.description !== refPrice12m.description,
   }
 }

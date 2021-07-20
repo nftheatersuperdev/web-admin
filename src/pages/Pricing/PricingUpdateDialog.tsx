@@ -89,8 +89,8 @@ export default function PricingUpdateDialog({
             description: description || '',
           }
           break
-        case '9m':
-          priceSnapshot.price9m = {
+        case '12m':
+          priceSnapshot.price12m = {
             price,
             fullPrice: fullPrice || 0,
             description: description || '',
@@ -108,7 +108,7 @@ export default function PricingUpdateDialog({
   }, [data, open]) // INFO: need to add "open" to the dependency list to render data when close/open dialog without change other param
 
   useEffect(() => {
-    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice9MChange } =
+    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice12MChange } =
       getPriceChanges(carModelPrices, carModelPricesRef.current)
 
     if (
@@ -116,7 +116,7 @@ export default function PricingUpdateDialog({
       isPrice1MChange ||
       isPrice3MChange ||
       isPrice6MChange ||
-      isPrice9MChange
+      isPrice12MChange
     ) {
       setIsPriceUpdate(true)
     } else {
@@ -158,8 +158,8 @@ export default function PricingUpdateDialog({
 
   const handleUpdateCar = () => {
     const changePrices = [] as PackagePriceInput[]
-    const { price1w, price1m, price3m, price6m, price9m } = carModelPrices
-    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice9MChange } =
+    const { price1w, price1m, price3m, price6m, price12m } = carModelPrices
+    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice12MChange } =
       getPriceChanges(carModelPrices, carModelPricesRef.current)
 
     if (isPrice1WChange) {
@@ -202,12 +202,12 @@ export default function PricingUpdateDialog({
       })
     }
 
-    if (isPrice9MChange) {
+    if (isPrice12MChange) {
       changePrices.push({
-        duration: '9m',
-        price: price9m.price,
-        fullPrice: price9m.fullPrice,
-        description: price9m.description,
+        duration: '12m',
+        price: price12m.price,
+        fullPrice: price12m.fullPrice,
+        description: price12m.description,
         carModelId: modelId,
       })
     }
@@ -426,17 +426,17 @@ export default function PricingUpdateDialog({
               </Grid>
 
               <Grid item xs={12} md={12}>
-                <Typography variant="subtitle1">{t('pricing.pricePerNineMonths')}</Typography>
+                <Typography variant="subtitle1">{t('pricing.pricePerTwelveMonths')}</Typography>
               </Grid>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
                   label={t('pricing.price')}
                   type="number"
-                  id="price9m.price"
-                  name="price9m.price"
-                  value={carModelPrices.price9m.price}
-                  onChange={(event) => handlePriceChange('price9m', 'price', event)}
+                  id="price12m.price"
+                  name="price12m.price"
+                  value={carModelPrices.price12m.price}
+                  onChange={(event) => handlePriceChange('price12m', 'price', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
                   }}
@@ -447,10 +447,10 @@ export default function PricingUpdateDialog({
                   fullWidth
                   label={t('pricing.fullPrice')}
                   type="number"
-                  id="price9m.fullPrice"
-                  name="price9m.fullPrice"
-                  value={carModelPrices.price9m.fullPrice}
-                  onChange={(event) => handlePriceChange('price9m', 'fullPrice', event)}
+                  id="price12m.fullPrice"
+                  name="price12m.fullPrice"
+                  value={carModelPrices.price12m.fullPrice}
+                  onChange={(event) => handlePriceChange('price12m', 'fullPrice', event)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">฿</InputAdornment>,
                   }}
@@ -461,10 +461,10 @@ export default function PricingUpdateDialog({
                   fullWidth
                   multiline
                   label={t('pricing.description')}
-                  id="price9m.description"
-                  name="price9m.description"
-                  value={carModelPrices.price9m.description}
-                  onChange={(event) => handleDescriptionChange('price9m', event)}
+                  id="price12m.description"
+                  name="price12m.description"
+                  value={carModelPrices.price12m.description}
+                  onChange={(event) => handleDescriptionChange('price12m', event)}
                   InputLabelProps={{
                     shrink: true,
                   }}
