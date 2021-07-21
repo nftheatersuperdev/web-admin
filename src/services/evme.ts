@@ -37,6 +37,7 @@ import {
   AvailableCarInput,
   UserAggregateFilter,
   UserAggregateResponse,
+  PackagePriceFilter,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -540,7 +541,8 @@ export function useSearchSubscriptions(
 
 export function usePricing(
   pageSize = 10,
-  sorting: PackagePriceSort[]
+  filter: PackagePriceFilter = {},
+  sorting: PackagePriceSort[] = []
 ): UseInfiniteQueryResult<WithPaginationType<PackagePrice>> {
   const { gqlRequest } = useGraphQLRequest()
 
@@ -552,9 +554,14 @@ export function usePricing(
           query GetPricing(
             $pageSize: Int!
             $after: ConnectionCursor
+            $filter: PackagePriceFilter
             $sorting: [PackagePriceSort!]
           ) {
-            packagePrices(paging: { first: $pageSize, after: $after }, sorting: $sorting) {
+            packagePrices(
+              paging: { first: $pageSize, after: $after }
+              filter: $filter
+              sorting: $sorting
+            ) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -584,6 +591,7 @@ export function usePricing(
         {
           pageSize,
           after: pageParam,
+          filter,
           sorting,
         }
       )

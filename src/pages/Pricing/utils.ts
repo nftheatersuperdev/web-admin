@@ -84,3 +84,23 @@ export const getPriceChanges = (
       price12m.description !== refPrice12m.description,
   }
 }
+
+export const getFieldComparator = (operator?: string): string => {
+  switch (operator) {
+    case 'equals':
+    case '=':
+      return 'eq'
+    case '!=':
+      return 'neq'
+    case '>':
+      return 'gt'
+    case '>=':
+      return 'gte'
+    case '<':
+      return 'lt'
+    case '<=':
+      return 'lte'
+    default:
+      return 'eq'
+  }
+}

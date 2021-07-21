@@ -191,6 +191,7 @@
     "duration": "Duration",
     "brand": "Car Brand",
     "model": "Car Model",
+    "modelId": "Car Model ID",
     "price": "Price",
     "fullPrice": "Full Price",
     "description": "Description",

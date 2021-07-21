@@ -191,6 +191,7 @@
     "duration": "แพ็คเกจ",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
+    "modelId": "เลขไอดีรุ่นรถยนต์",
     "price": "ราคา",
     "fullPrice": "ราคาปกติ",
     "description": "คำอธิบาย",
