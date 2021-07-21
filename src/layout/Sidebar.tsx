@@ -19,7 +19,6 @@ import {
   Group as UserIcon,
   Shop as PackageIcon,
   BatteryChargingFull as ChargingIcon,
-  BusinessCenter as InsuranceIcon,
   MonetizationOn as AdditionalExpenseIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
@@ -54,13 +53,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.dashboard'),
         path: ROUTE_PATHS.DASHBOARD,
         icon: <DashboardIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       {
         title: t('sidebar.users'),
         path: ROUTE_PATHS.USER,
         icon: <UserIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
       },
 
       {
@@ -95,12 +94,6 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
         icon: <AdditionalExpenseIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
-      },
-      {
-        title: t('sidebar.insurance'),
-        path: ROUTE_PATHS.INSURANCE,
-        icon: <InsuranceIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
       },
 
       { subHeader: t('sidebar.others'), allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
