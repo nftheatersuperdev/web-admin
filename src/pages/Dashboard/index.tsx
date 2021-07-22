@@ -6,6 +6,7 @@ import {
   CardMembership as SubscriptionIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
+import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import CardStatus from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
@@ -73,7 +74,12 @@ export default function Dashboard(): JSX.Element {
   const { data: cars } = useCars()
   const { data: subscriptions } = useSubscriptions()
   const { data: payments } = usePayments()
-  const { data: users } = useUsers()
+  const { data: users } = useUsers(config.tableRowsDefaultPageSize, {
+    // filter only "user"
+    role: {
+      eq: 'user',
+    },
+  })
 
   const totalCars = cars?.pages[0]?.totalCount || 0
 

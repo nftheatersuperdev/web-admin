@@ -40,7 +40,12 @@ const kycStatuses = ['pending', 'verified', 'rejected']
 const transformToUserFilter = (inputFilter: InputFilter): UserFilter => {
   const { email, phoneNumber, kycStatus, submitDate } = inputFilter
 
-  const userFilter: UserFilter = {}
+  const userFilter: UserFilter = {
+    // filter only "user"
+    role: {
+      eq: 'user',
+    },
+  }
 
   if (email) {
     userFilter.email = { iLike: `%${email}%` }
