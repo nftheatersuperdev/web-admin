@@ -168,6 +168,7 @@
     "acceleration": "Acceleration",
     "range": "Range",
     "totalPower": "Total Power",
+    "batteryCapacity": "Battery Capacity",
     "connectorType": "Connector Type",
     "chargeTime": "Charge Time",
     "fastChargeTime": "Fast Charge Time",

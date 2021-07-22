@@ -302,6 +302,7 @@ export function useCars(
                     bodyType {
                       bodyType
                     }
+                    batteryCapacity
                   }
                 }
               }

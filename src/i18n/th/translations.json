@@ -168,6 +168,7 @@
     "acceleration": "อัตราเร่ง",
     "range": "ระยะทาง",
     "totalPower": "แรงม้า",
+    "batteryCapacity": "ความจุแบตเตอร์รี่",
     "connectorType": "ประเภทหัวชาร์จ",
     "chargeTime": "ระยะเวลาชาร์จปกติ",
     "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",

@@ -141,6 +141,7 @@ export default function Car(): JSX.Element {
           connectorType,
           chargeTime,
           fastChargeTime,
+          batteryCapacity,
         } = carModel || {}
 
         return {
@@ -161,6 +162,7 @@ export default function Car(): JSX.Element {
           color,
           colorHex,
           updatedAt,
+          batteryCapacity,
         }
       }) || [],
     [cars, currentPageIndex]
@@ -184,12 +186,25 @@ export default function Car(): JSX.Element {
       flex: 1,
     },
     {
+      field: 'totalPower',
+      headerName: t('car.totalPower'),
+      description: t('car.totalPower'),
+      flex: 1,
+    },
+    {
+      field: 'batteryCapacity',
+      headerName: t('car.batteryCapacity'),
+      description: t('car.batteryCapacity'),
+      flex: 1,
+    },
+    {
       field: 'updatedAt',
       headerName: t('car.updatedDate'),
       description: t('car.updatedDate'),
       valueFormatter: (params: GridValueFormatterParams) =>
         formatDateWithPattern(params, DEFAULT_DATETIME_FORMAT),
       flex: 1,
+      hide: true,
     },
     {
       field: 'topSpeed',
@@ -209,13 +224,6 @@ export default function Car(): JSX.Element {
       field: 'range',
       headerName: t('car.range'),
       description: t('car.range'),
-      flex: 1,
-      hide: true,
-    },
-    {
-      field: 'totalPower',
-      headerName: t('car.totalPower'),
-      description: t('car.totalPower'),
       flex: 1,
       hide: true,
     },
