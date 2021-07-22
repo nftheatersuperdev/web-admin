@@ -22,7 +22,10 @@
     "subscriptions": "Subscriptions",
     "additionalExpense": "Additional Expense",
     "others": "Others",
-    "chargingLocations": "Charging Locations"
+    "chargingLocations": "Charging Locations",
+    "account": "Account",
+    "profile": "Profile",
+    "settings": "Settings"
   },
   "button": {
     "signIn": "Sign in",
@@ -56,11 +59,15 @@
       "invalidEmail": "Email is invalid",
       "invalidPassword": "Password is invalid",
       "invalidUserToken": "Token is invalid",
+      "invalidCredential": "Invalid credential",
       "userNotFound": "User not found",
       "userDisabled": "User is disabled",
       "userTokenExpired": "Token has expired",
+      "userMismatch": "User mismatch",
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
+      "weakPassword": "Password must be at least 6 characters long",
+      "requiresRecentLogin": "Please re-login again",
       "unknownError": "An unknown authentication error occurred, Please contact operation support"
     }
   },
@@ -276,5 +283,36 @@
   "chargingLocations": {
     "provider": "Provider",
     "address": "Address"
+  },
+  "role": {
+    "superAdmin": "Super Administrator",
+    "admin": "Administrator",
+    "customerSupport": "Customer Support",
+    "operation": "Operation"
+  },
+  "account": {
+    "updatePassword": "Update password",
+    "profileTitle": "Profile information",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phoneNumber": "Phone Number"
+  },
+  "settings": {
+    "title": "Password",
+    "subTitle": "Update password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updatePassword": {
+      "success": "Update password successfully",
+      "errors": {
+        "currentPasswordRequired": "Current password is required",
+        "newPasswordRequired": "New password is required",
+        "confirmNewPasswordRequired": "Current password is required",
+        "passwordMismatch": "Password mismatch",
+        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long"
+      }
+    }
   }
 }

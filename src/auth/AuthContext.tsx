@@ -2,6 +2,7 @@ import { ReactElement, createContext, useContext, useState, useEffect, Fragment 
 import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
 import { GraphQLClient, gql } from 'graphql-request'
+import { useTranslation } from 'react-i18next'
 import { User } from 'services/evme.types'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
@@ -27,28 +28,33 @@ interface AuthProps {
     isRememberMe: boolean
   ) => Promise<void>
   signOut: () => Promise<void>
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<void>
   setToken: (token: string) => void
   getToken: () => string | null | undefined
   refreshPersistentToken: () => Promise<void>
   setRole: (role: Role) => void
   getRole: () => string | null | undefined
+  getRoleDisplayName: () => string
 }
 
 const Auth = createContext<AuthProps>({
   firebaseUser: null,
   signInWithEmailAndPassword: (_email: string, _password: string, _isRememberMe: boolean) =>
-    Promise.resolve(undefined),
-  signOut: () => Promise.resolve(undefined),
+    Promise.resolve(),
+  signOut: () => Promise.resolve(),
+  updatePassword: (_currentPassword: string, _newPassword: string) => Promise.resolve(),
   setToken: (_token: string) => undefined,
   getToken: () => undefined,
-  refreshPersistentToken: () => Promise.resolve(undefined),
+  refreshPersistentToken: () => Promise.resolve(),
   setRole: (_role: Role) => undefined,
   getRole: () => undefined,
+  getRoleDisplayName: () => '',
 })
 
 export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps): JSX.Element {
   const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { t } = useTranslation()
 
   const errorMessage = useErrorMessage()
 
@@ -80,6 +86,22 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
 
   const getRole = (): string | null | undefined => {
     return ls.get<string | null | undefined>(STORAGE_KEYS.ROLE, { encrypt: true })
+  }
+
+  const getRoleDisplayName = (): string => {
+    const userRole = getRole()
+    switch (userRole) {
+      case ROLES.SUPER_ADMIN:
+        return t('role.superAdmin')
+      case ROLES.ADMIN:
+        return t('role.admin')
+      case ROLES.CUSTOMER_SUPPORT:
+        return t('role.customerSupport')
+      case ROLES.OPERATION:
+        return t('role.operation')
+      default:
+        return '-'
+    }
   }
 
   const signInWithEmailAndPassword = async (
@@ -142,6 +164,15 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
     }
   }
 
+  const updatePassword = async (currentPassword: string, newPassword: string): Promise<void> => {
+    try {
+      await fbase.updatePassword(currentPassword, newPassword)
+    } catch (error) {
+      const message = errorMessage(error.code)
+      throw new Error(message)
+    }
+  }
+
   if (isLoading) {
     return <Fragment>Loading...</Fragment>
   }
@@ -152,11 +183,13 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
         firebaseUser,
         signInWithEmailAndPassword,
         signOut,
+        updatePassword,
         setToken,
         getToken,
         refreshPersistentToken,
         setRole,
         getRole,
+        getRoleDisplayName,
       }}
     >
       {children}

@@ -7,7 +7,8 @@ export const ROUTE_PATHS = Object.freeze({
   ROOT: '/',
   DASHBOARD: '/dashboard',
   LOGIN: '/login',
-  SETTINGS: '/settings',
+  ACCOUNT: '/account',
+  ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   SUBSCRIPTION: '/subscription',
   PRICING: '/pricing',
@@ -30,9 +31,14 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
-    path: ROUTE_PATHS.SETTINGS,
-    component: lazy(() => import('./pages/Settings' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    path: ROUTE_PATHS.ACCOUNT_SETTINGS,
+    component: lazy(() => import('./pages/Account/Settings' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.ACCOUNT,
+    component: lazy(() => import('./pages/Account' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.USER,

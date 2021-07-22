@@ -1038,3 +1038,36 @@ export function useChargingLocations(): UseQueryResult<WithPaginationType<Chargi
     }
   )
 }
+
+export function useMe(): UseQueryResult<User> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.ME],
+    async () => {
+      const response = await gqlRequest(
+        gql`
+          query GetMe {
+            me {
+              id
+              firebaseId
+              firstName
+              lastName
+              role
+              disabled
+              phoneNumber
+              email
+            }
+          }
+        `
+      )
+
+      return response.me
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve profile data, ${error.message}`)
+      },
+    }
+  )
+}

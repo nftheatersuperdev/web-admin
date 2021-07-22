@@ -16,10 +16,12 @@ import {
   Equalizer as DashboardIcon,
   ShoppingCart as SubscriptionIcon,
   DirectionsCar as CarIcon,
-  Group as UserIcon,
+  People as UserIcon,
   Shop as PackageIcon,
   BatteryChargingFull as ChargingIcon,
   MonetizationOn as AdditionalExpenseIcon,
+  Person as ProfileIcon,
+  Settings as SettingsIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -102,6 +104,19 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+      { subHeader: t('sidebar.account') },
+      {
+        title: t('sidebar.profile'),
+        path: ROUTE_PATHS.ACCOUNT,
+        icon: <ProfileIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+      },
+      {
+        title: t('sidebar.settings'),
+        path: ROUTE_PATHS.ACCOUNT_SETTINGS,
+        icon: <SettingsIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
     ],
     [t]
