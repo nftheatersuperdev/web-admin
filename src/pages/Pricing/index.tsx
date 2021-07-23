@@ -11,7 +11,7 @@ import {
 } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { formatDates, formatMoney } from 'utils'
+import { columnFormatDate, columnFormatMoney } from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { useCarModels, useCreatePrices, usePricing } from 'services/evme'
@@ -189,7 +189,7 @@ export default function Pricing(): JSX.Element {
       field: 'price',
       headerName: t('pricing.price'),
       description: t('pricing.price'),
-      valueFormatter: formatMoney,
+      valueFormatter: columnFormatMoney,
       flex: 1,
       filterOperators: getGridNumericColumnOperators(),
     },
@@ -197,7 +197,7 @@ export default function Pricing(): JSX.Element {
       field: 'fullPrice',
       headerName: t('pricing.fullPrice'),
       description: t('pricing.fullPrice'),
-      valueFormatter: formatMoney,
+      valueFormatter: columnFormatMoney,
       flex: 1,
       filterable: false,
     },
@@ -205,7 +205,7 @@ export default function Pricing(): JSX.Element {
       field: 'createdAt',
       headerName: t('pricing.createdDate'),
       description: t('pricing.createdDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
     },
@@ -213,7 +213,7 @@ export default function Pricing(): JSX.Element {
       field: 'updatedAt',
       headerName: t('pricing.updatedDate'),
       description: t('pricing.updatedDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
     },

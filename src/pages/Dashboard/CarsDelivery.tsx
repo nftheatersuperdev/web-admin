@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import { GridColDef, GridRowData, GridPageChangeParams } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATETIME_FORMAT, formatDateWithPattern } from 'utils'
+import { DEFAULT_DATETIME_FORMAT, columnFormatDate } from 'utils'
 import styled from 'styled-components'
 import DataGridLocale from 'components/DataGridLocale'
 import DateTimePicker from 'components/DateTimePicker'
@@ -91,7 +91,7 @@ export default function CarsDelivery(): JSX.Element {
       field: 'startDate',
       headerName: t('dashboard.deliveryDate'),
       description: t('dashboard.deliveryDate'),
-      valueFormatter: (params) => formatDateWithPattern(params, DEFAULT_DATETIME_FORMAT),
+      valueFormatter: columnFormatDate,
       flex: 1,
     },
   ]

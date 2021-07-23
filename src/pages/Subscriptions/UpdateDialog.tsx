@@ -16,7 +16,7 @@ import {
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { functionFormatRawDate } from 'utils'
+import { formatDate } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
 import * as yup from 'yup'
@@ -129,96 +129,120 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             <TextField
               label={t('subscription.firstName')}
               value={subscription?.firstName}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.lastName')}
               value={subscription?.lastName}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.email')}
               value={subscription?.email}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.subscriptionId')}
               value={subscription?.id}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.startDate')}
-              value={functionFormatRawDate(subscription?.startDate)}
-              disabled
+              value={formatDate(subscription?.startDate)}
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.startAddress')}
               value={subscription?.startAddress}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.endDate')}
-              value={functionFormatRawDate(subscription?.endDate)}
-              disabled
+              value={formatDate(subscription?.endDate)}
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.endAddress')}
               value={subscription?.endAddress}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.createdDate')}
-              value={functionFormatRawDate(subscription?.createdAt)}
-              disabled
+              value={formatDate(subscription?.createdAt)}
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.updatedDate')}
-              value={functionFormatRawDate(subscription?.updatedAt)}
-              disabled
+              value={formatDate(subscription?.updatedAt)}
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.duration')}
               value={subscription?.duration}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.price')}
               value={subscription?.price}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={12}>
@@ -228,16 +252,20 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             <TextField
               label={t('subscription.brand')}
               value={subscription?.brand}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.model')}
               value={subscription?.model}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -267,14 +295,23 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             </FormControl>
           </Grid>
           <Grid item xs={12} md={6}>
-            <TextField label={t('subscription.vin')} value={subscription?.vin} disabled fullWidth />
+            <TextField
+              label={t('subscription.vin')}
+              value={subscription?.vin}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.seats')}
               value={subscription?.seats}
-              disabled
               fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
           <Grid item xs={12} md={12}>
