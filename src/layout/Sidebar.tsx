@@ -22,6 +22,7 @@ import {
   MonetizationOn as AdditionalExpenseIcon,
   Person as ProfileIcon,
   Settings as SettingsIcon,
+  SupervisedUserCircle as AdminUsersIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -104,6 +105,12 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+      {
+        title: t('sidebar.adminUsers'),
+        path: ROUTE_PATHS.ADMIN_USERS,
+        icon: <AdminUsersIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN],
       },
       { subHeader: t('sidebar.account') },
       {

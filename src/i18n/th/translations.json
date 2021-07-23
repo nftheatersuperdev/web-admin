@@ -23,6 +23,7 @@
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "others": "อื่นๆ",
     "chargingLocations": "สถานีชาร์จ",
+    "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
     "profile": "โปรไฟล์",
     "settings": "ตั้งค่า"
@@ -145,16 +146,23 @@
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
-    "role": "สถานะ",
-    "disabled": "ปิดการใช้งาน",
+    "role": "ระดับผู้ใช้",
     "createdDate": "วันที่สมัคร",
     "updatedDate": "วันที่แก้ไข",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
     "status": "สถานะ",
     "kycStatus": "สถานะ KYC",
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",
-    "rejectedReason": "เหตุผลของการปฏิเสธ"
+    "rejectedReason": "เหตุผลของการปฏิเสธ",
+    "enabled": "เปิด",
+    "disabled": "ปิด",
+    "actions": "ดำเนินการ",
+    "detailDialog": {
+      "title": "ข้อมูลผู้ใช้"
+    }
   },
   "car": {
     "id": "เลขไอดี",

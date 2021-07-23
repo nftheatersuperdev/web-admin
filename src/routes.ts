@@ -15,6 +15,7 @@ export const ROUTE_PATHS = Object.freeze({
   CAR: '/car',
   CHARGING_LOCATIONS: '/charging-locations',
   ADDITIONAL_EXPENSE: '/additional-expense',
+  ADMIN_USERS: '/admin-users',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -69,6 +70,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
     component: lazy(() => import('./pages/AdditionalExpenses' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.ADMIN_USERS,
+    component: lazy(() => import('./pages/AdminUsers' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

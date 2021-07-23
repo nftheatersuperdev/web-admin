@@ -23,6 +23,7 @@
     "additionalExpense": "Additional Expense",
     "others": "Others",
     "chargingLocations": "Charging Locations",
+    "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
     "settings": "Settings"
@@ -146,15 +147,22 @@
     "email": "Email",
     "phone": "Phone Number",
     "role": "Role",
-    "disabled": "Disabled",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "fullName": "Full Name",
     "status": "Status",
     "kycStatus": "KYC Status",
     "verifyDate": "Verify Date",
     "note": "Note",
-    "rejectedReason": "Reason of rejection"
+    "rejectedReason": "Reason of rejection",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "actions": "Actions",
+    "detailDialog": {
+      "title": "User Detail"
+    }
   },
   "car": {
     "id": "ID",
