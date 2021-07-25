@@ -65,10 +65,10 @@
       "userDisabled": "User is disabled",
       "userTokenExpired": "Token has expired",
       "userMismatch": "User mismatch",
-      "authenticationFailed": "Login failed",
-      "permissionNotAllowed": "Permission not allowed",
       "weakPassword": "Password must be at least 6 characters long",
       "requiresRecentLogin": "Please re-login again",
+      "authenticationFailed": "Login failed",
+      "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support"
     }
   },
