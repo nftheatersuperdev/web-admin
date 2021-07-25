@@ -122,7 +122,7 @@ export default function Pricing(): JSX.Element {
 
   const handleRowClick = (param: GridRowData) => {
     setIsUpdateDialogOpen(true)
-    setUpdatedModelId(param.row.modelId)
+    setUpdatedModelId(param.row.carModelId)
   }
 
   const rows = useMemo(
