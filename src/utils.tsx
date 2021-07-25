@@ -9,6 +9,10 @@ export function formatDate(dateStr?: string, pattern: string = DEFAULT_DATETIME_
   return dateStr ? dayjs(dateStr).format(pattern) : '-'
 }
 
+export function formatDateWithPattern(params: GridValueFormatterParams, pattern: string): string {
+  return params.value ? dayjs(params.value as Date).format(pattern || 'DD/MM/YYYY') : ''
+}
+
 export function columnFormatDate(params: GridValueFormatterParams): string {
   return formatDate(params.value as string)
 }
