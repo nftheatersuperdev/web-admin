@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/projecttron/tron-admin-web/compare/v1.1.0...v1.2.0) (2021-07-25)
+
+
+### Features
+
+* add battery capacity to car list view ([#100](https://www.github.com/projecttron/tron-admin-web/issues/100)) ([f020179](https://www.github.com/projecttron/tron-admin-web/commit/f020179935c4ec53da567858a04404e66103df02))
+* admin user list view and detail dialog ([#101](https://www.github.com/projecttron/tron-admin-web/issues/101)) ([9a04c49](https://www.github.com/projecttron/tron-admin-web/commit/9a04c49c94dd2ae845e2c51fde28218df8ea39f4))
+* update role accessing ([#99](https://www.github.com/projecttron/tron-admin-web/issues/99)) ([e4457cc](https://www.github.com/projecttron/tron-admin-web/commit/e4457ccdb494119954a423634a10c9b70f6a76a9))
+* view profile & update password ([#97](https://www.github.com/projecttron/tron-admin-web/issues/97)) ([1785159](https://www.github.com/projecttron/tron-admin-web/commit/1785159daa8eb8428d4ec4901ef0f9ef44850d00))
+
+
+### Bug Fixes
+
+* filter only evme users for list view and total user count in dashboard ([#98](https://www.github.com/projecttron/tron-admin-web/issues/98)) ([ddd580f](https://www.github.com/projecttron/tron-admin-web/commit/ddd580f1c3596b33aa6afa52f8b6ef0e2ef88d81))
+* filter package prices ([#96](https://www.github.com/projecttron/tron-admin-web/issues/96)) ([0dddd7e](https://www.github.com/projecttron/tron-admin-web/commit/0dddd7ebd7355da79c26016a68945c309ef717c2))
+* redirect to dashboard page ([#95](https://www.github.com/projecttron/tron-admin-web/issues/95)) ([ccad92a](https://www.github.com/projecttron/tron-admin-web/commit/ccad92a3bcab6a655d5c3f211ecb90ef8cdc1051))
+* refresh and persist new token when got 401 - firebase token expire from api ([#93](https://www.github.com/projecttron/tron-admin-web/issues/93)) ([8d8b101](https://www.github.com/projecttron/tron-admin-web/commit/8d8b101be726b7ed0c21b8328c5cbb95065130bb))
+* replace 9 months with 12 months in package prices ([#94](https://www.github.com/projecttron/tron-admin-web/issues/94)) ([bef0bec](https://www.github.com/projecttron/tron-admin-web/commit/bef0bec4a605d3babc0e58f92eedc00f3c1f5d1f))
+* resolved all conflicts on branch 'develop' ([#105](https://www.github.com/projecttron/tron-admin-web/issues/105)) ([6f66537](https://www.github.com/projecttron/tron-admin-web/commit/6f66537b3247c7e42ec8ad901368fcaa60062653))
+* typo translate plate number (en) ([#92](https://www.github.com/projecttron/tron-admin-web/issues/92)) ([cccb967](https://www.github.com/projecttron/tron-admin-web/commit/cccb967dbe4c50492025892e0209f77f4ab7c55a))
+
 ## [1.1.0](https://www.github.com/projecttron/tron-admin-web/compare/v1.0.7...v1.1.0) (2021-07-16)
 
 
