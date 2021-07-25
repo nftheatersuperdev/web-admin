@@ -37,6 +37,7 @@ import {
   AvailableCarInput,
   UserAggregateFilter,
   UserAggregateResponse,
+  PackagePriceFilter,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -301,6 +302,7 @@ export function useCars(
                     bodyType {
                       bodyType
                     }
+                    batteryCapacity
                   }
                 }
               }
@@ -540,7 +542,8 @@ export function useSearchSubscriptions(
 
 export function usePricing(
   pageSize = 10,
-  sorting: PackagePriceSort[]
+  filter: PackagePriceFilter = {},
+  sorting: PackagePriceSort[] = []
 ): UseInfiniteQueryResult<WithPaginationType<PackagePrice>> {
   const { gqlRequest } = useGraphQLRequest()
 
@@ -552,9 +555,14 @@ export function usePricing(
           query GetPricing(
             $pageSize: Int!
             $after: ConnectionCursor
+            $filter: PackagePriceFilter
             $sorting: [PackagePriceSort!]
           ) {
-            packagePrices(paging: { first: $pageSize, after: $after }, sorting: $sorting) {
+            packagePrices(
+              paging: { first: $pageSize, after: $after }
+              filter: $filter
+              sorting: $sorting
+            ) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -584,6 +592,7 @@ export function usePricing(
         {
           pageSize,
           after: pageParam,
+          filter,
           sorting,
         }
       )
@@ -1027,6 +1036,39 @@ export function useChargingLocations(): UseQueryResult<WithPaginationType<Chargi
         console.error(`Unable to retrieve charging locations, ${error.message}`)
       },
       keepPreviousData: true,
+    }
+  )
+}
+
+export function useMe(): UseQueryResult<User> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.ME],
+    async () => {
+      const response = await gqlRequest(
+        gql`
+          query GetMe {
+            me {
+              id
+              firebaseId
+              firstName
+              lastName
+              role
+              disabled
+              phoneNumber
+              email
+            }
+          }
+        `
+      )
+
+      return response.me
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve profile data, ${error.message}`)
+      },
     }
   )
 }

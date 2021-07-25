@@ -719,6 +719,7 @@ export type CarModel = {
   totalTorque: Scalars['Float']
   horsePower?: Maybe<Scalars['Float']>
   modelYear?: Maybe<Scalars['Float']>
+  batteryCapacity?: Maybe<Scalars['Float']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   logo?: Maybe<CarModelImage>
@@ -761,6 +762,7 @@ export type CarModelAggregateGroupBy = {
   totalTorque?: Maybe<Scalars['Float']>
   horsePower?: Maybe<Scalars['Float']>
   modelYear?: Maybe<Scalars['Float']>
+  batteryCapacity?: Maybe<Scalars['Float']>
 }
 
 export type CarModelAvgAggregate = {
@@ -776,6 +778,7 @@ export type CarModelAvgAggregate = {
   totalTorque?: Maybe<Scalars['Float']>
   horsePower?: Maybe<Scalars['Float']>
   modelYear?: Maybe<Scalars['Float']>
+  batteryCapacity?: Maybe<Scalars['Float']>
 }
 
 export type CarModelConnection = {
@@ -805,6 +808,7 @@ export type CarModelCountAggregate = {
   totalTorque?: Maybe<Scalars['Int']>
   horsePower?: Maybe<Scalars['Int']>
   modelYear?: Maybe<Scalars['Int']>
+  batteryCapacity?: Maybe<Scalars['Int']>
 }
 
 export type CarModelEdge = {
@@ -833,6 +837,7 @@ export type CarModelFilter = {
   totalTorque?: Maybe<NumberFieldComparison>
   horsePower?: Maybe<NumberFieldComparison>
   modelYear?: Maybe<NumberFieldComparison>
+  batteryCapacity?: Maybe<NumberFieldComparison>
 }
 
 export type CarModelImage = {
@@ -878,6 +883,7 @@ export type CarModelMaxAggregate = {
   totalTorque?: Maybe<Scalars['Float']>
   horsePower?: Maybe<Scalars['Float']>
   modelYear?: Maybe<Scalars['Float']>
+  batteryCapacity?: Maybe<Scalars['Float']>
 }
 
 export type CarModelMinAggregate = {
@@ -897,6 +903,7 @@ export type CarModelMinAggregate = {
   totalTorque?: Maybe<Scalars['Float']>
   horsePower?: Maybe<Scalars['Float']>
   modelYear?: Maybe<Scalars['Float']>
+  batteryCapacity?: Maybe<Scalars['Float']>
 }
 
 export type CarModelSort = {
@@ -921,6 +928,7 @@ export enum CarModelSortFields {
   TotalTorque = 'totalTorque',
   HorsePower = 'horsePower',
   ModelYear = 'modelYear',
+  BatteryCapacity = 'batteryCapacity',
 }
 
 export type CarModelSumAggregate = {
@@ -936,6 +944,7 @@ export type CarModelSumAggregate = {
   totalTorque?: Maybe<Scalars['Float']>
   horsePower?: Maybe<Scalars['Float']>
   modelYear?: Maybe<Scalars['Float']>
+  batteryCapacity?: Maybe<Scalars['Float']>
 }
 
 export type CarSort = {

@@ -178,7 +178,9 @@ export default function AdditionalExpenseCreateDialog(
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Grid>
 
@@ -192,7 +194,9 @@ export default function AdditionalExpenseCreateDialog(
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Grid>
 

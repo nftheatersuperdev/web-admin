@@ -4,13 +4,12 @@ import {
   GridColDef,
   GridRowData,
   GridCellParams,
-  GridValueFormatterParams,
   GridPageChangeParams,
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { formatDateWithPattern, DEFAULT_DATETIME_FORMAT } from 'utils'
+import { columnFormatDate } from 'utils'
 // import config from 'config'
 import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
@@ -141,6 +140,7 @@ export default function Car(): JSX.Element {
           connectorType,
           chargeTime,
           fastChargeTime,
+          batteryCapacity,
         } = carModel || {}
 
         return {
@@ -161,6 +161,7 @@ export default function Car(): JSX.Element {
           color,
           colorHex,
           updatedAt,
+          batteryCapacity,
         }
       }) || [],
     [cars, currentPageIndex]
@@ -184,12 +185,24 @@ export default function Car(): JSX.Element {
       flex: 1,
     },
     {
+      field: 'totalPower',
+      headerName: t('car.totalPower'),
+      description: t('car.totalPower'),
+      flex: 1,
+    },
+    {
+      field: 'batteryCapacity',
+      headerName: t('car.batteryCapacity'),
+      description: t('car.batteryCapacity'),
+      flex: 1,
+    },
+    {
       field: 'updatedAt',
       headerName: t('car.updatedDate'),
       description: t('car.updatedDate'),
-      valueFormatter: (params: GridValueFormatterParams) =>
-        formatDateWithPattern(params, DEFAULT_DATETIME_FORMAT),
+      valueFormatter: columnFormatDate,
       flex: 1,
+      hide: true,
     },
     {
       field: 'topSpeed',
@@ -209,13 +222,6 @@ export default function Car(): JSX.Element {
       field: 'range',
       headerName: t('car.range'),
       description: t('car.range'),
-      flex: 1,
-      hide: true,
-    },
-    {
-      field: 'totalPower',
-      headerName: t('car.totalPower'),
-      description: t('car.totalPower'),
       flex: 1,
       hide: true,
     },

@@ -45,4 +45,14 @@ export class Firebase {
   signOut(): Promise<void> {
     return this.auth.signOut()
   }
+
+  async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const user = this.auth.currentUser
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      user?.email || '',
+      currentPassword
+    )
+    await user?.reauthenticateWithCredential(credential)
+    return user?.updatePassword(newPassword)
+  }
 }

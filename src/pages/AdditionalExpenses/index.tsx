@@ -10,7 +10,7 @@ import {
 import toast from 'react-hot-toast'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { formatDates, formatMoney } from 'utils'
+import { columnFormatDate, columnFormatMoney } from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
@@ -133,7 +133,7 @@ export default function AdditionalExpenses(): JSX.Element {
       field: 'noticeDate',
       headerName: t('additionalExpense.noticeDate'),
       description: t('additionalExpense.noticeDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
     },
     {
@@ -146,7 +146,7 @@ export default function AdditionalExpenses(): JSX.Element {
       field: 'price',
       headerName: t('additionalExpense.price'),
       description: t('additionalExpense.price'),
-      valueFormatter: formatMoney,
+      valueFormatter: columnFormatMoney,
       flex: 1,
     },
     {
@@ -165,7 +165,7 @@ export default function AdditionalExpenses(): JSX.Element {
       field: 'createdAt',
       headerName: t('additionalExpense.createdDate'),
       description: t('additionalExpense.createdDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
     },
@@ -173,7 +173,7 @@ export default function AdditionalExpenses(): JSX.Element {
       field: 'updatedAt',
       headerName: t('additionalExpense.updatedDate'),
       description: t('additionalExpense.updatedDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
     },

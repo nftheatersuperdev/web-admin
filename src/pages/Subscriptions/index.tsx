@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Card, Button } from '@material-ui/core'
 import { GridColDef, GridPageChangeParams, GridRowData } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { formatDates, formatMoney, renderEmailLink } from 'utils'
+import { columnFormatDate, columnFormatMoney, renderEmailLink } from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import DataGridLocale from 'components/DataGridLocale'
@@ -110,7 +110,7 @@ export default function Subscription(): JSX.Element {
       field: 'price',
       headerName: t('subscription.price'),
       description: t('subscription.price'),
-      valueFormatter: formatMoney,
+      valueFormatter: columnFormatMoney,
       flex: 1,
     },
     {
@@ -130,21 +130,20 @@ export default function Subscription(): JSX.Element {
       field: 'startDate',
       headerName: t('subscription.startDate'),
       description: t('subscription.startDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
     },
     {
       field: 'endDate',
       headerName: t('subscription.endDate'),
       description: t('subscription.endDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
     },
     {
       field: 'startAddress',
       headerName: t('subscription.startAddress'),
       description: t('subscription.startAddress'),
-      valueFormatter: formatDates,
       flex: 1,
       hide: true,
     },
@@ -152,7 +151,6 @@ export default function Subscription(): JSX.Element {
       field: 'endAddress',
       headerName: t('subscription.endAddress'),
       description: t('subscription.endAddress'),
-      valueFormatter: formatDates,
       flex: 1,
       hide: true,
     },
@@ -160,7 +158,7 @@ export default function Subscription(): JSX.Element {
       field: 'createdAt',
       headerName: t('subscription.createdDate'),
       description: t('subscription.createdDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
     },
@@ -168,7 +166,7 @@ export default function Subscription(): JSX.Element {
       field: 'updatedAt',
       headerName: t('subscription.updatedDate'),
       description: t('subscription.updatedDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
     },

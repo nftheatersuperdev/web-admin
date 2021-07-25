@@ -21,9 +21,12 @@
     "subscriptionManagement": "Subscription Management",
     "subscriptions": "Subscriptions",
     "additionalExpense": "Additional Expense",
-    "insurance": "Insurance",
     "others": "Others",
-    "chargingLocations": "Charging Locations"
+    "chargingLocations": "Charging Locations",
+    "adminUsers": "Admin Users",
+    "account": "Account",
+    "profile": "Profile",
+    "settings": "Settings"
   },
   "button": {
     "signIn": "Sign in",
@@ -57,9 +60,13 @@
       "invalidEmail": "Email is invalid",
       "invalidPassword": "Password is invalid",
       "invalidUserToken": "Token is invalid",
+      "invalidCredential": "Invalid credential",
       "userNotFound": "User not found",
       "userDisabled": "User is disabled",
       "userTokenExpired": "Token has expired",
+      "userMismatch": "User mismatch",
+      "weakPassword": "Password must be at least 6 characters long",
+      "requiresRecentLogin": "Please re-login again",
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support"
@@ -140,15 +147,22 @@
     "email": "Email",
     "phone": "Phone Number",
     "role": "Role",
-    "disabled": "Disabled",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
+    "firstName": "First Name",
+    "lastName": "Last Name",
     "fullName": "Full Name",
     "status": "Status",
     "kycStatus": "KYC Status",
     "verifyDate": "Verify Date",
     "note": "Note",
-    "rejectedReason": "Reason of rejection"
+    "rejectedReason": "Reason of rejection",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "actions": "Actions",
+    "detailDialog": {
+      "title": "User Detail"
+    }
   },
   "car": {
     "id": "ID",
@@ -156,12 +170,13 @@
     "model": "Model",
     "color": "Color",
     "colorHex": "Color (Hex)",
-    "plateNumber": "Disabled",
+    "plateNumber": "Plate Number",
     "bodyType": "Body Type",
     "topSpeed": "Top Speed",
     "acceleration": "Acceleration",
     "range": "Range",
     "totalPower": "Total Power",
+    "batteryCapacity": "Battery Capacity",
     "connectorType": "Connector Type",
     "chargeTime": "Charge Time",
     "fastChargeTime": "Fast Charge Time",
@@ -192,6 +207,7 @@
     "duration": "Duration",
     "brand": "Car Brand",
     "model": "Car Model",
+    "modelId": "Car Model ID",
     "price": "Price",
     "fullPrice": "Full Price",
     "description": "Description",
@@ -199,7 +215,7 @@
     "pricePerOneMonth": "Price per 1 month",
     "pricePerThreeMonths": "Price per 3 months",
     "pricePerSixMonths": "Price per 6 months",
-    "pricePerNineMonths": "Price per 9 months",
+    "pricePerTwelveMonths": "Price per 12 months",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
     "createButton": "New Price",
@@ -276,5 +292,36 @@
   "chargingLocations": {
     "provider": "Provider",
     "address": "Address"
+  },
+  "role": {
+    "superAdmin": "Super Administrator",
+    "admin": "Administrator",
+    "customerSupport": "Customer Support",
+    "operation": "Operation"
+  },
+  "account": {
+    "updatePassword": "Update password",
+    "profileTitle": "Profile information",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phoneNumber": "Phone Number"
+  },
+  "settings": {
+    "title": "Password",
+    "subTitle": "Update password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updatePassword": {
+      "success": "Update password successfully",
+      "errors": {
+        "currentPasswordRequired": "Current password is required",
+        "newPasswordRequired": "New password is required",
+        "confirmNewPasswordRequired": "Current password is required",
+        "passwordMismatch": "Password mismatch",
+        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long"
+      }
+    }
   }
 }

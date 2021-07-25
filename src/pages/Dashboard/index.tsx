@@ -6,6 +6,8 @@ import {
   CardMembership as SubscriptionIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { formatMoney } from 'utils'
+import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import CardStatus from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
@@ -13,15 +15,6 @@ import { useCars, usePayments, useSubscriptions, useUsers } from 'services/evme'
 import CarsDelivery from './CarsDelivery'
 import CarsReturn from './CarsReturn'
 import UserRegistration from './UserRegistration'
-
-function _formatMoney(amount: number) {
-  const formatter = new Intl.NumberFormat('th-TH', {
-    style: 'currency',
-    currency: 'THB',
-    maximumFractionDigits: 0,
-  })
-  return formatter.format(amount)
-}
 
 const quickLinks = [
   {
@@ -73,7 +66,12 @@ export default function Dashboard(): JSX.Element {
   const { data: cars } = useCars()
   const { data: subscriptions } = useSubscriptions()
   const { data: payments } = usePayments()
-  const { data: users } = useUsers()
+  const { data: users } = useUsers(config.tableRowsDefaultPageSize, {
+    // filter only "user"
+    role: {
+      eq: 'user',
+    },
+  })
 
   const totalCars = cars?.pages[0]?.totalCount || 0
 
@@ -110,7 +108,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <CardStatus
             title={t('dashboard.totalPayments.title')}
-            value={_formatMoney(totalPaymentAmountToday)}
+            value={formatMoney(totalPaymentAmountToday)}
             subTitle={t('dashboard.totalPayments.subTitle')}
             icon={<MoneyIcon />}
             iconColor="green"

@@ -30,7 +30,7 @@ export interface CarInfo {
   colorHex: string
 }
 
-interface SubscriptionProps {
+interface CarUpdateDialogProps {
   open: boolean
   onClose: (newCarData: CarInput | null) => void
   carModelOptions: CarModelItem[]
@@ -42,7 +42,7 @@ export default function CarUpdateDialog({
   onClose,
   carModelOptions,
   carInfo,
-}: SubscriptionProps): JSX.Element {
+}: CarUpdateDialogProps): JSX.Element {
   const {
     vin: originalVin,
     plateNumber: originalPlate,

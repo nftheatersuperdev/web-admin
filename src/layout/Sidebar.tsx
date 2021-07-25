@@ -16,11 +16,13 @@ import {
   Equalizer as DashboardIcon,
   ShoppingCart as SubscriptionIcon,
   DirectionsCar as CarIcon,
-  Group as UserIcon,
+  People as UserIcon,
   Shop as PackageIcon,
   BatteryChargingFull as ChargingIcon,
-  BusinessCenter as InsuranceIcon,
   MonetizationOn as AdditionalExpenseIcon,
+  Person as ProfileIcon,
+  Settings as SettingsIcon,
+  SupervisedUserCircle as AdminUsersIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -54,13 +56,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.dashboard'),
         path: ROUTE_PATHS.DASHBOARD,
         icon: <DashboardIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       {
         title: t('sidebar.users'),
         path: ROUTE_PATHS.USER,
         icon: <UserIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
       },
 
       {
@@ -88,19 +90,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.subscriptions'),
         path: ROUTE_PATHS.SUBSCRIPTION,
         icon: <SubscriptionIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       {
         title: t('sidebar.additionalExpense'),
         path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
         icon: <AdditionalExpenseIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
-      },
-      {
-        title: t('sidebar.insurance'),
-        path: ROUTE_PATHS.INSURANCE,
-        icon: <InsuranceIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
       },
 
       { subHeader: t('sidebar.others'), allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
@@ -109,6 +105,25 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+      },
+      {
+        title: t('sidebar.adminUsers'),
+        path: ROUTE_PATHS.ADMIN_USERS,
+        icon: <AdminUsersIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN],
+      },
+      { subHeader: t('sidebar.account') },
+      {
+        title: t('sidebar.profile'),
+        path: ROUTE_PATHS.ACCOUNT,
+        icon: <ProfileIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+      },
+      {
+        title: t('sidebar.settings'),
+        path: ROUTE_PATHS.ACCOUNT_SETTINGS,
+        icon: <SettingsIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
     ],
     [t]

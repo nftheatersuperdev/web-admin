@@ -21,9 +21,9 @@ export function GraphQLRequestProvider({
   gqlClient,
   children,
 }: GraphQLRequestProviderProps): JSX.Element {
-  const { getToken } = useAuth()
+  const { getToken, refreshPersistentToken } = useAuth()
 
-  const gqlRequest = (
+  const gqlRequest = async (
     document: RequestDocument,
     variables?: Variables,
     requestHeaders?: Dom.RequestInit['headers']
@@ -35,7 +35,20 @@ export function GraphQLRequestProvider({
       Authorization: `Bearer ${token}`,
     }
 
-    return gqlClient.request(document, variables, headers)
+    try {
+      const response = await gqlClient.request(document, variables, headers)
+      return response
+    } catch (err) {
+      if (err.response.errors?.length) {
+        const { extensions } = err.response.errors[0]
+
+        if (extensions.exception.status === 401) {
+          await refreshPersistentToken()
+        }
+      }
+
+      throw err
+    }
   }
 
   return (

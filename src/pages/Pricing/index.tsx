@@ -1,17 +1,33 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button, Card } from '@material-ui/core'
-import { GridColDef, GridPageChangeParams, GridRowData } from '@material-ui/data-grid'
+import {
+  GridColDef,
+  GridFilterModelParams,
+  GridPageChangeParams,
+  GridRowData,
+  getGridNumericColumnOperators,
+  getGridStringOperators,
+  GridFilterItem,
+} from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { formatDates, formatMoney } from 'utils'
+import { columnFormatDate, columnFormatMoney } from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { useCarModels, useCreatePrices, usePricing } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import { PackagePriceInput, PackagePriceSortFields, SortDirection } from 'services/evme.types'
+import {
+  PackagePriceInput,
+  PackagePriceSortFields,
+  SortDirection,
+  PackagePriceFilter,
+} from 'services/evme.types'
 import PricingCreateDialog from './PricingCreateDialog'
 import PricingUpdateDialog from './PricingUpdateDialog'
+import { getFieldComparator } from './utils'
+
+const equalsOperators = getGridStringOperators().filter((operator) => operator.value === 'equals')
 
 /**
  * The Pricing page contains all functionality for administering pricing information in EVme.
@@ -27,7 +43,8 @@ export default function Pricing(): JSX.Element {
   const [updatedModelId, setUpdatedModelId] = useState('')
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const { data, fetchNextPage, fetchPreviousPage } = usePricing(pageSize, [
+  const [priceFilter, setPriceFilter] = useState<PackagePriceFilter>({})
+  const { data, refetch, fetchNextPage, fetchPreviousPage } = usePricing(pageSize, priceFilter, [
     {
       field: PackagePriceSortFields.CarModelId,
       direction: SortDirection.Desc,
@@ -43,6 +60,28 @@ export default function Pricing(): JSX.Element {
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
   }
+
+  const handleFilterChange = (params: GridFilterModelParams) => {
+    setPriceFilter(
+      params.filterModel.items.reduce(
+        (filter, { columnField, operatorValue, value }: GridFilterItem) => {
+          if (columnField && value) {
+            const comparator = getFieldComparator(operatorValue)
+            /* @ts-expect-error TODO */
+            filter[columnField] = {
+              [comparator]: columnField === 'price' ? +value : value,
+            }
+          }
+          return filter
+        },
+        {} as PackagePriceFilter
+      )
+    )
+  }
+
+  useEffect(() => {
+    refetch()
+  }, [priceFilter, refetch])
 
   const carModelOptions = useMemo(
     () =>
@@ -98,54 +137,85 @@ export default function Pricing(): JSX.Element {
         fullPrice: node?.fullPrice,
         brand: node?.carModel?.brand,
         model: node?.carModel?.model,
-        modelId: node?.carModel?.id,
+        carModelId: node?.carModel?.id,
       })) || [],
     [data, currentPageIndex]
   )
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: t('pricing.id'), description: t('pricing.id'), flex: 1 },
+    {
+      field: 'id',
+      headerName: t('pricing.id'),
+      description: t('pricing.id'),
+      flex: 1,
+      filterOperators: equalsOperators,
+    },
     {
       field: 'duration',
       headerName: t('pricing.duration'),
       description: t('pricing.duration'),
       flex: 1,
+      filterOperators: equalsOperators,
     },
     {
       field: 'description',
       headerName: t('pricing.description'),
       description: t('pricing.description'),
       flex: 1,
+      filterable: false,
     },
-    { field: 'brand', headerName: t('pricing.brand'), description: t('pricing.brand'), flex: 1 },
-    { field: 'model', headerName: t('pricing.model'), description: t('pricing.model'), flex: 1 },
+    {
+      field: 'brand',
+      headerName: t('pricing.brand'),
+      description: t('pricing.brand'),
+      flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'model',
+      headerName: t('pricing.model'),
+      description: t('pricing.model'),
+      flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'carModelId',
+      headerName: t('pricing.modelId'),
+      description: t('pricing.modelId'),
+      flex: 1,
+      filterOperators: equalsOperators,
+    },
     {
       field: 'price',
       headerName: t('pricing.price'),
       description: t('pricing.price'),
-      valueFormatter: formatMoney,
+      valueFormatter: columnFormatMoney,
       flex: 1,
+      filterOperators: getGridNumericColumnOperators(),
     },
     {
       field: 'fullPrice',
       headerName: t('pricing.fullPrice'),
       description: t('pricing.fullPrice'),
-      valueFormatter: formatMoney,
+      valueFormatter: columnFormatMoney,
       flex: 1,
+      filterable: false,
     },
     {
       field: 'createdAt',
       headerName: t('pricing.createdDate'),
       description: t('pricing.createdDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
+      filterable: false,
     },
     {
       field: 'updatedAt',
       headerName: t('pricing.updatedDate'),
       description: t('pricing.updatedDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
+      filterable: false,
     },
   ]
 
@@ -174,6 +244,8 @@ export default function Pricing(): JSX.Element {
           onRowClick={handleRowClick}
           checkboxSelection
           disableSelectionOnClick
+          filterMode="server"
+          onFilterModelChange={handleFilterChange}
         />
       </Card>
 

@@ -14,7 +14,7 @@ import {
 import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
 import { Refresh as RefreshIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { formatDates, DEFAULT_DATE_FORMAT } from 'utils'
+import { columnFormatDate, DEFAULT_DATE_FORMAT } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
 import { useUsers } from 'services/evme'
@@ -40,7 +40,12 @@ const kycStatuses = ['pending', 'verified', 'rejected']
 const transformToUserFilter = (inputFilter: InputFilter): UserFilter => {
   const { email, phoneNumber, kycStatus, submitDate } = inputFilter
 
-  const userFilter: UserFilter = {}
+  const userFilter: UserFilter = {
+    // filter only "user"
+    role: {
+      eq: 'user',
+    },
+  }
 
   if (email) {
     userFilter.email = { iLike: `%${email}%` }
@@ -114,7 +119,7 @@ export default function User(): JSX.Element {
       field: 'createdAt',
       headerName: t('user.createdDate'),
       description: t('user.createdDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
     },
     { field: 'fullName', headerName: t('user.fullName'), description: t('user.fullName'), flex: 1 },
@@ -130,7 +135,7 @@ export default function User(): JSX.Element {
       field: 'verifyDate',
       headerName: t('user.verifyDate'),
       description: t('user.verifyDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
     },
@@ -152,7 +157,7 @@ export default function User(): JSX.Element {
       field: 'updatedAt',
       headerName: t('user.updatedDate'),
       description: t('user.updatedDate'),
-      valueFormatter: formatDates,
+      valueFormatter: columnFormatDate,
       flex: 1,
     },
   ]

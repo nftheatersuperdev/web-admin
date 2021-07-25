@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { CarModelItem } from 'types'
 import { CarInput } from 'services/evme.types'
 
-interface SubscriptionProps {
+interface CarCreateDialogProps {
   open: boolean
   onClose: (newCarData: CarInput | null) => void
   carModelOptions: CarModelItem[]
@@ -32,7 +32,7 @@ export default function CarCreateDialog({
   open,
   onClose,
   carModelOptions,
-}: SubscriptionProps): JSX.Element {
+}: CarCreateDialogProps): JSX.Element {
   const { t } = useTranslation()
 
   const formik = useFormik({

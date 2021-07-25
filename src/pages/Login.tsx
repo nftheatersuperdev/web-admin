@@ -46,7 +46,7 @@ export default function Login(): JSX.Element {
         loading: t('toast.loading'),
         success: () => {
           actions.setSubmitting(false)
-          history.replace(ROUTE_PATHS.ROOT)
+          history.replace(ROUTE_PATHS.DASHBOARD)
           return t('authentication.success')
         },
         error: (err) => {

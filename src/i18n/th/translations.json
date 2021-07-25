@@ -21,9 +21,12 @@
     "subscriptionManagement": "การจัดการการจอง",
     "subscriptions": "ข้อมูลการจอง",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
-    "insurance": "ประกัน",
     "others": "อื่นๆ",
-    "chargingLocations": "สถานีชาร์จ"
+    "chargingLocations": "สถานีชาร์จ",
+    "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
+    "account": "บัญชีผู้ใช้",
+    "profile": "โปรไฟล์",
+    "settings": "ตั้งค่า"
   },
   "button": {
     "signIn": "เข้าสู่ระบบ",
@@ -57,9 +60,13 @@
       "invalidEmail": "อีเมลไม่ถูกต้อง",
       "invalidPassword": "รหัสผ่านไม่ถูกต้อง",
       "invalidUserToken": "รหัส Token ไม่ถูกต้อง",
-      "userNotFound": "ไม่มีผู้ใช้นี้ในระบบ",
-      "userDisabled": "ผู้ใช้นี้ไม่สามารถใช้งานได้",
+      "invalidCredential": "การยืนยันตัวตนไม่ถูกต้อง",
+      "userNotFound": "ไม่มีชื่อผู้ใช้นี้ในระบบ",
+      "userDisabled": "ชื่อผู้ใช้นี้ไม่สามารถใช้งานได้",
       "userTokenExpired": "รหัส Token หมดอายุ",
+      "userMismatch": "ชื่อผู้ใช้ไม่ตรงกัน",
+      "weakPassword": "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+      "requiresRecentLogin": "กรุณาลงชื่อเข้าใช้ระบบอีกครั้ง",
       "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
       "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
       "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ"
@@ -139,16 +146,23 @@
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
-    "role": "สถานะ",
-    "disabled": "ปิดการใช้งาน",
+    "role": "ระดับผู้ใช้",
     "createdDate": "วันที่สมัคร",
     "updatedDate": "วันที่แก้ไข",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
     "status": "สถานะ",
     "kycStatus": "สถานะ KYC",
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",
-    "rejectedReason": "เหตุผลของการปฏิเสธ"
+    "rejectedReason": "เหตุผลของการปฏิเสธ",
+    "enabled": "เปิด",
+    "disabled": "ปิด",
+    "actions": "ดำเนินการ",
+    "detailDialog": {
+      "title": "ข้อมูลผู้ใช้"
+    }
   },
   "car": {
     "id": "เลขไอดี",
@@ -162,6 +176,7 @@
     "acceleration": "อัตราเร่ง",
     "range": "ระยะทาง",
     "totalPower": "แรงม้า",
+    "batteryCapacity": "ความจุแบตเตอร์รี่",
     "connectorType": "ประเภทหัวชาร์จ",
     "chargeTime": "ระยะเวลาชาร์จปกติ",
     "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
@@ -192,6 +207,7 @@
     "duration": "แพ็คเกจ",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
+    "modelId": "เลขไอดีรุ่นรถยนต์",
     "price": "ราคา",
     "fullPrice": "ราคาปกติ",
     "description": "คำอธิบาย",
@@ -199,7 +215,7 @@
     "pricePerOneMonth": "ราคาต่อ 1 เดือน",
     "pricePerThreeMonths": "ราคาต่อ 3 เดือน",
     "pricePerSixMonths": "ราคาต่อ 6 เดือน",
-    "pricePerNineMonths": "ราคาต่อ 9 เดือน",
+    "pricePerTwelveMonths": "ราคาต่อ 12 เดือน",
     "createdDate": "วันที่สร้าง",
     "updatedDate": "วันที่แก้ไข",
     "createButton": "สร้างราคาใหม่",
@@ -276,5 +292,36 @@
   "chargingLocations": {
     "provider": "ผู้ให้บริการ",
     "address": "ที่อยู่"
+  },
+  "role": {
+    "superAdmin": "ผู้ดูแลระบบระดับสูง",
+    "admin": "ผู้ดูแลระบบ",
+    "customerSupport": "ฝ่ายบริการลูกค้า",
+    "operation": "ฝ่ายปฏิบัติการ"
+  },
+  "account": {
+    "updatePassword": "แก้ไขรหัสผ่าน",
+    "profileTitle": "ข้อมูลโปรไฟล์",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "email": "อีเมล",
+    "phoneNumber": "เบอร์โทรศัพท์"
+  },
+  "settings": {
+    "title": "รหัสผ่าน",
+    "subTitle": "แก้ไขรหัสผ่าน",
+    "currentPassword": "รหัสผ่านเดิม",
+    "newPassword": "รหัสผ่านใหม่",
+    "confirmNewPassword": "ยืนยันรหัสผ่านใหม่",
+    "updatePassword": {
+      "success": "แก้ไขรหัสผ่านสำเร็จ",
+      "errors": {
+        "currentPasswordRequired": "กรุณาระบุรหัสผ่านเดิม",
+        "newPasswordRequired": "กรุณาระบุรหัสผ่านใหม่",
+        "confirmNewPasswordRequired": "กรุณาระบุยืนยันรหัสผ่านใหม่",
+        "passwordMismatch": "รหัสผ่านไม่ตรงกัน",
+        "passwordMinimumLengthLimit": "รหัสผ่านต้องมีความยาวอย่างน้อย {{length}} ตัวอักษร"
+      }
+    }
   }
 }

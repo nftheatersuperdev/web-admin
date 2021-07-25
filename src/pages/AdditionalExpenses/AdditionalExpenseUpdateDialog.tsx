@@ -203,7 +203,9 @@ export default function AdditionalExpenseUpdateDialog(
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Grid>
 
@@ -217,7 +219,9 @@ export default function AdditionalExpenseUpdateDialog(
                 InputLabelProps={{
                   shrink: true,
                 }}
-                disabled
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Grid>
 

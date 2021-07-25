@@ -7,14 +7,15 @@ export const ROUTE_PATHS = Object.freeze({
   ROOT: '/',
   DASHBOARD: '/dashboard',
   LOGIN: '/login',
-  SETTINGS: '/settings',
+  ACCOUNT: '/account',
+  ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   SUBSCRIPTION: '/subscription',
   PRICING: '/pricing',
   CAR: '/car',
   CHARGING_LOCATIONS: '/charging-locations',
-  INSURANCE: '/insurance',
   ADDITIONAL_EXPENSE: '/additional-expense',
+  ADMIN_USERS: '/admin-users',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -28,22 +29,27 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DASHBOARD,
     component: lazy(() => import('./pages/Dashboard' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
-    path: ROUTE_PATHS.SETTINGS,
-    component: lazy(() => import('./pages/Settings' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    path: ROUTE_PATHS.ACCOUNT_SETTINGS,
+    component: lazy(() => import('./pages/Account/Settings' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.ACCOUNT,
+    component: lazy(() => import('./pages/Account' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.USER,
     component: lazy(() => import('./pages/User' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
   },
   {
     path: ROUTE_PATHS.SUBSCRIPTION,
     component: lazy(() => import('./pages/Subscriptions' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.PRICING,
@@ -58,11 +64,6 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CHARGING_LOCATIONS,
     component: lazy(() => import('./pages/ChargingLocations' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
-  },
-  {
-    path: ROUTE_PATHS.INSURANCE,
-    component: lazy(() => import('./pages/Insurance' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
   },
   {
