@@ -233,6 +233,7 @@
   "subscription": {
     "brand": "Car Brand",
     "model": "Car Model",
+    "modelId": "Car Model ID",
     "seats": "Seats",
     "topSpeed": "Top Speed",
     "plateNumber": "Plate Number",
