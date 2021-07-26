@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.1](https://www.github.com/projecttron/tron-admin-web/compare/v1.2.0...v1.2.1) (2021-07-25)
+
+
+### Bug Fixes
+
+* typo car model id ([#110](https://www.github.com/projecttron/tron-admin-web/issues/110)) ([c747cbc](https://www.github.com/projecttron/tron-admin-web/commit/c747cbcde2663f6659a8465f0687d460c5d5d60f))
+
 ## [1.2.0](https://www.github.com/projecttron/tron-admin-web/compare/v1.1.0...v1.2.0) (2021-07-25)
 
 
