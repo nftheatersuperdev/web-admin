@@ -38,7 +38,7 @@ const quickLinks = [
   {
     logo: '/images/cartrack.png',
     title: 'Cartrack',
-    link: 'https://www.cartrack.us',
+    link: 'https://fleetweb-th.cartrack.com',
     description: 'Fleet Management',
   },
   {
@@ -50,8 +50,8 @@ const quickLinks = [
   {
     logo: '/images/firebase.png',
     title: 'Firebase',
-    link: 'https://console.firebase.google.com/u/0/project/evme-dev',
-    description: 'Used for analytics, authentication and more',
+    link: 'https://console.firebase.google.com/u/0/project/evme-ptt',
+    description: 'Used for authentication, analytics and more',
   },
   {
     logo: '/images/sumsub.png',

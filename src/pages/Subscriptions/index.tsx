@@ -74,8 +74,8 @@ export default function Subscription(): JSX.Element {
     },
     {
       field: 'modelId',
-      headerName: t('subscription.model'),
-      description: t('subscription.model'),
+      headerName: t('subscription.modelId'),
+      description: t('subscription.modelId'),
       flex: 1,
     },
     {

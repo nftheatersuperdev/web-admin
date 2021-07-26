@@ -233,6 +233,7 @@
   "subscription": {
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
+    "modelId": "เลขไอดีรุ่นรถยนต์",
     "seats": "จำนวนที่นั่ง",
     "topSpeed": "ความเร็วสูงสุด",
     "plateNumber": "เลขทะเบียน",
