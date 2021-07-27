@@ -22,8 +22,8 @@ import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import DateTimePicker from 'components/DateTimePicker'
 import { useSearchSubscriptions, useCreateAdditionalExpense } from 'services/evme'
 import {
-  ExpenseTypes,
-  ExpenseStatuses,
+  getExpenseTypeOptions,
+  getExpenseStatusOptions,
   transformToMutationInput,
   validationSchema,
   getSubFilterByKeyword,
@@ -118,6 +118,9 @@ export default function AdditionalExpenseCreateDialog(
     formik.setFieldValue('firstName', value?.firstName || '')
     formik.setFieldValue('lastName', value?.lastName || '')
   }
+
+  const expenseTypeOptions = getExpenseTypeOptions(t)
+  const expenseStatusOptions = getExpenseStatusOptions(t)
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -223,7 +226,9 @@ export default function AdditionalExpenseCreateDialog(
 
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)}>
-                <InputLabel id="expenseType">{t('additionalExpense.type')}</InputLabel>
+                <InputLabel shrink id="expenseType">
+                  {t('additionalExpense.type.title')}
+                </InputLabel>
                 <Select
                   labelId="expenseType"
                   id="type"
@@ -231,9 +236,9 @@ export default function AdditionalExpenseCreateDialog(
                   value={formik.values.type}
                   onChange={formik.handleChange}
                 >
-                  {ExpenseTypes.map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
+                  {expenseTypeOptions.map(({ label, value }) => (
+                    <MenuItem key={value} value={value}>
+                      {label}
                     </MenuItem>
                   ))}
                 </Select>
@@ -262,7 +267,9 @@ export default function AdditionalExpenseCreateDialog(
 
             <Grid item xs={6}>
               <FormControl fullWidth error={formik.touched.status && Boolean(formik.errors.status)}>
-                <InputLabel id="status">{t('additionalExpense.status')}</InputLabel>
+                <InputLabel shrink id="status">
+                  {t('additionalExpense.status.title')}
+                </InputLabel>
                 <Select
                   labelId="status"
                   id="status"
@@ -270,9 +277,9 @@ export default function AdditionalExpenseCreateDialog(
                   value={formik.values.status}
                   onChange={formik.handleChange}
                 >
-                  {ExpenseStatuses.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
+                  {expenseStatusOptions.map(({ label, value }) => (
+                    <MenuItem key={value} value={value}>
+                      {label}
                     </MenuItem>
                   ))}
                 </Select>

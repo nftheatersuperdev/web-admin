@@ -541,6 +541,7 @@ export type CarConnectorType = {
   __typename?: 'CarConnectorType'
   id: Scalars['String']
   description: Scalars['String']
+  type: Scalars['String']
   carModels?: Maybe<Array<CarModel>>
   locations?: Maybe<Array<CarModel>>
 }
@@ -559,6 +560,7 @@ export type CarConnectorTypeAggregateGroupBy = {
   __typename?: 'CarConnectorTypeAggregateGroupBy'
   id?: Maybe<Scalars['ID']>
   description?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
 }
 
 export type CarConnectorTypeConnection = {
@@ -573,6 +575,7 @@ export type CarConnectorTypeCountAggregate = {
   __typename?: 'CarConnectorTypeCountAggregate'
   id?: Maybe<Scalars['Int']>
   description?: Maybe<Scalars['Int']>
+  type?: Maybe<Scalars['Int']>
 }
 
 export type CarConnectorTypeEdge = {
@@ -588,18 +591,21 @@ export type CarConnectorTypeFilter = {
   or?: Maybe<Array<CarConnectorTypeFilter>>
   id?: Maybe<IdFilterComparison>
   description?: Maybe<StringFieldComparison>
+  type?: Maybe<StringFieldComparison>
 }
 
 export type CarConnectorTypeMaxAggregate = {
   __typename?: 'CarConnectorTypeMaxAggregate'
   id?: Maybe<Scalars['ID']>
   description?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
 }
 
 export type CarConnectorTypeMinAggregate = {
   __typename?: 'CarConnectorTypeMinAggregate'
   id?: Maybe<Scalars['ID']>
   description?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
 }
 
 export type CarConnectorTypeSort = {
@@ -611,6 +617,7 @@ export type CarConnectorTypeSort = {
 export enum CarConnectorTypeSortFields {
   Id = 'id',
   Description = 'description',
+  Type = 'type',
 }
 
 export type CarCountAggregate = {
@@ -1426,7 +1433,6 @@ export type Mutation = {
   extendSubscription: Sub
   updateMySubscription: Sub
   cancelSubscription: Sub
-  setDeliveredStatus: Sub
   createWaitingList: WaitingList
   setDefaultAddressOnUser: User
   addSubscriptionsToUser: User
@@ -1538,10 +1544,6 @@ export type MutationUpdateMySubscriptionArgs = {
 
 export type MutationCancelSubscriptionArgs = {
   input: CancelSubscriptionInput
-}
-
-export type MutationSetDeliveredStatusArgs = {
-  input: SetSubscriptionStatusInput
 }
 
 export type MutationCreateWaitingListArgs = {
@@ -2725,11 +2727,6 @@ export type SetSubscriptionOnSubscriptionEventInput = {
   id: Scalars['ID']
   /** The id of relation. */
   relationId: Scalars['ID']
-}
-
-export type SetSubscriptionStatusInput = {
-  subscriptionId: Scalars['String']
-  status: Scalars['String']
 }
 
 export type SetSubscriptionsOnUserInput = {

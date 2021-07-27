@@ -1,19 +1,26 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useMemo, useState, useEffect } from 'react'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
   GridColDef,
   GridRowData,
   GridCellParams,
   GridPageChangeParams,
+  GridFilterModel,
+  GridFilterItem,
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { columnFormatDate } from 'utils'
-// import config from 'config'
+import {
+  columnFormatDate,
+  getIdFilterOperators,
+  getStringFilterOperators,
+  stringToFilterContains,
+} from 'utils'
+import config from 'config'
 import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
-import { CarInput, CarSortFields, SortDirection } from 'services/evme.types'
+import { CarInput, CarFilter, CarSortFields, SortDirection } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -22,7 +29,7 @@ import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
@@ -33,12 +40,14 @@ export default function Car(): JSX.Element {
   const createCarMutation = useCreateCar()
   const updateCarMutation = useUpdateCar()
   const deleteCarMutation = useDeleteCar()
+  const [carFilter, setCarFilter] = useState<CarFilter>({})
 
   const {
     data: cars,
+    refetch,
     fetchNextPage,
     fetchPreviousPage,
-  } = useCars(pageSize, [
+  } = useCars(pageSize, carFilter, [
     {
       field: CarSortFields.CarModelId,
       direction: SortDirection.Desc,
@@ -46,9 +55,39 @@ export default function Car(): JSX.Element {
   ])
   const { data: carModels } = useCarModels()
 
+  const idFilterOperators = getIdFilterOperators(t)
+  const stringFilterOperators = getStringFilterOperators(t)
+
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
   }
+
+  const handleFilterChange = (params: GridFilterModel) => {
+    setCarFilter(
+      params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+        let filterValue = value
+
+        if (operatorValue === 'iLike' && value) {
+          filterValue = stringToFilterContains(value)
+        }
+
+        if (filterValue) {
+          /* @ts-expect-error TODO */
+          filter[columnField] = {
+            [operatorValue as string]: filterValue,
+          }
+        }
+
+        return filter
+      }, {} as CarFilter)
+    )
+    // reset page
+    setCurrentPageIndex(0)
+  }
+
+  useEffect(() => {
+    refetch()
+  }, [carFilter, refetch])
 
   const onCloseCreateDialog = (data: CarInput | null) => {
     setIsCreateDialogOpen(false)
@@ -127,8 +166,17 @@ export default function Car(): JSX.Element {
   const rows = useMemo(
     () =>
       cars?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-        const { id, vin, plateNumber, color, colorHex, carModelId, carModel, updatedAt } =
-          node || {}
+        const {
+          id,
+          vin,
+          plateNumber,
+          color,
+          colorHex,
+          carModelId,
+          carModel,
+          createdAt,
+          updatedAt,
+        } = node || {}
 
         const {
           brand,
@@ -160,6 +208,7 @@ export default function Car(): JSX.Element {
           plateNumber,
           color,
           colorHex,
+          createdAt,
           updatedAt,
           batteryCapacity,
         }
@@ -168,33 +217,77 @@ export default function Car(): JSX.Element {
   )
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: t('car.id'), description: t('car.id'), flex: 1 },
-    { field: 'brand', headerName: t('car.brand'), description: t('car.brand'), flex: 1 },
-    { field: 'model', headerName: t('car.model'), description: t('car.model'), flex: 1 },
-    { field: 'color', headerName: t('car.color'), description: t('car.color'), flex: 1 },
+    {
+      field: 'id',
+      headerName: t('car.id'),
+      description: t('car.id'),
+      flex: 1,
+      filterOperators: idFilterOperators,
+    },
+    {
+      field: 'brand',
+      headerName: t('car.brand'),
+      description: t('car.brand'),
+      flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'model',
+      headerName: t('car.model'),
+      description: t('car.model'),
+      flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'color',
+      headerName: t('car.color'),
+      description: t('car.color'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
+    {
+      field: 'vin',
+      headerName: t('car.vin'),
+      description: t('car.vin'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
     {
       field: 'plateNumber',
       headerName: t('car.plateNumber'),
       description: t('car.plateNumber'),
       flex: 1,
+      filterOperators: stringFilterOperators,
     },
     {
       field: 'bodyType',
       headerName: t('car.bodyType'),
       description: t('car.bodyType'),
       flex: 1,
+      filterable: false,
     },
     {
       field: 'totalPower',
       headerName: t('car.totalPower'),
       description: t('car.totalPower'),
       flex: 1,
+      filterable: false,
     },
     {
       field: 'batteryCapacity',
       headerName: t('car.batteryCapacity'),
       description: t('car.batteryCapacity'),
       flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'createdAt',
+      headerName: t('car.createdDate'),
+      description: t('car.createdDate'),
+      valueFormatter: columnFormatDate,
+      flex: 1,
+      hide: true,
+      filterable: false,
     },
     {
       field: 'updatedAt',
@@ -203,6 +296,7 @@ export default function Car(): JSX.Element {
       valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'topSpeed',
@@ -210,6 +304,7 @@ export default function Car(): JSX.Element {
       description: t('car.topSpeed'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'acceleration',
@@ -217,6 +312,7 @@ export default function Car(): JSX.Element {
       description: t('car.acceleration'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'range',
@@ -224,6 +320,7 @@ export default function Car(): JSX.Element {
       description: t('car.range'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'connectorType',
@@ -231,6 +328,7 @@ export default function Car(): JSX.Element {
       description: t('car.connectorType'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'chargeTime',
@@ -238,6 +336,7 @@ export default function Car(): JSX.Element {
       description: t('car.chargeTime'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'fastChargeTime',
@@ -245,14 +344,14 @@ export default function Car(): JSX.Element {
       description: t('car.fastChargeTime'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
-    { field: 'vin', headerName: t('car.vin'), description: t('car.vin'), flex: 1 },
     {
       field: 'actions',
       headerName: t('car.actions'),
       description: t('car.actions'),
       sortable: false,
-      disableClickEventBubbling: true,
+      filterable: false,
       width: 140,
       renderCell: (params: GridCellParams) => (
         <Fragment>
@@ -297,6 +396,8 @@ export default function Car(): JSX.Element {
           checkboxSelection
           disableSelectionOnClick
           onRowClick={openEditCarDialog}
+          filterMode="server"
+          onFilterModelChange={handleFilterChange}
         />
       </Card>
 

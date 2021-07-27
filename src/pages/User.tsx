@@ -1,74 +1,34 @@
 import { useState, useEffect } from 'react'
-import dayjs from 'dayjs'
+import { Card, Button } from '@material-ui/core'
 import {
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-  Button,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-} from '@material-ui/core'
-import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
-import { Refresh as RefreshIcon } from '@material-ui/icons'
+  GridColDef,
+  GridFilterItem,
+  GridFilterModel,
+  GridPageChangeParams,
+  GridValueFormatterParams,
+} from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { columnFormatDate, DEFAULT_DATE_FORMAT } from 'utils'
-import styled from 'styled-components'
+import {
+  columnFormatDate,
+  getIdFilterOperators,
+  getStringFilterOperators,
+  getDateFilterOperators,
+  getSelectFilterOperators,
+  dateToFilterOnDay,
+  dateToFilterNotOnDay,
+  stringToFilterContains,
+} from 'utils'
 import config from 'config'
 import { useUsers } from 'services/evme'
 import { UserFilter, SortDirection, UserSortFields } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import DatePicker from 'components/DatePicker'
 import PageToolbar from 'layout/PageToolbar'
 
-const CardInputContainer = styled(Card)`
-  margin-bottom: 10px;
-`
-
-interface InputFilter {
-  email?: string
-  phoneNumber?: string
-  kycStatus: string
-  submitDate?: Date | null
-}
-
-const kycStatuses = ['pending', 'verified', 'rejected']
-
-const transformToUserFilter = (inputFilter: InputFilter): UserFilter => {
-  const { email, phoneNumber, kycStatus, submitDate } = inputFilter
-
-  const userFilter: UserFilter = {
-    // filter only "user"
-    role: {
-      eq: 'user',
-    },
-  }
-
-  if (email) {
-    userFilter.email = { iLike: `%${email}%` }
-  }
-
-  if (phoneNumber) {
-    userFilter.phoneNumber = { iLike: `%${phoneNumber}%` }
-  }
-
-  if (kycStatus) {
-    userFilter.kycStatus = { eq: kycStatus }
-  }
-
-  if (submitDate) {
-    userFilter.createdAt = {
-      between: {
-        upper: dayjs(submitDate).startOf('day').toDate(),
-        lower: dayjs(submitDate).endOf('day').toDate(),
-      },
-    }
-  }
-
-  return userFilter
+const defaultFilter = {
+  role: {
+    eq: 'user',
+  },
 }
 
 export default function User(): JSX.Element {
@@ -76,59 +36,140 @@ export default function User(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const [filter, setFilter] = useState<InputFilter>({
-    email: '',
-    phoneNumber: '',
-    kycStatus: '',
-    submitDate: null,
+  const [userFilter, setUserFilter] = useState<UserFilter>({
+    ...defaultFilter,
   })
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useUsers(
-    pageSize,
-    transformToUserFilter(filter),
-    [{ direction: SortDirection.Asc, field: UserSortFields.CreatedAt }]
-  )
+  const { data, refetch, fetchNextPage, fetchPreviousPage } = useUsers(pageSize, userFilter, [
+    { direction: SortDirection.Asc, field: UserSortFields.CreatedAt },
+  ])
 
-  useEffect(() => {
-    refetch()
-  }, [filter, refetch])
+  const idFilterOperators = getIdFilterOperators(t)
+  const stringFilterOperators = getStringFilterOperators(t)
+  const dateFilterOperators = getDateFilterOperators(t)
+  const selectFilterOperators = getSelectFilterOperators(t)
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
   }
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter((prevFilter) => ({
-      ...prevFilter,
-      [event.target.name]: event.target.value || '',
-    }))
+  const handleFilterChange = (params: GridFilterModel) => {
+    setUserFilter({
+      ...defaultFilter,
+      ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+        let filterValue = value
+
+        if ((columnField === 'createdAt' || columnField === 'updatedAt') && value) {
+          filterValue =
+            operatorValue === 'between' ? dateToFilterOnDay(value) : dateToFilterNotOnDay(value)
+        }
+
+        if (operatorValue === 'iLike' && value) {
+          filterValue = stringToFilterContains(value)
+        }
+
+        if (filterValue) {
+          /* @ts-expect-error TODO */
+          filter[columnField] = {
+            [operatorValue as string]: filterValue,
+          }
+        }
+
+        return filter
+      }, {} as UserFilter),
+    })
+    // reset page
+    setCurrentPageIndex(0)
   }
 
-  const handleClearSearchClick = () => {
-    setFilter({
-      email: '',
-      phoneNumber: '',
-      kycStatus: '',
-      submitDate: null,
-    })
-  }
+  useEffect(() => {
+    refetch()
+  }, [userFilter, refetch])
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: t('user.id'), description: t('user.id'), flex: 1, hide: true },
+    {
+      field: 'id',
+      headerName: t('user.id'),
+      description: t('user.id'),
+      flex: 1,
+      hide: true,
+      filterOperators: idFilterOperators,
+    },
     {
       field: 'createdAt',
       headerName: t('user.createdDate'),
       description: t('user.createdDate'),
       valueFormatter: columnFormatDate,
+      filterOperators: dateFilterOperators,
       flex: 1,
     },
-    { field: 'fullName', headerName: t('user.fullName'), description: t('user.fullName'), flex: 1 },
-    { field: 'email', headerName: t('user.email'), description: t('user.email'), flex: 1 },
-    { field: 'phoneNumber', headerName: t('user.phone'), description: t('user.phone'), flex: 1 },
+    {
+      field: 'firstName',
+      headerName: t('user.firstName'),
+      description: t('user.firstName'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
+    {
+      field: 'lastName',
+      headerName: t('user.lastName'),
+      description: t('user.lastName'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
+    {
+      field: 'email',
+      headerName: t('user.email'),
+      description: t('user.email'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
+    {
+      field: 'phoneNumber',
+      headerName: t('user.phone'),
+      description: t('user.phone'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
     {
       field: 'kycStatus',
-      headerName: t('user.kycStatus'),
-      description: t('user.kycStatus'),
+      headerName: t('user.kyc.status'),
+      description: t('user.kyc.status'),
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams): string => {
+        switch (params.value) {
+          case 'pending':
+            return t('user.kyc.pending')
+          case 'verified':
+            return t('user.kyc.verified')
+          case 'rejected':
+            return t('user.kyc.rejected')
+          default:
+            return '-'
+        }
+      },
+      filterOperators: selectFilterOperators,
+      valueOptions: [
+        {
+          label: t('user.kyc.pending'),
+          value: 'pending',
+        },
+        {
+          label: t('user.kyc.verified'),
+          value: 'verified',
+        },
+        {
+          label: t('user.kyc.rejected'),
+          value: 'rejected',
+        },
+      ],
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('user.updatedDate'),
+      description: t('user.updatedDate'),
+      valueFormatter: columnFormatDate,
+      filterOperators: dateFilterOperators,
       flex: 1,
     },
     {
@@ -138,6 +179,7 @@ export default function User(): JSX.Element {
       valueFormatter: columnFormatDate,
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'note',
@@ -145,6 +187,7 @@ export default function User(): JSX.Element {
       description: t('user.note'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'rejectedReason',
@@ -152,30 +195,25 @@ export default function User(): JSX.Element {
       description: t('user.rejectedReason'),
       flex: 1,
       hide: true,
-    },
-    {
-      field: 'updatedAt',
-      headerName: t('user.updatedDate'),
-      description: t('user.updatedDate'),
-      valueFormatter: columnFormatDate,
-      flex: 1,
+      filterable: false,
     },
   ]
 
   const rows =
     data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
       return {
-        id: node?.id,
-        fullName: `${node?.firstName || ''} ${node?.lastName || ''}`,
-        email: node?.email,
-        phoneNumber: node?.phoneNumber,
-        kycStatus: node?.kycStatus,
-        // verify date not support from backend
+        id: node.id,
+        firstName: node.firstName,
+        lastName: node.lastName,
+        email: node.email,
+        phoneNumber: node.phoneNumber,
+        kycStatus: node.kycStatus,
+        createdAt: node.createdAt,
+        updatedAt: node.updatedAt,
+        // these fields not support from backend
         verifyDate: null,
         note: '',
         rejectedReason: '',
-        createdAt: node?.createdAt,
-        updatedAt: node?.updatedAt,
       }
     }) || []
 
@@ -188,96 +226,6 @@ export default function User(): JSX.Element {
           </Button>
         </a>
       </PageToolbar>
-
-      <CardInputContainer>
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid item xs={2}>
-              <TextField
-                fullWidth
-                label={t('user.email')}
-                id="email"
-                name="email"
-                value={filter.email}
-                onChange={handleInputChange}
-              />
-            </Grid>
-
-            <Grid item xs={2}>
-              <TextField
-                fullWidth
-                label={t('user.phone')}
-                id="phoneNumber"
-                name="phoneNumber"
-                value={filter.phoneNumber}
-                onChange={handleInputChange}
-              />
-            </Grid>
-
-            <Grid item xs={2}>
-              <DatePicker
-                label={t('user.createdDate')}
-                id="submitDate"
-                name="submitDate"
-                format={DEFAULT_DATE_FORMAT}
-                defaultValue={undefined}
-                value={filter.submitDate}
-                onChange={(date) => {
-                  if (date) {
-                    setFilter((prevFilter) => ({
-                      ...prevFilter,
-                      submitDate: date.toDate(),
-                    }))
-                  }
-                }}
-                KeyboardButtonProps={{
-                  'aria-label': 'change date',
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={2}>
-              <FormControl fullWidth>
-                <InputLabel id="kycStatus">{t('user.kycStatus')}</InputLabel>
-                <Select
-                  labelId="kycStatus"
-                  id="kycStatus"
-                  name="kycStatus"
-                  displayEmpty
-                  value={filter.kycStatus}
-                  onChange={(
-                    event: React.ChangeEvent<{ name?: string; value: unknown }>,
-                    _child: React.ReactNode
-                  ) => {
-                    setFilter((prevFilter) => ({
-                      ...prevFilter,
-                      kycStatus: event.target.value ? (event.target.value as string) : '',
-                    }))
-                  }}
-                >
-                  <MenuItem value="">&nbsp;</MenuItem>
-                  {kycStatuses.map((value) => (
-                    <MenuItem key={value} value={value}>
-                      {value}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={3}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleClearSearchClick}
-                startIcon={<RefreshIcon />}
-              >
-                {t('button.clear')}
-              </Button>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </CardInputContainer>
 
       <Card>
         <DataGridLocale
@@ -295,6 +243,8 @@ export default function User(): JSX.Element {
           columns={columns}
           checkboxSelection
           disableSelectionOnClick
+          filterMode="server"
+          onFilterModelChange={handleFilterChange}
         />
       </Card>
     </Page>

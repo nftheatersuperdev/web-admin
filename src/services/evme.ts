@@ -38,6 +38,8 @@ import {
   UserAggregateFilter,
   UserAggregateResponse,
   PackagePriceFilter,
+  AdditionalExpenseFilter,
+  AdditionalExpenseSort,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -259,7 +261,8 @@ export function useCarModelById({
 
 export function useCars(
   pageSize = 10,
-  sorting = [] as CarSort[]
+  filter?: CarFilter,
+  sorting?: CarSort[]
 ): UseInfiniteQueryResult<WithPaginationType<Car>> {
   const { gqlRequest } = useGraphQLRequest()
 
@@ -268,8 +271,13 @@ export function useCars(
     async ({ pageParam = '' }) => {
       const response = await gqlRequest(
         gql`
-          query GetCars($pageSize: Int!, $after: ConnectionCursor, $sorting: [CarSort!]) {
-            cars(paging: { first: $pageSize, after: $after }, sorting: $sorting) {
+          query GetCars(
+            $pageSize: Int!
+            $after: ConnectionCursor
+            $filter: CarFilter
+            $sorting: [CarSort!]
+          ) {
+            cars(paging: { first: $pageSize, after: $after }, filter: $filter, sorting: $sorting) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -312,6 +320,7 @@ export function useCars(
         {
           pageSize,
           after: pageParam,
+          filter,
           sorting,
         }
       )
@@ -815,7 +824,9 @@ export function useUserAggregate(
 }
 
 export function useAdditionalExpenses(
-  pageSize = 10
+  pageSize = 10,
+  filter?: AdditionalExpenseFilter,
+  sorting?: AdditionalExpenseSort[]
 ): UseInfiniteQueryResult<WithPaginationType<AdditionalExpense>> {
   const { gqlRequest } = useGraphQLRequest()
 
@@ -824,8 +835,17 @@ export function useAdditionalExpenses(
     async ({ pageParam = '' }) => {
       const response = await gqlRequest(
         gql`
-          query GetAdditionalExpenses($pageSize: Int!, $after: ConnectionCursor) {
-            additionalExpenses(paging: { first: $pageSize, after: $after }) {
+          query GetAdditionalExpenses(
+            $pageSize: Int!
+            $after: ConnectionCursor
+            $filter: AdditionalExpenseFilter
+            $sorting: [AdditionalExpenseSort!]
+          ) {
+            additionalExpenses(
+              paging: { first: $pageSize, after: $after }
+              filter: $filter
+              sorting: $sorting
+            ) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -859,6 +879,8 @@ export function useAdditionalExpenses(
         {
           pageSize,
           after: pageParam,
+          filter,
+          sorting,
         }
       )
 

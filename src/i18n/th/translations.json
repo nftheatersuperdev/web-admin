@@ -153,7 +153,12 @@
     "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
     "status": "สถานะ",
-    "kycStatus": "สถานะ KYC",
+    "kyc": {
+      "status": "สถานะ KYC",
+      "pending": "รอการตรวจสอบ",
+      "verified": "ผ่านการตรวจสอบ",
+      "rejected": "ถูกปฏิเสธ"
+    },
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ",
@@ -216,6 +221,11 @@
     "pricePerThreeMonths": "ราคาต่อ 3 เดือน",
     "pricePerSixMonths": "ราคาต่อ 6 เดือน",
     "pricePerTwelveMonths": "ราคาต่อ 12 เดือน",
+    "1w": "1 สัปดาห์",
+    "1m": "1 เดือน",
+    "3m": "3 เดือน",
+    "6m": "6 เดือน",
+    "12m": "12 เดือน",
     "createdDate": "วันที่สร้าง",
     "updatedDate": "วันที่แก้ไข",
     "createButton": "สร้างราคาใหม่",
@@ -263,9 +273,23 @@
     "userId": "รหัสผู้ใช้",
     "userFullName": "ชื่อนามสกุลผู้ใช้",
     "noticeDate": "วันที่ได้รับแจ้งค่าใช้จ่าย",
-    "type": "ประเภทค่าใช้จ่าย",
+    "type": {
+      "title": "ประเภทค่าใช้จ่าย",
+      "maintenance": "ค่าบำรุงรักษา",
+      "insurance": "ค่าประกัน",
+      "service": "ค่าบริการ",
+      "repair": "ค่าซ่อม",
+      "replacement": "ค่าทดแทน"
+    },
     "price": "ราคา",
-    "status": "สถานะ",
+    "status": {
+      "title": "สถานะ",
+      "created": "สร้าง",
+      "informed": "แจ้ง",
+      "pending": "รอดำเนินการ",
+      "paid": "ชำระแล้ว",
+      "cancelled": "ยกเลิก"
+    },
     "note": "บันทึกเพิ่มเติม",
     "actions": "ดำเนินการ",
     "createdDate": "วันที่สร้าง",
@@ -324,5 +348,19 @@
         "passwordMinimumLengthLimit": "รหัสผ่านต้องมีความยาวอย่างน้อย {{length}} ตัวอักษร"
       }
     }
+  },
+  "filter": {
+    "equals": "เท่ากับ",
+    "notEquals": "ไม่เท่ากับ",
+    "greaterThan": "มากกว่า",
+    "greaterThanOrEquals": "มากกว่าหรือเท่ากับ",
+    "lessThan": "น้อยกว่า",
+    "lessThanOrEquals": "น้อยกว่าหรือเท่ากับ",
+    "date": "วันที่/เดือน/ปี ค.ส.",
+    "contains": "ประกอบด้วย",
+    "value": "ค่า",
+    "is": "มีค่าเป็น",
+    "true": "ใช่/เปิด",
+    "false": "ไม่ใช่/ปิด"
   }
 }

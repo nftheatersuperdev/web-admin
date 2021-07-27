@@ -1,5 +1,6 @@
 import * as Yup from 'yup'
 import { FormikValues } from 'formik'
+import { TFunction, Namespace } from 'react-i18next'
 import { AdditionalExpenseInput, SubFilter } from 'services/evme.types'
 
 export const transformToMutationInput = (data: FormikValues): AdditionalExpenseInput => {
@@ -14,8 +15,56 @@ export const transformToMutationInput = (data: FormikValues): AdditionalExpenseI
   }
 }
 
-export const ExpenseTypes = ['maintenance', 'insurance', 'service', 'repair', 'replacement']
-export const ExpenseStatuses = ['created', 'informed', 'pending', 'paid', 'cancelled']
+interface SelectOption {
+  label: string
+  value: string
+}
+
+export const getExpenseTypeOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('additionalExpense.type.maintenance'),
+    value: 'maintenance',
+  },
+  {
+    label: t('additionalExpense.type.insurance'),
+    value: 'insurance',
+  },
+  {
+    label: t('additionalExpense.type.service'),
+    value: 'service',
+  },
+  {
+    label: t('additionalExpense.type.repair'),
+    value: 'repair',
+  },
+  {
+    label: t('additionalExpense.type.replacement'),
+    value: 'replacement',
+  },
+]
+
+export const getExpenseStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('additionalExpense.status.created'),
+    value: 'created',
+  },
+  {
+    label: t('additionalExpense.status.informed'),
+    value: 'informed',
+  },
+  {
+    label: t('additionalExpense.status.pending'),
+    value: 'pending',
+  },
+  {
+    label: t('additionalExpense.status.paid'),
+    value: 'paid',
+  },
+  {
+    label: t('additionalExpense.status.cancelled'),
+    value: 'cancelled',
+  },
+]
 
 export const validationSchema = Yup.object({
   subscriptionId: Yup.string().required('Subscription ID is required'),

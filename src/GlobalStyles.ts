@@ -1,8 +1,8 @@
-import { createMuiTheme } from '@material-ui/core'
+import { createTheme } from '@material-ui/core/styles'
 import { createGlobalStyle, DefaultTheme } from 'styled-components'
 
 export const theme: DefaultTheme = {
-  ...createMuiTheme(),
+  ...createTheme(),
   size: {
     sidebar: '220px',
   },

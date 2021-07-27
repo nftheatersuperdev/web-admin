@@ -2,16 +2,21 @@ import { useState, useMemo, useEffect } from 'react'
 import { Button, Card } from '@material-ui/core'
 import {
   GridColDef,
-  GridFilterModelParams,
+  GridFilterModel,
   GridPageChangeParams,
   GridRowData,
-  getGridNumericColumnOperators,
-  getGridStringOperators,
   GridFilterItem,
+  GridValueFormatterParams,
 } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { columnFormatDate, columnFormatMoney } from 'utils'
+import {
+  columnFormatDate,
+  columnFormatMoney,
+  getIdFilterOperators,
+  getNumericFilterOperators,
+  getSelectFilterOperators,
+} from 'utils'
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import { useCarModels, useCreatePrices, usePricing } from 'services/evme'
@@ -23,11 +28,9 @@ import {
   SortDirection,
   PackagePriceFilter,
 } from 'services/evme.types'
+import { columnFormatDuration, getDurationOptions } from './utils'
 import PricingCreateDialog from './PricingCreateDialog'
 import PricingUpdateDialog from './PricingUpdateDialog'
-import { getFieldComparator } from './utils'
-
-const equalsOperators = getGridStringOperators().filter((operator) => operator.value === 'equals')
 
 /**
  * The Pricing page contains all functionality for administering pricing information in EVme.
@@ -57,26 +60,36 @@ export default function Pricing(): JSX.Element {
   const { data: carModels } = useCarModels()
   const mutationCreatePrice = useCreatePrices()
 
+  const idFilterOperators = getIdFilterOperators(t)
+  const numericFilterOperators = getNumericFilterOperators(t)
+  const selectFilterOperators = getSelectFilterOperators(t)
+  const durationOptions = getDurationOptions(t)
+
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
   }
 
-  const handleFilterChange = (params: GridFilterModelParams) => {
+  const handleFilterChange = (params: GridFilterModel) => {
     setPriceFilter(
-      params.filterModel.items.reduce(
-        (filter, { columnField, operatorValue, value }: GridFilterItem) => {
-          if (columnField && value) {
-            const comparator = getFieldComparator(operatorValue)
-            /* @ts-expect-error TODO */
-            filter[columnField] = {
-              [comparator]: columnField === 'price' ? +value : value,
-            }
+      params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+        let filterValue = value
+
+        if (columnField === 'price' && value) {
+          filterValue = +value
+        }
+
+        if (filterValue) {
+          /* @ts-expect-error TODO */
+          filter[columnField] = {
+            [operatorValue as string]: filterValue,
           }
-          return filter
-        },
-        {} as PackagePriceFilter
-      )
+        }
+
+        return filter
+      }, {} as PackagePriceFilter)
     )
+    // reset page
+    setCurrentPageIndex(0)
   }
 
   useEffect(() => {
@@ -148,14 +161,17 @@ export default function Pricing(): JSX.Element {
       headerName: t('pricing.id'),
       description: t('pricing.id'),
       flex: 1,
-      filterOperators: equalsOperators,
+      filterOperators: idFilterOperators,
     },
     {
       field: 'duration',
       headerName: t('pricing.duration'),
       description: t('pricing.duration'),
       flex: 1,
-      filterOperators: equalsOperators,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        columnFormatDuration(params.value as string, t),
+      filterOperators: selectFilterOperators,
+      valueOptions: durationOptions,
     },
     {
       field: 'description',
@@ -183,7 +199,7 @@ export default function Pricing(): JSX.Element {
       headerName: t('pricing.modelId'),
       description: t('pricing.modelId'),
       flex: 1,
-      filterOperators: equalsOperators,
+      filterOperators: idFilterOperators,
     },
     {
       field: 'price',
@@ -191,7 +207,7 @@ export default function Pricing(): JSX.Element {
       description: t('pricing.price'),
       valueFormatter: columnFormatMoney,
       flex: 1,
-      filterOperators: getGridNumericColumnOperators(),
+      filterOperators: numericFilterOperators,
     },
     {
       field: 'fullPrice',
@@ -241,9 +257,9 @@ export default function Pricing(): JSX.Element {
           onPageChange={setCurrentPageIndex}
           rows={rows}
           columns={columns}
-          onRowClick={handleRowClick}
           checkboxSelection
           disableSelectionOnClick
+          onRowClick={handleRowClick}
           filterMode="server"
           onFilterModelChange={handleFilterChange}
         />
