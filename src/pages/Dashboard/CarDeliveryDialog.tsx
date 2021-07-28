@@ -13,6 +13,7 @@ import dayjs from 'dayjs'
 import config from 'config'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import styled from 'styled-components'
+import { columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
 import { DeliveryModelData, MISSING_VALUE } from './utils'
 
 const MapWrapper = styled.div`
@@ -54,7 +55,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
       <DialogTitle id="form-dialog-title">{t('dashboard.carDelivery.dialogTitle')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label={t('dashboard.deliveryDate')}
@@ -67,7 +68,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
             />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label={t('dashboard.userName')}
@@ -80,7 +81,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
             />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label={t('dashboard.email')}
@@ -93,7 +94,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
             />
           </Grid>
 
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label={t('dashboard.phone')}
@@ -106,7 +107,20 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label={t('subscription.status.title')}
+              id="status"
+              name="status"
+              value={columnFormatSubEventStatus(modelData?.status || '', t)}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label={t('dashboard.remark')}
@@ -119,7 +133,7 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} md={12}>
             <MapWrapper>
               {isLoaded ? (
                 <GoogleMap id="map-car-delivery" center={{ lat, lng }} zoom={15}>

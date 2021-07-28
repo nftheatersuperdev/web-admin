@@ -26,10 +26,16 @@ import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import DataGridLocale from 'components/DataGridLocale'
 import { useSubscriptions } from 'services/evme'
-import { SubFilter } from 'services/evme.types'
+import { SubFilter, SubSortFields, SortDirection } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatDuration, getDurationOptions } from 'pages/Pricing/utils'
 import UpdateDialog from './UpdateDialog'
+import {
+  columnFormatSubEventStatus,
+  getVisibilityColumns,
+  setVisibilityColumns,
+  VisibilityColumns,
+} from './utils'
 
 export default function Subscription(): JSX.Element {
   const { t } = useTranslation()
@@ -39,7 +45,16 @@ export default function Subscription(): JSX.Element {
   const [selectedSubscription, setSelectedSubscription] = useState()
   const [subFilter, setSubFilter] = useState<SubFilter>({})
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(pageSize, subFilter)
+  const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(
+    pageSize,
+    subFilter,
+    [
+      {
+        field: SubSortFields.CreatedAt,
+        direction: SortDirection.Desc,
+      },
+    ]
+  )
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -47,6 +62,8 @@ export default function Subscription(): JSX.Element {
   const dateFilterOperators = getDateFilterOperators(t)
   const selectFilterOperators = getSelectFilterOperators(t)
   const durationOptions = getDurationOptions(t)
+
+  const visibilityColumns = getVisibilityColumns()
 
   const handleRowClick = (data: GridRowData) => {
     setUpdateDialogOpen(true)
@@ -114,48 +131,113 @@ export default function Subscription(): JSX.Element {
     setCurrentPageIndex(0)
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
+  }
+
   useEffect(() => {
     refetch()
   }, [subFilter, refetch])
 
   const rows =
-    data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
-      id: node.id,
-      vin: node.car?.vin,
-      plateNumber: node.car?.plateNumber,
-      brand: node.car?.carModel?.brand,
-      model: node.car?.carModel?.model,
-      price: node.packagePrice?.price,
-      duration: node.packagePrice?.duration,
-      seats: node.car?.carModel?.seats,
-      topSpeed: node.car?.carModel?.topSpeed,
-      fastChargeTime: node.car?.carModel?.fastChargeTime,
-      startDate: node.startDate,
-      endDate: node.endDate,
-      startAddress: node.startAddress?.full,
-      startLat: node.startAddress?.latitude,
-      startLng: node.startAddress?.longitude,
-      endAddress: node.endAddress?.full,
-      endLat: node.endAddress?.latitude,
-      endLng: node.endAddress?.longitude,
-      createdAt: node.createdAt,
-      updatedAt: node.updatedAt,
-      email: node.user.email,
-      phoneNumber: node.user.phoneNumber,
-      firstName: node.user.firstName,
-      lastName: node.user.lastName,
-      // not shown in table
-      color: node.car?.color,
-      carModelId: node.car?.carModel?.id,
-    })) || []
+    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
+      let status = '-'
+
+      if (node.events?.length) {
+        const latestEvent = node.events.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0]
+        status = latestEvent.status
+      }
+
+      return {
+        id: node.id,
+        vin: node.car?.vin,
+        plateNumber: node.car?.plateNumber,
+        brand: node.car?.carModel?.brand,
+        model: node.car?.carModel?.model,
+        price: node.packagePrice?.price,
+        duration: node.packagePrice?.duration,
+        seats: node.car?.carModel?.seats,
+        topSpeed: node.car?.carModel?.topSpeed,
+        fastChargeTime: node.car?.carModel?.fastChargeTime,
+        startDate: node.startDate,
+        endDate: node.endDate,
+        startAddress: node.startAddress?.full,
+        startLat: node.startAddress?.latitude,
+        startLng: node.startAddress?.longitude,
+        endAddress: node.endAddress?.full,
+        endLat: node.endAddress?.latitude,
+        endLng: node.endAddress?.longitude,
+        createdAt: node.createdAt,
+        updatedAt: node.updatedAt,
+        email: node.user.email,
+        phoneNumber: node.user.phoneNumber,
+        firstName: node.user.firstName,
+        lastName: node.user.lastName,
+        // not shown in table
+        color: node.car?.color,
+        carModelId: node.car?.carModel?.id,
+        status,
+      }
+    }) || []
 
   const columns: GridColDef[] = [
+    {
+      field: 'firstName',
+      headerName: t('subscription.firstName'),
+      description: t('subscription.firstName'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.firstName,
+    },
+    {
+      field: 'lastName',
+      headerName: t('subscription.lastName'),
+      description: t('subscription.lastName'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.lastName,
+    },
+    {
+      field: 'email',
+      headerName: t('subscription.email'),
+      description: t('subscription.email'),
+      renderCell: renderEmailLink,
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.email,
+    },
+    {
+      field: 'phoneNumber',
+      headerName: t('subscription.phone'),
+      description: t('subscription.phone'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.phoneNumber,
+    },
     {
       field: 'brand',
       headerName: t('subscription.brand'),
       description: t('subscription.brand'),
       flex: 1,
       filterable: false,
+      hide: !visibilityColumns.brand,
     },
     {
       field: 'model',
@@ -163,45 +245,7 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.model'),
       flex: 1,
       filterable: false,
-    },
-    {
-      field: 'carModelId',
-      headerName: t('subscription.modelId'),
-      description: t('subscription.modelId'),
-      flex: 1,
-      filterOperators: idFilterOperators,
-    },
-    {
-      field: 'seats',
-      headerName: t('subscription.seats'),
-      description: t('subscription.seats'),
-      flex: 1,
-      hide: true,
-      filterable: false,
-    },
-    {
-      field: 'topSpeed',
-      headerName: t('subscription.topSpeed'),
-      description: t('subscription.topSpeed'),
-      flex: 1,
-      hide: true,
-      filterable: false,
-    },
-    {
-      field: 'plateNumber',
-      headerName: t('subscription.plateNumber'),
-      description: t('subscription.plateNumber'),
-      flex: 1,
-      hide: true,
-      filterOperators: stringFilterOperators,
-    },
-    {
-      field: 'vin',
-      headerName: t('subscription.vin'),
-      description: t('subscription.vin'),
-      flex: 1,
-      hide: true,
-      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.model,
     },
     {
       field: 'price',
@@ -210,6 +254,7 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatMoney,
       flex: 1,
       filterOperators: numericFilterOperators,
+      hide: !visibilityColumns.price,
     },
     {
       field: 'duration',
@@ -220,14 +265,74 @@ export default function Subscription(): JSX.Element {
         columnFormatDuration(params.value as string, t),
       filterOperators: selectFilterOperators,
       valueOptions: durationOptions,
+      hide: !visibilityColumns.duration,
+    },
+    {
+      field: 'status',
+      headerName: t('subscription.status.title'),
+      description: t('subscription.status.title'),
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        columnFormatSubEventStatus(params.value as string, t),
+      filterable: false,
+      hide: !visibilityColumns.status,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('subscription.updatedDate'),
+      description: t('subscription.updatedDate'),
+      valueFormatter: columnFormatDate,
+      flex: 1,
+      filterable: false,
+      hide: !visibilityColumns.updatedAt,
+    },
+    {
+      field: 'carModelId',
+      headerName: t('subscription.modelId'),
+      description: t('subscription.modelId'),
+      flex: 1,
+      filterOperators: idFilterOperators,
+      hide: !visibilityColumns.carModelId,
+    },
+    {
+      field: 'seats',
+      headerName: t('subscription.seats'),
+      description: t('subscription.seats'),
+      flex: 1,
+      filterable: false,
+      hide: !visibilityColumns.seats,
+    },
+    {
+      field: 'topSpeed',
+      headerName: t('subscription.topSpeed'),
+      description: t('subscription.topSpeed'),
+      flex: 1,
+      filterable: false,
+      hide: !visibilityColumns.topSpeed,
+    },
+    {
+      field: 'plateNumber',
+      headerName: t('subscription.plateNumber'),
+      description: t('subscription.plateNumber'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.plateNumber,
+    },
+    {
+      field: 'vin',
+      headerName: t('subscription.vin'),
+      description: t('subscription.vin'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.vin,
     },
     {
       field: 'fastChargeTime',
       headerName: t('subscription.fastChargeTime'),
       description: t('subscription.fastChargeTime'),
       flex: 1,
-      hide: true,
       filterable: false,
+      hide: !visibilityColumns.fastChargeTime,
     },
     {
       field: 'startDate',
@@ -236,6 +341,7 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatDate,
       filterOperators: dateFilterOperators,
       flex: 1,
+      hide: !visibilityColumns.startDate,
     },
     {
       field: 'endDate',
@@ -244,22 +350,23 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatDate,
       filterOperators: dateFilterOperators,
       flex: 1,
+      hide: !visibilityColumns.endDate,
     },
     {
       field: 'startAddress',
       headerName: t('subscription.startAddress'),
       description: t('subscription.startAddress'),
       flex: 1,
-      hide: true,
       filterable: false,
+      hide: !visibilityColumns.startAddress,
     },
     {
       field: 'endAddress',
       headerName: t('subscription.endAddress'),
       description: t('subscription.endAddress'),
       flex: 1,
-      hide: true,
       filterable: false,
+      hide: !visibilityColumns.endAddress,
     },
     {
       field: 'createdAt',
@@ -267,46 +374,8 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.createdDate'),
       valueFormatter: columnFormatDate,
       flex: 1,
-      hide: true,
       filterable: false,
-    },
-    {
-      field: 'updatedAt',
-      headerName: t('subscription.updatedDate'),
-      description: t('subscription.updatedDate'),
-      valueFormatter: columnFormatDate,
-      flex: 1,
-      hide: true,
-      filterable: false,
-    },
-    {
-      field: 'email',
-      headerName: t('subscription.email'),
-      description: t('subscription.email'),
-      renderCell: renderEmailLink,
-      flex: 1,
-      filterOperators: stringFilterOperators,
-    },
-    {
-      field: 'phoneNumber',
-      headerName: t('subscription.phone'),
-      description: t('subscription.phone'),
-      flex: 1,
-      filterOperators: stringFilterOperators,
-    },
-    {
-      field: 'firstName',
-      headerName: t('subscription.firstName'),
-      description: t('subscription.firstName'),
-      flex: 1,
-      filterOperators: stringFilterOperators,
-    },
-    {
-      field: 'lastName',
-      headerName: t('subscription.lastName'),
-      description: t('subscription.lastName'),
-      flex: 1,
-      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.createdAt,
     },
   ]
 
@@ -339,6 +408,7 @@ export default function Subscription(): JSX.Element {
           onRowClick={handleRowClick}
           filterMode="server"
           onFilterModelChange={handleFilterChange}
+          onColumnVisibilityChange={onColumnVisibilityChange}
         />
       </Card>
 

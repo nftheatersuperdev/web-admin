@@ -9,6 +9,7 @@ export interface DeliveryModelData {
   address: string
   latitude: number
   longitude: number
+  status: string
 }
 
 export interface ReturnModelData {
@@ -18,6 +19,7 @@ export interface ReturnModelData {
   address: string
   latitude: number
   longitude: number
+  status: string
 }
 
-export const MISSING_VALUE = 'N/A'
+export const MISSING_VALUE = '-'

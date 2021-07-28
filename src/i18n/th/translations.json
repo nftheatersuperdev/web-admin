@@ -265,7 +265,18 @@
     "carDetails": "รายละเอียดรถ",
     "updateSubscriptionDetails": "อัพเดทรายละเอียดการสมัครสมาชิก",
     "bookingDetails": "รายละเอียดการจอง",
-    "subscriptionId": "หมายเลขการจอง"
+    "subscriptionId": "หมายเลขการจอง",
+    "status": {
+      "title": "สถานะ",
+      "reserved": "สำรองแล้ว",
+      "accepted": "ชำระแล้ว",
+      "delivered": "นำส่งรถแล้ว",
+      "cancelled": "ยกเลิก",
+      "upcoming_cancelled": "ยกเลิกก่อนนำส่ง",
+      "refused": "ชำระเงินถูกปฏิเสธ",
+      "completed": "คืนรถแล้ว",
+      "extended": "ต่ออายุการจอง"
+    }
   },
   "additionalExpense": {
     "id": "เลขไอดี",

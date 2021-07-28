@@ -411,6 +411,12 @@ export function useSubscriptions(
                     longitude
                     remark
                   }
+                  events {
+                    id
+                    status
+                    createdAt
+                    updatedAt
+                  }
                 }
               }
             }
