@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.2](https://www.github.com/projecttron/tron-admin-web/compare/v1.2.1...v1.2.2) (2021-07-26)
+
+
+### Bug Fixes
+
+* correct firebase and cartrack urls ([642f4d4](https://www.github.com/projecttron/tron-admin-web/commit/642f4d40c9156f0930efef19c6fcd7a8e0286c91))
+
 ### [1.2.1](https://www.github.com/projecttron/tron-admin-web/compare/v1.2.0...v1.2.1) (2021-07-25)
 
 
