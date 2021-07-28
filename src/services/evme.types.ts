@@ -2897,6 +2897,7 @@ export type SubAggregateFilter = {
   startDate?: Maybe<DateFieldComparison>
   endDate?: Maybe<DateFieldComparison>
   kind?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
 }
 
 export type SubAggregateGroupBy = {
@@ -2909,6 +2910,7 @@ export type SubAggregateGroupBy = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubAggregateResponse = {
@@ -2939,6 +2941,7 @@ export type SubCountAggregate = {
   startDate?: Maybe<Scalars['Int']>
   endDate?: Maybe<Scalars['Int']>
   kind?: Maybe<Scalars['Int']>
+  createdAt?: Maybe<Scalars['Int']>
 }
 
 export type SubEdge = {
@@ -2954,6 +2957,7 @@ export type SubEventsAggregateGroupBy = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubEventsAggregateResponse = {
@@ -2969,6 +2973,7 @@ export type SubEventsCountAggregate = {
   id?: Maybe<Scalars['Int']>
   subscriptionId?: Maybe<Scalars['Int']>
   status?: Maybe<Scalars['Int']>
+  createdAt?: Maybe<Scalars['Int']>
 }
 
 export type SubEventsMaxAggregate = {
@@ -2976,6 +2981,7 @@ export type SubEventsMaxAggregate = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubEventsMinAggregate = {
@@ -2983,6 +2989,7 @@ export type SubEventsMinAggregate = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubFilter = {
@@ -2996,9 +3003,11 @@ export type SubFilter = {
   startDate?: Maybe<DateFieldComparison>
   endDate?: Maybe<DateFieldComparison>
   kind?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
   car?: Maybe<SubFilterCarFilter>
   packagePrice?: Maybe<SubFilterPackagePriceFilter>
   user?: Maybe<SubFilterUserFilter>
+  events?: Maybe<SubFilterSubscriptionEventFilter>
 }
 
 export type SubFilterCarFilter = {
@@ -3020,6 +3029,15 @@ export type SubFilterPackagePriceFilter = {
   duration?: Maybe<StringFieldComparison>
   disabled?: Maybe<BooleanFieldComparison>
   price?: Maybe<NumberFieldComparison>
+}
+
+export type SubFilterSubscriptionEventFilter = {
+  and?: Maybe<Array<SubFilterSubscriptionEventFilter>>
+  or?: Maybe<Array<SubFilterSubscriptionEventFilter>>
+  id?: Maybe<IdFilterComparison>
+  subscriptionId?: Maybe<StringFieldComparison>
+  status?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
 }
 
 export type SubFilterUserFilter = {
@@ -3048,6 +3066,7 @@ export type SubMaxAggregate = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubMinAggregate = {
@@ -3060,6 +3079,7 @@ export type SubMinAggregate = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubPaymentsAggregateGroupBy = {
@@ -3133,6 +3153,7 @@ export enum SubSortFields {
   StartDate = 'startDate',
   EndDate = 'endDate',
   Kind = 'kind',
+  CreatedAt = 'createdAt',
 }
 
 export type SubscribeInput = {
@@ -3161,6 +3182,7 @@ export type SubscriptionEventAggregateFilter = {
   id?: Maybe<IdFilterComparison>
   subscriptionId?: Maybe<StringFieldComparison>
   status?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
 }
 
 export type SubscriptionEventAggregateGroupBy = {
@@ -3168,6 +3190,7 @@ export type SubscriptionEventAggregateGroupBy = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubscriptionEventConnection = {
@@ -3183,6 +3206,7 @@ export type SubscriptionEventCountAggregate = {
   id?: Maybe<Scalars['Int']>
   subscriptionId?: Maybe<Scalars['Int']>
   status?: Maybe<Scalars['Int']>
+  createdAt?: Maybe<Scalars['Int']>
 }
 
 export type SubscriptionEventEdge = {
@@ -3199,6 +3223,7 @@ export type SubscriptionEventFilter = {
   id?: Maybe<IdFilterComparison>
   subscriptionId?: Maybe<StringFieldComparison>
   status?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
 }
 
 export type SubscriptionEventInput = {
@@ -3211,6 +3236,7 @@ export type SubscriptionEventMaxAggregate = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubscriptionEventMinAggregate = {
@@ -3218,6 +3244,7 @@ export type SubscriptionEventMinAggregate = {
   id?: Maybe<Scalars['ID']>
   subscriptionId?: Maybe<Scalars['String']>
   status?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type SubscriptionEventSort = {
@@ -3230,6 +3257,7 @@ export enum SubscriptionEventSortFields {
   Id = 'id',
   SubscriptionId = 'subscriptionId',
   Status = 'status',
+  CreatedAt = 'createdAt',
 }
 
 export type SubscriptionInput = {
@@ -3631,6 +3659,7 @@ export type UserSubscriptionsAggregateGroupBy = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type UserSubscriptionsAggregateResponse = {
@@ -3651,6 +3680,7 @@ export type UserSubscriptionsCountAggregate = {
   startDate?: Maybe<Scalars['Int']>
   endDate?: Maybe<Scalars['Int']>
   kind?: Maybe<Scalars['Int']>
+  createdAt?: Maybe<Scalars['Int']>
 }
 
 export type UserSubscriptionsMaxAggregate = {
@@ -3663,6 +3693,7 @@ export type UserSubscriptionsMaxAggregate = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type UserSubscriptionsMinAggregate = {
@@ -3675,6 +3706,7 @@ export type UserSubscriptionsMinAggregate = {
   startDate?: Maybe<Scalars['DateTime']>
   endDate?: Maybe<Scalars['DateTime']>
   kind?: Maybe<Scalars['String']>
+  createdAt?: Maybe<Scalars['DateTime']>
 }
 
 export type WaitingList = {

@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Card, CardContent, Grid, Typography } from '@material-ui/core'
-import { GridColDef, GridRowData, GridPageChangeParams } from '@material-ui/data-grid'
+import {
+  GridColDef,
+  GridRowData,
+  GridPageChangeParams,
+  GridValueFormatterParams,
+} from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT, columnFormatDate } from 'utils'
 import styled from 'styled-components'
@@ -9,6 +14,7 @@ import DataGridLocale from 'components/DataGridLocale'
 import DateTimePicker from 'components/DateTimePicker'
 import { useSubscriptions } from 'services/evme'
 import { SortDirection, SubSortFields } from 'services/evme.types'
+import { columnFormatSubEventStatus, SubEventStatus } from 'pages/Subscriptions/utils'
 import CarDeliveryDialog from './CarDeliveryDialog'
 import { DeliveryModelData, MISSING_VALUE } from './utils'
 
@@ -39,6 +45,13 @@ export default function CarsDelivery(): JSX.Element {
     {
       and: [
         {
+          events: {
+            status: {
+              in: [SubEventStatus.RESERVED, SubEventStatus.ACCEPTED, SubEventStatus.CANCELLED],
+            },
+          },
+        },
+        {
           startDate: {
             gte: fromDate.toISOString(),
           },
@@ -68,24 +81,28 @@ export default function CarsDelivery(): JSX.Element {
       description: t('dashboard.subscriptionId'),
       flex: 1,
       hide: true,
+      filterable: false,
     },
     {
       field: 'userName',
       headerName: t('dashboard.userName'),
       description: t('dashboard.userName'),
       flex: 1,
+      filterable: false,
     },
     {
       field: 'carDisplayName',
       headerName: t('dashboard.carDisplayName'),
       description: t('dashboard.carDisplayName'),
       flex: 1,
+      filterable: false,
     },
     {
       field: 'plateNumber',
       headerName: t('dashboard.plateNumber'),
       description: t('dashboard.plateNumber'),
       flex: 1,
+      filterable: false,
     },
     {
       field: 'startDate',
@@ -93,18 +110,37 @@ export default function CarsDelivery(): JSX.Element {
       description: t('dashboard.deliveryDate'),
       valueFormatter: columnFormatDate,
       flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'status',
+      headerName: t('subscription.status.title'),
+      description: t('subscription.status.title'),
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        columnFormatSubEventStatus(params.value as string, t),
+      filterable: false,
     },
   ]
 
   const rows =
     data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-      const { id, car, startDate, user, startAddress } = node
+      const { id, car, startDate, user, startAddress, events } = node
       const { plateNumber, color, carModel } = car || {}
       const { brand, model } = carModel || {}
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
       const carDisplayName = `${brand}-${model} (${color})`
       const { full, latitude, longitude, remark } = startAddress || {}
+
+      let status = '-'
+
+      if (events?.length) {
+        const latestEvent = events.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0]
+        status = latestEvent.status
+      }
 
       return {
         id,
@@ -117,6 +153,7 @@ export default function CarsDelivery(): JSX.Element {
         address: full,
         latitude,
         longitude,
+        status,
       }
     }) || []
 
@@ -129,6 +166,7 @@ export default function CarsDelivery(): JSX.Element {
       address: param.row.address,
       latitude: param.row.latitude,
       longitude: param.row.longitude,
+      status: param.row.status,
     })
   }
 

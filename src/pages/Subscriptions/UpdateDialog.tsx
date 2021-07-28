@@ -21,6 +21,8 @@ import styled from 'styled-components'
 import config from 'config'
 import * as yup from 'yup'
 import { useCarModelById } from 'services/evme'
+import { columnFormatDuration } from 'pages/Pricing/utils'
+import { columnFormatSubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
   display: flex;
@@ -64,6 +66,7 @@ interface Subscription {
   endAddress: string
   endLat: number
   endLng: number
+  status: string
 }
 
 interface SubscriptionProps {
@@ -160,48 +163,48 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
+              label={t('subscription.phone')}
+              value={subscription?.phoneNumber}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.price')}
+              value={subscription?.price}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.duration')}
+              value={columnFormatDuration(subscription?.duration || '', t)}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.status.title')}
+              value={columnFormatSubEventStatus(subscription?.status || '', t)}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
               label={t('subscription.subscriptionId')}
               value={subscription?.id}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label={t('subscription.startDate')}
-              value={formatDate(subscription?.startDate)}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label={t('subscription.startAddress')}
-              value={subscription?.startAddress}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label={t('subscription.endDate')}
-              value={formatDate(subscription?.endDate)}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              label={t('subscription.endAddress')}
-              value={subscription?.endAddress}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -230,8 +233,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label={t('subscription.duration')}
-              value={subscription?.duration}
+              label={t('subscription.startDate')}
+              value={formatDate(subscription?.startDate)}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -240,14 +243,35 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label={t('subscription.price')}
-              value={subscription?.price}
+              label={t('subscription.endDate')}
+              value={formatDate(subscription?.endDate)}
               fullWidth
               InputProps={{
                 readOnly: true,
               }}
             />
           </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.startAddress')}
+              value={subscription?.startAddress}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.endAddress')}
+              value={subscription?.endAddress}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+
           <Grid item xs={12} md={12}>
             <Typography variant="subtitle1">{t('subscription.carDetails')}</Typography>
           </Grid>

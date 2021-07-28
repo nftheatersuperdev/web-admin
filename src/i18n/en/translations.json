@@ -265,7 +265,18 @@
     "carDetails": "Car Details",
     "updateSubscriptionDetails": "Update Subscription Details",
     "bookingDetails": "Booking Details",
-    "subscriptionId": "Subscription ID"
+    "subscriptionId": "Subscription ID",
+    "status": {
+      "title": "Status",
+      "reserved": "Reserved",
+      "accepted": "Accepted",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "upcoming_cancelled": "Upcoming Cancelled",
+      "refused": "Refused",
+      "completed": "Completed",
+      "extended": "Extended"
+    }
   },
   "additionalExpense": {
     "id": "ID",
