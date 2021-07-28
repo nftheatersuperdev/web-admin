@@ -43,7 +43,7 @@ interface Subscription {
   plateNumber: string
   brand: string
   model: string
-  modelId: string
+  carModelId: string
   color: string
   price: number
   duration: string
@@ -79,11 +79,13 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   // Fetch the available cars with the car model ID and the color of the subscription so that an admin
   // can possibly change the vehicle in this car model category
   const { data: carModel } = useCarModelById({
-    carModelId: subscription?.modelId || '',
+    carModelId: subscription?.carModelId || '',
     carFilter: { color: { eq: subscription?.color } },
     availableFilter: { startDate: subscription?.startDate, endDate: subscription?.endDate },
   })
+
   const { t } = useTranslation()
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
@@ -95,6 +97,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       formik.resetForm()
     },
   })
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: config.googleMapsApiKey,
@@ -273,7 +276,9 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               fullWidth
               error={formik.touched.plateNumber && Boolean(formik.errors.plateNumber)}
             >
-              <InputLabel id="plateNumber">{t('subscription.plateNumber')}</InputLabel>
+              <InputLabel shrink id="plateNumber">
+                {t('subscription.plateNumber')}
+              </InputLabel>
               <Select
                 labelId="plateNumber"
                 id="plateNumber"

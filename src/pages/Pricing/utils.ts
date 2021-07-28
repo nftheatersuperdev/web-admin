@@ -1,3 +1,4 @@
+import { TFunction, Namespace } from 'react-i18next'
 import { PackagePriceInput } from 'services/evme.types'
 
 export type Period = 'price1w' | 'price1m' | 'price3m' | 'price6m' | 'price12m'
@@ -85,22 +86,47 @@ export const getPriceChanges = (
   }
 }
 
-export const getFieldComparator = (operator?: string): string => {
-  switch (operator) {
-    case 'equals':
-    case '=':
-      return 'eq'
-    case '!=':
-      return 'neq'
-    case '>':
-      return 'gt'
-    case '>=':
-      return 'gte'
-    case '<':
-      return 'lt'
-    case '<=':
-      return 'lte'
+export const columnFormatDuration = (duration: string, t: TFunction<Namespace>): string => {
+  switch (duration) {
+    case '1w':
+      return t('pricing.1w')
+    case '1m':
+      return t('pricing.1m')
+    case '3m':
+      return t('pricing.3m')
+    case '6m':
+      return t('pricing.6m')
+    case '12m':
+      return t('pricing.12m')
     default:
-      return 'eq'
+      return '-'
   }
 }
+
+interface SelectOption {
+  label: string
+  value: string
+}
+
+export const getDurationOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('pricing.1w'),
+    value: '1w',
+  },
+  {
+    label: t('pricing.1m'),
+    value: '1m',
+  },
+  {
+    label: t('pricing.3m'),
+    value: '3m',
+  },
+  {
+    label: t('pricing.6m'),
+    value: '6m',
+  },
+  {
+    label: t('pricing.12m'),
+    value: '12m',
+  },
+]

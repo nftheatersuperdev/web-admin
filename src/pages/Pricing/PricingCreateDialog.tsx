@@ -226,7 +226,9 @@ export default function PricingCreateDialog({
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <FormControl fullWidth={true}>
-              <InputLabel id="car-model">{t('pricing.model')}</InputLabel>
+              <InputLabel shrink id="car-model">
+                {t('pricing.model')}
+              </InputLabel>
               <Select
                 labelId="car-model"
                 onChange={(event: React.ChangeEvent<{ value: unknown }>) => {

@@ -132,6 +132,9 @@ export default function CarCreateDialog({
                 name="carModel"
                 value={formik.values.carModel}
                 onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 error={formik.touched.carModel && Boolean(formik.errors.carModel)}
                 helperText={formik.touched.carModel && formik.errors.carModel}
               >

@@ -153,7 +153,12 @@
     "lastName": "Last Name",
     "fullName": "Full Name",
     "status": "Status",
-    "kycStatus": "KYC Status",
+    "kyc": {
+      "status": "KYC Status",
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected"
+    },
     "verifyDate": "Verify Date",
     "note": "Note",
     "rejectedReason": "Reason of rejection",
@@ -216,6 +221,11 @@
     "pricePerThreeMonths": "Price per 3 months",
     "pricePerSixMonths": "Price per 6 months",
     "pricePerTwelveMonths": "Price per 12 months",
+    "1w": "1 Week",
+    "1m": "1 Month",
+    "3m": "3 Months",
+    "6m": "6 Months",
+    "12m": "12 Months",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
     "createButton": "New Price",
@@ -263,9 +273,23 @@
     "userId": "User ID",
     "userFullName": "User full name",
     "noticeDate": "Date of expense notice",
-    "type": "Type of expense",
+    "type": {
+      "title": "Type of expense",
+      "maintenance": "Maintenance",
+      "insurance": "Insurance",
+      "service": "Service",
+      "repair": "Repair",
+      "replacement": "Replacement"
+    },
     "price": "Price",
-    "status": "Status",
+    "status": {
+      "title": "Status",
+      "created": "Created",
+      "informed": "Informed",
+      "pending": "Pending",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
     "note": "Notes",
     "actions": "Actions",
     "createdDate": "Created Date",
@@ -324,5 +348,19 @@
         "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long"
       }
     }
+  },
+  "filter": {
+    "equals": "Equals",
+    "notEquals": "Not equals",
+    "greaterThan": "Greater than",
+    "greaterThanOrEquals": "Greater than or Equals",
+    "lessThan": "Less than",
+    "lessThanOrEquals": "Less than or Equals",
+    "date": "DD/MM/YYYY",
+    "contains": "Contains",
+    "value": "Value",
+    "is": "Is",
+    "true": "True/Enable",
+    "false": "False/Disable"
   }
 }
