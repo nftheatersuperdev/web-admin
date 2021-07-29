@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/projecttron/tron-admin-web/compare/v1.2.2...v1.3.0) (2021-07-28)
+
+
+### Features
+
+* improve filter all menu ([#116](https://www.github.com/projecttron/tron-admin-web/issues/116)) ([dd8feab](https://www.github.com/projecttron/tron-admin-web/commit/dd8feab8ddf5cd98c51694bbfe704bf56a870c87))
+* show subscription status ([#119](https://www.github.com/projecttron/tron-admin-web/issues/119)) ([#121](https://www.github.com/projecttron/tron-admin-web/issues/121)) ([188d586](https://www.github.com/projecttron/tron-admin-web/commit/188d586b050568bc89107b19344eb1d0cb8af353))
+
+
+### Bug Fixes
+
+* missing admin-users route ([#118](https://www.github.com/projecttron/tron-admin-web/issues/118)) ([756ed27](https://www.github.com/projecttron/tron-admin-web/commit/756ed2765c9dbb1b80d3fd74bba2dbd5500769d6))
+
 ### [1.2.2](https://www.github.com/projecttron/tron-admin-web/compare/v1.2.1...v1.2.2) (2021-07-26)
 
 

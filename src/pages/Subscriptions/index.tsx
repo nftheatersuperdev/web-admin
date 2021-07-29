@@ -66,6 +66,8 @@ export default function Subscription(): JSX.Element {
   const statusOptions = getSubEventStatusOptions(t)
   const visibilityColumns = getVisibilityColumns()
 
+  const visibilityColumns = getVisibilityColumns()
+
   const handleRowClick = (data: GridRowData) => {
     setUpdateDialogOpen(true)
     setSelectedSubscription(data.row)
