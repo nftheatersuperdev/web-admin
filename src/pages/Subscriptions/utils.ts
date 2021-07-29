@@ -43,6 +43,46 @@ export const columnFormatSubEventStatus = (status: string, t: TFunction<Namespac
   }
 }
 
+interface SelectOption {
+  label: string
+  value: string
+}
+
+export const getSubEventStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('subscription.status.reserved'),
+    value: SubEventStatus.RESERVED,
+  },
+  {
+    label: t('subscription.status.accepted'),
+    value: SubEventStatus.ACCEPTED,
+  },
+  {
+    label: t('subscription.status.delivered'),
+    value: SubEventStatus.DELIVERED,
+  },
+  {
+    label: t('subscription.status.cancelled'),
+    value: SubEventStatus.CANCELLED,
+  },
+  {
+    label: t('subscription.status.upcoming_cancelled'),
+    value: SubEventStatus.UPCOMING_CANCELLED,
+  },
+  {
+    label: t('subscription.status.refused'),
+    value: SubEventStatus.REFUSED,
+  },
+  {
+    label: t('subscription.status.completed'),
+    value: SubEventStatus.COMPLETED,
+  },
+  {
+    label: t('subscription.status.extended'),
+    value: SubEventStatus.EXTENDED,
+  },
+]
+
 const STORAGE_KEYS = {
   VISIBILITY_COLUMNS: 'evme:subscription:visibility_columns',
 }

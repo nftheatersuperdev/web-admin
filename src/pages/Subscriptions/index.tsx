@@ -35,6 +35,7 @@ import {
   getVisibilityColumns,
   setVisibilityColumns,
   VisibilityColumns,
+  getSubEventStatusOptions,
 } from './utils'
 
 export default function Subscription(): JSX.Element {
@@ -62,6 +63,8 @@ export default function Subscription(): JSX.Element {
   const dateFilterOperators = getDateFilterOperators(t)
   const selectFilterOperators = getSelectFilterOperators(t)
   const durationOptions = getDurationOptions(t)
+  const statusOptions = getSubEventStatusOptions(t)
+  const visibilityColumns = getVisibilityColumns()
 
   const visibilityColumns = getVisibilityColumns()
 
@@ -89,7 +92,6 @@ export default function Subscription(): JSX.Element {
                 operatorValue === 'iLike' ? stringToFilterContains(value) : value,
             },
           }
-          return filter
         }
 
         if ((columnField === 'price' || columnField === 'duration') && value) {
@@ -98,7 +100,6 @@ export default function Subscription(): JSX.Element {
               [operatorValue as string]: columnField === 'price' ? +value : value,
             },
           }
-          return filter
         }
 
         if (
@@ -114,7 +115,14 @@ export default function Subscription(): JSX.Element {
                 operatorValue === 'iLike' ? stringToFilterContains(value) : value,
             },
           }
-          return filter
+        }
+
+        if (columnField === 'status' && value) {
+          filter.events = {
+            [columnField]: {
+              [operatorValue as string]: value,
+            },
+          }
         }
 
         if ((columnField === 'startDate' || columnField === 'endDate') && value) {
@@ -274,7 +282,8 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       valueFormatter: (params: GridValueFormatterParams) =>
         columnFormatSubEventStatus(params.value as string, t),
-      filterable: false,
+      filterOperators: selectFilterOperators,
+      valueOptions: statusOptions,
       hide: !visibilityColumns.status,
     },
     {
