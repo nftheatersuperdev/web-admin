@@ -258,7 +258,9 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "startAddress": "Delivery Address",
+    "startAddressRemark": "Delivery Address Remark",
     "endAddress": "Return Address",
+    "endAddressRemark": "Return Address Remark",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
     "omiseButton": "Open Omise",
@@ -276,7 +278,8 @@
       "refused": "Refused",
       "completed": "Completed",
       "extended": "Extended"
-    }
+    },
+    "noData": "No data"
   },
   "additionalExpense": {
     "id": "ID",

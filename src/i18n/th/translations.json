@@ -258,7 +258,9 @@
     "startDate": "วันที่เริ่มต้น",
     "endDate": "วันที่สิ้นสุด",
     "startAddress": "ที่อยู่จัดส่ง",
+    "startAddressRemark": "รายละเอียด ที่อยู่จัดส่ง",
     "endAddress": "ที่อยู่รับคืน",
+    "endAddressRemark": "รายละเอียด ที่อยู่รับคืน",
     "createdDate": "วันที่กดจอง",
     "updatedDate": "วันที่แก้ไข",
     "omiseButton": "เปิด Omise",
@@ -276,7 +278,8 @@
       "refused": "ชำระเงินถูกปฏิเสธ",
       "completed": "คืนรถแล้ว",
       "extended": "ต่ออายุการจอง"
-    }
+    },
+    "noData": "ไม่มีข้อมูล"
   },
   "additionalExpense": {
     "id": "เลขไอดี",
