@@ -280,7 +280,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.startAddressRemark')}
-              value={subscription?.startAddressRemark || t('subscription.noData')}
+              value={subscription?.startAddressRemark?.trim() || t('subscription.noData')}
               fullWidth
               multiline
               maxRows={3}
