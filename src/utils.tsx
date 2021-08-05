@@ -67,8 +67,8 @@ const FieldComparisons = {
 
 export const dateToFilterOnDay = (date: Date): DateFieldComparisonBetween => {
   return {
-    upper: dayjs(date).startOf('day').toDate(),
-    lower: dayjs(date).endOf('day').toDate(),
+    upper: dayjs(date).endOf('day').toDate(),
+    lower: dayjs(date).startOf('day').toDate(),
   }
 }
 
