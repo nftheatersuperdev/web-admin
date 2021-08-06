@@ -191,7 +191,7 @@ export default function Subscription(): JSX.Element {
         endAddress: node.endAddress?.full,
         endLat: node.endAddress?.latitude,
         endLng: node.endAddress?.longitude,
-        endAddressRemark: node.startAddress?.remark,
+        endAddressRemark: node.endAddress?.remark,
         createdAt: node.createdAt,
         updatedAt: node.updatedAt,
         email: node.user.email,
