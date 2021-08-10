@@ -157,7 +157,7 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleSortChange = (params: GridSortModel) => {
-    if (params && params.length > 0 && !isFetching) {
+    if (params?.length > 0 && !isFetching) {
       const { field: refField, sort } = params[0]
 
       let field = SubSortFields.CreatedAt
@@ -295,7 +295,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: numericFilterOperators,
       hide: !visibilityColumns.price,
-      sortable: true,
+      sortable: false,
     },
     {
       field: 'duration',
@@ -307,7 +307,7 @@ export default function Subscription(): JSX.Element {
       filterOperators: selectFilterOperators,
       valueOptions: durationOptions,
       hide: !visibilityColumns.duration,
-      sortable: true,
+      sortable: false,
     },
     {
       field: 'status',
