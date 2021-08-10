@@ -123,10 +123,10 @@ export default function CarDeliveryDialog({ open, onClose, modelData }: ModalPro
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label={t('dashboard.remark')}
+              label={t('subscription.startAddressRemark')}
               id="remark"
               name="remark"
-              value={modelData?.remark || MISSING_VALUE}
+              value={modelData?.remark?.trim() || t('subscription.noData')}
               InputProps={{
                 readOnly: true,
               }}

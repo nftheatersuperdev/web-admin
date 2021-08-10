@@ -10,7 +10,9 @@ ENV AMPLIFY_BRANCH_NAME=""
 ENV STATIC_WEB_FOLDER=""
 
 # Prepare tools
-RUN yum install -y zip
+RUN yum install -y \
+  zip \
+  jq
 RUN mkdir /deployment
 COPY ./entrypoint.sh /deployment/entrypoint.sh
 RUN chmod +x /deployment/entrypoint.sh
