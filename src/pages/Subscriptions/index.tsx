@@ -7,6 +7,7 @@ import {
   GridPageChangeParams,
   GridRowData,
   GridValueFormatterParams,
+  GridSortModel,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -45,16 +46,15 @@ export default function Subscription(): JSX.Element {
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
   const [subFilter, setSubFilter] = useState<SubFilter>({})
+  const [subSort, setSubSort] = useState({
+    field: SubSortFields.CreatedAt,
+    direction: SortDirection.Desc,
+  })
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(
+  const { data, refetch, fetchNextPage, fetchPreviousPage, isFetching } = useSubscriptions(
     pageSize,
     subFilter,
-    [
-      {
-        field: SubSortFields.CreatedAt,
-        direction: SortDirection.Desc,
-      },
-    ]
+    [subSort]
   )
 
   const idFilterOperators = getIdFilterOperators(t)
@@ -156,6 +156,32 @@ export default function Subscription(): JSX.Element {
     setVisibilityColumns(visibilityColumns)
   }
 
+  const handleSortChange = (params: GridSortModel) => {
+    if (params?.length > 0 && !isFetching) {
+      const { field: refField, sort } = params[0]
+
+      let field = SubSortFields.CreatedAt
+      switch (refField) {
+        case 'startDate':
+          field = SubSortFields.StartDate
+          break
+        case 'endDate':
+          field = SubSortFields.EndDate
+          break
+      }
+
+      const direction = sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc
+
+      setSubSort({
+        field,
+        direction,
+      })
+      refetch({
+        throwOnError: true,
+      })
+    }
+  }
+
   useEffect(() => {
     refetch()
   }, [subFilter, refetch])
@@ -187,9 +213,11 @@ export default function Subscription(): JSX.Element {
         startAddress: node.startAddress?.full,
         startLat: node.startAddress?.latitude,
         startLng: node.startAddress?.longitude,
+        startAddressRemark: node.startAddress?.remark,
         endAddress: node.endAddress?.full,
         endLat: node.endAddress?.latitude,
         endLng: node.endAddress?.longitude,
+        endAddressRemark: node.endAddress?.remark,
         createdAt: node.createdAt,
         updatedAt: node.updatedAt,
         email: node.user.email,
@@ -211,6 +239,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: stringFilterOperators,
       hide: !visibilityColumns.firstName,
+      sortable: false,
     },
     {
       field: 'lastName',
@@ -219,6 +248,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: stringFilterOperators,
       hide: !visibilityColumns.lastName,
+      sortable: false,
     },
     {
       field: 'email',
@@ -228,6 +258,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: stringFilterOperators,
       hide: !visibilityColumns.email,
+      sortable: false,
     },
     {
       field: 'phoneNumber',
@@ -236,6 +267,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: stringFilterOperators,
       hide: !visibilityColumns.phoneNumber,
+      sortable: false,
     },
     {
       field: 'brand',
@@ -244,6 +276,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.brand,
+      sortable: false,
     },
     {
       field: 'model',
@@ -252,6 +285,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.model,
+      sortable: false,
     },
     {
       field: 'price',
@@ -261,6 +295,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: numericFilterOperators,
       hide: !visibilityColumns.price,
+      sortable: false,
     },
     {
       field: 'duration',
@@ -272,6 +307,7 @@ export default function Subscription(): JSX.Element {
       filterOperators: selectFilterOperators,
       valueOptions: durationOptions,
       hide: !visibilityColumns.duration,
+      sortable: false,
     },
     {
       field: 'status',
@@ -283,6 +319,7 @@ export default function Subscription(): JSX.Element {
       filterOperators: selectFilterOperators,
       valueOptions: statusOptions,
       hide: !visibilityColumns.status,
+      sortable: false,
     },
     {
       field: 'updatedAt',
@@ -292,6 +329,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.updatedAt,
+      sortable: true,
     },
     {
       field: 'carModelId',
@@ -300,6 +338,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: idFilterOperators,
       hide: !visibilityColumns.carModelId,
+      sortable: false,
     },
     {
       field: 'seats',
@@ -308,6 +347,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.seats,
+      sortable: false,
     },
     {
       field: 'topSpeed',
@@ -316,6 +356,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.topSpeed,
+      sortable: false,
     },
     {
       field: 'plateNumber',
@@ -324,6 +365,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: stringFilterOperators,
       hide: !visibilityColumns.plateNumber,
+      sortable: false,
     },
     {
       field: 'vin',
@@ -332,6 +374,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterOperators: stringFilterOperators,
       hide: !visibilityColumns.vin,
+      sortable: false,
     },
     {
       field: 'fastChargeTime',
@@ -340,6 +383,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.fastChargeTime,
+      sortable: false,
     },
     {
       field: 'startDate',
@@ -349,6 +393,7 @@ export default function Subscription(): JSX.Element {
       filterOperators: dateFilterOperators,
       flex: 1,
       hide: !visibilityColumns.startDate,
+      sortable: true,
     },
     {
       field: 'endDate',
@@ -358,6 +403,7 @@ export default function Subscription(): JSX.Element {
       filterOperators: dateFilterOperators,
       flex: 1,
       hide: !visibilityColumns.endDate,
+      sortable: true,
     },
     {
       field: 'startAddress',
@@ -366,6 +412,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.startAddress,
+      sortable: false,
     },
     {
       field: 'endAddress',
@@ -374,6 +421,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.endAddress,
+      sortable: false,
     },
     {
       field: 'createdAt',
@@ -383,6 +431,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.createdAt,
+      sortable: true,
     },
   ]
 
@@ -416,6 +465,9 @@ export default function Subscription(): JSX.Element {
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          loading={isFetching}
         />
       </Card>
 

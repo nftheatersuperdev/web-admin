@@ -63,9 +63,11 @@ interface Subscription {
   startAddress: string
   startLat: number
   startLng: number
+  startAddressRemark: string | null
   endAddress: string
   endLat: number
   endLng: number
+  endAddressRemark: string | null
   status: string
 }
 
@@ -256,6 +258,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               label={t('subscription.startAddress')}
               value={subscription?.startAddress}
               fullWidth
+              multiline
+              maxRows={3}
               InputProps={{
                 readOnly: true,
               }}
@@ -266,6 +270,32 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               label={t('subscription.endAddress')}
               value={subscription?.endAddress}
               fullWidth
+              multiline
+              maxRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.startAddressRemark')}
+              value={subscription?.startAddressRemark?.trim() || t('subscription.noData')}
+              fullWidth
+              multiline
+              maxRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.endAddressRemark')}
+              value={subscription?.endAddressRemark?.trim() || t('subscription.noData')}
+              fullWidth
+              multiline
+              maxRows={3}
               InputProps={{
                 readOnly: true,
               }}
