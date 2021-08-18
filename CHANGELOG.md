@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.4.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.3.0...v1.4.0) (2021-08-18)
+
+
+### Features
+
+* add filter subscription status ([#123](https://www.github.com/evmeio/evme-admin-web/issues/123)) ([3026cf0](https://www.github.com/evmeio/evme-admin-web/commit/3026cf00c48ff19f33ce4d0f661483dbb33424b7))
+* add handler to sorting by api ([d440834](https://www.github.com/evmeio/evme-admin-web/commit/d440834317f267496c3b4edeb644d99d3e85c6b8))
+* add new translation variables ([35d4811](https://www.github.com/evmeio/evme-admin-web/commit/35d48115b98ac5dc6b9a94f5f0125e590fb4206a))
+* add textarea to show address remarks ([0ac7da7](https://www.github.com/evmeio/evme-admin-web/commit/0ac7da78319830adc2d45949291f45a392226daa))
+* add trim to be a condition to show remark ([4af488d](https://www.github.com/evmeio/evme-admin-web/commit/4af488d9a957b8c08b5e52557f9afb8aaf84fe73))
+* change start and end remark labels ([03edb41](https://www.github.com/evmeio/evme-admin-web/commit/03edb419836d89274450b547bbe8c8e4886201ca))
+* disable pricing and duration to be sortable and reduce if condition ([6134a64](https://www.github.com/evmeio/evme-admin-web/commit/6134a64fcc8e91009814f1a4fcbbbf87b153828b))
+* update subscription object ([877aef6](https://www.github.com/evmeio/evme-admin-web/commit/877aef6c4817606d1660999feb63965fb42be34f))
+
+
+### Bug Fixes
+
+* failed to compile ([#125](https://www.github.com/evmeio/evme-admin-web/issues/125)) ([18be3af](https://www.github.com/evmeio/evme-admin-web/commit/18be3af0a2317cf2c4d2a647fadfe87d1fd4a560))
+* swop date between condition ([6186db3](https://www.github.com/evmeio/evme-admin-web/commit/6186db36ab27f8ab0bae5eb647c2c427f897a1bc))
+* update mapping field for end address remark ([21950e0](https://www.github.com/evmeio/evme-admin-web/commit/21950e095a1988db16c173e7e8fed8049d156bf9))
+
 ## [1.3.0](https://www.github.com/projecttron/tron-admin-web/compare/v1.2.2...v1.3.0) (2021-07-28)
 
 
