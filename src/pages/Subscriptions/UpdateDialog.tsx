@@ -22,7 +22,7 @@ import config from 'config'
 import * as yup from 'yup'
 import { useCarModelById } from 'services/evme'
 import { columnFormatDuration } from 'pages/Pricing/utils'
-import { columnFormatSubEventStatus } from './utils'
+import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
   display: flex;
@@ -122,6 +122,12 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   ) {
     availablePlateNumbers.push(subscription.plateNumber)
   }
+
+  const disableToChangePlateNumber =
+    subscription &&
+    [SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].indexOf(subscription?.status) < 0
+      ? true
+      : false
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -339,6 +345,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                 name="plateNumber"
                 value={formik.values.plateNumber}
                 onChange={formik.handleChange}
+                disabled={disableToChangePlateNumber}
               >
                 {availablePlateNumbers.map((plateNumber) => (
                   <MenuItem key={plateNumber} value={plateNumber}>
