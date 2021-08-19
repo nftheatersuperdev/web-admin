@@ -125,9 +125,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
 
   const disableToChangePlateNumber =
     subscription &&
-    [SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].indexOf(subscription?.status) < 0
-      ? true
-      : false
+    ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
