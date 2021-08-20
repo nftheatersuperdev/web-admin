@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Grid,
   TextField,
@@ -13,6 +14,8 @@ import {
   Select,
   FormHelperText,
 } from '@material-ui/core'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import toast from 'react-hot-toast'
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -20,7 +23,7 @@ import { formatDate } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
 import * as yup from 'yup'
-import { useCarModelById } from 'services/evme'
+import { useCarModelById, useChangeCar } from 'services/evme'
 import { columnFormatDuration } from 'pages/Pricing/utils'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
@@ -77,9 +80,15 @@ interface SubscriptionProps {
   subscription: Subscription | undefined
 }
 
+interface SubscriptionUpdateValuesProps {
+  plateNumber: string | undefined
+}
+
 export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   const { open, onClose, subscription } = props
   const { startLat = 0, startLng = 0, endLat = 0, endLng = 0 } = subscription || {}
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // Fetch the available cars with the car model ID and the color of the subscription so that an admin
   // can possibly change the vehicle in this car model category
@@ -89,7 +98,34 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     availableFilter: { startDate: subscription?.startDate, endDate: subscription?.endDate },
   })
 
+  const changeCarMutation = useChangeCar()
+
   const { t } = useTranslation()
+
+  const handleOnSubmit = async ({ plateNumber }: SubscriptionUpdateValuesProps) => {
+    setIsLoading(true)
+    const carSelected = carModel?.cars?.find((car) => car.plateNumber === plateNumber)
+    const carId = carSelected?.id
+    const subscriptionId = subscription?.id
+
+    if (carId && subscriptionId) {
+      await toast.promise(
+        changeCarMutation.mutateAsync({
+          carId,
+          subscriptionId,
+        }),
+        {
+          loading: t('toast.loading'),
+          success: t('subscription.updateDialog.success'),
+          error: t('subscription.updateDialog.error'),
+        }
+      )
+    }
+
+    setIsLoading(false)
+    onClose()
+    formik.resetForm()
+  }
 
   const formik = useFormik({
     validationSchema,
@@ -97,10 +133,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       plateNumber: subscription?.plateNumber,
     },
     enableReinitialize: true,
-    onSubmit: () => {
-      onClose()
-      formik.resetForm()
-    },
+    onSubmit: handleOnSubmit,
   })
 
   const { isLoaded } = useJsApiLoader({
@@ -413,10 +446,16 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onFormCloseHandler} color="primary">
+        {isLoading && <CircularProgress size={24} />}
+        <Button onClick={onFormCloseHandler} color="primary" disabled={isLoading}>
           {t('button.cancel')}
         </Button>
-        <Button onClick={() => formik.handleSubmit()} color="primary" variant="contained">
+        <Button
+          onClick={() => formik.handleSubmit()}
+          color="primary"
+          variant="contained"
+          disabled={isLoading}
+        >
           {t('button.update')}
         </Button>
       </DialogActions>
