@@ -103,28 +103,30 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   const { t } = useTranslation()
 
   const handleOnSubmit = async ({ plateNumber }: SubscriptionUpdateValuesProps) => {
-    setIsLoading(true)
-    const carSelected = carModel?.cars?.find((car) => car.plateNumber === plateNumber)
-    const carId = carSelected?.id
-    const subscriptionId = subscription?.id
+    try {
+      setIsLoading(true)
+      const carSelected = carModel?.cars?.find((car) => car.plateNumber === plateNumber)
+      const carId = carSelected?.id
+      const subscriptionId = subscription?.id
 
-    if (carId && subscriptionId) {
-      await toast.promise(
-        changeCarMutation.mutateAsync({
-          carId,
-          subscriptionId,
-        }),
-        {
-          loading: t('toast.loading'),
-          success: t('subscription.updateDialog.success'),
-          error: t('subscription.updateDialog.error'),
-        }
-      )
+      if (carId && subscriptionId) {
+        await toast.promise(
+          changeCarMutation.mutateAsync({
+            carId,
+            subscriptionId,
+          }),
+          {
+            loading: t('toast.loading'),
+            success: t('subscription.updateDialog.success'),
+            error: t('subscription.updateDialog.error'),
+          }
+        )
+      }
+    } finally {
+      setIsLoading(false)
+      onClose()
+      formik.resetForm()
     }
-
-    setIsLoading(false)
-    onClose()
-    formik.resetForm()
   }
 
   const formik = useFormik({
