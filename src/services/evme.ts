@@ -40,6 +40,7 @@ import {
   PackagePriceFilter,
   AdditionalExpenseFilter,
   AdditionalExpenseSort,
+  SubscriptionUpdatePlateInput,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -1096,6 +1097,41 @@ export function useMe(): UseQueryResult<User> {
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve profile data, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useChangeCar(): UseMutationResult<
+  unknown,
+  unknown,
+  SubscriptionUpdatePlateInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ carId, subscriptionId }: SubscriptionUpdatePlateInput) => {
+      const response = await gqlRequest(
+        gql`
+          mutation ChangeCar($input: SubscriptionUpdatePlateInput!) {
+            changeCar(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            carId,
+            subscriptionId,
+          },
+        }
+      )
+      return response.changeCar
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to change car, ${error.message}`)
       },
     }
   )
