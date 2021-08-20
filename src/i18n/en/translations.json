@@ -279,7 +279,11 @@
       "completed": "Completed",
       "extended": "Extended"
     },
-    "noData": "No data"
+    "noData": "No data",
+    "updateDialog": {
+      "success": "Updated subscription successfully",
+      "error": "Failed to update subscription"
+    }
   },
   "additionalExpense": {
     "id": "ID",

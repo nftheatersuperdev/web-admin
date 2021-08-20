@@ -3373,6 +3373,13 @@ export type UpdateOneUserInput = {
   update: UserInput
 }
 
+export type SubscriptionUpdatePlateInput = {
+  /** The id of the record to update */
+  subscriptionId: Scalars['String']
+  /** The update to apply. */
+  carId: Scalars['String']
+}
+
 export type User = {
   __typename?: 'User'
   id: Scalars['String']
