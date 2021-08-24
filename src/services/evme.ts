@@ -41,6 +41,7 @@ import {
   AdditionalExpenseFilter,
   AdditionalExpenseSort,
   SubscriptionUpdatePlateInput,
+  SendDataViaEmailInput,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -1132,6 +1133,37 @@ export function useChangeCar(): UseMutationResult<
     {
       onError: (error: Error) => {
         console.error(`Unable to change car, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useSendDataViaEmail(): UseMutationResult<
+  unknown,
+  unknown,
+  SendDataViaEmailInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ emails }: SendDataViaEmailInput) => {
+      const { sendDataViaEmail } = await gqlRequest(
+        gql`
+          mutation SendDataViaEmail($emails: [String!]!) {
+            sendDataViaEmail(emails: $emails)
+          }
+        `,
+        {
+          emails,
+        }
+      )
+      console.log('sendDataViaEmail ->', sendDataViaEmail)
+      return sendDataViaEmail
+    },
+    {
+      onError: () => {
+        console.error('Failed too update an additional expense')
       },
     }
   )

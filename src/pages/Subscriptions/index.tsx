@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Card, Button } from '@material-ui/core'
+import EmailIcon from '@material-ui/icons/Email'
+import toast from 'react-hot-toast'
 import {
   GridColDef,
   GridFilterItem,
@@ -26,11 +28,12 @@ import {
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import DataGridLocale from 'components/DataGridLocale'
-import { useSubscriptions } from 'services/evme'
+import { useSubscriptions, useSendDataViaEmail } from 'services/evme'
 import { SubFilter, SubSortFields, SortDirection } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatDuration, getDurationOptions } from 'pages/Pricing/utils'
 import UpdateDialog from './UpdateDialog'
+import SendDataDialog from './SendDataDialog'
 import {
   columnFormatSubEventStatus,
   getVisibilityColumns,
@@ -44,12 +47,14 @@ export default function Subscription(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
+  const [isSendDataDialogOpen, setSendDataDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
   const [subFilter, setSubFilter] = useState<SubFilter>({})
   const [subSort, setSubSort] = useState({
     field: SubSortFields.CreatedAt,
     direction: SortDirection.Desc,
   })
+  const sendDataViaEmail = useSendDataViaEmail()
 
   const { data, refetch, fetchNextPage, fetchPreviousPage, isFetching } = useSubscriptions(
     pageSize,
@@ -180,6 +185,22 @@ export default function Subscription(): JSX.Element {
         throwOnError: true,
       })
     }
+  }
+
+  const handleOnSubmitSend = async (emails: string[]) => {
+    if (emails?.length > 0) {
+      await toast.promise(
+        sendDataViaEmail.mutateAsync({
+          emails,
+        }),
+        {
+          loading: t('toast.loading'),
+          success: t('subscription.sendAllData.success'),
+          error: t('subscription.sendAllData.error'),
+        }
+      )
+    }
+    setSendDataDialogOpen(false)
   }
 
   useEffect(() => {
@@ -438,11 +459,21 @@ export default function Subscription(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <a href="https://dashboard.omise.co/" target="_blank" rel="noreferrer">
-          <Button color="primary" variant="contained">
-            {t('subscription.omiseButton')}
+        <div>
+          <Button
+            color="primary"
+            startIcon={<EmailIcon />}
+            onClick={() => setSendDataDialogOpen(true)}
+          >
+            {t('subscription.sendAllDataViaEmailButton')}
           </Button>
-        </a>
+          &nbsp;&nbsp;
+          <a href="https://dashboard.omise.co/" target="_blank" rel="noreferrer">
+            <Button color="primary" variant="contained">
+              {t('subscription.omiseButton')}
+            </Button>
+          </a>
+        </div>
       </PageToolbar>
 
       <Card>
@@ -475,6 +506,11 @@ export default function Subscription(): JSX.Element {
         open={isUpdateDialogOpen}
         onClose={() => setUpdateDialogOpen(false)}
         subscription={selectedSubscription}
+      />
+      <SendDataDialog
+        open={isSendDataDialogOpen}
+        onClose={() => setSendDataDialogOpen(false)}
+        onSubmitSend={handleOnSubmitSend}
       />
     </Page>
   )

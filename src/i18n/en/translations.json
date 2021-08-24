@@ -264,6 +264,7 @@
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
     "omiseButton": "Open Omise",
+    "sendAllDataViaEmailButton": "Send All Data via Email",
     "carDetails": "Car Details",
     "updateSubscriptionDetails": "Update Subscription Details",
     "bookingDetails": "Booking Details",
@@ -283,6 +284,10 @@
     "updateDialog": {
       "success": "Updated subscription successfully",
       "error": "Failed to update subscription"
+    },
+    "sendAllData": {
+      "success": "The report has been generated",
+      "error": "Failed to generate a report"
     }
   },
   "additionalExpense": {
