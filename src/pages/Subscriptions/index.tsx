@@ -188,10 +188,13 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleOnSubmitSend = async (emails: string[]) => {
+    const exportColumns = Object.keys(visibilityColumns).filter((key) => visibilityColumns[key])
+
     if (emails?.length > 0) {
       await toast.promise(
         sendDataViaEmail.mutateAsync({
           emails,
+          columns: exportColumns,
         }),
         {
           loading: t('toast.loading'),

@@ -3382,6 +3382,7 @@ export type SubscriptionUpdatePlateInput = {
 
 export type SendDataViaEmailInput = {
   emails: Array<Scalars['String']>
+  columns: Array<Scalars['String']>
 }
 
 export type User = {

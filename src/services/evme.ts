@@ -1147,15 +1147,16 @@ export function useSendDataViaEmail(): UseMutationResult<
   const { gqlRequest } = useGraphQLRequest()
 
   return useMutation(
-    async ({ emails }: SendDataViaEmailInput) => {
+    async ({ emails, columns }: SendDataViaEmailInput) => {
       const { sendDataViaEmail } = await gqlRequest(
         gql`
-          mutation SendDataViaEmail($emails: [String!]!) {
-            sendDataViaEmail(emails: $emails)
+          mutation SendDataViaEmail($emails: [String!]!, $columns: [String!]!) {
+            sendDataViaEmail(emails: $emails, columns: $columns)
           }
         `,
         {
           emails,
+          columns,
         }
       )
       return sendDataViaEmail
