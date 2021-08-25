@@ -1158,7 +1158,6 @@ export function useSendDataViaEmail(): UseMutationResult<
           emails,
         }
       )
-      console.log('sendDataViaEmail ->', sendDataViaEmail)
       return sendDataViaEmail
     },
     {
