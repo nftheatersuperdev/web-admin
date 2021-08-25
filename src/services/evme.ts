@@ -1162,7 +1162,7 @@ export function useSendDataViaEmail(): UseMutationResult<
     },
     {
       onError: () => {
-        console.error('Failed too update an additional expense')
+        console.error('Failed to request send all data via email')
       },
     }
   )
