@@ -23,7 +23,10 @@ import { formatDate } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
 import * as yup from 'yup'
-import { useCarModelById, useChangeCar } from 'services/evme'
+import dayjs from 'dayjs'
+import { useAuth } from 'auth/AuthContext'
+import { ROLES } from 'auth/roles'
+import { useCarModelById, useChangeCar, useManualExtendSubscription } from 'services/evme'
 import { columnFormatDuration } from 'pages/Pricing/utils'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
@@ -36,6 +39,10 @@ const MapWrapper = styled.div`
   #map-return-address {
     flex: 1 1 auto;
   }
+`
+
+const MarginTop = styled.div`
+  margin-top: 10px;
 `
 
 const validationSchema = yup.object({
@@ -85,6 +92,9 @@ interface SubscriptionUpdateValuesProps {
 }
 
 export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
+  const { getRole } = useAuth()
+  const currentUserRole = getRole()
+  const isSuperAdminRole = currentUserRole === ROLES.SUPER_ADMIN
   const { open, onClose, subscription } = props
   const { startLat = 0, startLng = 0, endLat = 0, endLng = 0 } = subscription || {}
 
@@ -99,6 +109,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   })
 
   const changeCarMutation = useChangeCar()
+  const manualExtendSubscription = useManualExtendSubscription()
 
   const { t } = useTranslation()
 
@@ -161,6 +172,28 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   const disableToChangePlateNumber =
     subscription &&
     ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
+
+  const handleExtendEndDateDays = async (subscriptionId: string, endDate: string, day = 2) => {
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(t('subscription.extending.confirmationMessage'))
+    if (confirmed) {
+      const returnDate = dayjs(endDate).add(day, 'day')
+
+      await toast.promise(
+        manualExtendSubscription.mutateAsync({
+          subscriptionId,
+          returnDate,
+        }),
+        {
+          loading: t('toast.loading'),
+          success: t('subscription.updateDialog.success'),
+          error: t('subscription.updateDialog.error'),
+        }
+      )
+
+      onClose()
+    }
+  }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -291,6 +324,18 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                 readOnly: true,
               }}
             />
+            {isSuperAdminRole && subscription && (
+              <MarginTop>
+                <Button
+                  color="secondary"
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleExtendEndDateDays(subscription.id, subscription.endDate)}
+                >
+                  {t('subscription.extending.button')}
+                </Button>
+              </MarginTop>
+            )}
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
