@@ -3380,6 +3380,11 @@ export type SubscriptionUpdatePlateInput = {
   carId: Scalars['String']
 }
 
+export type SendDataViaEmailInput = {
+  emails: Array<Scalars['String']>
+  columns: Array<Scalars['String']>
+}
+
 export type User = {
   __typename?: 'User'
   id: Scalars['String']

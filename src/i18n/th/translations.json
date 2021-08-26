@@ -264,6 +264,7 @@
     "createdDate": "วันที่กดจอง",
     "updatedDate": "วันที่แก้ไข",
     "omiseButton": "เปิด Omise",
+    "sendAllDataViaEmailButton": "ส่งข้อมูลทั้งหมดผ่านอีเมล",
     "carDetails": "รายละเอียดรถ",
     "updateSubscriptionDetails": "อัพเดทรายละเอียดการสมัครสมาชิก",
     "bookingDetails": "รายละเอียดการจอง",
@@ -279,7 +280,15 @@
       "completed": "คืนรถแล้ว",
       "extended": "ต่ออายุการจอง"
     },
-    "noData": "ไม่มีข้อมูล"
+    "noData": "ไม่มีข้อมูล",
+    "updateDialog": {
+      "success": "ปรับปรุงหมายการจองเรียบร้อยแล้ว",
+      "error": "การปรับปรุงหมายการจองไม่สำเร็จ"
+    },
+    "sendAllData": {
+      "success": "รายการถูกสร้างขึ้นเรียบร้อยแล้ว",
+      "error": "การสร้างรายงานไม่สำเร็จ"
+    }
   },
   "additionalExpense": {
     "id": "เลขไอดี",
