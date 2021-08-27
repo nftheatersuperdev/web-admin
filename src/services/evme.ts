@@ -41,6 +41,7 @@ import {
   AdditionalExpenseFilter,
   AdditionalExpenseSort,
   SubscriptionUpdatePlateInput,
+  ManualExtendSubscriptionInput,
   SendDataViaEmailInput,
 } from './evme.types'
 
@@ -1098,6 +1099,41 @@ export function useMe(): UseQueryResult<User> {
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve profile data, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useManualExtendSubscription(): UseMutationResult<
+  unknown,
+  unknown,
+  ManualExtendSubscriptionInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ subscriptionId, returnDate }: ManualExtendSubscriptionInput) => {
+      const response = await gqlRequest(
+        gql`
+          mutation ManualExtendSubscription($input: ManaulExtendSubscriptionInput!) {
+            manualExtendSubscription(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            subscriptionId,
+            returnDate,
+          },
+        }
+      )
+      return response.changeCar
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to manual extend scription, ${error.message}`)
       },
     }
   )

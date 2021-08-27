@@ -285,6 +285,12 @@
       "success": "Updated subscription successfully",
       "error": "Failed to update subscription"
     },
+    "extending": {
+      "headerName": "Extending",
+      "description": "Calculating by extend the end date +2 days",
+      "button": "Extend",
+      "confirmationMessage": "Are you sure that to extend the end date to this subscription?"
+    },
     "sendAllData": {
       "success": "The report has been generated",
       "error": "Failed to generate a report"
