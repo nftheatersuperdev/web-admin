@@ -241,6 +241,7 @@
     }
   },
   "subscription": {
+    "id": "Subscription ID",
     "brand": "Car Brand",
     "model": "Car Model",
     "modelId": "Car Model ID",
