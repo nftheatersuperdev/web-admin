@@ -278,7 +278,8 @@
       "upcoming_cancelled": "ยกเลิกก่อนนำส่ง",
       "refused": "ชำระเงินถูกปฏิเสธ",
       "completed": "คืนรถแล้ว",
-      "extended": "ต่ออายุการจอง"
+      "extended": "ต่ออายุการจอง",
+      "manual_extended": "กำหนด ต่ออายุการจอง"
     },
     "noData": "ไม่มีข้อมูล",
     "updateDialog": {

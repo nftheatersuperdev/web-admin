@@ -10,6 +10,7 @@ export const SubEventStatus = {
   REFUSED: 'refused',
   COMPLETED: 'completed',
   EXTENDED: 'extended',
+  MANUAL_EXTENDED: 'manual_extended',
 }
 
 export const columnFormatSubEventStatus = (status: string, t: TFunction<Namespace>): string => {
@@ -38,7 +39,11 @@ export const columnFormatSubEventStatus = (status: string, t: TFunction<Namespac
     case SubEventStatus.EXTENDED:
       return t('subscription.status.extended')
 
+    case SubEventStatus.MANUAL_EXTENDED:
+      return t('subscription.status.manual_extended')
+
     default:
+      console.log('default status ->', status)
       return '-'
   }
 }

@@ -278,7 +278,8 @@
       "upcoming_cancelled": "Upcoming Cancelled",
       "refused": "Refused",
       "completed": "Completed",
-      "extended": "Extended"
+      "extended": "Extended",
+      "manual_extended": "Manual Extended"
     },
     "noData": "No data",
     "updateDialog": {
