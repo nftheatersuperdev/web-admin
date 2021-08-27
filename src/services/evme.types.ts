@@ -3385,6 +3385,11 @@ export type ManualExtendSubscriptionInput = {
   returnDate: Scalars['DateTime']
 }
 
+export type SendDataViaEmailInput = {
+  emails: Array<Scalars['String']>
+  columns: Array<Scalars['String']>
+}
+
 export type User = {
   __typename?: 'User'
   id: Scalars['String']

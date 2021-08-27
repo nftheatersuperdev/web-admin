@@ -42,6 +42,7 @@ import {
   AdditionalExpenseSort,
   SubscriptionUpdatePlateInput,
   ManualExtendSubscriptionInput,
+  SendDataViaEmailInput,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -1168,6 +1169,37 @@ export function useChangeCar(): UseMutationResult<
     {
       onError: (error: Error) => {
         console.error(`Unable to change car, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useSendDataViaEmail(): UseMutationResult<
+  unknown,
+  unknown,
+  SendDataViaEmailInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ emails, columns }: SendDataViaEmailInput) => {
+      const { sendDataViaEmail } = await gqlRequest(
+        gql`
+          mutation SendDataViaEmail($emails: [String!]!, $columns: [String!]!) {
+            sendDataViaEmail(emails: $emails, columns: $columns)
+          }
+        `,
+        {
+          emails,
+          columns,
+        }
+      )
+      return sendDataViaEmail
+    },
+    {
+      onError: () => {
+        console.error('Failed to request send all data via email')
       },
     }
   )
