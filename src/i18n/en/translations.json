@@ -205,6 +205,11 @@
       "message": "Are you sure that you want to delete this",
       "success": "Deleted car successfully",
       "error": "Failed to delete car"
+    },
+    "status": "Status",
+    "statuses": {
+      "available": "Available",
+      "outOfService": "Out of service"
     }
   },
   "pricing": {

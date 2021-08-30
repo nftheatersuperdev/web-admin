@@ -14,6 +14,7 @@ import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { CarModelItem } from 'types'
 import { CarInput } from 'services/evme.types'
+import CarStatusSelect from 'components/CarStatusSelect'
 
 const validationSchema = yup.object({
   vin: yup.string().required('Field is required'),
@@ -28,6 +29,7 @@ export interface CarInfo {
   carModelId: string
   color: string
   colorHex: string
+  status: string
 }
 
 interface CarUpdateDialogProps {
@@ -49,6 +51,7 @@ export default function CarUpdateDialog({
     carModelId: originalModelId,
     color: originalColor,
     colorHex: originalColorHex,
+    status: originalStatus,
   } = carInfo
 
   const { t } = useTranslation()
@@ -61,6 +64,7 @@ export default function CarUpdateDialog({
       carColor: originalColor,
       carModel: originalModelId,
       carColorHex: originalColorHex,
+      status: originalStatus,
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -70,6 +74,7 @@ export default function CarUpdateDialog({
         plateNumber: values.plateNumber,
         color: values.carColor,
         colorHex: values.carColorHex,
+        status: values.status,
       })
       formik.resetForm()
     },
@@ -173,6 +178,9 @@ export default function CarUpdateDialog({
                 ))}
               </TextField>
             </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <CarStatusSelect status={formik.values.status} onChange={formik.handleChange} />
           </Grid>
         </Grid>
       </DialogContent>

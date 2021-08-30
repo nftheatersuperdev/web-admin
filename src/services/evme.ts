@@ -23,6 +23,7 @@ import {
   CarInput,
   DeleteOneCarInput,
   UpdateOneCarInput,
+  UpdateOneCarStatusInput,
   PackagePriceInput,
   CursorPaging,
   SubFilter,
@@ -129,6 +130,36 @@ export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCa
           id,
           update,
         },
+      }
+    )
+    queryClient.invalidateQueries(QUERY_KEYS.CARS)
+    return response.updateCar
+  })
+}
+
+export function useUpdateCarStatus(): UseMutationResult<
+  CarModel,
+  unknown,
+  UpdateOneCarStatusInput,
+  unknown
+> {
+  const queryClient = useQueryClient()
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(async ({ carId, status }: UpdateOneCarStatusInput) => {
+    const response = await gqlRequest(
+      gql`
+        mutation CreateCarStatus($carId: String!, $status: String!) {
+          createCarStatus(input: { carStatus: { carId: $carId, status: $status } }) {
+            car {
+              id
+            }
+          }
+        }
+      `,
+      {
+        carId,
+        status,
       }
     )
     queryClient.invalidateQueries(QUERY_KEYS.CARS)
@@ -315,6 +346,7 @@ export function useCars(
                     }
                     batteryCapacity
                   }
+                  latestStatus
                 }
               }
             }
