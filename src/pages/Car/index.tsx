@@ -128,6 +128,8 @@ export default function Car(): JSX.Element {
       }
     )
 
+    refetch()
+
     /**
      * @DESCRIPTION Disable the update following as our backend disabled this function
      */
