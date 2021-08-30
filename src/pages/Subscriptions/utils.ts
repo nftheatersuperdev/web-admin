@@ -43,7 +43,6 @@ export const columnFormatSubEventStatus = (status: string, t: TFunction<Namespac
       return t('subscription.status.manual_extended')
 
     default:
-      console.log('default status ->', status)
       return '-'
   }
 }
