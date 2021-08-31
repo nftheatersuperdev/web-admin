@@ -422,6 +422,7 @@ export type Car = {
   colorHex?: Maybe<Scalars['String']>
   carModel?: Maybe<CarModel>
   carTrackId: Scalars['String']
+  latestStatus: Scalars['String']
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
@@ -683,6 +684,7 @@ export type CarInput = {
   colorHex: Scalars['String']
   vin: Scalars['String']
   plateNumber: Scalars['String']
+  status: Scalars['String']
 }
 
 export type CarMaxAggregate = {
@@ -3322,6 +3324,13 @@ export type UpdateOneCarInput = {
   id: Scalars['ID']
   /** The update to apply. */
   update: CarInput
+}
+
+export type UpdateOneCarStatusInput = {
+  /** The id of the record to update */
+  carId: Scalars['ID']
+  /** The update to apply. */
+  status: Scalars['String']
 }
 
 export type UpdateOneCarModelInput = {

@@ -19,15 +19,16 @@ import toast from 'react-hot-toast'
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { formatDate } from 'utils'
+import { formatDate, DEFAULT_DATETIME_FORMAT } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
-import * as yup from 'yup'
 import dayjs from 'dayjs'
+import * as yup from 'yup'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
 import { useCarModelById, useChangeCar, useManualExtendSubscription } from 'services/evme'
 import { columnFormatDuration } from 'pages/Pricing/utils'
+import DateTimePicker from 'components/DateTimePicker'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
@@ -39,10 +40,6 @@ const MapWrapper = styled.div`
   #map-return-address {
     flex: 1 1 auto;
   }
-`
-
-const MarginTop = styled.div`
-  margin-top: 10px;
 `
 
 const validationSchema = yup.object({
@@ -173,16 +170,21 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     subscription &&
     ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
 
-  const handleExtendEndDateDays = async (subscriptionId: string, endDate: string, day = 2) => {
+  const handleExtendEndDateDays = async (
+    subscriptionId: string,
+    originalDate: string,
+    newDate: string
+  ) => {
+    const confirmationMessage = t('subscription.extending.confirmationMessage')
+      .replace(':originalDate', dayjs(originalDate).format(DEFAULT_DATETIME_FORMAT))
+      .replace(':newDate', dayjs(newDate).format(DEFAULT_DATETIME_FORMAT))
     // eslint-disable-next-line no-alert
-    const confirmed = window.confirm(t('subscription.extending.confirmationMessage'))
+    const confirmed = window.confirm(confirmationMessage)
     if (confirmed) {
-      const returnDate = dayjs(endDate).add(day, 'day')
-
       await toast.promise(
         manualExtendSubscription.mutateAsync({
           subscriptionId,
-          returnDate,
+          returnDate: newDate,
         }),
         {
           loading: t('toast.loading'),
@@ -316,25 +318,42 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <TextField
-              label={t('subscription.endDate')}
-              value={formatDate(subscription?.endDate)}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-            {isSuperAdminRole && subscription && (
-              <MarginTop>
-                <Button
-                  color="secondary"
-                  variant="outlined"
-                  size="small"
-                  onClick={() => handleExtendEndDateDays(subscription.id, subscription.endDate)}
-                >
-                  {t('subscription.extending.button')}
-                </Button>
-              </MarginTop>
+            {!isSuperAdminRole && (
+              <TextField
+                label={t('subscription.endDate')}
+                value={formatDate(subscription?.endDate)}
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            )}
+            {isSuperAdminRole && subscription?.endDate && (
+              <DateTimePicker
+                fullWidth
+                disablePast
+                ampm={false}
+                label={t('subscription.endDate')}
+                id="extendEndDate"
+                name="extendEndDate"
+                format={DEFAULT_DATETIME_FORMAT}
+                minDate={subscription?.endDate}
+                value={subscription?.endDate}
+                onChange={(date) =>
+                  date &&
+                  handleExtendEndDateDays(
+                    subscription.id,
+                    subscription?.endDate,
+                    date?.toISOString()
+                  )
+                }
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
             )}
           </Grid>
           <Grid item xs={12} md={6}>

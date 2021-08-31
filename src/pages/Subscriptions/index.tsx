@@ -257,6 +257,16 @@ export default function Subscription(): JSX.Element {
 
   const columns: GridColDef[] = [
     {
+      field: 'id',
+      headerName: t('subscription.id'),
+      description: t('subscription.id'),
+      flex: 1,
+      filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.id,
+      sortable: false,
+      filterable: false,
+    },
+    {
       field: 'firstName',
       headerName: t('subscription.firstName'),
       description: t('subscription.firstName'),
