@@ -10,6 +10,10 @@ import {
   GridRowData,
   GridValueFormatterParams,
   GridSortModel,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarDensitySelector,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -70,6 +74,14 @@ export default function Subscription(): JSX.Element {
   const durationOptions = getDurationOptions(t)
   const statusOptions = getSubEventStatusOptions(t)
   const visibilityColumns = getVisibilityColumns()
+
+  const customToolbar = () => (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+    </GridToolbarContainer>
+  )
 
   const handleRowClick = (data: GridRowData) => {
     setUpdateDialogOpen(true)
@@ -512,6 +524,7 @@ export default function Subscription(): JSX.Element {
           sortingMode="server"
           onSortModelChange={handleSortChange}
           loading={isFetching}
+          customToolbar={customToolbar}
         />
       </Card>
 
