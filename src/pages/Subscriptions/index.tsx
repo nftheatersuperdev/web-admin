@@ -530,7 +530,12 @@ export default function Subscription(): JSX.Element {
 
       <UpdateDialog
         open={isUpdateDialogOpen}
-        onClose={() => setUpdateDialogOpen(false)}
+        onClose={(needRefetch) => {
+          if (needRefetch) {
+            refetch()
+          }
+          setUpdateDialogOpen(false)
+        }}
         subscription={selectedSubscription}
       />
       <SendDataDialog
