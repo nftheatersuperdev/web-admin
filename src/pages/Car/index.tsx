@@ -405,7 +405,12 @@ export default function Car(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
+        <Button
+          color="primary"
+          disabled
+          variant="contained"
+          onClick={() => setIsCreateDialogOpen(true)}
+        >
           {t('car.createButton')}
         </Button>
       </PageToolbar>
