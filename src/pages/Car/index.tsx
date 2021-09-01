@@ -156,8 +156,11 @@ export default function Car(): JSX.Element {
   )
 
   const openEditCarDialog = (param: GridRowData) => {
+    const selectedCar = cars?.pages[0].edges.find(({ node }) => node.id === param.id)
+    const latestStatus = selectedCar?.node.latestStatus
+
     setSelectedCarId(param.id)
-    const { vin, plateNumber, carModelId, color, colorHex, latestStatus } = param.row
+    const { vin, plateNumber, carModelId, color, colorHex } = param.row
 
     const status = latestStatus ? latestStatus : 'available'
 
@@ -192,6 +195,11 @@ export default function Car(): JSX.Element {
     setIsDeleteDialogOpen(false)
   }
 
+  const carStatuses = {
+    available: t('car.statuses.available'),
+    outOfService: t('car.statuses.outOfService'),
+  }
+
   const rows = useMemo(
     () =>
       cars?.pages[currentPageIndex]?.edges?.map(({ node }) => {
@@ -203,7 +211,7 @@ export default function Car(): JSX.Element {
           colorHex,
           carModelId,
           carModel,
-          latestStatus: status,
+          latestStatus,
           createdAt,
           updatedAt,
         } = node || {}
@@ -220,6 +228,9 @@ export default function Car(): JSX.Element {
           fastChargeTime,
           batteryCapacity,
         } = carModel || {}
+
+        const status =
+          latestStatus === 'available' ? carStatuses.available : carStatuses.outOfService
 
         return {
           carModelId,
@@ -244,6 +255,7 @@ export default function Car(): JSX.Element {
           status,
         }
       }) || [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [cars, currentPageIndex]
   )
 
@@ -376,6 +388,13 @@ export default function Car(): JSX.Element {
       flex: 1,
       hide: true,
       filterable: false,
+    },
+    {
+      field: 'status',
+      headerName: t('car.status'),
+      description: t('car.status'),
+      filterable: false,
+      sortable: false,
     },
     {
       field: 'actions',
