@@ -80,7 +80,7 @@ interface Subscription {
 
 interface SubscriptionProps {
   open: boolean
-  onClose: () => void
+  onClose: (needRefetch?: boolean) => void
   subscription: Subscription | undefined
 }
 
@@ -132,7 +132,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       }
     } finally {
       setIsLoading(false)
-      onClose()
+      onClose(true)
       formik.resetForm()
     }
   }

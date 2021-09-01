@@ -45,6 +45,11 @@ export default function CarUpdateDialog({
   carModelOptions,
   carInfo,
 }: CarUpdateDialogProps): JSX.Element {
+  /**
+   * @DESCRIPTION The variable here is because our business doesn't need anyone to add or update a car in the MVP phase.
+   */
+  const forceDisableFields = true
+
   const {
     vin: originalVin,
     plateNumber: originalPlate,
@@ -107,6 +112,7 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.vin && Boolean(formik.errors.vin)}
               helperText={formik.touched.vin && formik.errors.vin}
+              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -122,6 +128,7 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.plateNumber && Boolean(formik.errors.plateNumber)}
               helperText={formik.touched.plateNumber && formik.errors.plateNumber}
+              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -137,6 +144,7 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.carColor && Boolean(formik.errors.carColor)}
               helperText={formik.touched.carColor && formik.errors.carColor}
+              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -152,6 +160,7 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.carColorHex && Boolean(formik.errors.carColorHex)}
               helperText={formik.touched.carColorHex && formik.errors.carColorHex}
+              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -170,6 +179,7 @@ export default function CarUpdateDialog({
                 }}
                 error={formik.touched.carModel && Boolean(formik.errors.carModel)}
                 helperText={formik.touched.carModel && formik.errors.carModel}
+                disabled={forceDisableFields}
               >
                 {carModelOptions.map((model) => (
                   <MenuItem key={model.id} value={model.id}>

@@ -8,6 +8,7 @@ type DataGridLocaleProps = Omit<DataGridProps, 'onPageChange'> & {
   onFetchNextPage?: () => void
   onFetchPreviousPage?: () => void
   onPageChange?: (index: number) => void
+  customToolbar?: React.FC
 }
 
 export default function DataGridLocale(props: DataGridLocaleProps): JSX.Element {
@@ -19,6 +20,7 @@ export default function DataGridLocale(props: DataGridLocaleProps): JSX.Element 
     onPageChange,
     onFetchNextPage,
     onFetchPreviousPage,
+    customToolbar,
     ...rest
   } = props
 
@@ -36,7 +38,7 @@ export default function DataGridLocale(props: DataGridLocaleProps): JSX.Element 
   return (
     <DataGrid
       components={{
-        Toolbar: GridToolbar,
+        Toolbar: customToolbar ?? GridToolbar,
         ...components,
       }}
       onPageChange={handlePageChange}
