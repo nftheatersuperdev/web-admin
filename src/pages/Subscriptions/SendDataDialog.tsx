@@ -6,9 +6,10 @@ import {
   DialogContent,
   DialogContentText,
   Button,
+  Chip,
+  TextField,
 } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert'
-import ChipInput from 'material-ui-chip-input'
+import { Alert, Autocomplete } from '@material-ui/lab'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
@@ -61,6 +62,11 @@ export default function SendDataDialog({
   }
 
   function handleAddEmail(email: string) {
+    const isEmailDuplicated = chipEmails.includes(email)
+
+    if (!email || isEmailDuplicated) {
+      return false
+    }
     if (!validateEmail(email)) {
       setValidateEmailError(true)
       setAutoHideAlert()
@@ -81,17 +87,44 @@ export default function SendDataDialog({
         <DialogContentText>
           <p>{t('subscription.sendAllData.dialog.description')}</p>
         </DialogContentText>
-        <ChipInput
-          fullWidth={true}
-          variant="outlined"
-          size="small"
-          label={t('subscription.sendAllData.dialog.inputBox.label')}
-          placeholder={t('subscription.sendAllData.dialog.inputBox.placeholder')}
-          value={chipEmails}
-          onAdd={handleAddEmail}
-          onDelete={handleDeleteEmail}
-          InputProps={{
-            inputProps: { style: { minWidth: '100%' } },
+        <Autocomplete
+          multiple
+          freeSolo
+          disableClearable
+          disableCloseOnSelect
+          options={[]}
+          defaultValue={chipEmails}
+          renderTags={(_, getTagProps) =>
+            chipEmails.map((chipEmail, index) => (
+              <Chip
+                key={chipEmail}
+                variant="outlined"
+                label={chipEmail}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...getTagProps({ index })}
+                onDelete={(_) => handleDeleteEmail(chipEmail)}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...params}
+              variant="outlined"
+              label={t('subscription.sendAllData.dialog.inputBox.label')}
+              placeholder={t('subscription.sendAllData.dialog.inputBox.placeholder')}
+              onKeyDown={(event) => {
+                if (event.key === 'Backspace') {
+                  event.stopPropagation()
+                }
+              }}
+            />
+          )}
+          onChange={(event) => {
+            const { value } = event.target as HTMLTextAreaElement
+            if (validateEmail(value)) {
+              handleAddEmail(value)
+            }
           }}
         />
         {validateEmailError && (
