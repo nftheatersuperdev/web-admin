@@ -17,7 +17,7 @@ const MarginActionButtons = styled.div`
   margin: 10px 15px;
 `
 const MarginAlertDialog = styled.div`
-  margin: 10px 0 0 0;
+  margin-top: 10px;
 `
 
 export interface SendDataDialogProps {
