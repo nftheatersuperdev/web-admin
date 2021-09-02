@@ -40,7 +40,6 @@
     "i18next": "~20.3.1",
     "i18next-browser-languagedetector": "~6.1.1",
     "localstorage-slim": "~1.9.8",
-    "material-ui-chip-input": "~2.0.0-beta.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-toast": "~1.0.2",
