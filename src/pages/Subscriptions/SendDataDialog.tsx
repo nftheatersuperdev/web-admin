@@ -122,9 +122,7 @@ export default function SendDataDialog({
           )}
           onChange={(event) => {
             const { value } = event.target as HTMLTextAreaElement
-            if (validateEmail(value)) {
-              handleAddEmail(value)
-            }
+            handleAddEmail(value)
           }}
         />
         {validateEmailError && (
