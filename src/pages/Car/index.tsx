@@ -1,4 +1,5 @@
 import { Fragment, useMemo, useState, useEffect } from 'react'
+import styled from 'styled-components'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
   GridColDef,
@@ -33,6 +34,10 @@ import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
+
+const HideSection = styled(Button)`
+  display: none;
+`
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
@@ -424,14 +429,16 @@ export default function Car(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Button
-          color="primary"
-          disabled
-          variant="contained"
-          onClick={() => setIsCreateDialogOpen(true)}
-        >
-          {t('car.createButton')}
-        </Button>
+        <HideSection>
+          <Button
+            color="primary"
+            disabled
+            variant="contained"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
+            {t('car.createButton')}
+          </Button>
+        </HideSection>
       </PageToolbar>
 
       <Card>
