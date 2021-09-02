@@ -1,4 +1,4 @@
-import React, { KeyboardEvent } from 'react'
+import React from 'react'
 import {
   Dialog,
   DialogActions,
@@ -6,10 +6,18 @@ import {
   DialogContent,
   DialogContentText,
   Button,
-  Divider,
-  Chip,
-  TextField,
 } from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
+import ChipInput from 'material-ui-chip-input'
+import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
+
+const MarginActionButtons = styled.div`
+  margin: 10px 15px;
+`
+const MarginAlertDialog = styled.div`
+  margin: 10px 0 0 0;
+`
 
 export interface SendDataDialogProps {
   open: boolean
@@ -28,22 +36,38 @@ export default function SendDataDialog({
   onClose,
   onSubmitSend,
 }: SendDataDialogProps): JSX.Element {
+  const { t } = useTranslation()
   const [chipEmails, setChipEmails] = React.useState<string[]>([])
+  const [validateEmailError, setValidateEmailError] = React.useState<boolean>(false)
+  const [timeoutToHideAlert, setTimeoutToHideAlert] = React.useState<boolean>(false)
+
+  const setAutoHideAlert = (ms = 5000) => {
+    if (!timeoutToHideAlert) {
+      setTimeoutToHideAlert(true)
+      setTimeout(() => {
+        setValidateEmailError(false)
+        setTimeoutToHideAlert(false)
+      }, ms)
+    }
+  }
 
   function handleClose() {
     setChipEmails([])
     onClose()
   }
 
-  function handleDelete(chipEmail: string) {
-    setChipEmails(chipEmails.filter((email) => email !== chipEmail))
+  function handleDeleteEmail(email: string) {
+    setChipEmails(chipEmails.filter((chipEmail) => chipEmail !== email))
   }
 
-  function handleEmailInput(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { value: email } = event.target as HTMLTextAreaElement
-    if (event.key === 'Enter' && !chipEmails.includes(email) && validateEmail(email)) {
-      setChipEmails([...chipEmails, email])
+  function handleAddEmail(email: string) {
+    if (!validateEmail(email)) {
+      setValidateEmailError(true)
+      setAutoHideAlert()
+      return false
     }
+    setValidateEmailError(false)
+    setChipEmails([...chipEmails, email])
   }
 
   function handleOnClickSendButton() {
@@ -51,42 +75,47 @@ export default function SendDataDialog({
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Send All Data via Email</DialogTitle>
+    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth={true}>
+      <DialogTitle id="form-dialog-title">{t('subscription.sendAllData.dialog.title')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {chipEmails.length < 1
-            ? 'Please enter atleast one email to get the data'
-            : 'There are emails will retrieve the data'}
-          {chipEmails.map((chipEmail, index) => {
-            return (
-              <li key={index}>
-                <Chip label={chipEmail} onDelete={() => handleDelete(chipEmail)} />
-              </li>
-            )
-          })}
+          <p>{t('subscription.sendAllData.dialog.description')}</p>
         </DialogContentText>
-        <Divider />
-        <br />
-        <TextField
-          label="Email Address"
-          type="email"
-          fullWidth
+        <ChipInput
+          fullWidth={true}
           variant="outlined"
           size="small"
-          required
-          inputProps={{
-            onKeyDown: handleEmailInput,
+          label={t('subscription.sendAllData.dialog.inputBox.label')}
+          placeholder={t('subscription.sendAllData.dialog.inputBox.placeholder')}
+          value={chipEmails}
+          onAdd={handleAddEmail}
+          onDelete={handleDeleteEmail}
+          InputProps={{
+            inputProps: { style: { minWidth: '100%' } },
           }}
         />
+        {validateEmailError && (
+          <MarginAlertDialog>
+            <Alert severity="error" onClose={() => setValidateEmailError(false)}>
+              {t('subscription.sendAllData.dialog.alertBox.errorInvalidEmail')}
+            </Alert>
+          </MarginAlertDialog>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleOnClickSendButton} color="primary">
-          Send
-        </Button>
+        <MarginActionButtons>
+          <Button onClick={handleClose} color="primary">
+            {t('subscription.sendAllData.dialog.actionButton.cancel')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={chipEmails.length < 1}
+            onClick={handleOnClickSendButton}
+          >
+            {t('subscription.sendAllData.dialog.actionButton.send')}
+          </Button>
+        </MarginActionButtons>
       </DialogActions>
     </Dialog>
   )
