@@ -101,7 +101,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   // can possibly change the vehicle in this car model category
   const { data: carModel } = useCarModelById({
     carModelId: subscription?.carModelId || '',
-    carFilter: { color: { eq: subscription?.color } },
+    // carFilter: { color: { eq: subscription?.color } },
+    carFilter: {},
     availableFilter: { startDate: subscription?.startDate, endDate: subscription?.endDate },
   })
 
