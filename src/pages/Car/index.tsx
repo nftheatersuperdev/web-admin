@@ -115,13 +115,13 @@ export default function Car(): JSX.Element {
     })
   }
 
-  const onCloseEditDialog = (data: CarInput | null) => {
+  const onCloseEditDialog = async (data: CarInput | null) => {
     setIsUpdateDialogOpen(false)
     if (!data) {
       return
     }
 
-    toast.promise(
+    await toast.promise(
       updateCarStatusMutation.mutateAsync({
         carId: selectedCarId,
         status: data.status,

@@ -1161,7 +1161,7 @@ export function useManualExtendSubscription(): UseMutationResult<
           },
         }
       )
-      return response.changeCar
+      return response.manualExtendSubscription
     },
     {
       onError: (error: Error) => {
