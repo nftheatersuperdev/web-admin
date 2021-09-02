@@ -270,7 +270,7 @@
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
     "omiseButton": "Open Omise",
-    "sendAllDataViaEmailButton": "Send All Data via Email",
+    "sendAllDataViaEmailButton": "Export",
     "carDetails": "Car Details",
     "updateSubscriptionDetails": "Update Subscription Details",
     "bookingDetails": "Booking Details",
@@ -302,8 +302,8 @@
       "success": "The report has been generated",
       "error": "Failed to generate a report",
       "dialog": {
-        "title": "Send All Data via Email",
-        "description": "Please enter atleast one email address to get the data.",
+        "title": "Export",
+        "description": "Please enter at least one email address",
         "inputBox": {
           "label": "Email Address",
           "placeholder": "Please enter your email ex. ungatto@italiano.it"

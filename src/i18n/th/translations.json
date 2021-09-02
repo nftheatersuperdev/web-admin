@@ -270,7 +270,7 @@
     "createdDate": "วันที่กดจอง",
     "updatedDate": "วันที่แก้ไข",
     "omiseButton": "เปิด Omise",
-    "sendAllDataViaEmailButton": "ส่งข้อมูลทั้งหมดผ่านอีเมล",
+    "sendAllDataViaEmailButton": "ส่งออก",
     "carDetails": "รายละเอียดรถ",
     "updateSubscriptionDetails": "อัพเดทรายละเอียดการสมัครสมาชิก",
     "bookingDetails": "รายละเอียดการจอง",
@@ -302,8 +302,8 @@
       "success": "รายการถูกสร้างขึ้นเรียบร้อยแล้ว",
       "error": "การสร้างรายงานไม่สำเร็จ",
       "dialog": {
-        "title": "ส่งข้อมูลทั้งหมดผ่านอีเมล",
-        "description": "กรุณากรอกข้อมูลอย่างน้อย 1 อีเมลเพื่อรับข้อมูล",
+        "title": "ส่งออก",
+        "description": "กรุณากรอกข้อมูลอย่างน้อย 1 อีเมล",
         "inputBox": {
           "label": "อีเมล",
           "placeholder": "กรุณากรอกอีเมลของท่าน ตัวอย่าง เช่น ungatto@italiano.it"
