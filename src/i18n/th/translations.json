@@ -300,7 +300,22 @@
     },
     "sendAllData": {
       "success": "รายการถูกสร้างขึ้นเรียบร้อยแล้ว",
-      "error": "การสร้างรายงานไม่สำเร็จ"
+      "error": "การสร้างรายงานไม่สำเร็จ",
+      "dialog": {
+        "title": "ส่งข้อมูลทั้งหมดผ่านอีเมล",
+        "description": "กรุณากรอกข้อมูลอย่างน้อย 1 อีเมลเพื่อรับข้อมูล",
+        "inputBox": {
+          "label": "อีเมล",
+          "placeholder": "กรุณากรอกอีเมลของท่าน ตัวอย่าง เช่น ungatto@italiano.it"
+        },
+        "alertBox": {
+          "errorInvalidEmail": "อีเมลไม่ถูกต้องตามรูปแบบ"
+        },
+        "actionButton": {
+          "send": "ส่งข้อมูล",
+          "cancel": "ยกเลิก"
+        }
+      }
     }
   },
   "additionalExpense": {
