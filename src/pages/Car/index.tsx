@@ -161,7 +161,7 @@ export default function Car(): JSX.Element {
   )
 
   const openEditCarDialog = (param: GridRowData) => {
-    const selectedCar = cars?.pages[0].edges.find(({ node }) => node.id === param.id)
+    const selectedCar = cars?.pages[currentPageIndex].edges.find(({ node }) => node.id === param.id)
     const latestStatus = selectedCar?.node.latestStatus
 
     setSelectedCarId(param.id)
