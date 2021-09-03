@@ -338,7 +338,9 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                 id="extendEndDate"
                 name="extendEndDate"
                 format={DEFAULT_DATETIME_FORMAT}
-                minDate={subscription?.endDate}
+                minDate={dayjs(subscription?.endDate).add(1, 'day')}
+                minDateMessage=""
+                defaultValue={subscription?.endDate}
                 value={subscription?.endDate}
                 onChange={(date) =>
                   date &&

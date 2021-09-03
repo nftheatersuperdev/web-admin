@@ -115,13 +115,13 @@ export default function Car(): JSX.Element {
     })
   }
 
-  const onCloseEditDialog = (data: CarInput | null) => {
+  const onCloseEditDialog = async (data: CarInput | null) => {
     setIsUpdateDialogOpen(false)
     if (!data) {
       return
     }
 
-    toast.promise(
+    await toast.promise(
       updateCarStatusMutation.mutateAsync({
         carId: selectedCarId,
         status: data.status,
@@ -161,7 +161,7 @@ export default function Car(): JSX.Element {
   )
 
   const openEditCarDialog = (param: GridRowData) => {
-    const selectedCar = cars?.pages[0].edges.find(({ node }) => node.id === param.id)
+    const selectedCar = cars?.pages[currentPageIndex].edges.find(({ node }) => node.id === param.id)
     const latestStatus = selectedCar?.node.latestStatus
 
     setSelectedCarId(param.id)

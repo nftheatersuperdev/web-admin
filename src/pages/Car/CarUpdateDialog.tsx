@@ -94,6 +94,8 @@ export default function CarUpdateDialog({
     formik.resetForm()
   }
 
+  const isStatusHasNotChanged = originalStatus === formik.values.status
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{t('car.updateDialog.title')}</DialogTitle>
@@ -198,7 +200,12 @@ export default function CarUpdateDialog({
         <Button onClick={onFormCloseHandler} color="primary">
           {t('button.cancel')}
         </Button>
-        <Button onClick={() => formik.handleSubmit()} color="primary" variant="contained">
+        <Button
+          onClick={() => formik.handleSubmit()}
+          color="primary"
+          variant="contained"
+          disabled={isStatusHasNotChanged}
+        >
           {t('button.update')}
         </Button>
       </DialogActions>
