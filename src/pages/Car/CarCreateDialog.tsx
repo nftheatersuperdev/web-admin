@@ -14,6 +14,7 @@ import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { CarModelItem } from 'types'
 import { CarInput } from 'services/evme.types'
+import CarStatusSelect from 'components/CarStatusSelect'
 
 interface CarCreateDialogProps {
   open: boolean
@@ -43,6 +44,7 @@ export default function CarCreateDialog({
       carColor: '',
       carModel: '',
       carColorHex: '',
+      status: 'available',
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -52,6 +54,7 @@ export default function CarCreateDialog({
         plateNumber: values.plateNumber,
         color: values.carColor,
         colorHex: values.carColorHex,
+        status: values.status,
       })
       formik.resetForm()
     },
@@ -145,6 +148,9 @@ export default function CarCreateDialog({
                 ))}
               </TextField>
             </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <CarStatusSelect status={formik.values.status} onChange={formik.handleChange} />
           </Grid>
         </Grid>
       </DialogContent>

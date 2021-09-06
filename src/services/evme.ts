@@ -23,6 +23,7 @@ import {
   CarInput,
   DeleteOneCarInput,
   UpdateOneCarInput,
+  UpdateOneCarStatusInput,
   PackagePriceInput,
   CursorPaging,
   SubFilter,
@@ -40,6 +41,9 @@ import {
   PackagePriceFilter,
   AdditionalExpenseFilter,
   AdditionalExpenseSort,
+  SubscriptionUpdatePlateInput,
+  ManualExtendSubscriptionInput,
+  SendDataViaEmailInput,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -126,6 +130,36 @@ export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCa
           id,
           update,
         },
+      }
+    )
+    queryClient.invalidateQueries(QUERY_KEYS.CARS)
+    return response.updateCar
+  })
+}
+
+export function useUpdateCarStatus(): UseMutationResult<
+  CarModel,
+  unknown,
+  UpdateOneCarStatusInput,
+  unknown
+> {
+  const queryClient = useQueryClient()
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(async ({ carId, status }: UpdateOneCarStatusInput) => {
+    const response = await gqlRequest(
+      gql`
+        mutation CreateCarStatus($carId: String!, $status: String!) {
+          createCarStatus(input: { carStatus: { carId: $carId, status: $status } }) {
+            car {
+              id
+            }
+          }
+        }
+      `,
+      {
+        carId,
+        status,
       }
     )
     queryClient.invalidateQueries(QUERY_KEYS.CARS)
@@ -312,6 +346,7 @@ export function useCars(
                     }
                     batteryCapacity
                   }
+                  latestStatus
                 }
               }
             }
@@ -1096,6 +1131,107 @@ export function useMe(): UseQueryResult<User> {
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve profile data, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useManualExtendSubscription(): UseMutationResult<
+  unknown,
+  unknown,
+  ManualExtendSubscriptionInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ subscriptionId, returnDate }: ManualExtendSubscriptionInput) => {
+      const response = await gqlRequest(
+        gql`
+          mutation ManualExtendSubscription($input: ManaulExtendSubscriptionInput!) {
+            manualExtendSubscription(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            subscriptionId,
+            returnDate,
+          },
+        }
+      )
+      return response.manualExtendSubscription
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to manual extend scription, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useChangeCar(): UseMutationResult<
+  unknown,
+  unknown,
+  SubscriptionUpdatePlateInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ carId, subscriptionId }: SubscriptionUpdatePlateInput) => {
+      const response = await gqlRequest(
+        gql`
+          mutation ChangeCar($input: SubscriptionUpdatePlateInput!) {
+            changeCar(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            carId,
+            subscriptionId,
+          },
+        }
+      )
+      return response.changeCar
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to change car, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useSendDataViaEmail(): UseMutationResult<
+  unknown,
+  unknown,
+  SendDataViaEmailInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ emails, columns }: SendDataViaEmailInput) => {
+      const { sendDataViaEmail } = await gqlRequest(
+        gql`
+          mutation SendDataViaEmail($emails: [String!]!, $columns: [String!]!) {
+            sendDataViaEmail(emails: $emails, columns: $columns)
+          }
+        `,
+        {
+          emails,
+          columns,
+        }
+      )
+      return sendDataViaEmail
+    },
+    {
+      onError: () => {
+        console.error('Failed to request send all data via email')
       },
     }
   )

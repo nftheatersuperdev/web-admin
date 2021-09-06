@@ -205,6 +205,11 @@
       "message": "คุณแน่ใจหรือว่าต้องการลบข้อมูลรายการนี้",
       "success": "ลบข้อมูลรถยนต์สำเร็จ",
       "error": "ลบข้อมูลรถยนต์ไม่สำเร็จ"
+    },
+    "status": "สถานะ",
+    "statuses": {
+      "available": "พร้อมใช้งาน",
+      "outOfService": "ไม่พร้อมใช้งาน"
     }
   },
   "pricing": {
@@ -241,6 +246,7 @@
     }
   },
   "subscription": {
+    "id": "ไอดี",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
     "modelId": "เลขไอดีรุ่นรถยนต์",
@@ -264,6 +270,7 @@
     "createdDate": "วันที่กดจอง",
     "updatedDate": "วันที่แก้ไข",
     "omiseButton": "เปิด Omise",
+    "sendAllDataViaEmailButton": "ส่งออก",
     "carDetails": "รายละเอียดรถ",
     "updateSubscriptionDetails": "อัพเดทรายละเอียดการสมัครสมาชิก",
     "bookingDetails": "รายละเอียดการจอง",
@@ -277,9 +284,39 @@
       "upcoming_cancelled": "ยกเลิกก่อนนำส่ง",
       "refused": "ชำระเงินถูกปฏิเสธ",
       "completed": "คืนรถแล้ว",
-      "extended": "ต่ออายุการจอง"
+      "extended": "ต่ออายุการจอง",
+      "manual_extended": "กำหนด ต่ออายุการจอง"
     },
-    "noData": "ไม่มีข้อมูล"
+    "noData": "ไม่มีข้อมูล",
+    "updateDialog": {
+      "success": "ปรับปรุงหมายการจองเรียบร้อยแล้ว",
+      "error": "การปรับปรุงหมายการจองไม่สำเร็จ"
+    },
+    "extending": {
+      "headerName": "การยืดระยะเวลา",
+      "description": "การยืดระยะเวลาจะทำการคำนวณจากเวลาหมดอายุปัจจุบันและบวกเพิ่มไปอีก 2 วัน",
+      "button": "ยืดระยะเวลา",
+      "confirmationMessage": "คุณต้องการจะทำการยืดระยะเวลาหมดอายุจากวันที่ :originalDate ไปเป็น :newDate ของรายการจองนี้?"
+    },
+    "sendAllData": {
+      "success": "รายการถูกสร้างขึ้นเรียบร้อยแล้ว",
+      "error": "การสร้างรายงานไม่สำเร็จ",
+      "dialog": {
+        "title": "ส่งออก",
+        "description": "กรุณากรอกข้อมูลอย่างน้อย 1 อีเมล",
+        "inputBox": {
+          "label": "อีเมล",
+          "placeholder": "กรุณากรอกอีเมลของท่าน ตัวอย่าง เช่น ungatto@italiano.it"
+        },
+        "alertBox": {
+          "errorInvalidEmail": "อีเมลไม่ถูกต้องตามรูปแบบ"
+        },
+        "actionButton": {
+          "send": "ส่งข้อมูล",
+          "cancel": "ยกเลิก"
+        }
+      }
+    }
   },
   "additionalExpense": {
     "id": "เลขไอดี",

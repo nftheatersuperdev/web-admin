@@ -422,6 +422,7 @@ export type Car = {
   colorHex?: Maybe<Scalars['String']>
   carModel?: Maybe<CarModel>
   carTrackId: Scalars['String']
+  latestStatus: Scalars['String']
   deletedAt?: Maybe<Scalars['DateTime']>
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
@@ -683,6 +684,7 @@ export type CarInput = {
   colorHex: Scalars['String']
   vin: Scalars['String']
   plateNumber: Scalars['String']
+  status: Scalars['String']
 }
 
 export type CarMaxAggregate = {
@@ -3324,6 +3326,13 @@ export type UpdateOneCarInput = {
   update: CarInput
 }
 
+export type UpdateOneCarStatusInput = {
+  /** The id of the record to update */
+  carId: Scalars['ID']
+  /** The update to apply. */
+  status: Scalars['String']
+}
+
 export type UpdateOneCarModelInput = {
   /** The id of the record to update */
   id: Scalars['ID']
@@ -3371,6 +3380,23 @@ export type UpdateOneUserInput = {
   id: Scalars['ID']
   /** The update to apply. */
   update: UserInput
+}
+
+export type SubscriptionUpdatePlateInput = {
+  /** The id of the record to update */
+  subscriptionId: Scalars['String']
+  /** The update to apply. */
+  carId: Scalars['String']
+}
+
+export type ManualExtendSubscriptionInput = {
+  subscriptionId: Scalars['String']
+  returnDate: Scalars['DateTime']
+}
+
+export type SendDataViaEmailInput = {
+  emails: Array<Scalars['String']>
+  columns: Array<Scalars['String']>
 }
 
 export type User = {

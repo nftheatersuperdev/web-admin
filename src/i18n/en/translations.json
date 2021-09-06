@@ -205,6 +205,11 @@
       "message": "Are you sure that you want to delete this",
       "success": "Deleted car successfully",
       "error": "Failed to delete car"
+    },
+    "status": "Status",
+    "statuses": {
+      "available": "Available",
+      "outOfService": "Out of service"
     }
   },
   "pricing": {
@@ -241,6 +246,7 @@
     }
   },
   "subscription": {
+    "id": "Subscription ID",
     "brand": "Car Brand",
     "model": "Car Model",
     "modelId": "Car Model ID",
@@ -264,6 +270,7 @@
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
     "omiseButton": "Open Omise",
+    "sendAllDataViaEmailButton": "Export",
     "carDetails": "Car Details",
     "updateSubscriptionDetails": "Update Subscription Details",
     "bookingDetails": "Booking Details",
@@ -277,9 +284,39 @@
       "upcoming_cancelled": "Upcoming Cancelled",
       "refused": "Refused",
       "completed": "Completed",
-      "extended": "Extended"
+      "extended": "Extended",
+      "manual_extended": "Manual Extended"
     },
-    "noData": "No data"
+    "noData": "No data",
+    "updateDialog": {
+      "success": "Updated subscription successfully",
+      "error": "Failed to update subscription"
+    },
+    "extending": {
+      "headerName": "Extending",
+      "description": "Calculating by extend the end date +2 days",
+      "button": "Extend",
+      "confirmationMessage": "Are you sure to extend the end date from :originalDate to :newDate for this subscription?"
+    },
+    "sendAllData": {
+      "success": "The report has been generated",
+      "error": "Failed to generate a report",
+      "dialog": {
+        "title": "Export",
+        "description": "Please enter at least one email address",
+        "inputBox": {
+          "label": "Email Address",
+          "placeholder": "Please enter your email ex. ungatto@italiano.it"
+        },
+        "alertBox": {
+          "errorInvalidEmail": "The email is invalid"
+        },
+        "actionButton": {
+          "send": "Send",
+          "cancel": "Cancel"
+        }
+      }
+    }
   },
   "additionalExpense": {
     "id": "ID",

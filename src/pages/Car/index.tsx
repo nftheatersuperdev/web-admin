@@ -1,4 +1,5 @@
 import { Fragment, useMemo, useState, useEffect } from 'react'
+import styled from 'styled-components'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
   GridColDef,
@@ -18,7 +19,14 @@ import {
   stringToFilterContains,
 } from 'utils'
 import config from 'config'
-import { useCars, useCarModels, useCreateCar, useUpdateCar, useDeleteCar } from 'services/evme'
+import {
+  useCars,
+  useCarModels,
+  useCreateCar,
+  // useUpdateCar,
+  useUpdateCarStatus,
+  useDeleteCar,
+} from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
 import { CarInput, CarFilter, CarSortFields, SortDirection } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
@@ -26,6 +34,10 @@ import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
+
+const HideSection = styled(Button)`
+  display: none;
+`
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
@@ -38,7 +50,8 @@ export default function Car(): JSX.Element {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentRowData, setCurrentRowData] = useState({} as GridRowData)
   const createCarMutation = useCreateCar()
-  const updateCarMutation = useUpdateCar()
+  // const updateCarMutation = useUpdateCar()
+  const updateCarStatusMutation = useUpdateCarStatus()
   const deleteCarMutation = useDeleteCar()
   const [carFilter, setCarFilter] = useState<CarFilter>({})
 
@@ -102,16 +115,16 @@ export default function Car(): JSX.Element {
     })
   }
 
-  const onCloseEditDialog = (data: CarInput | null) => {
+  const onCloseEditDialog = async (data: CarInput | null) => {
     setIsUpdateDialogOpen(false)
     if (!data) {
       return
     }
 
-    toast.promise(
-      updateCarMutation.mutateAsync({
-        update: data,
-        id: selectedCarId,
+    await toast.promise(
+      updateCarStatusMutation.mutateAsync({
+        carId: selectedCarId,
+        status: data.status,
       }),
       {
         loading: t('toast.loading'),
@@ -119,6 +132,23 @@ export default function Car(): JSX.Element {
         error: t('car.updateDialog.error'),
       }
     )
+
+    refetch()
+
+    /**
+     * @DESCRIPTION Disable the update following as our backend disabled this function
+     */
+    // toast.promise(
+    //   updateCarMutation.mutateAsync({
+    //     update: data,
+    //     id: selectedCarId,
+    //   }),
+    //   {
+    //     loading: t('toast.loading'),
+    //     success: t('car.updateDialog.success'),
+    //     error: t('car.updateDialog.error'),
+    //   }
+    // )
   }
 
   const carModelOptions = useMemo(
@@ -131,14 +161,21 @@ export default function Car(): JSX.Element {
   )
 
   const openEditCarDialog = (param: GridRowData) => {
+    const selectedCar = cars?.pages[currentPageIndex].edges.find(({ node }) => node.id === param.id)
+    const latestStatus = selectedCar?.node.latestStatus
+
     setSelectedCarId(param.id)
     const { vin, plateNumber, carModelId, color, colorHex } = param.row
+
+    const status = latestStatus ? latestStatus : 'available'
+
     setCarInfo({
       vin,
       plateNumber,
       carModelId,
       color,
       colorHex,
+      status,
     })
     setIsUpdateDialogOpen(true)
   }
@@ -163,6 +200,11 @@ export default function Car(): JSX.Element {
     setIsDeleteDialogOpen(false)
   }
 
+  const carStatuses = {
+    available: t('car.statuses.available'),
+    outOfService: t('car.statuses.outOfService'),
+  }
+
   const rows = useMemo(
     () =>
       cars?.pages[currentPageIndex]?.edges?.map(({ node }) => {
@@ -174,6 +216,7 @@ export default function Car(): JSX.Element {
           colorHex,
           carModelId,
           carModel,
+          latestStatus,
           createdAt,
           updatedAt,
         } = node || {}
@@ -190,6 +233,9 @@ export default function Car(): JSX.Element {
           fastChargeTime,
           batteryCapacity,
         } = carModel || {}
+
+        const status =
+          latestStatus === 'available' ? carStatuses.available : carStatuses.outOfService
 
         return {
           carModelId,
@@ -211,8 +257,10 @@ export default function Car(): JSX.Element {
           createdAt,
           updatedAt,
           batteryCapacity,
+          status,
         }
       }) || [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [cars, currentPageIndex]
   )
 
@@ -347,6 +395,13 @@ export default function Car(): JSX.Element {
       filterable: false,
     },
     {
+      field: 'status',
+      headerName: t('car.status'),
+      description: t('car.status'),
+      filterable: false,
+      sortable: false,
+    },
+    {
       field: 'actions',
       headerName: t('car.actions'),
       description: t('car.actions'),
@@ -374,9 +429,16 @@ export default function Car(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
-          {t('car.createButton')}
-        </Button>
+        <HideSection>
+          <Button
+            color="primary"
+            disabled
+            variant="contained"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
+            {t('car.createButton')}
+          </Button>
+        </HideSection>
       </PageToolbar>
 
       <Card>
