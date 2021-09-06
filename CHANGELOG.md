@@ -1,5 +1,50 @@
 # Changelog
 
+## [1.5.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.4.0...v1.5.0) (2021-09-06)
+
+
+### Features
+
+* add a package to using in the project ([9cd67ee](https://www.github.com/evmeio/evme-admin-web/commit/9cd67ee8770864ed36534893e4368d42aaf9c49e))
+* add calendar to select extend end date ([fe9c84f](https://www.github.com/evmeio/evme-admin-web/commit/fe9c84f9e473ec946e52b0073655871aeb92f3e0))
+* add feature to export columns ([e997c39](https://www.github.com/evmeio/evme-admin-web/commit/e997c39fb521d85093b8a08a64671385c8ceff1a))
+* add new colunm subscription id ([bb989da](https://www.github.com/evmeio/evme-admin-web/commit/bb989da422fecc4265c1a1c65d3a32578aecfa72))
+* add new status to show in subscription menu ([59b4655](https://www.github.com/evmeio/evme-admin-web/commit/59b4655a64a214ca0e0017f7632795c1f5029d23))
+* add new types and translations ([777d2d9](https://www.github.com/evmeio/evme-admin-web/commit/777d2d96351d9421e3413d18f10058846066089a))
+* add translations ([0deb113](https://www.github.com/evmeio/evme-admin-web/commit/0deb113c547b40acde8d4a9ca1d187507b241545))
+* admin able to be manual update car status ([0d62bb5](https://www.github.com/evmeio/evme-admin-web/commit/0d62bb5d741b17342768b0705f5d2b6eefc52a49))
+* block the ui to which subscription unable to update plate number ([2298c69](https://www.github.com/evmeio/evme-admin-web/commit/2298c694027501a242654edc1c2c9522fccc6b07))
+* block update car status with the same original status ([e9b688d](https://www.github.com/evmeio/evme-admin-web/commit/e9b688d94e03eb81c1ef322e74d0f99614659e1f))
+* finish admin dashboard extend subscription end date ([8726e9f](https://www.github.com/evmeio/evme-admin-web/commit/8726e9fe1a0858418d03471095dfff582f5cff74))
+* hide add new car button ([5bf690f](https://www.github.com/evmeio/evme-admin-web/commit/5bf690f2a6220334f6a6f01c9cb6e71097725fdf))
+* implement and update dialog for subscript to change a car ([579bad0](https://www.github.com/evmeio/evme-admin-web/commit/579bad02a1d1a8e82fe752da8eb6c3c3fe263a57))
+* implement export all data ([e8de075](https://www.github.com/evmeio/evme-admin-web/commit/e8de0758c9a726dca5f1629720b33467446a392f))
+* reduced complexity of condition ([eb2e220](https://www.github.com/evmeio/evme-admin-web/commit/eb2e220b15103e8f3ebe6b896900e550350767cf))
+* remove car filter ([31e9672](https://www.github.com/evmeio/evme-admin-web/commit/31e9672ffad65ccaa6ee22701a4efc6ae672743b))
+* remove export button in data grid ([85990b7](https://www.github.com/evmeio/evme-admin-web/commit/85990b77f324b6a898faa98ff80309c764855d0a))
+* update send data dialog component ([831dd90](https://www.github.com/evmeio/evme-admin-web/commit/831dd90e5f1f6042a41d68bfdf6040603a038fcc))
+
+
+### Bug Fixes
+
+* add await for updating car status and refetch table immediately ([39751ff](https://www.github.com/evmeio/evme-admin-web/commit/39751ff2e5f219d917b76c080dfc7afaec349b72))
+* add plus one day to be able to select extend the end date ([2bb302f](https://www.github.com/evmeio/evme-admin-web/commit/2bb302f6f3e93db3312e52626a405f67a8d9327c))
+* add try..finally to handle when request failed ([906010d](https://www.github.com/evmeio/evme-admin-web/commit/906010d69827609f358b5e6bc5e4582fb7592404))
+* car status show up incorrect after update ([b2eace4](https://www.github.com/evmeio/evme-admin-web/commit/b2eace498b89f776bbe5184e0f6603a907c8de47))
+* change error message ([78ee7d9](https://www.github.com/evmeio/evme-admin-web/commit/78ee7d991a1f83374a5da392c477222bf71f3ad7))
+* change lib for render chip input email ([1ccd49f](https://www.github.com/evmeio/evme-admin-web/commit/1ccd49f457b5e133ec32ee52cfae2f65c3cc7269))
+* disable add new car button ([f12d7c0](https://www.github.com/evmeio/evme-admin-web/commit/f12d7c0d497396cb46f091de1ec0f0fe052596c6))
+* disable fields in car dialog update ([77e8985](https://www.github.com/evmeio/evme-admin-web/commit/77e8985997c31188278f658426753ebed1839b2f))
+* eslint shorthand-property-no-redundant-values ([e1c2cd2](https://www.github.com/evmeio/evme-admin-web/commit/e1c2cd2e36959dfbd936152d06f929de06e7a5ec))
+* ev1338 refetch data in table after update success ([c183000](https://www.github.com/evmeio/evme-admin-web/commit/c1830005e9c4e13647929ae9357c7b7a2c339e7a))
+* get car info by correct page index ([333cf40](https://www.github.com/evmeio/evme-admin-web/commit/333cf40f4fca7dfe9accc3da59def8d84cbe5a00))
+* handle add email error ([f563f47](https://www.github.com/evmeio/evme-admin-web/commit/f563f47c8074a19b6bd86e80a5a769d8eb756e00))
+* remove console.log ([a328473](https://www.github.com/evmeio/evme-admin-web/commit/a3284738daf69d51d9a6d1ae9896482eb23143ba))
+* remove console.log ([12ea9a3](https://www.github.com/evmeio/evme-admin-web/commit/12ea9a36f9fcb57eb8bb64d2690791f0eb9f4c1c))
+* remove out date lib ([29b531f](https://www.github.com/evmeio/evme-admin-web/commit/29b531f420508c271201b946ac983790559e5263))
+* skip test case for validate new car button ([f680349](https://www.github.com/evmeio/evme-admin-web/commit/f680349fc7ff2e9ac6ce8315926eae094ec7006a))
+* update export translation ([4dfcce6](https://www.github.com/evmeio/evme-admin-web/commit/4dfcce624b487a104352141969b87d859b415d0d))
+
 ## [1.4.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.3.0...v1.4.0) (2021-08-18)
 
 
