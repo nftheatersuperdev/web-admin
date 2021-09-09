@@ -153,7 +153,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   })
 
   const onFormCloseHandler = () => {
-    onClose()
+    onClose(true)
     formik.resetForm()
   }
 
@@ -194,7 +194,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
         }
       )
 
-      onClose()
+      onClose(true)
     }
   }
 
