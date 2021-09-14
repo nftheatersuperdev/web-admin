@@ -3146,6 +3146,10 @@ export type SubSort = {
   nulls?: Maybe<SortNulls>
 }
 
+export type SubOrder = {
+  [key: string]: SortDirection
+}
+
 export enum SubSortFields {
   Id = 'id',
   UserId = 'userId',
