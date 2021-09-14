@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.1](https://www.github.com/evmeio/evme-admin-web/compare/v1.5.0...v1.5.1) (2021-09-14)
+
+
+### Bug Fixes
+
+* force refetch data on close dialog ([6182a0f](https://www.github.com/evmeio/evme-admin-web/commit/6182a0f256747f36ee4b8f8c4d11bdf139c4b052))
+
 ## [1.5.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.4.0...v1.5.0) (2021-09-06)
 
 
