@@ -6,6 +6,7 @@ import {
   GridFilterModel,
   GridPageChangeParams,
   GridValueFormatterParams,
+  GridSortModel,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -20,7 +21,7 @@ import {
 } from 'utils'
 import config from 'config'
 import { useUsers } from 'services/evme'
-import { UserFilter, SortDirection, UserSortFields } from 'services/evme.types'
+import { UserFilter, SortDirection, UserSortFields, UserSort } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
@@ -35,14 +36,20 @@ export default function User(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [userSort, setUserSort] = useState<UserSort>({
+    field: UserSortFields.CreatedAt,
+    direction: SortDirection.Asc,
+  })
 
   const [userFilter, setUserFilter] = useState<UserFilter>({
     ...defaultFilter,
   })
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useUsers(pageSize, userFilter, [
-    { direction: SortDirection.Asc, field: UserSortFields.CreatedAt },
-  ])
+  const { data, refetch, fetchNextPage, fetchPreviousPage, isFetching } = useUsers(
+    pageSize,
+    userFilter,
+    [userSort]
+  )
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -80,6 +87,44 @@ export default function User(): JSX.Element {
     })
     // reset page
     setCurrentPageIndex(0)
+  }
+
+  const handleSortChange = (params: GridSortModel) => {
+    if (params?.length > 0 && !isFetching) {
+      const { field: refField, sort } = params[0]
+      const direction = sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc
+      let field
+
+      switch (refField) {
+        case 'firstName':
+          field = UserSortFields.FirstName
+          break
+        case 'lastName':
+          field = UserSortFields.LastName
+          break
+        case 'email':
+          field = UserSortFields.Email
+          break
+        case 'phoneNumber':
+          field = UserSortFields.PhoneNumber
+          break
+        case 'kycStatus':
+          field = UserSortFields.KycStatus
+          break
+        case 'updatedAt':
+          field = UserSortFields.UpdatedAt
+          break
+        default:
+          field = UserSortFields.CreatedAt
+          break
+      }
+
+      setUserSort({
+        field,
+        direction,
+      })
+      refetch()
+    }
   }
 
   useEffect(() => {
@@ -245,6 +290,9 @@ export default function User(): JSX.Element {
           disableSelectionOnClick
           filterMode="server"
           onFilterModelChange={handleFilterChange}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          loading={isFetching}
         />
       </Card>
     </Page>
