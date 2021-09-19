@@ -392,7 +392,7 @@ export function useCarsFilterAndSort(
   const { gqlRequest } = useGraphQLRequest()
 
   return useQuery(
-    [QUERY_KEYS.SEARCH_SUBSCRIPTIONS, { filter, order, page, pageSize }],
+    [QUERY_KEYS.CARS, { filter, order, page, pageSize }],
     async () => {
       const { carsFilterAndSort } = await gqlRequest(
         gql`
