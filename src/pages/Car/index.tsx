@@ -106,7 +106,6 @@ export default function Car(): JSX.Element {
       const order: SubOrder = {
         [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
       }
-      console.log('refField ->', refField)
 
       setCarSort(order)
       refetch()
