@@ -28,6 +28,7 @@ import {
   CursorPaging,
   SubFilter,
   SubSort,
+  SubOrder,
   PackagePriceSort,
   ChargingLocation,
   CarSort,
@@ -74,6 +75,16 @@ export interface WithPaginationType<P> {
   edges: {
     node: P
   }[]
+}
+
+export interface WithPaginateType<P> {
+  paginate?: {
+    totalPages: number
+    nextPage: number | null
+    previousPage: number | null
+  }
+  totalData?: number
+  data: [P]
 }
 
 export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, unknown> {
@@ -586,6 +597,101 @@ export function useSearchSubscriptions(
         console.error(`Unable to retrieve subscriptions, ${error.message}`)
       },
       keepPreviousData: true,
+    }
+  )
+}
+
+export function useSubscriptionsFilterAndSort(
+  filter?: SubFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<Sub>> {
+  const { gqlRequest } = useGraphQLRequest()
+  return useQuery(
+    [QUERY_KEYS.SEARCH_SUBSCRIPTIONS, { filter, order, page, pageSize }],
+    async () => {
+      const { subscriptionsFilterAndSort } = await gqlRequest(
+        gql`
+          query SubscriptionsFilterAndSort(
+            $filter: SubFilterInput
+            $order: SubOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            subscriptionsFilterAndSort(
+              filter: $filter
+              order: $order
+              pageSize: $pageSize
+              page: $page
+            ) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                userId
+                startDate
+                endDate
+                createdAt
+                updatedAt
+                kind
+                user {
+                  firstName
+                  lastName
+                  phoneNumber
+                  email
+                }
+                car {
+                  vin
+                  plateNumber
+                  color
+                  carModel {
+                    id
+                    brand
+                    model
+                    seats
+                    topSpeed
+                    fastChargeTime
+                  }
+                }
+                packagePrice {
+                  duration
+                  price
+                }
+                startAddress {
+                  full
+                  latitude
+                  longitude
+                  remark
+                }
+                endAddress {
+                  full
+                  latitude
+                  longitude
+                  remark
+                }
+                events {
+                  id
+                  status
+                  createdAt
+                  updatedAt
+                }
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return subscriptionsFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve SubscriptionsFilterAndSort, ${error.message}`)
+      },
     }
   )
 }
