@@ -383,6 +383,75 @@ export function useCars(
   )
 }
 
+export function useCarsFilterAndSort(
+  filter?: CarFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<Car>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.CARS, { filter, order, page, pageSize }],
+    async () => {
+      const { carsFilterAndSort } = await gqlRequest(
+        gql`
+          query CarsFilterAndSort(
+            $filter: CarFilterInput
+            $order: CarOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            carsFilterAndSort(filter: $filter, order: $order, pageSize: $pageSize, page: $page) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                vin
+                plateNumber
+                color
+                createdAt
+                updatedAt
+                carModelId
+                carModel {
+                  brand
+                  model
+                  acceleration
+                  topSpeed
+                  range
+                  totalPower
+                  totalTorque
+                  connectorType {
+                    description
+                  }
+                  chargeTime
+                  fastChargeTime
+                  bodyType {
+                    bodyType
+                  }
+                  batteryCapacity
+                }
+                latestStatus
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return carsFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve carsFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
 export function useSubscriptions(
   pageSize = 10,
   filter?: SubFilter,
