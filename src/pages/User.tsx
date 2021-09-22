@@ -20,8 +20,8 @@ import {
   stringToFilterContains,
 } from 'utils'
 import config from 'config'
-import { useUsers } from 'services/evme'
-import { UserFilter, SortDirection, UserSortFields, UserSort } from 'services/evme.types'
+import { useUsersFilterAndSort } from 'services/evme'
+import { UserFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
@@ -36,20 +36,16 @@ export default function User(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [userSort, setUserSort] = useState<UserSort>({
-    field: UserSortFields.CreatedAt,
-    direction: SortDirection.Asc,
-  })
-
   const [userFilter, setUserFilter] = useState<UserFilter>({
     ...defaultFilter,
   })
+  const [userSort, setUserSort] = useState<SubOrder>({})
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage, isFetching } = useUsers(
-    pageSize,
-    userFilter,
-    [userSort]
-  )
+  const {
+    data: userData,
+    refetch,
+    isFetching,
+  } = useUsersFilterAndSort(userFilter, userSort, currentPageIndex, pageSize)
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -92,37 +88,12 @@ export default function User(): JSX.Element {
   const handleSortChange = (params: GridSortModel) => {
     if (params?.length > 0 && !isFetching) {
       const { field: refField, sort } = params[0]
-      const direction = sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc
-      let field
 
-      switch (refField) {
-        case 'firstName':
-          field = UserSortFields.FirstName
-          break
-        case 'lastName':
-          field = UserSortFields.LastName
-          break
-        case 'email':
-          field = UserSortFields.Email
-          break
-        case 'phoneNumber':
-          field = UserSortFields.PhoneNumber
-          break
-        case 'kycStatus':
-          field = UserSortFields.KycStatus
-          break
-        case 'updatedAt':
-          field = UserSortFields.UpdatedAt
-          break
-        default:
-          field = UserSortFields.CreatedAt
-          break
+      const order: SubOrder = {
+        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
       }
 
-      setUserSort({
-        field,
-        direction,
-      })
+      setUserSort(order)
       refetch()
     }
   }
@@ -244,17 +215,17 @@ export default function User(): JSX.Element {
     },
   ]
 
-  const rows =
-    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
+  const users =
+    userData?.data.map((user) => {
       return {
-        id: node.id,
-        firstName: node.firstName,
-        lastName: node.lastName,
-        email: node.email,
-        phoneNumber: node.phoneNumber,
-        kycStatus: node.kycStatus,
-        createdAt: node.createdAt,
-        updatedAt: node.updatedAt,
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        kycStatus: user.kycStatus,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
         // these fields not support from backend
         verifyDate: null,
         note: '',
@@ -278,13 +249,11 @@ export default function User(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          rowCount={userData?.totalData}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
           onPageChange={setCurrentPageIndex}
-          rows={rows}
+          rows={users}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick
