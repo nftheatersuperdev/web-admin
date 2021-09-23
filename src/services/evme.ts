@@ -1015,6 +1015,62 @@ export function useUsers(
   )
 }
 
+export function useUsersFilterAndSort(
+  filter?: UserFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<User>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USERS, { filter, order, page, pageSize }],
+    async () => {
+      const { usersFilterAndSort } = await gqlRequest(
+        gql`
+          query UsersFilterAndSort(
+            $filter: UserFilterInput
+            $order: UserOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            usersFilterAndSort(filter: $filter, order: $order, pageSize: $pageSize, page: $page) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                firstName
+                lastName
+                email
+                phoneNumber
+                role
+                disabled
+                createdAt
+                updatedAt
+                subscriptions {
+                  carId
+                }
+                kycStatus
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return usersFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve usersFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
 export function useUserAggregate(
   filter: UserAggregateFilter
 ): UseQueryResult<UserAggregateResponse[]> {
