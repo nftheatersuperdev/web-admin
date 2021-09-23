@@ -307,7 +307,7 @@ export default function Car(): JSX.Element {
       hide: !visibilityColumns.id,
       flex: 1,
       filterOperators: idFilterOperators,
-      sortable: false,
+      sortable: true,
     },
     {
       field: 'brand',
