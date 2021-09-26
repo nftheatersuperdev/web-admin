@@ -25,6 +25,7 @@ import { UserFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
+import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 const defaultFilter = {
   role: {
@@ -51,6 +52,7 @@ export default function User(): JSX.Element {
   const stringFilterOperators = getStringFilterOperators(t)
   const dateFilterOperators = getDateFilterOperators(t)
   const selectFilterOperators = getSelectFilterOperators(t)
+  const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -85,6 +87,25 @@ export default function User(): JSX.Element {
     setCurrentPageIndex(0)
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
+  }
+
   const handleSortChange = (params: GridSortModel) => {
     if (params?.length > 0 && !isFetching) {
       const { field: refField, sort } = params[0]
@@ -107,22 +128,15 @@ export default function User(): JSX.Element {
       field: 'id',
       headerName: t('user.id'),
       description: t('user.id'),
+      hide: !visibilityColumns.id,
       flex: 1,
-      hide: true,
       filterOperators: idFilterOperators,
-    },
-    {
-      field: 'createdAt',
-      headerName: t('user.createdDate'),
-      description: t('user.createdDate'),
-      valueFormatter: columnFormatDate,
-      filterOperators: dateFilterOperators,
-      flex: 1,
     },
     {
       field: 'firstName',
       headerName: t('user.firstName'),
       description: t('user.firstName'),
+      hide: !visibilityColumns.firstName,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -130,6 +144,7 @@ export default function User(): JSX.Element {
       field: 'lastName',
       headerName: t('user.lastName'),
       description: t('user.lastName'),
+      hide: !visibilityColumns.lastName,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -137,6 +152,7 @@ export default function User(): JSX.Element {
       field: 'email',
       headerName: t('user.email'),
       description: t('user.email'),
+      hide: !visibilityColumns.email,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -144,6 +160,7 @@ export default function User(): JSX.Element {
       field: 'phoneNumber',
       headerName: t('user.phone'),
       description: t('user.phone'),
+      hide: !visibilityColumns.phoneNumber,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -151,6 +168,7 @@ export default function User(): JSX.Element {
       field: 'kycStatus',
       headerName: t('user.kyc.status'),
       description: t('user.kyc.status'),
+      hide: !visibilityColumns.kycStatus,
       flex: 1,
       valueFormatter: (params: GridValueFormatterParams): string => {
         switch (params.value) {
@@ -181,37 +199,47 @@ export default function User(): JSX.Element {
       ],
     },
     {
-      field: 'updatedAt',
-      headerName: t('user.updatedDate'),
-      description: t('user.updatedDate'),
-      valueFormatter: columnFormatDate,
-      filterOperators: dateFilterOperators,
-      flex: 1,
-    },
-    {
       field: 'verifyDate',
       headerName: t('user.verifyDate'),
       description: t('user.verifyDate'),
+      hide: !visibilityColumns.verifyDate,
       valueFormatter: columnFormatDate,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'note',
       headerName: t('user.note'),
       description: t('user.note'),
+      hide: !visibilityColumns.note,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'rejectedReason',
       headerName: t('user.rejectedReason'),
       description: t('user.rejectedReason'),
+      hide: !visibilityColumns.rejectedReason,
       flex: 1,
-      hide: true,
       filterable: false,
+    },
+    {
+      field: 'createdAt',
+      headerName: t('user.createdDate'),
+      description: t('user.createdDate'),
+      hide: !visibilityColumns.createdAt,
+      valueFormatter: columnFormatDate,
+      filterOperators: dateFilterOperators,
+      flex: 1,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('user.updatedDate'),
+      description: t('user.updatedDate'),
+      hide: !visibilityColumns.updatedAt,
+      valueFormatter: columnFormatDate,
+      filterOperators: dateFilterOperators,
+      flex: 1,
     },
   ]
 
@@ -259,6 +287,7 @@ export default function User(): JSX.Element {
           disableSelectionOnClick
           filterMode="server"
           onFilterModelChange={handleFilterChange}
+          onColumnVisibilityChange={onColumnVisibilityChange}
           sortingMode="server"
           onSortModelChange={handleSortChange}
           loading={isFetching}

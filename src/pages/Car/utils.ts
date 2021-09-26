@@ -1,13 +1,42 @@
 import { TFunction, Namespace } from 'react-i18next'
+import ls from 'localstorage-slim'
 
 interface SelectOption {
   label: string
   value: string
 }
 
+const STORAGE_KEYS = {
+  VISIBILITY_COLUMNS: 'evme:car:visibility_columns',
+}
+
 export const CarStatus = {
   AVAILABLE: 'available',
   OUT_OF_SERVICE: 'out_of_service',
+}
+
+export const defaultVisibilityColumns: VisibilityColumns = {
+  firstName: true,
+  lastName: true,
+  email: true,
+  phoneNumber: true,
+  brand: true,
+  model: true,
+  price: true,
+  duration: true,
+  status: true,
+  updatedAt: true,
+  carModelId: false,
+  seats: false,
+  topSpeed: false,
+  plateNumber: false,
+  vin: false,
+  fastChargeTime: false,
+  startDate: false,
+  endDate: false,
+  startAddress: false,
+  endAddress: false,
+  createdAt: false,
 }
 
 export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
@@ -34,4 +63,19 @@ export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): 
     default:
       return '-'
   }
+}
+
+export interface VisibilityColumns {
+  [key: string]: boolean
+}
+
+export const getVisibilityColumns = (): VisibilityColumns => {
+  return (
+    ls.get<VisibilityColumns | undefined>(STORAGE_KEYS.VISIBILITY_COLUMNS) ||
+    defaultVisibilityColumns
+  )
+}
+
+export const setVisibilityColumns = (columns: VisibilityColumns): void => {
+  ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
 }
