@@ -83,30 +83,23 @@ export default function VoucherCreateDialog({
         startAt: values.startAt,
         endAt: values.endAt,
       }
-
-      if (isUpdate) {
-        toast.promise(updateVoucher.mutateAsync({ id: voucherId, ...requestBody }), {
-          loading: t('toast.loading'),
-          success: () => {
-            formik.resetForm()
-            setIsLoading(false)
-            onClose()
-            return t('voucher.dialog.update.success')
-          },
-          error: t('voucher.dialog.update.error'),
-        })
-      } else {
-        toast.promise(createVoucher.mutateAsync(requestBody), {
-          loading: t('toast.loading'),
-          success: () => {
-            formik.resetForm()
-            setIsLoading(false)
-            onClose()
-            return t('voucher.dialog.create.success')
-          },
-          error: t('voucher.dialog.create.error'),
-        })
+      const mutateFunction = isUpdate ? updateVoucher : createVoucher
+      const mutateObject = isUpdate ? { id: voucherId, ...requestBody } : requestBody
+      const toastMessages = {
+        success: isUpdate ? t('voucher.dialog.update.success') : t('voucher.dialog.create.success'),
+        error: isUpdate ? t('voucher.dialog.update.error') : t('voucher.dialog.create.error'),
       }
+
+      toast.promise(mutateFunction.mutateAsync(mutateObject), {
+        loading: t('toast.loading'),
+        success: () => {
+          formik.resetForm()
+          setIsLoading(false)
+          onClose()
+          return toastMessages.success
+        },
+        error: toastMessages.error,
+      })
     },
   })
 
