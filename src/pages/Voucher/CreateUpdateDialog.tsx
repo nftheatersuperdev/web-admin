@@ -20,7 +20,6 @@ import { useCreateVoucher, useUpdateVoucher } from 'services/evme'
 import DateTimePicker from 'components/DateTimePicker'
 
 interface CreateUpdateDialogProps {
-  method: string
   voucher?: Voucher | null
   open: boolean
   onClose: () => void
@@ -30,25 +29,23 @@ const ButtonSpace = styled(Button)`
   margin: 0 15px 10px 15px;
 `
 
-const validationSchema = yup.object({
-  code: yup.string().required('Field is required'),
-  description: yup.string(),
-  percentDiscount: yup.number().required('Field is required'),
-  amount: yup.number().required('Field is required'),
-  limitPerUser: yup.number().required('Field is required'),
-})
-
-export default function VoucherCreateDialog({
-  method,
+export default function VoucherCreateUpdateDialog({
   voucher,
   open,
   onClose,
 }: CreateUpdateDialogProps): JSX.Element {
   const voucherId = voucher?.id
-  const isUpdate = method === 'update'
+  const isUpdate = !!voucherId
   const { t } = useTranslation()
   const createVoucher = useCreateVoucher()
   const updateVoucher = useUpdateVoucher()
+  const validationSchema = yup.object({
+    code: yup.string().required(t('validation.required')),
+    description: yup.string(),
+    percentDiscount: yup.number().required(t('validation.required')),
+    amount: yup.number().required(t('validation.required')),
+    limitPerUser: yup.number().required(t('validation.required')),
+  })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
 

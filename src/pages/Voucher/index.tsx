@@ -35,7 +35,6 @@ export default function Voucher(): JSX.Element {
   const [voucherFilter, setVoucherFilter] = useState<VoucherFilter>({})
   const [voucherSort, setVoucherSort] = useState<SubOrder>({})
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
-  const [dialogMethod, setDialogMethod] = useState<string>('create')
   const [selectedVoucher, setSelectedVoucher] = useState<VoucherType | null>()
 
   const {
@@ -133,7 +132,6 @@ export default function Voucher(): JSX.Element {
   }
 
   const handleRowClick = (data: GridRowData) => {
-    setDialogMethod('update')
     setDialogOpen(true)
     setSelectedVoucher(data.row)
   }
@@ -263,7 +261,6 @@ export default function Voucher(): JSX.Element {
           variant="contained"
           onClick={() => {
             setDialogOpen(true)
-            setDialogMethod('create')
           }}
         >
           {t('voucher.button.createNew')}
@@ -296,12 +293,11 @@ export default function Voucher(): JSX.Element {
 
         <CreateUpdateDialog
           open={dialogOpen}
-          method={dialogMethod}
           voucher={selectedVoucher}
           onClose={() => {
             setDialogOpen(false)
-            setDialogMethod('create')
             setSelectedVoucher(null)
+            refetch()
           }}
         />
       </Card>

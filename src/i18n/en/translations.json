@@ -442,5 +442,8 @@
         "error": "Something went wrong when updating the voucher"
       }
     }
+  },
+  "validation": {
+    "required": "Field is required"
   }
 }
