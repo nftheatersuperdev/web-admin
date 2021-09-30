@@ -26,7 +26,7 @@ interface CreateUpdateDialogProps {
 }
 
 const ButtonSpace = styled(Button)`
-  margin: 0 15px 10px 15px;
+  margin: 0 15px 10px;
 `
 
 export default function VoucherCreateUpdateDialog({
