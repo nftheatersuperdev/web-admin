@@ -110,9 +110,6 @@ export default function VoucherCreateDialog({
     },
   })
 
-  // const startAtMinDate = dayjs(formik.values.startAt).add(1, 'day')
-  // const endAtMinDate = dayjs(formik.values.startAt)
-
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
