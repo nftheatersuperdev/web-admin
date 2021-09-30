@@ -422,7 +422,7 @@
     "percentDiscount": "ส่วนลด",
     "amount": "ทั้งหมด",
     "description": "รายละเอียด",
-    "limitPerUser": "จำกัดต่อผู้ใช่งาน",
+    "limitPerUser": "จำกัดต่อผู้ใช้งาน",
     "startAt": "วันที่เริ่มต้น",
     "endAt": "วันที่สิ้นสุด",
     "createdAt": "วันที่สร้าง",
