@@ -52,6 +52,12 @@ export default function VoucherCreateDialog({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const datePlusOneDay = dayjs().add(1, 'day')
+  const defaultDate = {
+    startAt: datePlusOneDay.startOf('day'),
+    endAt: datePlusOneDay.endOf('day'),
+  }
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
@@ -60,6 +66,8 @@ export default function VoucherCreateDialog({
       percentDiscount: 0,
       amount: 0,
       limitPerUser: 0,
+      startAt: isUpdate ? voucher?.startAt : defaultDate.startAt,
+      endAt: isUpdate ? voucher?.endAt : defaultDate.endAt,
       ...voucher,
     },
     enableReinitialize: true,
@@ -102,8 +110,8 @@ export default function VoucherCreateDialog({
     },
   })
 
-  const startAtMinDate = dayjs(formik.values.startAt).add(1, 'day')
-  const endAtMinDate = dayjs(formik.values.startAt)
+  // const startAtMinDate = dayjs(formik.values.startAt).add(1, 'day')
+  // const endAtMinDate = dayjs(formik.values.startAt)
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -141,12 +149,13 @@ export default function VoucherCreateDialog({
               id="startAt"
               name="startAt"
               format={DEFAULT_DATETIME_FORMAT}
-              minDate={startAtMinDate}
+              minDate={formik.values.startAt}
               minDateMessage=""
               defaultValue={formik.values.startAt}
               value={formik.values.startAt}
               onChange={(date) => {
                 formik.setFieldValue('startAt', date)
+                formik.setFieldValue('endAt', dayjs(date ?? new Date()).endOf('day'))
               }}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
@@ -166,7 +175,7 @@ export default function VoucherCreateDialog({
               id="endAt"
               name="endAt"
               format={DEFAULT_DATETIME_FORMAT}
-              minDate={endAtMinDate}
+              minDate={formik.values.startAt}
               minDateMessage=""
               defaultValue={formik.values.endAt}
               value={formik.values.endAt}
