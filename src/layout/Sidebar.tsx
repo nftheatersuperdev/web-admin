@@ -23,6 +23,7 @@ import {
   Person as ProfileIcon,
   Settings as SettingsIcon,
   SupervisedUserCircle as AdminUsersIcon,
+  LoyaltyOutlined as LoyaltyOutlinedIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -97,6 +98,17 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
         icon: <AdditionalExpenseIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+      },
+
+      {
+        subHeader: t('sidebar.voucherManagement'),
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+      },
+      {
+        title: t('sidebar.vouchers'),
+        path: ROUTE_PATHS.VOUCHER,
+        icon: <LoyaltyOutlinedIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
 
       { subHeader: t('sidebar.others'), allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },

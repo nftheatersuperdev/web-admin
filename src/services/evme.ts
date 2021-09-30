@@ -17,6 +17,8 @@ import {
   Payment,
   Sub,
   User,
+  Voucher,
+  VoucherInput,
   AdditionalExpense,
   AdditionalExpenseInput,
   UpdateOneAdditionalExpenseInput,
@@ -45,6 +47,7 @@ import {
   SubscriptionUpdatePlateInput,
   ManualExtendSubscriptionInput,
   SendDataViaEmailInput,
+  VoucherFilter,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -56,6 +59,7 @@ const QUERY_KEYS = {
   SUBSCRIPTIONS: 'evme:subscriptions',
   SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
   USERS: 'evme:users',
+  VOUCHERS: 'evme:vouchers',
   USER_AGGREGATE: 'evme:user-aggregate',
   PAYMENTS: 'evme:payments',
   ADDITIONAL_EXPENSES: 'evme:additional-expenses',
@@ -1066,6 +1070,143 @@ export function useUsersFilterAndSort(
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve usersFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVouchersFilterAndSort(
+  filter?: VoucherFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<Voucher>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.VOUCHERS, { filter, order, page, pageSize }],
+    async () => {
+      const { vouchersFilterAndSort } = await gqlRequest(
+        gql`
+          query VouchersFilterAndSort(
+            $filter: VoucherFilterInput
+            $order: VoucherOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            vouchersFilterAndSort(
+              filter: $filter
+              order: $order
+              pageSize: $pageSize
+              page: $page
+            ) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                code
+                percentDiscount
+                amount
+                startAt
+                endAt
+                description
+                createdAt
+                updatedAt
+                limitPerUser
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return vouchersFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve vouchersFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherInput, unknown> {
+  const queryClient = useQueryClient()
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ code, description, percentDiscount, amount, limitPerUser, startAt, endAt }) => {
+      const { createVoucher } = await gqlRequest(
+        gql`
+          mutation CreateVoucher($input: CreateOneVoucherInput!) {
+            createVoucher(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            voucher: {
+              code,
+              description,
+              percentDiscount,
+              amount,
+              limitPerUser,
+              startAt,
+              endAt,
+            },
+          },
+        }
+      )
+      return createVoucher
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.VOUCHERS),
+      onError: () => {
+        console.error('Failed to createVoucher')
+      },
+    }
+  )
+}
+
+export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherInput, unknown> {
+  const queryClient = useQueryClient()
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, code, description, percentDiscount, amount, limitPerUser, startAt, endAt }) => {
+      const { updateVoucher } = await gqlRequest(
+        gql`
+          mutation UpdateVoucher($input: UpdateOneVoucherInput!) {
+            updateVoucher(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            id,
+            update: {
+              code,
+              description,
+              percentDiscount,
+              amount,
+              limitPerUser,
+              startAt,
+              endAt,
+            },
+          },
+        }
+      )
+      return updateVoucher
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.VOUCHERS),
+      onError: () => {
+        console.error('Failed to updateVoucher')
       },
     }
   )
