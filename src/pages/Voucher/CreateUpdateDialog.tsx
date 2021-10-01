@@ -54,6 +54,11 @@ export default function VoucherCreateUpdateDialog({
     startAt: datePlusOneDay.startOf('day'),
     endAt: datePlusOneDay.endOf('day'),
   }
+  const currentDateTime = new Date()
+  const startAtDateTime = new Date(voucher?.startAt)
+  const endAtDateTime = new Date(voucher?.endAt)
+  const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+  const isInactive = currentDateTime > endAtDateTime
 
   const formik = useFormik({
     validationSchema,
@@ -138,7 +143,7 @@ export default function VoucherCreateUpdateDialog({
               }}
               error={formik.touched.code && Boolean(formik.errors.code)}
               helperText={formik.touched.code && formik.errors.code}
-              disabled={isUpdate}
+              disabled={isInactive || isActive}
             />
           </Grid>
         </Grid>
@@ -167,6 +172,7 @@ export default function VoucherCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
+              disabled={isInactive || isActive}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -192,6 +198,7 @@ export default function VoucherCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
+              disabled={isInactive}
             />
           </Grid>
         </Grid>
@@ -212,7 +219,7 @@ export default function VoucherCreateUpdateDialog({
               inputProps={{ min: 0, max: 100 }}
               error={formik.touched.percentDiscount && Boolean(formik.errors.percentDiscount)}
               helperText={formik.touched.percentDiscount && formik.errors.percentDiscount}
-              disabled={isUpdate}
+              disabled={isInactive || isActive}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -231,7 +238,7 @@ export default function VoucherCreateUpdateDialog({
               inputProps={{ min: 0 }}
               error={formik.touched.amount && Boolean(formik.errors.amount)}
               helperText={formik.touched.amount && formik.errors.amount}
-              disabled={isUpdate}
+              disabled={isInactive || isActive}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -250,6 +257,7 @@ export default function VoucherCreateUpdateDialog({
               inputProps={{ min: 0 }}
               error={formik.touched.limitPerUser && Boolean(formik.errors.limitPerUser)}
               helperText={formik.touched.limitPerUser && formik.errors.limitPerUser}
+              disabled={isInactive || isActive}
             />
           </Grid>
         </Grid>
@@ -270,6 +278,7 @@ export default function VoucherCreateUpdateDialog({
               }}
               error={formik.touched.descriptionEn && Boolean(formik.errors.descriptionEn)}
               helperText={formik.touched.descriptionEn && formik.errors.descriptionEn}
+              disabled={isInactive || isActive}
             />
           </Grid>
         </Grid>
@@ -290,6 +299,7 @@ export default function VoucherCreateUpdateDialog({
               }}
               error={formik.touched.descriptionTh && Boolean(formik.errors.descriptionTh)}
               helperText={formik.touched.descriptionTh && formik.errors.descriptionTh}
+              disabled={isInactive || isActive}
             />
           </Grid>
         </Grid>
