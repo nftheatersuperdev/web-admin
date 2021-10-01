@@ -14,6 +14,7 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
+  GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -241,6 +242,7 @@ export default function Subscription(): JSX.Element {
         firstName: subscription.user?.firstName,
         lastName: subscription.user?.lastName,
         status,
+        voucher: subscription.voucher,
         // not shown in table
         color: subscription.car?.color,
         carModelId: subscription.car?.carModel?.id,
@@ -438,6 +440,16 @@ export default function Subscription(): JSX.Element {
       valueOptions: statusOptions,
       hide: !visibilityColumns.status,
       sortable: false,
+    },
+    {
+      field: 'voucher',
+      headerName: 'Voucher',
+      description: 'Voucher',
+      flex: 1,
+      filterable: false,
+      sortable: false,
+      hide: !visibilityColumns.voucher,
+      renderCell: ({ row }: GridCellParams) => row.voucher?.code ?? '-',
     },
     {
       field: 'createdAt',
