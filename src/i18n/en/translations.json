@@ -451,6 +451,9 @@
         "success": "Voucher has been updated",
         "error": "Something went wrong when updating the voucher"
       }
+    },
+    "errors": {
+      "duplicatedCode": "The voucher code is duplicated"
     }
   },
   "validation": {

@@ -96,7 +96,23 @@ export default function VoucherCreateUpdateDialog({
           onClose()
           return toastMessages.success
         },
-        error: toastMessages.error,
+        error: (error) => {
+          setIsLoading(false)
+          let errorMessage = toastMessages.error
+          let errorField = ''
+
+          if (error.message) {
+            // The voucher code is duplicated
+            if (error.message.includes('unique constraint')) {
+              errorField = 'code'
+              errorMessage = t('voucher.errors.duplicatedCode')
+            }
+
+            formik.setFieldError(errorField, errorMessage)
+            return errorMessage
+          }
+          return errorMessage
+        },
       })
     },
   })
