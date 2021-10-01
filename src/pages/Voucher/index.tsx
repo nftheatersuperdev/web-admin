@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react'
 import { Card, Button, IconButton } from '@material-ui/core'
-import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
+import { Edit as EditIcon } from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -152,9 +152,9 @@ export default function Voucher(): JSX.Element {
     setSelectedVoucher(editObject)
   }
 
-  const handleDeleteRow = (data: GridRowData) => {
-    console.log('handleDeleteRow: data ->', data)
-  }
+  // const handleDeleteRow = (data: GridRowData) => {
+  //   console.log('handleDeleteRow: data ->', data)
+  // }
 
   useEffect(() => {
     refetch()
@@ -279,9 +279,9 @@ export default function Voucher(): JSX.Element {
             <IconButton aria-label="edit" onClick={() => handleEditRow(params.row)}>
               <EditIcon />
             </IconButton>
-            <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+            {/* <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />
-            </IconButton>
+            </IconButton> */}
           </Fragment>
         )
       },
