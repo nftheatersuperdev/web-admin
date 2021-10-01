@@ -3818,3 +3818,46 @@ export enum WaitingListSortFields {
   PhoneNumber = 'phoneNumber',
   Email = 'email',
 }
+
+export type Voucher = {
+  __typename?: 'Voucher'
+  id: Scalars['String']
+  code: Scalars['String']
+  descriptionEn: Scalars['String'] | undefined
+  descriptionTh: Scalars['String'] | undefined
+  percentDiscount: Scalars['Int']
+  amount: Scalars['Int']
+  limitPerUser: Scalars['Int']
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type VoucherInput = {
+  id?: Maybe<Scalars['ID']>
+  code: Scalars['String']
+  descriptionEn: Scalars['String'] | undefined
+  descriptionTh: Scalars['String'] | undefined
+  percentDiscount: Scalars['Float']
+  amount: Scalars['Float']
+  limitPerUser: Scalars['Float']
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+}
+
+export type VoucherFilter = {
+  and?: Maybe<Array<UserFilter>>
+  or?: Maybe<Array<UserFilter>>
+  id?: Maybe<StringFieldComparison>
+  firebaseId?: Maybe<StringFieldComparison>
+  firstName?: Maybe<StringFieldComparison>
+  lastName?: Maybe<StringFieldComparison>
+  role?: Maybe<StringFieldComparison>
+  disabled?: Maybe<BooleanFieldComparison>
+  phoneNumber?: Maybe<StringFieldComparison>
+  email?: Maybe<StringFieldComparison>
+  kycStatus?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
+  updatedAt?: Maybe<DateFieldComparison>
+}

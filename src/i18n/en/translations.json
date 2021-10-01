@@ -19,7 +19,9 @@
     "pricing": "Pricing",
     "vehicleManagement": "Vehicle Management",
     "subscriptionManagement": "Subscription Management",
+    "voucherManagement": "Voucher Management",
     "subscriptions": "Subscriptions",
+    "vouchers": "Vouchers",
     "additionalExpense": "Additional Expense",
     "others": "Others",
     "chargingLocations": "Charging Locations",
@@ -413,5 +415,48 @@
     "is": "Is",
     "true": "True/Enable",
     "false": "False/Disable"
+  },
+  "voucher": {
+    "id": "ID",
+    "code": "Code",
+    "percentDiscount": "Percent Discount",
+    "amount": "Amount",
+    "description": {
+      "en": "Description (English)",
+      "th": "Description (Thai)"
+    },
+    "limitPerUser": "Limit Per User",
+    "status": "Status",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending"
+    },
+    "startAt": "Start Date",
+    "endAt": "End Date",
+    "createdAt": "Created Date",
+    "updatedAt": "Updated Date",
+    "actions": "Actions",
+    "button": {
+      "createNew": "Create new voucher"
+    },
+    "dialog": {
+      "create": {
+        "title": "Create new voucher",
+        "success": "Voucher has been created",
+        "error": "Something went wrong when creating a voucher"
+      },
+      "update": {
+        "title": "Update voucher",
+        "success": "Voucher has been updated",
+        "error": "Something went wrong when updating the voucher"
+      }
+    },
+    "errors": {
+      "duplicatedCode": "The voucher code is duplicated"
+    }
+  },
+  "validation": {
+    "required": "Field is required"
   }
 }
