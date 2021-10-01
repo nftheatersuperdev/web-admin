@@ -73,7 +73,8 @@ export default function VoucherCreateUpdateDialog({
 
       const requestBody: VoucherInput = {
         code: values.code,
-        description: values.description,
+        descriptionEn: values.descriptionEn,
+        descriptionTh: values.descriptionTh,
         percentDiscount: values.percentDiscount,
         amount: values.amount,
         limitPerUser: values.limitPerUser,
@@ -242,17 +243,37 @@ export default function VoucherCreateUpdateDialog({
               fullWidth
               multiline
               rows={3}
-              label={t('voucher.description')}
-              id="description"
-              name="description"
+              label={t('voucher.description.en')}
+              id="descriptionEn"
+              name="descriptionEn"
               variant="outlined"
-              value={formik.values.description}
+              value={formik.values.descriptionEn}
               onChange={formik.handleChange}
               InputLabelProps={{
                 shrink: true,
               }}
-              error={formik.touched.description && Boolean(formik.errors.description)}
-              helperText={formik.touched.description && formik.errors.description}
+              error={formik.touched.descriptionEn && Boolean(formik.errors.descriptionEn)}
+              helperText={formik.touched.descriptionEn && formik.errors.descriptionEn}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              label={t('voucher.description.th')}
+              id="descriptionTh"
+              name="descriptionTh"
+              variant="outlined"
+              value={formik.values.descriptionTh}
+              onChange={formik.handleChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={formik.touched.descriptionTh && Boolean(formik.errors.descriptionTh)}
+              helperText={formik.touched.descriptionTh && formik.errors.descriptionTh}
             />
           </Grid>
         </Grid>

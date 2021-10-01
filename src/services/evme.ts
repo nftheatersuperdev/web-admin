@@ -1113,7 +1113,8 @@ export function useVouchersFilterAndSort(
                 amount
                 startAt
                 endAt
-                description
+                descriptionEn
+                descriptionTh
                 createdAt
                 updatedAt
                 limitPerUser
@@ -1138,7 +1139,16 @@ export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
   const { gqlRequest } = useGraphQLRequest()
 
   return useMutation(
-    async ({ code, description, percentDiscount, amount, limitPerUser, startAt, endAt }) => {
+    async ({
+      code,
+      descriptionEn,
+      descriptionTh,
+      percentDiscount,
+      amount,
+      limitPerUser,
+      startAt,
+      endAt,
+    }) => {
       const { createVoucher } = await gqlRequest(
         gql`
           mutation CreateVoucher($input: CreateOneVoucherInput!) {
@@ -1151,7 +1161,8 @@ export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
           input: {
             voucher: {
               code,
-              description,
+              descriptionEn,
+              descriptionTh,
               percentDiscount,
               amount,
               limitPerUser,
@@ -1177,7 +1188,17 @@ export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
   const { gqlRequest } = useGraphQLRequest()
 
   return useMutation(
-    async ({ id, code, description, percentDiscount, amount, limitPerUser, startAt, endAt }) => {
+    async ({
+      id,
+      code,
+      descriptionEn,
+      descriptionTh,
+      percentDiscount,
+      amount,
+      limitPerUser,
+      startAt,
+      endAt,
+    }) => {
       const { updateVoucher } = await gqlRequest(
         gql`
           mutation UpdateVoucher($input: UpdateOneVoucherInput!) {
@@ -1191,7 +1212,8 @@ export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
             id,
             update: {
               code,
-              description,
+              descriptionEn,
+              descriptionTh,
               percentDiscount,
               amount,
               limitPerUser,

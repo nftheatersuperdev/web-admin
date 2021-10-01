@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import { Card, Button } from '@material-ui/core'
+import { useState, useEffect, Fragment } from 'react'
+import { Card, Button, IconButton } from '@material-ui/core'
+import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -7,6 +8,8 @@ import {
   GridPageChangeParams,
   GridSortModel,
   GridRowData,
+  GridCellParams,
+  GridValueFormatterParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -131,9 +134,26 @@ export default function Voucher(): JSX.Element {
     }
   }
 
-  const handleRowClick = (data: GridRowData) => {
+  const handleEditRow = (data: GridRowData) => {
+    const editObject: VoucherType = {
+      id: data.id,
+      code: data.code,
+      descriptionEn: data.descriptionEn,
+      descriptionTh: data.descriptionTh,
+      percentDiscount: data.percentDiscount,
+      amount: data.amount,
+      limitPerUser: data.limitPerUser,
+      startAt: data.startAt,
+      endAt: data.endAt,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    }
     setDialogOpen(true)
-    setSelectedVoucher(data.row)
+    setSelectedVoucher(editObject)
+  }
+
+  const handleDeleteRow = (data: GridRowData) => {
+    console.log('handleDeleteRow: data ->', data)
   }
 
   useEffect(() => {
@@ -160,13 +180,24 @@ export default function Voucher(): JSX.Element {
       filterOperators: stringFilterOperators,
     },
     {
-      field: 'description',
-      headerName: t('voucher.description'),
-      description: t('voucher.description'),
-      hide: !visibilityColumns.description,
+      field: 'descriptionEn',
+      headerName: t('voucher.description.en'),
+      description: t('voucher.description.en'),
+      hide: !visibilityColumns.descriptionEn,
       flex: 1,
       sortable: false,
       filterOperators: stringFilterOperators,
+      valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
+    },
+    {
+      field: 'descriptionTh',
+      headerName: t('voucher.description.th'),
+      description: t('voucher.description.th'),
+      hide: !visibilityColumns.descriptionTh,
+      flex: 1,
+      sortable: false,
+      filterOperators: stringFilterOperators,
+      valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
     },
     {
       field: 'percentDiscount',
@@ -235,6 +266,26 @@ export default function Voucher(): JSX.Element {
       filterOperators: dateFilterOperators,
       valueFormatter: columnFormatDate,
     },
+    {
+      field: 'actions',
+      headerName: t('car.actions'),
+      description: t('car.actions'),
+      sortable: false,
+      filterable: false,
+      width: 140,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Fragment>
+            <IconButton aria-label="edit" onClick={() => handleEditRow(params.row)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+              <DeleteIcon />
+            </IconButton>
+          </Fragment>
+        )
+      },
+    },
   ]
 
   const vouchers =
@@ -242,7 +293,8 @@ export default function Voucher(): JSX.Element {
       return {
         id: voucher.id,
         code: voucher.code,
-        description: voucher.description,
+        descriptionEn: voucher.descriptionEn,
+        descriptionTh: voucher.descriptionTh,
         percentDiscount: voucher.percentDiscount,
         amount: voucher.amount,
         limitPerUser: voucher.limitPerUser,
@@ -282,7 +334,6 @@ export default function Voucher(): JSX.Element {
           columns={columns}
           checkboxSelection
           disableSelectionOnClick
-          onRowClick={handleRowClick}
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}

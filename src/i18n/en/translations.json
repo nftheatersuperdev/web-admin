@@ -421,12 +421,16 @@
     "code": "Code",
     "percentDiscount": "Percent Discount",
     "amount": "Amount",
-    "description": "Description",
+    "description": {
+      "en": "Description (English)",
+      "th": "Description (Thai)"
+    },
     "limitPerUser": "Limit Per User",
     "startAt": "Start Date",
     "endAt": "End Date",
     "createdAt": "Created Date",
     "updatedAt": "Updated Date",
+    "actions": "Actions",
     "button": {
       "createNew": "Create new voucher"
     },

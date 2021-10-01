@@ -3823,7 +3823,8 @@ export type Voucher = {
   __typename?: 'Voucher'
   id: Scalars['String']
   code: Scalars['String']
-  description: Scalars['String']
+  descriptionEn: Scalars['String'] | undefined
+  descriptionTh: Scalars['String'] | undefined
   percentDiscount: Scalars['Int']
   amount: Scalars['Int']
   limitPerUser: Scalars['Int']
@@ -3836,7 +3837,8 @@ export type Voucher = {
 export type VoucherInput = {
   id?: Maybe<Scalars['ID']>
   code: Scalars['String']
-  description: Scalars['String']
+  descriptionEn: Scalars['String'] | undefined
+  descriptionTh: Scalars['String'] | undefined
   percentDiscount: Scalars['Float']
   amount: Scalars['Float']
   limitPerUser: Scalars['Float']
