@@ -316,7 +316,7 @@ export default function VoucherCreateUpdateDialog({
           {t('button.cancel')}
         </ButtonSpace>
         <ButtonSpace
-          disabled={isLoading}
+          disabled={isLoading || isInactive}
           onClick={() => formik.handleSubmit()}
           color="primary"
           variant="contained"
