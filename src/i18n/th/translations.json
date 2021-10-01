@@ -426,6 +426,12 @@
       "th": "รายละเอียด ภาษาไทย"
     },
     "limitPerUser": "จำกัดต่อผู้ใช้งาน",
+    "status": "สถานะ",
+    "statuses": {
+      "active": "[Active]",
+      "inactive": "[Inactive]",
+      "pending": "[Pending]"
+    },
     "startAt": "วันที่เริ่มต้น",
     "endAt": "วันที่สิ้นสุด",
     "createdAt": "วันที่สร้าง",

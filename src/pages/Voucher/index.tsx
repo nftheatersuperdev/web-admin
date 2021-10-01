@@ -1,5 +1,5 @@
 import { useState, useEffect, Fragment } from 'react'
-import { Card, Button, IconButton } from '@material-ui/core'
+import { Card, Button, IconButton, Chip } from '@material-ui/core'
 import { Edit as EditIcon } from '@material-ui/icons'
 import {
   GridColDef,
@@ -265,6 +265,34 @@ export default function Voucher(): JSX.Element {
       sortable: true,
       filterOperators: dateFilterOperators,
       valueFormatter: columnFormatDate,
+    },
+    {
+      field: 'status',
+      headerName: t('voucher.status'),
+      description: t('voucher.status'),
+      hide: !visibilityColumns.status,
+      flex: 0,
+      sortable: false,
+      filterOperators: dateFilterOperators,
+      valueFormatter: columnFormatDate,
+      renderCell: (params: GridCellParams) => {
+        const currentDateTime = new Date()
+        const startAtDateTime = new Date(params.row.startAt)
+        const endAtDateTime = new Date(params.row.endAt)
+
+        const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+        const isInactive = currentDateTime > endAtDateTime
+        const isPending = currentDateTime < startAtDateTime
+
+        if (isActive) {
+          return <Chip label={t('voucher.statuses.active')} color="primary" />
+        } else if (isInactive) {
+          return <Chip label={t('voucher.statuses.inactive')} color="secondary" />
+        } else if (isPending) {
+          return <Chip label={t('voucher.statuses.pending')} color="default" />
+        }
+        return '-'
+      },
     },
     {
       field: 'actions',

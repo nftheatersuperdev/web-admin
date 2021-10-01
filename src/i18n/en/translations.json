@@ -426,6 +426,12 @@
       "th": "Description (Thai)"
     },
     "limitPerUser": "Limit Per User",
+    "status": "Status",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending"
+    },
     "startAt": "Start Date",
     "endAt": "End Date",
     "createdAt": "Created Date",
