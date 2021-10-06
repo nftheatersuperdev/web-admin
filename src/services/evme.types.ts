@@ -2799,6 +2799,7 @@ export type Sub = {
   eventsAggregate: Array<SubEventsAggregateResponse>
   paymentsAggregate: Array<SubPaymentsAggregateResponse>
   additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>
+  voucher?: Maybe<Voucher>
 }
 
 export type SubEventsArgs = {
@@ -3010,6 +3011,7 @@ export type SubFilter = {
   packagePrice?: Maybe<SubFilterPackagePriceFilter>
   user?: Maybe<SubFilterUserFilter>
   events?: Maybe<SubFilterSubscriptionEventFilter>
+  voucher?: Maybe<SubFilterVoucherFilter>
 }
 
 export type SubFilterCarFilter = {
@@ -3056,6 +3058,12 @@ export type SubFilterUserFilter = {
   kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
+}
+
+export type SubFilterVoucherFilter = {
+  and?: Maybe<Array<SubFilterVoucherFilter>>
+  or?: Maybe<Array<SubFilterVoucherFilter>>
+  code?: Maybe<StringFieldComparison>
 }
 
 export type SubMaxAggregate = {

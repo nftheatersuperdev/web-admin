@@ -14,6 +14,7 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
+  GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -144,6 +145,17 @@ export default function Subscription(): JSX.Element {
           }
         }
 
+        if (columnField === 'voucherCode' && value) {
+          filter.voucher = {
+            code: {
+              [operatorValue as string]:
+                operatorValue === 'iLike' ? stringToFilterContains(value) : value,
+            },
+          }
+        }
+
+        console.log('filter ->', filter)
+
         return filter
       }, {} as SubFilter)
     )
@@ -241,6 +253,7 @@ export default function Subscription(): JSX.Element {
         firstName: subscription.user?.firstName,
         lastName: subscription.user?.lastName,
         status,
+        voucher: subscription.voucher,
         // not shown in table
         color: subscription.car?.color,
         carModelId: subscription.car?.carModel?.id,
@@ -438,6 +451,17 @@ export default function Subscription(): JSX.Element {
       valueOptions: statusOptions,
       hide: !visibilityColumns.status,
       sortable: false,
+    },
+    {
+      field: 'voucherCode',
+      headerName: t('subscription.voucherCode'),
+      description: t('subscription.voucherCode'),
+      flex: 1,
+      hide: !visibilityColumns.voucherCode,
+      filterOperators: stringFilterOperators,
+      filterable: true,
+      sortable: false,
+      renderCell: (params: GridCellParams): JSX.Element => params.row.voucher?.code ?? '-',
     },
     {
       field: 'createdAt',

@@ -277,6 +277,7 @@
     "updateSubscriptionDetails": "Update Subscription Details",
     "bookingDetails": "Booking Details",
     "subscriptionId": "Subscription ID",
+    "voucherCode": "Voucher Code",
     "status": {
       "title": "Status",
       "reserved": "Reserved",
