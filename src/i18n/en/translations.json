@@ -450,6 +450,12 @@
         "title": "Update voucher",
         "success": "Voucher has been updated",
         "error": "Something went wrong when updating the voucher"
+      },
+      "packagePrice": {
+        "title": "Package Price",
+        "selectAvailablePackages": "Select Available Packages",
+        "success": "Package price has been updated",
+        "error": "Something went wrong when updating the package price into a voucher"
       }
     },
     "errors": {

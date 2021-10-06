@@ -3403,6 +3403,11 @@ export type SendDataViaEmailInput = {
   columns: Array<Scalars['String']>
 }
 
+export type RefIdAndRelationIds = {
+  id: Scalars['ID']
+  relationIds: Array<Scalars['ID']>
+}
+
 export type User = {
   __typename?: 'User'
   id: Scalars['String']
@@ -3819,6 +3824,11 @@ export enum WaitingListSortFields {
   Email = 'email',
 }
 
+export type UserGroup = {
+  __typename?: 'userGroups'
+  name: Scalars['String']
+}
+
 export type Voucher = {
   __typename?: 'Voucher'
   id: Scalars['String']
@@ -3828,6 +3838,8 @@ export type Voucher = {
   percentDiscount: Scalars['Int']
   amount: Scalars['Int']
   limitPerUser: Scalars['Int']
+  userGroups: Array<UserGroup>
+  packagePrices: Array<PackagePrice>
   startAt: Scalars['DateTime']
   endAt: Scalars['DateTime']
   createdAt: Scalars['DateTime']
