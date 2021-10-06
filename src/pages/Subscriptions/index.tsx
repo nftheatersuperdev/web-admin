@@ -154,8 +154,6 @@ export default function Subscription(): JSX.Element {
           }
         }
 
-        console.log('filter ->', filter)
-
         return filter
       }, {} as SubFilter)
     )
