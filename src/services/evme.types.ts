@@ -2799,6 +2799,7 @@ export type Sub = {
   eventsAggregate: Array<SubEventsAggregateResponse>
   paymentsAggregate: Array<SubPaymentsAggregateResponse>
   additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>
+  voucher: Voucher
 }
 
 export type SubEventsArgs = {

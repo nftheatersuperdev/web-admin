@@ -753,6 +753,9 @@ export function useSubscriptionsFilterAndSort(
                   createdAt
                   updatedAt
                 }
+                voucher {
+                  code
+                }
               }
             }
           }
