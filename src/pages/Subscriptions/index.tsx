@@ -459,7 +459,7 @@ export default function Subscription(): JSX.Element {
       filterOperators: stringFilterOperators,
       filterable: true,
       sortable: false,
-      renderCell: (params: GridCellParams): JSX.Element => params.row.voucher?.code ?? '-',
+      renderCell: ({ row }: GridCellParams) => row.voucher?.code ?? '-',
     },
     {
       field: 'createdAt',
