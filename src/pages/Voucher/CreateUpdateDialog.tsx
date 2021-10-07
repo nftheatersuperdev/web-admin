@@ -158,7 +158,7 @@ export default function VoucherCreateUpdateDialog({
               id="startAt"
               name="startAt"
               format={DEFAULT_DATETIME_FORMAT}
-              minDate={formik.values.startAt}
+              minDate={isUpdate ? formik.values.startAt : defaultDate.startAt}
               minDateMessage=""
               defaultValue={formik.values.startAt}
               value={formik.values.startAt}

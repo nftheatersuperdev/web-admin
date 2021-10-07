@@ -2799,7 +2799,7 @@ export type Sub = {
   eventsAggregate: Array<SubEventsAggregateResponse>
   paymentsAggregate: Array<SubPaymentsAggregateResponse>
   additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>
-  voucher: Voucher
+  voucher?: Maybe<Voucher>
 }
 
 export type SubEventsArgs = {
@@ -3011,6 +3011,7 @@ export type SubFilter = {
   packagePrice?: Maybe<SubFilterPackagePriceFilter>
   user?: Maybe<SubFilterUserFilter>
   events?: Maybe<SubFilterSubscriptionEventFilter>
+  voucher?: Maybe<SubFilterVoucherFilter>
 }
 
 export type SubFilterCarFilter = {
@@ -3057,6 +3058,12 @@ export type SubFilterUserFilter = {
   kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
+}
+
+export type SubFilterVoucherFilter = {
+  and?: Maybe<Array<SubFilterVoucherFilter>>
+  or?: Maybe<Array<SubFilterVoucherFilter>>
+  code?: Maybe<StringFieldComparison>
 }
 
 export type SubMaxAggregate = {
@@ -3402,6 +3409,11 @@ export type ManualExtendSubscriptionInput = {
 export type SendDataViaEmailInput = {
   emails: Array<Scalars['String']>
   columns: Array<Scalars['String']>
+}
+
+export type RefIdAndRelationIds = {
+  id: Scalars['ID']
+  relationIds: Array<Scalars['ID']>
 }
 
 export type User = {
@@ -3820,6 +3832,11 @@ export enum WaitingListSortFields {
   Email = 'email',
 }
 
+export type UserGroup = {
+  __typename?: 'userGroups'
+  name: Scalars['String']
+}
+
 export type Voucher = {
   __typename?: 'Voucher'
   id: Scalars['String']
@@ -3829,6 +3846,8 @@ export type Voucher = {
   percentDiscount: Scalars['Int']
   amount: Scalars['Int']
   limitPerUser: Scalars['Int']
+  userGroups: Array<UserGroup>
+  packagePrices: Array<PackagePrice>
   startAt: Scalars['DateTime']
   endAt: Scalars['DateTime']
   createdAt: Scalars['DateTime']

@@ -48,6 +48,7 @@ import {
   ManualExtendSubscriptionInput,
   SendDataViaEmailInput,
   VoucherFilter,
+  RefIdAndRelationIds,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -60,6 +61,8 @@ const QUERY_KEYS = {
   SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
   USERS: 'evme:users',
   VOUCHERS: 'evme:vouchers',
+  VOUCHER_BY_ID: 'evme:voucher-by-id',
+  VOUCHERS_PACKAGE_PRICE: 'evme:vouchers-package-price',
   USER_AGGREGATE: 'evme:user-aggregate',
   PAYMENTS: 'evme:payments',
   ADDITIONAL_EXPENSES: 'evme:additional-expenses',
@@ -1121,6 +1124,21 @@ export function useVouchersFilterAndSort(
                 createdAt
                 updatedAt
                 limitPerUser
+                userGroups {
+                  name
+                }
+                packagePrices {
+                  id
+                  carModelId
+                  carModel {
+                    id
+                    brand
+                    model
+                  }
+                  duration
+                  price
+                  fullPrice
+                }
               }
             }
           }
@@ -1132,6 +1150,77 @@ export function useVouchersFilterAndSort(
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve vouchersFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVouchersSearchPackagePrices(keyword = ''): UseQueryResult<PackagePrice[]> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.VOUCHERS_PACKAGE_PRICE, { keyword }],
+    async () => {
+      const { vouchersSearchPackagePrices } = await gqlRequest(
+        gql`
+          query VouchersSearchPackagePrices($keyword: String!) {
+            vouchersSearchPackagePrices(keyword: $keyword) {
+              id
+              carModelId
+              carModel {
+                id
+                brand
+                model
+              }
+              duration
+              price
+              fullPrice
+            }
+          }
+        `,
+        { keyword }
+      )
+      return vouchersSearchPackagePrices
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve vouchersSearchPackagePrices, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.VOUCHER_BY_ID, { id }],
+    async () => {
+      const { voucher } = await gqlRequest(
+        gql`
+          query Voucher($id: String!) {
+            voucher(id: $id) {
+              id
+              packagePrices {
+                id
+                carModel {
+                  id
+                  brand
+                  model
+                }
+                price
+                fullPrice
+              }
+            }
+          }
+        `,
+        { id }
+      )
+      return voucher
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve voucher, ${error.message}`)
       },
     }
   )
@@ -1629,6 +1718,72 @@ export function useSendDataViaEmail(): UseMutationResult<
     {
       onError: () => {
         console.error('Failed to request send all data via email')
+      },
+    }
+  )
+}
+
+export function useAddPackagePricesToVoucher(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation AddPackagePricesToVoucher($id: ID!, $relationIds: [ID!]!) {
+            addPackagePricesToVoucher(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useAddPackagePricesToVoucher ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useRemovePackagePricesFromVoucher(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation RemovePackagePricesFromVoucher($id: ID!, $relationIds: [ID!]!) {
+            removePackagePricesFromVoucher(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useRemovePackagePricesFromVoucher ${error.message}`)
       },
     }
   )

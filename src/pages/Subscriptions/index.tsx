@@ -145,6 +145,15 @@ export default function Subscription(): JSX.Element {
           }
         }
 
+        if (columnField === 'voucherCode' && value) {
+          filter.voucher = {
+            code: {
+              [operatorValue as string]:
+                operatorValue === 'iLike' ? stringToFilterContains(value) : value,
+            },
+          }
+        }
+
         return filter
       }, {} as SubFilter)
     )
@@ -442,13 +451,14 @@ export default function Subscription(): JSX.Element {
       sortable: false,
     },
     {
-      field: 'voucher',
-      headerName: 'Voucher',
-      description: 'Voucher',
+      field: 'voucherCode',
+      headerName: t('subscription.voucherCode'),
+      description: t('subscription.voucherCode'),
       flex: 1,
-      filterable: false,
+      hide: !visibilityColumns.voucherCode,
+      filterOperators: stringFilterOperators,
+      filterable: true,
       sortable: false,
-      hide: !visibilityColumns.voucher,
       renderCell: ({ row }: GridCellParams) => row.voucher?.code ?? '-',
     },
     {

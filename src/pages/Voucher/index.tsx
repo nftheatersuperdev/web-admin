@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react'
 import { Card, Button, IconButton, Chip } from '@material-ui/core'
-import { Edit as EditIcon } from '@material-ui/icons'
+import { Edit as EditIcon, Redeem as VoucherIcon } from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -30,6 +30,7 @@ import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import CreateUpdateDialog from './CreateUpdateDialog'
+import PackagePriceDialog from './PackagePriceDialog'
 
 export default function Voucher(): JSX.Element {
   const { t } = useTranslation()
@@ -37,7 +38,8 @@ export default function Voucher(): JSX.Element {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [voucherFilter, setVoucherFilter] = useState<VoucherFilter>({})
   const [voucherSort, setVoucherSort] = useState<SubOrder>({})
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+  const [createUpdateDialogOpen, setCreateUpdateDialogOpen] = useState<boolean>(false)
+  const [packagePriceDialogOpen, setPackagePriceDialogOpen] = useState<boolean>(false)
   const [selectedVoucher, setSelectedVoucher] = useState<VoucherType | null>()
 
   const {
@@ -134,8 +136,8 @@ export default function Voucher(): JSX.Element {
     }
   }
 
-  const handleEditRow = (data: GridRowData) => {
-    const editObject: VoucherType = {
+  const handleDialogData = (module: string, data: GridRowData) => {
+    const object: VoucherType = {
       id: data.id,
       code: data.code,
       descriptionEn: data.descriptionEn,
@@ -143,13 +145,20 @@ export default function Voucher(): JSX.Element {
       percentDiscount: data.percentDiscount,
       amount: data.amount,
       limitPerUser: data.limitPerUser,
+      userGroups: data.userGroups,
+      packagePrices: data.packagePrices,
       startAt: data.startAt,
       endAt: data.endAt,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     }
-    setDialogOpen(true)
-    setSelectedVoucher(editObject)
+    setSelectedVoucher(object)
+
+    if (module === 'createUpdate') {
+      setCreateUpdateDialogOpen(true)
+    } else if (module === 'packagePrice') {
+      setPackagePriceDialogOpen(true)
+    }
   }
 
   // const handleDeleteRow = (data: GridRowData) => {
@@ -304,8 +313,11 @@ export default function Voucher(): JSX.Element {
       renderCell: (params: GridCellParams) => {
         return (
           <Fragment>
-            <IconButton aria-label="edit" onClick={() => handleEditRow(params.row)}>
+            <IconButton onClick={() => handleDialogData('createUpdate', params.row)}>
               <EditIcon />
+            </IconButton>
+            <IconButton onClick={() => handleDialogData('packagePrice', params.row)}>
+              <VoucherIcon />
             </IconButton>
             {/* <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />
@@ -326,6 +338,8 @@ export default function Voucher(): JSX.Element {
         percentDiscount: voucher.percentDiscount,
         amount: voucher.amount,
         limitPerUser: voucher.limitPerUser,
+        userGroups: voucher.userGroups,
+        packagePrices: voucher.packagePrices,
         startAt: voucher.startAt,
         endAt: voucher.endAt,
         createdAt: voucher.createdAt,
@@ -340,7 +354,7 @@ export default function Voucher(): JSX.Element {
           color="primary"
           variant="contained"
           onClick={() => {
-            setDialogOpen(true)
+            setCreateUpdateDialogOpen(true)
           }}
         >
           {t('voucher.button.createNew')}
@@ -371,10 +385,20 @@ export default function Voucher(): JSX.Element {
         />
 
         <CreateUpdateDialog
-          open={dialogOpen}
+          open={createUpdateDialogOpen}
           voucher={selectedVoucher}
           onClose={() => {
-            setDialogOpen(false)
+            setCreateUpdateDialogOpen(false)
+            setSelectedVoucher(null)
+            refetch()
+          }}
+        />
+
+        <PackagePriceDialog
+          open={packagePriceDialogOpen}
+          voucher={selectedVoucher}
+          onClose={() => {
+            setPackagePriceDialogOpen(false)
             setSelectedVoucher(null)
             refetch()
           }}
