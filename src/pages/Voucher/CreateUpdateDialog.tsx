@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import {
+  Box,
   Grid,
   TextField,
   Dialog,
@@ -29,6 +30,7 @@ const ButtonSpace = styled(Button)`
   margin: 0 15px 10px;
 `
 
+// eslint-disable-next-line complexity
 export default function VoucherCreateUpdateDialog({
   voucher,
   open,
@@ -60,14 +62,26 @@ export default function VoucherCreateUpdateDialog({
   const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
   const isInactive = currentDateTime > endAtDateTime
 
+  const toValidateKeyPress = (event: React.KeyboardEvent) => {
+    const allowCharacters = /[a-zA-Z0-9]/
+    if (!allowCharacters.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  const toValidateInputValue = (event: FormEvent) => {
+    const target = event.target as HTMLInputElement
+    target.value = target.value.toUpperCase().replace(/\s/g, '')
+  }
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
       code: '',
       description: '',
-      percentDiscount: 0,
-      amount: 0,
-      limitPerUser: 0,
+      percentDiscount: undefined,
+      amount: undefined,
+      limitPerUser: undefined,
       startAt: isUpdate ? voucher?.startAt : defaultDate.startAt,
       endAt: isUpdate ? voucher?.endAt : defaultDate.endAt,
       ...voucher,
@@ -80,9 +94,9 @@ export default function VoucherCreateUpdateDialog({
         code: values.code,
         descriptionEn: values.descriptionEn,
         descriptionTh: values.descriptionTh,
-        percentDiscount: values.percentDiscount,
-        amount: values.amount,
-        limitPerUser: values.limitPerUser,
+        percentDiscount: values?.percentDiscount,
+        amount: values?.amount,
+        limitPerUser: values?.limitPerUser,
         startAt: values.startAt,
         endAt: values.endAt,
       }
@@ -122,14 +136,34 @@ export default function VoucherCreateUpdateDialog({
     },
   })
 
+  const voucherIdField = isUpdate && (
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Box mb={2}>
+          <TextField
+            fullWidth
+            label={t('voucher.id')}
+            variant="standard"
+            value={voucherId}
+            InputProps={{
+              readOnly: true,
+            }}
+            disabled
+          />
+        </Box>
+      </Grid>
+    </Grid>
+  )
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
         {isUpdate ? t('voucher.dialog.update.title') : t('voucher.dialog.create.title')}
       </DialogTitle>
       <DialogContent>
+        {voucherIdField}
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
               label={t('voucher.code')}
@@ -144,6 +178,8 @@ export default function VoucherCreateUpdateDialog({
               error={formik.touched.code && Boolean(formik.errors.code)}
               helperText={formik.touched.code && formik.errors.code}
               disabled={isInactive || isActive}
+              onInput={toValidateInputValue}
+              onKeyPress={toValidateKeyPress}
             />
           </Grid>
         </Grid>
@@ -172,6 +208,9 @@ export default function VoucherCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
+              InputProps={{
+                readOnly: true,
+              }}
               disabled={isInactive || isActive}
             />
           </Grid>
@@ -197,6 +236,9 @@ export default function VoucherCreateUpdateDialog({
               }}
               InputLabelProps={{
                 shrink: true,
+              }}
+              InputProps={{
+                readOnly: true,
               }}
               disabled={isInactive}
             />

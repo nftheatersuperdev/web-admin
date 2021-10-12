@@ -175,7 +175,7 @@ export default function Voucher(): JSX.Element {
       headerName: t('voucher.id'),
       description: t('voucher.id'),
       hide: !visibilityColumns.id,
-      flex: 0,
+      flex: 1,
       sortable: true,
       filterOperators: idFilterOperators,
     },
