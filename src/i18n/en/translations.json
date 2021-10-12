@@ -421,7 +421,7 @@
     "id": "ID",
     "code": "Code",
     "percentDiscount": "Percent Discount",
-    "amount": "Amount",
+    "amount": "Limit",
     "description": {
       "en": "Description (English)",
       "th": "Description (Thai)"
