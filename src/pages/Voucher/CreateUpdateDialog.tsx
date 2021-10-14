@@ -44,9 +44,15 @@ export default function VoucherCreateUpdateDialog({
   const validationSchema = yup.object({
     code: yup.string().required(t('validation.required')),
     description: yup.string(),
-    percentDiscount: yup.number().required(t('validation.required')),
-    amount: yup.number().required(t('validation.required')),
-    limitPerUser: yup.number().required(t('validation.required')),
+    percentDiscount: yup
+      .number()
+      .min(1, t('validation.minimumIsOne'))
+      .required(t('validation.required')),
+    amount: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
+    limitPerUser: yup
+      .number()
+      .min(1, t('validation.minimumIsOne'))
+      .required(t('validation.required')),
   })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -258,7 +264,7 @@ export default function VoucherCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
-              inputProps={{ min: 0, max: 100 }}
+              inputProps={{ min: 1, max: 100 }}
               error={formik.touched.percentDiscount && Boolean(formik.errors.percentDiscount)}
               helperText={formik.touched.percentDiscount && formik.errors.percentDiscount}
               disabled={isInactive || isActive}
@@ -277,7 +283,7 @@ export default function VoucherCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
-              inputProps={{ min: 0 }}
+              inputProps={{ min: 1 }}
               error={formik.touched.amount && Boolean(formik.errors.amount)}
               helperText={formik.touched.amount && formik.errors.amount}
               disabled={isInactive || isActive}
@@ -296,7 +302,7 @@ export default function VoucherCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
-              inputProps={{ min: 0 }}
+              inputProps={{ min: 1 }}
               error={formik.touched.limitPerUser && Boolean(formik.errors.limitPerUser)}
               helperText={formik.touched.limitPerUser && formik.errors.limitPerUser}
               disabled={isInactive || isActive}

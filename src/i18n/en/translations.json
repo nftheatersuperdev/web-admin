@@ -464,6 +464,7 @@
     }
   },
   "validation": {
-    "required": "Field is required"
+    "required": "Field is required",
+    "minimumIsOne": "Minimum is 1"
   }
 }
