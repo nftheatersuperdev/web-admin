@@ -1281,6 +1281,8 @@ export type DateFieldComparisonBetween = {
   upper: Scalars['DateTime']
 }
 
+export type DateFieldComparisonGreaterOrLess = Scalars['DateTime']
+
 export type DeleteManyAdditionalExpenseFilesInput = {
   /** Filter to find records to delete */
   filter: AdditionalExpenseFileDeleteFilter
