@@ -71,14 +71,17 @@ export default function Voucher(): JSX.Element {
             columnField === 'endAt') &&
           value
         ) {
-          const comparingOperations = ['gt', 'gte', 'lt', 'lte']
+          const comparingValue = operatorValue as string
+          const comparingOperations = ['gt', 'lt', 'gte', 'lte']
+          const isUsingOperators = comparingOperations.includes(comparingValue)
+          const isGreaterThanOrLessThan = ['gt', 'lt'].includes(comparingValue)
 
           if (operatorValue === 'between') {
             filterValue = dateToFilterOnDay(value)
-          } else if (comparingOperations.includes(operatorValue as string)) {
-            filterValue = dateToFilterGreaterOrLess(value)
-          } else {
+          } else if (operatorValue === 'notBetween') {
             filterValue = dateToFilterNotOnDay(value)
+          } else if (isUsingOperators) {
+            filterValue = dateToFilterGreaterOrLess(value, isGreaterThanOrLessThan)
           }
         }
 
@@ -105,6 +108,7 @@ export default function Voucher(): JSX.Element {
           }
         }
 
+        console.log('filter ->', filter)
         return filter
       }, {} as VoucherFilter),
     })

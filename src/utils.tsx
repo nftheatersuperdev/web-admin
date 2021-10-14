@@ -79,8 +79,17 @@ export const dateToFilterNotOnDay = (date: Date): DateFieldComparisonBetween => 
   }
 }
 
-export const dateToFilterGreaterOrLess = (date: Date): DateFieldComparisonGreaterOrLess => {
-  return dayjs(date).startOf('day').toDate()
+export const dateToFilterGreaterOrLess = (
+  date: Date,
+  greaterThanOrLessThan = false
+): DateFieldComparisonGreaterOrLess => {
+  let filterDate = dayjs(date)
+  if (greaterThanOrLessThan) {
+    filterDate = filterDate.endOf('day')
+  } else {
+    filterDate = filterDate.startOf('day')
+  }
+  return filterDate.toDate()
 }
 
 export const stringToFilterContains = (value: string): string => {
