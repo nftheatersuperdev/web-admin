@@ -465,6 +465,7 @@
   },
   "validation": {
     "required": "ต้องระบุข้อมูล",
-    "minimumIsOne": "ระบุอย่างน้อย 1"
+    "minimumIsOne": "ระบุอย่างน้อย 1",
+    "minimumIsOneHundred": "ระบุสูงสุด 100"
   }
 }

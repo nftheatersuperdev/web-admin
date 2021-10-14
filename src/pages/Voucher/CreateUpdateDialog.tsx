@@ -47,6 +47,7 @@ export default function VoucherCreateUpdateDialog({
     percentDiscount: yup
       .number()
       .min(1, t('validation.minimumIsOne'))
+      .max(100, t('validation.minimumIsOneHundred'))
       .required(t('validation.required')),
     amount: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
     limitPerUser: yup
@@ -68,16 +69,35 @@ export default function VoucherCreateUpdateDialog({
   const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
   const isInactive = currentDateTime > endAtDateTime
 
-  const toValidateKeyPress = (event: React.KeyboardEvent) => {
+  const handleValidateCodeKeyPress = (event: React.KeyboardEvent) => {
     const allowCharacters = /[a-zA-Z0-9]/
     if (!allowCharacters.test(event.key)) {
       event.preventDefault()
     }
   }
 
-  const toValidateInputValue = (event: FormEvent) => {
+  const handleValidateNumericKeyPress = (event: React.KeyboardEvent) => {
+    const allowCharacters = /[0-9]/
+    if (!allowCharacters.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  const handleValidateCodeValue = (event: FormEvent) => {
     const target = event.target as HTMLInputElement
     target.value = target.value.toUpperCase().replace(/\s/g, '')
+  }
+
+  const handleValidatePercentageValue = (event: FormEvent, maximum = 100) => {
+    const target = event.target as HTMLInputElement
+    target.value = target.value.toUpperCase().replace(/\s/g, '')
+    if (Number(target.value) > maximum) {
+      target.value = String(maximum)
+    }
+  }
+
+  const handleDisableEvent = (event: FormEvent) => {
+    event.preventDefault()
   }
 
   const formik = useFormik({
@@ -184,8 +204,11 @@ export default function VoucherCreateUpdateDialog({
               error={formik.touched.code && Boolean(formik.errors.code)}
               helperText={formik.touched.code && formik.errors.code}
               disabled={isInactive || isActive}
-              onInput={toValidateInputValue}
-              onKeyPress={toValidateKeyPress}
+              onInput={handleValidateCodeValue}
+              onKeyPress={handleValidateCodeKeyPress}
+              onCut={handleDisableEvent}
+              onCopy={handleDisableEvent}
+              onPaste={handleDisableEvent}
             />
           </Grid>
         </Grid>
@@ -261,13 +284,16 @@ export default function VoucherCreateUpdateDialog({
               variant="outlined"
               value={formik.values.percentDiscount}
               onChange={formik.handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{ min: 1, max: 100 }}
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ min: 1, max: 100, step: 1 }}
               error={formik.touched.percentDiscount && Boolean(formik.errors.percentDiscount)}
               helperText={formik.touched.percentDiscount && formik.errors.percentDiscount}
               disabled={isInactive || isActive}
+              onInput={handleValidatePercentageValue}
+              onKeyPress={handleValidateNumericKeyPress}
+              onCut={handleDisableEvent}
+              onCopy={handleDisableEvent}
+              onPaste={handleDisableEvent}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -287,6 +313,10 @@ export default function VoucherCreateUpdateDialog({
               error={formik.touched.amount && Boolean(formik.errors.amount)}
               helperText={formik.touched.amount && formik.errors.amount}
               disabled={isInactive || isActive}
+              onKeyPress={handleValidateNumericKeyPress}
+              onCut={handleDisableEvent}
+              onCopy={handleDisableEvent}
+              onPaste={handleDisableEvent}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -306,6 +336,10 @@ export default function VoucherCreateUpdateDialog({
               error={formik.touched.limitPerUser && Boolean(formik.errors.limitPerUser)}
               helperText={formik.touched.limitPerUser && formik.errors.limitPerUser}
               disabled={isInactive || isActive}
+              onKeyPress={handleValidateNumericKeyPress}
+              onCut={handleDisableEvent}
+              onCopy={handleDisableEvent}
+              onPaste={handleDisableEvent}
             />
           </Grid>
         </Grid>
