@@ -108,7 +108,6 @@ export default function Voucher(): JSX.Element {
           }
         }
 
-        console.log('filter ->', filter)
         return filter
       }, {} as VoucherFilter),
     })
