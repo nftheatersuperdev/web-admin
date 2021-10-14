@@ -290,6 +290,7 @@ export default function Voucher(): JSX.Element {
       hide: !visibilityColumns.status,
       flex: 0,
       sortable: false,
+      filterable: false,
       filterOperators: dateFilterOperators,
       valueFormatter: columnFormatDate,
       renderCell: (params: GridCellParams) => {
