@@ -421,7 +421,7 @@
     "id": "ID",
     "code": "Code",
     "percentDiscount": "Percent Discount",
-    "amount": "Amount",
+    "amount": "Limit",
     "description": {
       "en": "Description (English)",
       "th": "Description (Thai)"
@@ -464,6 +464,7 @@
     }
   },
   "validation": {
-    "required": "Field is required"
+    "required": "Field is required",
+    "minimumIsOne": "Minimum is 1"
   }
 }

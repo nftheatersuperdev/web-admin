@@ -16,9 +16,10 @@ import {
   getIdFilterOperators,
   getNumericFilterOperators,
   getStringFilterOperators,
-  getDateFilterOperators,
+  getDateFilterMoreOperators,
   dateToFilterOnDay,
   dateToFilterNotOnDay,
+  dateToFilterGreaterOrLess,
   stringToFilterContains,
   columnFormatDate,
 } from 'utils'
@@ -51,7 +52,7 @@ export default function Voucher(): JSX.Element {
   const idFilterOperators = getIdFilterOperators(t)
   const numericFilterOperators = getNumericFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
-  const dateFilterOperators = getDateFilterOperators(t)
+  const dateFilterOperators = getDateFilterMoreOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
@@ -70,8 +71,15 @@ export default function Voucher(): JSX.Element {
             columnField === 'endAt') &&
           value
         ) {
-          filterValue =
-            operatorValue === 'between' ? dateToFilterOnDay(value) : dateToFilterNotOnDay(value)
+          const comparingOperations = ['gt', 'gte', 'lt', 'lte']
+
+          if (operatorValue === 'between') {
+            filterValue = dateToFilterOnDay(value)
+          } else if (comparingOperations.includes(operatorValue as string)) {
+            filterValue = dateToFilterGreaterOrLess(value)
+          } else {
+            filterValue = dateToFilterNotOnDay(value)
+          }
         }
 
         if (operatorValue === 'iLike' && value) {
@@ -175,7 +183,7 @@ export default function Voucher(): JSX.Element {
       headerName: t('voucher.id'),
       description: t('voucher.id'),
       hide: !visibilityColumns.id,
-      flex: 0,
+      flex: 1,
       sortable: true,
       filterOperators: idFilterOperators,
     },
@@ -282,6 +290,7 @@ export default function Voucher(): JSX.Element {
       hide: !visibilityColumns.status,
       flex: 0,
       sortable: false,
+      filterable: false,
       filterOperators: dateFilterOperators,
       valueFormatter: columnFormatDate,
       renderCell: (params: GridCellParams) => {

@@ -1281,6 +1281,8 @@ export type DateFieldComparisonBetween = {
   upper: Scalars['DateTime']
 }
 
+export type DateFieldComparisonGreaterOrLess = Scalars['DateTime']
+
 export type DeleteManyAdditionalExpenseFilesInput = {
   /** Filter to find records to delete */
   filter: AdditionalExpenseFileDeleteFilter
@@ -3859,9 +3861,9 @@ export type VoucherInput = {
   code: Scalars['String']
   descriptionEn: Scalars['String'] | undefined
   descriptionTh: Scalars['String'] | undefined
-  percentDiscount: Scalars['Float']
-  amount: Scalars['Float']
-  limitPerUser: Scalars['Float']
+  percentDiscount?: Maybe<Scalars['Float']>
+  amount?: Maybe<Scalars['Float']>
+  limitPerUser?: Maybe<Scalars['Float']>
   startAt: Scalars['DateTime']
   endAt: Scalars['DateTime']
 }
