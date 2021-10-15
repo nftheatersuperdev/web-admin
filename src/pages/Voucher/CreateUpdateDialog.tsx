@@ -47,7 +47,7 @@ export default function VoucherCreateUpdateDialog({
     percentDiscount: yup
       .number()
       .min(1, t('validation.minimumIsOne'))
-      .max(100, t('validation.minimumIsOneHundred'))
+      .max(100, t('validation.maximumIsOneHundred'))
       .required(t('validation.required')),
     amount: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
     limitPerUser: yup
