@@ -465,6 +465,7 @@
   },
   "validation": {
     "required": "Field is required",
-    "minimumIsOne": "Minimum is 1"
+    "minimumIsOne": "Minimum is 1",
+    "maximumIsOneHundred": "Maximum is 100"
   }
 }
