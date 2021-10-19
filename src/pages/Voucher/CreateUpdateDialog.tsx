@@ -42,7 +42,10 @@ export default function VoucherCreateUpdateDialog({
   const createVoucher = useCreateVoucher()
   const updateVoucher = useUpdateVoucher()
   const validationSchema = yup.object({
-    code: yup.string().required(t('validation.required')),
+    code: yup
+      .string()
+      .matches(/^[a-zA-Z0-9]+$/, t('validation.invalidVoucherCode'))
+      .required(t('validation.required')),
     description: yup.string(),
     percentDiscount: yup
       .number()
@@ -206,9 +209,6 @@ export default function VoucherCreateUpdateDialog({
               disabled={isInactive || isActive}
               onInput={handleValidateCodeValue}
               onKeyPress={handleValidateCodeKeyPress}
-              onCut={handleDisableEvent}
-              onCopy={handleDisableEvent}
-              onPaste={handleDisableEvent}
             />
           </Grid>
         </Grid>

@@ -81,10 +81,10 @@ export const dateToFilterNotOnDay = (date: Date): DateFieldComparisonBetween => 
 
 export const dateToFilterGreaterOrLess = (
   date: Date,
-  greaterThanOrLessThan = false
+  isGreaterThan = false
 ): DateFieldComparisonGreaterOrLess => {
   let filterDate = dayjs(date)
-  if (greaterThanOrLessThan) {
+  if (isGreaterThan) {
     filterDate = filterDate.endOf('day')
   } else {
     filterDate = filterDate.startOf('day')
