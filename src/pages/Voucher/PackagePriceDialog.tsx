@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import {
-  Chip,
   TextField,
   Grid,
   Dialog,
@@ -8,8 +7,14 @@ import {
   DialogTitle,
   DialogContent,
   Button,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
 } from '@material-ui/core'
-import Autocomplete from '@material-ui/lab/Autocomplete'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Autocomplete'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -23,6 +28,9 @@ import {
 const ButtonSpace = styled(Button)`
   margin: 0 15px 10px;
 `
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+const checkedIcon = <CheckBoxIcon fontSize="small" />
 
 interface PackagePriceDialogProps {
   voucher?: Voucher | null
@@ -127,28 +135,38 @@ export default function VoucherPackagePriceDialog({
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
+            <RadioGroup aria-label="package-options" name="package-options">
+              <FormControlLabel value="all" control={<Radio />} label="All Packages" />
+              <FormControlLabel
+                value="select"
+                control={<Radio />}
+                label={t('voucher.dialog.packagePrice.selectAvailablePackages')}
+              />
+            </RadioGroup>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
             <Autocomplete
+              disabled
               multiple
               id="package-price-select"
               value={selectedPackages}
               options={masterPackagePrices ?? []}
               onChange={(_, newValue) => setSelectedPackages([...newValue])}
               getOptionLabel={(option) => optionLabel(option)}
-              renderTags={(tagValue, getTagProps) =>
-                tagValue.map((option, index) => (
-                  <Chip
-                    key={option.id}
-                    label={optionLabel(option)}
-                    // eslint-disable-next-line react/jsx-props-no-spreading
-                    {...getTagProps({ index })}
-                  />
-                ))
-              }
+              disableCloseOnSelect
+              renderOption={(option, { selected }: AutocompleteRenderOptionState) => (
+                <Fragment>
+                  <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
+                  {optionLabel(option)}
+                </Fragment>
+              )}
               renderInput={(params) => (
                 <TextField
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
-                  label={t('voucher.dialog.packagePrice.selectAvailablePackages')}
+                  label={t('voucher.dialog.packagePrice.availablePackages')}
                   variant="outlined"
                 />
               )}
