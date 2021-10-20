@@ -74,14 +74,14 @@ export default function Voucher(): JSX.Element {
           const comparingValue = operatorValue as string
           const comparingOperations = ['gt', 'lt', 'gte', 'lte']
           const isUsingOperators = comparingOperations.includes(comparingValue)
-          const isGreaterThan = ['gt'].includes(comparingValue)
+          const isGreaterThanOrLessThanEqual = ['gt', 'lte'].includes(comparingValue)
 
           if (operatorValue === 'between') {
             filterValue = dateToFilterOnDay(value)
           } else if (operatorValue === 'notBetween') {
             filterValue = dateToFilterNotOnDay(value)
           } else if (isUsingOperators) {
-            filterValue = dateToFilterGreaterOrLess(value, isGreaterThan)
+            filterValue = dateToFilterGreaterOrLess(value, isGreaterThanOrLessThanEqual)
           }
         }
 
