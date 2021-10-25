@@ -4,6 +4,7 @@ import { Box, CircularProgress } from '@material-ui/core'
 import { Toaster } from 'react-hot-toast'
 import { routes, ROUTE_PATHS } from './routes'
 import LayoutRoute from './layout/LayoutRoute'
+import ValidateToken from './components/ValidateToken'
 
 function App(): JSX.Element {
   return (
@@ -22,6 +23,7 @@ function App(): JSX.Element {
     >
       <Router>
         <Toaster />
+        <ValidateToken />
         <Switch>
           {routes.map(({ exact, path, component, isPublic, allowedRoles }) => (
             <LayoutRoute
