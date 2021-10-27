@@ -7,6 +7,7 @@ export const ROUTE_PATHS = Object.freeze({
   ROOT: '/',
   DASHBOARD: '/dashboard',
   LOGIN: '/login',
+  LOGOUT: '/logout',
   ACCOUNT: '/account',
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
@@ -26,6 +27,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.LOGIN,
     isPublic: true,
     component: lazy(() => import('./pages/Login' /* webpackChunkName: "app" */)),
+  },
+  {
+    path: ROUTE_PATHS.LOGOUT,
+    isPublic: true,
+    component: lazy(() => import('./pages/Logout' /* webpackChunkName: "app" */)),
   },
   {
     path: ROUTE_PATHS.DASHBOARD,
