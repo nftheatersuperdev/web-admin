@@ -164,6 +164,7 @@
     "verifyDate": "Verify Date",
     "note": "Note",
     "rejectedReason": "Reason of rejection",
+    "userGroups": "User groups",
     "enabled": "Enabled",
     "disabled": "Disabled",
     "actions": "Actions",

@@ -1065,6 +1065,9 @@ export function useUsersFilterAndSort(
                   carId
                 }
                 kycStatus
+                userGroups {
+                  name
+                }
               }
             }
           }

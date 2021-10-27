@@ -3440,6 +3440,7 @@ export type User = {
   tokenKyc?: Maybe<Scalars['String']>
   subscriptionsAggregate: Array<UserSubscriptionsAggregateResponse>
   favoriteChargingLocationsAggregate: Array<UserFavoriteChargingLocationsAggregateResponse>
+  userGroups: Array<UserGroup>
 }
 
 export type UserSubscriptionsArgs = {

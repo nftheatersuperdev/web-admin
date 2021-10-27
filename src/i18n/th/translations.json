@@ -164,6 +164,7 @@
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ",
+    "userGroups": "กลุ่มผู้ใช้งาน",
     "enabled": "เปิด",
     "disabled": "ปิด",
     "actions": "ดำเนินการ",
