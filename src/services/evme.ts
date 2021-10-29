@@ -2128,24 +2128,26 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
   )
 }
 
-export function useUserGroupSoftDelete(): UseMutationResult<unknown, unknown, RefId, unknown> {
+export function useDeleteOneUserGroup(): UseMutationResult<unknown, unknown, RefId, unknown> {
   const { gqlRequest } = useGraphQLRequest()
 
   return useMutation(
     async ({ id }: RefId) => {
-      const { userGroupSoftDelete } = await gqlRequest(
+      const { deleteOneUserGroup } = await gqlRequest(
         gql`
-          mutation UserGroupSoftDelete($id: String!) {
-            userGroupSoftDelete(id: $id)
+          mutation DeleteOneUserGroup($id: ID!) {
+            deleteOneUserGroup(input: { id: $id }) {
+              id
+            }
           }
         `,
         { id }
       )
-      return userGroupSoftDelete
+      return deleteOneUserGroup
     },
     {
       onError: (error: Error) => {
-        console.error(`Unable to request to userGroupSoftDelete ${error.message}`)
+        console.error(`Unable to request to deleteOneUserGroup ${error.message}`)
       },
     }
   )

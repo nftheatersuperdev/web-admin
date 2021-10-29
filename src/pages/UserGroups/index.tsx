@@ -30,7 +30,7 @@ import config from 'config'
 import {
   useUserGroupsFilterAndSort,
   useChangeUserGroup,
-  useUserGroupSoftDelete,
+  useDeleteOneUserGroup,
 } from 'services/evme'
 import { UserGroupFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
@@ -55,7 +55,7 @@ export default function UserGroup(): JSX.Element {
   } = useUserGroupsFilterAndSort(userGroupFilter, userGroupSort, currentPageIndex, pageSize)
 
   const changeUserGroupMutation = useChangeUserGroup()
-  const userGroupSoftDelete = useUserGroupSoftDelete()
+  const deleteOneUserGroup = useDeleteOneUserGroup()
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -179,7 +179,7 @@ export default function UserGroup(): JSX.Element {
 
   const removeUserGroup = async (refId: string) => {
     await toast.promise(
-      userGroupSoftDelete.mutateAsync({
+      deleteOneUserGroup.mutateAsync({
         id: refId,
       }),
       {
