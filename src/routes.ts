@@ -10,6 +10,8 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT: '/account',
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
+  USER_GROUPS: '/user-groups',
+  USER_GROUP_USERS: '/user-groups/:ugid/users',
   SUBSCRIPTION: '/subscription',
   PRICING: '/pricing',
   CAR: '/car',
@@ -46,6 +48,16 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.USER,
     component: lazy(() => import('./pages/User' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+  },
+  {
+    path: ROUTE_PATHS.USER_GROUP_USERS,
+    component: lazy(() => import('./pages/UserGroupUsers' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.USER_GROUPS,
+    component: lazy(() => import('./pages/UserGroups' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.SUBSCRIPTION,

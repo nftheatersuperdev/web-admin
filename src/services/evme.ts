@@ -49,6 +49,12 @@ import {
   SendDataViaEmailInput,
   VoucherFilter,
   RefIdAndRelationIds,
+  RefId,
+  UserGroupFilter,
+  UserGroup,
+  UserGroupUpdateInput,
+  UserGroupCreateInput,
+  UserGroupDeleteInput,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -60,6 +66,10 @@ const QUERY_KEYS = {
   SUBSCRIPTIONS: 'evme:subscriptions',
   SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
   USERS: 'evme:users',
+  USER_GROUPS: 'evme:user-groups',
+  USER_GROUP: 'evme:user-group',
+  USER_GROUP_USERS: 'evme:user-groups:users',
+  USER_GROUP_AVAILABLE_USERS: 'evme:user-groups:users:available',
   VOUCHERS: 'evme:vouchers',
   VOUCHER_BY_ID: 'evme:voucher-by-id',
   VOUCHERS_PACKAGE_PRICE: 'evme:vouchers-package-price',
@@ -1787,6 +1797,355 @@ export function useRemovePackagePricesFromVoucher(): UseMutationResult<
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve useRemovePackagePricesFromVoucher ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useUserGroupsFilterAndSort(
+  filter?: UserGroupFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<UserGroup>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USER_GROUPS, { filter, order, page, pageSize }],
+    async () => {
+      const { userGroupsFilterAndSort } = await gqlRequest(
+        gql`
+          query UserGroupsFilterAndSort(
+            $filter: UserGroupFilterInput
+            $order: UserGroupOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            userGroupsFilterAndSort(
+              filter: $filter
+              order: $order
+              pageSize: $pageSize
+              page: $page
+            ) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                name
+                createdAt
+                updatedAt
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return userGroupsFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve userGroupsFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useChangeUserGroup(): UseMutationResult<
+  unknown,
+  unknown,
+  UserGroupUpdateInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, name }: UserGroupUpdateInput) => {
+      const { updateOneUserGroup } = await gqlRequest(
+        gql`
+          mutation UpdateOneUserGroup($input: UpdateOneUserGroupInput!) {
+            updateOneUserGroup(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            id,
+            update: {
+              name,
+            },
+          },
+        }
+      )
+      return updateOneUserGroup
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to mutation useChangeUserGroup, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useCreateUserGroup(): UseMutationResult<
+  unknown,
+  unknown,
+  UserGroupCreateInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ name }: UserGroupCreateInput) => {
+      const { createOneUserGroup } = await gqlRequest(
+        gql`
+          mutation CreateOneUserGroup($input: CreateOneUserGroupInput!) {
+            createOneUserGroup(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            userGroup: {
+              name,
+            },
+          },
+        }
+      )
+      return createOneUserGroup
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to mutation useCreateUserGroup, ${error.message}`)
+      },
+    }
+  )
+}
+export function useDeleteUserGroup(): UseMutationResult<
+  unknown,
+  unknown,
+  UserGroupDeleteInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id }: UserGroupDeleteInput) => {
+      const { deleteUserGroup } = await gqlRequest(
+        gql`
+          mutation DeleteUserGroup($input: DeleteOneUserGroupInput!) {
+            deleteUserGroup(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            id,
+          },
+        }
+      )
+      return deleteUserGroup
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to mutation useDeleteUserGroup, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useUserGroupUsers(
+  userGroupId = '',
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<User>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USER_GROUP_USERS, { userGroupId, page, pageSize }],
+    async () => {
+      const { userGroupUsers } = await gqlRequest(
+        gql`
+          query UserGroupUsers($userGroupId: String!, $pageSize: Float!, $page: Float!) {
+            userGroupUsers(userGroupId: $userGroupId, page: $page, pageSize: $pageSize) {
+              data {
+                id
+                firstName
+                lastName
+                email
+                phoneNumber
+              }
+              totalData
+              paginate {
+                nextPage
+                previousPage
+                totalPages
+              }
+            }
+          }
+        `,
+        { userGroupId, pageSize, page }
+      )
+      return userGroupUsers
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve userGroupUsers, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useUserGroup(id = ''): UseQueryResult<UserGroup> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USER_GROUP, { id }],
+    async () => {
+      const { userGroup } = await gqlRequest(
+        gql`
+          query UserGroup($id: ID!) {
+            userGroup(id: $id) {
+              id
+              name
+            }
+          }
+        `,
+        { id }
+      )
+      return userGroup
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useUserGroup, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useFindUsersByNotInUserGroupAndKeyword(
+  userGroupId: string,
+  keyword: string
+): UseQueryResult<User[]> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USER_GROUP_AVAILABLE_USERS, { userGroupId }],
+    async () => {
+      const { findUsersByNotInUserGroupAndKeyword } = await gqlRequest(
+        gql`
+          query FindUsersByNotInUserGroupAndKeyword($userGroupId: String!, $keyword: String!) {
+            findUsersByNotInUserGroupAndKeyword(userGroupId: $userGroupId, keyword: $keyword) {
+              id
+              firstName
+              lastName
+              email
+              phoneNumber
+            }
+          }
+        `,
+        { userGroupId, keyword }
+      )
+      return findUsersByNotInUserGroupAndKeyword
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useFindUsersByNotInUserGroupAndKeyword, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useAddUsersToUserGroup(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation AddUsersToUserGroup($id: ID!, $relationIds: [ID!]!) {
+            addUsersToUserGroup(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useAddUsersToUserGroup ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useRemoveUserGroupsFromUser(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation RemoveUserGroupsFromUser($id: ID!, $relationIds: [ID!]!) {
+            removeUserGroupsFromUser(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useRemoveUserGroupsFromUser ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useUserGroupSoftDelete(): UseMutationResult<unknown, unknown, RefId, unknown> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id }: RefId) => {
+      const { userGroupSoftDelete } = await gqlRequest(
+        gql`
+          mutation UserGroupSoftDelete($id: String!) {
+            userGroupSoftDelete(id: $id)
+          }
+        `,
+        { id }
+      )
+      return userGroupSoftDelete
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to request to userGroupSoftDelete ${error.message}`)
       },
     }
   )
