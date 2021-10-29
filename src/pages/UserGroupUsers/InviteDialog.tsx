@@ -151,14 +151,6 @@ export default function InviteDialog({
       </DialogContent>
       <DialogActions>
         <ButtonSpace
-          disabled={!selectedUser || isLoading}
-          onClick={() => handleConfirmInviteUser()}
-          color="primary"
-          variant="outlined"
-        >
-          {t('button.confirm')}
-        </ButtonSpace>
-        <ButtonSpace
           onClick={() => {
             clearOptionData()
             onClose()
@@ -167,6 +159,14 @@ export default function InviteDialog({
           variant="outlined"
         >
           {t('button.cancel')}
+        </ButtonSpace>
+        <ButtonSpace
+          disabled={!selectedUser || isLoading}
+          onClick={() => handleConfirmInviteUser()}
+          color="primary"
+          variant="contained"
+        >
+          {t('button.confirm')}
         </ButtonSpace>
       </DialogActions>
     </Dialog>

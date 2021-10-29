@@ -1,7 +1,7 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams, useHistory } from 'react-router-dom'
-import { Card, Button, IconButton, Typography } from '@material-ui/core'
+import { useParams, Link } from 'react-router-dom'
+import { Card, Button, IconButton, Typography, Breadcrumbs } from '@material-ui/core'
 import { Delete as DeleteIcon } from '@material-ui/icons'
 import styled from 'styled-components'
 import toast from 'react-hot-toast'
@@ -29,7 +29,6 @@ const MarginBottom = styled.div`
 `
 
 export default function UserGroupUsers(): JSX.Element {
-  const history = useHistory()
   const { ugid } = useParams<UserGroupUsersParams>()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
@@ -167,18 +166,18 @@ export default function UserGroupUsers(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Fragment>
-          <Button color="primary" variant="contained" onClick={() => setOpenInviteDialog(true)}>
-            {t('userGroups.dialog.invitation.button')}
-          </Button>
-          <Button onClick={() => history.push('/user-groups')}>{t('button.back')}</Button>
-        </Fragment>
+        <Button color="primary" variant="contained" onClick={() => setOpenInviteDialog(true)}>
+          {t('userGroups.dialog.invitation.button')}
+        </Button>
       </PageToolbar>
 
       <MarginBottom>
-        <Typography variant="h5" component="div" gutterBottom>
-          {t('userGroups.title')}: {userGroup?.name}
-        </Typography>
+        <Breadcrumbs aria-label="breadcrumb" separator="›">
+          <Link color="textPrimary" to="/user-groups">
+            {t('userGroups.title')}
+          </Link>
+          <Typography>{userGroup?.name}</Typography>
+        </Breadcrumbs>
       </MarginBottom>
 
       <Card>

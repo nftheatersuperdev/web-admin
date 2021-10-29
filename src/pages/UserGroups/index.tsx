@@ -1,7 +1,8 @@
 import { useState, useEffect, Fragment } from 'react'
 import toast from 'react-hot-toast'
+import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { Card, Button, IconButton } from '@material-ui/core'
+import { Card, Button, IconButton, Breadcrumbs, Typography } from '@material-ui/core'
 import { Delete as DeleteIcon, People as UserIcon } from '@material-ui/icons'
 import {
   GridColDef,
@@ -38,6 +39,10 @@ import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import CreateDialog from './CreateDialog'
+
+const MarginBottom = styled.div`
+  margin-bottom: 20px;
+`
 
 export default function UserGroup(): JSX.Element {
   const history = useHistory()
@@ -282,6 +287,12 @@ export default function UserGroup(): JSX.Element {
           {t('userGroups.button.createNew')}
         </Button>
       </PageToolbar>
+
+      <MarginBottom>
+        <Breadcrumbs aria-label="breadcrumb" separator="›">
+          <Typography>{t('userGroups.title')}</Typography>
+        </Breadcrumbs>
+      </MarginBottom>
 
       <Card>
         <DataGridLocale
