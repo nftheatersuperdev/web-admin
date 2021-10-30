@@ -8,6 +8,8 @@ import {
   GridPageChangeParams,
   GridFilterModel,
   GridFilterItem,
+  GridSortModel,
+  GridValueFormatterParams,
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import toast from 'react-hot-toast'
@@ -16,24 +18,31 @@ import {
   columnFormatDate,
   getIdFilterOperators,
   getStringFilterOperators,
+  getSelectFilterOperators,
   stringToFilterContains,
 } from 'utils'
 import config from 'config'
 import {
-  useCars,
   useCarModels,
   useCreateCar,
-  // useUpdateCar,
   useUpdateCarStatus,
   useDeleteCar,
+  useCarsFilterAndSort,
 } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
-import { CarInput, CarFilter, CarSortFields, SortDirection } from 'services/evme.types'
+import { CarInput, CarFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
+import {
+  getCarStatusOptions,
+  columnFormatCarStatus,
+  getVisibilityColumns,
+  setVisibilityColumns,
+  VisibilityColumns,
+} from './utils'
 
 const HideSection = styled(Button)`
   display: none;
@@ -54,22 +63,21 @@ export default function Car(): JSX.Element {
   const updateCarStatusMutation = useUpdateCarStatus()
   const deleteCarMutation = useDeleteCar()
   const [carFilter, setCarFilter] = useState<CarFilter>({})
+  const [carSort, setCarSort] = useState<SubOrder>({})
 
   const {
-    data: cars,
+    data: carData,
     refetch,
-    fetchNextPage,
-    fetchPreviousPage,
-  } = useCars(pageSize, carFilter, [
-    {
-      field: CarSortFields.CarModelId,
-      direction: SortDirection.Desc,
-    },
-  ])
+    isFetching,
+  } = useCarsFilterAndSort(carFilter, carSort, currentPageIndex, pageSize)
+
   const { data: carModels } = useCarModels()
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
+  const selectFilterOperators = getSelectFilterOperators(t)
+  const statusOptions = getCarStatusOptions(t)
+  const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -96,6 +104,38 @@ export default function Car(): JSX.Element {
     )
     // reset page
     setCurrentPageIndex(0)
+  }
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
+  }
+
+  const handleSortChange = (params: GridSortModel) => {
+    if (params?.length > 0 && !isFetching) {
+      const { field: refField, sort } = params[0]
+
+      const order: SubOrder = {
+        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
+      }
+
+      setCarSort(order)
+      refetch()
+    }
   }
 
   useEffect(() => {
@@ -161,8 +201,8 @@ export default function Car(): JSX.Element {
   )
 
   const openEditCarDialog = (param: GridRowData) => {
-    const selectedCar = cars?.pages[currentPageIndex].edges.find(({ node }) => node.id === param.id)
-    const latestStatus = selectedCar?.node.latestStatus
+    const selectedCar = carData?.data.find((car) => car.id === param.id)
+    const latestStatus = selectedCar?.latestStatus
 
     setSelectedCarId(param.id)
     const { vin, plateNumber, carModelId, color, colorHex } = param.row
@@ -205,77 +245,75 @@ export default function Car(): JSX.Element {
     outOfService: t('car.statuses.outOfService'),
   }
 
-  const rows = useMemo(
-    () =>
-      cars?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-        const {
-          id,
-          vin,
-          plateNumber,
-          color,
-          colorHex,
-          carModelId,
-          carModel,
-          latestStatus,
-          createdAt,
-          updatedAt,
-        } = node || {}
+  const cars =
+    carData?.data.map((car) => {
+      const {
+        id,
+        vin,
+        plateNumber,
+        color,
+        colorHex,
+        carModelId,
+        carModel,
+        latestStatus,
+        createdAt,
+        updatedAt,
+      } = car || {}
 
-        const {
-          brand,
-          model,
-          acceleration,
-          topSpeed,
-          range,
-          totalPower,
-          connectorType,
-          chargeTime,
-          fastChargeTime,
-          batteryCapacity,
-        } = carModel || {}
+      const {
+        brand,
+        model,
+        acceleration,
+        topSpeed,
+        range,
+        totalPower,
+        connectorType,
+        chargeTime,
+        fastChargeTime,
+        batteryCapacity,
+      } = carModel || {}
 
-        const status =
-          latestStatus === 'available' ? carStatuses.available : carStatuses.outOfService
+      const status = latestStatus === 'available' ? carStatuses.available : carStatuses.outOfService
 
-        return {
-          carModelId,
-          brand,
-          topSpeed,
-          acceleration,
-          range,
-          totalPower,
-          connectorType: connectorType?.description,
-          chargeTime,
-          fastChargeTime,
-          bodyType: carModel?.bodyType?.bodyType,
-          model,
-          id,
-          vin,
-          plateNumber,
-          color,
-          colorHex,
-          createdAt,
-          updatedAt,
-          batteryCapacity,
-          status,
-        }
-      }) || [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cars, currentPageIndex]
-  )
+      return {
+        carModelId,
+        brand,
+        topSpeed,
+        acceleration,
+        range,
+        totalPower,
+        connectorType: connectorType?.description,
+        chargeTime,
+        fastChargeTime,
+        bodyType: carModel?.bodyType?.bodyType,
+        model,
+        id,
+        vin,
+        plateNumber,
+        color,
+        colorHex,
+        createdAt,
+        updatedAt,
+        batteryCapacity,
+        status,
+      }
+    }) || []
 
   const columns: GridColDef[] = [
     {
       field: 'id',
       headerName: t('car.id'),
       description: t('car.id'),
+      hide: !visibilityColumns.id,
       flex: 1,
       filterOperators: idFilterOperators,
+      sortable: true,
     },
     {
       field: 'brand',
       headerName: t('car.brand'),
       description: t('car.brand'),
+      hide: !visibilityColumns.brand,
       flex: 1,
       filterable: false,
     },
@@ -283,6 +321,7 @@ export default function Car(): JSX.Element {
       field: 'model',
       headerName: t('car.model'),
       description: t('car.model'),
+      hide: !visibilityColumns.model,
       flex: 1,
       filterable: false,
     },
@@ -290,34 +329,42 @@ export default function Car(): JSX.Element {
       field: 'color',
       headerName: t('car.color'),
       description: t('car.color'),
-      flex: 1,
       filterOperators: stringFilterOperators,
+      hide: !visibilityColumns.color,
+      flex: 1,
     },
     {
       field: 'vin',
       headerName: t('car.vin'),
       description: t('car.vin'),
-      flex: 1,
       filterOperators: stringFilterOperators,
+      flex: 1,
+      hide: !visibilityColumns.vin,
+      sortable: false,
     },
     {
       field: 'plateNumber',
       headerName: t('car.plateNumber'),
       description: t('car.plateNumber'),
+      hide: !visibilityColumns.plateNumber,
       flex: 1,
       filterOperators: stringFilterOperators,
+      sortable: false,
     },
     {
       field: 'bodyType',
       headerName: t('car.bodyType'),
       description: t('car.bodyType'),
+      hide: !visibilityColumns.bodyType,
       flex: 1,
       filterable: false,
+      sortable: false,
     },
     {
       field: 'totalPower',
       headerName: t('car.totalPower'),
       description: t('car.totalPower'),
+      hide: !visibilityColumns.totalPower,
       flex: 1,
       filterable: false,
     },
@@ -325,6 +372,7 @@ export default function Car(): JSX.Element {
       field: 'batteryCapacity',
       headerName: t('car.batteryCapacity'),
       description: t('car.batteryCapacity'),
+      hide: !visibilityColumns.batteryCapacity,
       flex: 1,
       filterable: false,
     },
@@ -332,73 +380,79 @@ export default function Car(): JSX.Element {
       field: 'createdAt',
       headerName: t('car.createdDate'),
       description: t('car.createdDate'),
+      hide: !visibilityColumns.createdAt,
       valueFormatter: columnFormatDate,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'updatedAt',
       headerName: t('car.updatedDate'),
       description: t('car.updatedDate'),
+      hide: !visibilityColumns.updatedAt,
       valueFormatter: columnFormatDate,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'topSpeed',
       headerName: t('car.topSpeed'),
       description: t('car.topSpeed'),
+      hide: !visibilityColumns.topSpeed,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'acceleration',
       headerName: t('car.acceleration'),
       description: t('car.acceleration'),
+      hide: !visibilityColumns.acceleration,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'range',
       headerName: t('car.range'),
       description: t('car.range'),
+      hide: !visibilityColumns.range,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'connectorType',
       headerName: t('car.connectorType'),
       description: t('car.connectorType'),
+      hide: !visibilityColumns.connectorType,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'chargeTime',
       headerName: t('car.chargeTime'),
       description: t('car.chargeTime'),
+      hide: !visibilityColumns.chargeTime,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'fastChargeTime',
       headerName: t('car.fastChargeTime'),
       description: t('car.fastChargeTime'),
+      hide: !visibilityColumns.fastChargeTime,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'status',
+      flex: 1,
       headerName: t('car.status'),
       description: t('car.status'),
-      filterable: false,
+      hide: !visibilityColumns.status,
+      filterOperators: selectFilterOperators,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        columnFormatCarStatus(params.value as string, t),
+      valueOptions: statusOptions,
+      filterable: true,
       sortable: false,
     },
     {
@@ -447,19 +501,21 @@ export default function Car(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={cars?.pages[currentPageIndex]?.totalCount}
+          rowCount={carData?.totalData}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
           onPageChange={setCurrentPageIndex}
-          rows={rows}
+          rows={cars}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick
           onRowClick={openEditCarDialog}
           filterMode="server"
           onFilterModelChange={handleFilterChange}
+          onColumnVisibilityChange={onColumnVisibilityChange}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          loading={isFetching}
         />
       </Card>
 

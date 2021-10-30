@@ -17,6 +17,8 @@ import {
   Payment,
   Sub,
   User,
+  Voucher,
+  VoucherInput,
   AdditionalExpense,
   AdditionalExpenseInput,
   UpdateOneAdditionalExpenseInput,
@@ -28,6 +30,7 @@ import {
   CursorPaging,
   SubFilter,
   SubSort,
+  SubOrder,
   PackagePriceSort,
   ChargingLocation,
   CarSort,
@@ -44,6 +47,8 @@ import {
   SubscriptionUpdatePlateInput,
   ManualExtendSubscriptionInput,
   SendDataViaEmailInput,
+  VoucherFilter,
+  RefIdAndRelationIds,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -55,6 +60,9 @@ const QUERY_KEYS = {
   SUBSCRIPTIONS: 'evme:subscriptions',
   SEARCH_SUBSCRIPTIONS: 'evme:search-subscriptions',
   USERS: 'evme:users',
+  VOUCHERS: 'evme:vouchers',
+  VOUCHER_BY_ID: 'evme:voucher-by-id',
+  VOUCHERS_PACKAGE_PRICE: 'evme:vouchers-package-price',
   USER_AGGREGATE: 'evme:user-aggregate',
   PAYMENTS: 'evme:payments',
   ADDITIONAL_EXPENSES: 'evme:additional-expenses',
@@ -74,6 +82,16 @@ export interface WithPaginationType<P> {
   edges: {
     node: P
   }[]
+}
+
+export interface WithPaginateType<P> {
+  paginate?: {
+    totalPages: number
+    nextPage: number | null
+    previousPage: number | null
+  }
+  totalData?: number
+  data: [P]
 }
 
 export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, unknown> {
@@ -372,6 +390,75 @@ export function useCars(
   )
 }
 
+export function useCarsFilterAndSort(
+  filter?: CarFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<Car>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.CARS, { filter, order, page, pageSize }],
+    async () => {
+      const { carsFilterAndSort } = await gqlRequest(
+        gql`
+          query CarsFilterAndSort(
+            $filter: CarFilterInput
+            $order: CarOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            carsFilterAndSort(filter: $filter, order: $order, pageSize: $pageSize, page: $page) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                vin
+                plateNumber
+                color
+                createdAt
+                updatedAt
+                carModelId
+                carModel {
+                  brand
+                  model
+                  acceleration
+                  topSpeed
+                  range
+                  totalPower
+                  totalTorque
+                  connectorType {
+                    description
+                  }
+                  chargeTime
+                  fastChargeTime
+                  bodyType {
+                    bodyType
+                  }
+                  batteryCapacity
+                }
+                latestStatus
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return carsFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve carsFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
 export function useSubscriptions(
   pageSize = 10,
   filter?: SubFilter,
@@ -586,6 +673,104 @@ export function useSearchSubscriptions(
         console.error(`Unable to retrieve subscriptions, ${error.message}`)
       },
       keepPreviousData: true,
+    }
+  )
+}
+
+export function useSubscriptionsFilterAndSort(
+  filter?: SubFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<Sub>> {
+  const { gqlRequest } = useGraphQLRequest()
+  return useQuery(
+    [QUERY_KEYS.SEARCH_SUBSCRIPTIONS, { filter, order, page, pageSize }],
+    async () => {
+      const { subscriptionsFilterAndSort } = await gqlRequest(
+        gql`
+          query SubscriptionsFilterAndSort(
+            $filter: SubFilterInput
+            $order: SubOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            subscriptionsFilterAndSort(
+              filter: $filter
+              order: $order
+              pageSize: $pageSize
+              page: $page
+            ) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                userId
+                startDate
+                endDate
+                createdAt
+                updatedAt
+                kind
+                user {
+                  firstName
+                  lastName
+                  phoneNumber
+                  email
+                }
+                car {
+                  vin
+                  plateNumber
+                  color
+                  carModel {
+                    id
+                    brand
+                    model
+                    seats
+                    topSpeed
+                    fastChargeTime
+                  }
+                }
+                packagePrice {
+                  duration
+                  price
+                }
+                startAddress {
+                  full
+                  latitude
+                  longitude
+                  remark
+                }
+                endAddress {
+                  full
+                  latitude
+                  longitude
+                  remark
+                }
+                events {
+                  id
+                  status
+                  createdAt
+                  updatedAt
+                }
+                voucher {
+                  code
+                }
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return subscriptionsFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve SubscriptionsFilterAndSort, ${error.message}`)
+      },
     }
   )
 }
@@ -836,6 +1021,307 @@ export function useUsers(
         console.error(`Unable to retrieve users, ${error.message}`)
       },
       keepPreviousData: true,
+    }
+  )
+}
+
+export function useUsersFilterAndSort(
+  filter?: UserFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<User>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USERS, { filter, order, page, pageSize }],
+    async () => {
+      const { usersFilterAndSort } = await gqlRequest(
+        gql`
+          query UsersFilterAndSort(
+            $filter: UserFilterInput
+            $order: UserOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            usersFilterAndSort(filter: $filter, order: $order, pageSize: $pageSize, page: $page) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                firstName
+                lastName
+                email
+                phoneNumber
+                role
+                disabled
+                createdAt
+                updatedAt
+                subscriptions {
+                  carId
+                }
+                kycStatus
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return usersFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve usersFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVouchersFilterAndSort(
+  filter?: VoucherFilter,
+  order?: SubOrder,
+  page = 0,
+  pageSize = 10
+): UseQueryResult<WithPaginateType<Voucher>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.VOUCHERS, { filter, order, page, pageSize }],
+    async () => {
+      const { vouchersFilterAndSort } = await gqlRequest(
+        gql`
+          query VouchersFilterAndSort(
+            $filter: VoucherFilterInput
+            $order: VoucherOrderInput
+            $pageSize: Float!
+            $page: Float!
+          ) {
+            vouchersFilterAndSort(
+              filter: $filter
+              order: $order
+              pageSize: $pageSize
+              page: $page
+            ) {
+              paginate {
+                totalPages
+                nextPage
+                previousPage
+              }
+              totalData
+              data {
+                id
+                code
+                percentDiscount
+                amount
+                startAt
+                endAt
+                descriptionEn
+                descriptionTh
+                createdAt
+                updatedAt
+                limitPerUser
+                userGroups {
+                  name
+                }
+                packagePrices {
+                  id
+                  carModelId
+                  carModel {
+                    id
+                    brand
+                    model
+                  }
+                  duration
+                  price
+                  fullPrice
+                }
+              }
+            }
+          }
+        `,
+        { filter, order, pageSize, page }
+      )
+      return vouchersFilterAndSort
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve vouchersFilterAndSort, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVouchersSearchPackagePrices(keyword = ''): UseQueryResult<PackagePrice[]> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.VOUCHERS_PACKAGE_PRICE, { keyword }],
+    async () => {
+      const { vouchersSearchPackagePrices } = await gqlRequest(
+        gql`
+          query VouchersSearchPackagePrices($keyword: String!) {
+            vouchersSearchPackagePrices(keyword: $keyword) {
+              id
+              carModelId
+              carModel {
+                id
+                brand
+                model
+              }
+              duration
+              price
+              fullPrice
+            }
+          }
+        `,
+        { keyword }
+      )
+      return vouchersSearchPackagePrices
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve vouchersSearchPackagePrices, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.VOUCHER_BY_ID, { id }],
+    async () => {
+      const { voucher } = await gqlRequest(
+        gql`
+          query Voucher($id: String!) {
+            voucher(id: $id) {
+              id
+              packagePrices {
+                id
+                carModel {
+                  id
+                  brand
+                  model
+                }
+                price
+                fullPrice
+              }
+            }
+          }
+        `,
+        { id }
+      )
+      return voucher
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve voucher, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherInput, unknown> {
+  const queryClient = useQueryClient()
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({
+      code,
+      descriptionEn,
+      descriptionTh,
+      percentDiscount,
+      amount,
+      limitPerUser,
+      startAt,
+      endAt,
+    }) => {
+      const { createVoucher } = await gqlRequest(
+        gql`
+          mutation CreateVoucher($input: CreateOneVoucherInput!) {
+            createVoucher(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            voucher: {
+              code,
+              descriptionEn,
+              descriptionTh,
+              percentDiscount,
+              amount,
+              limitPerUser,
+              startAt,
+              endAt,
+            },
+          },
+        }
+      )
+      return createVoucher
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.VOUCHERS),
+      onError: () => {
+        console.error('Failed to createVoucher')
+      },
+    }
+  )
+}
+
+export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherInput, unknown> {
+  const queryClient = useQueryClient()
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({
+      id,
+      code,
+      descriptionEn,
+      descriptionTh,
+      percentDiscount,
+      amount,
+      limitPerUser,
+      startAt,
+      endAt,
+    }) => {
+      const { updateVoucher } = await gqlRequest(
+        gql`
+          mutation UpdateVoucher($input: UpdateOneVoucherInput!) {
+            updateVoucher(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            id,
+            update: {
+              code,
+              descriptionEn,
+              descriptionTh,
+              percentDiscount,
+              amount,
+              limitPerUser,
+              startAt,
+              endAt,
+            },
+          },
+        }
+      )
+      return updateVoucher
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.VOUCHERS),
+      onError: () => {
+        console.error('Failed to updateVoucher')
+      },
     }
   )
 }
@@ -1232,6 +1718,72 @@ export function useSendDataViaEmail(): UseMutationResult<
     {
       onError: () => {
         console.error('Failed to request send all data via email')
+      },
+    }
+  )
+}
+
+export function useAddPackagePricesToVoucher(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation AddPackagePricesToVoucher($id: ID!, $relationIds: [ID!]!) {
+            addPackagePricesToVoucher(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useAddPackagePricesToVoucher ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useRemovePackagePricesFromVoucher(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation RemovePackagePricesFromVoucher($id: ID!, $relationIds: [ID!]!) {
+            removePackagePricesFromVoucher(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to retrieve useRemovePackagePricesFromVoucher ${error.message}`)
       },
     }
   )

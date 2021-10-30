@@ -17,7 +17,6 @@ import { CarInput } from 'services/evme.types'
 import CarStatusSelect from 'components/CarStatusSelect'
 
 const validationSchema = yup.object({
-  vin: yup.string().required('Field is required'),
   plateNumber: yup.string().required('Field is required'),
   carColor: yup.string().required('Field is required'),
   carModel: yup.string().required('Field is required'),

@@ -1281,6 +1281,8 @@ export type DateFieldComparisonBetween = {
   upper: Scalars['DateTime']
 }
 
+export type DateFieldComparisonGreaterOrLess = Scalars['DateTime']
+
 export type DeleteManyAdditionalExpenseFilesInput = {
   /** Filter to find records to delete */
   filter: AdditionalExpenseFileDeleteFilter
@@ -2799,6 +2801,7 @@ export type Sub = {
   eventsAggregate: Array<SubEventsAggregateResponse>
   paymentsAggregate: Array<SubPaymentsAggregateResponse>
   additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>
+  voucher?: Maybe<Voucher>
 }
 
 export type SubEventsArgs = {
@@ -3010,6 +3013,7 @@ export type SubFilter = {
   packagePrice?: Maybe<SubFilterPackagePriceFilter>
   user?: Maybe<SubFilterUserFilter>
   events?: Maybe<SubFilterSubscriptionEventFilter>
+  voucher?: Maybe<SubFilterVoucherFilter>
 }
 
 export type SubFilterCarFilter = {
@@ -3056,6 +3060,12 @@ export type SubFilterUserFilter = {
   kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
+}
+
+export type SubFilterVoucherFilter = {
+  and?: Maybe<Array<SubFilterVoucherFilter>>
+  or?: Maybe<Array<SubFilterVoucherFilter>>
+  code?: Maybe<StringFieldComparison>
 }
 
 export type SubMaxAggregate = {
@@ -3144,6 +3154,10 @@ export type SubSort = {
   field: SubSortFields
   direction: SortDirection
   nulls?: Maybe<SortNulls>
+}
+
+export type SubOrder = {
+  [key: string]: SortDirection
 }
 
 export enum SubSortFields {
@@ -3397,6 +3411,11 @@ export type ManualExtendSubscriptionInput = {
 export type SendDataViaEmailInput = {
   emails: Array<Scalars['String']>
   columns: Array<Scalars['String']>
+}
+
+export type RefIdAndRelationIds = {
+  id: Scalars['ID']
+  relationIds: Array<Scalars['ID']>
 }
 
 export type User = {
@@ -3813,4 +3832,54 @@ export enum WaitingListSortFields {
   LastName = 'lastName',
   PhoneNumber = 'phoneNumber',
   Email = 'email',
+}
+
+export type UserGroup = {
+  __typename?: 'userGroups'
+  name: Scalars['String']
+}
+
+export type Voucher = {
+  __typename?: 'Voucher'
+  id: Scalars['String']
+  code: Scalars['String']
+  descriptionEn: Scalars['String'] | undefined
+  descriptionTh: Scalars['String'] | undefined
+  percentDiscount: Scalars['Int']
+  amount: Scalars['Int']
+  limitPerUser: Scalars['Int']
+  userGroups: Array<UserGroup>
+  packagePrices: Array<PackagePrice>
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type VoucherInput = {
+  id?: Maybe<Scalars['ID']>
+  code: Scalars['String']
+  descriptionEn: Scalars['String'] | undefined
+  descriptionTh: Scalars['String'] | undefined
+  percentDiscount?: Maybe<Scalars['Float']>
+  amount?: Maybe<Scalars['Float']>
+  limitPerUser?: Maybe<Scalars['Float']>
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+}
+
+export type VoucherFilter = {
+  and?: Maybe<Array<UserFilter>>
+  or?: Maybe<Array<UserFilter>>
+  id?: Maybe<StringFieldComparison>
+  firebaseId?: Maybe<StringFieldComparison>
+  firstName?: Maybe<StringFieldComparison>
+  lastName?: Maybe<StringFieldComparison>
+  role?: Maybe<StringFieldComparison>
+  disabled?: Maybe<BooleanFieldComparison>
+  phoneNumber?: Maybe<StringFieldComparison>
+  email?: Maybe<StringFieldComparison>
+  kycStatus?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
+  updatedAt?: Maybe<DateFieldComparison>
 }

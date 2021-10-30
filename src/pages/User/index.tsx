@@ -6,6 +6,7 @@ import {
   GridFilterModel,
   GridPageChangeParams,
   GridValueFormatterParams,
+  GridSortModel,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -19,11 +20,12 @@ import {
   stringToFilterContains,
 } from 'utils'
 import config from 'config'
-import { useUsers } from 'services/evme'
-import { UserFilter, SortDirection, UserSortFields } from 'services/evme.types'
+import { useUsersFilterAndSort } from 'services/evme'
+import { UserFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
+import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 const defaultFilter = {
   role: {
@@ -35,19 +37,22 @@ export default function User(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-
   const [userFilter, setUserFilter] = useState<UserFilter>({
     ...defaultFilter,
   })
+  const [userSort, setUserSort] = useState<SubOrder>({})
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useUsers(pageSize, userFilter, [
-    { direction: SortDirection.Asc, field: UserSortFields.CreatedAt },
-  ])
+  const {
+    data: userData,
+    refetch,
+    isFetching,
+  } = useUsersFilterAndSort(userFilter, userSort, currentPageIndex, pageSize)
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
   const dateFilterOperators = getDateFilterOperators(t)
   const selectFilterOperators = getSelectFilterOperators(t)
+  const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -82,6 +87,38 @@ export default function User(): JSX.Element {
     setCurrentPageIndex(0)
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
+  }
+
+  const handleSortChange = (params: GridSortModel) => {
+    if (params?.length > 0 && !isFetching) {
+      const { field: refField, sort } = params[0]
+
+      const order: SubOrder = {
+        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
+      }
+
+      setUserSort(order)
+      refetch()
+    }
+  }
+
   useEffect(() => {
     refetch()
   }, [userFilter, refetch])
@@ -91,22 +128,15 @@ export default function User(): JSX.Element {
       field: 'id',
       headerName: t('user.id'),
       description: t('user.id'),
+      hide: !visibilityColumns.id,
       flex: 1,
-      hide: true,
       filterOperators: idFilterOperators,
-    },
-    {
-      field: 'createdAt',
-      headerName: t('user.createdDate'),
-      description: t('user.createdDate'),
-      valueFormatter: columnFormatDate,
-      filterOperators: dateFilterOperators,
-      flex: 1,
     },
     {
       field: 'firstName',
       headerName: t('user.firstName'),
       description: t('user.firstName'),
+      hide: !visibilityColumns.firstName,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -114,6 +144,7 @@ export default function User(): JSX.Element {
       field: 'lastName',
       headerName: t('user.lastName'),
       description: t('user.lastName'),
+      hide: !visibilityColumns.lastName,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -121,6 +152,7 @@ export default function User(): JSX.Element {
       field: 'email',
       headerName: t('user.email'),
       description: t('user.email'),
+      hide: !visibilityColumns.email,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -128,6 +160,7 @@ export default function User(): JSX.Element {
       field: 'phoneNumber',
       headerName: t('user.phone'),
       description: t('user.phone'),
+      hide: !visibilityColumns.phoneNumber,
       flex: 1,
       filterOperators: stringFilterOperators,
     },
@@ -135,6 +168,7 @@ export default function User(): JSX.Element {
       field: 'kycStatus',
       headerName: t('user.kyc.status'),
       description: t('user.kyc.status'),
+      hide: !visibilityColumns.kycStatus,
       flex: 1,
       valueFormatter: (params: GridValueFormatterParams): string => {
         switch (params.value) {
@@ -165,51 +199,61 @@ export default function User(): JSX.Element {
       ],
     },
     {
-      field: 'updatedAt',
-      headerName: t('user.updatedDate'),
-      description: t('user.updatedDate'),
-      valueFormatter: columnFormatDate,
-      filterOperators: dateFilterOperators,
-      flex: 1,
-    },
-    {
       field: 'verifyDate',
       headerName: t('user.verifyDate'),
       description: t('user.verifyDate'),
+      hide: !visibilityColumns.verifyDate,
       valueFormatter: columnFormatDate,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'note',
       headerName: t('user.note'),
       description: t('user.note'),
+      hide: !visibilityColumns.note,
       flex: 1,
-      hide: true,
       filterable: false,
     },
     {
       field: 'rejectedReason',
       headerName: t('user.rejectedReason'),
       description: t('user.rejectedReason'),
+      hide: !visibilityColumns.rejectedReason,
       flex: 1,
-      hide: true,
       filterable: false,
+    },
+    {
+      field: 'createdAt',
+      headerName: t('user.createdDate'),
+      description: t('user.createdDate'),
+      hide: !visibilityColumns.createdAt,
+      valueFormatter: columnFormatDate,
+      filterOperators: dateFilterOperators,
+      flex: 1,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('user.updatedDate'),
+      description: t('user.updatedDate'),
+      hide: !visibilityColumns.updatedAt,
+      valueFormatter: columnFormatDate,
+      filterOperators: dateFilterOperators,
+      flex: 1,
     },
   ]
 
-  const rows =
-    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
+  const users =
+    userData?.data.map((user) => {
       return {
-        id: node.id,
-        firstName: node.firstName,
-        lastName: node.lastName,
-        email: node.email,
-        phoneNumber: node.phoneNumber,
-        kycStatus: node.kycStatus,
-        createdAt: node.createdAt,
-        updatedAt: node.updatedAt,
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        kycStatus: user.kycStatus,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
         // these fields not support from backend
         verifyDate: null,
         note: '',
@@ -233,18 +277,20 @@ export default function User(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          rowCount={userData?.totalData}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
           onPageChange={setCurrentPageIndex}
-          rows={rows}
+          rows={users}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick
           filterMode="server"
           onFilterModelChange={handleFilterChange}
+          onColumnVisibilityChange={onColumnVisibilityChange}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          loading={isFetching}
         />
       </Card>
     </Page>

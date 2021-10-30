@@ -14,6 +14,7 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
+  GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -32,8 +33,8 @@ import {
 import config from 'config'
 import PageToolbar from 'layout/PageToolbar'
 import DataGridLocale from 'components/DataGridLocale'
-import { useSubscriptions, useSendDataViaEmail } from 'services/evme'
-import { SubFilter, SubSortFields, SortDirection } from 'services/evme.types'
+import { useSendDataViaEmail, useSubscriptionsFilterAndSort } from 'services/evme'
+import { SubFilter, SubOrder, SortDirection } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatDuration, getDurationOptions } from 'pages/Pricing/utils'
 import UpdateDialog from './UpdateDialog'
@@ -54,17 +55,14 @@ export default function Subscription(): JSX.Element {
   const [isSendDataDialogOpen, setSendDataDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
   const [subFilter, setSubFilter] = useState<SubFilter>({})
-  const [subSort, setSubSort] = useState({
-    field: SubSortFields.CreatedAt,
-    direction: SortDirection.Desc,
-  })
+  const [subSort, setSubSort] = useState<SubOrder>({})
   const sendDataViaEmail = useSendDataViaEmail()
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage, isFetching } = useSubscriptions(
-    pageSize,
-    subFilter,
-    [subSort]
-  )
+  const {
+    data: subscriptionsData,
+    refetch,
+    isFetching,
+  } = useSubscriptionsFilterAndSort(subFilter, subSort, currentPageIndex, pageSize)
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -147,6 +145,15 @@ export default function Subscription(): JSX.Element {
           }
         }
 
+        if (columnField === 'voucherCode' && value) {
+          filter.voucher = {
+            code: {
+              [operatorValue as string]:
+                operatorValue === 'iLike' ? stringToFilterContains(value) : value,
+            },
+          }
+        }
+
         return filter
       }, {} as SubFilter)
     )
@@ -177,25 +184,12 @@ export default function Subscription(): JSX.Element {
     if (params?.length > 0 && !isFetching) {
       const { field: refField, sort } = params[0]
 
-      let field = SubSortFields.CreatedAt
-      switch (refField) {
-        case 'startDate':
-          field = SubSortFields.StartDate
-          break
-        case 'endDate':
-          field = SubSortFields.EndDate
-          break
+      const order: SubOrder = {
+        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
       }
 
-      const direction = sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc
-
-      setSubSort({
-        field,
-        direction,
-      })
-      refetch({
-        throwOnError: true,
-      })
+      setSubSort(order)
+      refetch()
     }
   }
 
@@ -222,48 +216,45 @@ export default function Subscription(): JSX.Element {
     refetch()
   }, [subFilter, refetch])
 
-  const rows =
-    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-      let status = '-'
-
-      if (node.events?.length) {
-        const latestEvent = node.events.sort(
+  const subscriptions =
+    subscriptionsData?.data.map((subscription) => {
+      const status =
+        subscription.events?.sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0]
-        status = latestEvent.status
-      }
+        )[0]?.status || '-'
 
       return {
-        id: node.id,
-        vin: node.car?.vin,
-        plateNumber: node.car?.plateNumber,
-        brand: node.car?.carModel?.brand,
-        model: node.car?.carModel?.model,
-        price: node.packagePrice?.price,
-        duration: node.packagePrice?.duration,
-        seats: node.car?.carModel?.seats,
-        topSpeed: node.car?.carModel?.topSpeed,
-        fastChargeTime: node.car?.carModel?.fastChargeTime,
-        startDate: node.startDate,
-        endDate: node.endDate,
-        startAddress: node.startAddress?.full,
-        startLat: node.startAddress?.latitude,
-        startLng: node.startAddress?.longitude,
-        startAddressRemark: node.startAddress?.remark,
-        endAddress: node.endAddress?.full,
-        endLat: node.endAddress?.latitude,
-        endLng: node.endAddress?.longitude,
-        endAddressRemark: node.endAddress?.remark,
-        createdAt: node.createdAt,
-        updatedAt: node.updatedAt,
-        email: node.user.email,
-        phoneNumber: node.user.phoneNumber,
-        firstName: node.user.firstName,
-        lastName: node.user.lastName,
-        // not shown in table
-        color: node.car?.color,
-        carModelId: node.car?.carModel?.id,
+        id: subscription.id,
+        vin: subscription.car?.vin,
+        plateNumber: subscription.car?.plateNumber,
+        brand: subscription.car?.carModel?.brand,
+        model: subscription.car?.carModel?.model,
+        price: subscription.packagePrice?.price,
+        duration: subscription.packagePrice?.duration,
+        seats: subscription.car?.carModel?.seats,
+        topSpeed: subscription.car?.carModel?.topSpeed,
+        fastChargeTime: subscription.car?.carModel?.fastChargeTime,
+        startDate: subscription.startDate,
+        endDate: subscription.endDate,
+        startAddress: subscription.startAddress?.full,
+        startLat: subscription.startAddress?.latitude,
+        startLng: subscription.startAddress?.longitude,
+        startAddressRemark: subscription.startAddress?.remark,
+        endAddress: subscription.endAddress?.full,
+        endLat: subscription.endAddress?.latitude,
+        endLng: subscription.endAddress?.longitude,
+        endAddressRemark: subscription.endAddress?.remark,
+        createdAt: subscription.createdAt,
+        updatedAt: subscription.updatedAt,
+        email: subscription.user?.email,
+        phoneNumber: subscription.user?.phoneNumber,
+        firstName: subscription.user?.firstName,
+        lastName: subscription.user?.lastName,
         status,
+        voucher: subscription.voucher,
+        // not shown in table
+        color: subscription.car?.color,
+        carModelId: subscription.car?.carModel?.id,
       }
     }) || []
 
@@ -316,12 +307,12 @@ export default function Subscription(): JSX.Element {
       sortable: false,
     },
     {
-      field: 'brand',
-      headerName: t('subscription.brand'),
-      description: t('subscription.brand'),
+      field: 'carModelId',
+      headerName: t('subscription.modelId'),
+      description: t('subscription.modelId'),
       flex: 1,
-      filterable: false,
-      hide: !visibilityColumns.brand,
+      filterOperators: idFilterOperators,
+      hide: !visibilityColumns.carModelId,
       sortable: false,
     },
     {
@@ -334,56 +325,12 @@ export default function Subscription(): JSX.Element {
       sortable: false,
     },
     {
-      field: 'price',
-      headerName: t('subscription.price'),
-      description: t('subscription.price'),
-      valueFormatter: columnFormatMoney,
-      flex: 1,
-      filterOperators: numericFilterOperators,
-      hide: !visibilityColumns.price,
-      sortable: false,
-    },
-    {
-      field: 'duration',
-      headerName: t('subscription.duration'),
-      description: t('subscription.duration'),
-      flex: 1,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        columnFormatDuration(params.value as string, t),
-      filterOperators: selectFilterOperators,
-      valueOptions: durationOptions,
-      hide: !visibilityColumns.duration,
-      sortable: false,
-    },
-    {
-      field: 'status',
-      headerName: t('subscription.status.title'),
-      description: t('subscription.status.title'),
-      flex: 1,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        columnFormatSubEventStatus(params.value as string, t),
-      filterOperators: selectFilterOperators,
-      valueOptions: statusOptions,
-      hide: !visibilityColumns.status,
-      sortable: false,
-    },
-    {
-      field: 'updatedAt',
-      headerName: t('subscription.updatedDate'),
-      description: t('subscription.updatedDate'),
-      valueFormatter: columnFormatDate,
+      field: 'brand',
+      headerName: t('subscription.brand'),
+      description: t('subscription.brand'),
       flex: 1,
       filterable: false,
-      hide: !visibilityColumns.updatedAt,
-      sortable: true,
-    },
-    {
-      field: 'carModelId',
-      headerName: t('subscription.modelId'),
-      description: t('subscription.modelId'),
-      flex: 1,
-      filterOperators: idFilterOperators,
-      hide: !visibilityColumns.carModelId,
+      hide: !visibilityColumns.brand,
       sortable: false,
     },
     {
@@ -432,6 +379,28 @@ export default function Subscription(): JSX.Element {
       sortable: false,
     },
     {
+      field: 'price',
+      headerName: t('subscription.price'),
+      description: t('subscription.price'),
+      valueFormatter: columnFormatMoney,
+      flex: 1,
+      filterOperators: numericFilterOperators,
+      hide: !visibilityColumns.price,
+      sortable: false,
+    },
+    {
+      field: 'duration',
+      headerName: t('subscription.duration'),
+      description: t('subscription.duration'),
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        columnFormatDuration(params.value as string, t),
+      filterOperators: selectFilterOperators,
+      valueOptions: durationOptions,
+      hide: !visibilityColumns.duration,
+      sortable: false,
+    },
+    {
       field: 'startDate',
       headerName: t('subscription.startDate'),
       description: t('subscription.startDate'),
@@ -470,6 +439,29 @@ export default function Subscription(): JSX.Element {
       sortable: false,
     },
     {
+      field: 'status',
+      headerName: t('subscription.status.title'),
+      description: t('subscription.status.title'),
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        columnFormatSubEventStatus(params.value as string, t),
+      filterOperators: selectFilterOperators,
+      valueOptions: statusOptions,
+      hide: !visibilityColumns.status,
+      sortable: false,
+    },
+    {
+      field: 'voucherCode',
+      headerName: t('subscription.voucherCode'),
+      description: t('subscription.voucherCode'),
+      flex: 1,
+      hide: !visibilityColumns.voucherCode,
+      filterOperators: stringFilterOperators,
+      filterable: true,
+      sortable: false,
+      renderCell: ({ row }: GridCellParams) => row.voucher?.code ?? '-',
+    },
+    {
       field: 'createdAt',
       headerName: t('subscription.createdDate'),
       description: t('subscription.createdDate'),
@@ -477,6 +469,16 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       filterable: false,
       hide: !visibilityColumns.createdAt,
+      sortable: true,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('subscription.updatedDate'),
+      description: t('subscription.updatedDate'),
+      valueFormatter: columnFormatDate,
+      flex: 1,
+      filterable: false,
+      hide: !visibilityColumns.updatedAt,
       sortable: true,
     },
   ]
@@ -507,13 +509,11 @@ export default function Subscription(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          rowCount={subscriptionsData?.totalData}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
           onPageChange={setCurrentPageIndex}
-          rows={rows}
+          rows={subscriptions}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick

@@ -8,7 +8,7 @@ import {
 import { Link } from '@material-ui/core'
 import dayjs from 'dayjs'
 import { TFunction, Namespace } from 'react-i18next'
-import { DateFieldComparisonBetween } from 'services/evme.types'
+import { DateFieldComparisonBetween, DateFieldComparisonGreaterOrLess } from 'services/evme.types'
 import GridFilterDatePicker from 'components/GridFilterDatePicker'
 import GridFilterBooleanRadio from 'components/GridFilterBooleanRadio'
 
@@ -79,6 +79,19 @@ export const dateToFilterNotOnDay = (date: Date): DateFieldComparisonBetween => 
   }
 }
 
+export const dateToFilterGreaterOrLess = (
+  date: Date,
+  isGreaterThan = false
+): DateFieldComparisonGreaterOrLess => {
+  let filterDate = dayjs(date)
+  if (isGreaterThan) {
+    filterDate = filterDate.endOf('day')
+  } else {
+    filterDate = filterDate.startOf('day')
+  }
+  return filterDate.toDate()
+}
+
 export const stringToFilterContains = (value: string): string => {
   return value ? `%${value}%` : ''
 }
@@ -123,20 +136,6 @@ export const getIdFilterOperators = (t: TFunction<Namespace>): GridFilterOperato
 
 export const getStringFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
-    label: t('filter.equals'),
-    value: FieldComparisons.equals,
-    getApplyFilterFn: (filterItem: GridFilterItem) => {
-      if (!filterItem.value) {
-        return null
-      }
-      const collator = new Intl.Collator(undefined, { sensitivity: 'base', usage: 'search' })
-      return ({ value }: GridCellParams): boolean => {
-        return collator.compare(filterItem.value, value?.toString() || '') === 0
-      }
-    },
-    InputComponent: GridFilterInputValue,
-  },
-  {
     label: t('filter.contains'),
     value: FieldComparisons.contains,
     getApplyFilterFn: (filterItem: GridFilterItem) => {
@@ -146,6 +145,20 @@ export const getStringFilterOperators = (t: TFunction<Namespace>): GridFilterOpe
       const filterRegex = new RegExp(escapeRegExp(filterItem.value), 'i')
       return ({ value }: GridCellParams): boolean => {
         return filterRegex.test(value?.toString() || '')
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      const collator = new Intl.Collator(undefined, { sensitivity: 'base', usage: 'search' })
+      return ({ value }: GridCellParams): boolean => {
+        return collator.compare(filterItem.value, value?.toString() || '') === 0
       }
     },
     InputComponent: GridFilterInputValue,
@@ -270,6 +283,105 @@ export const getDateFilterOperators = (t: TFunction<Namespace>): GridFilterOpera
 
       return ({ value }: GridCellParams): boolean => {
         return filterItem.value !== value
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+]
+
+export const getDateFilterMoreOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.onDay,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+  {
+    label: t('filter.notEquals'),
+    value: FieldComparisons.notOnDay,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value !== value
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+  {
+    label: t('filter.greaterThan'),
+    value: FieldComparisons.greaterThan,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        if (!value) {
+          return false
+        }
+        return new Date(filterItem.value) > new Date(value as string)
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+  {
+    label: t('filter.greaterThanOrEquals'),
+    value: FieldComparisons.greaterThanOrEquals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        if (!value) {
+          return false
+        }
+        return new Date(filterItem.value) >= new Date(value as string)
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+  {
+    label: t('filter.lessThan'),
+    value: FieldComparisons.lessThan,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        if (!value) {
+          return false
+        }
+        return new Date(filterItem.value) < new Date(value as string)
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+  {
+    label: t('filter.lessThanOrEquals'),
+    value: FieldComparisons.lessThanOrEquals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        if (!value) {
+          return false
+        }
+        return new Date(filterItem.value) <= new Date(value as string)
       }
     },
     InputComponent: GridFilterDatePicker,
