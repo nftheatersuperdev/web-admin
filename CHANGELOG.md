@@ -1,5 +1,53 @@
 # Changelog
 
+## [1.6.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.5.1...v1.6.0) (2021-10-30)
+
+
+### Features
+
+* add filtering by date to compare by ge, gte, lt and lte ([9c9442c](https://www.github.com/evmeio/evme-admin-web/commit/9c9442c6f3b547798981b233540c6320aa36d167))
+* add function to handle visibility of columns in car list page ([3df1e19](https://www.github.com/evmeio/evme-admin-web/commit/3df1e1913c88fcc3d01b2c6e5634677c3f5ef21c))
+* add minimum for numbers ([7cd23fc](https://www.github.com/evmeio/evme-admin-web/commit/7cd23fc31d9b79ec0d1f8064055764fc92fd322b))
+* add more case to handle firebase token invalidated ([7aa956c](https://www.github.com/evmeio/evme-admin-web/commit/7aa956cb40c8ca20e855e08707ab03f4953f4709))
+* calculate status and render to table list ([1dd90fb](https://www.github.com/evmeio/evme-admin-web/commit/1dd90fbd5514188cd833ea38719fa09c78483f4f))
+* disable update button when voucher is inactive status ([093ead6](https://www.github.com/evmeio/evme-admin-web/commit/093ead6bff94f1a932fdfe4a8d781bd658c9a36e))
+* enable function to sorting by server side ([ebb9376](https://www.github.com/evmeio/evme-admin-web/commit/ebb937641b914283c4593f9277b5af0f69e76dc7))
+* enable sortable by id in car list page ([147a9de](https://www.github.com/evmeio/evme-admin-web/commit/147a9deb28fd71543bef759391cea9d0d75529e1))
+* ev1517 add voucher in subscription list page ([216311e](https://www.github.com/evmeio/evme-admin-web/commit/216311e373e0235a6840a44a92ede947c917a133))
+* implement description multi language ([ffd3ecd](https://www.github.com/evmeio/evme-admin-web/commit/ffd3ecd51ee9e308c4eb19b63d02fd39f5643629))
+* implement package price dialog in voucher page list ([a04160c](https://www.github.com/evmeio/evme-admin-web/commit/a04160c11447f4c4576445a27b222aa6882c5d80))
+* implement show and filter voucher code in subscription list page ([c0d2b0e](https://www.github.com/evmeio/evme-admin-web/commit/c0d2b0e2a326f7e5744eb7342b2f912de91efec6))
+* implement voucher list page includes create and update dialog ([fe57e1c](https://www.github.com/evmeio/evme-admin-web/commit/fe57e1ce114d3d39fa593fed08df3af40564bc2e))
+* improve add or edit field by status conditions ([72743dd](https://www.github.com/evmeio/evme-admin-web/commit/72743ddb6d3777ed2439715d7c8abdd28dad6da2))
+* improve car list page to get sort and filter by API ([95aa793](https://www.github.com/evmeio/evme-admin-web/commit/95aa793589eddb1a45c89c34adb3e6d11eba8df7))
+* improve string filtering ([9c1daad](https://www.github.com/evmeio/evme-admin-web/commit/9c1daad434c19020fba66e872a3a71d0eef96b0e))
+* improve voucher code text field to validate value ([c4ac7e8](https://www.github.com/evmeio/evme-admin-web/commit/c4ac7e865f0fb568b951badc5dcdcb10e1d46a73))
+* remove default of number values and add validation for code ([fa05bb5](https://www.github.com/evmeio/evme-admin-web/commit/fa05bb51d91a14c3932b9b0e1df0e9d24089d0b4))
+* rename of limit of voucher ([70e1d30](https://www.github.com/evmeio/evme-admin-web/commit/70e1d304b81047270bcbef26c10e81e0044a9f0d))
+* set maximum to numeric field ([9bb9968](https://www.github.com/evmeio/evme-admin-web/commit/9bb99681b1263dc6040423e81ae1f8f3f697a1b0))
+* show error when try add or update a duplicate code ([089b873](https://www.github.com/evmeio/evme-admin-web/commit/089b873f735ee195cf30a97b675191b3223ce5a3))
+* unlock select date when status is pending ([9c8170a](https://www.github.com/evmeio/evme-admin-web/commit/9c8170acb98aba8dc99120a09e2a53b0eaf621ba))
+
+
+### Bug Fixes
+
+* disable filterable for voucher status ([efb9956](https://www.github.com/evmeio/evme-admin-web/commit/efb9956e3704f6add5dc3ce5271e4c28a4bdbd07))
+* eslint and disable delete function on voucher list page ([7b48433](https://www.github.com/evmeio/evme-admin-web/commit/7b484336a0b782a68c4af2819057ce0bb27b4bf8))
+* eslint error ([6b6b467](https://www.github.com/evmeio/evme-admin-web/commit/6b6b467090254946204e4d1e23611a5264c46d7a))
+* ev1633 Firebase token expired ([2f8bfcf](https://www.github.com/evmeio/evme-admin-web/commit/2f8bfcfdc570c5b26a655d2aaa3c87dec01239f9))
+* ignore empty object and not throw error ([eb92d60](https://www.github.com/evmeio/evme-admin-web/commit/eb92d604e7a4934c39e26a65d03c95525c606f33))
+* incorrect comparison of dates ([45c7824](https://www.github.com/evmeio/evme-admin-web/commit/45c782473ec8e43aa0b28bfe16591a69e44ea4ca))
+* incorrect filter by dates less then ([eea436d](https://www.github.com/evmeio/evme-admin-web/commit/eea436dd069828147b7bca69886cebc3e210c28e))
+* incorrect to filter by date with less and less than ([a98632d](https://www.github.com/evmeio/evme-admin-web/commit/a98632db848f692681525645bb112ae6a56b89da))
+* remove console.log ([18b1d01](https://www.github.com/evmeio/evme-admin-web/commit/18b1d0120a1e32ac4ac4c918cc3e3cbf229b7f82))
+* remove unused code ([a049a7d](https://www.github.com/evmeio/evme-admin-web/commit/a049a7d8a96d7a2170a822f05777aa36e14840af))
+* remove unused code and fix eslint ([aef9d81](https://www.github.com/evmeio/evme-admin-web/commit/aef9d81024b1fc0692c597b2e4a8f4517b55ed8c))
+* remove unused codes ([e055cfe](https://www.github.com/evmeio/evme-admin-web/commit/e055cfed1239baca3a45f7797242e3d105dbd0cd))
+* typo about validation message and variable ([9461ebb](https://www.github.com/evmeio/evme-admin-web/commit/9461ebb575a7f7f98f1b1db839f634caa5df4527))
+* typo voucher in thai ([34ada2f](https://www.github.com/evmeio/evme-admin-web/commit/34ada2fcf5b6f6035abdbbd2c1c3923f161c437d))
+* typo voucher limitPerUser ([0b85572](https://www.github.com/evmeio/evme-admin-web/commit/0b855721fdce159eaea3aa711eeb47d40ade7ec5))
+* using correct cache for car list page ([26090df](https://www.github.com/evmeio/evme-admin-web/commit/26090df12fd165effac6843cf5716d821964f35c))
+
 ### [1.5.1](https://www.github.com/evmeio/evme-admin-web/compare/v1.5.0...v1.5.1) (2021-09-14)
 
 
