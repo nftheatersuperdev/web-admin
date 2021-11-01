@@ -3403,6 +3403,19 @@ export type SubscriptionUpdatePlateInput = {
   carId: Scalars['String']
 }
 
+export type UserGroupDeleteInput = {
+  id: Scalars['String']
+}
+
+export type UserGroupCreateInput = {
+  name: Scalars['String']
+}
+
+export type UserGroupUpdateInput = {
+  id: Scalars['String']
+  name: Scalars['String']
+}
+
 export type ManualExtendSubscriptionInput = {
   subscriptionId: Scalars['String']
   returnDate: Scalars['DateTime']
@@ -3411,6 +3424,10 @@ export type ManualExtendSubscriptionInput = {
 export type SendDataViaEmailInput = {
   emails: Array<Scalars['String']>
   columns: Array<Scalars['String']>
+}
+
+export type RefId = {
+  id: Scalars['ID']
 }
 
 export type RefIdAndRelationIds = {
@@ -3440,6 +3457,7 @@ export type User = {
   tokenKyc?: Maybe<Scalars['String']>
   subscriptionsAggregate: Array<UserSubscriptionsAggregateResponse>
   favoriteChargingLocationsAggregate: Array<UserFavoriteChargingLocationsAggregateResponse>
+  userGroups: Array<UserGroup>
 }
 
 export type UserSubscriptionsArgs = {
@@ -3835,8 +3853,11 @@ export enum WaitingListSortFields {
 }
 
 export type UserGroup = {
-  __typename?: 'userGroups'
+  __typename?: 'UserGroup'
+  id: Scalars['String']
   name: Scalars['String']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
 }
 
 export type Voucher = {
@@ -3880,6 +3901,15 @@ export type VoucherFilter = {
   phoneNumber?: Maybe<StringFieldComparison>
   email?: Maybe<StringFieldComparison>
   kycStatus?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
+  updatedAt?: Maybe<DateFieldComparison>
+}
+
+export type UserGroupFilter = {
+  and?: Maybe<Array<UserFilter>>
+  or?: Maybe<Array<UserFilter>>
+  id?: Maybe<StringFieldComparison>
+  name?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
 }
