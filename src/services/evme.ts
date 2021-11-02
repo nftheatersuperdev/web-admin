@@ -49,7 +49,6 @@ import {
   SendDataViaEmailInput,
   VoucherFilter,
   RefIdAndRelationIds,
-  RefId,
   UserGroupFilter,
   UserGroup,
   UserGroupUpdateInput,
@@ -2123,31 +2122,6 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve useRemoveUserGroupsFromUser ${error.message}`)
-      },
-    }
-  )
-}
-
-export function useDeleteOneUserGroup(): UseMutationResult<unknown, unknown, RefId, unknown> {
-  const { gqlRequest } = useGraphQLRequest()
-
-  return useMutation(
-    async ({ id }: RefId) => {
-      const { deleteOneUserGroup } = await gqlRequest(
-        gql`
-          mutation DeleteOneUserGroup($id: ID!) {
-            deleteOneUserGroup(input: { id: $id }) {
-              id
-            }
-          }
-        `,
-        { id }
-      )
-      return deleteOneUserGroup
-    },
-    {
-      onError: (error: Error) => {
-        console.error(`Unable to request to deleteOneUserGroup ${error.message}`)
       },
     }
   )
