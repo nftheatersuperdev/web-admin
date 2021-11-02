@@ -229,7 +229,7 @@ export default function User(): JSX.Element {
       description: t('user.userGroups'),
       hide: !visibilityColumns.userGroups,
       flex: 1,
-      filterable: false,
+      filterOperators: stringFilterOperators,
     },
     {
       field: 'createdAt',
