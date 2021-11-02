@@ -11,7 +11,7 @@ const InvisibilityDOM = styled.div`
 
 export const checkInvalidatedToken = (error: unknown): boolean => {
   if (error instanceof Error) {
-    const result = error.message.search(/invalidated/)
+    const result = error.message.search(/invalidated|revoked/)
     if (result >= 0) {
       window.location.replace('/logout')
       return false
