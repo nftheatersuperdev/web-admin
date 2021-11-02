@@ -3,17 +3,14 @@ import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { Card, Button, IconButton, Breadcrumbs, Typography } from '@material-ui/core'
-import { Delete as DeleteIcon, People as UserIcon } from '@material-ui/icons'
+import { Delete as DeleteIcon, People as UserIcon, Edit as EditIcon } from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
   GridFilterModel,
   GridPageChangeParams,
   GridSortModel,
-  GridEditCellPropsParams,
-  GridRowId,
   GridRowData,
-  GridCellValue,
   GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
@@ -28,13 +25,18 @@ import {
   columnFormatDate,
 } from 'utils'
 import config from 'config'
-import { useUserGroupsFilterAndSort, useChangeUserGroup, useDeleteUserGroup } from 'services/evme'
-import { UserGroupFilter, SortDirection, SubOrder } from 'services/evme.types'
+import { useUserGroupsFilterAndSort, useDeleteUserGroup } from 'services/evme'
+import {
+  UserGroupFilter,
+  SortDirection,
+  SubOrder,
+  UserGroup as UserGroupType,
+} from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
-import CreateDialog from './CreateDialog'
+import CreateUpdateDialog from './CreateUpdateDialog'
 
 const MarginBottom = styled.div`
   margin-bottom: 20px;
@@ -47,7 +49,8 @@ export default function UserGroup(): JSX.Element {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [userGroupFilter, setUserGroupFilter] = useState<UserGroupFilter>({})
   const [userGroupSort, setUserGroupSort] = useState<SubOrder>({})
-  const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false)
+  const [userGroupSelected, setUserGroupSelected] = useState<UserGroupType | null>()
+  const [openCreateUpdateDialog, setOpenCreateUpdateDialog] = useState<boolean>(false)
 
   const {
     data: userGroupData,
@@ -55,7 +58,6 @@ export default function UserGroup(): JSX.Element {
     isFetching,
   } = useUserGroupsFilterAndSort(userGroupFilter, userGroupSort, currentPageIndex, pageSize)
 
-  const changeUserGroupMutation = useChangeUserGroup()
   const deleteUserGroup = useDeleteUserGroup()
 
   const idFilterOperators = getIdFilterOperators(t)
@@ -155,29 +157,6 @@ export default function UserGroup(): JSX.Element {
     }
   }
 
-  const updateUserGroupName = async (refId: GridRowId, value: GridCellValue) => {
-    await toast.promise(
-      changeUserGroupMutation.mutateAsync({
-        id: refId as string,
-        name: value as string,
-      }),
-      {
-        loading: t('toast.loading'),
-        success: t('userGroups.alert.changeName.success'),
-        error: t('userGroups.alert.changeName.error'),
-      }
-    )
-    refetch()
-  }
-
-  const handleEditCellChange = (param: GridEditCellPropsParams) => {
-    const { field, id, props } = param
-
-    if (field === 'name' && props?.value) {
-      updateUserGroupName(id, props.value)
-    }
-  }
-
   const removeUserGroup = async (refId: string) => {
     await toast.promise(
       deleteUserGroup.mutateAsync({
@@ -198,6 +177,17 @@ export default function UserGroup(): JSX.Element {
     if (confirmed) {
       removeUserGroup(rowData.id)
     }
+  }
+
+  const handleOpenUpdateDialog = (rowData: GridRowData) => {
+    const updateObject: UserGroupType = {
+      id: rowData.id,
+      name: rowData.name,
+      createdAt: rowData.createdAt,
+      updatedAt: rowData.updatedAt,
+    }
+    setUserGroupSelected(updateObject)
+    setOpenCreateUpdateDialog(true)
   }
 
   useEffect(() => {
@@ -222,7 +212,7 @@ export default function UserGroup(): JSX.Element {
       flex: 1,
       sortable: false,
       filterOperators: stringFilterOperators,
-      editable: true,
+      editable: false,
     },
     {
       field: 'createdAt',
@@ -248,12 +238,16 @@ export default function UserGroup(): JSX.Element {
       field: 'actions',
       headerName: t('car.actions'),
       description: t('car.actions'),
+      flex: 1,
       sortable: false,
       filterable: false,
       width: 140,
       renderCell: (params: GridCellParams) => {
         return (
           <Fragment>
+            <IconButton onClick={() => handleOpenUpdateDialog(params.row)}>
+              <EditIcon />
+            </IconButton>
             <IconButton onClick={() => history.push(`/user-groups/${params.id}/users`)}>
               <UserIcon />
             </IconButton>
@@ -279,7 +273,7 @@ export default function UserGroup(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained" onClick={() => setOpenCreateDialog(true)}>
+        <Button color="primary" variant="contained" onClick={() => setOpenCreateUpdateDialog(true)}>
           {t('userGroups.button.createNew')}
         </Button>
       </PageToolbar>
@@ -311,14 +305,15 @@ export default function UserGroup(): JSX.Element {
           sortingMode="server"
           onSortModelChange={handleSortChange}
           loading={isFetching}
-          onEditCellChangeCommitted={handleEditCellChange}
         />
       </Card>
 
-      <CreateDialog
-        open={openCreateDialog}
+      <CreateUpdateDialog
+        open={openCreateUpdateDialog}
+        userGroup={userGroupSelected}
         onClose={() => {
-          setOpenCreateDialog(false)
+          setOpenCreateUpdateDialog(false)
+          setUserGroupSelected(null)
           refetch()
         }}
       />

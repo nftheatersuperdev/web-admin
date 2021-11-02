@@ -13,11 +13,12 @@ import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { useCreateUserGroup } from 'services/evme'
-import { UserGroupCreateInput } from 'services/evme.types'
+import { useCreateUserGroup, useChangeUserGroup } from 'services/evme'
+import { UserGroupInput, UserGroup } from 'services/evme.types'
 
 interface CreateDialogProps {
   open: boolean
+  userGroup?: UserGroup | null
   onClose: () => void
 }
 
@@ -26,11 +27,21 @@ const ButtonSpace = styled(Button)`
 `
 
 // eslint-disable-next-line complexity
-export default function UserGroupCreateDialog({ open, onClose }: CreateDialogProps): JSX.Element {
+export default function UserGroupCreateUpdateDialog({
+  open,
+  userGroup,
+  onClose,
+}: CreateDialogProps): JSX.Element {
+  const isUpdate = !!userGroup
+
   const { t } = useTranslation()
   const createUserGroup = useCreateUserGroup()
+  const changeUserGroup = useChangeUserGroup()
   const validationSchema = yup.object({
-    name: yup.string().required(t('validation.required')),
+    name: yup
+      .string()
+      .matches(/^[a-zA-Z0-9]+$/, t('validation.invalidName'))
+      .required(t('validation.required')),
   })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -38,27 +49,37 @@ export default function UserGroupCreateDialog({ open, onClose }: CreateDialogPro
   const formik = useFormik({
     validationSchema,
     initialValues: {
-      name: '',
+      name: userGroup?.name ?? '',
     },
     enableReinitialize: true,
     onSubmit: (values) => {
       setIsLoading(true)
+      const userGroupId = userGroup?.id
 
-      const object: UserGroupCreateInput = {
+      const requestBody: UserGroupInput = {
         name: values.name,
       }
 
-      toast.promise(createUserGroup.mutateAsync(object), {
+      const mutateFunction = isUpdate ? changeUserGroup : createUserGroup
+      const mutateObject = isUpdate ? { id: userGroupId, ...requestBody } : requestBody
+      const toastMessages = {
+        success: isUpdate
+          ? t('userGroups.dialog.update.success')
+          : t('userGroups.dialog.create.success'),
+        error: isUpdate ? t('userGroups.dialog.update.error') : t('userGroups.dialog.create.error'),
+      }
+
+      toast.promise(mutateFunction.mutateAsync(mutateObject), {
         loading: t('toast.loading'),
         success: () => {
           formik.resetForm()
           setIsLoading(false)
           onClose()
-          return t('userGroups.dialog.create.success')
+          return toastMessages.success
         },
         error: () => {
           setIsLoading(false)
-          return t('userGroups.dialog.create.error')
+          return toastMessages.error
         },
       })
     },
@@ -104,7 +125,7 @@ export default function UserGroupCreateDialog({ open, onClose }: CreateDialogPro
           color="primary"
           variant="contained"
         >
-          {t('button.create')}
+          {t(isUpdate ? 'button.update' : 'button.create')}
         </ButtonSpace>
       </DialogActions>
     </Dialog>

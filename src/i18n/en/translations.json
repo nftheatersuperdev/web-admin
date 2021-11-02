@@ -487,6 +487,11 @@
         "success": "User group has been created",
         "error": "Something went wrong!"
       },
+      "update": {
+        "title": "Update a user group",
+        "success": "User group has been updated",
+        "error": "Something went wrong!"
+      },
       "delete": {
         "confirmationMessage": "Do you want to remove the data?",
         "success": "User has been deleted",
@@ -509,6 +514,7 @@
     "required": "Field is required",
     "minimumIsOne": "Minimum is 1",
     "maximumIsOneHundred": "Maximum is 100",
-    "invalidVoucherCode": "Invalid voucher code"
+    "invalidVoucherCode": "Invalid voucher code",
+    "invalidName": "Invalid name"
   }
 }
