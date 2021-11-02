@@ -2,10 +2,10 @@ name: Deploy Staging
 
 env:
   aws_default_region: ap-southeast-1
-  aws_amplify_app_id: ""
+  aws_amplify_app_id: d3bgvkmhsivs58
   aws_amplify_branch: staging
   aws_amplify_s3_source: s3://evme-webadmin-staging
-  aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:staging/webadmin-evme-staging-secret-yK5HHO
+  aws_secret_arn: arn:aws:secretsmanager:ap-southeast-1:578869420458:secret:staging/webadmin-evme-staging-secret-PVxuob
 
 on:
   push:
