@@ -28,11 +28,7 @@ import {
   columnFormatDate,
 } from 'utils'
 import config from 'config'
-import {
-  useUserGroupsFilterAndSort,
-  useChangeUserGroup,
-  useDeleteOneUserGroup,
-} from 'services/evme'
+import { useUserGroupsFilterAndSort, useChangeUserGroup, useDeleteUserGroup } from 'services/evme'
 import { UserGroupFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
@@ -60,7 +56,7 @@ export default function UserGroup(): JSX.Element {
   } = useUserGroupsFilterAndSort(userGroupFilter, userGroupSort, currentPageIndex, pageSize)
 
   const changeUserGroupMutation = useChangeUserGroup()
-  const deleteOneUserGroup = useDeleteOneUserGroup()
+  const deleteUserGroup = useDeleteUserGroup()
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -184,7 +180,7 @@ export default function UserGroup(): JSX.Element {
 
   const removeUserGroup = async (refId: string) => {
     await toast.promise(
-      deleteOneUserGroup.mutateAsync({
+      deleteUserGroup.mutateAsync({
         id: refId,
       }),
       {
