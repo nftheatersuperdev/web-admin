@@ -3407,12 +3407,8 @@ export type UserGroupDeleteInput = {
   id: Scalars['String']
 }
 
-export type UserGroupCreateInput = {
-  name: Scalars['String']
-}
-
-export type UserGroupUpdateInput = {
-  id: Scalars['String']
+export type UserGroupInput = {
+  id?: Maybe<Scalars['String']>
   name: Scalars['String']
 }
 

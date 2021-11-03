@@ -468,13 +468,16 @@
     }
   },
   "userGroups": {
-    "title": "User Group",
+    "title": "User Groups",
     "id": "ID",
     "name": "Name",
     "createdAt": "Created Date",
     "updatedAt": "Updated Date",
     "button": {
-      "createNew": "Create new user group"
+      "createNew": "Create new user group",
+      "addUser": {
+        "tooltip": "Add user to {{name}} group"
+      }
     },
     "alert": {
       "changeName": {
@@ -486,6 +489,11 @@
       "create": {
         "title": "Create new user group",
         "success": "User group has been created",
+        "error": "Something went wrong!"
+      },
+      "update": {
+        "title": "Update a user group",
+        "success": "User group has been updated",
         "error": "Something went wrong!"
       },
       "delete": {
@@ -510,6 +518,8 @@
     "required": "Field is required",
     "minimumIsOne": "Minimum is 1",
     "maximumIsOneHundred": "Maximum is 100",
-    "invalidVoucherCode": "Invalid voucher code"
+    "invalidVoucherCode": "Invalid voucher code",
+    "invalidName": "Invalid name",
+    "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
   }
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Grid,
   TextField,
@@ -13,11 +13,12 @@ import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { useCreateUserGroup } from 'services/evme'
-import { UserGroupCreateInput } from 'services/evme.types'
+import { useCreateUserGroup, useChangeUserGroup } from 'services/evme'
+import { UserGroupInput, UserGroup } from 'services/evme.types'
 
 interface CreateDialogProps {
   open: boolean
+  userGroup?: UserGroup | null
   onClose: () => void
 }
 
@@ -26,47 +27,81 @@ const ButtonSpace = styled(Button)`
 `
 
 // eslint-disable-next-line complexity
-export default function UserGroupCreateDialog({ open, onClose }: CreateDialogProps): JSX.Element {
+export default function UserGroupCreateUpdateDialog({
+  open,
+  userGroup,
+  onClose,
+}: CreateDialogProps): JSX.Element {
+  const isUpdate = !!userGroup
+
   const { t } = useTranslation()
   const createUserGroup = useCreateUserGroup()
+  const changeUserGroup = useChangeUserGroup()
   const validationSchema = yup.object({
-    name: yup.string().required(t('validation.required')),
+    name: yup
+      .string()
+      .matches(/^[a-zA-Z0-9]+$/, t('validation.invalidName'))
+      .required(t('validation.required')),
   })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isNoChange, setIsNoChange] = useState<boolean>(true)
 
   const formik = useFormik({
     validationSchema,
     initialValues: {
-      name: '',
+      name: userGroup?.name ?? '',
     },
     enableReinitialize: true,
     onSubmit: (values) => {
       setIsLoading(true)
+      const userGroupId = userGroup?.id
 
-      const object: UserGroupCreateInput = {
+      const requestBody: UserGroupInput = {
         name: values.name,
       }
 
-      toast.promise(createUserGroup.mutateAsync(object), {
+      const mutateFunction = isUpdate ? changeUserGroup : createUserGroup
+      const mutateObject = isUpdate ? { id: userGroupId, ...requestBody } : requestBody
+      const toastMessages = {
+        success: isUpdate
+          ? t('userGroups.dialog.update.success')
+          : t('userGroups.dialog.create.success'),
+        error: isUpdate ? t('userGroups.dialog.update.error') : t('userGroups.dialog.create.error'),
+      }
+
+      toast.promise(mutateFunction.mutateAsync(mutateObject), {
         loading: t('toast.loading'),
         success: () => {
           formik.resetForm()
           setIsLoading(false)
           onClose()
-          return t('userGroups.dialog.create.success')
+          return toastMessages.success
         },
         error: () => {
           setIsLoading(false)
-          return t('userGroups.dialog.create.error')
+          return toastMessages.error
         },
       })
     },
   })
 
+  useEffect(() => {
+    if (isUpdate) {
+      if (userGroup?.name !== formik.values.name) {
+        setIsNoChange(false)
+      } else {
+        setIsNoChange(true)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.name])
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{t('userGroups.dialog.create.title')}</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {isUpdate ? t('userGroups.dialog.update.title') : t('userGroups.dialog.create.title')}
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -81,8 +116,8 @@ export default function UserGroupCreateDialog({ open, onClose }: CreateDialogPro
               InputLabelProps={{
                 shrink: true,
               }}
+              helperText={t('validation.allowOnlyLettersAndNumbers')}
               error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
             />
           </Grid>
         </Grid>
@@ -91,6 +126,7 @@ export default function UserGroupCreateDialog({ open, onClose }: CreateDialogPro
         <ButtonSpace
           onClick={() => {
             onClose()
+            setIsNoChange(false)
             formik.resetForm()
           }}
           color="primary"
@@ -99,12 +135,12 @@ export default function UserGroupCreateDialog({ open, onClose }: CreateDialogPro
           {t('button.cancel')}
         </ButtonSpace>
         <ButtonSpace
-          disabled={isLoading}
+          disabled={isLoading || isNoChange}
           onClick={() => formik.handleSubmit()}
           color="primary"
           variant="contained"
         >
-          {t('button.create')}
+          {t(isUpdate ? 'button.update' : 'button.create')}
         </ButtonSpace>
       </DialogActions>
     </Dialog>
