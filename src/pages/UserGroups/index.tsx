@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react'
 import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { Card, Button, IconButton, Breadcrumbs, Typography } from '@material-ui/core'
+import { Card, Button, IconButton, Breadcrumbs, Typography, Tooltip } from '@material-ui/core'
 import {
   Delete as DeleteIcon,
   GroupAdd as GroupAddIcon,
@@ -247,14 +247,17 @@ export default function UserGroup(): JSX.Element {
       filterable: false,
       width: 140,
       renderCell: (params: GridCellParams) => {
+        const { name } = params.row
         return (
           <Fragment>
             <IconButton onClick={() => handleOpenUpdateDialog(params.row)}>
               <EditIcon />
             </IconButton>
-            <IconButton onClick={() => history.push(`/user-groups/${params.id}/users`)}>
-              <GroupAddIcon />
-            </IconButton>
+            <Tooltip title={t('userGroups.button.addUser.tooltip', { name })} arrow>
+              <IconButton onClick={() => history.push(`/user-groups/${params.id}/users`)}>
+                <GroupAddIcon />
+              </IconButton>
+            </Tooltip>
             <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />
             </IconButton>

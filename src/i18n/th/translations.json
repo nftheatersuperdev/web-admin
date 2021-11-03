@@ -473,7 +473,10 @@
     "createdAt": "วันที่สร้าง",
     "updatedAt": "วันที่แก้ไข",
     "button": {
-      "createNew": "สร้างกลุ่มผู้ใช้งานใหม่"
+      "createNew": "สร้างกลุ่มผู้ใช้งานใหม่",
+      "addUser": {
+        "tooltip": "เพิ่มผู้ใช้งานเข้ากลุ่ม {{name}}"
+      }
     },
     "alert": {
       "changeName": {

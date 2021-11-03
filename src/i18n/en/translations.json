@@ -473,7 +473,10 @@
     "createdAt": "Created Date",
     "updatedAt": "Updated Date",
     "button": {
-      "createNew": "Create new user group"
+      "createNew": "Create new user group",
+      "addUser": {
+        "tooltip": "Add user to {{name}} group"
+      }
     },
     "alert": {
       "changeName": {
