@@ -93,6 +93,12 @@ export default function UserGroupCreateUpdateDialog({
       } else {
         setIsNoChange(true)
       }
+    } else {
+      if (formik.values.name.length > 0) {
+        setIsNoChange(false)
+      } else {
+        setIsNoChange(true)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.name])
