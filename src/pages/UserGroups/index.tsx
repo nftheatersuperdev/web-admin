@@ -3,7 +3,11 @@ import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { Card, Button, IconButton, Breadcrumbs, Typography } from '@material-ui/core'
-import { Delete as DeleteIcon, People as UserIcon, Edit as EditIcon } from '@material-ui/icons'
+import {
+  Delete as DeleteIcon,
+  GroupAdd as GroupAddIcon,
+  Edit as EditIcon,
+} from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -249,7 +253,7 @@ export default function UserGroup(): JSX.Element {
               <EditIcon />
             </IconButton>
             <IconButton onClick={() => history.push(`/user-groups/${params.id}/users`)}>
-              <UserIcon />
+              <GroupAddIcon />
             </IconButton>
             <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />

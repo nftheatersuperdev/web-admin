@@ -467,7 +467,7 @@
     }
   },
   "userGroups": {
-    "title": "User Group",
+    "title": "User Groups",
     "id": "ID",
     "name": "Name",
     "createdAt": "Created Date",

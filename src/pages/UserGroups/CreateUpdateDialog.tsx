@@ -87,7 +87,9 @@ export default function UserGroupCreateUpdateDialog({
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{t('userGroups.dialog.create.title')}</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        {isUpdate ? t('userGroups.dialog.update.title') : t('userGroups.dialog.create.title')}
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
