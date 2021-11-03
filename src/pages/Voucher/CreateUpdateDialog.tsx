@@ -19,6 +19,7 @@ import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Voucher, VoucherInput } from 'services/evme.types'
 import { useCreateVoucher, useUpdateVoucher } from 'services/evme'
 import DateTimePicker from 'components/DateTimePicker'
+import HTMLEditor from 'components/HTMLEditor'
 
 interface CreateUpdateDialogProps {
   voucher?: Voucher | null
@@ -42,7 +43,10 @@ export default function VoucherCreateUpdateDialog({
   const createVoucher = useCreateVoucher()
   const updateVoucher = useUpdateVoucher()
   const validationSchema = yup.object({
-    code: yup.string().required(t('validation.required')),
+    code: yup
+      .string()
+      .matches(/^[a-zA-Z0-9]+$/, t('validation.invalidVoucherCode'))
+      .required(t('validation.required')),
     description: yup.string(),
     percentDiscount: yup
       .number()
@@ -57,6 +61,8 @@ export default function VoucherCreateUpdateDialog({
   })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [descriptionEnTemp, setDescriptionEnTemp] = useState<string | null>()
+  const [descriptionThTemp, setDescriptionThTemp] = useState<string | null>()
 
   const datePlusOneDay = dayjs().add(1, 'day')
   const defaultDate = {
@@ -104,7 +110,6 @@ export default function VoucherCreateUpdateDialog({
     validationSchema,
     initialValues: {
       code: '',
-      description: '',
       percentDiscount: undefined,
       amount: undefined,
       limitPerUser: undefined,
@@ -118,8 +123,8 @@ export default function VoucherCreateUpdateDialog({
 
       const requestBody: VoucherInput = {
         code: values.code,
-        descriptionEn: values.descriptionEn,
-        descriptionTh: values.descriptionTh,
+        descriptionEn: descriptionEnTemp ?? voucher?.descriptionEn,
+        descriptionTh: descriptionThTemp ?? voucher?.descriptionTh,
         percentDiscount: values?.percentDiscount,
         amount: values?.amount,
         limitPerUser: values?.limitPerUser,
@@ -161,6 +166,15 @@ export default function VoucherCreateUpdateDialog({
       })
     },
   })
+
+  const handleOnDescriptionChange = (value: string, language: string) => {
+    if (language === 'en') {
+      setDescriptionEnTemp(value)
+      return true
+    }
+    setDescriptionThTemp(value)
+    return true
+  }
 
   const voucherIdField = isUpdate && (
     <Grid container spacing={3}>
@@ -206,9 +220,6 @@ export default function VoucherCreateUpdateDialog({
               disabled={isInactive || isActive}
               onInput={handleValidateCodeValue}
               onKeyPress={handleValidateCodeKeyPress}
-              onCut={handleDisableEvent}
-              onCopy={handleDisableEvent}
-              onPaste={handleDisableEvent}
             />
           </Grid>
         </Grid>
@@ -345,42 +356,22 @@ export default function VoucherCreateUpdateDialog({
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
+            <HTMLEditor
+              id="description-en"
               label={t('voucher.description.en')}
-              id="descriptionEn"
-              name="descriptionEn"
-              variant="outlined"
-              value={formik.values.descriptionEn}
-              onChange={formik.handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={formik.touched.descriptionEn && Boolean(formik.errors.descriptionEn)}
-              helperText={formik.touched.descriptionEn && formik.errors.descriptionEn}
+              initialValue={voucher?.descriptionEn}
+              handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'en')}
               disabled={isInactive || isActive}
             />
           </Grid>
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
+            <HTMLEditor
+              id="description-th"
               label={t('voucher.description.th')}
-              id="descriptionTh"
-              name="descriptionTh"
-              variant="outlined"
-              value={formik.values.descriptionTh}
-              onChange={formik.handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={formik.touched.descriptionTh && Boolean(formik.errors.descriptionTh)}
-              helperText={formik.touched.descriptionTh && formik.errors.descriptionTh}
+              initialValue={voucher?.descriptionTh}
+              handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'th')}
               disabled={isInactive || isActive}
             />
           </Grid>

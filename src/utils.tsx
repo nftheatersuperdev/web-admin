@@ -81,10 +81,10 @@ export const dateToFilterNotOnDay = (date: Date): DateFieldComparisonBetween => 
 
 export const dateToFilterGreaterOrLess = (
   date: Date,
-  greaterThanOrLessThan = false
+  isGreaterThan = false
 ): DateFieldComparisonGreaterOrLess => {
   let filterDate = dayjs(date)
-  if (greaterThanOrLessThan) {
+  if (isGreaterThan) {
     filterDate = filterDate.endOf('day')
   } else {
     filterDate = filterDate.startOf('day')
@@ -136,20 +136,6 @@ export const getIdFilterOperators = (t: TFunction<Namespace>): GridFilterOperato
 
 export const getStringFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
-    label: t('filter.equals'),
-    value: FieldComparisons.equals,
-    getApplyFilterFn: (filterItem: GridFilterItem) => {
-      if (!filterItem.value) {
-        return null
-      }
-      const collator = new Intl.Collator(undefined, { sensitivity: 'base', usage: 'search' })
-      return ({ value }: GridCellParams): boolean => {
-        return collator.compare(filterItem.value, value?.toString() || '') === 0
-      }
-    },
-    InputComponent: GridFilterInputValue,
-  },
-  {
     label: t('filter.contains'),
     value: FieldComparisons.contains,
     getApplyFilterFn: (filterItem: GridFilterItem) => {
@@ -159,6 +145,20 @@ export const getStringFilterOperators = (t: TFunction<Namespace>): GridFilterOpe
       const filterRegex = new RegExp(escapeRegExp(filterItem.value), 'i')
       return ({ value }: GridCellParams): boolean => {
         return filterRegex.test(value?.toString() || '')
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      const collator = new Intl.Collator(undefined, { sensitivity: 'base', usage: 'search' })
+      return ({ value }: GridCellParams): boolean => {
+        return collator.compare(filterItem.value, value?.toString() || '') === 0
       }
     },
     InputComponent: GridFilterInputValue,

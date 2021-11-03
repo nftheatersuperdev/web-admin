@@ -29,6 +29,7 @@ import { ROLES } from 'auth/roles'
 import { useCarModelById, useChangeCar, useManualExtendSubscription } from 'services/evme'
 import { columnFormatDuration } from 'pages/Pricing/utils'
 import DateTimePicker from 'components/DateTimePicker'
+import { checkInvalidatedToken } from 'components/ValidateToken'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
@@ -131,6 +132,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           }
         )
       }
+    } catch (error: unknown) {
+      checkInvalidatedToken(error)
     } finally {
       setIsLoading(false)
       onClose(true)

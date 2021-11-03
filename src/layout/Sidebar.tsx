@@ -24,6 +24,7 @@ import {
   Settings as SettingsIcon,
   SupervisedUserCircle as AdminUsersIcon,
   LoyaltyOutlined as LoyaltyOutlinedIcon,
+  GroupAdd as GroupAddIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -63,6 +64,12 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.users'),
         path: ROUTE_PATHS.USER,
         icon: <UserIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+      },
+      {
+        title: t('sidebar.userGroups'),
+        path: ROUTE_PATHS.USER_GROUPS,
+        icon: <GroupAddIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
       },
 
