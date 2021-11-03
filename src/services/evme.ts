@@ -51,8 +51,7 @@ import {
   RefIdAndRelationIds,
   UserGroupFilter,
   UserGroup,
-  UserGroupUpdateInput,
-  UserGroupCreateInput,
+  UserGroupInput,
   UserGroupDeleteInput,
 } from './evme.types'
 
@@ -1853,16 +1852,11 @@ export function useUserGroupsFilterAndSort(
   )
 }
 
-export function useChangeUserGroup(): UseMutationResult<
-  unknown,
-  unknown,
-  UserGroupUpdateInput,
-  unknown
-> {
+export function useChangeUserGroup(): UseMutationResult<unknown, unknown, UserGroupInput, unknown> {
   const { gqlRequest } = useGraphQLRequest()
 
   return useMutation(
-    async ({ id, name }: UserGroupUpdateInput) => {
+    async ({ id, name }: UserGroupInput) => {
       const { updateOneUserGroup } = await gqlRequest(
         gql`
           mutation UpdateOneUserGroup($input: UpdateOneUserGroupInput!) {
@@ -1890,16 +1884,11 @@ export function useChangeUserGroup(): UseMutationResult<
   )
 }
 
-export function useCreateUserGroup(): UseMutationResult<
-  unknown,
-  unknown,
-  UserGroupCreateInput,
-  unknown
-> {
+export function useCreateUserGroup(): UseMutationResult<unknown, unknown, UserGroupInput, unknown> {
   const { gqlRequest } = useGraphQLRequest()
 
   return useMutation(
-    async ({ name }: UserGroupCreateInput) => {
+    async ({ name }: UserGroupInput) => {
       const { createOneUserGroup } = await gqlRequest(
         gql`
           mutation CreateOneUserGroup($input: CreateOneUserGroupInput!) {
