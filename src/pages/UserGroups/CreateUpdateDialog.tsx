@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Grid,
   TextField,
@@ -45,6 +45,7 @@ export default function UserGroupCreateUpdateDialog({
   })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isNoChange, setIsNoChange] = useState<boolean>(true)
 
   const formik = useFormik({
     validationSchema,
@@ -85,6 +86,17 @@ export default function UserGroupCreateUpdateDialog({
     },
   })
 
+  useEffect(() => {
+    if (isUpdate) {
+      if (userGroup?.name !== formik.values.name) {
+        setIsNoChange(false)
+      } else {
+        setIsNoChange(true)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.name])
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
@@ -104,8 +116,8 @@ export default function UserGroupCreateUpdateDialog({
               InputLabelProps={{
                 shrink: true,
               }}
+              helperText={t('validation.allowOnlyLettersAndNumbers')}
               error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
             />
           </Grid>
         </Grid>
@@ -114,6 +126,7 @@ export default function UserGroupCreateUpdateDialog({
         <ButtonSpace
           onClick={() => {
             onClose()
+            setIsNoChange(false)
             formik.resetForm()
           }}
           color="primary"
@@ -122,7 +135,7 @@ export default function UserGroupCreateUpdateDialog({
           {t('button.cancel')}
         </ButtonSpace>
         <ButtonSpace
-          disabled={isLoading}
+          disabled={isLoading || isNoChange}
           onClick={() => formik.handleSubmit()}
           color="primary"
           variant="contained"

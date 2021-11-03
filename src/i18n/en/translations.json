@@ -515,6 +515,7 @@
     "minimumIsOne": "Minimum is 1",
     "maximumIsOneHundred": "Maximum is 100",
     "invalidVoucherCode": "Invalid voucher code",
-    "invalidName": "Invalid name"
+    "invalidName": "Invalid name",
+    "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
   }
 }

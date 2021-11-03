@@ -515,6 +515,7 @@
     "minimumIsOne": "ระบุอย่างน้อย 1",
     "maximumIsOneHundred": "ระบุสูงสุด 100",
     "invalidVoucherCode": "รูปแบบของวอชเชอร์ไม่ถูกต้อง",
-    "invalidName": "รูปแบบของชื่อไม่ถูกต้อง"
+    "invalidName": "รูปแบบของชื่อไม่ถูกต้อง",
+    "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น"
   }
 }
