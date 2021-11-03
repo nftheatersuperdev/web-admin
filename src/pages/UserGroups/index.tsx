@@ -78,13 +78,7 @@ export default function UserGroup(): JSX.Element {
       ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
         let filterValue = value
 
-        if (
-          (columnField === 'createdAt' ||
-            columnField === 'updatedAt' ||
-            columnField === 'startAt' ||
-            columnField === 'endAt') &&
-          value
-        ) {
+        if ((columnField === 'createdAt' || columnField === 'updatedAt') && value) {
           const comparingValue = operatorValue as string
           const comparingOperations = ['gt', 'lt', 'gte', 'lte']
           const isUsingOperators = comparingOperations.includes(comparingValue)
