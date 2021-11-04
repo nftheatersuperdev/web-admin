@@ -27,7 +27,9 @@ export default function HTMLEditor({
     menubar: false,
     statusbar: false,
     plugins: [],
-    toolbar: 'bold italic underline forecolor bullist numlist',
+    toolbar:
+      'formatselect | bold italic underline forecolor | aligncenter alignjustify alignleft alignright | bullist numlist',
+    block_formats: 'Heading 1=h1; Heading 2=h2; Heading 3=h3;',
   }
 
   return (
