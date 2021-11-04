@@ -94,6 +94,17 @@ export interface WithPaginateType<P> {
   data: [P]
 }
 
+const handleErrorActions = (error: unknown): boolean => {
+  if (error instanceof Error) {
+    const result = error.message.search(/invalidated|revoked/)
+    if (result >= 0) {
+      window.location.replace('/logout')
+      return false
+    }
+  }
+  return true
+}
+
 export function useCreateCar(): UseMutationResult<CarModel, unknown, CarInput, unknown> {
   const queryClient = useQueryClient()
   const { gqlRequest } = useGraphQLRequest()
@@ -252,6 +263,7 @@ export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve car models, ${error.message}`)
       },
       keepPreviousData: true,
@@ -304,6 +316,7 @@ export function useCarModelById({
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve car model, ${error.message}`)
       },
       keepPreviousData: true,
@@ -383,6 +396,7 @@ export function useCars(
     {
       getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve cars, ${error.message}`)
       },
       keepPreviousData: true,
@@ -453,6 +467,7 @@ export function useCarsFilterAndSort(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve carsFilterAndSort, ${error.message}`)
       },
     }
@@ -556,6 +571,7 @@ export function useSubscriptions(
     {
       getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve subscriptions, ${error.message}`)
       },
       keepPreviousData: true,
@@ -670,6 +686,7 @@ export function useSearchSubscriptions(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve subscriptions, ${error.message}`)
       },
       keepPreviousData: true,
@@ -769,7 +786,8 @@ export function useSubscriptionsFilterAndSort(
     },
     {
       onError: (error: Error) => {
-        console.error(`Unable to retrieve SubscriptionsFilterAndSort, ${error.message}`)
+        handleErrorActions(error)
+        console.error(`Unable to retrieve subscriptionsFilterAndSort, ${error.message}`)
       },
     }
   )
@@ -836,6 +854,7 @@ export function usePricing(
     {
       getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve pricing, ${error.message}`)
       },
       keepPreviousData: true,
@@ -884,6 +903,7 @@ export function usePricingByCarModelId({
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve pricing, ${error.message}`)
       },
       keepPreviousData: true,
@@ -953,6 +973,7 @@ export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve payments, ${error.message}`)
       },
       keepPreviousData: true,
@@ -1018,6 +1039,7 @@ export function useUsers(
     {
       getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve users, ${error.message}`)
       },
       keepPreviousData: true,
@@ -1075,6 +1097,7 @@ export function useUsersFilterAndSort(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve usersFilterAndSort, ${error.message}`)
       },
     }
@@ -1149,6 +1172,7 @@ export function useVouchersFilterAndSort(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve vouchersFilterAndSort, ${error.message}`)
       },
     }
@@ -1184,6 +1208,7 @@ export function useVouchersSearchPackagePrices(keyword = ''): UseQueryResult<Pac
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve vouchersSearchPackagePrices, ${error.message}`)
       },
     }
@@ -1220,6 +1245,7 @@ export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve voucher, ${error.message}`)
       },
     }
@@ -1268,7 +1294,8 @@ export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
     },
     {
       onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.VOUCHERS),
-      onError: () => {
+      onError: (error: Error) => {
+        handleErrorActions(error)
         console.error('Failed to createVoucher')
       },
     }
@@ -1319,7 +1346,8 @@ export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
     },
     {
       onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.VOUCHERS),
-      onError: () => {
+      onError: (error: Error) => {
+        handleErrorActions(error)
         console.error('Failed to updateVoucher')
       },
     }
@@ -1416,6 +1444,7 @@ export function useAdditionalExpenses(
     {
       getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve additional expenses, ${error.message}`)
       },
       keepPreviousData: true,
@@ -1509,7 +1538,8 @@ export function useCreateAdditionalExpense(): UseMutationResult<
     },
     {
       onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.ADDITIONAL_EXPENSES),
-      onError: () => {
+      onError: (error: Error) => {
+        handleErrorActions(error)
         console.error('Failed too create an additional expense')
       },
     }
@@ -1546,7 +1576,8 @@ export function useUpdateAdditionalExpense(): UseMutationResult<
     },
     {
       onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.ADDITIONAL_EXPENSES),
-      onError: () => {
+      onError: (error: Error) => {
+        handleErrorActions(error)
         console.error('Failed too update an additional expense')
       },
     }
@@ -1582,6 +1613,7 @@ export function useChargingLocations(): UseQueryResult<WithPaginationType<Chargi
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve charging locations, ${error.message}`)
       },
       keepPreviousData: true,
@@ -1616,6 +1648,7 @@ export function useMe(): UseQueryResult<User> {
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve profile data, ${error.message}`)
       },
     }
@@ -1651,6 +1684,7 @@ export function useManualExtendSubscription(): UseMutationResult<
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to manual extend scription, ${error.message}`)
       },
     }
@@ -1686,6 +1720,7 @@ export function useChangeCar(): UseMutationResult<
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to change car, ${error.message}`)
       },
     }
@@ -1716,7 +1751,8 @@ export function useSendDataViaEmail(): UseMutationResult<
       return sendDataViaEmail
     },
     {
-      onError: () => {
+      onError: (error: Error) => {
+        handleErrorActions(error)
         console.error('Failed to request send all data via email')
       },
     }
@@ -1750,6 +1786,7 @@ export function useAddPackagePricesToVoucher(): UseMutationResult<
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve useAddPackagePricesToVoucher ${error.message}`)
       },
     }
@@ -1783,6 +1820,7 @@ export function useRemovePackagePricesFromVoucher(): UseMutationResult<
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve useRemovePackagePricesFromVoucher ${error.message}`)
       },
     }
