@@ -1135,6 +1135,7 @@ export function useVouchersFilterAndSort(
                 createdAt
                 updatedAt
                 limitPerUser
+                isAllPackages
                 userGroups {
                   name
                 }
@@ -1299,6 +1300,7 @@ export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
       percentDiscount,
       amount,
       limitPerUser,
+      isAllPackages,
       startAt,
       endAt,
     }) => {
@@ -1320,6 +1322,7 @@ export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
               percentDiscount,
               amount,
               limitPerUser,
+              isAllPackages,
               startAt,
               endAt,
             },
