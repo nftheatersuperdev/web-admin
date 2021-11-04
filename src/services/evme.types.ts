@@ -3865,6 +3865,7 @@ export type Voucher = {
   percentDiscount: Scalars['Int']
   amount: Scalars['Int']
   limitPerUser: Scalars['Int']
+  isAllPackages: Scalars['Boolean']
   userGroups: Array<UserGroup>
   packagePrices: Array<PackagePrice>
   startAt: Scalars['DateTime']
@@ -3875,14 +3876,15 @@ export type Voucher = {
 
 export type VoucherInput = {
   id?: Maybe<Scalars['ID']>
-  code: Scalars['String']
-  descriptionEn: Scalars['String'] | undefined
-  descriptionTh: Scalars['String'] | undefined
+  code?: Maybe<Scalars['String']>
+  descriptionEn?: Maybe<Scalars['String']>
+  descriptionTh?: Maybe<Scalars['String']>
   percentDiscount?: Maybe<Scalars['Float']>
   amount?: Maybe<Scalars['Float']>
   limitPerUser?: Maybe<Scalars['Float']>
-  startAt: Scalars['DateTime']
-  endAt: Scalars['DateTime']
+  isAllPackages?: Maybe<Scalars['Boolean']>
+  startAt?: Maybe<Scalars['DateTime']>
+  endAt?: Maybe<Scalars['DateTime']>
 }
 
 export type VoucherFilter = {
