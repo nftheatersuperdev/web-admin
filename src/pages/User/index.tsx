@@ -224,6 +224,14 @@ export default function User(): JSX.Element {
       filterable: false,
     },
     {
+      field: 'userGroups',
+      headerName: t('user.userGroups'),
+      description: t('user.userGroups'),
+      hide: !visibilityColumns.userGroups,
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
+    {
       field: 'createdAt',
       headerName: t('user.createdDate'),
       description: t('user.createdDate'),
@@ -245,6 +253,11 @@ export default function User(): JSX.Element {
 
   const users =
     userData?.data.map((user) => {
+      const userGroups =
+        user.userGroups.length > 0
+          ? user.userGroups.map((userGroup) => userGroup.name).join(',')
+          : '-'
+
       return {
         id: user.id,
         firstName: user.firstName,
@@ -258,6 +271,7 @@ export default function User(): JSX.Element {
         verifyDate: null,
         note: '',
         rejectedReason: '',
+        userGroups,
       }
     }) || []
 
