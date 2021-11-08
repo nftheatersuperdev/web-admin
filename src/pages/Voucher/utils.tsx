@@ -4,6 +4,12 @@ const STORAGE_KEYS = {
   VISIBILITY_COLUMNS: 'evme:user:visibility_columns',
 }
 
+export const events = {
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+}
+
 export const defaultVisibilityColumns: VisibilityColumns = {
   id: false,
   code: true,
