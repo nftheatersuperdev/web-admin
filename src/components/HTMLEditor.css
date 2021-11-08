@@ -4,3 +4,7 @@
 .tox-notifications-container {
   display: none !important;
 }
+.tox .tox-collection--list .tox-collection__item {
+  padding: 8px !important;
+  margin: 2px 0 !important;
+}
