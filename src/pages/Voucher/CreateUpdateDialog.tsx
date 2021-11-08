@@ -126,17 +126,7 @@ export default function VoucherCreateUpdateDialog({
       isAllPackages: data.isAllPackages || false,
     }
 
-    toast.promise(createVoucherEvents.mutateAsync(voucherEventInput), {
-      loading: t('toast.loading'),
-      success: () => {
-        console.log('success!')
-        return 'Success'
-      },
-      error: (error) => {
-        console.log('error ->', error)
-        return 'Error'
-      },
-    })
+    createVoucherEvents.mutateAsync(voucherEventInput)
   }
 
   const formik = useFormik({
