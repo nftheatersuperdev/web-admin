@@ -19,6 +19,7 @@ import {
   User,
   Voucher,
   VoucherInput,
+  VoucherEventsInput,
   AdditionalExpense,
   AdditionalExpenseInput,
   UpdateOneAdditionalExpenseInput,
@@ -2152,6 +2153,40 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
     {
       onError: (error: Error) => {
         console.error(`Unable to retrieve useRemoveUserGroupsFromUser ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useCreateVoucherEvents(): UseMutationResult<
+  unknown,
+  unknown,
+  VoucherEventsInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async (voucherEvents: VoucherEventsInput) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation CreateVoucherEvents($input: CreateManyVoucherEventsInput!) {
+            createVoucherEvents(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            voucherEvents,
+          },
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        console.error(`Unable to useCreateVoucherEvents ${error.message}`)
       },
     }
   )

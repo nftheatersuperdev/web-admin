@@ -16,10 +16,12 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
-import { Voucher, VoucherInput } from 'services/evme.types'
-import { useCreateVoucher, useUpdateVoucher } from 'services/evme'
+import { useAuth } from 'auth/AuthContext'
+import { Voucher, VoucherEventsInput, VoucherInput } from 'services/evme.types'
+import { useCreateVoucher, useUpdateVoucher, useCreateVoucherEvents } from 'services/evme'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
+import { events } from './utils'
 
 interface CreateUpdateDialogProps {
   voucher?: Voucher | null
@@ -37,11 +39,13 @@ export default function VoucherCreateUpdateDialog({
   open,
   onClose,
 }: CreateUpdateDialogProps): JSX.Element {
+  const { getUserId } = useAuth()
   const voucherId = voucher?.id
   const isUpdate = !!voucherId
   const { t } = useTranslation()
   const createVoucher = useCreateVoucher()
   const updateVoucher = useUpdateVoucher()
+  const createVoucherEvents = useCreateVoucherEvents()
   const validationSchema = yup.object({
     code: yup
       .string()
@@ -106,6 +110,25 @@ export default function VoucherCreateUpdateDialog({
     event.preventDefault()
   }
 
+  const sendVoucherEvent = (id: string, data: VoucherInput) => {
+    const voucherEventInput: VoucherEventsInput = {
+      voucherId: id,
+      userId: getUserId() || '',
+      event: isUpdate ? events.UPDATE : events.CREATE,
+      code: data.code || '',
+      descriptionEn: data.descriptionEn || '',
+      descriptionTh: data.descriptionTh || '',
+      percentDiscount: data.percentDiscount || 0,
+      amount: data.amount || 0,
+      limitPerUser: data.limitPerUser || 0,
+      startAt: data.startAt || '',
+      endAt: data.endAt || '',
+      isAllPackages: data.isAllPackages || false,
+    }
+
+    createVoucherEvents.mutateAsync(voucherEventInput)
+  }
+
   const formik = useFormik({
     validationSchema,
     initialValues: {
@@ -140,7 +163,8 @@ export default function VoucherCreateUpdateDialog({
 
       toast.promise(mutateFunction.mutateAsync(mutateObject), {
         loading: t('toast.loading'),
-        success: () => {
+        success: (result) => {
+          sendVoucherEvent(result.id, mutateObject)
           formik.resetForm()
           setIsLoading(false)
           onClose()
