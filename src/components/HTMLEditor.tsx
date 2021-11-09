@@ -28,8 +28,8 @@ export default function HTMLEditor({
     statusbar: false,
     plugins: [],
     toolbar:
-      'formatselect | bold italic underline forecolor | aligncenter alignjustify alignleft alignright | bullist numlist',
-    block_formats: 'Heading 1=h1; Heading 2=h2; Heading 3=h3;',
+      'formatselect | bold italic underline forecolor | aligncenter alignleft alignright | bullist numlist',
+    block_formats: 'Heading 1=h1; Heading 2=h2; Heading 3=h3; Paragraph=p;',
   }
 
   return (
