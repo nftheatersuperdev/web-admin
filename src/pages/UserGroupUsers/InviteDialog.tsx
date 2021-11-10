@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fragment, useEffect, useState, ChangeEvent } from 'react'
 import {
   Grid,
@@ -13,8 +14,13 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { useFindUsersByNotInUserGroupAndKeyword, useAddUsersToUserGroup } from 'services/evme'
-import { User } from 'services/evme.types'
+import {
+  useFindUsersByNotInUserGroupAndKeyword,
+  useFindWhitelistUsersNotInUserGroupAndKeyword,
+  useAddUsersToUserGroup,
+  useAddWhitelistsToUserGroup,
+} from 'services/evme'
+import { User, Whitelist } from 'services/evme.types'
 
 interface InviteDialogProps {
   userGroupId: string
@@ -35,44 +41,58 @@ export default function InviteDialog({
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [keyword, setKeyword] = useState<string>('')
-  const [selectOptions, setSelectOptions] = useState<User[]>()
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectOptions, setSelectOptions] = useState<any[]>()
+  const [selectedUser, setSelectedUser] = useState<User | any | null>(null)
+  const [selectedWhitelist, setSelectedWhitelist] = useState<Whitelist | any | null>(null)
 
   const {
     data: users,
-    refetch,
-    isFetching,
+    refetch: usersRefetch,
+    isFetching: usersRefetching,
   } = useFindUsersByNotInUserGroupAndKeyword(userGroupId, keyword)
+  const {
+    data: whitelistUsers,
+    refetch: whitelistUsersRefetch,
+    isFetching: whitelistUsersRefetching,
+  } = useFindWhitelistUsersNotInUserGroupAndKeyword(userGroupId, keyword)
   const addUsersToUserGroup = useAddUsersToUserGroup()
+  const addWhitelistsToUserGroup = useAddWhitelistsToUserGroup()
+
+  const isFetching = usersRefetching || whitelistUsersRefetching
+  const refetch = async () => {
+    await usersRefetch()
+    await whitelistUsersRefetch()
+  }
 
   const clearOptionData = async () => {
     setKeyword('')
-    setSelectedUser(null)
     await refetch()
+    setSelectedUser(null)
+    setSelectedWhitelist(null)
   }
 
   const handleConfirmInviteUser = () => {
-    if (selectedUser) {
-      toast.promise(
-        addUsersToUserGroup.mutateAsync({
-          id: userGroupId,
-          relationIds: [selectedUser.id],
-        }),
-        {
-          loading: t('toast.loading'),
-          success: () => {
-            clearOptionData()
-            onClose()
-            return t('userGroups.dialog.invitation.success')
-          },
-          error: t('userGroups.dialog.invitation.error'),
-        }
-      )
+    const mutationFunction = selectedUser ? addUsersToUserGroup : addWhitelistsToUserGroup
+    const mutationData = {
+      id: userGroupId,
+      relationIds: [selectedUser ? selectedUser.id : selectedWhitelist.id],
     }
+
+    toast.promise(mutationFunction.mutateAsync(mutationData), {
+      loading: t('toast.loading'),
+      success: () => {
+        clearOptionData()
+        onClose()
+        return t('userGroups.dialog.invitation.success')
+      },
+      error: t('userGroups.dialog.invitation.error'),
+    })
   }
 
-  const handleOnSelectedOption = async (value: User | null) => {
-    if (value?.id) {
+  const handleOnSelectedOption = async (value: any) => {
+    if (value?.isWhitelist) {
+      setSelectedWhitelist(value)
+    } else if (value?.id) {
       setSelectedUser(value)
     } else {
       await clearOptionData()
@@ -94,8 +114,22 @@ export default function InviteDialog({
   }, [keyword])
 
   useEffect(() => {
-    setSelectOptions(users)
-  }, [users])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mergeUsers: any[] = []
+    if (whitelistUsers && whitelistUsers.length >= 1) {
+      const whitelistUsersMapped = whitelistUsers.map((whitelistUser) => {
+        return {
+          isWhitelist: true,
+          ...whitelistUser,
+        }
+      })
+      mergeUsers = [...mergeUsers, ...whitelistUsersMapped]
+    }
+    if (users && users.length >= 1) {
+      mergeUsers = [...mergeUsers, ...users]
+    }
+    setSelectOptions(mergeUsers)
+  }, [users, whitelistUsers])
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -109,17 +143,21 @@ export default function InviteDialog({
               options={selectOptions || []}
               getOptionLabel={(option) => {
                 const label = []
-                if (option.firstName) {
-                  label.push(option.firstName)
-                }
-                if (option.lastName) {
-                  label.push(option.lastName)
-                }
-                if (option.email) {
-                  label.push(option.email)
-                }
-                if (option.phoneNumber) {
-                  label.push(option.phoneNumber)
+                if (option.isWhitelist) {
+                  label.push(`[Whitelist] ${option.value}`)
+                } else {
+                  if (option.firstName) {
+                    label.push(option.firstName)
+                  }
+                  if (option.lastName) {
+                    label.push(option.lastName)
+                  }
+                  if (option.email) {
+                    label.push(option.email)
+                  }
+                  if (option.phoneNumber) {
+                    label.push(option.phoneNumber)
+                  }
                 }
                 return label.join(', ')
               }}
@@ -161,7 +199,7 @@ export default function InviteDialog({
           {t('button.cancel')}
         </ButtonSpace>
         <ButtonSpace
-          disabled={!selectedUser || isLoading}
+          disabled={(!selectedUser && !selectedWhitelist) || isLoading}
           onClick={() => handleConfirmInviteUser()}
           color="primary"
           variant="contained"

@@ -3927,3 +3927,11 @@ export type UserGroupFilter = {
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
 }
+
+export type Whitelist = {
+  id: Scalars['ID']
+  value: Scalars['String']
+  type: Scalars['String']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}

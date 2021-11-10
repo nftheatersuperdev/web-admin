@@ -69,6 +69,7 @@ const QUERY_KEYS = {
   USER_GROUP: 'evme:user-group',
   USER_GROUP_USERS: 'evme:user-groups:users',
   USER_GROUP_AVAILABLE_USERS: 'evme:user-groups:users:available',
+  USER_GROUP_AVAILABLE_WHITELIST_USERS: 'evme:user-groups:whitelist-users:available',
   VOUCHERS: 'evme:vouchers',
   VOUCHER_BY_ID: 'evme:voucher-by-id',
   VOUCHERS_PACKAGE_PRICE: 'evme:vouchers-package-price',
@@ -2187,6 +2188,79 @@ export function useCreateVoucherEvents(): UseMutationResult<
     {
       onError: (error: Error) => {
         console.error(`Unable to useCreateVoucherEvents ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useFindWhitelistUsersNotInUserGroupAndKeyword(
+  userGroupId: string,
+  keyword: string
+): UseQueryResult<User[]> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USER_GROUP_AVAILABLE_WHITELIST_USERS, { userGroupId }],
+    async () => {
+      const { findWhitelistUsersNotInUserGroupAndKeyword } = await gqlRequest(
+        gql`
+          query FindWhitelistUsersNotInUserGroupAndKeyword(
+            $userGroupId: String!
+            $keyword: String!
+          ) {
+            findWhitelistUsersNotInUserGroupAndKeyword(
+              userGroupId: $userGroupId
+              keyword: $keyword
+            ) {
+              id
+              value
+              type
+            }
+          }
+        `,
+        { userGroupId, keyword }
+      )
+      return findWhitelistUsersNotInUserGroupAndKeyword
+    },
+    {
+      onError: (error: Error) => {
+        console.error(
+          `Unable to retrieve useFindWhitelistUsersNotInUserGroupAndKeyword, ${error.message}`
+        )
+      },
+    }
+  )
+}
+
+export function useAddWhitelistsToUserGroup(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { data } = await gqlRequest(
+        gql`
+          mutation AddWhitelistsToUserGroup($id: ID!, $relationIds: [ID!]!) {
+            addWhitelistsToUserGroup(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return data
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useAddWhitelistsToUserGroup ${error.message}`)
       },
     }
   )
