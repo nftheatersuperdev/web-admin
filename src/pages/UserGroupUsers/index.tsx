@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { Card, Button, IconButton, Typography, Breadcrumbs } from '@material-ui/core'
@@ -10,13 +10,16 @@ import {
   GridPageChangeParams,
   GridCellParams,
   GridRowData,
+  GridFilterModel,
+  GridFilterItem,
 } from '@material-ui/data-grid'
-import { getIdFilterOperators, getStringFilterOperators } from 'utils'
+import { getIdFilterOperators, getStringFilterOperators, stringToFilterContains } from 'utils'
 import config from 'config'
 import { useUserGroupUsers, useUserGroup, useRemoveUserGroupsFromUser } from 'services/evme'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
+import { UserFilter } from 'services/evme.types'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import InviteDialog from './InviteDialog'
 
@@ -34,12 +37,13 @@ export default function UserGroupUsers(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0)
   const [openInviteDialog, setOpenInviteDialog] = useState<boolean>(false)
+  const [userFilter, setUserFilter] = useState<UserFilter>()
 
   const {
     data: userGroupUsersData,
     refetch,
     isFetching,
-  } = useUserGroupUsers(ugid, currentPageIndex, pageSize)
+  } = useUserGroupUsers(ugid, currentPageIndex, pageSize, userFilter)
 
   const { data: userGroup } = useUserGroup(ugid)
   const removeUserGroupsFromUser = useRemoveUserGroupsFromUser()
@@ -71,6 +75,29 @@ export default function UserGroupUsers(): JSX.Element {
     setVisibilityColumns(visibilityColumns)
   }
 
+  const handleFilterChange = (params: GridFilterModel) => {
+    setUserFilter({
+      ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+        let filterValue = value
+
+        if (operatorValue === 'iLike' && value) {
+          filterValue = stringToFilterContains(value)
+        }
+
+        if (filterValue) {
+          /* @ts-expect-error TODO */
+          filter[columnField] = {
+            [operatorValue as string]: filterValue,
+          }
+        }
+
+        return filter
+      }, {} as UserFilter),
+    })
+    // reset page
+    setCurrentPageIndex(0)
+  }
+
   const handleDeleteRow = (rowData: GridRowData) => {
     // eslint-disable-next-line no-alert
     const confirmed = window.confirm(t('userGroups.dialog.delete.confirmationMessage'))
@@ -88,6 +115,10 @@ export default function UserGroupUsers(): JSX.Element {
       )
     }
   }
+
+  useEffect(() => {
+    refetch()
+  }, [userFilter, refetch])
 
   const columns: GridColDef[] = [
     {
@@ -196,6 +227,10 @@ export default function UserGroupUsers(): JSX.Element {
           checkboxSelection
           disableSelectionOnClick
           onColumnVisibilityChange={onColumnVisibilityChange}
+          filterMode="server"
+          onFilterModelChange={handleFilterChange}
+          // sortingMode="server"
+          // onSortModelChange={handleSortChange}
           loading={isFetching}
         />
       </Card>

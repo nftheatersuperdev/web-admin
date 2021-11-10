@@ -1994,7 +1994,8 @@ export function useDeleteUserGroup(): UseMutationResult<
 export function useUserGroupUsers(
   userGroupId = '',
   page = 0,
-  pageSize = 10
+  pageSize = 10,
+  filter?: UserFilter
 ): UseQueryResult<WithPaginateType<User>> {
   const { gqlRequest } = useGraphQLRequest()
 
@@ -2003,8 +2004,18 @@ export function useUserGroupUsers(
     async () => {
       const { userGroupUsers } = await gqlRequest(
         gql`
-          query UserGroupUsers($userGroupId: String!, $pageSize: Float!, $page: Float!) {
-            userGroupUsers(userGroupId: $userGroupId, page: $page, pageSize: $pageSize) {
+          query UserGroupUsers(
+            $userGroupId: String!
+            $pageSize: Float!
+            $page: Float!
+            $filter: UserFilterInput
+          ) {
+            userGroupUsers(
+              userGroupId: $userGroupId
+              page: $page
+              pageSize: $pageSize
+              filter: $filter
+            ) {
               data {
                 id
                 firstName
@@ -2021,7 +2032,7 @@ export function useUserGroupUsers(
             }
           }
         `,
-        { userGroupId, pageSize, page }
+        { userGroupId, pageSize, page, filter }
       )
       return userGroupUsers
     },
