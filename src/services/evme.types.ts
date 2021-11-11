@@ -3634,6 +3634,33 @@ export type UserFilter = {
   updatedAt?: Maybe<DateFieldComparison>
 }
 
+export type UserWhitelist = {
+  __typename?: 'UserWhitelist'
+  id: Scalars['ID']
+  value: Scalars['String']
+  type: Scalars['String']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type UserWhitelistInput = {
+  __typename?: 'UserWhitelistInput'
+  value: Scalars['String']
+  type: Scalars['String']
+}
+
+export type UserWhitelistRemoveInput = {
+  __typename?: 'UserWhitelistRemoveInput'
+  whitelistId: Scalars['ID']
+  userGroupId: Scalars['ID']
+}
+
+export type UserWhitelistFilter = {
+  id?: Maybe<StringFieldComparison>
+  value?: Maybe<StringFieldComparison>
+  type?: Maybe<StringFieldComparison>
+}
+
 export type UserInput = {
   firebaseId: Scalars['String']
   firstName?: Maybe<Scalars['String']>
@@ -3926,12 +3953,4 @@ export type UserGroupFilter = {
   name?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
-}
-
-export type Whitelist = {
-  id: Scalars['ID']
-  value: Scalars['String']
-  type: Scalars['String']
-  createdAt: Scalars['DateTime']
-  updatedAt: Scalars['DateTime']
 }

@@ -505,13 +505,23 @@
         "title": "Invite a user become to the user group",
         "button": "Invite a user",
         "searchField": {
-          "label": "Search a user",
-          "example": "Ex. ptt",
+          "label": "Search a user or enter new email address",
+          "example": "Ex. ptt or new email such as milano@italia.it",
           "helperText": "Enter at least 3 characters to searching names, email or phone number on database"
         },
         "success": "User has been added",
-        "error": "Something went wrong!"
+        "error": "Something went wrong!",
+        "duplicated": "The email is duplicated"
       }
+    }
+  },
+  "whitelist": {
+    "title": "Unregistered users",
+    "value": "Value",
+    "type": "Type",
+    "tabs": {
+      "registeredUsers": "Registered users",
+      "nonRegisteredUsers": "Non-registered users"
     }
   },
   "validation": {

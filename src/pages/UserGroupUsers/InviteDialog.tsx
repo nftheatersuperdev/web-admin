@@ -19,13 +19,15 @@ import {
   useFindWhitelistUsersNotInUserGroupAndKeyword,
   useAddUsersToUserGroup,
   useAddWhitelistsToUserGroup,
+  useCreateOneWhitelist,
 } from 'services/evme'
-import { User, Whitelist } from 'services/evme.types'
+import { User, UserWhitelist } from 'services/evme.types'
 
 interface InviteDialogProps {
   userGroupId: string
   open: boolean
-  onClose: () => void
+  onClose: (goTabIndex: number) => void
+  currentTabIndex?: number
 }
 
 const ButtonSpace = styled(Button)`
@@ -37,13 +39,15 @@ export default function InviteDialog({
   userGroupId,
   open,
   onClose,
+  currentTabIndex,
 }: InviteDialogProps): JSX.Element {
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [keyword, setKeyword] = useState<string>('')
   const [selectOptions, setSelectOptions] = useState<any[]>()
   const [selectedUser, setSelectedUser] = useState<User | any | null>(null)
-  const [selectedWhitelist, setSelectedWhitelist] = useState<Whitelist | any | null>(null)
+  const [selectedWhitelist, setSelectedWhitelist] = useState<UserWhitelist | any | null>(null)
+  const [selectedNewEmail, setSelectedNewEmail] = useState<string | null>(null)
 
   const {
     data: users,
@@ -57,6 +61,7 @@ export default function InviteDialog({
   } = useFindWhitelistUsersNotInUserGroupAndKeyword(userGroupId, keyword)
   const addUsersToUserGroup = useAddUsersToUserGroup()
   const addWhitelistsToUserGroup = useAddWhitelistsToUserGroup()
+  const createOneWhitelist = useCreateOneWhitelist()
 
   const isFetching = usersRefetching || whitelistUsersRefetching
   const refetch = async () => {
@@ -69,41 +74,96 @@ export default function InviteDialog({
     await refetch()
     setSelectedUser(null)
     setSelectedWhitelist(null)
+    setSelectedNewEmail(null)
   }
 
-  const handleConfirmInviteUser = () => {
-    const mutationFunction = selectedUser ? addUsersToUserGroup : addWhitelistsToUserGroup
-    const mutationData = {
-      id: userGroupId,
-      relationIds: [selectedUser ? selectedUser.id : selectedWhitelist.id],
+  const handleConfirmInviteUser = async () => {
+    setIsLoading(true)
+    let mutationFunction
+    let whitelistId
+    let tabIndex = 0
+
+    if (selectedNewEmail && !selectedUser && !selectedWhitelist) {
+      try {
+        const newWhitelist = await createOneWhitelist.mutateAsync({
+          type: 'email',
+          value: selectedNewEmail || '',
+        })
+        whitelistId = newWhitelist.id
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          if (error.message?.includes('unique constraint')) {
+            return toast.error(t('userGroups.dialog.invitation.duplicated'))
+          }
+        }
+      }
     }
 
-    toast.promise(mutationFunction.mutateAsync(mutationData), {
+    if (selectedUser) {
+      mutationFunction = addUsersToUserGroup.mutateAsync({
+        id: userGroupId,
+        relationIds: [selectedUser.id],
+      })
+    } else {
+      whitelistId = whitelistId ?? selectedWhitelist.id
+      mutationFunction = addWhitelistsToUserGroup.mutateAsync({
+        id: userGroupId,
+        relationIds: [whitelistId],
+      })
+      tabIndex = 1
+    }
+
+    await toast.promise(mutationFunction, {
       loading: t('toast.loading'),
       success: () => {
         clearOptionData()
-        onClose()
+        onClose(tabIndex)
         return t('userGroups.dialog.invitation.success')
       },
-      error: t('userGroups.dialog.invitation.error'),
+      error: (error) => {
+        if (error.message?.includes('unique constraint')) {
+          return t('userGroups.dialog.invitation.duplicated')
+        }
+        return t('userGroups.dialog.invitation.error')
+      },
     })
+
+    setIsLoading(false)
+
+    return true
+  }
+
+  const validateEmail = (value: string): boolean => {
+    if (/\S+@\S+\.\S+/.test(value)) {
+      return true
+    }
+    return false
   }
 
   const handleOnSelectedOption = async (value: any) => {
-    if (value?.isWhitelist) {
+    if (!value) {
+      await clearOptionData()
+    } else if (value?.isWhitelist) {
       setSelectedWhitelist(value)
     } else if (value?.id) {
       setSelectedUser(value)
     } else {
-      await clearOptionData()
+      if (validateEmail(value)) {
+        setSelectedNewEmail(value)
+      }
     }
   }
 
   const handleChangeKeyword = (event: ChangeEvent<{ value: unknown }>) => {
     setIsLoading(true)
     const currentKeyword = event.target.value as string
-    if (currentKeyword.length >= 3) {
-      setKeyword(currentKeyword)
+    if (validateEmail(currentKeyword)) {
+      setSelectedNewEmail(currentKeyword)
+    } else {
+      setSelectedNewEmail(null)
+      if (currentKeyword.length >= 3) {
+        setKeyword(currentKeyword)
+      }
     }
     setIsLoading(false)
   }
@@ -131,6 +191,9 @@ export default function InviteDialog({
     setSelectOptions(mergeUsers)
   }, [users, whitelistUsers])
 
+  const isInviteButtonDisabled =
+    isLoading || (!selectedUser && !selectedWhitelist && !selectedNewEmail)
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{t('userGroups.dialog.invitation.title')}</DialogTitle>
@@ -139,12 +202,15 @@ export default function InviteDialog({
           <Grid item xs={12}>
             <Autocomplete
               id="users"
+              freeSolo
+              autoSelect
               autoHighlight
+              clearOnBlur={false}
               options={selectOptions || []}
               getOptionLabel={(option) => {
                 const label = []
                 if (option.isWhitelist) {
-                  label.push(`[Whitelist] ${option.value}`)
+                  label.push(`[${t('whitelist.title')}] ${option.value}`)
                 } else {
                   if (option.firstName) {
                     label.push(option.firstName)
@@ -191,7 +257,7 @@ export default function InviteDialog({
         <ButtonSpace
           onClick={() => {
             clearOptionData()
-            onClose()
+            onClose(currentTabIndex ?? 0)
           }}
           color="default"
           variant="outlined"
@@ -199,12 +265,12 @@ export default function InviteDialog({
           {t('button.cancel')}
         </ButtonSpace>
         <ButtonSpace
-          disabled={(!selectedUser && !selectedWhitelist) || isLoading}
+          disabled={isInviteButtonDisabled}
           onClick={() => handleConfirmInviteUser()}
           color="primary"
           variant="contained"
         >
-          {t('button.confirm')}
+          {t('button.invite')}
         </ButtonSpace>
       </DialogActions>
     </Dialog>

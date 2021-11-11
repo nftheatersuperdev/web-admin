@@ -36,6 +36,10 @@ import {
   ChargingLocation,
   CarSort,
   UserFilter,
+  UserWhitelistFilter,
+  UserWhitelist,
+  UserWhitelistInput,
+  UserWhitelistRemoveInput,
   UserSort,
   UpdateOneSubInput,
   CarFilter,
@@ -68,6 +72,7 @@ const QUERY_KEYS = {
   USER_GROUPS: 'evme:user-groups',
   USER_GROUP: 'evme:user-group',
   USER_GROUP_USERS: 'evme:user-groups:users',
+  USER_GROUP_WHITELIST_USERS: 'evme:user-groups:whitelist-users',
   USER_GROUP_AVAILABLE_USERS: 'evme:user-groups:users:available',
   USER_GROUP_AVAILABLE_WHITELIST_USERS: 'evme:user-groups:whitelist-users:available',
   VOUCHERS: 'evme:vouchers',
@@ -1889,6 +1894,7 @@ export function useUserGroupsFilterAndSort(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve userGroupsFilterAndSort, ${error.message}`)
       },
     }
@@ -1921,6 +1927,7 @@ export function useChangeUserGroup(): UseMutationResult<unknown, unknown, UserGr
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to mutation useChangeUserGroup, ${error.message}`)
       },
     }
@@ -1952,6 +1959,7 @@ export function useCreateUserGroup(): UseMutationResult<unknown, unknown, UserGr
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to mutation useCreateUserGroup, ${error.message}`)
       },
     }
@@ -1985,6 +1993,7 @@ export function useDeleteUserGroup(): UseMutationResult<
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to mutation useDeleteUserGroup, ${error.message}`)
       },
     }
@@ -2038,7 +2047,60 @@ export function useUserGroupUsers(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve userGroupUsers, ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useUserGroupUsersWhitelist(
+  userGroupId = '',
+  page = 0,
+  pageSize = 10,
+  filter?: UserWhitelistFilter
+): UseQueryResult<WithPaginateType<UserWhitelist>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery(
+    [QUERY_KEYS.USER_GROUP_WHITELIST_USERS, { userGroupId, page, pageSize }],
+    async () => {
+      const { userGroupUsersWhitelist } = await gqlRequest(
+        gql`
+          query UserGroupUsersWhitelist(
+            $userGroupId: String!
+            $pageSize: Float!
+            $page: Float!
+            $filter: UserWhitelistFilterInput
+          ) {
+            userGroupUsersWhitelist(
+              userGroupId: $userGroupId
+              page: $page
+              pageSize: $pageSize
+              filter: $filter
+            ) {
+              data {
+                id
+                value
+                type
+              }
+              totalData
+              paginate {
+                nextPage
+                previousPage
+                totalPages
+              }
+            }
+          }
+        `,
+        { userGroupId, pageSize, page, filter }
+      )
+      return userGroupUsersWhitelist
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve userGroupUsersWhitelist, ${error.message}`)
       },
     }
   )
@@ -2065,6 +2127,7 @@ export function useUserGroup(id = ''): UseQueryResult<UserGroup> {
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve useUserGroup, ${error.message}`)
       },
     }
@@ -2098,6 +2161,7 @@ export function useFindUsersByNotInUserGroupAndKeyword(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve useFindUsersByNotInUserGroupAndKeyword, ${error.message}`)
       },
     }
@@ -2114,7 +2178,7 @@ export function useAddUsersToUserGroup(): UseMutationResult<
 
   return useMutation(
     async ({ id, relationIds }: RefIdAndRelationIds) => {
-      const { data } = await gqlRequest(
+      const { addUsersToUserGroup } = await gqlRequest(
         gql`
           mutation AddUsersToUserGroup($id: ID!, $relationIds: [ID!]!) {
             addUsersToUserGroup(input: { id: $id, relationIds: $relationIds }) {
@@ -2127,10 +2191,11 @@ export function useAddUsersToUserGroup(): UseMutationResult<
           relationIds,
         }
       )
-      return data
+      return addUsersToUserGroup
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve useAddUsersToUserGroup ${error.message}`)
       },
     }
@@ -2147,7 +2212,7 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
 
   return useMutation(
     async ({ id, relationIds }: RefIdAndRelationIds) => {
-      const { data } = await gqlRequest(
+      const { removeUserGroupsFromUser } = await gqlRequest(
         gql`
           mutation RemoveUserGroupsFromUser($id: ID!, $relationIds: [ID!]!) {
             removeUserGroupsFromUser(input: { id: $id, relationIds: $relationIds }) {
@@ -2160,10 +2225,11 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
           relationIds,
         }
       )
-      return data
+      return removeUserGroupsFromUser
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to retrieve useRemoveUserGroupsFromUser ${error.message}`)
       },
     }
@@ -2180,7 +2246,7 @@ export function useCreateVoucherEvents(): UseMutationResult<
 
   return useMutation(
     async (voucherEvents: VoucherEventsInput) => {
-      const { data } = await gqlRequest(
+      const { createVoucherEvents } = await gqlRequest(
         gql`
           mutation CreateVoucherEvents($input: CreateManyVoucherEventsInput!) {
             createVoucherEvents(input: $input) {
@@ -2194,10 +2260,11 @@ export function useCreateVoucherEvents(): UseMutationResult<
           },
         }
       )
-      return data
+      return createVoucherEvents
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(`Unable to useCreateVoucherEvents ${error.message}`)
       },
     }
@@ -2235,6 +2302,7 @@ export function useFindWhitelistUsersNotInUserGroupAndKeyword(
     },
     {
       onError: (error: Error) => {
+        handleErrorActions(error)
         console.error(
           `Unable to retrieve useFindWhitelistUsersNotInUserGroupAndKeyword, ${error.message}`
         )
@@ -2253,7 +2321,7 @@ export function useAddWhitelistsToUserGroup(): UseMutationResult<
 
   return useMutation(
     async ({ id, relationIds }: RefIdAndRelationIds) => {
-      const { data } = await gqlRequest(
+      const { addWhitelistsToUserGroup } = await gqlRequest(
         gql`
           mutation AddWhitelistsToUserGroup($id: ID!, $relationIds: [ID!]!) {
             addWhitelistsToUserGroup(input: { id: $id, relationIds: $relationIds }) {
@@ -2266,12 +2334,115 @@ export function useAddWhitelistsToUserGroup(): UseMutationResult<
           relationIds,
         }
       )
-      return data
+      return addWhitelistsToUserGroup
     },
     {
       onError: (error: Error) => {
         handleErrorActions(error)
         console.error(`Unable to retrieve useAddWhitelistsToUserGroup ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useRemoveUserGroupsFromWhitelist(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { removeUserGroupsFromWhitelist } = await gqlRequest(
+        gql`
+          mutation RemoveUserGroupsFromWhitelist($id: ID!, $relationIds: [ID!]!) {
+            removeUserGroupsFromWhitelist(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return removeUserGroupsFromWhitelist
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useRemoveUserGroupsFromWhitelist ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useCreateOneWhitelist(): UseMutationResult<
+  UserWhitelist,
+  unknown,
+  UserWhitelistInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ type, value }: UserWhitelistInput) => {
+      const { createOneWhitelist } = await gqlRequest(
+        gql`
+          mutation CreateOneWhitelist($input: CreateOneWhitelistInput!) {
+            createOneWhitelist(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            whitelist: {
+              value,
+              type,
+            },
+          },
+        }
+      )
+      return createOneWhitelist
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useCreateOneWhitelist ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useDeleteWhitelistFromUserGroup(): UseMutationResult<
+  UserWhitelist,
+  unknown,
+  UserWhitelistRemoveInput,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ whitelistId, userGroupId }: UserWhitelistRemoveInput) => {
+      const { deleteWhitelistFromUserGroup } = await gqlRequest(
+        gql`
+          mutation DeleteWhitelistFromUserGroup($whitelistId: String!, $userGroupId: String!) {
+            deleteWhitelistFromUserGroup(whitelistId: $whitelistId, userGroupId: $userGroupId) {
+              id
+            }
+          }
+        `,
+        { whitelistId, userGroupId }
+      )
+      return deleteWhitelistFromUserGroup
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useDeleteWhitelistFromUserGroup ${error.message}`)
       },
     }
   )
