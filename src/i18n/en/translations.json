@@ -516,7 +516,7 @@
     }
   },
   "whitelist": {
-    "title": "Unregistered users",
+    "title": "Non-registered users",
     "value": "Value",
     "type": "Type",
     "tabs": {
