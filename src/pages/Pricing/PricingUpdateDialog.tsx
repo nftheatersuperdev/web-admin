@@ -61,6 +61,13 @@ export default function PricingUpdateDialog({
       const { duration, price, fullPrice, description } = node || {}
 
       switch (duration) {
+        case '3d':
+          priceSnapshot.price3d = {
+            price,
+            fullPrice: fullPrice || 0,
+            description: description || '',
+          }
+          break
         case '1w':
           priceSnapshot.price1w = {
             price,
@@ -108,10 +115,17 @@ export default function PricingUpdateDialog({
   }, [data, open]) // INFO: need to add "open" to the dependency list to render data when close/open dialog without change other param
 
   useEffect(() => {
-    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice12MChange } =
-      getPriceChanges(carModelPrices, carModelPricesRef.current)
+    const {
+      isPrice3DChange,
+      isPrice1WChange,
+      isPrice1MChange,
+      isPrice3MChange,
+      isPrice6MChange,
+      isPrice12MChange,
+    } = getPriceChanges(carModelPrices, carModelPricesRef.current)
 
     if (
+      isPrice3DChange ||
       isPrice1WChange ||
       isPrice1MChange ||
       isPrice3MChange ||
@@ -158,9 +172,25 @@ export default function PricingUpdateDialog({
 
   const handleUpdateCar = () => {
     const changePrices = [] as PackagePriceInput[]
-    const { price1w, price1m, price3m, price6m, price12m } = carModelPrices
-    const { isPrice1WChange, isPrice1MChange, isPrice3MChange, isPrice6MChange, isPrice12MChange } =
-      getPriceChanges(carModelPrices, carModelPricesRef.current)
+    const { price3d, price1w, price1m, price3m, price6m, price12m } = carModelPrices
+    const {
+      isPrice3DChange,
+      isPrice1WChange,
+      isPrice1MChange,
+      isPrice3MChange,
+      isPrice6MChange,
+      isPrice12MChange,
+    } = getPriceChanges(carModelPrices, carModelPricesRef.current)
+
+    if (isPrice3DChange) {
+      changePrices.push({
+        duration: '3d',
+        price: price3d.price,
+        fullPrice: price3d.fullPrice,
+        description: price3d.description,
+        carModelId: modelId,
+      })
+    }
 
     if (isPrice1WChange) {
       changePrices.push({
@@ -241,6 +271,52 @@ export default function PricingUpdateDialog({
 
           {selectedCarModel ? (
             <Grid container item xs={12} spacing={3}>
+              <Grid item xs={12} md={12}>
+                <Typography variant="subtitle1">{t('pricing.pricePerThreeDays')}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.price')}
+                  type="number"
+                  id="price3d.price"
+                  name="price3d.price"
+                  value={carModelPrices.price3d.price}
+                  onChange={(event) => handlePriceChange('price3d', 'price', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label={t('pricing.fullPrice')}
+                  type="number"
+                  id="price3d.fullPrice"
+                  name="price3d.fullPrice"
+                  value={carModelPrices.price3d.fullPrice}
+                  onChange={(event) => handlePriceChange('price3d', 'fullPrice', event)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">฿</InputAdornment>,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  label={t('pricing.description')}
+                  id="price3d.description"
+                  name="price3d.description"
+                  value={carModelPrices.price3d.description}
+                  onChange={(event) => handleDescriptionChange('price3d', event)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
               <Grid item xs={12} md={12}>
                 <Typography variant="subtitle1">{t('pricing.pricePerOneWeek')}</Typography>
               </Grid>
