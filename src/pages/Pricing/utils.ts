@@ -124,6 +124,10 @@ interface SelectOption {
 
 export const getDurationOptions = (t: TFunction<Namespace>): SelectOption[] => [
   {
+    label: t('pricing.3d'),
+    value: '3d',
+  },
+  {
     label: t('pricing.1w'),
     value: '1w',
   },
