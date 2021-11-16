@@ -101,7 +101,7 @@ export const getPriceChanges = (
 export const columnFormatDuration = (duration: string, t: TFunction<Namespace>): string => {
   switch (duration) {
     case '3d':
-      return t('pricing.1w')
+      return t('pricing.3d')
     case '1w':
       return t('pricing.1w')
     case '1m':
@@ -123,6 +123,10 @@ interface SelectOption {
 }
 
 export const getDurationOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('pricing.3d'),
+    value: '3d',
+  },
   {
     label: t('pricing.1w'),
     value: '1w',

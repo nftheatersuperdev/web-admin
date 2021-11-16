@@ -1288,7 +1288,7 @@ export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
     }) => {
       const { createVoucher } = await gqlRequest(
         gql`
-          mutation CreateVoucher($input: CreateOneVoucherInput!) {
+          mutation CreateVoucher($input: VoucherInput!) {
             createVoucher(input: $input) {
               id
             }
@@ -1296,16 +1296,14 @@ export function useCreateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
         `,
         {
           input: {
-            voucher: {
-              code,
-              descriptionEn,
-              descriptionTh,
-              percentDiscount,
-              amount,
-              limitPerUser,
-              startAt,
-              endAt,
-            },
+            code,
+            descriptionEn,
+            descriptionTh,
+            percentDiscount,
+            amount,
+            limitPerUser,
+            startAt,
+            endAt,
           },
         }
       )
