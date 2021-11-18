@@ -457,6 +457,11 @@
         "success": "Voucher has been updated",
         "error": "Something went wrong when updating the voucher"
       },
+      "delete": {
+        "confirmationMessage": "Do you want to remove the data?",
+        "success": "Voucher has been deleted",
+        "error": "Something went wrong!"
+      },
       "packagePrice": {
         "title": "Package Price",
         "selectAvailablePackages": "Select Available Packages",

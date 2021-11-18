@@ -1,6 +1,7 @@
+import toast from 'react-hot-toast'
 import { useState, useEffect, Fragment } from 'react'
 import { Card, Button, IconButton, Chip } from '@material-ui/core'
-import { Edit as EditIcon, Redeem as VoucherIcon } from '@material-ui/icons'
+import { Delete as DeleteIcon, Edit as EditIcon, Redeem as VoucherIcon } from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -24,7 +25,7 @@ import {
   columnFormatDate,
 } from 'utils'
 import config from 'config'
-import { useVouchersFilterAndSort } from 'services/evme'
+import { useVouchersFilterAndSort, useDeleteVoucher } from 'services/evme'
 import { VoucherFilter, SortDirection, SubOrder, Voucher as VoucherType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
@@ -48,6 +49,7 @@ export default function Voucher(): JSX.Element {
     refetch,
     isFetching,
   } = useVouchersFilterAndSort(voucherFilter, voucherSort, currentPageIndex, pageSize)
+  const deleteVoucher = useDeleteVoucher()
 
   const idFilterOperators = getIdFilterOperators(t)
   const numericFilterOperators = getNumericFilterOperators(t)
@@ -173,9 +175,22 @@ export default function Voucher(): JSX.Element {
     }
   }
 
-  // const handleDeleteRow = (data: GridRowData) => {
-  //   console.log('handleDeleteRow: data ->', data)
-  // }
+  const handleDeleteRow = (data: GridRowData) => {
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(t('voucher.dialog.delete.confirmationMessage'))
+    if (confirmed) {
+      const { id } = data
+      toast.promise(deleteVoucher.mutateAsync({ id }), {
+        loading: t('toast.loading'),
+        success: () => {
+          return t('voucher.dialog.delete.success')
+        },
+        error: () => {
+          return t('voucher.dialog.delete.error')
+        },
+      })
+    }
+  }
 
   useEffect(() => {
     refetch()
@@ -320,6 +335,7 @@ export default function Voucher(): JSX.Element {
       field: 'actions',
       headerName: t('car.actions'),
       description: t('car.actions'),
+      flex: 1,
       sortable: false,
       filterable: false,
       width: 140,
@@ -332,9 +348,9 @@ export default function Voucher(): JSX.Element {
             <IconButton onClick={() => handleDialogData('packagePrice', params.row)}>
               <VoucherIcon />
             </IconButton>
-            {/* <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+            <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />
-            </IconButton> */}
+            </IconButton>
           </Fragment>
         )
       },

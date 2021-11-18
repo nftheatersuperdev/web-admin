@@ -1373,6 +1373,36 @@ export function useUpdateVoucher(): UseMutationResult<Voucher, unknown, VoucherI
   )
 }
 
+export function useDeleteVoucher(): UseMutationResult<Voucher, unknown, VoucherInput, unknown> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id }) => {
+      const { deleteVoucher } = await gqlRequest(
+        gql`
+          mutation DeleteVoucher($input: DeleteOneVoucherInput!) {
+            deleteVoucher(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            id,
+          },
+        }
+      )
+      return deleteVoucher
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error('Failed to useDeleteVoucher')
+      },
+    }
+  )
+}
+
 export function useUserAggregate(
   filter: UserAggregateFilter
 ): UseQueryResult<UserAggregateResponse[]> {
