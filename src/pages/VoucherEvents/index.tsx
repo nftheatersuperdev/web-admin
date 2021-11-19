@@ -11,7 +11,11 @@ import {
   // GridRowParams,
   GridRowId,
 } from '@material-ui/data-grid'
-import { Compare as CompareIcon } from '@material-ui/icons'
+import {
+  Compare as CompareIcon,
+  Check as CheckIcon,
+  NotInterested as NotInterestedIcon,
+} from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { columnFormatDate } from 'utils'
@@ -48,6 +52,8 @@ export default function VoucherEvents(): JSX.Element {
     [data, currentPageIndex]
   )
 
+  console.log('voucherEvents ->', voucherEvents)
+
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
   }
@@ -72,6 +78,46 @@ export default function VoucherEvents(): JSX.Element {
   }
 
   const columns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: t('voucherEvents.id'),
+      description: t('voucherEvents.id'),
+      hide: !visibilityColumns.eventId,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'voucherId',
+      headerName: t('voucher.id'),
+      description: t('voucher.id'),
+      hide: !visibilityColumns.voucherId,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) => row.voucher.id,
+    },
+    {
+      field: 'userId',
+      headerName: t('voucherEvents.userId'),
+      description: t('voucherEvents.userId'),
+      hide: !visibilityColumns.userId,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) => row.user.id,
+    },
+    {
+      field: 'userDetail',
+      headerName: t('voucherEvents.userDetail'),
+      description: t('voucherEvents.userDetail'),
+      hide: !visibilityColumns.userDetail,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) =>
+        `${row.user.firstName} ${row.user.lastName} (${row.user.email})`,
+    },
     {
       field: 'event',
       headerName: t('voucherEvents.title'),
@@ -170,11 +216,34 @@ export default function VoucherEvents(): JSX.Element {
       filterable: false,
     },
     {
+      field: 'isAllPackages',
+      headerName: 'ALL Packages',
+      description: 'ALL Packages',
+      hide: !visibilityColumns.isAllPackages,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: ({ row }: GridCellParams) =>
+        row.isAllPackages ? <CheckIcon fontSize="small" /> : <NotInterestedIcon fontSize="small" />,
+    },
+    {
       field: 'createdAt',
       headerName: t('additionalExpense.createdDate'),
       description: t('additionalExpense.createdDate'),
       valueFormatter: columnFormatDate,
       hide: !visibilityColumns.endAt,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'updatedAt',
+      headerName: t('additionalExpense.updatedDate'),
+      description: t('additionalExpense.updatedDate'),
+      valueFormatter: columnFormatDate,
+      hide: !visibilityColumns.updatedAt,
       flex: 1,
       sortable: false,
       filterable: false,

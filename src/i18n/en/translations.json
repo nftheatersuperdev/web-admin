@@ -424,7 +424,7 @@
   },
   "voucher": {
     "title": "Vouchers",
-    "id": "ID",
+    "id": "Voucher ID",
     "code": "Code",
     "percentDiscount": "Percent Discount",
     "amount": "Limit",
@@ -477,6 +477,9 @@
   },
   "voucherEvents": {
     "title": "Voucher Events",
+    "id": "Event ID",
+    "userId": "User ID",
+    "userDetail": "User Detail",
     "tooltip": {
       "title": "See all events"
     }

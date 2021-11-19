@@ -7,6 +7,8 @@ import {
   Edit as EditIcon,
   Redeem as VoucherIcon,
   Note as NoteIcon,
+  Check as CheckIcon,
+  NotInterested as NotInterestedIcon,
 } from '@material-ui/icons'
 import {
   GridColDef,
@@ -290,6 +292,19 @@ export default function Voucher(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
+      field: 'isAllPackages',
+      headerName: 'ALL Packages',
+      description: 'ALL Packages',
+      hide: !visibilityColumns.endAt,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: ({ row }: GridCellParams) =>
+        row.isAllPackages ? <CheckIcon fontSize="small" /> : <NotInterestedIcon fontSize="small" />,
+    },
+    {
       field: 'createdAt',
       headerName: t('voucher.createdAt'),
       description: t('voucher.createdAt'),
@@ -345,18 +360,20 @@ export default function Voucher(): JSX.Element {
       flex: 1,
       sortable: false,
       filterable: false,
-      width: 140,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params: GridCellParams) => {
         return (
           <Fragment>
-            <IconButton onClick={() => handleDialogData('createUpdate', params.row)}>
+            <IconButton size="small" onClick={() => handleDialogData('createUpdate', params.row)}>
               <EditIcon />
             </IconButton>
-            <IconButton onClick={() => handleDialogData('packagePrice', params.row)}>
+            <IconButton size="small" onClick={() => handleDialogData('packagePrice', params.row)}>
               <VoucherIcon />
             </IconButton>
             <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
               <IconButton
+                size="small"
                 onClick={() =>
                   history.push(`/vouchers/${params.id}/events?code=${params.row.code}`)
                 }
@@ -364,7 +381,11 @@ export default function Voucher(): JSX.Element {
                 <NoteIcon />
               </IconButton>
             </Tooltip>
-            <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+            <IconButton
+              size="small"
+              aria-label="delete"
+              onClick={() => handleDeleteRow(params.row)}
+            >
               <DeleteIcon />
             </IconButton>
           </Fragment>
