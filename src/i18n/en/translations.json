@@ -423,6 +423,7 @@
     "false": "False/Disable"
   },
   "voucher": {
+    "title": "Vouchers",
     "id": "ID",
     "code": "Code",
     "percentDiscount": "Percent Discount",
@@ -457,6 +458,11 @@
         "success": "Voucher has been updated",
         "error": "Something went wrong when updating the voucher"
       },
+      "delete": {
+        "confirmationMessage": "Do you want to remove the data?",
+        "success": "Voucher has been deleted",
+        "error": "Something went wrong!"
+      },
       "packagePrice": {
         "title": "Package Price",
         "selectAvailablePackages": "Select Available Packages",
@@ -467,6 +473,12 @@
     },
     "errors": {
       "duplicatedCode": "The voucher code is duplicated"
+    }
+  },
+  "voucherEvents": {
+    "title": "Voucher Events",
+    "tooltip": {
+      "title": "See all events"
     }
   },
   "userGroups": {
