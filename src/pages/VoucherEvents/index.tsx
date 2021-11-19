@@ -8,7 +8,7 @@ import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridCellParams,
-  // GridRowParams,
+  GridRowParams,
   GridRowId,
 } from '@material-ui/data-grid'
 import {
@@ -25,6 +25,7 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import ChangesDialog from './ChangesDialog'
+import DetailDialog from './DetailDialog'
 
 interface VoucherEventsParams {
   voucherId: string
@@ -43,16 +44,16 @@ export default function VoucherEvents(): JSX.Element {
 
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [changesDialogOpen, setChangesDialogOpen] = useState<boolean>(false)
+  const [detailDialogOpen, setDetailDialogOpen] = useState<boolean>(false)
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0)
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
   const [firstCompareObject, setFirstCompareObject] = useState<VoucherEventsType>()
   const [secondCompareObject, setSecondCompareObject] = useState<VoucherEventsType>()
+  const [dataDetails, setDataDetails] = useState<VoucherEventsType>()
   const voucherEvents = useMemo(
     () => data?.pages[currentPageIndex]?.edges?.map(({ node }) => node) || [],
     [data, currentPageIndex]
   )
-
-  console.log('voucherEvents ->', voucherEvents)
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -250,9 +251,27 @@ export default function VoucherEvents(): JSX.Element {
     },
   ]
 
-  // const handleRowClick = (params: GridRowParams) => {
-  //   console.log('params ->', params)
-  // }
+  const handleRowClick = ({ row }: GridRowParams) => {
+    const event: VoucherEventsType = {
+      id: row.id,
+      code: row.code,
+      event: row.event,
+      amount: row.amount,
+      limitPerUser: row.limitPerUser,
+      percentDiscount: row.percentDiscount,
+      descriptionEn: row.descriptionEn,
+      descriptionTh: row.descriptionTh,
+      startAt: row.startAt,
+      endAt: row.endAt,
+      isAllPackages: row.isAllPackages,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      user: row.user,
+      voucher: row.voucher,
+    }
+    setDataDetails(event)
+    setDetailDialogOpen(true)
+  }
 
   const handleOnCompareChanges = () => {
     const [firstId, secondId] = selectionModel
@@ -294,6 +313,17 @@ export default function VoucherEvents(): JSX.Element {
       ''
     )
 
+  const renderDetailDialog =
+    detailDialogOpen && dataDetails ? (
+      <DetailDialog
+        open={detailDialogOpen}
+        data={dataDetails}
+        onClose={() => setDetailDialogOpen(false)}
+      />
+    ) : (
+      ''
+    )
+
   return (
     <Page>
       <MarginBottom>
@@ -322,7 +352,7 @@ export default function VoucherEvents(): JSX.Element {
             disableSelectionOnClick
             onColumnVisibilityChange={onColumnVisibilityChange}
             customToolbar={customToolbar}
-            // onRowClick={handleRowClick}
+            onRowClick={handleRowClick}
             onSelectionModelChange={(newSelectionModel) => {
               setSelectionModel(newSelectionModel)
             }}
@@ -331,6 +361,7 @@ export default function VoucherEvents(): JSX.Element {
       </Card>
 
       {renderChangesDialog}
+      {renderDetailDialog}
     </Page>
   )
 }
