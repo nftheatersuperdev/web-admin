@@ -19,6 +19,8 @@ import {
   User,
   Voucher,
   VoucherInput,
+  VoucherFilter,
+  VoucherEvents,
   VoucherEventsInput,
   AdditionalExpense,
   AdditionalExpenseInput,
@@ -52,7 +54,6 @@ import {
   SubscriptionUpdatePlateInput,
   ManualExtendSubscriptionInput,
   SendDataViaEmailInput,
-  VoucherFilter,
   RefIdAndRelationIds,
   UserGroupFilter,
   UserGroup,
@@ -76,6 +77,8 @@ const QUERY_KEYS = {
   USER_GROUP_AVAILABLE_USERS: 'evme:user-groups:users:available',
   USER_GROUP_AVAILABLE_WHITELIST_USERS: 'evme:user-groups:whitelist-users:available',
   VOUCHERS: 'evme:vouchers',
+  VOUCHER_EVENTS: 'evme:voucher-events',
+  VOUCHER_EVENTS_BY_VOUCHER_ID: 'evme:voucher-event:voucher-id',
   VOUCHER_BY_ID: 'evme:voucher-by-id',
   VOUCHERS_PACKAGE_PRICE: 'evme:vouchers-package-price',
   USER_AGGREGATE: 'evme:user-aggregate',
@@ -2259,6 +2262,73 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
       onError: (error: Error) => {
         handleErrorActions(error)
         console.error(`Unable to retrieve useRemoveUserGroupsFromUser ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useVoucherEventsByVoucherId(
+  voucherId: string,
+  pageSize = 10
+): UseInfiniteQueryResult<WithPaginationType<VoucherEvents>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useInfiniteQuery(
+    [QUERY_KEYS.VOUCHER_EVENTS_BY_VOUCHER_ID, { voucherId }],
+    async ({ pageParam = '' }) => {
+      const { voucherEvents } = await gqlRequest(
+        gql`
+          query VoucherEvents($voucherId: ID!, $pageSize: Int!, $after: ConnectionCursor) {
+            voucherEvents(
+              paging: { first: $pageSize, after: $after }
+              filter: { voucher: { id: { eq: $voucherId } } }
+              sorting: { field: createdAt, direction: DESC }
+            ) {
+              totalCount
+              pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+              }
+              edges {
+                node {
+                  id
+                  code
+                  event
+                  percentDiscount
+                  amount
+                  limitPerUser
+                  descriptionEn
+                  descriptionTh
+                  isAllPackages
+                  startAt
+                  endAt
+                  voucher {
+                    id
+                    code
+                  }
+                  user {
+                    id
+                    firstName
+                    lastName
+                    email
+                  }
+                  createdAt
+                  updatedAt
+                }
+              }
+            }
+          }
+        `,
+        { voucherId, pageSize, after: pageParam }
+      )
+      return voucherEvents
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useVoucherEvents, ${error.message}`)
       },
     }
   )

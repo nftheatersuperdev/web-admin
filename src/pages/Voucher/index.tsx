@@ -1,7 +1,13 @@
 import toast from 'react-hot-toast'
+import { useHistory } from 'react-router-dom'
 import { useState, useEffect, Fragment } from 'react'
-import { Card, Button, IconButton, Chip } from '@material-ui/core'
-import { Delete as DeleteIcon, Edit as EditIcon, Redeem as VoucherIcon } from '@material-ui/icons'
+import { Card, Button, IconButton, Chip, Tooltip } from '@material-ui/core'
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Redeem as VoucherIcon,
+  Note as NoteIcon,
+} from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -35,6 +41,7 @@ import CreateUpdateDialog from './CreateUpdateDialog'
 import PackagePriceDialog from './PackagePriceDialog'
 
 export default function Voucher(): JSX.Element {
+  const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
@@ -348,6 +355,15 @@ export default function Voucher(): JSX.Element {
             <IconButton onClick={() => handleDialogData('packagePrice', params.row)}>
               <VoucherIcon />
             </IconButton>
+            <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
+              <IconButton
+                onClick={() =>
+                  history.push(`/vouchers/${params.id}/events?code=${params.row.code}`)
+                }
+              >
+                <NoteIcon />
+              </IconButton>
+            </Tooltip>
             <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />
             </IconButton>

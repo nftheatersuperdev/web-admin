@@ -423,6 +423,7 @@
     "false": "ไม่ใช่/ปิด"
   },
   "voucher": {
+    "title": "วอชเชอร์",
     "id": "เลขไอดี",
     "code": "รหัส",
     "percentDiscount": "ส่วนลด",
@@ -472,6 +473,12 @@
     },
     "errors": {
       "duplicatedCode": "ไม่สามารถใช้ รหัสวอชเชอร์ ซ้ำได้"
+    }
+  },
+  "voucherEvents": {
+    "title": "บันทึกวอชเชอร์",
+    "tooltip": {
+      "title": "ดูบันทึกวอชเชอร์"
     }
   },
   "userGroups": {

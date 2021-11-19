@@ -423,6 +423,7 @@
     "false": "False/Disable"
   },
   "voucher": {
+    "title": "Vouchers",
     "id": "ID",
     "code": "Code",
     "percentDiscount": "Percent Discount",
@@ -472,6 +473,12 @@
     },
     "errors": {
       "duplicatedCode": "The voucher code is duplicated"
+    }
+  },
+  "voucherEvents": {
+    "title": "Voucher Events",
+    "tooltip": {
+      "title": "See all events"
     }
   },
   "userGroups": {

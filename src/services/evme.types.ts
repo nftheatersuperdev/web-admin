@@ -3930,6 +3930,25 @@ export type VoucherFilter = {
   updatedAt?: Maybe<DateFieldComparison>
 }
 
+export type VoucherEvents = {
+  __typename?: 'VoucherEvents'
+  id: Scalars['ID']
+  code: Scalars['String']
+  event: Scalars['String']
+  percentDiscount: Scalars['Int']
+  amount: Scalars['Int']
+  limitPerUser: Scalars['Int']
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+  descriptionEn: Scalars['String']
+  descriptionTh: Scalars['String']
+  isAllPackages: Scalars['Boolean']
+  voucher: Voucher
+  user: User
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
 export type VoucherEventsInput = {
   __typename?: 'VoucherEventsInput'
   voucherId?: Maybe<Scalars['ID']>
