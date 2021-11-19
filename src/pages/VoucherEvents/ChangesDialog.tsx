@@ -5,7 +5,6 @@ import { formatDate } from 'utils'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import {
   Button,
-  Divider,
   Dialog,
   DialogActions,
   DialogContent,
@@ -25,15 +24,18 @@ interface ChangesDialogProps {
 }
 
 const style = {
-  added: 'background-color: rgb(204, 232, 204);color: rgb(0, 55, 0);',
+  added: 'background-color: #cce7cc; color: #003700; padding: 10px; border-radius: 0 0 4px 4px;',
   removed:
-    'background-color: rgb(232, 204, 204);color: rgb(55, 0, 0);text-decoration:line-through;',
+    'background-color: #feb3b3; color: #370000; padding: 10px; text-decoration: line-through; border-radius: 4px 4px 0 0',
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       padding: theme.spacing(2),
+    },
+    htmlSpace: {
+      margin: '10px 0',
     },
   })
 )
@@ -51,11 +53,9 @@ export default function ChangesDialog({
     const html = []
     for (const sentence of diffChange) {
       if (sentence.added) {
-        html.push(`<span style='${style.added}'>${sentence.value.replace(/\n/g, '<br />')}</span>`)
+        html.push(`<div style='${style.added}'>${sentence.value}</div>`)
       } else if (sentence.removed) {
-        html.push(
-          `<span style='${style.removed}'>${sentence.value.replace(/\n/g, '<br />')}</span>`
-        )
+        html.push(`<div style='${style.removed}'>${sentence.value}</div>`)
       }
     }
 
@@ -70,8 +70,10 @@ export default function ChangesDialog({
             <Typography>
               <strong>{title}</strong>
             </Typography>
-            <Divider />
-            <div dangerouslySetInnerHTML={{ __html: html.join('<br />') }} />
+            <div
+              className={classes.htmlSpace}
+              dangerouslySetInnerHTML={{ __html: html.join('') }}
+            />
           </Paper>
         </Grid>
       </Grid>
