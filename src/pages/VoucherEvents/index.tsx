@@ -8,10 +8,14 @@ import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridCellParams,
-  // GridRowParams,
+  GridRowParams,
   GridRowId,
 } from '@material-ui/data-grid'
-import { Compare as CompareIcon } from '@material-ui/icons'
+import {
+  Compare as CompareIcon,
+  Check as CheckIcon,
+  NotInterested as NotInterestedIcon,
+} from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { columnFormatDate } from 'utils'
@@ -21,6 +25,7 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import ChangesDialog from './ChangesDialog'
+import DetailDialog from './DetailDialog'
 
 interface VoucherEventsParams {
   voucherId: string
@@ -39,10 +44,12 @@ export default function VoucherEvents(): JSX.Element {
 
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [changesDialogOpen, setChangesDialogOpen] = useState<boolean>(false)
+  const [detailDialogOpen, setDetailDialogOpen] = useState<boolean>(false)
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0)
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
   const [firstCompareObject, setFirstCompareObject] = useState<VoucherEventsType>()
   const [secondCompareObject, setSecondCompareObject] = useState<VoucherEventsType>()
+  const [dataDetails, setDataDetails] = useState<VoucherEventsType>()
   const voucherEvents = useMemo(
     () => data?.pages[currentPageIndex]?.edges?.map(({ node }) => node) || [],
     [data, currentPageIndex]
@@ -72,6 +79,46 @@ export default function VoucherEvents(): JSX.Element {
   }
 
   const columns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: t('voucherEvents.id'),
+      description: t('voucherEvents.id'),
+      hide: !visibilityColumns.eventId,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'voucherId',
+      headerName: t('voucher.id'),
+      description: t('voucher.id'),
+      hide: !visibilityColumns.voucherId,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) => row.voucher.id,
+    },
+    {
+      field: 'userId',
+      headerName: t('voucherEvents.userId'),
+      description: t('voucherEvents.userId'),
+      hide: !visibilityColumns.userId,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) => row.user.id,
+    },
+    {
+      field: 'userDetail',
+      headerName: t('voucherEvents.userDetail'),
+      description: t('voucherEvents.userDetail'),
+      hide: !visibilityColumns.userDetail,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) =>
+        `${row.user.firstName} ${row.user.lastName} (${row.user.email})`,
+    },
     {
       field: 'event',
       headerName: t('voucherEvents.title'),
@@ -170,6 +217,19 @@ export default function VoucherEvents(): JSX.Element {
       filterable: false,
     },
     {
+      field: 'isAllPackages',
+      headerName: 'ALL Packages',
+      description: 'ALL Packages',
+      hide: !visibilityColumns.isAllPackages,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: ({ row }: GridCellParams) =>
+        row.isAllPackages ? <CheckIcon fontSize="small" /> : <NotInterestedIcon fontSize="small" />,
+    },
+    {
       field: 'createdAt',
       headerName: t('additionalExpense.createdDate'),
       description: t('additionalExpense.createdDate'),
@@ -179,11 +239,39 @@ export default function VoucherEvents(): JSX.Element {
       sortable: false,
       filterable: false,
     },
+    {
+      field: 'updatedAt',
+      headerName: t('additionalExpense.updatedDate'),
+      description: t('additionalExpense.updatedDate'),
+      valueFormatter: columnFormatDate,
+      hide: !visibilityColumns.updatedAt,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
   ]
 
-  // const handleRowClick = (params: GridRowParams) => {
-  //   console.log('params ->', params)
-  // }
+  const handleRowClick = ({ row }: GridRowParams) => {
+    const event: VoucherEventsType = {
+      id: row.id,
+      code: row.code,
+      event: row.event,
+      amount: row.amount,
+      limitPerUser: row.limitPerUser,
+      percentDiscount: row.percentDiscount,
+      descriptionEn: row.descriptionEn,
+      descriptionTh: row.descriptionTh,
+      startAt: row.startAt,
+      endAt: row.endAt,
+      isAllPackages: row.isAllPackages,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      user: row.user,
+      voucher: row.voucher,
+    }
+    setDataDetails(event)
+    setDetailDialogOpen(true)
+  }
 
   const handleOnCompareChanges = () => {
     const [firstId, secondId] = selectionModel
@@ -225,6 +313,17 @@ export default function VoucherEvents(): JSX.Element {
       ''
     )
 
+  const renderDetailDialog =
+    detailDialogOpen && dataDetails ? (
+      <DetailDialog
+        open={detailDialogOpen}
+        data={dataDetails}
+        onClose={() => setDetailDialogOpen(false)}
+      />
+    ) : (
+      ''
+    )
+
   return (
     <Page>
       <MarginBottom>
@@ -253,7 +352,7 @@ export default function VoucherEvents(): JSX.Element {
             disableSelectionOnClick
             onColumnVisibilityChange={onColumnVisibilityChange}
             customToolbar={customToolbar}
-            // onRowClick={handleRowClick}
+            onRowClick={handleRowClick}
             onSelectionModelChange={(newSelectionModel) => {
               setSelectionModel(newSelectionModel)
             }}
@@ -262,6 +361,7 @@ export default function VoucherEvents(): JSX.Element {
       </Card>
 
       {renderChangesDialog}
+      {renderDetailDialog}
     </Page>
   )
 }
