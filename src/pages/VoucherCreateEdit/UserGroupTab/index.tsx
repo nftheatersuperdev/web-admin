@@ -4,8 +4,18 @@ import styled from 'styled-components'
 import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Autocomplete'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import { Fragment, useEffect, useState } from 'react'
-import { Button, Checkbox, CircularProgress, Divider, Grid, TextField } from '@material-ui/core'
+import { Fragment, useEffect, useState, ChangeEvent } from 'react'
+import {
+  Button,
+  Checkbox,
+  CircularProgress,
+  Divider,
+  FormControlLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import { VoucherDataAndRefetchProps } from 'pages/VoucherCreateEdit/types'
 import {
@@ -25,6 +35,11 @@ const DividerSpace = styled(Divider)`
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
 const checkedIcon = <CheckBoxIcon fontSize="small" />
 
+const selectOptions = {
+  ALL: 'all',
+  SELECT: 'select',
+}
+
 export default function VoucherUserGroupTab({
   voucher,
   refetch,
@@ -38,30 +53,56 @@ export default function VoucherUserGroupTab({
   )
   const addUserGroupsToVoucher = useAddUserGroupsToVoucher()
   const removeUserGroupsFromVoucher = useRemoveUserGroupsFromVoucher()
+  const isApplyAllUsers = voucher && voucher?.userGroups.length === 0
+  const existsOption = isApplyAllUsers ? selectOptions.ALL : selectOptions.SELECT
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedUserGroups, setSelectedUserGroups] = useState<UserGroup[]>()
   const [currentUserGroups, setCurrentUserGroups] = useState<UserGroup[]>()
+  const [userGroupIsEmpty, setUserGroupIsEmpty] = useState<boolean>(true)
   const [userGroupIsEqualToExists, setUserGroupIsEqualToExists] = useState<boolean>(true)
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
+  const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
   const masterUserGroups = data?.data
 
   const handleUpdateUserGroups = async () => {
     setIsLoading(true)
     const voucherId = voucher?.id
 
-    if (voucherId && voucher && voucher?.userGroups.length > 0) {
+    if (
+      currentOption === selectOptions.ALL &&
+      voucherId &&
+      voucher &&
+      voucher.userGroups.length > 0
+    ) {
       await removeUserGroupsFromVoucher.mutateAsync({
         id: voucherId,
-        relationIds: voucher?.userGroups.map((userGroup) => userGroup.id),
+        relationIds: voucher.userGroups?.map((userGroup) => userGroup.id),
       })
-
-      if (selectedUserGroups?.length === 0) {
-        toast.success(t('voucher.dialog.userGroups.removeSuccess'))
-        setCurrentUserGroups([])
-      }
+      toast.success(t('voucher.dialog.userGroups.removeSuccess'))
+      setSelectedUserGroups([])
+      setIsLoading(false)
+      refetch()
+      return
     }
 
-    if (voucherId && selectedUserGroups && selectedUserGroups?.length > 0) {
+    if (
+      currentOption === selectOptions.SELECT &&
+      voucherId &&
+      voucher &&
+      voucher.userGroups.length > 0
+    ) {
+      await removeUserGroupsFromVoucher.mutateAsync({
+        id: voucherId,
+        relationIds: voucher.userGroups?.map((userGroup) => userGroup.id),
+      })
+    }
+
+    if (
+      currentOption === selectOptions.SELECT &&
+      voucherId &&
+      selectedUserGroups &&
+      selectedUserGroups?.length > 0
+    ) {
       await toast.promise(
         addUserGroupsToVoucher.mutateAsync({
           id: voucherId,
@@ -74,9 +115,13 @@ export default function VoucherUserGroupTab({
         }
       )
       setCurrentUserGroups(selectedUserGroups)
+      setIsLoading(false)
+      refetch()
     }
-    refetch()
-    setIsLoading(false)
+  }
+
+  const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {
+    setCurrentOption(value)
   }
 
   useEffect(() => {
@@ -98,6 +143,35 @@ export default function VoucherUserGroupTab({
     }
   }, [currentUserGroups, selectedUserGroups])
 
+  useEffect(() => {
+    if (selectedUserGroups && selectedUserGroups.length > 0) {
+      setUserGroupIsEmpty(false)
+    } else {
+      setUserGroupIsEmpty(true)
+    }
+  }, [selectedUserGroups])
+
+  useEffect(() => {
+    if (currentOption === selectOptions.ALL && existsOption !== selectOptions.ALL) {
+      setOptionIsEqualToExists(false)
+      setUserGroupIsEqualToExists(false)
+      setUserGroupIsEmpty(false)
+    } else if (currentOption !== existsOption) {
+      setUserGroupIsEqualToExists(false)
+      setOptionIsEqualToExists(false)
+    } else {
+      setOptionIsEqualToExists(true)
+    }
+  }, [currentOption, existsOption])
+
+  useEffect(() => {
+    if (isApplyAllUsers) {
+      setCurrentOption(selectOptions.ALL)
+    } else {
+      setCurrentOption(selectOptions.SELECT)
+    }
+  }, [isApplyAllUsers])
+
   return (
     <Fragment>
       <Grid container spacing={3}>
@@ -106,7 +180,9 @@ export default function VoucherUserGroupTab({
             onClick={() => handleUpdateUserGroups()}
             color="primary"
             variant="contained"
-            disabled={isLoading || userGroupIsEqualToExists || optionIsEqualToExists}
+            disabled={
+              isLoading || userGroupIsEqualToExists || optionIsEqualToExists || userGroupIsEmpty
+            }
           >
             {isLoading && <CircularProgress size={20} />}&nbsp;
             {t('button.update')}
@@ -115,29 +191,52 @@ export default function VoucherUserGroupTab({
       </Grid>
       <DividerSpace />
       {/* <pre>{JSON.stringify(selectedUserGroups, null, 2)}</pre> */}
-      <Autocomplete
-        multiple
-        id="user-groups-select"
-        value={selectedUserGroups ?? []}
-        options={masterUserGroups ?? []}
-        onChange={(_, newValue) => setSelectedUserGroups([...newValue])}
-        getOptionLabel={(option: UserGroup) => option.name}
-        disableCloseOnSelect
-        renderOption={(option, { selected }: AutocompleteRenderOptionState) => (
-          <Fragment>
-            <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
-            {option.name}
-          </Fragment>
-        )}
-        renderInput={(params) => (
-          <TextField
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...params}
-            label={t('voucher.dialog.userGroups.availableUserGroups')}
-            variant="outlined"
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <RadioGroup
+            aria-label="user-group-options"
+            name="user-group-options"
+            onChange={handleOnOptionChange}
+            defaultValue={currentOption}
+            value={currentOption}
+          >
+            <FormControlLabel value={selectOptions.ALL} control={<Radio />} label="All Users" />
+            <FormControlLabel
+              value={selectOptions.SELECT}
+              control={<Radio />}
+              label={t('voucher.dialog.userGroups.selectAvailableUserGroups')}
+            />
+          </RadioGroup>
+        </Grid>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Autocomplete
+            multiple
+            id="user-groups-select"
+            value={selectedUserGroups ?? []}
+            options={masterUserGroups ?? []}
+            onChange={(_, newValue) => setSelectedUserGroups([...newValue])}
+            getOptionLabel={(option: UserGroup) => option.name}
+            disableCloseOnSelect
+            renderOption={(option, { selected }: AutocompleteRenderOptionState) => (
+              <Fragment>
+                <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
+                {option.name}
+              </Fragment>
+            )}
+            renderInput={(params) => (
+              <TextField
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...params}
+                label={t('voucher.dialog.userGroups.availableUserGroups')}
+                variant="outlined"
+              />
+            )}
+            disabled={currentOption !== 'select'}
           />
-        )}
-      />
+        </Grid>
+      </Grid>
     </Fragment>
   )
 }
