@@ -1237,7 +1237,7 @@ export function useVouchersSearchPackagePrices(keyword = ''): UseQueryResult<Pac
   )
 }
 
-export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher>> {
+export function useVoucherById(id = ''): UseQueryResult<Voucher> {
   const { gqlRequest } = useGraphQLRequest()
 
   return useQuery(
@@ -1245,16 +1245,32 @@ export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher
     async () => {
       const { voucher } = await gqlRequest(
         gql`
-          query Voucher($id: String!) {
+          query Voucher($id: ID!) {
             voucher(id: $id) {
               id
+              code
+              percentDiscount
+              amount
+              startAt
+              endAt
+              descriptionEn
+              descriptionTh
+              createdAt
+              updatedAt
+              limitPerUser
+              isAllPackages
+              userGroups {
+                name
+              }
               packagePrices {
                 id
+                carModelId
                 carModel {
                   id
                   brand
                   model
                 }
+                duration
                 price
                 fullPrice
               }

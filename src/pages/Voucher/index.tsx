@@ -365,7 +365,7 @@ export default function Voucher(): JSX.Element {
       renderCell: (params: GridCellParams) => {
         return (
           <Fragment>
-            <IconButton size="small" onClick={() => handleDialogData('createUpdate', params.row)}>
+            <IconButton size="small" onClick={() => history.push(`/vouchers/${params.id}/edit`)}>
               <EditIcon />
             </IconButton>
             <IconButton size="small" onClick={() => handleDialogData('packagePrice', params.row)}>
@@ -420,9 +420,7 @@ export default function Voucher(): JSX.Element {
         <Button
           color="primary"
           variant="contained"
-          onClick={() => {
-            setCreateUpdateDialogOpen(true)
-          }}
+          onClick={() => history.push('/vouchers/create')}
         >
           {t('voucher.button.createNew')}
         </Button>
