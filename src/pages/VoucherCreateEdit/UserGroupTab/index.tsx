@@ -80,6 +80,7 @@ export default function VoucherUserGroupTab({
       })
       toast.success(t('voucher.dialog.userGroups.removeSuccess'))
       setSelectedUserGroups([])
+      setCurrentUserGroups([])
       setIsLoading(false)
       refetch()
       return
