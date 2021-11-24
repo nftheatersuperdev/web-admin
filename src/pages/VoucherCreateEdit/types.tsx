@@ -4,8 +4,11 @@ export interface VoucherCreateEditParams {
   voucherId: string
 }
 
-export interface VoucherGeneralInformationTabProps {
+export interface VoucherDataAndRefetchProps {
   voucher?: Voucher
-  isEdit: boolean
   refetch: () => void
+}
+
+export interface VoucherAbleToEditProps extends VoucherDataAndRefetchProps {
+  isEdit: boolean
 }

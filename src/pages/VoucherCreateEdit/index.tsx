@@ -8,7 +8,9 @@ import { AppBar, Box, Breadcrumbs, Card, Grid, Tab, Tabs, Typography } from '@ma
 import { Page } from 'layout/LayoutRoute'
 import { VoucherCreateEditParams } from 'pages/VoucherCreateEdit/types'
 import { useVoucherById } from 'services/evme'
-import GeneralInformation from 'pages/VoucherCreateEdit/GeneralInformation'
+import GeneralInformationTab from 'pages/VoucherCreateEdit/GeneralInformationTab'
+import PackagePriceTab from 'pages/VoucherCreateEdit/PackagePriceTab'
+import UserGroupTab from 'pages/VoucherCreateEdit/UserGroupTab'
 
 const CardSpacing = styled(Card)`
   margin: 20px 0;
@@ -84,13 +86,17 @@ export default function VoucherCreateEdit(): JSX.Element {
           >
             <Tab label="General Information" {...a11yProps(0)} />
             <Tab label="Package Prices" {...a11yProps(1)} disabled={!isEdit} />
+            <Tab label="User Groups" {...a11yProps(2)} disabled={!isEdit} />
           </Tabs>
         </AppBar>
         <TabPanel value={tabIndex} index={0}>
-          <GeneralInformation voucher={voucher} isEdit={isEdit} refetch={refetch} />
+          <GeneralInformationTab voucher={voucher} isEdit={isEdit} refetch={refetch} />
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
-          Item Two
+          <PackagePriceTab voucher={voucher} refetch={refetch} />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={2}>
+          <UserGroupTab voucher={voucher} refetch={refetch} />
         </TabPanel>
       </CardSpacing>
     </Page>

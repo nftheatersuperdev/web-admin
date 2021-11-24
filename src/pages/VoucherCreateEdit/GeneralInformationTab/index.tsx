@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { useCreateVoucher, useUpdateVoucher } from 'services/evme'
 import { VoucherInput } from 'services/evme.types'
-import { VoucherGeneralInformationTabProps } from 'pages/VoucherCreateEdit/types'
+import { VoucherAbleToEditProps } from 'pages/VoucherCreateEdit/types'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
 
@@ -26,7 +26,7 @@ export default function VoucherGeneralInformationTab({
   voucher,
   isEdit,
   refetch,
-}: VoucherGeneralInformationTabProps): JSX.Element {
+}: VoucherAbleToEditProps): JSX.Element {
   const history = useHistory()
   const { t } = useTranslation()
   const createVoucher = useCreateVoucher()
