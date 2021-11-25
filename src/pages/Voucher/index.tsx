@@ -5,7 +5,6 @@ import { Card, Button, IconButton, Chip, Tooltip } from '@material-ui/core'
 import {
   Delete as DeleteIcon,
   Edit as EditIcon,
-  Redeem as VoucherIcon,
   Note as NoteIcon,
   Check as CheckIcon,
   NotInterested as NotInterestedIcon,
@@ -158,32 +157,6 @@ export default function Voucher(): JSX.Element {
     }
   }
 
-  const handleDialogData = (module: string, data: GridRowData) => {
-    const object: VoucherType = {
-      id: data.id,
-      code: data.code,
-      descriptionEn: data.descriptionEn,
-      descriptionTh: data.descriptionTh,
-      percentDiscount: data.percentDiscount,
-      amount: data.amount,
-      limitPerUser: data.limitPerUser,
-      isAllPackages: data.isAllPackages,
-      userGroups: data.userGroups,
-      packagePrices: data.packagePrices,
-      startAt: data.startAt,
-      endAt: data.endAt,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    }
-    setSelectedVoucher(object)
-
-    if (module === 'createUpdate') {
-      setCreateUpdateDialogOpen(true)
-    } else if (module === 'packagePrice') {
-      setPackagePriceDialogOpen(true)
-    }
-  }
-
   const handleDeleteRow = (data: GridRowData) => {
     // eslint-disable-next-line no-alert
     const confirmed = window.confirm(t('voucher.dialog.delete.confirmationMessage'))
@@ -295,7 +268,7 @@ export default function Voucher(): JSX.Element {
       field: 'isAllPackages',
       headerName: 'ALL Packages',
       description: 'ALL Packages',
-      hide: !visibilityColumns.endAt,
+      hide: !visibilityColumns.isAllPackages,
       flex: 1,
       sortable: false,
       filterable: false,
@@ -365,11 +338,8 @@ export default function Voucher(): JSX.Element {
       renderCell: (params: GridCellParams) => {
         return (
           <Fragment>
-            <IconButton size="small" onClick={() => handleDialogData('createUpdate', params.row)}>
+            <IconButton size="small" onClick={() => history.push(`/vouchers/${params.id}/edit`)}>
               <EditIcon />
-            </IconButton>
-            <IconButton size="small" onClick={() => handleDialogData('packagePrice', params.row)}>
-              <VoucherIcon />
             </IconButton>
             <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
               <IconButton
@@ -420,9 +390,7 @@ export default function Voucher(): JSX.Element {
         <Button
           color="primary"
           variant="contained"
-          onClick={() => {
-            setCreateUpdateDialogOpen(true)
-          }}
+          onClick={() => history.push('/vouchers/create')}
         >
           {t('voucher.button.createNew')}
         </Button>

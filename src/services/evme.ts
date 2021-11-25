@@ -1237,7 +1237,7 @@ export function useVouchersSearchPackagePrices(keyword = ''): UseQueryResult<Pac
   )
 }
 
-export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher>> {
+export function useVoucherById(id = ''): UseQueryResult<Voucher> {
   const { gqlRequest } = useGraphQLRequest()
 
   return useQuery(
@@ -1245,16 +1245,35 @@ export function useVoucherById(id = ''): UseQueryResult<WithPaginateType<Voucher
     async () => {
       const { voucher } = await gqlRequest(
         gql`
-          query Voucher($id: String!) {
+          query Voucher($id: ID!) {
             voucher(id: $id) {
               id
+              code
+              percentDiscount
+              amount
+              startAt
+              endAt
+              descriptionEn
+              descriptionTh
+              createdAt
+              updatedAt
+              limitPerUser
+              isAllPackages
+              userGroups {
+                id
+                name
+                createdAt
+                updatedAt
+              }
               packagePrices {
                 id
+                carModelId
                 carModel {
                   id
                   brand
                   model
                 }
+                duration
                 price
                 fullPrice
               }
@@ -2541,6 +2560,74 @@ export function useDeleteWhitelistFromUserGroup(): UseMutationResult<
       onError: (error: Error) => {
         handleErrorActions(error)
         console.error(`Unable to retrieve useDeleteWhitelistFromUserGroup ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useAddUserGroupsToVoucher(): UseMutationResult<
+  Voucher,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { addUserGroupsToVoucher } = await gqlRequest(
+        gql`
+          mutation AddUserGroupsToVoucher($id: ID!, $relationIds: [ID!]!) {
+            addUserGroupsToVoucher(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return addUserGroupsToVoucher
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useAddUserGroupsToVoucher ${error.message}`)
+      },
+    }
+  )
+}
+
+export function useRemoveUserGroupsFromVoucher(): UseMutationResult<
+  Voucher,
+  unknown,
+  RefIdAndRelationIds,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, relationIds }: RefIdAndRelationIds) => {
+      const { removeUserGroupsFromVoucher } = await gqlRequest(
+        gql`
+          mutation RemoveUserGroupsFromVoucher($id: ID!, $relationIds: [ID!]!) {
+            removeUserGroupsFromVoucher(input: { id: $id, relationIds: $relationIds }) {
+              id
+            }
+          }
+        `,
+        {
+          id,
+          relationIds,
+        }
+      )
+      return removeUserGroupsFromVoucher
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useRemoveUserGroupsFromVoucher ${error.message}`)
       },
     }
   )

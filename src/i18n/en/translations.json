@@ -469,6 +469,14 @@
         "availablePackages": "Available Packages",
         "success": "Package price has been updated",
         "error": "Something went wrong when updating the package price into a voucher"
+      },
+      "userGroups": {
+        "title": "User groups",
+        "selectAvailableUserGroups": "Select available user groups",
+        "availableUserGroups": "Available user groups",
+        "removeSuccess": "User groups has been removed",
+        "success": "User groups has been updated",
+        "error": "Something went wrong when updating the user group into a voucher"
       }
     },
     "errors": {
