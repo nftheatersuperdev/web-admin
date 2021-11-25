@@ -132,15 +132,7 @@
       "!src/serviceWorker.ts",
       "!src/react-app-env.d.ts",
       "!src/reportWebVitals.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "statements": 10,
-        "branches": 1,
-        "functions": 10,
-        "lines": 10
-      }
-    }
+    ]
   },
   "msw": {
     "workerDirectory": "public"
