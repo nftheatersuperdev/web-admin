@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.7.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.6.0...v1.7.0) (2021-11-30)
+
+
+### Features
+
+* add 3 days package price for pricing EV-1669 ([6a95109](https://www.github.com/evmeio/evme-admin-web/commit/6a951091f3a510583d86c6e5f8acca8d23a5f257))
+* add checker for revoked of Firebase ID token ([34ddb1d](https://www.github.com/evmeio/evme-admin-web/commit/34ddb1d8df854939c5bb802764cf0be4e217d68b))
+* add duration filter by 3 days ([31e8799](https://www.github.com/evmeio/evme-admin-web/commit/31e879962815500f5a169e42ecae87fea2e449cf))
+* add helper text and validation of button ([e33a22e](https://www.github.com/evmeio/evme-admin-web/commit/e33a22ed58fe411988b11d3621e4d37fe6f3b90a))
+* add more fields to render in voucher and voucher event list page ([c970417](https://www.github.com/evmeio/evme-admin-web/commit/c970417636f590f2abe8cde916869b01f8512549))
+* add tooltip to add user button of user group manage ([bc79453](https://www.github.com/evmeio/evme-admin-web/commit/bc79453f6209a01646547e0c560c32b07fa7dbe0))
+* add user detail dialog ([c3b1a4b](https://www.github.com/evmeio/evme-admin-web/commit/c3b1a4b261775acdd1925ab3b924cb44db9fc2fc))
+* add user filter by user group ([5f9621a](https://www.github.com/evmeio/evme-admin-web/commit/5f9621a11a2753747a61e7c4e4b3399dae7a33e8))
+* change add user icon and update breadcrumbs label ([9fa0313](https://www.github.com/evmeio/evme-admin-web/commit/9fa0313a062f1db600174fab1a65265a2f12da69))
+* change editable to be dialog of user group ([9496ea9](https://www.github.com/evmeio/evme-admin-web/commit/9496ea996d182a0956d18a1f28e4fc7524626626))
+* delete voucher EV-1635 ([e05f839](https://www.github.com/evmeio/evme-admin-web/commit/e05f8390e231c6e46619e32cd7052d641b532624))
+* finish add non-registered to user group EV-1671, EV-1672, EV-1673 and EV-1674 ([9138e9a](https://www.github.com/evmeio/evme-admin-web/commit/9138e9a5a0cdb72d9c9d72937226ad6ef490dc5d))
+* finish create voucher event after updating or creating EV-1558 ([452b09a](https://www.github.com/evmeio/evme-admin-web/commit/452b09a5e219804cb17e225283ea2442d9000110))
+* finish select all or some package to set to voucher ([5d117f4](https://www.github.com/evmeio/evme-admin-web/commit/5d117f43dd93d1312cae4c15d751c95b853aeca5))
+* implement detail dialog for show information of event log ([14845ae](https://www.github.com/evmeio/evme-admin-web/commit/14845ae8e836c4126a036b249835727d6a50124d))
+* implement tab to assign user group to voucher EV-1684 ([6de67a7](https://www.github.com/evmeio/evme-admin-web/commit/6de67a748dbddb1530f2d38f325d9c9774adee30))
+* improve invite a user in whitelist EV-1673 ([e569fad](https://www.github.com/evmeio/evme-admin-web/commit/e569fad5d9e3d7f19d8efae308323060321c662d))
+* improve to filter users in user group list page ([665d038](https://www.github.com/evmeio/evme-admin-web/commit/665d0389e2a26dcc70a18b3934b924c153a45e35))
+* improve voucher desc to be HTML editor ([67f5f55](https://www.github.com/evmeio/evme-admin-web/commit/67f5f5537f5449ab6d5f3ae72d08590c6ec4c38e))
+* prepare to improve voucher event log to show all of data in dialog ([0141315](https://www.github.com/evmeio/evme-admin-web/commit/014131582d3dd334d4dfe76eb06b928252c35137))
+* update html tags following the EV-1604 ([068c2f0](https://www.github.com/evmeio/evme-admin-web/commit/068c2f0f4f407d7120799bb84b428c1c9f6cd64b))
+* user group management for voucher EV-1684 ([c578dde](https://www.github.com/evmeio/evme-admin-web/commit/c578dde3a5b36ff1fcdb09d1c33e36238f36c8d1))
+* voucher events view EV-1562 ([a05ab34](https://www.github.com/evmeio/evme-admin-web/commit/a05ab34d50eb3b1df44dbad9531975ede2de788b))
+
+
+### Bug Fixes
+
+* add condition to avoid disable the button ([e99c22c](https://www.github.com/evmeio/evme-admin-web/commit/e99c22c161807d443a33273a9cd70dab54cd9f93))
+* change api to delete a user group ([5ab28b5](https://www.github.com/evmeio/evme-admin-web/commit/5ab28b55a59fac087567005c64bafb04e90909c9))
+* changes from BE when create VoucherInput ([f82c69c](https://www.github.com/evmeio/evme-admin-web/commit/f82c69cf947af591ef3fa9847eca0cbcddb04d5b))
+* eslint coverageThreshold ([0a77f88](https://www.github.com/evmeio/evme-admin-web/commit/0a77f883e553c6f5c8cac2df914cae08bc042c1a))
+* incorrect condition to disable update button ([8c6d14a](https://www.github.com/evmeio/evme-admin-web/commit/8c6d14ae83e1ecd73304ac3150baf0158c5b6d52))
+* incorrect render duration label of pricing ([b8a6a07](https://www.github.com/evmeio/evme-admin-web/commit/b8a6a071a0cfac708b6b3cbcc480074591dd9b4c))
+* incorrect visibility columns of voucher list page ([ba74ecb](https://www.github.com/evmeio/evme-admin-web/commit/ba74ecbd7feacc071e8b9efc986ed16eee4b05b8))
+* remove unused code ([aeb0d1b](https://www.github.com/evmeio/evme-admin-web/commit/aeb0d1b6985fb231893b5fc949471c33b258b596))
+* typo ([d90e679](https://www.github.com/evmeio/evme-admin-web/commit/d90e679d113aaeea331e2408f0485275a9459a9f))
+
 ## [1.6.0](https://www.github.com/evmeio/evme-admin-web/compare/v1.5.1...v1.6.0) (2021-10-30)
 
 
