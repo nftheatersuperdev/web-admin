@@ -3403,6 +3403,15 @@ export type SubscriptionUpdatePlateInput = {
   carId: Scalars['String']
 }
 
+export type UserGroupDeleteInput = {
+  id: Scalars['String']
+}
+
+export type UserGroupInput = {
+  id?: Maybe<Scalars['String']>
+  name: Scalars['String']
+}
+
 export type ManualExtendSubscriptionInput = {
   subscriptionId: Scalars['String']
   returnDate: Scalars['DateTime']
@@ -3411,6 +3420,10 @@ export type ManualExtendSubscriptionInput = {
 export type SendDataViaEmailInput = {
   emails: Array<Scalars['String']>
   columns: Array<Scalars['String']>
+}
+
+export type RefId = {
+  id: Scalars['ID']
 }
 
 export type RefIdAndRelationIds = {
@@ -3440,6 +3453,7 @@ export type User = {
   tokenKyc?: Maybe<Scalars['String']>
   subscriptionsAggregate: Array<UserSubscriptionsAggregateResponse>
   favoriteChargingLocationsAggregate: Array<UserFavoriteChargingLocationsAggregateResponse>
+  userGroups: Array<UserGroup>
 }
 
 export type UserSubscriptionsArgs = {
@@ -3618,6 +3632,33 @@ export type UserFilter = {
   kycStatus?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
+}
+
+export type UserWhitelist = {
+  __typename?: 'UserWhitelist'
+  id: Scalars['ID']
+  value: Scalars['String']
+  type: Scalars['String']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type UserWhitelistInput = {
+  __typename?: 'UserWhitelistInput'
+  value: Scalars['String']
+  type: Scalars['String']
+}
+
+export type UserWhitelistRemoveInput = {
+  __typename?: 'UserWhitelistRemoveInput'
+  whitelistId: Scalars['ID']
+  userGroupId: Scalars['ID']
+}
+
+export type UserWhitelistFilter = {
+  id?: Maybe<StringFieldComparison>
+  value?: Maybe<StringFieldComparison>
+  type?: Maybe<StringFieldComparison>
 }
 
 export type UserInput = {
@@ -3835,8 +3876,11 @@ export enum WaitingListSortFields {
 }
 
 export type UserGroup = {
-  __typename?: 'userGroups'
+  __typename?: 'UserGroup'
+  id: Scalars['String']
   name: Scalars['String']
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
 }
 
 export type Voucher = {
@@ -3848,6 +3892,7 @@ export type Voucher = {
   percentDiscount: Scalars['Int']
   amount: Scalars['Int']
   limitPerUser: Scalars['Int']
+  isAllPackages: Scalars['Boolean']
   userGroups: Array<UserGroup>
   packagePrices: Array<PackagePrice>
   startAt: Scalars['DateTime']
@@ -3858,14 +3903,15 @@ export type Voucher = {
 
 export type VoucherInput = {
   id?: Maybe<Scalars['ID']>
-  code: Scalars['String']
-  descriptionEn: Scalars['String'] | undefined
-  descriptionTh: Scalars['String'] | undefined
+  code?: Maybe<Scalars['String']>
+  descriptionEn?: Maybe<Scalars['String']>
+  descriptionTh?: Maybe<Scalars['String']>
   percentDiscount?: Maybe<Scalars['Float']>
   amount?: Maybe<Scalars['Float']>
   limitPerUser?: Maybe<Scalars['Float']>
-  startAt: Scalars['DateTime']
-  endAt: Scalars['DateTime']
+  isAllPackages?: Maybe<Scalars['Boolean']>
+  startAt?: Maybe<Scalars['DateTime']>
+  endAt?: Maybe<Scalars['DateTime']>
 }
 
 export type VoucherFilter = {
@@ -3880,6 +3926,50 @@ export type VoucherFilter = {
   phoneNumber?: Maybe<StringFieldComparison>
   email?: Maybe<StringFieldComparison>
   kycStatus?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
+  updatedAt?: Maybe<DateFieldComparison>
+}
+
+export type VoucherEvents = {
+  __typename?: 'VoucherEvents'
+  id: Scalars['ID']
+  code: Scalars['String']
+  event: Scalars['String']
+  percentDiscount: Scalars['Int']
+  amount: Scalars['Int']
+  limitPerUser: Scalars['Int']
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+  descriptionEn: Scalars['String']
+  descriptionTh: Scalars['String']
+  isAllPackages: Scalars['Boolean']
+  voucher: Voucher
+  user: User
+  createdAt: Scalars['DateTime']
+  updatedAt: Scalars['DateTime']
+}
+
+export type VoucherEventsInput = {
+  __typename?: 'VoucherEventsInput'
+  voucherId?: Maybe<Scalars['ID']>
+  userId: Scalars['ID']
+  event: Scalars['String']
+  code: Scalars['String']
+  descriptionEn: Scalars['String']
+  descriptionTh: Scalars['String']
+  percentDiscount: Scalars['Int']
+  amount: Scalars['Int']
+  limitPerUser: Scalars['Int']
+  startAt: Scalars['DateTime']
+  endAt: Scalars['DateTime']
+  isAllPackages: Scalars['Boolean']
+}
+
+export type UserGroupFilter = {
+  and?: Maybe<Array<UserFilter>>
+  or?: Maybe<Array<UserFilter>>
+  id?: Maybe<StringFieldComparison>
+  name?: Maybe<StringFieldComparison>
   createdAt?: Maybe<DateFieldComparison>
   updatedAt?: Maybe<DateFieldComparison>
 }

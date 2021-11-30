@@ -11,10 +11,15 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT: '/account',
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
+  USER_GROUPS: '/user-groups',
+  USER_GROUP_USERS: '/user-groups/:ugid/users',
   SUBSCRIPTION: '/subscription',
   PRICING: '/pricing',
   CAR: '/car',
-  VOUCHER: '/voucher',
+  VOUCHER: '/vouchers',
+  VOUCHER_CREATE: '/vouchers/create',
+  VOUCHER_EDIT: '/vouchers/:voucherId/edit',
+  VOUCHER_EVENTS: '/vouchers/:voucherId/events',
   CHARGING_LOCATIONS: '/charging-locations',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
@@ -54,6 +59,16 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
   },
   {
+    path: ROUTE_PATHS.USER_GROUP_USERS,
+    component: lazy(() => import('./pages/UserGroupUsers' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.USER_GROUPS,
+    component: lazy(() => import('./pages/UserGroups' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
     path: ROUTE_PATHS.SUBSCRIPTION,
     component: lazy(() => import('./pages/Subscriptions' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
@@ -66,6 +81,21 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CAR,
     component: lazy(() => import('./pages/Car' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.VOUCHER_CREATE,
+    component: lazy(() => import('./pages/VoucherCreateEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.VOUCHER_EDIT,
+    component: lazy(() => import('./pages/VoucherCreateEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.VOUCHER_EVENTS,
+    component: lazy(() => import('./pages/VoucherEvents' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {

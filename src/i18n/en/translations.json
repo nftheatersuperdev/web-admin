@@ -15,6 +15,7 @@
   "sidebar": {
     "dashboard": "Dashboard",
     "users": "Users",
+    "userGroups": "User Groups",
     "cars": "Cars",
     "pricing": "Pricing",
     "vehicleManagement": "Vehicle Management",
@@ -41,7 +42,8 @@
     "confirm": "Confirm",
     "search": "Search",
     "clear": "Clear",
-    "back": "Back"
+    "back": "Back",
+    "invite": "Invite"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -164,6 +166,7 @@
     "verifyDate": "Verify Date",
     "note": "Note",
     "rejectedReason": "Reason of rejection",
+    "userGroups": "User groups",
     "enabled": "Enabled",
     "disabled": "Disabled",
     "actions": "Actions",
@@ -223,11 +226,13 @@
     "price": "Price",
     "fullPrice": "Full Price",
     "description": "Description",
+    "pricePerThreeDays": "Price per 3 days",
     "pricePerOneWeek": "Price per 1 week",
     "pricePerOneMonth": "Price per 1 month",
     "pricePerThreeMonths": "Price per 3 months",
     "pricePerSixMonths": "Price per 6 months",
     "pricePerTwelveMonths": "Price per 12 months",
+    "3d": "3 Days",
     "1w": "1 Week",
     "1m": "1 Month",
     "3m": "3 Months",
@@ -418,7 +423,8 @@
     "false": "False/Disable"
   },
   "voucher": {
-    "id": "ID",
+    "title": "Vouchers",
+    "id": "Voucher ID",
     "code": "Code",
     "percentDiscount": "Percent Discount",
     "amount": "Limit",
@@ -452,21 +458,103 @@
         "success": "Voucher has been updated",
         "error": "Something went wrong when updating the voucher"
       },
+      "delete": {
+        "confirmationMessage": "Do you want to remove the data?",
+        "success": "Voucher has been deleted",
+        "error": "Something went wrong!"
+      },
       "packagePrice": {
         "title": "Package Price",
         "selectAvailablePackages": "Select Available Packages",
+        "availablePackages": "Available Packages",
         "success": "Package price has been updated",
         "error": "Something went wrong when updating the package price into a voucher"
+      },
+      "userGroups": {
+        "title": "User groups",
+        "selectAvailableUserGroups": "Select available user groups",
+        "availableUserGroups": "Available user groups",
+        "removeSuccess": "User groups has been removed",
+        "success": "User groups has been updated",
+        "error": "Something went wrong when updating the user group into a voucher"
       }
     },
     "errors": {
       "duplicatedCode": "The voucher code is duplicated"
     }
   },
+  "voucherEvents": {
+    "title": "Voucher Events",
+    "id": "Event ID",
+    "userId": "User ID",
+    "userDetail": "User Detail",
+    "tooltip": {
+      "title": "See all events"
+    }
+  },
+  "userGroups": {
+    "title": "User Groups",
+    "id": "ID",
+    "name": "Name",
+    "createdAt": "Created Date",
+    "updatedAt": "Updated Date",
+    "button": {
+      "createNew": "Create new user group",
+      "addUser": {
+        "tooltip": "Add user to {{name}} group"
+      }
+    },
+    "alert": {
+      "changeName": {
+        "success": "Name has been updated",
+        "error": "Something went wrong!"
+      }
+    },
+    "dialog": {
+      "create": {
+        "title": "Create new user group",
+        "success": "User group has been created",
+        "error": "Something went wrong!"
+      },
+      "update": {
+        "title": "Update a user group",
+        "success": "User group has been updated",
+        "error": "Something went wrong!"
+      },
+      "delete": {
+        "confirmationMessage": "Do you want to remove the data?",
+        "success": "User has been deleted",
+        "error": "Something went wrong!"
+      },
+      "invitation": {
+        "title": "Invite a user become to the user group",
+        "button": "Invite a user",
+        "searchField": {
+          "label": "Search a user or enter new email address",
+          "example": "Ex. ptt or new email such as milano@italia.it",
+          "helperText": "Enter at least 3 characters to searching names, email or phone number on database"
+        },
+        "success": "User has been added",
+        "error": "Something went wrong!",
+        "duplicated": "The email is duplicated"
+      }
+    }
+  },
+  "whitelist": {
+    "title": "Non-registered users",
+    "value": "Value",
+    "type": "Type",
+    "tabs": {
+      "registeredUsers": "Registered users",
+      "nonRegisteredUsers": "Non-registered users"
+    }
+  },
   "validation": {
     "required": "Field is required",
     "minimumIsOne": "Minimum is 1",
     "maximumIsOneHundred": "Maximum is 100",
-    "invalidVoucherCode": "Invalid voucher code"
+    "invalidVoucherCode": "Invalid voucher code",
+    "invalidName": "Invalid name",
+    "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
   }
 }

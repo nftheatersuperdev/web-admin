@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Card, Button } from '@material-ui/core'
+import { Card, Button, IconButton } from '@material-ui/core'
+import PageviewIcon from '@material-ui/icons/Pageview'
 import {
   GridColDef,
   GridFilterItem,
@@ -7,6 +8,7 @@ import {
   GridPageChangeParams,
   GridValueFormatterParams,
   GridSortModel,
+  GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
@@ -21,11 +23,12 @@ import {
 } from 'utils'
 import config from 'config'
 import { useUsersFilterAndSort } from 'services/evme'
-import { UserFilter, SortDirection, SubOrder } from 'services/evme.types'
+import { UserFilter, SortDirection, SubOrder, User as UserType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import DetailDialog from './DetailDialog'
 
 const defaultFilter = {
   role: {
@@ -41,6 +44,8 @@ export default function User(): JSX.Element {
     ...defaultFilter,
   })
   const [userSort, setUserSort] = useState<SubOrder>({})
+  const [userDetail, setUserDetail] = useState<UserType>()
+  const [openUserDetailDialog, setOpenUserDetailDialog] = useState<boolean>(false)
 
   const {
     data: userData,
@@ -224,6 +229,14 @@ export default function User(): JSX.Element {
       filterable: false,
     },
     {
+      field: 'userGroups',
+      headerName: t('user.userGroups'),
+      description: t('user.userGroups'),
+      hide: !visibilityColumns.userGroups,
+      flex: 1,
+      filterOperators: stringFilterOperators,
+    },
+    {
       field: 'createdAt',
       headerName: t('user.createdDate'),
       description: t('user.createdDate'),
@@ -241,10 +254,58 @@ export default function User(): JSX.Element {
       filterOperators: dateFilterOperators,
       flex: 1,
     },
+    {
+      field: 'actions',
+      headerName: t('car.actions'),
+      description: t('car.actions'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: GridCellParams) => (
+        <IconButton
+          onClick={() => {
+            const userDetail: UserType = {
+              id: params.row.id,
+              firebaseId: params.row.firebaseId,
+              firstName: params.row.firstName,
+              lastName: params.row.lastName,
+              role: params.row.role,
+              subscriptions: params.row.subscriptions,
+              disabled: params.row.disabled,
+              phoneNumber: params.row.phoneNumber,
+              email: params.row.email,
+              omiseId: params.row.omiseId,
+              carTrackId: params.row.carTrackId,
+              defaultAddress: params.row.defaultAddress,
+              favoriteChargingLocations: params.row.favoriteChargingLocations,
+              kycStatus: params.row.kycStatus,
+              createdAt: params.row.createdAt,
+              updatedAt: params.row.updatedAt,
+              creditCard: params.row.creditCard,
+              tokenKyc: params.row.tokenKyc,
+              subscriptionsAggregate: params.row.subscriptionsAggregate,
+              favoriteChargingLocationsAggregate: params.row.favoriteChargingLocationsAggregate,
+              userGroups: params.row.userGroups,
+            }
+            setUserDetail(userDetail)
+            setOpenUserDetailDialog(true)
+          }}
+        >
+          <PageviewIcon />
+        </IconButton>
+      ),
+    },
   ]
+
+  // setUserDetail
 
   const users =
     userData?.data.map((user) => {
+      const userGroups =
+        user.userGroups.length > 0
+          ? user.userGroups.map((userGroup) => userGroup.name).join(',')
+          : '-'
+
       return {
         id: user.id,
         firstName: user.firstName,
@@ -258,6 +319,7 @@ export default function User(): JSX.Element {
         verifyDate: null,
         note: '',
         rejectedReason: '',
+        userGroups,
       }
     }) || []
 
@@ -293,6 +355,12 @@ export default function User(): JSX.Element {
           loading={isFetching}
         />
       </Card>
+
+      <DetailDialog
+        open={openUserDetailDialog}
+        user={userDetail}
+        onClose={() => setOpenUserDetailDialog(false)}
+      />
     </Page>
   )
 }

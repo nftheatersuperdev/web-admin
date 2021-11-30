@@ -12,6 +12,7 @@ import { EVmeAuthError, ERROR_CODES } from './errors'
 export const STORAGE_KEYS = {
   ROLE: 'evme:user_role',
   TOKEN: 'evme:user_token',
+  ID: 'evme:user_id',
 }
 
 interface AuthProviderProps {
@@ -35,6 +36,8 @@ interface AuthProps {
   setRole: (role: Role) => void
   getRole: () => string | null | undefined
   getRoleDisplayName: () => string
+  setUserId: (id: string) => void
+  getUserId: () => string | null | undefined
 }
 
 const Auth = createContext<AuthProps>({
@@ -49,6 +52,8 @@ const Auth = createContext<AuthProps>({
   setRole: (_role: Role) => undefined,
   getRole: () => undefined,
   getRoleDisplayName: () => '',
+  setUserId: (_id: string) => undefined,
+  getUserId: () => undefined,
 })
 
 export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps): JSX.Element {
@@ -78,6 +83,14 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
       const newToken = await firebaseUser.getIdToken(true)
       setToken(newToken)
     }
+  }
+
+  const setUserId = (id: string) => {
+    ls.set<string>(STORAGE_KEYS.ID, id)
+  }
+
+  const getUserId = (): string | null | undefined => {
+    return ls.get<string | null | undefined>(STORAGE_KEYS.ID)
   }
 
   const setRole = (role: Role) => {
@@ -132,7 +145,7 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
       )
 
       if (response.me) {
-        const { disabled, role } = response.me as User
+        const { disabled, role, id } = response.me as User
 
         if (disabled) {
           throw new EVmeAuthError('User disabled', ERROR_CODES.USER_DISABLED)
@@ -142,6 +155,7 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
           throw new EVmeAuthError('Role is invalid', ERROR_CODES.USER_NOT_FOUND)
         }
 
+        setUserId(id)
         setToken(token || '')
         setRole(role)
       } else {
@@ -190,6 +204,8 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
         setRole,
         getRole,
         getRoleDisplayName,
+        setUserId,
+        getUserId,
       }}
     >
       {children}

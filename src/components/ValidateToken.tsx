@@ -9,17 +9,6 @@ const InvisibilityDOM = styled.div`
   display: none;
 `
 
-export const checkInvalidatedToken = (error: unknown): boolean => {
-  if (error instanceof Error) {
-    const result = error.message.search(/invalidated/)
-    if (result >= 0) {
-      window.location.replace('/logout')
-      return false
-    }
-  }
-  return true
-}
-
 function ValidateToken(): JSX.Element {
   const { getToken, signOut } = useAuth()
   const history = useHistory()

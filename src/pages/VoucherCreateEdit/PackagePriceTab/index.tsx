@@ -1,17 +1,15 @@
+/* eslint-disable react/forbid-component-props */
 import { Fragment, useEffect, useState, ChangeEvent } from 'react'
 import {
-  TextField,
-  Grid,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  DialogContent,
   Button,
   Checkbox,
+  CircularProgress,
+  Divider,
+  FormControlLabel,
+  Grid,
   Radio,
   RadioGroup,
-  FormControlLabel,
-  CircularProgress,
+  TextField,
 } from '@material-ui/core'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
@@ -19,41 +17,39 @@ import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Au
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { Voucher, PackagePrice } from 'services/evme.types'
+import { PackagePrice } from 'services/evme.types'
 import {
   useVouchersSearchPackagePrices,
   useAddPackagePricesToVoucher,
   useRemovePackagePricesFromVoucher,
   useUpdateVoucher,
 } from 'services/evme'
+import { VoucherDataAndRefetchProps } from 'pages/VoucherCreateEdit/types'
 
 const ButtonSpace = styled(Button)`
-  margin: 0 15px 10px;
+  margin: 0;
+`
+const DividerSpace = styled(Divider)`
+  margin: 20px 0;
 `
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
 const checkedIcon = <CheckBoxIcon fontSize="small" />
-
-interface PackagePriceDialogProps {
-  voucher?: Voucher | null
-  open: boolean
-  onClose: () => void
-}
 
 const selectOptions = {
   ALL: 'all',
   SELECT: 'select',
 }
 
-export default function VoucherPackagePriceDialog({
+export default function VoucherPackagePriceTab({
   voucher,
-  open,
-  onClose,
-}: PackagePriceDialogProps): JSX.Element {
+  refetch,
+}: VoucherDataAndRefetchProps): JSX.Element {
   const existsOption = voucher?.isAllPackages ? selectOptions.ALL : selectOptions.SELECT
   const { t } = useTranslation()
   const [keyword] = useState<string>('')
-  const { data: masterPackagePrices } = useVouchersSearchPackagePrices(keyword)
+  const { data: masterPackagePrices, isSuccess: isSuccessToGetMasterPackagePrices } =
+    useVouchersSearchPackagePrices(keyword)
   const addPackagePricesToVoucher = useAddPackagePricesToVoucher()
   const removePackagePricesFromVoucher = useRemovePackagePricesFromVoucher()
   const updateVoucher = useUpdateVoucher()
@@ -67,7 +63,9 @@ export default function VoucherPackagePriceDialog({
 
   const optionLabel = (option: PackagePrice) => {
     let duration
-    if (option.duration === '1w') {
+    if (option.duration === '3d') {
+      duration = t('pricing.3d')
+    } else if (option.duration === '1w') {
       duration = t('pricing.1w')
     } else if (option.duration === '1m') {
       duration = t('pricing.1m')
@@ -96,7 +94,8 @@ export default function VoucherPackagePriceDialog({
     )
     setCurrentPackages(packages)
     setSelectedPackages(packages)
-  }, [masterPackagePrices, voucher?.packagePrices])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccessToGetMasterPackagePrices])
 
   useEffect(() => {
     if (JSON.stringify(currentPackages) !== JSON.stringify(selectedPackages)) {
@@ -134,7 +133,7 @@ export default function VoucherPackagePriceDialog({
     } else {
       setCurrentOption(selectOptions.SELECT)
     }
-  }, [voucher?.isAllPackages])
+  }, [voucher])
 
   const requestToUpdate = async (
     voucherId: string,
@@ -156,14 +155,15 @@ export default function VoucherPackagePriceDialog({
     return true
   }
 
-  const handleOnCloseDialog = () => {
-    setSelectedPackages([])
-    setCurrentOption(selectOptions.ALL)
+  const handleOnSubmitted = () => {
+    if (currentOption === selectOptions.ALL) {
+      setSelectedPackages([])
+    }
     setPackageIsEmpty(true)
     setPackageIsEqualToExists(true)
     setOptionIsEqualToExists(true)
-    onClose()
     setIsLoading(false)
+    refetch()
   }
 
   const handleUpdatePackagePrices = async () => {
@@ -196,7 +196,7 @@ export default function VoucherPackagePriceDialog({
         toastMessages
       )
     }
-    handleOnCloseDialog()
+    handleOnSubmitted()
   }
 
   const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {
@@ -204,75 +204,70 @@ export default function VoucherPackagePriceDialog({
   }
 
   return (
-    <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">
-        {t('voucher.dialog.packagePrice.title')} ({voucher?.code})
-      </DialogTitle>
-      <DialogContent>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <RadioGroup
-              aria-label="package-options"
-              name="package-options"
-              onChange={handleOnOptionChange}
-              defaultValue={currentOption}
-            >
-              <FormControlLabel
-                value={selectOptions.ALL}
-                control={<Radio />}
-                label="All Packages"
-              />
-              <FormControlLabel
-                value={selectOptions.SELECT}
-                control={<Radio />}
-                label={t('voucher.dialog.packagePrice.selectAvailablePackages')}
-              />
-            </RadioGroup>
-          </Grid>
+    <Fragment>
+      <Grid container spacing={3}>
+        <Grid item xs={12} style={{ textAlign: 'right' }}>
+          <ButtonSpace
+            disabled={
+              isLoading || optionIsEqualToExists || packageIsEqualToExists || packageIsEmpty
+            }
+            onClick={() => handleUpdatePackagePrices()}
+            color="primary"
+            variant="contained"
+          >
+            {isLoading && <CircularProgress size={20} />}&nbsp;
+            {t('button.update')}
+          </ButtonSpace>
         </Grid>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Autocomplete
-              multiple
-              id="package-price-select"
-              value={selectedPackages}
-              options={masterPackagePrices ?? []}
-              onChange={(_, newValue) => setSelectedPackages([...newValue])}
-              getOptionLabel={(option) => optionLabel(option)}
-              disableCloseOnSelect
-              renderOption={(option, { selected }: AutocompleteRenderOptionState) => (
-                <Fragment>
-                  <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
-                  {optionLabel(option)}
-                </Fragment>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...params}
-                  label={t('voucher.dialog.packagePrice.availablePackages')}
-                  variant="outlined"
-                />
-              )}
-              disabled={currentOption !== 'select'}
+      </Grid>
+      <DividerSpace />
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <RadioGroup
+            aria-label="package-options"
+            name="package-options"
+            onChange={handleOnOptionChange}
+            defaultValue={currentOption}
+            value={currentOption}
+          >
+            <FormControlLabel value={selectOptions.ALL} control={<Radio />} label="All Packages" />
+            <FormControlLabel
+              value={selectOptions.SELECT}
+              control={<Radio />}
+              label={t('voucher.dialog.packagePrice.selectAvailablePackages')}
             />
-          </Grid>
+          </RadioGroup>
         </Grid>
-      </DialogContent>
-      <DialogActions>
-        <ButtonSpace disabled={isLoading} onClick={() => handleOnCloseDialog()} color="primary">
-          {t('button.close')}
-        </ButtonSpace>
-        <ButtonSpace
-          disabled={isLoading || optionIsEqualToExists || packageIsEqualToExists || packageIsEmpty}
-          onClick={() => handleUpdatePackagePrices()}
-          color="primary"
-          variant="contained"
-        >
-          {isLoading && <CircularProgress size={20} />}&nbsp;
-          {t('button.update')}
-        </ButtonSpace>
-      </DialogActions>
-    </Dialog>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          {/* <pre>{JSON.stringify(selectedPackages, null, 2)}</pre> */}
+          <Autocomplete
+            multiple
+            id="package-price-select"
+            value={selectedPackages ?? []}
+            options={masterPackagePrices ?? []}
+            onChange={(_, newValue) => setSelectedPackages([...newValue])}
+            getOptionLabel={(option) => optionLabel(option)}
+            disableCloseOnSelect
+            renderOption={(option, { selected }: AutocompleteRenderOptionState) => (
+              <Fragment>
+                <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
+                {optionLabel(option)}
+              </Fragment>
+            )}
+            renderInput={(params) => (
+              <TextField
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...params}
+                label={t('voucher.dialog.packagePrice.availablePackages')}
+                variant="outlined"
+              />
+            )}
+            disabled={currentOption !== 'select'}
+          />
+        </Grid>
+      </Grid>
+    </Fragment>
   )
 }

@@ -1,6 +1,14 @@
+import toast from 'react-hot-toast'
+import { useHistory } from 'react-router-dom'
 import { useState, useEffect, Fragment } from 'react'
-import { Card, Button, IconButton, Chip } from '@material-ui/core'
-import { Edit as EditIcon, Redeem as VoucherIcon } from '@material-ui/icons'
+import { Card, Button, IconButton, Chip, Tooltip } from '@material-ui/core'
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Note as NoteIcon,
+  Check as CheckIcon,
+  NotInterested as NotInterestedIcon,
+} from '@material-ui/icons'
 import {
   GridColDef,
   GridFilterItem,
@@ -24,7 +32,7 @@ import {
   columnFormatDate,
 } from 'utils'
 import config from 'config'
-import { useVouchersFilterAndSort } from 'services/evme'
+import { useVouchersFilterAndSort, useDeleteVoucher } from 'services/evme'
 import { VoucherFilter, SortDirection, SubOrder, Voucher as VoucherType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
@@ -34,6 +42,7 @@ import CreateUpdateDialog from './CreateUpdateDialog'
 import PackagePriceDialog from './PackagePriceDialog'
 
 export default function Voucher(): JSX.Element {
+  const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
@@ -48,6 +57,7 @@ export default function Voucher(): JSX.Element {
     refetch,
     isFetching,
   } = useVouchersFilterAndSort(voucherFilter, voucherSort, currentPageIndex, pageSize)
+  const deleteVoucher = useDeleteVoucher()
 
   const idFilterOperators = getIdFilterOperators(t)
   const numericFilterOperators = getNumericFilterOperators(t)
@@ -147,34 +157,22 @@ export default function Voucher(): JSX.Element {
     }
   }
 
-  const handleDialogData = (module: string, data: GridRowData) => {
-    const object: VoucherType = {
-      id: data.id,
-      code: data.code,
-      descriptionEn: data.descriptionEn,
-      descriptionTh: data.descriptionTh,
-      percentDiscount: data.percentDiscount,
-      amount: data.amount,
-      limitPerUser: data.limitPerUser,
-      userGroups: data.userGroups,
-      packagePrices: data.packagePrices,
-      startAt: data.startAt,
-      endAt: data.endAt,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
-    }
-    setSelectedVoucher(object)
-
-    if (module === 'createUpdate') {
-      setCreateUpdateDialogOpen(true)
-    } else if (module === 'packagePrice') {
-      setPackagePriceDialogOpen(true)
+  const handleDeleteRow = (data: GridRowData) => {
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(t('voucher.dialog.delete.confirmationMessage'))
+    if (confirmed) {
+      const { id } = data
+      toast.promise(deleteVoucher.mutateAsync({ id }), {
+        loading: t('toast.loading'),
+        success: () => {
+          return t('voucher.dialog.delete.success')
+        },
+        error: () => {
+          return t('voucher.dialog.delete.error')
+        },
+      })
     }
   }
-
-  // const handleDeleteRow = (data: GridRowData) => {
-  //   console.log('handleDeleteRow: data ->', data)
-  // }
 
   useEffect(() => {
     refetch()
@@ -267,6 +265,19 @@ export default function Voucher(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
+      field: 'isAllPackages',
+      headerName: 'ALL Packages',
+      description: 'ALL Packages',
+      hide: !visibilityColumns.isAllPackages,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: ({ row }: GridCellParams) =>
+        row.isAllPackages ? <CheckIcon fontSize="small" /> : <NotInterestedIcon fontSize="small" />,
+    },
+    {
       field: 'createdAt',
       headerName: t('voucher.createdAt'),
       description: t('voucher.createdAt'),
@@ -319,21 +330,34 @@ export default function Voucher(): JSX.Element {
       field: 'actions',
       headerName: t('car.actions'),
       description: t('car.actions'),
+      flex: 1,
       sortable: false,
       filterable: false,
-      width: 140,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params: GridCellParams) => {
         return (
           <Fragment>
-            <IconButton onClick={() => handleDialogData('createUpdate', params.row)}>
+            <IconButton size="small" onClick={() => history.push(`/vouchers/${params.id}/edit`)}>
               <EditIcon />
             </IconButton>
-            <IconButton onClick={() => handleDialogData('packagePrice', params.row)}>
-              <VoucherIcon />
-            </IconButton>
-            {/* <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+            <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
+              <IconButton
+                size="small"
+                onClick={() =>
+                  history.push(`/vouchers/${params.id}/events?code=${params.row.code}`)
+                }
+              >
+                <NoteIcon />
+              </IconButton>
+            </Tooltip>
+            <IconButton
+              size="small"
+              aria-label="delete"
+              onClick={() => handleDeleteRow(params.row)}
+            >
               <DeleteIcon />
-            </IconButton> */}
+            </IconButton>
           </Fragment>
         )
       },
@@ -350,6 +374,7 @@ export default function Voucher(): JSX.Element {
         percentDiscount: voucher.percentDiscount,
         amount: voucher.amount,
         limitPerUser: voucher.limitPerUser,
+        isAllPackages: voucher.isAllPackages,
         userGroups: voucher.userGroups,
         packagePrices: voucher.packagePrices,
         startAt: voucher.startAt,
@@ -365,9 +390,7 @@ export default function Voucher(): JSX.Element {
         <Button
           color="primary"
           variant="contained"
-          onClick={() => {
-            setCreateUpdateDialogOpen(true)
-          }}
+          onClick={() => history.push('/vouchers/create')}
         >
           {t('voucher.button.createNew')}
         </Button>

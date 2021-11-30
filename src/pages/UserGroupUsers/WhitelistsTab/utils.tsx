@@ -1,26 +1,16 @@
 import ls from 'localstorage-slim'
 
 const STORAGE_KEYS = {
-  VISIBILITY_COLUMNS: 'evme:vouchers:visibility_columns',
-}
-
-export const events = {
-  CREATE: 'create',
-  UPDATE: 'update',
-  DELETE: 'delete',
+  VISIBILITY_COLUMNS: 'evme:user-group:whitelist-users:visibility_columns',
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
   id: false,
-  code: true,
-  description: true,
-  percentDiscount: true,
-  amount: true,
-  limitPerUser: false,
-  startAt: false,
-  endAt: false,
-  createdAt: false,
-  updatedAt: false,
+  name: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phoneNumber: true,
 }
 
 export interface VisibilityColumns {

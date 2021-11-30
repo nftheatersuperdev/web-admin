@@ -1,11 +1,12 @@
 import { TFunction, Namespace } from 'react-i18next'
 import { PackagePriceInput } from 'services/evme.types'
 
-export type Period = 'price1w' | 'price1m' | 'price3m' | 'price6m' | 'price12m'
+export type Period = 'price3d' | 'price1w' | 'price1m' | 'price3m' | 'price6m' | 'price12m'
 
 export type CarModelPrice = Pick<PackagePriceInput, 'price' | 'fullPrice' | 'description'>
 
 export interface CarModelPrices {
+  price3d: CarModelPrice
   price1w: CarModelPrice
   price1m: CarModelPrice
   price3m: CarModelPrice
@@ -14,6 +15,11 @@ export interface CarModelPrices {
 }
 
 export const defaultCarModelPrices = {
+  price3d: {
+    price: 0,
+    fullPrice: 0,
+    description: '',
+  },
   price1w: {
     price: 0,
     fullPrice: 0,
@@ -42,6 +48,7 @@ export const defaultCarModelPrices = {
 }
 
 interface PriceChangeResult {
+  isPrice3DChange: boolean
   isPrice1WChange: boolean
   isPrice1MChange: boolean
   isPrice3MChange: boolean
@@ -53,8 +60,9 @@ export const getPriceChanges = (
   carModelPrices: CarModelPrices,
   refCarModelPrices: CarModelPrices
 ): PriceChangeResult => {
-  const { price1w, price1m, price3m, price6m, price12m } = carModelPrices
+  const { price3d, price1w, price1m, price3m, price6m, price12m } = carModelPrices
   const {
+    price3d: refPrice3d,
     price1w: refPrice1w,
     price1m: refPrice1m,
     price3m: refPrice3m,
@@ -63,6 +71,10 @@ export const getPriceChanges = (
   } = refCarModelPrices
 
   return {
+    isPrice3DChange:
+      price3d.price !== refPrice3d.price ||
+      price3d.fullPrice !== refPrice3d.fullPrice ||
+      price3d.description !== refPrice3d.description,
     isPrice1WChange:
       price1w.price !== refPrice1w.price ||
       price1w.fullPrice !== refPrice1w.fullPrice ||
@@ -88,6 +100,8 @@ export const getPriceChanges = (
 
 export const columnFormatDuration = (duration: string, t: TFunction<Namespace>): string => {
   switch (duration) {
+    case '3d':
+      return t('pricing.3d')
     case '1w':
       return t('pricing.1w')
     case '1m':
@@ -109,6 +123,10 @@ interface SelectOption {
 }
 
 export const getDurationOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('pricing.3d'),
+    value: '3d',
+  },
   {
     label: t('pricing.1w'),
     value: '1w',
