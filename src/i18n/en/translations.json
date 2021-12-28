@@ -93,6 +93,9 @@
     "title": "404 - Page Not Found"
   },
   "dashboard": {
+    "overall": "Overall",
+    "kyc": "KYCs (Sumsub)",
+    "subscription": "Subscription",
     "totalCars": {
       "title": "Total Cars",
       "subTitle": "Number of cars currently available"
@@ -100,6 +103,14 @@
     "totalSubscriptions": {
       "title": "Total Subscriptions",
       "subTitle": "Number of currently active subscriptions"
+    },
+    "totalUpcomingCarsDelivery": {
+      "title": "Upcoming Cars Delivery",
+      "subTitle": "Today"
+    },
+    "totalUpcomingCarsReturn": {
+      "title": "Upcoming Cars Return",
+      "subTitle": "Today"
     },
     "totalPayments": {
       "title": "Total Payments",

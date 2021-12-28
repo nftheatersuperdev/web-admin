@@ -10,6 +10,7 @@ interface Config {
   evme: string
   googleMapsApiKey: string
   firebase: Record<string, string>
+  maxInteger: number
 }
 
 const config: Config = {
@@ -33,6 +34,7 @@ const config: Config = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID || '',
     measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID || '',
   },
+  maxInteger: 2147483647,
 }
 
 export default config

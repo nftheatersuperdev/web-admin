@@ -93,6 +93,9 @@
     "title": "404 - ไม่พบหน้า"
   },
   "dashboard": {
+    "overall": "Overall",
+    "kyc": "KYCs (Sumsub)",
+    "subscription": "Subscription",
     "totalCars": {
       "title": "รถยนต์",
       "subTitle": "จำนวนรถยนต์ทั้งหมด"
@@ -100,6 +103,14 @@
     "totalSubscriptions": {
       "title": "ข้อมูลการจอง",
       "subTitle": "จำนวนการจองทั้งหมด"
+    },
+    "totalUpcomingCarsDelivery": {
+      "title": "Upcoming Cars Delivery",
+      "subTitle": "Today"
+    },
+    "totalUpcomingCarsReturn": {
+      "title": "Upcoming Cars Return",
+      "subTitle": "Today"
     },
     "totalPayments": {
       "title": "ยอดชำระเงิน",

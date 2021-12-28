@@ -65,6 +65,14 @@ const FieldComparisons = {
   is: 'is',
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const nowLowerUpper = () => {
+  return {
+    lower: dayjs().startOf('day'),
+    upper: dayjs().endOf('day'),
+  }
+}
+
 export const dateToFilterOnDay = (date: Date): DateFieldComparisonBetween => {
   return {
     upper: dayjs(date).endOf('day').toDate(),
