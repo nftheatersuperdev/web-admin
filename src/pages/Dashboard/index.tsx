@@ -6,12 +6,20 @@ import {
   CardMembership as SubscriptionIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { formatMoney } from 'utils'
+import { filter } from 'lodash/fp'
+import { formatMoney, nowLowerUpper } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import CardStatus from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
-import { useCars, usePayments, useSubscriptions, useUsers } from 'services/evme'
+import {
+  useCars,
+  usePayments,
+  useSubscriptions,
+  useSubscriptionsFilterAndSort,
+  useUsers,
+} from 'services/evme'
+import { CarEdge } from 'services/evme.types'
 import CarsDelivery from './CarsDelivery'
 import CarsReturn from './CarsReturn'
 import UserRegistration from './UserRegistration'
@@ -63,8 +71,16 @@ const quickLinks = [
 
 export default function Dashboard(): JSX.Element {
   const { t } = useTranslation()
-  const { data: cars } = useCars()
+  const { data: cars } = useCars(config.maxInteger)
   const { data: subscriptions } = useSubscriptions()
+  const { data: upcomingDelieverySubscriptions } = useSubscriptionsFilterAndSort({
+    startDate: { between: nowLowerUpper() },
+    events: { status: { eq: 'accepted' } },
+  })
+  const { data: upcomingReturnSubscriptions } = useSubscriptionsFilterAndSort({
+    endDate: { between: nowLowerUpper() },
+    events: { status: { eq: 'delivered' } },
+  })
   const { data: payments } = usePayments()
   const { data: users } = useUsers(config.tableRowsDefaultPageSize, {
     // filter only "user"
@@ -72,40 +88,34 @@ export default function Dashboard(): JSX.Element {
       eq: 'user',
     },
   })
-
   const totalCars = cars?.pages[0]?.totalCount || 0
-
+  const totalAvailableCars = filter((e: CarEdge) => e.node.latestStatus === 'available')(
+    cars?.pages[0]?.edges
+  ).length
   const totalSubscriptions = subscriptions?.pages[0]?.totalCount || 0
 
   const totalPaymentAmountToday =
     payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
 
   const totalUsers = users?.pages[0]?.totalCount || 0
-
+  const totalUpcomingCarsDelivery = upcomingDelieverySubscriptions?.totalData || 0
+  const totalUpcomingCarsReturn = upcomingReturnSubscriptions?.totalData || 0
   return (
     <Page>
       <Grid container spacing={3}>
-        <Grid item lg={3} sm={6} xl={3} xs={12}>
+        <Grid item xs={12}>
+          <h1>{t('dashboard.overall')}</h1>
+        </Grid>
+        <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalCars.title')}
-            value={totalCars}
+            value={`${totalAvailableCars}/${totalCars}`}
             subTitle={t('dashboard.totalCars.subTitle')}
             icon={<CarIcon />}
             iconColor="red"
           />
         </Grid>
-
-        <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <CardStatus
-            title={t('dashboard.totalSubscriptions.title')}
-            value={totalSubscriptions}
-            subTitle={t('dashboard.totalSubscriptions.subTitle')}
-            icon={<SubscriptionIcon />}
-            iconColor="purple"
-          />
-        </Grid>
-
-        <Grid item lg={3} sm={6} xl={3} xs={12}>
+        <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalPayments.title')}
             value={formatMoney(totalPaymentAmountToday)}
@@ -114,8 +124,7 @@ export default function Dashboard(): JSX.Element {
             iconColor="green"
           />
         </Grid>
-
-        <Grid item lg={3} sm={6} xl={3} xs={12}>
+        <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalUsers.title')}
             value={totalUsers}
@@ -124,11 +133,42 @@ export default function Dashboard(): JSX.Element {
             iconColor="#5d4037"
           />
         </Grid>
-
+        <Grid item xs={12}>
+          <h1>{t('dashboard.kyc')}</h1>
+        </Grid>
         <Grid item xs={12}>
           <UserRegistration />
         </Grid>
-
+        <Grid item xs={12}>
+          <h1>{t('dashboard.subscription')}</h1>
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <CardStatus
+            title={t('dashboard.totalSubscriptions.title')}
+            value={totalSubscriptions}
+            subTitle={t('dashboard.totalSubscriptions.subTitle')}
+            icon={<SubscriptionIcon />}
+            iconColor="purple"
+          />
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <CardStatus
+            title={t('dashboard.totalUpcomingCarsDelivery.title')}
+            value={totalUpcomingCarsDelivery}
+            subTitle={t('dashboard.totalUpcomingCarsDelivery.subTitle')}
+            icon={<SubscriptionIcon />}
+            iconColor="purple"
+          />
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <CardStatus
+            title={t('dashboard.totalUpcomingCarsReturn.title')}
+            value={totalUpcomingCarsReturn}
+            subTitle={t('dashboard.totalUpcomingCarsReturn.subTitle')}
+            icon={<SubscriptionIcon />}
+            iconColor="purple"
+          />
+        </Grid>
         <Grid item xs={12} lg={6}>
           <CarsDelivery />
         </Grid>

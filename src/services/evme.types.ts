@@ -675,6 +675,7 @@ export type CarFilter = {
   carModelId?: Maybe<StringFieldComparison>
   color?: Maybe<StringFieldComparison>
   carTrackId?: Maybe<StringFieldComparison>
+  status?: Maybe<StringFieldComparison>
 }
 
 export type CarInput = {
