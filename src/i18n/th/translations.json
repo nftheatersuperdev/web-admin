@@ -1,0 +1,597 @@
+{
+  "header": {
+    "aria": {
+      "sidebarToggle": "สลับแถบด้านข้าง",
+      "logo": "โลโก้ EVme",
+      "changeLanguage": "เปลี่ยนภาษา",
+      "settings": "ตั้งค่า",
+      "login": "เข้าสู่ระบบ"
+    },
+    "menu": {
+      "profile": "โปรไฟล์",
+      "logout": "ออกจากระบบ"
+    }
+  },
+  "sidebar": {
+    "dashboard": "แดชบอร์ด",
+    "users": "ผู้ใช้",
+    "userGroups": "กลุ่มผู้ใช้งาน",
+    "cars": "รถยนต์",
+    "pricing": "ราคาแพ็คเกจ",
+    "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
+    "vehicleManagement": "การจัดการยานพาหนะ",
+    "subscriptionManagement": "การจัดการการจอง",
+    "voucherManagement": "การจัดการวอชเชอร์",
+    "subscriptions": "ข้อมูลการจอง",
+    "vouchers": "วอชเชอร์",
+    "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
+    "others": "อื่นๆ",
+    "chargingLocations": "สถานีชาร์จ",
+    "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
+    "account": "บัญชีผู้ใช้",
+    "profile": "โปรไฟล์",
+    "settings": "ตั้งค่า"
+  },
+  "button": {
+    "signIn": "เข้าสู่ระบบ",
+    "signOut": "ออกจากระบบ",
+    "create": "สร้าง",
+    "update": "แก้ไข",
+    "delete": "ลบ",
+    "cancel": "ยกเลิก",
+    "close": "ปิด",
+    "confirm": "ยืนยัน",
+    "search": "ค้นหา",
+    "clear": "เคลียร์",
+    "back": "กลับ",
+    "invite": "เชิญชวน",
+    "inviteAmount": "เชิญชวน {{amount}} อีเมล"
+  },
+  "datetimePicker": {
+    "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
+    "invalidLabel": "เกิดข้อผิดพลาด",
+    "cancelLabel": "ยกเลิก",
+    "clearLabel": "เคลียร์",
+    "okLabel": "ตกลง",
+    "todayLabel": "วันนี้"
+  },
+  "toast": {
+    "loading": "กำลังดำเนินการ..."
+  },
+  "authentication": {
+    "success": "เข้าสู่ระบบสำเร็จ",
+    "error": {
+      "emailRequired": "ระบุอีเมล",
+      "passwordRequired": "ระบุรหัสผ่าน",
+      "invalidEmail": "อีเมลไม่ถูกต้อง",
+      "invalidPassword": "รหัสผ่านไม่ถูกต้อง",
+      "invalidUserToken": "รหัส Token ไม่ถูกต้อง",
+      "invalidCredential": "การยืนยันตัวตนไม่ถูกต้อง",
+      "userNotFound": "ไม่มีชื่อผู้ใช้นี้ในระบบ",
+      "userDisabled": "ชื่อผู้ใช้นี้ไม่สามารถใช้งานได้",
+      "userTokenExpired": "รหัส Token หมดอายุ",
+      "userMismatch": "ชื่อผู้ใช้ไม่ตรงกัน",
+      "weakPassword": "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+      "requiresRecentLogin": "กรุณาลงชื่อเข้าใช้ระบบอีกครั้ง",
+      "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
+      "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
+      "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ"
+    }
+  },
+  "login": {
+    "title": "EVme",
+    "subTitle": "Admin Portal",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "rememberMe": "จำรหัสผ่านของฉัน"
+  },
+  "home": {
+    "title": "ยินดีต้อนรับเข้าสู่ EVme Admin Portal"
+  },
+  "forbidden": {
+    "title": "403 - คุณไม่มีสิทธิ์ในการเข้าถึง"
+  },
+  "notFound": {
+    "title": "404 - ไม่พบหน้า"
+  },
+  "dashboard": {
+    "overall": "Overall",
+    "kyc": "KYCs (Sumsub)",
+    "subscription": "Subscription",
+    "totalCars": {
+      "title": "รถยนต์",
+      "subTitle": "จำนวนรถยนต์ทั้งหมด"
+    },
+    "totalSubscriptions": {
+      "title": "ข้อมูลการจอง",
+      "subTitle": "จำนวนการจองทั้งหมด"
+    },
+    "totalUpcomingCarsDelivery": {
+      "title": "Upcoming Cars Delivery",
+      "subTitle": "Today"
+    },
+    "totalUpcomingCarsReturn": {
+      "title": "Upcoming Cars Return",
+      "subTitle": "Today"
+    },
+    "totalPayments": {
+      "title": "ยอดชำระเงิน",
+      "subTitle": "ยอดชำระเงินรวมวันนี้"
+    },
+    "totalUsers": {
+      "title": "สมาชิก",
+      "subTitle": "จำนวนสมาชิกทั้งหมด"
+    },
+    "totalRequestedCases": {
+      "title": "ได้รับเอกสาร",
+      "subTitle": "จำนวนได้รับเอกสาร"
+    },
+    "totalApprovedCases": {
+      "title": "ผ่านการตรวจสอบ",
+      "subTitle": "จำนวนผ่านการตรวจสอบ"
+    },
+    "totalRejectedCases": {
+      "title": "ไม่ผ่านการตรวจสอบ",
+      "subTitle": "จำนวนไม่ผ่านการตรวจสอบ"
+    },
+    "quickLinks": "ควิกลิงค์",
+    "carDelivery": {
+      "title": "รถยนต์ที่ต้องจัดส่ง",
+      "dialogTitle": "รายละเอียดการจัดส่ง"
+    },
+    "carReturn": {
+      "title": "รถยนต์ที่ต้องรับคืน",
+      "dialogTitle": "รายละเอียดการรับคืน"
+    },
+    "reportOfUserRegistration": {
+      "title": "รายงานการตรวจสอบความถูกต้องของบุคคล",
+      "periodDate": "ประจำวันที่"
+    },
+    "selectedDate": "วันที่",
+    "subscriptionId": "หมายเลขการจอง",
+    "userName": "ชื่อสมาชิก",
+    "carDisplayName": "รถยนต์",
+    "plateNumber": "เลขทะเบียน",
+    "deliveryDate": "วันที่จัดส่ง",
+    "returnDate": "วันที่รับคืน",
+    "email": "อีเมล",
+    "phone": "หมายเลขโทรศัพท์",
+    "remark": "หมายเหตุ"
+  },
+  "user": {
+    "id": "เลขไอดี",
+    "email": "อีเมล",
+    "phone": "เบอร์โทรศัพท์",
+    "role": "ระดับผู้ใช้",
+    "createdDate": "วันที่สมัคร",
+    "updatedDate": "วันที่แก้ไข",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "fullName": "ชื่อ-นามสกุล",
+    "status": "สถานะ",
+    "kyc": {
+      "status": "สถานะ KYC",
+      "pending": "รอการตรวจสอบ",
+      "verified": "ผ่านการตรวจสอบ",
+      "rejected": "ถูกปฏิเสธ"
+    },
+    "verifyDate": "วันที่ตรวจสอบ",
+    "note": "โน๊ต",
+    "rejectedReason": "เหตุผลของการปฏิเสธ",
+    "userGroups": "กลุ่มผู้ใช้งาน",
+    "enabled": "เปิด",
+    "disabled": "ปิด",
+    "actions": "ดำเนินการ",
+    "detailDialog": {
+      "title": "ข้อมูลผู้ใช้"
+    }
+  },
+  "car": {
+    "id": "เลขไอดี",
+    "brand": "ยี่ห้อ",
+    "model": "รุ่น",
+    "color": "สี",
+    "colorHex": "สี (Hex)",
+    "plateNumber": "เลขทะเบียน",
+    "bodyType": "ประเภท",
+    "topSpeed": "ความเร็วสูงสุด",
+    "acceleration": "อัตราเร่ง",
+    "range": "ระยะทาง",
+    "totalPower": "แรงม้า",
+    "batteryCapacity": "ความจุแบตเตอร์รี่",
+    "connectorType": "ประเภทหัวชาร์จ",
+    "chargeTime": "ระยะเวลาชาร์จปกติ",
+    "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
+    "vin": "หมายเลขตัวถัง",
+    "actions": "ดำเนินการ",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "createButton": "สร้างข้อมูลรถยนต์",
+    "createDialog": {
+      "title": "สร้างข้อมูลรถยนต์ใหม่",
+      "success": "สร้างข้อมูลรถยนต์สำเร็จ",
+      "error": "สร้างข้อมูลรถยนต์ไม่สำเร็จ"
+    },
+    "updateDialog": {
+      "title": "แก้ไขข้อมูลรถยนต์",
+      "success": "แก้ไขข้อมูลรถยนต์สำเร็จ",
+      "error": "แก้ไขข้อมูลรถยนต์ไม่สำเร็จ"
+    },
+    "deleteDialog": {
+      "title": "ลบข้อมูลรถยนต์",
+      "message": "คุณแน่ใจหรือว่าต้องการลบข้อมูลรายการนี้",
+      "success": "ลบข้อมูลรถยนต์สำเร็จ",
+      "error": "ลบข้อมูลรถยนต์ไม่สำเร็จ"
+    },
+    "status": "สถานะ",
+    "statuses": {
+      "available": "พร้อมใช้งาน",
+      "outOfService": "ไม่พร้อมใช้งาน"
+    }
+  },
+  "pricing": {
+    "id": "เลขไอดี",
+    "duration": "แพ็คเกจ",
+    "brand": "ยี่ห้อ",
+    "model": "รุ่น",
+    "modelId": "เลขไอดีรุ่นรถยนต์",
+    "price": "ราคา",
+    "fullPrice": "ราคาปกติ",
+    "description": "คำอธิบาย",
+    "pricePerThreeDays": "ราคาต่อ 3 วัน",
+    "pricePerOneWeek": "ราคาต่อ 1 สัปดาห์",
+    "pricePerOneMonth": "ราคาต่อ 1 เดือน",
+    "pricePerThreeMonths": "ราคาต่อ 3 เดือน",
+    "pricePerSixMonths": "ราคาต่อ 6 เดือน",
+    "pricePerTwelveMonths": "ราคาต่อ 12 เดือน",
+    "3d": "3 วัน",
+    "1w": "1 สัปดาห์",
+    "1m": "1 เดือน",
+    "3m": "3 เดือน",
+    "6m": "6 เดือน",
+    "12m": "12 เดือน",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "createButton": "สร้างราคาใหม่",
+    "createDialog": {
+      "title": "สร้างราคา",
+      "success": "สร้างราคาสำเร็จ",
+      "error": "สร้างราคาไม่สำเร็จ"
+    },
+    "updateDialog": {
+      "title": "แก้ไขราคา",
+      "success": "แก้ไขราคาสำเร็จ",
+      "error": "แก้ไขราคาไม่สำเร็จ"
+    }
+  },
+  "subscription": {
+    "id": "ไอดี",
+    "brand": "ยี่ห้อ",
+    "model": "รุ่น",
+    "modelId": "เลขไอดีรุ่นรถยนต์",
+    "seats": "จำนวนที่นั่ง",
+    "topSpeed": "ความเร็วสูงสุด",
+    "plateNumber": "เลขทะเบียน",
+    "vin": "หมายเลขตัวถัง",
+    "price": "ราคา",
+    "duration": "ระยะเวลาการจอง",
+    "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
+    "email": "อีเมล",
+    "phone": "เบอร์โทรศัพท์",
+    "firstName": "ชื่อจริง",
+    "lastName": "นามสกุล",
+    "startDate": "วันที่เริ่มต้น",
+    "endDate": "วันที่สิ้นสุด",
+    "startAddress": "ที่อยู่จัดส่ง",
+    "startAddressRemark": "รายละเอียด ที่อยู่จัดส่ง",
+    "endAddress": "ที่อยู่รับคืน",
+    "endAddressRemark": "รายละเอียด ที่อยู่รับคืน",
+    "createdDate": "วันที่กดจอง",
+    "updatedDate": "วันที่แก้ไข",
+    "omiseButton": "เปิด Omise",
+    "sendAllDataViaEmailButton": "ส่งออก",
+    "carDetails": "รายละเอียดรถ",
+    "updateSubscriptionDetails": "อัพเดทรายละเอียดการสมัครสมาชิก",
+    "bookingDetails": "รายละเอียดการจอง",
+    "subscriptionId": "หมายเลขการจอง",
+    "voucherCode": "รหัสวอชเชอร์",
+    "paymentVersion": "เวอร์ชันการชำระเงิน",
+    "status": {
+      "title": "สถานะ",
+      "reserved": "สำรองแล้ว",
+      "accepted": "ชำระแล้ว",
+      "delivered": "นำส่งรถแล้ว",
+      "cancelled": "ยกเลิก",
+      "upcoming_cancelled": "ยกเลิกก่อนนำส่ง",
+      "refused": "ชำระเงินถูกปฏิเสธ",
+      "completed": "คืนรถแล้ว",
+      "extended": "ต่ออายุการจอง",
+      "manual_extended": "กำหนด ต่ออายุการจอง"
+    },
+    "noData": "ไม่มีข้อมูล",
+    "updateDialog": {
+      "success": "ปรับปรุงหมายการจองเรียบร้อยแล้ว",
+      "error": "การปรับปรุงหมายการจองไม่สำเร็จ"
+    },
+    "extending": {
+      "headerName": "การยืดระยะเวลา",
+      "description": "การยืดระยะเวลาจะทำการคำนวณจากเวลาหมดอายุปัจจุบันและบวกเพิ่มไปอีก 2 วัน",
+      "button": "ยืดระยะเวลา",
+      "confirmationMessage": "คุณต้องการจะทำการยืดระยะเวลาหมดอายุจากวันที่ :originalDate ไปเป็น :newDate ของรายการจองนี้?"
+    },
+    "sendAllData": {
+      "success": "รายการถูกสร้างขึ้นเรียบร้อยแล้ว",
+      "error": "การสร้างรายงานไม่สำเร็จ",
+      "dialog": {
+        "title": "ส่งออก",
+        "description": "กรุณากรอกข้อมูลอย่างน้อย 1 อีเมล",
+        "inputBox": {
+          "label": "อีเมล",
+          "placeholder": "กรุณากรอกอีเมลของท่าน ตัวอย่าง เช่น ungatto@italiano.it"
+        },
+        "alertBox": {
+          "errorInvalidEmail": "อีเมลไม่ถูกต้องตามรูปแบบ"
+        },
+        "actionButton": {
+          "send": "ส่งข้อมูล",
+          "cancel": "ยกเลิก"
+        }
+      }
+    }
+  },
+  "additionalExpense": {
+    "id": "เลขไอดี",
+    "subscriptionId": "หมายเลขการจอง",
+    "userId": "รหัสผู้ใช้",
+    "userFullName": "ชื่อนามสกุลผู้ใช้",
+    "noticeDate": "วันที่ได้รับแจ้งค่าใช้จ่าย",
+    "type": {
+      "title": "ประเภทค่าใช้จ่าย",
+      "maintenance": "ค่าบำรุงรักษา",
+      "insurance": "ค่าประกัน",
+      "service": "ค่าบริการ",
+      "repair": "ค่าซ่อม",
+      "replacement": "ค่าทดแทน"
+    },
+    "price": "ราคา",
+    "status": {
+      "title": "สถานะ",
+      "created": "สร้าง",
+      "informed": "แจ้ง",
+      "pending": "รอดำเนินการ",
+      "paid": "ชำระแล้ว",
+      "cancelled": "ยกเลิก"
+    },
+    "note": "บันทึกเพิ่มเติม",
+    "actions": "ดำเนินการ",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "createButton": "สร้างค่าใช้จ่ายใหม่",
+    "findByIdError": "ไม่สามารถโหลดข้อมูลค่าใช้จ่าย",
+    "autoCompleteSubscription": "ไอดีการจอง (พิมพ์ \"ชื่อผู้ใช้\" หรือ \"เลขทะเบียน\")",
+    "createDialog": {
+      "title": "สร้างค่าใช้จ่ายใหม่",
+      "success": "สร้างค่าใช้จ่ายใหม่สำเร็จ",
+      "error": "สร้างค่าใช้จ่ายใหม่ไม่สำเร็จ"
+    },
+    "updateDialog": {
+      "title": "แก้ไขค่าใช้จ่าย",
+      "success": "แก้ไขค่าใช้จ่ายสำเร็จ",
+      "error": "แก้ไขค่าใช้จ่ายไม่สำเร็จ"
+    },
+    "deleteDialog": {
+      "title": "ลบค่าใช้จ่าย",
+      "message": "คุณแน่ใจหรือว่าต้องการลบข้อมูลรายการนี้",
+      "success": "ลบค่าใช้จ่ายสำเร็จ",
+      "error": "ลบค่าใช้จ่ายไม่สำเร็จ"
+    }
+  },
+  "chargingLocations": {
+    "provider": "ผู้ให้บริการ",
+    "address": "ที่อยู่"
+  },
+  "role": {
+    "superAdmin": "ผู้ดูแลระบบระดับสูง",
+    "admin": "ผู้ดูแลระบบ",
+    "customerSupport": "ฝ่ายบริการลูกค้า",
+    "operation": "ฝ่ายปฏิบัติการ"
+  },
+  "account": {
+    "updatePassword": "แก้ไขรหัสผ่าน",
+    "profileTitle": "ข้อมูลโปรไฟล์",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "email": "อีเมล",
+    "phoneNumber": "เบอร์โทรศัพท์"
+  },
+  "settings": {
+    "title": "รหัสผ่าน",
+    "subTitle": "แก้ไขรหัสผ่าน",
+    "currentPassword": "รหัสผ่านเดิม",
+    "newPassword": "รหัสผ่านใหม่",
+    "confirmNewPassword": "ยืนยันรหัสผ่านใหม่",
+    "updatePassword": {
+      "success": "แก้ไขรหัสผ่านสำเร็จ",
+      "errors": {
+        "currentPasswordRequired": "กรุณาระบุรหัสผ่านเดิม",
+        "newPasswordRequired": "กรุณาระบุรหัสผ่านใหม่",
+        "confirmNewPasswordRequired": "กรุณาระบุยืนยันรหัสผ่านใหม่",
+        "passwordMismatch": "รหัสผ่านไม่ตรงกัน",
+        "passwordMinimumLengthLimit": "รหัสผ่านต้องมีความยาวอย่างน้อย {{length}} ตัวอักษร"
+      }
+    }
+  },
+  "filter": {
+    "equals": "เท่ากับ",
+    "notEquals": "ไม่เท่ากับ",
+    "greaterThan": "มากกว่า",
+    "greaterThanOrEquals": "มากกว่าหรือเท่ากับ",
+    "lessThan": "น้อยกว่า",
+    "lessThanOrEquals": "น้อยกว่าหรือเท่ากับ",
+    "date": "วันที่/เดือน/ปี ค.ส.",
+    "contains": "ประกอบด้วย",
+    "value": "ค่า",
+    "is": "มีค่าเป็น",
+    "true": "ใช่/เปิด",
+    "false": "ไม่ใช่/ปิด"
+  },
+  "voucher": {
+    "title": "วอชเชอร์",
+    "id": "วอชเชอร์ ไอดี",
+    "code": "รหัส",
+    "percentDiscount": "ส่วนลด",
+    "amount": "จำนวน",
+    "description": {
+      "en": "รายละเอียด ภาษาอังกฤษ",
+      "th": "รายละเอียด ภาษาไทย"
+    },
+    "limitPerUser": "จำกัดต่อผู้ใช้งาน",
+    "status": "สถานะ",
+    "statuses": {
+      "active": "[Active]",
+      "inactive": "[Inactive]",
+      "pending": "[Pending]"
+    },
+    "startAt": "วันที่เริ่มต้น",
+    "endAt": "วันที่สิ้นสุด",
+    "createdAt": "วันที่สร้าง",
+    "updatedAt": "วันที่แก้ไข",
+    "actions": "ดำเนินการ",
+    "button": {
+      "createNew": "สร้างวอชเชอร์ใหม่"
+    },
+    "dialog": {
+      "create": {
+        "title": "สร้างข้อมูลวอชเชอร์ใหม่",
+        "success": "วอชเชอร์ถูกสร้างเรียบร้อยแล้ว",
+        "error": "ไม่สามารถสร้างวอชเชอร์ได้"
+      },
+      "update": {
+        "title": "ปรับปรุงข้อมูลวอชเชอร์",
+        "success": "วอชเชอร์ถูกปรับปรุงเรียบร้อยแล้ว",
+        "error": "ไม่สามารถปรับปรุงวอชเชอร์ได้"
+      },
+      "delete": {
+        "confirmationMessage": "คุณยืนยันที่จะลบข้อมูลนี้ใช่หรือไม่?",
+        "success": "วอชเชอร์ถูกลบออกจากกลุ่มนี้แล้ว",
+        "error": "เกิดข้อผิดพลาดในการลบข้อมูล!"
+      },
+      "packagePrice": {
+        "title": "จัดการราคาแพ็คเกจ",
+        "selectAvailablePackages": "ราคาแพ็คเกจ ที่สามารถเลือกได้",
+        "availablePackages": "ราคาแพ็คเกจ",
+        "success": "ราคาแพ็คเกจได้รับการปรับปรุงเรียบร้อยแล้ว",
+        "error": "ไม่สามารถปรับปรุงราคาแพ็ตเกจไปยังวอชเชอร์ได้"
+      },
+      "userGroups": {
+        "title": "กลุ่มผู้ใช้งาน",
+        "selectAvailableUserGroups": "กลุ่มผู้ใช้งาน ที่สามารถเลือกได้",
+        "availableUserGroups": "กลุ่มผู้ใช้งาน",
+        "removeSuccess": "กลุ่มผู้ใช้งานถูกนำออกจากวอชเชอร์เรียบร้อยแล้ว",
+        "success": "กลุ่มผู้ใช้งานได้รับการปรับปรุงเรียบร้อยแล้ว",
+        "error": "ไม่สามารถปรับปรุงกลุ่มผู้ใช้งานไปยังวอชเชอร์ได้"
+      }
+    },
+    "errors": {
+      "duplicatedCode": "ไม่สามารถใช้ รหัสวอชเชอร์ ซ้ำได้"
+    }
+  },
+  "voucherEvents": {
+    "title": "บันทึกวอชเชอร์",
+    "id": "บันทึกไอดี",
+    "userId": "รหัสผู้ใช้",
+    "userDetail": "รายละเอียดผู้ใช้",
+    "tooltip": {
+      "title": "ดูบันทึกวอชเชอร์"
+    }
+  },
+  "userGroups": {
+    "title": "กลุ่มผู้ใช้งาน",
+    "id": "ไอดี",
+    "name": "ชื่อ",
+    "createdAt": "วันที่สร้าง",
+    "updatedAt": "วันที่แก้ไข",
+    "button": {
+      "createNew": "สร้างกลุ่มผู้ใช้งานใหม่",
+      "addUser": {
+        "tooltip": "เพิ่มผู้ใช้งานเข้ากลุ่ม {{name}}"
+      }
+    },
+    "alert": {
+      "changeName": {
+        "success": "ชื่อถูกเปลี่ยนเรียบร้อยแล้ว",
+        "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูล!"
+      }
+    },
+    "dialog": {
+      "create": {
+        "title": "สร้างกลุ่มผู้ใช้งานใหม่",
+        "success": "สร้างกลุ่มผู้ใช้งานใหม่เรียบร้อยแล้ว",
+        "error": "เกิดข้อผิดพลาดในการเพิ่มข้อมูล!"
+      },
+      "update": {
+        "title": "แก้ไขกลุ่มผู้ใช้งาน",
+        "success": "กลุ่มผู้ใช้งานทำการแก้ไขแล้ว",
+        "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูล!"
+      },
+      "delete": {
+        "confirmationMessage": "คุณยืนยันที่จะลบข้อมูลนี้ใช่หรือไม่?",
+        "success": "ผู้ใช้งานถูกลบออกจากกลุ่มนี้แล้ว",
+        "error": "เกิดข้อผิดพลาดในการลบข้อมูล!"
+      },
+      "invitation": {
+        "title": "เพิ่มผู้ใช้งานเพื่อเข้าสู่กลุ่มของผู้ใช้",
+        "button": "เพิ่มผู้ใช้งาน",
+        "multipleUsersButton": "เพิ่มผู้ใช้งาน",
+        "searchField": {
+          "label": "ค้นหาผู้ใช้งาน หรือกรอกอีเมลใหม่",
+          "example": "ตัวอย่าง เช่น ptt หรือ อีเมลใหม่ milano@italia.it",
+          "helperText": "กรอกข้อมูลอย่างน้อย 3 ตัวอักษร เพื่อค้นหาในฐานข้อมูลด้วย ชื่อ/นามสกุล อีเมล หรือ เบอร์โทรศัพท์"
+        },
+        "success": "เพิ่มผู้ใช้งานเรียบร้อยแล้ว",
+        "error": "เกิดข้อผิดพลาดในการเพิ่มข้อมูล!",
+        "duplicated": "อีเมลที่กรอกมีอยู่แล้วในระบบ"
+      },
+      "csvUpload": {
+        "title": "เพิ่มผู้ใช้งานจากไฟล์ CSV",
+        "button": "อัพโหลดไฟล์ CSV",
+        "uploadButton": "อัพโหลด {{length}} อีเมล",
+        "selectFileButton": "เลือกไฟล์ CSV",
+        "thereAreNoEmails": "ไม่พบข้อมูลอีเมล",
+        "validation": {
+          "email": {
+            "warning": "บางอีเมลไม่ถูกต้องตามรูปแบบ แต่คุณยังสามารถอัพโหลดอีเมลที่ถูกต้องได้",
+            "error": "อีเมลทั้งหมดรูปแบบไม่ถูกต้อง",
+            "success": "อีเมลทั้งหมดรูปแบบถูกต้อง"
+          }
+        },
+        "accordion": {
+          "valid": "{{length}} อีเมลที่ถูกรูปแบบ",
+          "invalid": "{{length}} อีเมลที่ไม่ถูกรูปแบบ"
+        },
+        "success": "เพิ่มอีเมลเรียบร้อยแล้ว",
+        "error": "เกิดข้อผิดพลาดในการเพิ่มข้อมูล!"
+      }
+    }
+  },
+  "whitelist": {
+    "title": "ผู้ใช้ที่ยังไม่ได้ลงทะเบียน",
+    "value": "ข้อมูล",
+    "type": "ประเภท",
+    "tabs": {
+      "registeredUsers": "ผู้ใช้ที่ลงทะเบียนแล้ว",
+      "nonRegisteredUsers": "ผู้ใช้ที่ยังไม่ได้ลงทะเบียน"
+    }
+  },
+  "validation": {
+    "required": "ต้องระบุข้อมูล",
+    "minimumIsOne": "ระบุอย่างน้อย 1",
+    "maximumIsOneHundred": "ระบุสูงสุด 100",
+    "invalidVoucherCode": "รูปแบบของวอชเชอร์ไม่ถูกต้อง",
+    "invalidName": "รูปแบบของชื่อไม่ถูกต้อง",
+    "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น"
+  },
+  "cardStatus": {
+    "detail": "Detail >"
+  }
+}

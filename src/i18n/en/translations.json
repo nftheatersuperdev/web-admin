@@ -1,0 +1,636 @@
+{
+  "header": {
+    "aria": {
+      "sidebarToggle": "Sidebar Toggle",
+      "logo": "EVme Logo",
+      "changeLanguage": "Change Language",
+      "settings": "Settings",
+      "login": "Login"
+    },
+    "menu": {
+      "profile": "Profile",
+      "logout": "Logout"
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "userGroups": "User Groups",
+    "cars": "Cars",
+    "pricing": "Pricing",
+    "modelAndPricing": "Model & Pricing",
+    "vehicleManagement": "Vehicle Management",
+    "subscriptionManagement": "Subscription Management",
+    "voucherManagement": "Voucher Management",
+    "subscriptions": "Subscriptions",
+    "vouchers": "Vouchers",
+    "additionalExpense": "Additional Expense",
+    "others": "Others",
+    "chargingLocations": "Charging Locations",
+    "adminUsers": "Admin Users",
+    "account": "Account",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "button": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "search": "Search",
+    "clear": "Clear",
+    "back": "Back",
+    "invite": "Invite",
+    "inviteAmount": "Invite {{amount}} emails"
+  },
+  "datetimePicker": {
+    "invalidDateMessage": "Invalid Date Format",
+    "invalidLabel": "unknown",
+    "cancelLabel": "Cancel",
+    "clearLabel": "Clear",
+    "okLabel": "OK",
+    "todayLabel": "Today"
+  },
+  "toast": {
+    "loading": "Loading..."
+  },
+  "authentication": {
+    "success": "Login successful",
+    "error": {
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "invalidEmail": "Email is invalid",
+      "invalidPassword": "Password is invalid",
+      "invalidUserToken": "Token is invalid",
+      "invalidCredential": "Invalid credential",
+      "userNotFound": "User not found",
+      "userDisabled": "User is disabled",
+      "userTokenExpired": "Token has expired",
+      "userMismatch": "User mismatch",
+      "weakPassword": "Password must be at least 6 characters long",
+      "requiresRecentLogin": "Please re-login again",
+      "authenticationFailed": "Login failed",
+      "permissionNotAllowed": "Permission not allowed",
+      "unknownError": "An unknown authentication error occurred, Please contact operation support"
+    }
+  },
+  "login": {
+    "title": "EVme",
+    "subTitle": "Admin Portal",
+    "email": "Email Address",
+    "password": "Password",
+    "rememberMe": "Remember Me"
+  },
+  "home": {
+    "title": "Welcome to EVme Admin Portal"
+  },
+  "forbidden": {
+    "title": "403 - Forbidden: Access is denied"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found"
+  },
+  "dashboard": {
+    "overall": "Overall",
+    "kyc": "KYCs (Sumsub)",
+    "subscription": "Subscription",
+    "totalCars": {
+      "title": "Total Cars",
+      "subTitle": "Number of cars currently available"
+    },
+    "totalSubscriptions": {
+      "title": "Total Subscriptions",
+      "subTitle": "Number of currently active subscriptions"
+    },
+    "totalUpcomingCarsDelivery": {
+      "title": "Upcoming Cars Delivery",
+      "subTitle": "Today"
+    },
+    "totalUpcomingCarsReturn": {
+      "title": "Upcoming Cars Return",
+      "subTitle": "Today"
+    },
+    "totalPayments": {
+      "title": "Total Payments",
+      "subTitle": "Total amount of payments today"
+    },
+    "totalUsers": {
+      "title": "Total Users",
+      "subTitle": "Total number of registered users"
+    },
+    "totalRequestedCases": {
+      "title": "Total Requested Cases",
+      "subTitle": "Number of requested cases"
+    },
+    "totalApprovedCases": {
+      "title": "Total Approved Cases",
+      "subTitle": "Number of approved cases"
+    },
+    "totalRejectedCases": {
+      "title": "Total Rejected Cases",
+      "subTitle": "Number of rejected cases"
+    },
+    "quickLinks": "Quick Links",
+    "carDelivery": {
+      "title": "Upcoming Cars Delivery",
+      "dialogTitle": "Delivery Detail"
+    },
+    "carReturn": {
+      "title": "Upcoming Cars Return",
+      "dialogTitle": "Return Detail"
+    },
+    "reportOfUserRegistration": {
+      "title": "Reports of User Registration",
+      "periodDate": "Period Date"
+    },
+    "selectedDate": "Date",
+    "subscriptionId": "Subscription ID",
+    "userName": "User Name",
+    "carDisplayName": "Car",
+    "plateNumber": "Plate Number",
+    "deliveryDate": "Delivery Date",
+    "returnDate": "Return Date",
+    "email": "Email",
+    "phone": "Phone Number",
+    "remark": "Remark"
+  },
+  "user": {
+    "id": "ID",
+    "email": "Email",
+    "phone": "Phone Number",
+    "role": "Role",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "fullName": "Full Name",
+    "status": "Status",
+    "kyc": {
+      "status": "KYC Status",
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "rejectReason": "Reject Reason"
+    },
+    "verifyDate": "Verify Date",
+    "note": "Note",
+    "rejectedReason": "Reason of rejection",
+    "userGroups": "User groups",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "actions": "Actions",
+    "detailDialog": {
+      "title": "User Detail"
+    }
+  },
+  "car": {
+    "id": "ID",
+    "brand": "Brand",
+    "model": "Model",
+    "color": "Color",
+    "colorHex": "Color (Hex)",
+    "plateNumber": "Plate Number",
+    "bodyType": "Body Type",
+    "topSpeed": "Top Speed",
+    "acceleration": "Acceleration",
+    "range": "Range",
+    "totalPower": "Total Power",
+    "batteryCapacity": "Battery Capacity",
+    "connectorType": "Connector Type",
+    "chargeTime": "Charge Time",
+    "fastChargeTime": "Fast Charge Time",
+    "vin": "VIN",
+    "actions": "Actions",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "createButton": "New Car",
+    "createDialog": {
+      "title": "Create New Car",
+      "success": "Created car successfully",
+      "error": "Failed to create car"
+    },
+    "updateDialog": {
+      "title": "Update Car",
+      "success": "Updated car successfully",
+      "error": "Failed to update car"
+    },
+    "deleteDialog": {
+      "title": "Delete Car",
+      "message": "Are you sure that you want to delete this",
+      "success": "Deleted car successfully",
+      "error": "Failed to delete car"
+    },
+    "status": "Status",
+    "statuses": {
+      "available": "Available",
+      "outOfService": "Out of service"
+    }
+  },
+  "pricing": {
+    "id": "ID",
+    "duration": "Duration",
+    "brand": "Car Brand",
+    "model": "Car Model",
+    "modelId": "Car Model ID",
+    "price": "Price",
+    "fullPrice": "Full Price",
+    "description": "Description",
+    "pricePerThreeDays": "3 Days",
+    "pricePerOneWeek": "1 Week",
+    "pricePerOneMonth": "1 Month",
+    "pricePerThreeMonths": "3 Months",
+    "pricePerSixMonths": "6 Months",
+    "pricePerTwelveMonths": "12 Months",
+    "3d": "3 Days",
+    "1w": "1 Week",
+    "1m": "1 Month",
+    "3m": "3 Months",
+    "6m": "6 Months",
+    "12m": "12 Months",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "createButton": "New Price",
+    "createDialog": {
+      "title": "Create New Price",
+      "success": "Created car successfully",
+      "error": "Failed to create car"
+    },
+    "updateDialog": {
+      "title": "Update Car",
+      "success": "Updated car successfully",
+      "error": "Failed to update car"
+    },
+    "plan": "Plan"
+  },
+  "subscription": {
+    "id": "Subscription ID",
+    "brand": "Car Brand",
+    "model": "Car Model",
+    "modelId": "Car Model ID",
+    "seats": "Seats",
+    "topSpeed": "Top Speed",
+    "plateNumber": "Plate Number",
+    "vin": "VIN",
+    "price": "Price",
+    "duration": "Duration",
+    "fastChargeTime": "Fast Charge Time",
+    "email": "Email",
+    "phone": "Phone Number",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "startAddress": "Delivery Address",
+    "startAddressRemark": "Delivery Address Remark",
+    "endAddress": "Return Address",
+    "endAddressRemark": "Return Address Remark",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "omiseButton": "Open Omise",
+    "sendAllDataViaEmailButton": "Export",
+    "carDetails": "Car Details",
+    "updateSubscriptionDetails": "Update Subscription Details",
+    "bookingDetails": "Booking Details",
+    "subscriptionId": "Subscription ID",
+    "voucherCode": "Voucher Code",
+    "paymentVersion": "Payment Version",
+    "status": {
+      "title": "Status",
+      "reserved": "Reserved",
+      "accepted": "Accepted",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "upcoming_cancelled": "Upcoming Cancelled",
+      "refused": "Refused",
+      "completed": "Completed",
+      "extended": "Extended",
+      "manual_extended": "Manual Extended"
+    },
+    "payment": {
+      "status": "Payment Status",
+      "failureMessage": "Payment Failure Message",
+      "updatedDate": "Payment Updated Date"
+    },
+    "noData": "No data",
+    "updateDialog": {
+      "success": "Updated subscription successfully",
+      "error": "Failed to update subscription"
+    },
+    "extending": {
+      "headerName": "Extending",
+      "description": "Calculating by extend the end date +2 days",
+      "button": "Extend",
+      "confirmationMessage": "Are you sure to extend the end date from :originalDate to :newDate for this subscription?"
+    },
+    "sendAllData": {
+      "success": "The report has been generated",
+      "error": "Failed to generate a report",
+      "dialog": {
+        "title": "Export",
+        "description": "Please enter at least one email address",
+        "inputBox": {
+          "label": "Email Address",
+          "placeholder": "Please enter your email ex. ungatto@italiano.it"
+        },
+        "alertBox": {
+          "errorInvalidEmail": "The email is invalid"
+        },
+        "actionButton": {
+          "send": "Send",
+          "cancel": "Cancel"
+        }
+      }
+    }
+  },
+  "additionalExpense": {
+    "id": "ID",
+    "subscriptionId": "Subscription ID",
+    "userId": "User ID",
+    "userFullName": "User full name",
+    "noticeDate": "Date of expense notice",
+    "type": {
+      "title": "Type of expense",
+      "maintenance": "Maintenance",
+      "insurance": "Insurance",
+      "service": "Service",
+      "repair": "Repair",
+      "replacement": "Replacement"
+    },
+    "price": "Price",
+    "status": {
+      "title": "Status",
+      "created": "Created",
+      "informed": "Informed",
+      "pending": "Pending",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "note": "Notes",
+    "actions": "Actions",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "createButton": "Create Additional Expense",
+    "findByIdError": "Unable to retrieve additional expense by id",
+    "autoCompleteSubscription": "Subscription ID (Typing \"User first name\" or \"Car plate no.\")",
+    "createDialog": {
+      "title": "Create New Additional Expense",
+      "success": "Created additional expense successfully",
+      "error": "Failed to create additional expense"
+    },
+    "updateDialog": {
+      "title": "Update Additional Expense",
+      "success": "Updated additional expense successfully",
+      "error": "Failed to update additional expense"
+    },
+    "deleteDialog": {
+      "title": "Delete Additional Expense",
+      "message": "Are you sure that you want to delete this ID",
+      "success": "Deleted additional expense successfully",
+      "error": "Failed to delete additional expense"
+    }
+  },
+  "chargingLocations": {
+    "provider": "Provider",
+    "address": "Address"
+  },
+  "role": {
+    "superAdmin": "Super Administrator",
+    "admin": "Administrator",
+    "customerSupport": "Customer Support",
+    "operation": "Operation"
+  },
+  "account": {
+    "updatePassword": "Update password",
+    "profileTitle": "Profile information",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "phoneNumber": "Phone Number"
+  },
+  "settings": {
+    "title": "Password",
+    "subTitle": "Update password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updatePassword": {
+      "success": "Update password successfully",
+      "errors": {
+        "currentPasswordRequired": "Current password is required",
+        "newPasswordRequired": "New password is required",
+        "confirmNewPasswordRequired": "Current password is required",
+        "passwordMismatch": "Password mismatch",
+        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long"
+      }
+    }
+  },
+  "filter": {
+    "equals": "Equals",
+    "notEquals": "Not equals",
+    "greaterThan": "Greater than",
+    "greaterThanOrEquals": "Greater than or Equals",
+    "lessThan": "Less than",
+    "lessThanOrEquals": "Less than or Equals",
+    "date": "DD/MM/YYYY",
+    "contains": "Contains",
+    "value": "Value",
+    "is": "Is",
+    "true": "True/Enable",
+    "false": "False/Disable"
+  },
+  "carModel": {
+    "brand": "Brand",
+    "model": "Model",
+    "seats": "Seats",
+    "modelYear": "Model Year",
+    "condition": "Condition",
+    "bodyType": "Body Type",
+    "acceleration": "Acceleration",
+    "topSpeed": "Top Speed",
+    "range": "Range",
+    "totalPower": "Total Power",
+    "horsePower": "Horse Power",
+    "batteryCapacity": "Battery Capacity",
+    "connectorType": "Connector Type",
+    "chargeTime": "Charge Time",
+    "fastChargeTime": "Fast Charge Time"
+  },
+  "modelForm": {
+    "overview": "Overview",
+    "performance": "Performance",
+    "charging": "Charging",
+    "success": "Model has been updated",
+    "error": "Something went wrong when updating the model"
+  },
+  "voucher": {
+    "title": "Vouchers",
+    "id": "Voucher ID",
+    "code": "Code",
+    "percentDiscount": "Percent Discount",
+    "amount": "Limit",
+    "description": {
+      "en": "Description (English)",
+      "th": "Description (Thai)"
+    },
+    "limitPerUser": "Limit Per User",
+    "status": "Status",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending"
+    },
+    "startAt": "Start Date",
+    "endAt": "End Date",
+    "createdAt": "Created Date",
+    "updatedAt": "Updated Date",
+    "actions": "Actions",
+    "button": {
+      "createNew": "Create new voucher"
+    },
+    "dialog": {
+      "create": {
+        "title": "Create new voucher",
+        "success": "Voucher has been created",
+        "error": "Something went wrong when creating a voucher"
+      },
+      "update": {
+        "title": "Update voucher",
+        "success": "Voucher has been updated",
+        "error": "Something went wrong when updating the voucher"
+      },
+      "delete": {
+        "confirmationMessage": "Do you want to remove the data?",
+        "success": "Voucher has been deleted",
+        "error": "Something went wrong!"
+      },
+      "packagePrice": {
+        "title": "Package Price",
+        "selectAvailablePackages": "Select Available Packages",
+        "availablePackages": "Available Packages",
+        "success": "Package price has been updated",
+        "error": "Something went wrong when updating the package price into a voucher"
+      },
+      "userGroups": {
+        "title": "User groups",
+        "selectAvailableUserGroups": "Select available user groups",
+        "availableUserGroups": "Available user groups",
+        "removeSuccess": "User groups has been removed",
+        "success": "User groups has been updated",
+        "error": "Something went wrong when updating the user group into a voucher"
+      }
+    },
+    "errors": {
+      "duplicatedCode": "The voucher code is duplicated"
+    }
+  },
+  "voucherEvents": {
+    "title": "Voucher Events",
+    "id": "Event ID",
+    "userId": "User ID",
+    "userDetail": "User Detail",
+    "tooltip": {
+      "title": "See all events"
+    }
+  },
+  "userGroups": {
+    "title": "User Groups",
+    "id": "ID",
+    "name": "Name",
+    "createdAt": "Created Date",
+    "updatedAt": "Updated Date",
+    "button": {
+      "createNew": "Create new user group",
+      "addUser": {
+        "tooltip": "Add user to {{name}} group"
+      }
+    },
+    "alert": {
+      "changeName": {
+        "success": "Name has been updated",
+        "error": "Something went wrong!"
+      }
+    },
+    "dialog": {
+      "create": {
+        "title": "Create new user group",
+        "success": "User group has been created",
+        "error": "Something went wrong!"
+      },
+      "update": {
+        "title": "Update a user group",
+        "success": "User group has been updated",
+        "error": "Something went wrong!"
+      },
+      "delete": {
+        "confirmationMessage": "Do you want to remove the data?",
+        "success": "User has been deleted",
+        "error": "Something went wrong!"
+      },
+      "invitation": {
+        "title": "Invite a user become to the user group",
+        "button": "Invite a user",
+        "multipleUsersButton": "Invite multiple emails",
+        "searchField": {
+          "label": "Search a user or enter new email address",
+          "example": "Ex. ptt or new email such as milano@italia.it",
+          "helperText": "Enter at least 3 characters to searching names, email or phone number on database"
+        },
+        "success": "User has been added",
+        "error": "Something went wrong!",
+        "duplicated": "The email is duplicated"
+      },
+      "csvUpload": {
+        "title": "Add users from csv file",
+        "button": "Upload CSV file",
+        "uploadButton": "Upload {{length}} emails",
+        "selectFileButton": "Select CSV file",
+        "thereAreNoEmails": "There are no emails.",
+        "validation": {
+          "email": {
+            "warning": "Some emails are invalid, but you can still upload the valid emails.",
+            "error": "All emails are invalid.",
+            "success": "All emails are valid."
+          }
+        },
+        "accordion": {
+          "valid": "{{length}} valid emails",
+          "invalid": "{{length}} invalid emails"
+        },
+        "success": "Emails has been added",
+        "error": "Something went wrong!"
+      }
+    }
+  },
+  "whitelist": {
+    "title": "Non-registered users",
+    "value": "Value",
+    "type": "Type",
+    "tabs": {
+      "registeredUsers": "Registered users",
+      "nonRegisteredUsers": "Non-registered users"
+    }
+  },
+  "validation": {
+    "required": "Field is required",
+    "minimumIsOne": "Minimum is 1",
+    "maximumIsOneHundred": "Maximum is 100",
+    "invalidVoucherCode": "Invalid voucher code",
+    "invalidName": "Invalid name",
+    "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
+  },
+  "cardStatus": {
+    "detail": "Detail >"
+  },
+  "paymentEvent": {
+    "status": {
+      "pending": "Pending",
+      "successful": "Successful",
+      "failed": "Failed",
+      "authorizedRefund": "Authorized Refund"
+    }
+  }
+}
