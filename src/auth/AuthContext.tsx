@@ -2,6 +2,7 @@ import { ReactElement, createContext, useContext, useState, useEffect, Fragment 
 import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
 import { useTranslation } from 'react-i18next'
+import { userMe } from 'services/web-bff/user'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 import { ROLES, Role } from './roles'
@@ -124,10 +125,11 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         throw new Error('User not found')
       }
       const token = await user.getIdToken()
+      const userProfile = await userMe(user.uid, token)
 
       setUserId(user.uid)
       setToken(token || '')
-      setRole(ROLES.SUPER_ADMIN)
+      setRole(userProfile.role)
     } catch (error) {
       const message = errorMessage(error)
       throw new Error(message)
