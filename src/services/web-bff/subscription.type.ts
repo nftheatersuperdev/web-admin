@@ -1,6 +1,6 @@
-import type { ResponseWithPagination } from './response.type'
-import type { User } from './user.type'
-import type { Car } from './car.type'
+import type { ResponseWithPagination } from 'services/web-bff/response.type'
+import type { User, UserAddress } from 'services/web-bff/user.type'
+import type { Car } from 'services/web-bff/car.type'
 
 export enum SubscriptionDuration {
   threeDays = '3d',
@@ -18,8 +18,8 @@ export interface Subscription {
   duration: SubscriptionDuration
   startDate: string
   endDate: string
-  deliveryAddress: string
-  returnAddress: string
+  deliveryAddress: UserAddress
+  returnAddress: UserAddress
   voucherCode: string
   status: string
   paymentVersion: number

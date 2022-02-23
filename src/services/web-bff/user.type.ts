@@ -1,4 +1,5 @@
-import type { Response } from './response.type'
+import type { Maybe } from 'services/web-bff/general.types'
+import type { Response } from 'services/web-bff/response.type'
 
 export interface User {
   id: string
@@ -19,6 +20,14 @@ export interface User {
   userGroups: []
   createdAt: string
   updatedAt: string
+}
+
+export interface UserAddress {
+  id: string
+  full: string
+  latitude: number
+  longitude: number
+  remark?: Maybe<string>
 }
 
 export interface UserMeProps {
