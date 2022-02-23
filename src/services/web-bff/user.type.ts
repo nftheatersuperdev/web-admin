@@ -1,24 +1,33 @@
-import type { Response } from './response.type'
+import type { Maybe } from 'services/web-bff/general.types'
+import type { Response } from 'services/web-bff/response.type'
 
 export interface User {
   id: string
-  firebase_id: string
-  first_name: string
-  last_name: string
+  firebaseId: string
+  firstName: string
+  lastName: string
   role: 'user' | 'operator' | 'admin' | 'super_admin'
   disabled: false
-  phone_number: string
+  phoneNumber: string
   email: string
-  omise_id: string | null
-  car_track_id: string | null
-  default_address: string | null
-  kyc_status: 'pending' | 'verified' | 'rejected'
-  kyc_reject_reason: string | null
+  omiseId: string | null
+  carTrackId: string | null
+  defaultAddress: string | null
+  kycStatus: 'pending' | 'verified' | 'rejected'
+  kycRejectReason: string | null
   locale: 'TH' | 'EN'
-  credit_card: string | null
-  user_groups: []
-  created_at: string
-  updated_at: string
+  creditCard: string | null
+  userGroups: []
+  createdAt: string
+  updatedAt: string
+}
+
+export interface UserAddress {
+  id: string
+  full: string
+  latitude: number
+  longitude: number
+  remark?: Maybe<string>
 }
 
 export interface UserMeProps {

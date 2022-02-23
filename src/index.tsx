@@ -6,6 +6,7 @@ import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
@@ -13,6 +14,8 @@ import GlobalStyles, { theme } from './GlobalStyles'
 
 // Ensure that internationalization is bundled into app
 import './i18n'
+
+const queryClient = new QueryClient()
 
 if (config.isProductionEnvironment) {
   // eslint-disable-next-line
@@ -46,7 +49,9 @@ ReactDOM.render(
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <AuthProvider fbase={new Firebase()}>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </AuthProvider>
       </ThemeProvider>
     </StylesProvider>
