@@ -248,11 +248,11 @@ export default function Dashboard(): JSX.Element {
           />
         </Grid>
         <Grid item xs={12} lg={6}>
-          <CarsDelivery />
+          <CarsDelivery accessToken={accessToken} />
         </Grid>
 
         <Grid item xs={12} lg={6}>
-          <CarsReturn />
+          <CarsReturn accessToken={accessToken} />
         </Grid>
 
         <Grid item xs={12}>

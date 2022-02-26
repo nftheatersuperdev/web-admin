@@ -1,4 +1,8 @@
 import type { Response } from 'services/web-bff/response.type'
+import type {
+  SubscriptionListResponse,
+  SubscriptionStatus,
+} from 'services/web-bff/subscription.type'
 
 export interface DashboardResponse extends Response {
   data: {
@@ -19,4 +23,8 @@ export interface DashboardResponse extends Response {
 
 export interface DashboardProps {
   (accessToken: string): Promise<DashboardResponse>
+}
+
+export interface DashboardUpcomingCarsProps {
+  (accessToken: string, status: SubscriptionStatus, date: string): Promise<SubscriptionListResponse>
 }

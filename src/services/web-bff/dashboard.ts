@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { DashboardProps, DashboardResponse } from 'services/web-bff/dashboard.type'
+import type { DashboardProps, DashboardResponse } from 'services/web-bff/dashboard.type'
 
 export const getInformations: DashboardProps = async (
   accessToken: string

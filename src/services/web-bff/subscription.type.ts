@@ -11,17 +11,31 @@ export enum SubscriptionDuration {
   twelveMonths = '12m',
 }
 
+export enum SubscriptionStatus {
+  reserved = 'reserved',
+  accepted = 'accepted',
+  delivered = 'delivered',
+  cancelled = 'cancelled',
+  upcomingCancelled = 'upcoming_cancelled',
+  refused = 'refused',
+  completed = 'completed',
+  extended = 'extended',
+  manualExtended = 'manual_extended',
+  acceptedCarDonditions = 'accepted_car_conditions',
+  acceptedAgreement = 'accepted_agreement',
+}
+
 export interface Subscription {
   id: string
   user: User
-  car: Car
+  car: Partial<Car>
   duration: SubscriptionDuration
   startDate: string
   endDate: string
   deliveryAddress: UserAddress
   returnAddress: UserAddress
   voucherCode: string
-  status: string
+  status: SubscriptionStatus
   paymentVersion: number
   paymentStatus: string
   price: number
@@ -29,14 +43,28 @@ export interface Subscription {
   updatedDate: string
 }
 
-export type SubscriptionListQuery = Partial<Subscription>
+export interface SubscriptionListQuery {
+  status?: string
+  startDate?: {
+    between: {
+      lower: string
+      upper: string
+    }
+  }
+  endDate?: {
+    between: {
+      lower: string
+      upper: string
+    }
+  }
+}
 
 export interface SubscriptionListProps {
   (
     accessToken: string,
     query?: SubscriptionListQuery,
-    limit?: 10,
-    page?: 1
+    limit?: number,
+    page?: number
   ): Promise<SubscriptionListResponse>
 }
 
