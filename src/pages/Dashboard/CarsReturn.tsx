@@ -7,16 +7,20 @@ import {
   GridPageChangeParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
+import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT, columnFormatDate } from 'utils'
 import styled from 'styled-components'
 import DataGridLocale from 'components/DataGridLocale'
 import DatePicker from 'components/DatePicker'
-import { useSubscriptionsFilterAndSort } from 'services/evme'
-import { SortDirection, SubSortFields } from 'services/evme.types'
-import { columnFormatSubEventStatus, SubEventStatus } from 'pages/Subscriptions/utils'
-import CarReturnDialog from './CarReturnDialog'
-import { ReturnModelData, MISSING_VALUE } from './utils'
+import { getList, status as subscriptionStatus } from 'services/web-bff/subscription'
+import { columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
+import CarDeliveryDialog from './CarDeliveryDialog'
+import { DeliveryModelData, MISSING_VALUE } from './utils'
+
+interface CarsReturnProps {
+  accessToken: string
+}
 
 const GridInputItem = styled(Grid)`
   margin-bottom: 10px;
@@ -24,34 +28,30 @@ const GridInputItem = styled(Grid)`
 
 const initSelectedDate = dayjs(new Date()).toDate()
 
-export default function CarsReturn(): JSX.Element {
+export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(initSelectedDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
-  const [dialogData, setDialogData] = useState({} as ReturnModelData)
+  const [dialogData, setDialogData] = useState({} as DeliveryModelData)
   const { t } = useTranslation()
 
   const [pageSize, setPageSize] = useState(5)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const { data, refetch, isFetching } = useSubscriptionsFilterAndSort(
-    {
-      and: {
-        events: {
-          status: {
-            eq: SubEventStatus.DELIVERED,
-          },
-        },
-        endDate: {
+  const { data, refetch, isFetching } = useQuery('cars-return', () =>
+    getList(
+      accessToken,
+      {
+        status: subscriptionStatus.DELIVERED,
+        startDate: {
           between: {
             lower: dayjs(selectedDate).startOf('day').format(),
             upper: dayjs(selectedDate).endOf('day').format(),
           },
         },
       },
-    },
-    { [SubSortFields.EndDate]: SortDirection.Desc },
-    currentPageIndex,
-    pageSize
+      pageSize,
+      currentPageIndex + 1
+    )
   )
 
   useEffect(() => {
@@ -93,9 +93,9 @@ export default function CarsReturn(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'endDate',
-      headerName: t('dashboard.returnDate'),
-      description: t('dashboard.returnDate'),
+      field: 'startDate',
+      headerName: t('dashboard.deliveryDate'),
+      description: t('dashboard.deliveryDate'),
       valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
@@ -111,31 +111,22 @@ export default function CarsReturn(): JSX.Element {
     },
   ]
 
+  const rowCount = data?.data.pagination.totalRecords
   const rows =
-    data?.data.map((node) => {
-      const { id, car, endDate, user, endAddress, events } = node
-      const { plateNumber, color, carModel } = car || {}
-      const { brand, model } = carModel || {}
+    data?.data.subscriptions.map((node) => {
+      const { id, car, startDate, user, deliveryAddress, status } = node
+      const { plateNumber, color, brand, name } = car || {}
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
-      const carDisplayName = `${brand}-${model} (${color})`
-      const { full, latitude, longitude, remark } = endAddress || {}
-
-      let status = '-'
-
-      if (events?.length) {
-        const latestEvent = events.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0]
-        status = latestEvent.status
-      }
+      const carDisplayName = `${brand}-${name} (${color})`
+      const { full, latitude, longitude, remark } = deliveryAddress || {}
 
       return {
         id,
         userName,
         carDisplayName,
         plateNumber,
-        endDate,
+        startDate,
         user,
         remark,
         address: full,
@@ -149,7 +140,7 @@ export default function CarsReturn(): JSX.Element {
     setIsDetailDialogOpen(true)
     setDialogData({
       user: param.row.user,
-      endDate: param.row.endDate,
+      startDate: param.row.startDate,
       remark: param.row.remark,
       address: param.row.address,
       latitude: param.row.latitude,
@@ -168,7 +159,7 @@ export default function CarsReturn(): JSX.Element {
         <Grid container spacing={3}>
           <Grid item xs={12} justifyContent="space-between" container>
             <Typography color="textSecondary" gutterBottom variant="h6">
-              {t('dashboard.carReturn.title')}
+              {t('dashboard.carDelivery.title')}
             </Typography>
             <GridInputItem item>
               <DatePicker
@@ -187,21 +178,22 @@ export default function CarsReturn(): JSX.Element {
             </GridInputItem>
           </Grid>
         </Grid>
+
         <DataGridLocale
           autoHeight
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.totalData}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
+          onRowClick={handleRowClick}
           rows={rows}
           columns={columns}
-          onRowClick={handleRowClick}
           loading={isFetching}
         />
-        <CarReturnDialog
+        <CarDeliveryDialog
           open={isDetailDialogOpen}
           onClose={handleDialogClose}
           modelData={dialogData}

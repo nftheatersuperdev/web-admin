@@ -7,16 +7,20 @@ import {
   GridPageChangeParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
+import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT, columnFormatDate } from 'utils'
 import styled from 'styled-components'
 import DataGridLocale from 'components/DataGridLocale'
 import DatePicker from 'components/DatePicker'
-import { useSubscriptionsFilterAndSort } from 'services/evme'
-import { SortDirection, SubSortFields } from 'services/evme.types'
-import { columnFormatSubEventStatus, SubEventStatus } from 'pages/Subscriptions/utils'
+import { getList, status as subscriptionStatus } from 'services/web-bff/subscription'
+import { columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
 import CarDeliveryDialog from './CarDeliveryDialog'
 import { DeliveryModelData, MISSING_VALUE } from './utils'
+
+interface CarsDeliveryProps {
+  accessToken: string
+}
 
 const GridInputItem = styled(Grid)`
   margin-bottom: 10px;
@@ -24,7 +28,7 @@ const GridInputItem = styled(Grid)`
 
 const initSelectedDate = dayjs(new Date()).toDate()
 
-export default function CarsDelivery(): JSX.Element {
+export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(initSelectedDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
   const [dialogData, setDialogData] = useState({} as DeliveryModelData)
@@ -33,14 +37,11 @@ export default function CarsDelivery(): JSX.Element {
   const [pageSize, setPageSize] = useState(5)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const { data, refetch, isFetching } = useSubscriptionsFilterAndSort(
-    {
-      and: {
-        events: {
-          status: {
-            eq: SubEventStatus.ACCEPTED,
-          },
-        },
+  const { data, refetch, isFetching } = useQuery('cars-delivery', () =>
+    getList(
+      accessToken,
+      {
+        status: subscriptionStatus.ACCEPTED,
         startDate: {
           between: {
             lower: dayjs(selectedDate).startOf('day').format(),
@@ -48,10 +49,9 @@ export default function CarsDelivery(): JSX.Element {
           },
         },
       },
-    },
-    { [SubSortFields.StartDate]: SortDirection.Desc },
-    currentPageIndex,
-    pageSize
+      pageSize,
+      currentPageIndex + 1
+    )
   )
 
   useEffect(() => {
@@ -111,24 +111,15 @@ export default function CarsDelivery(): JSX.Element {
     },
   ]
 
+  const rowCount = data?.data.pagination.totalRecords
   const rows =
-    data?.data.map((node) => {
-      const { id, car, startDate, user, startAddress, events } = node
-      const { plateNumber, color, carModel } = car || {}
-      const { brand, model } = carModel || {}
+    data?.data.subscriptions.map((node) => {
+      const { id, car, startDate, user, deliveryAddress, status } = node
+      const { plateNumber, color, brand, name } = car || {}
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
-      const carDisplayName = `${brand}-${model} (${color})`
-      const { full, latitude, longitude, remark } = startAddress || {}
-
-      let status = '-'
-
-      if (events?.length) {
-        const latestEvent = events.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0]
-        status = latestEvent.status
-      }
+      const carDisplayName = `${brand}-${name} (${color})`
+      const { full, latitude, longitude, remark } = deliveryAddress || {}
 
       return {
         id,
@@ -193,7 +184,7 @@ export default function CarsDelivery(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.totalData}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
