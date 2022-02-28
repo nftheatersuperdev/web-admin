@@ -15,8 +15,8 @@ import DataGridLocale from 'components/DataGridLocale'
 import DatePicker from 'components/DatePicker'
 import { getList, status as subscriptionStatus } from 'services/web-bff/subscription'
 import { columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
-import CarDeliveryDialog from './CarDeliveryDialog'
-import { DeliveryModelData, MISSING_VALUE } from './utils'
+import CarReturnDialog from './CarReturnDialog'
+import { ReturnModelData, MISSING_VALUE } from './utils'
 
 interface CarsReturnProps {
   accessToken: string
@@ -31,7 +31,7 @@ const initSelectedDate = dayjs(new Date()).toDate()
 export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(initSelectedDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
-  const [dialogData, setDialogData] = useState({} as DeliveryModelData)
+  const [dialogData, setDialogData] = useState({} as ReturnModelData)
   const { t } = useTranslation()
 
   const [pageSize, setPageSize] = useState(5)
@@ -94,8 +94,8 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
     },
     {
       field: 'startDate',
-      headerName: t('dashboard.deliveryDate'),
-      description: t('dashboard.deliveryDate'),
+      headerName: t('dashboard.returnDate'),
+      description: t('dashboard.returnDate'),
       valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
@@ -114,12 +114,12 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
   const rowCount = data?.data.pagination.totalRecords
   const rows =
     data?.data.subscriptions.map((node) => {
-      const { id, car, startDate, user, deliveryAddress, status } = node
+      const { id, car, startDate, user, returnAddress, status } = node
       const { plateNumber, color, brand, name } = car || {}
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
       const carDisplayName = `${brand}-${name} (${color})`
-      const { full, latitude, longitude, remark } = deliveryAddress || {}
+      const { full, latitude, longitude, remark } = returnAddress || {}
 
       return {
         id,
@@ -140,7 +140,7 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
     setIsDetailDialogOpen(true)
     setDialogData({
       user: param.row.user,
-      startDate: param.row.startDate,
+      endDate: param.row.endDate,
       remark: param.row.remark,
       address: param.row.address,
       latitude: param.row.latitude,
@@ -159,7 +159,7 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
         <Grid container spacing={3}>
           <Grid item xs={12} justifyContent="space-between" container>
             <Typography color="textSecondary" gutterBottom variant="h6">
-              {t('dashboard.carDelivery.title')}
+              {t('dashboard.carReturn.title')}
             </Typography>
             <GridInputItem item>
               <DatePicker
@@ -193,7 +193,7 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
           columns={columns}
           loading={isFetching}
         />
-        <CarDeliveryDialog
+        <CarReturnDialog
           open={isDetailDialogOpen}
           onClose={handleDialogClose}
           modelData={dialogData}
