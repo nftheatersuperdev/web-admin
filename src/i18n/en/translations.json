@@ -12,11 +12,19 @@
       "logout": "Logout"
     }
   },
+  "carAvailability": {
+    "selectedFromDate": "Start Date",
+    "selectedToDate": "End Date",
+    "search": "Search",
+    "available": "Available",
+    "inUse": "In Use"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "users": "Users",
     "userGroups": "User Groups",
     "cars": "Cars",
+    "carAvailability": "Car Availability",
     "pricing": "Pricing",
     "modelAndPricing": "Model & Pricing",
     "vehicleManagement": "Vehicle Management",
@@ -226,9 +234,11 @@
     },
     "status": "Status",
     "statuses": {
+      "published": "Published",
       "available": "Available",
       "outOfService": "Out of service"
-    }
+    },
+    "subscriptionId": "Subscription ID"
   },
   "pricing": {
     "id": "ID",

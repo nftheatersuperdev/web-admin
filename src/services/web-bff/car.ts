@@ -9,7 +9,7 @@ export const getList = async ({
   page = 1,
 }: CarListProps): Promise<CarListResponse> => {
   const response: CarListResponse = await axios
-    .get(`https://run.mocky.io/v3/bbac756a-3b8a-4e99-94e7-1b50a584b1ee`, {
+    .get(`https://run.mocky.io/v3/7f974300-5ee0-4816-bc4c-d73019bbc575`, {
       params: {
         ...query,
         ...sort,

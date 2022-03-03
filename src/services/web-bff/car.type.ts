@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { StringFieldComparison } from 'services/web-bff/general.types'
 import type { ResponseWithPagination } from 'services/web-bff/response.type'
+import type { Subscription } from 'services/web-bff/subscription.type'
 
 export interface Car {
   id: string
@@ -27,6 +29,7 @@ export interface Car {
   status: string
   createdAt: string
   updatedAt: string
+  subscriptions: [Subscription]
 }
 
 export interface UpcomingCar {
@@ -40,6 +43,10 @@ export interface CarListQuery {
   vin?: StringFieldComparison
   plateNumber?: StringFieldComparison
   status?: StringFieldComparison
+  subscription?: {
+    startDate: any
+    endDate: any
+  }
 }
 
 export interface CarListProps {
