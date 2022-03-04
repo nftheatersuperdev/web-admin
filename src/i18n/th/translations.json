@@ -12,11 +12,19 @@
       "logout": "ออกจากระบบ"
     }
   },
+  "carAvailability": {
+    "selectedFromDate": "วันที่เริ่มต้น",
+    "selectedToDate": "วันที่สิ้นสุด",
+    "search": "ค้นหา",
+    "available": "รถว่าง",
+    "inUse": "ใช้งานอยู่"
+  },
   "sidebar": {
     "dashboard": "แดชบอร์ด",
     "users": "ผู้ใช้",
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
+    "carAvailability": "สถานะการใช้รถ",
     "pricing": "ราคาแพ็คเกจ",
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
@@ -225,9 +233,11 @@
     },
     "status": "สถานะ",
     "statuses": {
+      "published": "เปิด",
       "available": "พร้อมใช้งาน",
       "outOfService": "ไม่พร้อมใช้งาน"
-    }
+    },
+    "subscriptionId": "หมายเลขการจอง"
   },
   "pricing": {
     "id": "เลขไอดี",

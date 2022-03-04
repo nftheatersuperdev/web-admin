@@ -3,6 +3,7 @@ export const ROLES = Object.freeze({
   SUPER_ADMIN: 'super_admin',
   CUSTOMER_SUPPORT: 'customer_support_team',
   OPERATION: 'operation_team',
+  MARKETING: 'marketing',
 })
 
 export type Role =
@@ -10,6 +11,7 @@ export type Role =
   | typeof ROLES.ADMIN
   | typeof ROLES.CUSTOMER_SUPPORT
   | typeof ROLES.OPERATION
+  | typeof ROLES.MARKETING
 
 export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boolean => {
   if (!allowedRoles || !allowedRoles.length) {

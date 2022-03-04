@@ -84,6 +84,18 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
+        title: t('sidebar.carAvailability'),
+        path: ROUTE_PATHS.CAR_AVAILABILITY,
+        icon: <CarIcon />,
+        // allowedRoles: [
+        //   ROLES.SUPER_ADMIN,
+        //   ROLES.ADMIN,
+        //   ROLES.CUSTOMER_SUPPORT,
+        //   ROLES.OPERATION,
+        //   ROLES.MARKETING,
+        // ],
+      },
+      {
         title: t('sidebar.modelAndPricing'),
         path: ROUTE_PATHS.MODEL_AND_PRICING,
         icon: <PackageIcon />,
