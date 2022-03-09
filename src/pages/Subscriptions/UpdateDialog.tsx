@@ -204,6 +204,9 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     }
   }
 
+  const subscriptionPrice = subscription?.price.toLocaleString('th', { minimumFractionDigits: 2 })
+  const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
+
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
@@ -257,7 +260,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.price')}
-              value={subscription?.price}
+              value={subscriptionPriceFullFormat}
               fullWidth
               InputProps={{
                 readOnly: true,
