@@ -335,7 +335,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                 }}
               />
             )}
-            {subscription?.endDate && (
+            {isSuperAdminRole && subscription?.endDate && (
               <DateTimePicker
                 fullWidth
                 disablePast
@@ -499,6 +499,9 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                     lng: subscription?.deliveryLongitude ?? 0,
                   }}
                   zoom={15}
+                  options={{
+                    gestureHandling: 'none',
+                  }}
                 >
                   <InfoWindow
                     position={{
@@ -525,6 +528,9 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                     lng: subscription?.returnLongitude ?? 0,
                   }}
                   zoom={15}
+                  options={{
+                    gestureHandling: 'none',
+                  }}
                 >
                   <InfoWindow
                     position={{
