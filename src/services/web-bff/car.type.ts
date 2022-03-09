@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { StringFieldComparison } from 'services/web-bff/general.types'
-import type { ResponseWithPagination } from 'services/web-bff/response.type'
-import type { Subscription } from 'services/web-bff/subscription.type'
+import { StringFieldComparison, DateRangeFieldComparison } from 'services/web-bff/general.type'
+import { ResponseWithPagination } from 'services/web-bff/response.type'
+import { Subscription } from 'services/web-bff/subscription.type'
 
 export interface Car {
   id: string
+  modelId: string
   name: string
   brand: string
   color: string
@@ -39,14 +40,13 @@ export interface UpcomingCar {
 
 export interface CarListQuery {
   id?: StringFieldComparison
+  modeId?: StringFieldComparison
   color?: StringFieldComparison
   vin?: StringFieldComparison
   plateNumber?: StringFieldComparison
   status?: StringFieldComparison
-  subscription?: {
-    startDate: any
-    endDate: any
-  }
+  subscription?: DateRangeFieldComparison
+  availableDate?: DateRangeFieldComparison
 }
 
 export interface CarListProps {
@@ -56,8 +56,6 @@ export interface CarListProps {
   limit?: number
   page?: number
 }
-
-// Promise<CarListResponse>
 
 export type CarListResponse = {
   data: {

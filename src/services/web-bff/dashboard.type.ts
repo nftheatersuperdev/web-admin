@@ -1,8 +1,5 @@
-import type { Response } from 'services/web-bff/response.type'
-import type {
-  SubscriptionListResponse,
-  SubscriptionStatus,
-} from 'services/web-bff/subscription.type'
+import { Response } from 'services/web-bff/response.type'
+import { SubscriptionListResponse, SubscriptionStatus } from 'services/web-bff/subscription.type'
 
 export interface DashboardResponse extends Response {
   data: {

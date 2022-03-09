@@ -1,6 +1,8 @@
-import type { ResponseWithPagination } from 'services/web-bff/response.type'
-import type { User, UserAddress } from 'services/web-bff/user.type'
-import type { Car } from 'services/web-bff/car.type'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { SortDirection } from 'services/web-bff/general.type'
+import { ResponseWithPagination } from 'services/web-bff/response.type'
+import { User, UserAddress } from 'services/web-bff/user.type'
+import { Car } from 'services/web-bff/car.type'
 
 export enum SubscriptionDuration {
   threeDays = '3d',
@@ -59,13 +61,16 @@ export interface SubscriptionListQuery {
   }
 }
 
+export interface SubscriptionOrder {
+  [key: string]: SortDirection
+}
+
 export interface SubscriptionListProps {
-  (
-    accessToken: string,
-    query?: SubscriptionListQuery,
-    limit?: number,
-    page?: number
-  ): Promise<SubscriptionListResponse>
+  accessToken: string
+  query?: SubscriptionListQuery
+  sort?: SubscriptionOrder
+  limit?: number
+  page?: number
 }
 
 export type SubscriptionListResponse = {
@@ -73,3 +78,15 @@ export type SubscriptionListResponse = {
     subscriptions: Subscription[]
   }
 } & ResponseWithPagination
+
+export interface SubscriptionChangeCarProps {
+  accessToken: string
+  subscriptionId: string
+  carId: string
+}
+
+export interface SubscriptionExtendEndDateProps {
+  accessToken: string
+  subscriptionId: string
+  endDate: any
+}

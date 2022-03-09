@@ -38,9 +38,9 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
   const { data, refetch, isFetching } = useQuery('cars-return', () =>
-    getList(
+    getList({
       accessToken,
-      {
+      query: {
         status: subscriptionStatus.DELIVERED,
         startDate: {
           between: {
@@ -49,9 +49,9 @@ export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Elemen
           },
         },
       },
-      pageSize,
-      currentPageIndex + 1
-    )
+      limit: pageSize,
+      page: currentPageIndex + 1,
+    })
   )
 
   useEffect(() => {

@@ -1,5 +1,5 @@
-import type { Maybe } from 'services/web-bff/general.types'
-import type { Response } from 'services/web-bff/response.type'
+import { Maybe } from 'services/web-bff/general.type'
+import { Response } from 'services/web-bff/response.type'
 
 export interface User {
   id: string

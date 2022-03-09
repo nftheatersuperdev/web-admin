@@ -24,11 +24,13 @@ import styled from 'styled-components'
 import config from 'config'
 import dayjs from 'dayjs'
 import * as yup from 'yup'
+import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
-import { useCarModelById, useChangeCar, useManualExtendSubscription } from 'services/evme'
 import { columnFormatDuration } from 'pages/Pricing/utils'
 import DateTimePicker from 'components/DateTimePicker'
+import { changeCar, extend } from 'services/web-bff/subscription'
+import { getList } from 'services/web-bff/car'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
@@ -48,40 +50,44 @@ const validationSchema = yup.object({
 
 interface Subscription {
   id: string
-  vin: string
-  plateNumber: string
-  brand: string
-  model: string
+  userFirstName: string
+  userLastName: string
+  userEmail: string
+  userPhoneNumber: string
+  carId: string
   carModelId: string
-  color: string
+  carName: string
+  carBrand: string
+  carColor: string
+  carPlateNumber: string
+  carVin: string
+  carSeats: number
+  carTopSpeed: number
+  carFastChargeTime: number
   price: number
   duration: string
-  seats: number
-  topSpeed: number
-  fastChargeTime: number
   startDate: string
   endDate: string
-  createdAt: string
-  updatedAt: string
-  email: string
-  phoneNumber: string
-  firstName: string
-  lastName: string
-  startAddress: string
-  startLat: number
-  startLng: number
-  startAddressRemark: string | null
-  endAddress: string
-  endLat: number
-  endLng: number
-  endAddressRemark: string | null
+  deliveryAddress: string
+  deliveryLatitude: number
+  deliveryLongitude: number
+  deliveryRemark: string
+  returnAddress: string
+  returnLatitude: number
+  returnLongitude: number
+  returnRemark: string
   status: string
+  voucherCode: string
+  paymentVersion: string
+  createdDate: string
+  updatedDate: string
 }
 
 interface SubscriptionProps {
+  accessToken: string
+  subscription: Subscription | undefined
   open: boolean
   onClose: (needRefetch?: boolean) => void
-  subscription: Subscription | undefined
 }
 
 interface SubscriptionUpdateValuesProps {
@@ -89,47 +95,48 @@ interface SubscriptionUpdateValuesProps {
 }
 
 export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
+  const { accessToken, open, onClose, subscription } = props
+
+  if (!subscription) {
+    return <div>{` `}</div>
+  }
+
+  const { t } = useTranslation()
   const { getRole } = useAuth()
   const currentUserRole = getRole()
   const isSuperAdminRole = currentUserRole === ROLES.SUPER_ADMIN
-  const { open, onClose, subscription } = props
-  const { startLat = 0, startLng = 0, endLat = 0, endLng = 0 } = subscription || {}
-
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  // Fetch the available cars with the car model ID and the color of the subscription so that an admin
-  // can possibly change the vehicle in this car model category
-  const { data: carModel } = useCarModelById({
-    carModelId: subscription?.carModelId || '',
-    // carFilter: { color: { eq: subscription?.color } },
-    carFilter: {},
-    availableFilter: { startDate: subscription?.startDate, endDate: subscription?.endDate },
-  })
-
-  const changeCarMutation = useChangeCar()
-  const manualExtendSubscription = useManualExtendSubscription()
-
-  const { t } = useTranslation()
+  const { data: availableCarsResponse } = useQuery('available-cars', () =>
+    getList({
+      accessToken,
+      query: {
+        modeId: {
+          eq: subscription.carModelId,
+        },
+        availableDate: {
+          startDate: subscription.startDate,
+          endDate: subscription.endDate,
+        },
+      },
+      limit: 500,
+    })
+  )
+  const availableCars = availableCarsResponse?.data.cars || []
 
   const handleOnSubmit = async ({ plateNumber }: SubscriptionUpdateValuesProps) => {
     try {
       setIsLoading(true)
-      const carSelected = carModel?.cars?.find((car) => car.plateNumber === plateNumber)
+      const carSelected = availableCars.find((car) => car.plateNumber === plateNumber)
       const carId = carSelected?.id
       const subscriptionId = subscription?.id
 
       if (carId && subscriptionId) {
-        await toast.promise(
-          changeCarMutation.mutateAsync({
-            carId,
-            subscriptionId,
-          }),
-          {
-            loading: t('toast.loading'),
-            success: t('subscription.updateDialog.success'),
-            error: t('subscription.updateDialog.error'),
-          }
-        )
+        await toast.promise(changeCar({ accessToken, subscriptionId, carId }), {
+          loading: t('toast.loading'),
+          success: t('subscription.updateDialog.success'),
+          error: t('subscription.updateDialog.error'),
+        })
       }
     } finally {
       setIsLoading(false)
@@ -141,7 +148,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   const formik = useFormik({
     validationSchema,
     initialValues: {
-      plateNumber: subscription?.plateNumber,
+      plateNumber: subscription?.carPlateNumber,
     },
     enableReinitialize: true,
     onSubmit: handleOnSubmit,
@@ -157,14 +164,12 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     formik.resetForm()
   }
 
-  const availablePlateNumbers =
-    carModel?.cars?.filter((car) => car.available).map((car) => car.plateNumber) || []
-
+  const availablePlateNumbers = availableCars?.map((car) => car.plateNumber) || []
   if (
-    !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.plateNumber) &&
-    subscription?.plateNumber
+    !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.carPlateNumber) &&
+    subscription?.carPlateNumber
   ) {
-    availablePlateNumbers.push(subscription.plateNumber)
+    availablePlateNumbers.push(subscription.carPlateNumber)
   }
 
   const disableToChangePlateNumber =
@@ -183,9 +188,10 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     const confirmed = window.confirm(confirmationMessage)
     if (confirmed) {
       await toast.promise(
-        manualExtendSubscription.mutateAsync({
+        extend({
+          accessToken,
           subscriptionId,
-          returnDate: newDate,
+          endDate: newDate,
         }),
         {
           loading: t('toast.loading'),
@@ -211,7 +217,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.firstName')}
-              value={subscription?.firstName}
+              value={subscription?.userFirstName}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -221,7 +227,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.lastName')}
-              value={subscription?.lastName}
+              value={subscription?.userLastName}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -231,7 +237,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.email')}
-              value={subscription?.email}
+              value={subscription?.userEmail}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -241,7 +247,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.phone')}
-              value={subscription?.phoneNumber}
+              value={subscription?.userPhoneNumber}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -291,7 +297,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.createdDate')}
-              value={formatDate(subscription?.createdAt)}
+              value={formatDate(subscription?.createdDate)}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -301,7 +307,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.updatedDate')}
-              value={formatDate(subscription?.updatedAt)}
+              value={formatDate(subscription?.updatedDate)}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -329,7 +335,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                 }}
               />
             )}
-            {isSuperAdminRole && subscription?.endDate && (
+            {subscription?.endDate && (
               <DateTimePicker
                 fullWidth
                 disablePast
@@ -362,7 +368,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.startAddress')}
-              value={subscription?.startAddress}
+              value={subscription?.deliveryAddress}
               fullWidth
               multiline
               maxRows={3}
@@ -374,7 +380,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.endAddress')}
-              value={subscription?.endAddress}
+              value={subscription?.returnAddress}
               fullWidth
               multiline
               maxRows={3}
@@ -386,7 +392,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.startAddressRemark')}
-              value={subscription?.startAddressRemark?.trim() || t('subscription.noData')}
+              value={subscription?.deliveryRemark?.trim() || t('subscription.noData')}
               fullWidth
               multiline
               maxRows={3}
@@ -398,7 +404,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.endAddressRemark')}
-              value={subscription?.endAddressRemark?.trim() || t('subscription.noData')}
+              value={subscription?.returnRemark?.trim() || t('subscription.noData')}
               fullWidth
               multiline
               maxRows={3}
@@ -414,7 +420,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.brand')}
-              value={subscription?.brand}
+              value={subscription?.carBrand}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -424,7 +430,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.model')}
-              value={subscription?.model}
+              value={subscription?.carName}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -463,7 +469,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.vin')}
-              value={subscription?.vin}
+              value={subscription?.carVin}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -473,7 +479,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.seats')}
-              value={subscription?.seats}
+              value={subscription?.carSeats}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -488,11 +494,19 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               {isLoaded ? (
                 <GoogleMap
                   id="map-delivery-address"
-                  center={{ lat: startLat, lng: startLng }}
+                  center={{
+                    lat: subscription?.deliveryLatitude ?? 0,
+                    lng: subscription?.deliveryLongitude ?? 0,
+                  }}
                   zoom={15}
                 >
-                  <InfoWindow position={{ lat: startLat, lng: startLng }}>
-                    <h4>{subscription?.startAddress}</h4>
+                  <InfoWindow
+                    position={{
+                      lat: subscription?.deliveryLatitude ?? 0,
+                      lng: subscription?.deliveryLongitude ?? 0,
+                    }}
+                  >
+                    <h4>{subscription?.deliveryAddress}</h4>
                   </InfoWindow>
                 </GoogleMap>
               ) : null}
@@ -504,9 +518,21 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             </Typography>
             <MapWrapper>
               {isLoaded ? (
-                <GoogleMap id="map-return-address" center={{ lat: endLat, lng: endLng }} zoom={15}>
-                  <InfoWindow position={{ lat: endLat, lng: endLng }}>
-                    <h4>{subscription?.endAddress}</h4>
+                <GoogleMap
+                  id="map-return-address"
+                  center={{
+                    lat: subscription?.returnLatitude ?? 0,
+                    lng: subscription?.returnLongitude ?? 0,
+                  }}
+                  zoom={15}
+                >
+                  <InfoWindow
+                    position={{
+                      lat: subscription?.returnLatitude ?? 0,
+                      lng: subscription?.returnLongitude ?? 0,
+                    }}
+                  >
+                    <h4>{subscription?.returnAddress}</h4>
                   </InfoWindow>
                 </GoogleMap>
               ) : null}
