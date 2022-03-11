@@ -1,5 +1,10 @@
 import axios from 'axios'
-import { SubscriptionListProps, SubscriptionListResponse } from 'services/web-bff/subscription.type'
+import {
+  SubscriptionListProps,
+  SubscriptionListResponse,
+  SubscriptionChangeCarProps,
+  SubscriptionExtendEndDateProps,
+} from 'services/web-bff/subscription.type'
 
 export const status = {
   RESERVED: 'reserved',
@@ -15,16 +20,18 @@ export const status = {
   ACCEPTED_AGREEMENT: 'accepted_agreement',
 }
 
-export const getList: SubscriptionListProps = async (
+export const getList = async ({
   accessToken,
   query,
+  sort,
   limit = 10,
-  page = 1
-): Promise<SubscriptionListResponse> => {
+  page = 1,
+}: SubscriptionListProps): Promise<SubscriptionListResponse> => {
   const response: SubscriptionListResponse = await axios
-    .get(`https://run.mocky.io/v3/9c1191c1-6bd1-41f5-95ed-40ab94c5cd91/subscriptions`, {
+    .get(`https://run.mocky.io/v3/02fef5e9-cfe4-496a-9c18-deb2d9a07fdc`, {
       params: {
         ...query,
+        ...sort,
         limit,
         page,
       },
@@ -37,6 +44,55 @@ export const getList: SubscriptionListProps = async (
   return response
 }
 
+/**
+ * This function allows operators to update a car with changing plate numbers.
+ */
+export const changeCar = async ({
+  accessToken,
+  subscriptionId,
+  carId,
+}: SubscriptionChangeCarProps): Promise<boolean> => {
+  await axios.patch(
+    `https://run.mocky.io/v3/bf06262b-712b-48de-9808-0b71c8c3958d`,
+    {
+      subscriptionId,
+      carId,
+    },
+    {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+
+  return true
+}
+
+/**
+ * This function allows operators to extend the end date of a subscription
+ */
+export const extend = async ({
+  accessToken,
+  subscriptionId,
+  endDate,
+}: SubscriptionExtendEndDateProps): Promise<boolean> => {
+  await axios.patch(
+    `https://run.mocky.io/v3/bf06262b-712b-48de-9808-0b71c8c3958d`,
+    {
+      subscriptionId,
+      endDate,
+    },
+    {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    }
+  )
+
+  return true
+}
+
 export default {
   getList,
+  changeCar,
 }

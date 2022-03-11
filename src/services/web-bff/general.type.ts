@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> }
+
+export enum SortDirection {
+  Asc = 'ASC',
+  Desc = 'DESC',
+}
 
 export interface StringFieldComparison {
   is?: Maybe<boolean>
@@ -35,4 +41,9 @@ export interface NumberFieldComparison {
   notILike?: Maybe<number>
   in?: Maybe<number[]>
   notIn?: Maybe<number[]>
+}
+
+export interface DateRangeFieldComparison {
+  startDate: any
+  endDate: any
 }

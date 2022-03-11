@@ -274,7 +274,10 @@
       "success": "Updated car successfully",
       "error": "Failed to update car"
     },
-    "plan": "Plan"
+    "plan": "Plan",
+    "currency": {
+      "thb": "THB"
+    }
   },
   "subscription": {
     "id": "Subscription ID",

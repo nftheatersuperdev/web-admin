@@ -1,11 +1,14 @@
+import config from 'config'
 import { Card } from '@material-ui/core'
 import {
-  DataGrid,
   GridColDef,
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
+  GridPageChangeParams,
+  GridSortModel,
+  GridRowData,
 } from '@material-ui/data-grid'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
@@ -13,12 +16,15 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { getList } from 'services/web-bff/subscription'
 import { Page } from 'layout/LayoutRoute'
+import DataGridLocale from 'components/DataGridLocale'
 import {
   getVisibilityColumns,
   setVisibilityColumns,
   VisibilityColumns,
 } from 'pages/Subscriptions/utils'
-import type { SubscriptionListQuery } from 'services/web-bff/subscription.type'
+import UpdateDialog from 'pages/Subscriptions/UpdateDialog'
+import { SortDirection } from 'services/web-bff/general.type'
+import { SubscriptionListQuery, SubscriptionOrder } from 'services/web-bff/subscription.type'
 
 const customToolbar = () => (
   <GridToolbarContainer>
@@ -32,10 +38,22 @@ export default function Subscription(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
   const visibilityColumns = getVisibilityColumns()
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
+  const [selectedSubscription, setSelectedSubscription] = useState()
+  const [sort, setSort] = useState<SubscriptionOrder>({ createdAt: SortDirection.Desc })
   const [query] = useState<SubscriptionListQuery>()
-  const { data: response } = useQuery('subscriptions', () => getList(accessToken, query))
+  const {
+    data: response,
+    isFetching,
+    refetch,
+  } = useQuery('subscriptions', () =>
+    getList({ accessToken, query, sort, limit: pageSize, page: currentPageIndex + 1 })
+  )
 
-  const subscriptions =
+  const rowCount = response?.data.pagination.totalRecords ?? 0
+  const rows =
     response?.data.subscriptions.map((subscription) => ({
       id: subscription.id,
       userFirstName: subscription.user.firstName,
@@ -43,8 +61,10 @@ export default function Subscription(): JSX.Element {
       userEmail: subscription.user.email,
       userPhoneNumber: subscription.user.phoneNumber,
       carId: subscription.car.id,
+      carModelId: subscription.car.modelId,
       carName: subscription.car.name,
       carBrand: subscription.car.brand,
+      carColor: subscription.car.color,
       carPlateNumber: subscription.car.plateNumber,
       carVin: subscription.car.vin,
       carSeats: subscription.car.seats,
@@ -55,7 +75,13 @@ export default function Subscription(): JSX.Element {
       startDate: subscription.startDate,
       endDate: subscription.endDate,
       deliveryAddress: subscription.deliveryAddress?.full,
+      deliveryLatitude: subscription.deliveryAddress?.latitude,
+      deliveryLongitude: subscription.deliveryAddress?.longitude,
+      deliveryRemark: subscription.deliveryAddress?.remark,
       returnAddress: subscription.returnAddress?.full,
+      returnLatitude: subscription.returnAddress?.latitude,
+      returnLongitude: subscription.returnAddress?.longitude,
+      returnRemark: subscription.returnAddress?.remark,
       status: subscription.status,
       voucherCode: subscription.voucherCode,
       paymentVersion: subscription.paymentVersion,
@@ -287,19 +313,65 @@ export default function Subscription(): JSX.Element {
     setVisibilityColumns(visibilityColumns)
   }
 
+  const handleSortChange = (params: GridSortModel) => {
+    if (params?.length > 0 && !isFetching) {
+      const { field: refField, sort } = params[0]
+
+      const order: SubscriptionOrder = {
+        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
+      }
+
+      setSort(order)
+      refetch()
+    }
+  }
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
+  const handleRowClick = (data: GridRowData) => {
+    setUpdateDialogOpen(true)
+    setSelectedSubscription(data.row)
+  }
+
   return (
     <Page>
       <Card>
-        <DataGrid
+        <DataGridLocale
           autoHeight
-          components={{
-            Toolbar: customToolbar,
-          }}
+          pagination
+          pageSize={pageSize}
+          page={currentPageIndex}
+          rowCount={rowCount}
+          paginationMode="server"
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={setCurrentPageIndex}
+          rows={rows}
           columns={columns}
           onColumnVisibilityChange={onColumnVisibilityChange}
-          rows={subscriptions}
+          onRowClick={handleRowClick}
+          /**
+           * @TODO add filter from server
+           */
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          loading={isFetching}
+          customToolbar={customToolbar}
         />
       </Card>
+
+      <UpdateDialog
+        accessToken={accessToken}
+        open={isUpdateDialogOpen}
+        onClose={(needRefetch) => {
+          if (needRefetch) {
+            refetch()
+          }
+          setUpdateDialogOpen(false)
+        }}
+        subscription={selectedSubscription}
+      />
     </Page>
   )
 }

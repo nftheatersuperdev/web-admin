@@ -38,9 +38,9 @@ export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.El
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
   const { data, refetch, isFetching } = useQuery('cars-delivery', () =>
-    getList(
+    getList({
       accessToken,
-      {
+      query: {
         status: subscriptionStatus.ACCEPTED,
         startDate: {
           between: {
@@ -49,9 +49,9 @@ export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.El
           },
         },
       },
-      pageSize,
-      currentPageIndex + 1
-    )
+      limit: pageSize,
+      page: currentPageIndex + 1,
+    })
   )
 
   useEffect(() => {
