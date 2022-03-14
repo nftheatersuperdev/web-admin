@@ -1,21 +1,27 @@
 import {
   Button,
   Card,
+  Checkbox,
   FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
   Grid,
   InputLabel,
   MenuItem,
   Select,
   TextField,
 } from '@material-ui/core'
+import { flow, get, includes, map } from 'lodash/fp'
 import styled from 'styled-components'
 import toast from 'react-hot-toast'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import config from 'config'
+import { useQuery } from 'react-query'
 import { useState } from 'react'
+import { useAuth } from 'auth/AuthContext'
+import { getBodyTypes, getConnectorTypes, update } from 'services/web-bff/car'
 import { CarModelDataAndRefetchProps } from 'pages/ModelAndPricingEdit/types'
-import { useCarBodyTypes, useCarConnectorTypes, useUpdateCarModel } from 'services/evme'
 
 const ButtonSpace = styled(Button)`
   margin: 0;
@@ -25,18 +31,26 @@ const CardSpacing = styled(Card)`
   padding: 20px;
 `
 
-export default function ModelForm({ carModel, refetch }: CarModelDataAndRefetchProps): JSX.Element {
+const CheckBoxGroupLabel = styled(FormLabel)`
+  font-size: 12px;
+`
+
+export default function ModelForm({ car, refetch }: CarModelDataAndRefetchProps): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
-  const updateCarModel = useUpdateCarModel()
-  const { data: carBodyTypes } = useCarBodyTypes(config.maxInteger)
-  const { data: carConnectorTypes } = useCarConnectorTypes(config.maxInteger)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const { data: carBodyTypes } = useQuery('car-body-types', () => getBodyTypes({ accessToken }))
+  const { data: carConnectorTypes } = useQuery('car-connector-types', () =>
+    getConnectorTypes({ accessToken })
+  )
 
   const formik = useFormik({
     initialValues: {
-      ...carModel,
-      bodyTypeId: `${carModel?.bodyTypeId}` || '',
-      connectorTypeId: carModel?.connectorTypeId || '',
+      ...car,
+      bodyTypeId: `${car?.bodyType.id}` || '',
+      connectorTypeId: car?.connectorType.id || '',
+      connectorTypeIds: flow(get('connectorTypes'), map('id'))(car),
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -45,7 +59,7 @@ export default function ModelForm({ carModel, refetch }: CarModelDataAndRefetchP
       const updatedFields = {
         id: values.id,
         brand: values.brand,
-        model: values.model,
+        name: values.name,
         seats: values.seats,
         condition: values.condition,
         acceleration: values.acceleration,
@@ -59,7 +73,7 @@ export default function ModelForm({ carModel, refetch }: CarModelDataAndRefetchP
         fastChargeTime: values.fastChargeTime,
         bodyTypeId: `${values.bodyTypeId}`,
       }
-      toast.promise(updateCarModel.mutateAsync(updatedFields), {
+      toast.promise(update({ accessToken, updatedFields }), {
         loading: t('toast.loading'),
         success: () => {
           formik.resetForm()
@@ -102,10 +116,10 @@ export default function ModelForm({ carModel, refetch }: CarModelDataAndRefetchP
             <TextField
               fullWidth
               label={t('carModel.model')}
-              id="model"
-              name="model"
+              id="name"
+              name="name"
               variant="outlined"
-              value={formik.values.model}
+              value={formik.values.name}
               onChange={formik.handleChange}
               InputLabelProps={{
                 shrink: true,
@@ -138,9 +152,9 @@ export default function ModelForm({ carModel, refetch }: CarModelDataAndRefetchP
                 value={formik.values.bodyTypeId}
                 onChange={formik.handleChange}
               >
-                {carBodyTypes?.edges?.map(({ node: { id, bodyType } }) => (
-                  <MenuItem key={id} value={id}>
-                    {bodyType}
+                {carBodyTypes?.map((bodyType) => (
+                  <MenuItem key={bodyType.id} value={bodyType.id}>
+                    {bodyType.description}
                   </MenuItem>
                 ))}
               </Select>
@@ -263,23 +277,27 @@ export default function ModelForm({ carModel, refetch }: CarModelDataAndRefetchP
           <Grid item xs={12}>
             <h3>{t('modelForm.charging')}</h3>
           </Grid>
-          <Grid item xs={4}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="connectorTypeId">{t('carModel.connectorType')}</InputLabel>
-              <Select
-                labelId="connectorTypeId"
-                label={t('carModel.connectorType')}
-                id="connectorTypeId"
-                name="connectorTypeId"
-                value={formik.values.connectorTypeId}
-                onChange={formik.handleChange}
-              >
-                {carConnectorTypes?.edges?.map(({ node: { id, type } }) => (
-                  <MenuItem key={id} value={id}>
-                    {type}
-                  </MenuItem>
+          <Grid item xs={12}>
+            <FormControl component="fieldset">
+              <CheckBoxGroupLabel>{t('carModel.connectorType')}</CheckBoxGroupLabel>
+              <FormGroup row>
+                {carConnectorTypes?.map((connectorType) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        key={connectorType.id}
+                        onChange={formik.handleChange}
+                        name="connectorTypeIds"
+                        color="primary"
+                        value={connectorType.id}
+                        checked={includes(connectorType.id)(formik.values.connectorTypeIds)}
+                      />
+                    }
+                    label={connectorType.type}
+                    key={connectorType.id}
+                  />
                 ))}
-              </Select>
+              </FormGroup>
             </FormControl>
           </Grid>
           <Grid item xs={4}>

@@ -12,7 +12,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { CarModelItem } from 'types'
 import toast from 'react-hot-toast'
-import { useCreatePrices, usePricingByCarModelId } from 'services/evme'
+import { useQuery } from 'react-query'
+import { useAuth } from 'auth/AuthContext'
+import { getByCarId, createByCarId } from 'services/web-bff/package-price'
 import { PackagePriceInput } from 'services/evme.types'
 import { CarModelPrices, Period, defaultCarModelPrices, getPriceChanges } from 'pages/Pricing/utils'
 
@@ -29,31 +31,29 @@ const CardSpacing = styled(Card)`
 
 interface SubscriptionProps {
   modelOptions: CarModelItem[]
-  modelId: string
+  carId: string
 }
 
-export default function PricingForm({
-  modelOptions = [],
-  modelId,
-}: SubscriptionProps): JSX.Element {
+export default function PricingForm({ modelOptions = [], carId }: SubscriptionProps): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
   const [selectedCarModel, setSelectedCarModelsId] = useState<string>('')
   const [carModelPrices, setCarModelPrices] = useState<CarModelPrices>({ ...defaultCarModelPrices })
   const carModelPricesRef = useRef<CarModelPrices>({ ...defaultCarModelPrices })
   const [isPriceUpdated, setIsPriceUpdate] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const mutationCreatePrice = useCreatePrices()
 
-  const { data } = usePricingByCarModelId({
-    carModelId: modelId,
-  })
+  const { data: packagePrices } = useQuery('package-price-by-carId', () =>
+    getByCarId({ accessToken, carId })
+  )
+
   const handleUpdatePrice = (data: PackagePriceInput[] | null) => {
     setIsLoading(true)
     if (!data) {
       return
     }
 
-    toast.promise(mutationCreatePrice.mutateAsync(data), {
+    toast.promise(createByCarId({ accessToken, data }), {
       loading: t('toast.loading'),
       success: () => {
         setIsLoading(false)
@@ -68,16 +68,16 @@ export default function PricingForm({
 
   useEffect(() => {
     const selectedModel = modelOptions.find((model) => {
-      return model.id === modelId
+      return model.id === carId
     })?.modelName
     selectedModel && setSelectedCarModelsId(selectedModel)
-  }, [modelId, modelOptions])
+  }, [carId, modelOptions])
 
   useEffect(() => {
     const priceSnapshot = { ...defaultCarModelPrices }
 
-    data?.edges?.forEach(({ node }) => {
-      const { duration, price, fullPrice, description } = node || {}
+    packagePrices?.forEach((packagePrice) => {
+      const { duration, price, fullPrice, description } = packagePrice || {}
 
       switch (duration) {
         case '3d':
@@ -131,7 +131,7 @@ export default function PricingForm({
 
     setCarModelPrices(priceSnapshot)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]) // INFO: need to add "open" to the dependency list to render data when close/open dialog without change other param
+  }, [packagePrices]) // INFO: need to add "open" to the dependency list to render data when close/open dialog without change other param
 
   useEffect(() => {
     const {
@@ -207,7 +207,7 @@ export default function PricingForm({
         price: price3d.price,
         fullPrice: price3d.fullPrice,
         description: price3d.description,
-        carModelId: modelId,
+        carModelId: carId,
       })
     }
 
@@ -217,7 +217,7 @@ export default function PricingForm({
         price: price1w.price,
         fullPrice: price1w.fullPrice,
         description: price1w.description,
-        carModelId: modelId,
+        carModelId: carId,
       })
     }
 
@@ -227,7 +227,7 @@ export default function PricingForm({
         price: price1m.price,
         fullPrice: price1m.fullPrice,
         description: price1m.description,
-        carModelId: modelId,
+        carModelId: carId,
       })
     }
 
@@ -237,7 +237,7 @@ export default function PricingForm({
         price: price3m.price,
         fullPrice: price3m.fullPrice,
         description: price3m.description,
-        carModelId: modelId,
+        carModelId: carId,
       })
     }
 
@@ -247,7 +247,7 @@ export default function PricingForm({
         price: price6m.price,
         fullPrice: price6m.fullPrice,
         description: price6m.description,
-        carModelId: modelId,
+        carModelId: carId,
       })
     }
 
@@ -257,7 +257,7 @@ export default function PricingForm({
         price: price12m.price,
         fullPrice: price12m.fullPrice,
         description: price12m.description,
-        carModelId: modelId,
+        carModelId: carId,
       })
     }
 
