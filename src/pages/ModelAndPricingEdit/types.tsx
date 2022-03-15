@@ -1,10 +1,10 @@
-import { CarModel } from 'services/evme.types'
+import { Car } from 'services/web-bff/car.type'
 
 export interface ModelAndPricingEditParams {
-  carModelId: string
+  id: string
 }
 
 export interface CarModelDataAndRefetchProps {
-  carModel?: CarModel
+  car?: Car
   refetch: () => void
 }

@@ -6,16 +6,24 @@ import { useTranslation } from 'react-i18next'
 import { columnFormatDate, getIdFilterOperators } from 'utils'
 import config from 'config'
 import { Edit as EditIcon } from '@material-ui/icons'
-import { useCarModels } from 'services/evme'
+import { useQuery } from 'react-query'
+import { useAuth } from 'auth/AuthContext'
+import { getList } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 
 export default function ModelAndPricing(): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useCarModels(pageSize)
+
+  const {
+    data: cars,
+    refetch,
+    isFetching,
+  } = useQuery('model-and-pricing-page', () => getList({ accessToken }))
 
   const idFilterOperators = getIdFilterOperators(t)
 
@@ -27,16 +35,17 @@ export default function ModelAndPricing(): JSX.Element {
     refetch()
   }, [refetch])
 
+  const rowCount = cars?.data.pagination.totalRecords
   const rows = useMemo(
     () =>
-      data?.pages[currentPageIndex]?.edges?.map(({ node }) => ({
-        id: node?.id,
-        brand: node?.brand,
-        model: node?.model,
-        createdAt: node?.createdAt,
-        updatedAt: node?.updatedAt,
+      cars?.data.cars?.map((car) => ({
+        id: car?.id,
+        brand: car?.brand,
+        name: car?.name,
+        createdDate: car?.createdDate,
+        updatedDate: car?.updatedDate,
       })) || [],
-    [data, currentPageIndex]
+    [cars]
   )
 
   const columns: GridColDef[] = [
@@ -55,14 +64,14 @@ export default function ModelAndPricing(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'model',
+      field: 'name',
       headerName: t('pricing.model'),
       description: t('pricing.model'),
       flex: 1,
       filterable: false,
     },
     {
-      field: 'createdAt',
+      field: 'createdDate',
       headerName: t('pricing.createdDate'),
       description: t('pricing.createdDate'),
       valueFormatter: columnFormatDate,
@@ -70,7 +79,7 @@ export default function ModelAndPricing(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'updatedAt',
+      field: 'updatedDate',
       headerName: t('pricing.updatedDate'),
       description: t('pricing.updatedDate'),
       valueFormatter: columnFormatDate,
@@ -107,17 +116,16 @@ export default function ModelAndPricing(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
           rows={rows}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick
           filterMode="server"
+          loading={isFetching}
         />
       </Card>
     </Page>

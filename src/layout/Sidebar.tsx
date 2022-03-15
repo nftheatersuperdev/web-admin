@@ -99,7 +99,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.modelAndPricing'),
         path: ROUTE_PATHS.MODEL_AND_PRICING,
         icon: <PackageIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
       },
       {
         subHeader: t('sidebar.subscriptionManagement'),
