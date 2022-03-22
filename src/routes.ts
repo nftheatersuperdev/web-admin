@@ -110,22 +110,22 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.VOUCHER_CREATE,
     component: lazy(() => import('./pages/VoucherCreateEdit' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.VOUCHER_EDIT,
     component: lazy(() => import('./pages/VoucherCreateEdit' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.VOUCHER_EVENTS,
     component: lazy(() => import('./pages/VoucherEvents' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.VOUCHER,
     component: lazy(() => import('./pages/Voucher' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.CHARGING_LOCATIONS,

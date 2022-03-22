@@ -32,8 +32,11 @@ import {
   columnFormatDate,
 } from 'utils'
 import config from 'config'
-import { useVouchersFilterAndSort, useDeleteVoucher } from 'services/evme'
-import { VoucherFilter, SortDirection, SubOrder, Voucher as VoucherType } from 'services/evme.types'
+import { useQuery } from 'react-query'
+import { useAuth } from 'auth/AuthContext'
+import { getList, deleteById } from 'services/web-bff/voucher'
+import { VoucherListQuery } from 'services/web-bff/voucher.type'
+import { SortDirection, SubOrder, Voucher as VoucherType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
@@ -42,11 +45,12 @@ import CreateUpdateDialog from './CreateUpdateDialog'
 import PackagePriceDialog from './PackagePriceDialog'
 
 export default function Voucher(): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [voucherFilter, setVoucherFilter] = useState<VoucherFilter>({})
+  const [voucherQuery, setVoucherQuery] = useState<VoucherListQuery>({})
   const [voucherSort, setVoucherSort] = useState<SubOrder>({})
   const [createUpdateDialogOpen, setCreateUpdateDialogOpen] = useState<boolean>(false)
   const [packagePriceDialogOpen, setPackagePriceDialogOpen] = useState<boolean>(false)
@@ -56,8 +60,15 @@ export default function Voucher(): JSX.Element {
     data: voucherData,
     refetch,
     isFetching,
-  } = useVouchersFilterAndSort(voucherFilter, voucherSort, currentPageIndex, pageSize)
-  const deleteVoucher = useDeleteVoucher()
+  } = useQuery('voucher-list', () =>
+    getList({
+      accessToken,
+      sort: voucherSort,
+      query: voucherQuery,
+      page: currentPageIndex + 1,
+      limit: pageSize,
+    })
+  )
 
   const idFilterOperators = getIdFilterOperators(t)
   const numericFilterOperators = getNumericFilterOperators(t)
@@ -70,7 +81,7 @@ export default function Voucher(): JSX.Element {
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
-    setVoucherFilter({
+    setVoucherQuery({
       ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
         let filterValue = value
 
@@ -119,7 +130,7 @@ export default function Voucher(): JSX.Element {
         }
 
         return filter
-      }, {} as VoucherFilter),
+      }, {} as VoucherListQuery),
     })
     // reset page
     setCurrentPageIndex(0)
@@ -162,7 +173,7 @@ export default function Voucher(): JSX.Element {
     const confirmed = window.confirm(t('voucher.dialog.delete.confirmationMessage'))
     if (confirmed) {
       const { id } = data
-      toast.promise(deleteVoucher.mutateAsync({ id }), {
+      toast.promise(deleteById({ accessToken, id }), {
         loading: t('toast.loading'),
         success: () => {
           return t('voucher.dialog.delete.success')
@@ -176,7 +187,7 @@ export default function Voucher(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [voucherFilter, refetch])
+  }, [voucherQuery, refetch])
 
   const columns: GridColDef[] = [
     {
@@ -245,7 +256,7 @@ export default function Voucher(): JSX.Element {
       filterOperators: numericFilterOperators,
     },
     {
-      field: 'startAt',
+      field: 'startDate',
       headerName: t('voucher.startAt'),
       description: t('voucher.startAt'),
       hide: !visibilityColumns.startAt,
@@ -255,7 +266,7 @@ export default function Voucher(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'endAt',
+      field: 'endDate',
       headerName: t('voucher.endAt'),
       description: t('voucher.endAt'),
       hide: !visibilityColumns.endAt,
@@ -278,7 +289,7 @@ export default function Voucher(): JSX.Element {
         row.isAllPackages ? <CheckIcon fontSize="small" /> : <NotInterestedIcon fontSize="small" />,
     },
     {
-      field: 'createdAt',
+      field: 'createdDate',
       headerName: t('voucher.createdAt'),
       description: t('voucher.createdAt'),
       hide: !visibilityColumns.createdAt,
@@ -288,7 +299,7 @@ export default function Voucher(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'updatedAt',
+      field: 'updatedDate',
       headerName: t('voucher.updatedAt'),
       description: t('voucher.updatedAt'),
       hide: !visibilityColumns.updatedAt,
@@ -364,8 +375,9 @@ export default function Voucher(): JSX.Element {
     },
   ]
 
-  const vouchers =
-    voucherData?.data.map((voucher) => {
+  const rowCount = voucherData?.data.pagination.totalRecords
+  const rows =
+    voucherData?.data.vouchers.map((voucher) => {
       return {
         id: voucher.id,
         code: voucher.code,
@@ -377,10 +389,10 @@ export default function Voucher(): JSX.Element {
         isAllPackages: voucher.isAllPackages,
         userGroups: voucher.userGroups,
         packagePrices: voucher.packagePrices,
-        startAt: voucher.startAt,
-        endAt: voucher.endAt,
-        createdAt: voucher.createdAt,
-        updatedAt: voucher.updatedAt,
+        startDate: voucher.startDate,
+        endDate: voucher.endDate,
+        createdDate: voucher.createdDate,
+        updatedDate: voucher.updatedDate,
       }
     }) || []
 
@@ -403,11 +415,11 @@ export default function Voucher(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={voucherData?.totalData}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
-          rows={vouchers}
+          rows={rows}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick

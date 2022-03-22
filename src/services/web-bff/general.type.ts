@@ -47,3 +47,8 @@ export interface DateRangeFieldComparison {
   startDate: any
   endDate: any
 }
+
+export interface BooleanFieldComparison {
+  is?: Maybe<boolean>
+  isNot?: Maybe<boolean>
+}

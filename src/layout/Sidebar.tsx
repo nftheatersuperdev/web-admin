@@ -75,7 +75,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
 
       {
         subHeader: t('sidebar.vehicleManagement'),
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
         title: t('sidebar.cars'),
@@ -103,7 +103,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
       },
       {
         subHeader: t('sidebar.subscriptionManagement'),
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       {
         title: t('sidebar.subscriptions'),
@@ -120,13 +120,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
 
       {
         subHeader: t('sidebar.voucherManagement'),
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       {
         title: t('sidebar.vouchers'),
         path: ROUTE_PATHS.VOUCHER,
         icon: <LoyaltyOutlinedIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
 
       { subHeader: t('sidebar.others'), allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN] },
@@ -147,13 +147,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.profile'),
         path: ROUTE_PATHS.ACCOUNT,
         icon: <ProfileIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       {
         title: t('sidebar.settings'),
         path: ROUTE_PATHS.ACCOUNT_SETTINGS,
         icon: <SettingsIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
     ],
     [t]
