@@ -8,6 +8,7 @@ interface Config {
   isProductionEnvironment: boolean
   sentry: SentryOptions
   evme: string
+  evmeBff: string
   googleMapsApiKey: string
   firebase: Record<string, string>
   maxInteger: number
@@ -24,6 +25,7 @@ const config: Config = {
     environment: process.env.REACT_APP_SENTRY_ENVIRONMENT || '',
   },
   evme: process.env.REACT_APP_EVME_API || '',
+  evmeBff: process.env.REACT_APP_EVME_BFF_API || '',
   googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
   firebase: {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY || '',
