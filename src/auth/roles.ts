@@ -1,8 +1,8 @@
 export const ROLES = Object.freeze({
   ADMIN: 'admin',
   SUPER_ADMIN: 'super_admin',
-  CUSTOMER_SUPPORT: 'customer_support_team',
-  OPERATION: 'operation_team',
+  CUSTOMER_SUPPORT: 'customer_support',
+  OPERATION: 'operation',
   MARKETING: 'marketing',
 })
 

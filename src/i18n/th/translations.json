@@ -408,7 +408,8 @@
     "superAdmin": "ผู้ดูแลระบบระดับสูง",
     "admin": "ผู้ดูแลระบบ",
     "customerSupport": "ฝ่ายบริการลูกค้า",
-    "operation": "ฝ่ายปฏิบัติการ"
+    "operation": "ฝ่ายปฏิบัติการ",
+    "marketing": "ฝ่ายการตลาด"
   },
   "account": {
     "updatePassword": "แก้ไขรหัสผ่าน",
