@@ -31,7 +31,7 @@ export interface UserAddress {
 }
 
 export interface UserMeProps {
-  (fid: string, accessToken: string): Promise<User>
+  (accessToken: string): Promise<User>
 }
 export interface UserMeResponse extends Response {
   data: {
