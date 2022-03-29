@@ -44,7 +44,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DASHBOARD,
     component: lazy(() => import('./pages/Dashboard' /* webpackChunkName: "app" */)),
-    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.ACCOUNT_SETTINGS,
@@ -74,7 +74,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.SUBSCRIPTION,
     component: lazy(() => import('./pages/Subscriptions' /* webpackChunkName: "app" */)),
-    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.PRICING,
@@ -84,28 +84,28 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.MODEL_AND_PRICING_EDIT,
     component: lazy(() => import('./pages/ModelAndPricingEdit' /* webpackChunkName: "app" */)),
-    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.MODEL_AND_PRICING,
     component: lazy(() => import('./pages/ModelAndPricing' /* webpackChunkName: "app" */)),
-    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.CAR,
     component: lazy(() => import('./pages/Car' /* webpackChunkName: "app" */)),
-    // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.CAR_AVAILABILITY,
     component: lazy(() => import('./pages/CarAvailability' /* webpackChunkName: "app" */)),
-    // allowedRoles: [
-    //   ROLES.SUPER_ADMIN,
-    //   ROLES.ADMIN,
-    //   ROLES.CUSTOMER_SUPPORT,
-    //   ROLES.OPERATION,
-    //   ROLES.MARKETING,
-    // ],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+    ],
   },
   {
     path: ROUTE_PATHS.VOUCHER_CREATE,

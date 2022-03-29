@@ -15,10 +15,11 @@ import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
 import { ROUTE_PATHS } from 'routes'
 import { Page } from 'layout/LayoutRoute'
-import { useMe } from 'services/evme'
+import { getAdminUserProfile } from 'services/web-bff/admin-user'
 
 const GridContainer = styled(Grid)`
   box-sizing: border-box;
@@ -60,9 +61,10 @@ const ProfileTitle = styled(CardHeader)`
 export default function Account(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
-  const { firebaseUser, getRoleDisplayName } = useAuth()
+  const { firebaseUser, getRoleDisplayName, getToken } = useAuth()
   const role = getRoleDisplayName()
-  const { data: profile } = useMe()
+  const accessToken = getToken() ?? ''
+  const { data: profile } = useQuery('cars', () => getAdminUserProfile({ accessToken }))
 
   const lastSignIn = firebaseUser?.metadata?.lastSignInTime
     ? dayjs(firebaseUser?.metadata?.lastSignInTime).format('DD/MM/YYYY HH:mm')
@@ -149,21 +151,6 @@ export default function Account(): JSX.Element {
                       variant="outlined"
                       fullWidth
                       value={profile?.email || '-'}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      id="phoneNumber"
-                      label={t('account.phoneNumber')}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                      variant="outlined"
-                      fullWidth
-                      value={profile?.phoneNumber || '-'}
                     />
                   </Grid>
                 </Grid>

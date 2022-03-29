@@ -414,7 +414,8 @@
     "superAdmin": "Super Administrator",
     "admin": "Administrator",
     "customerSupport": "Customer Support",
-    "operation": "Operation"
+    "operation": "Operation",
+    "marketing": "Marketing"
   },
   "account": {
     "updatePassword": "Update password",
