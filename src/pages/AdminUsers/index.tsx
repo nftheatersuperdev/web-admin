@@ -25,19 +25,24 @@ import {
 import config from 'config'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
+import { useQuery } from 'react-query'
 import { useUsers } from 'services/evme'
 import { User, UserFilter } from 'services/evme.types'
+import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import AdminUserDetailDialog from './AdminUserDetailDialog'
 
 export default function AdminUsers(): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
   const { firebaseUser } = useAuth()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<Partial<User>>({})
+
+  const { data: adminUsersData } = useQuery('cars', () => getAdminUsers({ accessToken }))
 
   const defaultFilter = {
     role: {
@@ -107,6 +112,14 @@ export default function AdminUsers(): JSX.Element {
       filterOperators: idFilterOperators,
     },
     {
+      field: 'firebaseUId',
+      headerName: 'Firebase UID',
+      description: 'Firebase UID',
+      flex: 1,
+      hide: true,
+      filterOperators: idFilterOperators,
+    },
+    {
       field: 'firstName',
       headerName: t('user.firstName'),
       description: t('user.firstName'),
@@ -128,19 +141,13 @@ export default function AdminUsers(): JSX.Element {
       filterOperators: stringFilterOperators,
     },
     {
-      field: 'phoneNumber',
-      headerName: t('user.phone'),
-      description: t('user.phone'),
-      flex: 1,
-      filterOperators: stringFilterOperators,
-    },
-    {
       field: 'role',
       headerName: t('user.role'),
       description: t('user.role'),
       flex: 1,
       valueFormatter: (params: GridValueFormatterParams): string => {
-        switch (params.value) {
+        const role = String(params.value).toLocaleLowerCase()
+        switch (role) {
           case ROLES.SUPER_ADMIN:
             return t('role.superAdmin')
           case ROLES.ADMIN:
@@ -149,6 +156,8 @@ export default function AdminUsers(): JSX.Element {
             return t('role.customerSupport')
           case ROLES.OPERATION:
             return t('role.operation')
+          case ROLES.MARKETING:
+            return t('role.marketing')
           default:
             return '-'
         }
@@ -170,13 +179,13 @@ export default function AdminUsers(): JSX.Element {
       ],
     },
     {
-      field: 'disabled',
+      field: 'isActive',
       headerName: t('user.status'),
       description: t('user.status'),
       filterOperators: booleanFilterOperators,
       flex: 1,
       renderCell: (params: GridCellParams) =>
-        params.value ? (
+        !params.value ? (
           <Chip
             variant="outlined"
             size="small"
@@ -195,7 +204,7 @@ export default function AdminUsers(): JSX.Element {
         ),
     },
     {
-      field: 'createdAt',
+      field: 'createdDate',
       headerName: t('user.createdDate'),
       description: t('user.createdDate'),
       valueFormatter: columnFormatDate,
@@ -203,7 +212,7 @@ export default function AdminUsers(): JSX.Element {
       flex: 1,
     },
     {
-      field: 'updatedAt',
+      field: 'updatedDate',
       headerName: t('user.updatedDate'),
       description: t('user.updatedDate'),
       valueFormatter: columnFormatDate,
@@ -231,20 +240,7 @@ export default function AdminUsers(): JSX.Element {
     },
   ]
 
-  const rows =
-    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-      return {
-        id: node.id,
-        firstName: node.firstName,
-        lastName: node.lastName,
-        email: node.email,
-        phoneNumber: node.phoneNumber,
-        role: node.role,
-        disabled: node.disabled,
-        createdAt: node.createdAt,
-        updatedAt: node.updatedAt,
-      }
-    }) || []
+  const rows = adminUsersData?.data.adminUsers ?? []
 
   return (
     <Page>
@@ -262,7 +258,6 @@ export default function AdminUsers(): JSX.Element {
           onPageChange={setCurrentPageIndex}
           rows={rows}
           columns={columns}
-          checkboxSelection
           disableSelectionOnClick
           onRowClick={(params: GridRowParams) => {
             setSelectedUser({ ...params.row })
