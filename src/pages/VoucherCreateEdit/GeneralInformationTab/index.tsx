@@ -9,8 +9,9 @@ import { Button, Divider, Grid, TextField } from '@material-ui/core'
 import { useFormik } from 'formik'
 import { useHistory } from 'react-router-dom'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
-import { useCreateVoucher, useUpdateVoucher } from 'services/evme'
-import { VoucherInput } from 'services/evme.types'
+import { useAuth } from 'auth/AuthContext'
+import voucherService from 'services/web-bff/voucher'
+import { VoucherInput } from 'services/web-bff/voucher.type'
 import { VoucherAbleToEditProps } from 'pages/VoucherCreateEdit/types'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
@@ -27,10 +28,9 @@ export default function VoucherGeneralInformationTab({
   isEdit,
   refetch,
 }: VoucherAbleToEditProps): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
-  const createVoucher = useCreateVoucher()
-  const updateVoucher = useUpdateVoucher()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [descriptionEnTemp, setDescriptionEnTemp] = useState<string | null>()
   const [descriptionThTemp, setDescriptionThTemp] = useState<string | null>()
@@ -55,12 +55,12 @@ export default function VoucherGeneralInformationTab({
 
   const datePlusOneDay = dayjs().add(1, 'day')
   const defaultDate = {
-    startAt: datePlusOneDay.startOf('day'),
-    endAt: datePlusOneDay.endOf('day'),
+    startDate: datePlusOneDay.startOf('day'),
+    endDate: datePlusOneDay.endOf('day'),
   }
   const currentDateTime = new Date()
-  const startAtDateTime = new Date(voucher?.startAt)
-  const endAtDateTime = new Date(voucher?.endAt)
+  const startAtDateTime = new Date(voucher?.startDate)
+  const endAtDateTime = new Date(voucher?.endDate)
   const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
   const isInactive = currentDateTime > endAtDateTime
 
@@ -111,8 +111,8 @@ export default function VoucherGeneralInformationTab({
       percentDiscount: undefined,
       amount: undefined,
       limitPerUser: undefined,
-      startAt: isEdit ? voucher?.startAt : defaultDate.startAt,
-      endAt: isEdit ? voucher?.endAt : defaultDate.endAt,
+      startDate: isEdit ? voucher?.startDate : defaultDate.startDate,
+      endDate: isEdit ? voucher?.endDate : defaultDate.endDate,
       ...voucher,
     },
     enableReinitialize: true,
@@ -126,17 +126,17 @@ export default function VoucherGeneralInformationTab({
         percentDiscount: values?.percentDiscount,
         amount: values?.amount,
         limitPerUser: values?.limitPerUser,
-        startAt: values.startAt,
-        endAt: values.endAt,
+        startDate: values.startDate,
+        endDate: values.endDate,
       }
-      const mutateFunction = isEdit ? updateVoucher : createVoucher
-      const mutateObject = isEdit ? { id: voucher?.id, ...requestBody } : requestBody
+      const mutateFunction = isEdit ? voucherService.update : voucherService.create
+      const data = isEdit ? { id: voucher?.id, ...requestBody } : requestBody
       const toastMessages = {
         success: isEdit ? t('voucher.dialog.update.success') : t('voucher.dialog.create.success'),
         error: isEdit ? t('voucher.dialog.update.error') : t('voucher.dialog.create.error'),
       }
 
-      toast.promise(mutateFunction.mutateAsync(mutateObject), {
+      toast.promise(mutateFunction({ accessToken, data }), {
         loading: t('toast.loading'),
         success: ({ id }) => {
           formik.resetForm()
@@ -212,16 +212,16 @@ export default function VoucherGeneralInformationTab({
             disablePast
             ampm={false}
             label={t('voucher.startAt')}
-            id="startAt"
-            name="startAt"
+            id="startDate"
+            name="startDate"
             format={DEFAULT_DATETIME_FORMAT}
-            minDate={isEdit ? formik.values.startAt : defaultDate.startAt}
+            minDate={isEdit ? formik.values.startDate : defaultDate.startDate}
             minDateMessage=""
-            defaultValue={formik.values.startAt}
-            value={formik.values.startAt}
+            defaultValue={formik.values.startDate}
+            value={formik.values.startDate}
             onChange={(date) => {
-              formik.setFieldValue('startAt', date)
-              formik.setFieldValue('endAt', dayjs(date ?? new Date()).endOf('day'))
+              formik.setFieldValue('startDate', date)
+              formik.setFieldValue('endDate', dayjs(date ?? new Date()).endOf('day'))
             }}
             KeyboardButtonProps={{
               'aria-label': 'change date',
@@ -242,13 +242,13 @@ export default function VoucherGeneralInformationTab({
             disablePast
             ampm={false}
             label={t('voucher.endAt')}
-            id="endAt"
-            name="endAt"
+            id="endDate"
+            name="endDate"
             format={DEFAULT_DATETIME_FORMAT}
-            minDate={formik.values.startAt}
+            minDate={formik.values.startDate}
             minDateMessage=""
-            defaultValue={formik.values.endAt}
-            value={formik.values.endAt}
+            defaultValue={formik.values.endDate}
+            value={formik.values.endDate}
             onChange={(date) => {
               formik.setFieldValue('endAt', date)
             }}

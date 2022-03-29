@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Maybe } from 'services/web-bff/general.type'
 import { Response } from 'services/web-bff/response.type'
 
@@ -28,6 +29,13 @@ export interface UserAddress {
   latitude: number
   longitude: number
   remark?: Maybe<string>
+}
+
+export interface UserGroup {
+  id: string
+  name: string
+  createdAt?: any
+  updatedAt?: any
 }
 
 export interface UserMeProps {
