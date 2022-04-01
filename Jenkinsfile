@@ -1,3 +1,5 @@
+@Library('shared-jenkins-library@master') _
+
 pipeline {
     agent { label "master" }
     tools { nodejs 'NodeJS' }
@@ -32,6 +34,14 @@ pipeline {
              steps{
                 sh "aws amplify start-deployment --app-id d2nztmvn1ui6cz --branch-name dev --source-url=s3://admin-web-dev-test/admin-web.zip"
              }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sendNotifications(currentBuild.result)
+            }
         }
     }
 }
