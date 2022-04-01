@@ -32,7 +32,7 @@ pipeline {
         }
         stage ('Upload to S3') {
              steps{
-                sh "aws s3 cp ./build/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
+                sh "aws s3 cp ./build/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
              }
         }
         stage ('Deploy') {
