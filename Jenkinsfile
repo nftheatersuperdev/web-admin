@@ -4,6 +4,11 @@ pipeline {
     agent { label "master" }
     tools { nodejs 'NodeJS' }
 
+    parameters {
+      string(name: 'RELEASE_VERSION', defaultValue: '0.0.1', description: 'Release Version')
+      string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Your environment (dev/staging)')
+    }
+
     stages {
         stage ('Install Package') {
             steps {
@@ -22,17 +27,17 @@ pipeline {
         }
         stage ('Zip') {
              steps{
-                sh "cd build && zip -r admin-web.zip ./* && cd -"
+                sh "cd build && zip -r admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip ./* && cd -"
              }
         }
         stage ('Upload to S3') {
              steps{
-                sh "aws s3 cp ./build/admin-web.zip s3://admin-web-dev-test/admin-web.zip"
+                sh "aws s3 cp ./build/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
              }
         }
         stage ('Deploy') {
              steps{
-                sh "aws amplify start-deployment --app-id d2nztmvn1ui6cz --branch-name dev --source-url=s3://admin-web-dev-test/admin-web.zip"
+                sh "aws amplify start-deployment --app-id d2nztmvn1ui6cz --branch-name dev --source-url=s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
              }
         }
     }
