@@ -10,7 +10,7 @@ pipeline {
         }
         stage ('Copy Environment') {
              steps{
-                sh "cp /var/lib/jenkins/workspace/.env /var/lib/jenkins/workspace/admin-web-tesla"
+                sh "cp /data/web-admin/.env /var/lib/jenkins/workspace/admin-web-tesla"
              }
         }
         stage ('Build Static File') {
