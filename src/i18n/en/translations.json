@@ -170,6 +170,7 @@
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
+    "password": "Password",
     "role": "Role",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Chip, IconButton } from '@material-ui/core'
+import { Button, Card, Chip, IconButton } from '@material-ui/core'
 import {
   GridCellParams,
   GridColDef,
@@ -26,12 +26,14 @@ import config from 'config'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
 import { useQuery } from 'react-query'
+import PageToolbar from 'layout/PageToolbar'
 import { useUsers } from 'services/evme'
 import { User, UserFilter } from 'services/evme.types'
 import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import AdminUserDetailDialog from './AdminUserDetailDialog'
+import AdminUserCreateDialog from './AdminUserCreateDialog'
 
 export default function AdminUsers(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
@@ -40,6 +42,7 @@ export default function AdminUsers(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<Partial<User>>({})
 
   const { data: adminUsersData } = useQuery('cars', () => getAdminUsers({ accessToken }))
@@ -244,6 +247,12 @@ export default function AdminUsers(): JSX.Element {
 
   return (
     <Page>
+      <PageToolbar>
+        <Button color="primary" variant="contained" onClick={() => setIsCreateDialogOpen(true)}>
+          Create new
+        </Button>
+      </PageToolbar>
+
       <Card>
         <DataGridLocale
           autoHeight
@@ -272,6 +281,11 @@ export default function AdminUsers(): JSX.Element {
         open={isDetailDialogOpen}
         onClose={() => setIsDetailDialogOpen(false)}
         user={selectedUser}
+      />
+
+      <AdminUserCreateDialog
+        open={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
       />
     </Page>
   )

@@ -1,12 +1,20 @@
 import { Response } from 'services/web-bff/response.type'
 
+export enum AdminUserRole {
+  CUSTOMER_SUPPORT = 'CUSTOMER_SUPPORT',
+  OPERATION = 'CUSTOMER_SUPPORT',
+  MARKETING = 'MARKETING',
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+}
+
 export interface AdminUser {
   id: string
   firebaseUId: string
   email: string
   firstName: string
   lastName: string
-  role: 'ADMIN' | 'SUPER_ADMIN'
+  role: AdminUserRole
   isActive: false
   createdDate: string
   updatedDate: string
@@ -18,6 +26,13 @@ export interface GetAdminUsersProps {
 
 export interface GetAdminUserProfileProps {
   accessToken: string
+}
+
+export interface CreateNewAdminUserProps {
+  firebaseToken: string
+  firstname: string
+  lastname: string
+  role: AdminUserRole
 }
 
 export interface AdminUsersResponse extends Response {
