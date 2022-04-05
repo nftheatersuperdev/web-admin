@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from 'config'
 import { createNewAdminUser } from 'services/web-bff/admin-user'
-import { CreateNewUserProps, RegisterUserData } from 'services/firebase-rest.type'
+import { CreateNewUserProps, RegisterFirebaseUserData } from 'services/firebase-rest.type'
 
 const instance = axios.create({
   baseURL: config.firebaseRest,
@@ -11,17 +11,12 @@ const instance = axios.create({
   },
 })
 
-export const createNewUser = async ({
-  email,
-  password,
-  firstname,
-  lastname,
-  role,
-}: CreateNewUserProps): Promise<boolean> => {
+export const createNewUser = async (props: CreateNewUserProps): Promise<boolean> => {
+  const { accessToken, email, password, firstname, lastname, role } = props
   let idToken = ''
 
   try {
-    const data: RegisterUserData = await instance
+    const data: RegisterFirebaseUserData = await instance
       .post('/v1/accounts:signUp', {
         email,
         password,
@@ -32,6 +27,7 @@ export const createNewUser = async ({
     idToken = data.idToken
 
     await createNewAdminUser({
+      accessToken,
       firebaseToken: idToken,
       firstname,
       lastname,
@@ -43,7 +39,7 @@ export const createNewUser = async ({
     if (idToken) {
       await deleteUserByIdToken(idToken)
     }
-    throw error.response.data
+    throw error.response.data?.error || error
   }
 }
 

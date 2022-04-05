@@ -19,6 +19,7 @@ import { createNewUser } from 'services/firebase-rest'
 import { AdminUserRole } from 'services/web-bff/admin-user.type'
 
 interface AdminUserCreateDialogProps {
+  accessToken: string
   open: boolean
   onClose: () => void
 }
@@ -32,6 +33,7 @@ const ButtonActions = styled.div`
 `
 
 export default function AdminUserCreateDialog({
+  accessToken,
   open,
   onClose,
 }: AdminUserCreateDialogProps): JSX.Element {
@@ -86,27 +88,28 @@ export default function AdminUserCreateDialog({
       lastName: Yup.string().max(255).required(t('validation.required')),
     }),
     onSubmit: (values, actions) => {
-      toast.promise(
-        createNewUser({
-          firstname: values.firstName,
-          lastname: values.lastName,
-          email: values.email,
-          password: values.password,
-          role: getValueRole(values.role),
-        }),
-        {
-          loading: t('toast.loading'),
-          success: () => {
-            actions.setSubmitting(false)
-            return 'Done!'
-          },
-          error: (err) => {
-            actions.setSubmitting(false)
-            onClose()
-            return err.message
-          },
-        }
-      )
+      actions.setSubmitting(true)
+      toast
+        .promise(
+          createNewUser({
+            accessToken,
+            firstname: values.firstName,
+            lastname: values.lastName,
+            email: values.email,
+            password: values.password,
+            role: getValueRole(values.role),
+          }),
+          {
+            loading: t('toast.loading'),
+            success: () => 'User has been created',
+            error: (error) => `Something went wrong (${error.message || error})`,
+          }
+        )
+        .finally(() => {
+          onClose()
+          actions.resetForm()
+          actions.setSubmitting(false)
+        })
     },
   })
 

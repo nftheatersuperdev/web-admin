@@ -27,7 +27,6 @@ import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
 import { useQuery } from 'react-query'
 import PageToolbar from 'layout/PageToolbar'
-import { useUsers } from 'services/evme'
 import { User, UserFilter } from 'services/evme.types'
 import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
@@ -45,7 +44,7 @@ export default function AdminUsers(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<Partial<User>>({})
 
-  const { data: adminUsersData } = useQuery('cars', () => getAdminUsers({ accessToken }))
+  const { data: adminUsersData, refetch } = useQuery('cars', () => getAdminUsers({ accessToken }))
 
   const defaultFilter = {
     role: {
@@ -55,8 +54,6 @@ export default function AdminUsers(): JSX.Element {
   }
 
   const [userFilter, setUserFilter] = useState<UserFilter>({ ...defaultFilter })
-
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useUsers(pageSize, userFilter)
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -243,6 +240,10 @@ export default function AdminUsers(): JSX.Element {
     },
   ]
 
+  /**
+   * @TODO After backend finished the pagination will be update the rowCount again.
+   */
+  const rowCount = adminUsersData?.data.adminUsers.length
   const rows = adminUsersData?.data.adminUsers ?? []
 
   return (
@@ -259,11 +260,11 @@ export default function AdminUsers(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
+          // onFetchNextPage={fetchNextPage}
+          // onFetchPreviousPage={fetchPreviousPage}
           onPageChange={setCurrentPageIndex}
           rows={rows}
           columns={columns}
@@ -284,6 +285,7 @@ export default function AdminUsers(): JSX.Element {
       />
 
       <AdminUserCreateDialog
+        accessToken={accessToken}
         open={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
       />

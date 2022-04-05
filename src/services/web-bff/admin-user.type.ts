@@ -29,6 +29,7 @@ export interface GetAdminUserProfileProps {
 }
 
 export interface CreateNewAdminUserProps {
+  accessToken: string
   firebaseToken: string
   firstname: string
   lastname: string

@@ -38,18 +38,27 @@ export const getAdminUsers = async ({
 }
 
 export const createNewAdminUser = async ({
+  accessToken,
   firebaseToken,
   firstname,
   lastname,
   role,
 }: CreateNewAdminUserProps): Promise<AdminUser> => {
   const response: AdminUserProfileResponse = await axios
-    .post(`${config.evmeBff}/v1/admin-users`, {
-      firebaseToken,
-      firstname,
-      lastname,
-      role,
-    })
+    .post(
+      `${config.evmeBff}/v1/admin-users`,
+      {
+        firebaseToken,
+        firstname,
+        lastname,
+        role,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
     .then((response) => response.data)
 
   return response.data
