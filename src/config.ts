@@ -9,6 +9,8 @@ interface Config {
   sentry: SentryOptions
   evme: string
   evmeBff: string
+  firebaseRest: string
+  firebaseRestKey: string
   googleMapsApiKey: string
   firebase: Record<string, string>
   maxInteger: number
@@ -27,6 +29,8 @@ const config: Config = {
   evme: process.env.REACT_APP_EVME_API || '',
   evmeBff: process.env.REACT_APP_EVME_BFF_API || '',
   googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
+  firebaseRest: process.env.REACT_APP_FIREBASE_REST_API || '',
+  firebaseRestKey: process.env.REACT_APP_FIREBASE_REST_KEY || '',
   firebase: {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY || '',
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || '',

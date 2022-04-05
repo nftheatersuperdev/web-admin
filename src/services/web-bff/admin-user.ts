@@ -3,6 +3,7 @@ import config from 'config'
 import {
   GetAdminUsersProps,
   GetAdminUserProfileProps,
+  CreateNewAdminUserProps,
   AdminUser,
   AdminUsersResponse,
   AdminUserProfileResponse,
@@ -36,7 +37,35 @@ export const getAdminUsers = async ({
   return response
 }
 
+export const createNewAdminUser = async ({
+  accessToken,
+  firebaseToken,
+  firstname,
+  lastname,
+  role,
+}: CreateNewAdminUserProps): Promise<AdminUser> => {
+  const response: AdminUserProfileResponse = await axios
+    .post(
+      `${config.evmeBff}/v1/admin-users`,
+      {
+        firebaseToken,
+        firstname,
+        lastname,
+        role,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+    .then((response) => response.data)
+
+  return response.data
+}
+
 export default {
   getAdminUserProfile,
   getAdminUsers,
+  createNewAdminUser,
 }
