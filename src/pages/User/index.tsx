@@ -1,34 +1,35 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
 import { Card, Button, IconButton } from '@material-ui/core'
 import PageviewIcon from '@material-ui/icons/Pageview'
+import qs from 'qs'
+import { useLocation } from 'react-router-dom'
 import {
   GridColDef,
   GridFilterItem,
   GridFilterModel,
   GridPageChangeParams,
   GridValueFormatterParams,
-  GridSortModel,
   GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
-  getIdFilterOperators,
-  getStringFilterOperators,
-  getDateFilterOperators,
-  getSelectFilterOperators,
-  dateToFilterOnDay,
+  getEqualFilterOperators,
+  getContainFilterOperators,
+  FieldComparisons,
+  FieldKeyOparators,
+  /*dateToFilterOnDay,
   dateToFilterNotOnDay,
-  stringToFilterContains,
+  stringToFilterContains,*/
 } from 'utils'
 import config from 'config'
-import qs from 'qs'
-import { useUsersFilterAndSort } from 'services/evme'
-import { UserFilter, SortDirection, SubOrder, User as UserType } from 'services/evme.types'
+import { useQuery } from 'react-query'
+import { UserInputRequest } from 'services/web-bff/user.type'
+import { UserFilter, User as UserType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
+import { search } from 'services/web-bff/user'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import DetailDialog from './DetailDialog'
 
@@ -43,57 +44,38 @@ export default function User(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [userFilter, setUserFilter] = useState<UserFilter>({
+  const [userFilter] = useState<UserFilter>({
     ...defaultFilter,
     ...query,
   })
-  const [userSort, setUserSort] = useState<SubOrder>({})
+  const [userFilter2, setUserFilter2] = useState<UserInputRequest>()
   const [userDetail, setUserDetail] = useState<UserType>()
   const [openUserDetailDialog, setOpenUserDetailDialog] = useState<boolean>(false)
+
+  /* const {
+     data: userData,
+     refetch,
+     isFetching,
+   } = useUsersFilterAndSort(userFilter, userSort, currentPageIndex, pageSize)*/
 
   const {
     data: userData,
     refetch,
     isFetching,
-  } = useUsersFilterAndSort(userFilter, userSort, currentPageIndex, pageSize)
+  } = useQuery('user-list', () =>
+    search({
+      data: userFilter2,
+      page: currentPageIndex + 1,
+      limit: pageSize,
+    })
+  )
 
-  const idFilterOperators = getIdFilterOperators(t)
-  const stringFilterOperators = getStringFilterOperators(t)
-  const dateFilterOperators = getDateFilterOperators(t)
-  const selectFilterOperators = getSelectFilterOperators(t)
+  const equalOperators = getEqualFilterOperators(t)
+  const containOperators = getContainFilterOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
-  }
-
-  const handleFilterChange = (params: GridFilterModel) => {
-    setUserFilter({
-      ...defaultFilter,
-      ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        let filterValue = value
-
-        if ((columnField === 'createdAt' || columnField === 'updatedAt') && value) {
-          filterValue =
-            operatorValue === 'between' ? dateToFilterOnDay(value) : dateToFilterNotOnDay(value)
-        }
-
-        if (operatorValue === 'iLike' && value) {
-          filterValue = stringToFilterContains(value)
-        }
-
-        if (filterValue) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: filterValue,
-          }
-        }
-
-        return filter
-      }, {} as UserFilter),
-    })
-    // reset page
-    setCurrentPageIndex(0)
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -115,19 +97,6 @@ export default function User(): JSX.Element {
     setVisibilityColumns(visibilityColumns)
   }
 
-  const handleSortChange = (params: GridSortModel) => {
-    if (params?.length > 0 && !isFetching) {
-      const { field: refField, sort } = params[0]
-
-      const order: SubOrder = {
-        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
-      }
-
-      setUserSort(order)
-      refetch()
-    }
-  }
-
   useEffect(() => {
     refetch()
   }, [userFilter, refetch])
@@ -139,7 +108,7 @@ export default function User(): JSX.Element {
       description: t('user.id'),
       hide: !visibilityColumns.id,
       flex: 1,
-      filterOperators: idFilterOperators,
+      filterOperators: equalOperators,
     },
     {
       field: 'firstName',
@@ -147,7 +116,7 @@ export default function User(): JSX.Element {
       description: t('user.firstName'),
       hide: !visibilityColumns.firstName,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
     },
     {
       field: 'lastName',
@@ -155,7 +124,7 @@ export default function User(): JSX.Element {
       description: t('user.lastName'),
       hide: !visibilityColumns.lastName,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
     },
     {
       field: 'email',
@@ -163,7 +132,7 @@ export default function User(): JSX.Element {
       description: t('user.email'),
       hide: !visibilityColumns.email,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
     },
     {
       field: 'phoneNumber',
@@ -171,7 +140,7 @@ export default function User(): JSX.Element {
       description: t('user.phone'),
       hide: !visibilityColumns.phoneNumber,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
     },
     {
       field: 'kycStatus',
@@ -191,7 +160,7 @@ export default function User(): JSX.Element {
             return '-'
         }
       },
-      filterOperators: selectFilterOperators,
+      filterOperators: equalOperators,
       valueOptions: [
         {
           label: t('user.kyc.pending'),
@@ -238,7 +207,7 @@ export default function User(): JSX.Element {
       description: t('user.userGroups'),
       hide: !visibilityColumns.userGroups,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
     },
     {
       field: 'createdAt',
@@ -246,7 +215,7 @@ export default function User(): JSX.Element {
       description: t('user.createdDate'),
       hide: !visibilityColumns.createdAt,
       valueFormatter: columnFormatDate,
-      filterOperators: dateFilterOperators,
+      filterOperators: equalOperators,
       flex: 1,
     },
     {
@@ -255,7 +224,7 @@ export default function User(): JSX.Element {
       description: t('user.updatedDate'),
       hide: !visibilityColumns.updatedAt,
       valueFormatter: columnFormatDate,
-      filterOperators: dateFilterOperators,
+      filterOperators: equalOperators,
       flex: 1,
     },
     {
@@ -302,15 +271,32 @@ export default function User(): JSX.Element {
     },
   ]
 
+  const handleFilterChange = (params: GridFilterModel) => {
+    let keyValue = ''
+    setUserFilter2({
+      ...params.items.reduce((filter, { columnField, value, operatorValue }: GridFilterItem) => {
+        if (value) {
+          switch (operatorValue) {
+            case FieldComparisons.equals:
+              keyValue = `${columnField}${FieldKeyOparators.equals}`
+              break
+            case FieldComparisons.contains:
+              keyValue = `${columnField}${FieldKeyOparators.contains}`
+              break
+          }
+          filter = { [keyValue]: value }
+        }
+        return filter
+      }, {} as UserInputRequest),
+    })
+    // reset page
+    setCurrentPageIndex(0)
+  }
+
   // setUserDetail
 
   const users =
-    userData?.data.map((user) => {
-      const userGroups =
-        user.userGroups.length > 0
-          ? user.userGroups.map((userGroup) => userGroup.name).join(',')
-          : '-'
-
+    userData?.data.users.map((user) => {
       return {
         id: user.id,
         firstName: user.firstName,
@@ -324,7 +310,7 @@ export default function User(): JSX.Element {
         verifyDate: null,
         note: '',
         kycRejectReason: user.kycRejectReason,
-        userGroups,
+        userGroups: user.userGroups,
       }
     }) || []
 
@@ -344,7 +330,7 @@ export default function User(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={userData?.totalData}
+          rowCount={userData?.data.users.length}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
@@ -356,7 +342,6 @@ export default function User(): JSX.Element {
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
           sortingMode="server"
-          onSortModelChange={handleSortChange}
           loading={isFetching}
         />
       </Card>

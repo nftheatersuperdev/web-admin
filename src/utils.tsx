@@ -53,7 +53,7 @@ export function escapeRegExp(value: string): string {
   return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 }
 
-const FieldComparisons = {
+export const FieldComparisons = {
   equals: 'eq',
   notEquals: 'neq',
   greaterThan: 'gt',
@@ -63,6 +63,19 @@ const FieldComparisons = {
   onDay: 'between',
   notOnDay: 'notBetween',
   contains: 'iLike',
+  is: 'is',
+}
+
+export const FieldKeyOparators = {
+  equals: 'Equal',
+  notEquals: 'neq',
+  greaterThan: 'gt',
+  greaterThanOrEquals: 'gte',
+  lessThan: 'lt',
+  lessThanOrEquals: 'lte',
+  onDay: 'between',
+  notOnDay: 'notBetween',
+  contains: 'Contain',
   is: 'is',
 }
 
@@ -449,3 +462,36 @@ export const validateEmail = (email: string): boolean => {
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
 }
+
+export const getContainFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.contains'),
+    value: FieldComparisons.contains,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      const filterRegex = new RegExp(escapeRegExp(filterItem.value), 'i')
+      return ({ value }: GridCellParams): boolean => {
+        return filterRegex.test(value?.toString() || '')
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+]
+
+export const getEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+]

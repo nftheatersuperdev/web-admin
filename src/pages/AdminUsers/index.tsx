@@ -44,7 +44,7 @@ export default function AdminUsers(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<Partial<User>>({})
 
-  const { data: adminUsersData, refetch } = useQuery('cars', () => getAdminUsers({ accessToken }))
+  const { data: adminUsersData, refetch } = useQuery('cars', () => getAdminUsers())
 
   const defaultFilter = {
     role: {

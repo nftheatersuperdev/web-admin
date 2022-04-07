@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from 'config'
+import { BaseApi } from 'api/baseApi'
 import {
-  GetAdminUsersProps,
   GetAdminUserProfileProps,
   CreateNewAdminUserProps,
   AdminUser,
@@ -23,16 +23,10 @@ export const getAdminUserProfile = async ({
   return response.data
 }
 
-export const getAdminUsers = async ({
-  accessToken,
-}: GetAdminUsersProps): Promise<AdminUsersResponse> => {
-  const response: AdminUsersResponse = await axios
-    .get(`${config.evmeBff}/v1/admin-users`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data)
+export const getAdminUsers = async (): Promise<AdminUsersResponse> => {
+  const response: AdminUsersResponse = await BaseApi.get('/v1/admin-users').then((response) => {
+    return response.data
+  })
 
   return response
 }
