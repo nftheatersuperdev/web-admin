@@ -166,6 +166,12 @@
     "phone": "Phone Number",
     "remark": "Remark"
   },
+  "adminUser": {
+    "createDialog": {
+      "success": "The admin user has been created",
+      "failed": "Something went wrong ({{error}})"
+    }
+  },
   "user": {
     "id": "ID",
     "email": "Email",

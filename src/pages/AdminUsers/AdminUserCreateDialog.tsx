@@ -108,8 +108,11 @@ export default function AdminUserCreateDialog({
           }),
           {
             loading: t('toast.loading'),
-            success: () => 'User has been created',
-            error: (error) => `Something went wrong (${error.message || error})`,
+            success: t('adminUser.createDialog.success'),
+            error: (error) =>
+              t('adminUser.createDialog.failed', {
+                error: error.message || error,
+              }),
           }
         )
         .finally(() => {
