@@ -314,6 +314,8 @@ export default function User(): JSX.Element {
       }
     }) || []
 
+  const pagination = userData?.data.pagination || null
+
   return (
     <Page>
       <PageToolbar>
@@ -330,7 +332,7 @@ export default function User(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={userData?.data.users.length}
+          rowCount={pagination?.totalRecords}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
