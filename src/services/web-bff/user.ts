@@ -1,8 +1,7 @@
-import axios from 'axios'
-import config from 'config'
-import { User, UserMeProps, UserMeResponse } from './user.type'
+import { BaseApi } from 'api/baseApi'
+import { UserListResponse, UserMeProps } from './user.type'
 
-export const userMe: UserMeProps = async (accessToken): Promise<User> => {
+/*export const userMe: UserMeProps = async (accessToken): Promise<User> => {
   const response: UserMeResponse = await axios
     .get(`${config.evmeBff}/v1/admin-users/profiles`, {
       headers: {
@@ -12,8 +11,18 @@ export const userMe: UserMeProps = async (accessToken): Promise<User> => {
     .then((response) => response.data)
 
   return response.data.user
+}*/
+
+export const search = async ({ data, limit, page }: UserMeProps): Promise<UserListResponse> => {
+  const response: UserListResponse = await BaseApi.post('/v1/users/search', data, {
+    params: {
+      limit,
+      page,
+    },
+  }).then((response) => response.data)
+  return response
 }
 
 export default {
-  userMe,
+  search,
 }
