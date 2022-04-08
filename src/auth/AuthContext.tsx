@@ -109,6 +109,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         return t('role.customerSupport')
       case ROLES.OPERATION:
         return t('role.operation')
+      case ROLES.MARKETING:
+        return t('role.marketing')
       default:
         return '-'
     }
