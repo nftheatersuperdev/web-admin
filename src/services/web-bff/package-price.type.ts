@@ -11,8 +11,8 @@ export interface PackagePrice {
   price: number
   description?: string
   fullPrice?: number
-  createdAt: any
-  updatedAt: any
+  createdDate: any
+  updatedDate: any
 }
 
 export interface PackagePriceCreateData {

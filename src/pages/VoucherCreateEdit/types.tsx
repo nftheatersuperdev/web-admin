@@ -1,4 +1,4 @@
-import { Voucher } from 'services/evme.types'
+import { Voucher } from 'services/web-bff/voucher.type'
 
 export interface VoucherCreateEditParams {
   voucherId: string
