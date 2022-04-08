@@ -70,13 +70,19 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.users'),
         path: ROUTE_PATHS.USER,
         icon: <UserIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.MARKETING],
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.OPERATION,
+          ROLES.CUSTOMER_SUPPORT,
+          ROLES.MARKETING,
+        ],
       },
       {
         title: t('sidebar.userGroups'),
         path: ROUTE_PATHS.USER_GROUPS,
         icon: <GroupAddIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.MARKETING],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
       },
 
       {
@@ -87,7 +93,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.cars'),
         path: ROUTE_PATHS.CAR,
         icon: <CarIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
         title: t('sidebar.carAvailability'),
@@ -105,7 +111,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.modelAndPricing'),
         path: ROUTE_PATHS.MODEL_AND_PRICING,
         icon: <PackageIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
       },
       {
         subHeader: t('sidebar.subscriptionManagement'),
@@ -133,30 +139,18 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.additionalExpense'),
         path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
         icon: <AdditionalExpenseIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
 
       {
         subHeader: t('sidebar.voucherManagement'),
-        allowedRoles: [
-          ROLES.SUPER_ADMIN,
-          ROLES.ADMIN,
-          ROLES.CUSTOMER_SUPPORT,
-          ROLES.OPERATION,
-          ROLES.MARKETING,
-        ],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING],
       },
       {
         title: t('sidebar.vouchers'),
         path: ROUTE_PATHS.VOUCHER,
         icon: <LoyaltyOutlinedIcon />,
-        allowedRoles: [
-          ROLES.SUPER_ADMIN,
-          ROLES.ADMIN,
-          ROLES.CUSTOMER_SUPPORT,
-          ROLES.OPERATION,
-          ROLES.MARKETING,
-        ],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING],
       },
 
       {
@@ -167,7 +161,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.chargingLocations'),
         path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.CUSTOMER_SUPPORT,
+          ROLES.OPERATION,
+          ROLES.MARKETING,
+        ],
       },
       {
         title: t('sidebar.adminUsers'),
