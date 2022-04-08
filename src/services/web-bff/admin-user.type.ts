@@ -2,7 +2,7 @@ import { Response } from 'services/web-bff/response.type'
 
 export enum AdminUserRole {
   CUSTOMER_SUPPORT = 'CUSTOMER_SUPPORT',
-  OPERATION = 'CUSTOMER_SUPPORT',
+  OPERATION = 'OPERATION',
   MARKETING = 'MARKETING',
   ADMIN = 'ADMIN',
   SUPER_ADMIN = 'SUPER_ADMIN',

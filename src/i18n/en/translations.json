@@ -79,7 +79,7 @@
       "userDisabled": "User is disabled",
       "userTokenExpired": "Token has expired",
       "userMismatch": "User mismatch",
-      "weakPassword": "Password must be at least 6 characters long",
+      "weakPassword": "Password must contain at least 8 characters, one uppercase, one number and one special case character",
       "requiresRecentLogin": "Please re-login again",
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
@@ -165,6 +165,12 @@
     "email": "Email",
     "phone": "Phone Number",
     "remark": "Remark"
+  },
+  "adminUser": {
+    "createDialog": {
+      "success": "The admin user has been created",
+      "failed": "Something went wrong ({{error}})"
+    }
   },
   "user": {
     "id": "ID",

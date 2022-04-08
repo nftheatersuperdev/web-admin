@@ -84,6 +84,13 @@ export default function AdminUserCreateDialog({
         .email(t('authentication.error.invalidEmail'))
         .max(255)
         .required(t('authentication.error.emailRequired')),
+      password: Yup.string()
+        .min(8)
+        .required(t('authentication.error.passwordRequired'))
+        .matches(
+          /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
+          t('authentication.error.weakPassword')
+        ),
       firstName: Yup.string().max(255).required(t('validation.required')),
       lastName: Yup.string().max(255).required(t('validation.required')),
     }),
@@ -101,8 +108,11 @@ export default function AdminUserCreateDialog({
           }),
           {
             loading: t('toast.loading'),
-            success: () => 'User has been created',
-            error: (error) => `Something went wrong (${error.message || error})`,
+            success: t('adminUser.createDialog.success'),
+            error: (error) =>
+              t('adminUser.createDialog.failed', {
+                error: error.message || error,
+              }),
           }
         )
         .finally(() => {
