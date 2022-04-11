@@ -495,3 +495,37 @@ export const getEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOper
     InputComponent: GridFilterInputValue,
   },
 ]
+
+export const geEqualtDateOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.onDay,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterDatePicker,
+  },
+]
+
+export const getEqualSelectFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+    InputComponentProps: { type: 'singleSelect' },
+  },
+]
