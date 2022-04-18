@@ -46,11 +46,9 @@ export const updateUserGroup = async (data: UserGroupInput): Promise<UserGroupRe
 }
 
 export const searchUserInUserGroup = async ({
-  id,
   data,
 }: UserMeProps): Promise<UserByUserGroupListResponse> => {
   /*/v1/user-groups/${id}/users/search*/
-  console.log(id)
   const response: UserByUserGroupListResponse = await BaseApi.post(
     `b078b478-3b61-4dd8-92ec-bcd05a2c7571`,
     data
