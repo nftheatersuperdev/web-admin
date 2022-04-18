@@ -1,7 +1,7 @@
 import axios from 'axios'
-import config from 'config'
 import ls from 'localstorage-slim'
 import { STORAGE_KEYS } from 'auth/AuthContext'
+import config from 'config'
 
 export const BaseApi = axios.create({
   baseURL: config.evmeBff,

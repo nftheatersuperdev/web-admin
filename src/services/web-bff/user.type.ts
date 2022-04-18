@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { UserGroupInput } from 'services/evme.types'
 import { Maybe } from 'services/web-bff/general.type'
 import { Response, ResponseWithPagination } from 'services/web-bff/response.type'
 
@@ -19,8 +20,8 @@ export interface User {
   locale: 'TH' | 'EN'
   creditCard: string | null
   userGroups: []
-  createdAt: string
-  updatedAt: string
+  createdDate: string
+  updatedDate: string
 }
 
 export interface UserAddress {
@@ -34,18 +35,45 @@ export interface UserAddress {
 export interface UserGroup {
   id: string
   name: string
-  createdAt?: any
-  updatedAt?: any
+  createdDate?: any
+  updatedDate?: any
 }
 
-/*export interface UserMeProps {
-  (accessToken: string): Promise<User>
-}*/
+export interface UserGroup {
+  id: string
+  users: User[]
+}
+
+export interface UserMeProps {
+  (
+    accessToken: string,
+    data?: UserInputRequest,
+    size?: number,
+    page?: number
+  ): Promise<UserListResponse>
+}
+
+export interface UserMeProps {
+  id?: string
+  data?: UserInputRequest
+  size?: number
+  page?: number
+}
 
 export interface UserMeProps {
   data?: UserInputRequest
+  size?: number
+  page?: number
+}
+
+export interface UserGroupProps {
+  data?: UserGroupInputRequest
   limit?: number
   page?: number
+}
+
+export interface UserGroupInputProps {
+  data?: UserGroupInput
 }
 
 export interface UserInputRequest {
@@ -55,7 +83,7 @@ export interface UserInputRequest {
   emailContain?: string
   phoneNumberContain?: string
   kycStatusEqual?: string
-  userGroupContain?: string
+  userGroupNameContain?: string
   createdDateEqual?: string
   updatedDateEqual?: string
 }
@@ -65,8 +93,33 @@ export interface UserMeResponse extends Response {
   }
 }
 
+export interface UserGroupInputRequest {
+  idEqual?: string
+  nameContain?: string
+  createdDateEqual?: string
+  updatedDateEqual?: string
+}
+
 export type UserListResponse = {
   data: {
     users: User[]
+  }
+} & ResponseWithPagination
+
+export type UserGroupListResponse = {
+  data: {
+    userGroups: UserGroup[]
+  }
+} & ResponseWithPagination
+
+export interface UserGroupResponse {
+  data: {
+    UserGroup: UserGroup
+  }
+}
+
+export type UserByUserGroupListResponse = {
+  data: {
+    userGroup: UserGroup
   }
 } & ResponseWithPagination
