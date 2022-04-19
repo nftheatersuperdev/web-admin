@@ -5,12 +5,12 @@ import { Response, ResponseWithPagination } from 'services/web-bff/response.type
 
 export interface User {
   id: string
-  firebaseId: string
-  firstName: string
-  lastName: string
+  firebaseId: string | null
+  firstName: string | null
+  lastName: string | null
   role: 'user' | 'operator' | 'admin' | 'super_admin'
   disabled: false
-  phoneNumber: string
+  phoneNumber?: string | null
   email: string
   omiseId: string | null
   carTrackId: string | null
@@ -19,7 +19,7 @@ export interface User {
   kycRejectReason: string | null
   locale: 'TH' | 'EN'
   creditCard: string | null
-  userGroups: []
+  userGroups: string[]
   createdDate: string
   updatedDate: string
 }
@@ -68,12 +68,17 @@ export interface UserMeProps {
 
 export interface UserGroupProps {
   data?: UserGroupInputRequest
-  limit?: number
+  size?: number
   page?: number
 }
 
 export interface UserGroupInputProps {
   data?: UserGroupInput
+}
+
+export interface UserInGroupInputProps {
+  id?: string
+  users?: string[]
 }
 
 export interface UserInputRequest {

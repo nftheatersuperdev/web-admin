@@ -191,7 +191,7 @@ export default function UsersTab({
       width: 140,
       renderCell: (params: GridCellParams) => {
         return (
-          <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+          <IconButton aria-label="delete" disabled onClick={() => handleDeleteRow(params.row)}>
             <DeleteIcon />
           </IconButton>
         )

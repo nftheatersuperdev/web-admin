@@ -23,6 +23,7 @@ import {
   FieldComparisons,
   FieldKeyOparators,
   columnFormatDate,
+  geEqualtDateOperators,
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
@@ -39,22 +40,18 @@ import CreateUpdateDialog from './CreateUpdateDialog'
 const MarginBottom = styled.div`
   margin-bottom: 20px;
 `
+const defaultFilter: UserGroupInputRequest = {} as UserGroupInputRequest
 
 export default function UserGroup(): JSX.Element {
   const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [userGroupFilter, setUserGroupFilter] = useState<UserGroupInputRequest>({})
+  const [userGroupFilter, setUserGroupFilter] = useState<UserGroupInputRequest>({
+    ...defaultFilter,
+  })
   const [userGroupSelected, setUserGroupSelected] = useState<UserGroupType | null>()
   const [openCreateUpdateDialog, setOpenCreateUpdateDialog] = useState<boolean>(false)
-
-  // const {
-  //   data: userGroupData,
-  //   refetch,
-  //   isFetching,
-  // } = useUserGroupsFilterAndSort(userGroupFilter, userGroupSort, currentPageIndex, pageSize)
-
   const {
     data: userGroupData,
     refetch,
@@ -63,16 +60,18 @@ export default function UserGroup(): JSX.Element {
     searchUserGroup({
       data: userGroupFilter,
       page: currentPageIndex + 1,
-      limit: pageSize,
+      size: pageSize,
     })
   )
-  const deleteUserGroup = useDeleteUserGroup()
 
+  const deleteUserGroup = useDeleteUserGroup()
   const equalOperators = getEqualFilterOperators(t)
   const containOperators = getContainFilterOperators(t)
+  const dateEqualOperators = geEqualtDateOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setCurrentPageIndex(0)
     setPageSize(params.pageSize)
   }
 
@@ -144,8 +143,8 @@ export default function UserGroup(): JSX.Element {
     const updateObject: UserGroupType = {
       id: rowData.id,
       name: rowData.name,
-      createdAt: rowData.createdAt,
-      updatedAt: rowData.updatedAt,
+      createdDate: rowData.createdDate,
+      updatedDate: rowData.updatedDate,
     }
     setUserGroupSelected(updateObject)
     setOpenCreateUpdateDialog(true)
@@ -153,7 +152,11 @@ export default function UserGroup(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [userGroupFilter, refetch])
+  }, [userGroupFilter, refetch, currentPageIndex])
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, pageSize])
 
   const columns: GridColDef[] = [
     {
@@ -176,23 +179,23 @@ export default function UserGroup(): JSX.Element {
       editable: false,
     },
     {
-      field: 'createdAt',
-      headerName: t('userGroups.createdAt'),
-      description: t('userGroups.createdAt'),
-      hide: !visibilityColumns.createdAt,
+      field: 'createdDate',
+      headerName: t('userGroups.createdDate'),
+      description: t('userGroups.createdDate'),
+      hide: !visibilityColumns.createdDate,
       flex: 1,
       sortable: false,
-      filterOperators: equalOperators,
+      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'updatedAt',
-      headerName: t('userGroups.updatedAt'),
-      description: t('userGroups.updatedAt'),
-      hide: !visibilityColumns.updatedAt,
+      field: 'updatedDate',
+      headerName: t('userGroups.updatedDate'),
+      description: t('userGroups.updatedDate'),
+      hide: !visibilityColumns.updatedDate,
       flex: 1,
       sortable: false,
-      filterOperators: equalOperators,
+      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
     {
@@ -229,12 +232,15 @@ export default function UserGroup(): JSX.Element {
       return {
         id: userGroup.id,
         name: userGroup.name,
-        createdAt: userGroup.createdDate,
-        updatedAt: userGroup.updatedDate,
+        createdDate: userGroup.createdDate,
+        updatedDate: userGroup.updatedDate,
       }
     }) || []
   const pagination = userGroupData?.data.pagination || null
 
+  const handleFetchPage = (pageNumber: number) => {
+    setCurrentPageIndex(pageNumber)
+  }
   return (
     <Page>
       <PageToolbar>
@@ -268,6 +274,8 @@ export default function UserGroup(): JSX.Element {
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
           loading={isFetching}
+          onFetchNextPage={() => handleFetchPage(currentPageIndex + 1)}
+          onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
         />
       </Card>
 

@@ -36,7 +36,6 @@ const ButtonHidden = styled(Button)`
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props
-
   return (
     <div
       role="tabpanel"
@@ -86,6 +85,7 @@ export default function UserGroupUsers(): JSX.Element {
           <ButtonSpace
             color="primary"
             variant="contained"
+            disabled={true}
             onClick={() => setOpenUploadCSVDialog(true)}
           >
             {t('userGroups.dialog.csvUpload.button')}
@@ -127,7 +127,7 @@ export default function UserGroupUsers(): JSX.Element {
             variant="fullWidth"
           >
             <Tab label={t('whitelist.tabs.registeredUsers')} {...a11yProps(0)} />
-            <Tab label={t('whitelist.tabs.nonRegisteredUsers')} {...a11yProps(1)} />
+            <Tab disabled={true} label={t('whitelist.tabs.nonRegisteredUsers')} {...a11yProps(1)} />
           </Tabs>
         </AppBar>
         <TabPanel value={tabIndex} index={0}>

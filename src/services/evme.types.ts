@@ -3909,8 +3909,8 @@ export type UserGroup = {
   __typename?: 'UserGroup'
   id: Scalars['String']
   name: Scalars['String']
-  createdAt: Scalars['DateTime']
-  updatedAt: Scalars['DateTime']
+  createdDate: Scalars['DateTime']
+  updatedDate: Scalars['DateTime']
 }
 
 export type Voucher = {

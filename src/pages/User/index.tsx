@@ -24,7 +24,7 @@ import {
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
-import { UserInputRequest, UserListResponse, UserMeProps } from 'services/web-bff/user.type'
+import { UserInputRequest, UserMeProps } from 'services/web-bff/user.type'
 import { User as UserType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
@@ -39,28 +39,21 @@ export default function User(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [userFilter2, setUserFilter2] = useState<UserInputRequest>({ ...defaultFilter })
+  const [userFilter, setUserFilter] = useState<UserInputRequest>({ ...defaultFilter })
   const [userDetail, setUserDetail] = useState<UserType>()
   const [openUserDetailDialog, setOpenUserDetailDialog] = useState<boolean>(false)
-  const [page, setPage] = useState(1)
 
-  /* const {
-     data: userData,
-     refetch,
-     isFetching,
-   } = useUsersFilterAndSort(userFilter, userSort, currentPageIndex, pageSize)*/
-
-  const PostUser = async () => {
-    const data: UserListResponse = await searchUser({
-      data: userFilter2,
-      page,
+  const {
+    data: userData,
+    refetch,
+    isFetching,
+  } = useQuery('user-list', () =>
+    searchUser({
+      data: userFilter,
+      page: currentPageIndex + 1,
       size: pageSize,
     } as UserMeProps)
-    setPage(data.data.pagination.page)
-    return data
-  }
-
-  const { data: userData, refetch, isFetching } = useQuery(['user-list', page], () => PostUser())
+  )
 
   const equalOperators = getEqualFilterOperators(t)
   const containOperators = getContainFilterOperators(t)
@@ -69,6 +62,7 @@ export default function User(): JSX.Element {
   const equalSelectFilterOperators = getEqualSelectFilterOperators(t)
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setCurrentPageIndex(0)
     setPageSize(params.pageSize)
   }
 
@@ -93,7 +87,11 @@ export default function User(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [userFilter2, refetch])
+  }, [userFilter, refetch, currentPageIndex])
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, pageSize])
 
   const columns: GridColDef[] = [
     {
@@ -279,8 +277,13 @@ export default function User(): JSX.Element {
 
   const handleFilterChange = (params: GridFilterModel) => {
     let keyValue = ''
-    setUserFilter2({
+    console.log(params)
+    setUserFilter({
       ...params.items.reduce((filter, { columnField, value, operatorValue }: GridFilterItem) => {
+        if (columnField === 'userGroups') {
+          filter = { userGroupNameContain: value }
+          return filter
+        }
         if (value) {
           switch (operatorValue) {
             case FieldComparisons.equals:
@@ -320,6 +323,10 @@ export default function User(): JSX.Element {
       }
     }) || []
 
+  const handleFetchPage = (pageNumber: number) => {
+    setCurrentPageIndex(pageNumber)
+  }
+
   return (
     <Page>
       <PageToolbar>
@@ -348,12 +355,8 @@ export default function User(): JSX.Element {
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
           loading={isFetching}
-          onFetchNextPage={() => {
-            setPage(page + 1)
-          }}
-          onFetchPreviousPage={() => {
-            setPage(page - 1)
-          }}
+          onFetchNextPage={() => handleFetchPage(currentPageIndex + 1)}
+          onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
         />
       </Card>
 
