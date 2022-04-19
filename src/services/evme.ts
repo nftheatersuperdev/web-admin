@@ -55,10 +55,17 @@ import {
   ManualExtendSubscriptionInput,
   SendDataViaEmailInput,
   RefIdAndRelationIds,
+  RefIdAndStrings,
   UserGroupFilter,
   UserGroup,
   UserGroupInput,
   UserGroupDeleteInput,
+  PaymentFilter,
+  CarModelFilter,
+  CarModelSort,
+  CarModelInput,
+  CarBodyType,
+  CarConnectorType,
 } from './evme.types'
 
 const QUERY_KEYS = {
@@ -87,6 +94,8 @@ const QUERY_KEYS = {
   ADDITIONAL_EXPENSE_BY_ID: 'evme:additional-expense-by-id',
   CHARGING_LOCATIONS: 'evme:charging-locations',
   ME: 'evme:me',
+  CAR_BODY_TYPES: 'evme:car-body-types',
+  CONNECTOR_TYPES: 'evme:connection-types',
 }
 
 export interface WithPaginationType<P> {
@@ -165,10 +174,9 @@ export function useUpdateCar(): UseMutationResult<CarModel, unknown, UpdateOneCa
       gql`
         mutation UpdateCar($input: UpdateOneCarInput!) {
           updateCar(input: $input) {
-            vin
-            plateNumber
             carModelId
             color
+            colorHex
           }
         }
       `,
@@ -241,16 +249,94 @@ export function useDeleteCar(): UseMutationResult<CarModel, unknown, DeleteOneCa
   })
 }
 
-export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
+export function useUpdateCarModel(): UseMutationResult<CarModel, unknown, CarModelInput, unknown> {
+  const queryClient = useQueryClient()
   const { gqlRequest } = useGraphQLRequest()
 
-  return useQuery(
-    [QUERY_KEYS.CAR_MODELS],
-    async () => {
+  return useMutation(
+    async ({
+      id,
+      brand,
+      model,
+      seats,
+      condition,
+      acceleration,
+      topSpeed,
+      range,
+      totalPower,
+      horsePower,
+      batteryCapacity,
+      connectorTypeId,
+      modelYear,
+      chargeTime,
+      fastChargeTime,
+      bodyTypeId,
+    }) => {
+      const { updateCarModel } = await gqlRequest(
+        gql`
+          mutation UpdateCarModel($input: UpdateOneCarModelInput!) {
+            updateCarModel(input: $input) {
+              id
+            }
+          }
+        `,
+        {
+          input: {
+            id,
+            update: {
+              brand,
+              model,
+              seats,
+              condition,
+              acceleration,
+              topSpeed,
+              range,
+              totalPower,
+              horsePower,
+              batteryCapacity,
+              connectorTypeId,
+              chargeTime,
+              fastChargeTime,
+              bodyTypeId,
+              modelYear,
+            },
+          },
+        }
+      )
+      return updateCarModel
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(QUERY_KEYS.CAR_MODELS),
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error('Failed to updateCarModel')
+      },
+    }
+  )
+}
+
+export function useCarModels(
+  pageSize = 10,
+  filter?: CarModelFilter,
+  sorting?: CarModelSort[]
+): UseInfiniteQueryResult<WithPaginationType<CarModel>> {
+  const { gqlRequest } = useGraphQLRequest()
+  return useInfiniteQuery(
+    [QUERY_KEYS.CAR_MODELS, { filter, sorting, pageSize }],
+    async ({ pageParam = '' }) => {
       const response = await gqlRequest(
         gql`
-          query GetCarModels {
-            carModels {
+          query GetCarModels(
+            $pageSize: Int!
+            $after: ConnectionCursor
+            $filter: CarModelFilter
+            $sorting: [CarModelSort!]
+          ) {
+            carModels(
+              paging: { first: $pageSize, after: $after }
+              filter: $filter
+              sorting: $sorting
+            ) {
               totalCount
               pageInfo {
                 hasNextPage
@@ -275,11 +361,18 @@ export function useCarModels(): UseQueryResult<WithPaginationType<CarModel>> {
               }
             }
           }
-        `
+        `,
+        {
+          pageSize,
+          after: pageParam,
+          filter,
+          sorting,
+        }
       )
       return response.carModels
     },
     {
+      getNextPageParam: (lastPage, _pages) => lastPage.pageInfo.endCursor,
       onError: (error: Error) => {
         handleErrorActions(error)
         console.error(`Unable to retrieve car models, ${error.message}`)
@@ -315,6 +408,26 @@ export function useCarModelById({
             $availableFilter: AvailableCarInput!
           ) {
             carModel(id: $carModelId) {
+              id
+              brand
+              model
+              seats
+              condition
+              acceleration
+              topSpeed
+              range
+              totalPower
+              horsePower
+              batteryCapacity
+              connectorTypeId
+              chargeTime
+              fastChargeTime
+              bodyTypeId
+              modelYear
+              bodyType {
+                id
+                bodyType
+              }
               cars(filter: $carFilter) {
                 id
                 vin
@@ -453,6 +566,7 @@ export function useCarsFilterAndSort(
                 vin
                 plateNumber
                 color
+                colorHex
                 createdAt
                 updatedAt
                 carModelId
@@ -744,6 +858,7 @@ export function useSubscriptionsFilterAndSort(
               totalData
               data {
                 id
+                chargedPrice
                 userId
                 startDate
                 endDate
@@ -794,6 +909,15 @@ export function useSubscriptionsFilterAndSort(
                 voucher {
                   code
                 }
+                payments {
+                  updatedAt
+                  events {
+                    status
+                    omiseFailureMessage
+                    updatedAt
+                  }
+                }
+                paymentVersion
               }
             }
           }
@@ -965,7 +1089,10 @@ export function useCreatePrices(): UseMutationResult<
   })
 }
 
-export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
+export function usePayments(
+  pageSize = 10,
+  filter?: PaymentFilter
+): UseQueryResult<WithPaginationType<Payment>> {
   const { gqlRequest } = useGraphQLRequest()
 
   return useQuery(
@@ -973,19 +1100,26 @@ export function usePayments(): UseQueryResult<WithPaginationType<Payment>> {
     async () => {
       const response = await gqlRequest(
         gql`
-          query GetPayments {
-            payments {
+          query GetPayments($pageSize: Int!, $filter: PaymentFilter) {
+            payments(paging: { first: $pageSize }, filter: $filter) {
               edges {
                 node {
                   amount
                   createdAt
                   currency
                   subscriptionId
+                  events {
+                    status
+                  }
                 }
               }
             }
           }
-        `
+        `,
+        {
+          pageSize,
+          filter,
+        }
       )
       return response.payments
     },
@@ -1040,6 +1174,7 @@ export function useUsers(
                     carId
                   }
                   kycStatus
+                  kycRejectReason
                 }
               }
             }
@@ -1105,6 +1240,7 @@ export function useUsersFilterAndSort(
                   carId
                 }
                 kycStatus
+                kycRejectReason
                 userGroups {
                   name
                 }
@@ -2286,6 +2422,38 @@ export function useRemoveUserGroupsFromUser(): UseMutationResult<
   )
 }
 
+export function useAddEmailsToUserGroup(): UseMutationResult<
+  unknown,
+  unknown,
+  RefIdAndStrings,
+  unknown
+> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useMutation(
+    async ({ id, values }: RefIdAndStrings) => {
+      const { addEmailsToUserGroup } = await gqlRequest(
+        gql`
+          mutation AddEmailsToUserGroup($id: String!, $values: [String!]!) {
+            addEmailsToUserGroup(userGroupId: $id, emails: $values)
+          }
+        `,
+        {
+          id,
+          values,
+        }
+      )
+      return addEmailsToUserGroup
+    },
+    {
+      onError: (error: Error) => {
+        handleErrorActions(error)
+        console.error(`Unable to retrieve useAddUsersToUserGroup ${error.message}`)
+      },
+    }
+  )
+}
+
 export function useVoucherEventsByVoucherId(
   voucherId: string,
   pageSize = 10
@@ -2631,4 +2799,60 @@ export function useRemoveUserGroupsFromVoucher(): UseMutationResult<
       },
     }
   )
+}
+
+export function useCarBodyTypes(pageSize = 10): UseQueryResult<WithPaginationType<CarBodyType>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery([QUERY_KEYS.CAR_BODY_TYPES, pageSize], async () => {
+    const response = await gqlRequest(
+      gql`
+        query GetCarBodyTypes($pageSize: Int!) {
+          carBodyTypes(paging: { first: $pageSize }) {
+            edges {
+              node {
+                id
+                bodyType
+              }
+            }
+          }
+        }
+      `,
+      {
+        pageSize,
+      }
+    )
+
+    return response.carBodyTypes
+  })
+}
+
+export function useCarConnectorTypes(
+  pageSize = 10
+): UseQueryResult<WithPaginationType<CarConnectorType>> {
+  const { gqlRequest } = useGraphQLRequest()
+
+  return useQuery([QUERY_KEYS.CONNECTOR_TYPES, pageSize], async () => {
+    const response = await gqlRequest(
+      gql`
+        query GetCarConnectorTypes($pageSize: Int!) {
+          carConnectors(paging: { first: $pageSize }) {
+            edges {
+              node {
+                id
+                description
+                type
+                chargingType
+              }
+            }
+          }
+        }
+      `,
+      {
+        pageSize,
+      }
+    )
+
+    return response.carConnectors
+  })
 }

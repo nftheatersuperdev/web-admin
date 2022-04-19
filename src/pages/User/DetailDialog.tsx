@@ -114,6 +114,20 @@ export default function UserDetailDialog({
           </Grid>
         </Grid>
         <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label={t('user.rejectedReason')}
+              margin="normal"
+              variant="outlined"
+              value={user?.kycRejectReason}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth

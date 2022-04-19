@@ -12,12 +12,21 @@
       "logout": "ออกจากระบบ"
     }
   },
+  "carAvailability": {
+    "selectedFromDate": "วันที่เริ่มต้น",
+    "selectedToDate": "วันที่สิ้นสุด",
+    "search": "ค้นหา",
+    "available": "รถว่าง",
+    "inUse": "ใช้งานอยู่"
+  },
   "sidebar": {
     "dashboard": "แดชบอร์ด",
     "users": "ผู้ใช้",
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
+    "carAvailability": "สถานะการใช้รถ",
     "pricing": "ราคาแพ็คเกจ",
+    "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
     "subscriptionManagement": "การจัดการการจอง",
     "voucherManagement": "การจัดการวอชเชอร์",
@@ -43,7 +52,8 @@
     "search": "ค้นหา",
     "clear": "เคลียร์",
     "back": "กลับ",
-    "invite": "เชิญชวน"
+    "invite": "เชิญชวน",
+    "inviteAmount": "เชิญชวน {{amount}} อีเมล"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -69,7 +79,7 @@
       "userDisabled": "ชื่อผู้ใช้นี้ไม่สามารถใช้งานได้",
       "userTokenExpired": "รหัส Token หมดอายุ",
       "userMismatch": "ชื่อผู้ใช้ไม่ตรงกัน",
-      "weakPassword": "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร",
+      "weakPassword": "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร ประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร",
       "requiresRecentLogin": "กรุณาลงชื่อเข้าใช้ระบบอีกครั้ง",
       "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
       "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
@@ -145,8 +155,7 @@
       "title": "รายงานการตรวจสอบความถูกต้องของบุคคล",
       "periodDate": "ประจำวันที่"
     },
-    "fromDate": "ตั้งแต่วันที่",
-    "toDate": "ถึงวันที่",
+    "selectedDate": "วันที่",
     "subscriptionId": "หมายเลขการจอง",
     "userName": "ชื่อสมาชิก",
     "carDisplayName": "รถยนต์",
@@ -157,10 +166,17 @@
     "phone": "หมายเลขโทรศัพท์",
     "remark": "หมายเหตุ"
   },
+  "adminUser": {
+    "createDialog": {
+      "success": "บัญชีผู้ดูแลระบบถูกสร้างขึ้นแล้ว",
+      "failed": "เกิดข้อผิดพลาดบางอย่าง ({{error}})"
+    }
+  },
   "user": {
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
+    "password": "รหัสผ่าน",
     "role": "ระดับผู้ใช้",
     "createdDate": "วันที่สมัคร",
     "updatedDate": "วันที่แก้ไข",
@@ -224,9 +240,11 @@
     },
     "status": "สถานะ",
     "statuses": {
+      "published": "เปิด",
       "available": "พร้อมใช้งาน",
       "outOfService": "ไม่พร้อมใช้งาน"
-    }
+    },
+    "subscriptionId": "หมายเลขการจอง"
   },
   "pricing": {
     "id": "เลขไอดี",
@@ -261,6 +279,10 @@
       "title": "แก้ไขราคา",
       "success": "แก้ไขราคาสำเร็จ",
       "error": "แก้ไขราคาไม่สำเร็จ"
+    },
+    "plan": "แผน",
+    "currency": {
+      "thb": "บาท"
     }
   },
   "subscription": {
@@ -294,6 +316,7 @@
     "bookingDetails": "รายละเอียดการจอง",
     "subscriptionId": "หมายเลขการจอง",
     "voucherCode": "รหัสวอชเชอร์",
+    "paymentVersion": "เวอร์ชันการชำระเงิน",
     "status": {
       "title": "สถานะ",
       "reserved": "สำรองแล้ว",
@@ -392,7 +415,8 @@
     "superAdmin": "ผู้ดูแลระบบระดับสูง",
     "admin": "ผู้ดูแลระบบ",
     "customerSupport": "ฝ่ายบริการลูกค้า",
-    "operation": "ฝ่ายปฏิบัติการ"
+    "operation": "ฝ่ายปฏิบัติการ",
+    "marketing": "ฝ่ายการตลาด"
   },
   "account": {
     "updatePassword": "แก้ไขรหัสผ่าน",
@@ -540,6 +564,7 @@
       "invitation": {
         "title": "เพิ่มผู้ใช้งานเพื่อเข้าสู่กลุ่มของผู้ใช้",
         "button": "เพิ่มผู้ใช้งาน",
+        "multipleUsersButton": "เพิ่มผู้ใช้งาน",
         "searchField": {
           "label": "ค้นหาผู้ใช้งาน หรือกรอกอีเมลใหม่",
           "example": "ตัวอย่าง เช่น ptt หรือ อีเมลใหม่ milano@italia.it",
@@ -548,6 +573,26 @@
         "success": "เพิ่มผู้ใช้งานเรียบร้อยแล้ว",
         "error": "เกิดข้อผิดพลาดในการเพิ่มข้อมูล!",
         "duplicated": "อีเมลที่กรอกมีอยู่แล้วในระบบ"
+      },
+      "csvUpload": {
+        "title": "เพิ่มผู้ใช้งานจากไฟล์ CSV",
+        "button": "อัพโหลดไฟล์ CSV",
+        "uploadButton": "อัพโหลด {{length}} อีเมล",
+        "selectFileButton": "เลือกไฟล์ CSV",
+        "thereAreNoEmails": "ไม่พบข้อมูลอีเมล",
+        "validation": {
+          "email": {
+            "warning": "บางอีเมลไม่ถูกต้องตามรูปแบบ แต่คุณยังสามารถอัพโหลดอีเมลที่ถูกต้องได้",
+            "error": "อีเมลทั้งหมดรูปแบบไม่ถูกต้อง",
+            "success": "อีเมลทั้งหมดรูปแบบถูกต้อง"
+          }
+        },
+        "accordion": {
+          "valid": "{{length}} อีเมลที่ถูกรูปแบบ",
+          "invalid": "{{length}} อีเมลที่ไม่ถูกรูปแบบ"
+        },
+        "success": "เพิ่มอีเมลเรียบร้อยแล้ว",
+        "error": "เกิดข้อผิดพลาดในการเพิ่มข้อมูล!"
       }
     }
   },
@@ -567,5 +612,8 @@
     "invalidVoucherCode": "รูปแบบของวอชเชอร์ไม่ถูกต้อง",
     "invalidName": "รูปแบบของชื่อไม่ถูกต้อง",
     "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น"
+  },
+  "cardStatus": {
+    "detail": "Detail >"
   }
 }

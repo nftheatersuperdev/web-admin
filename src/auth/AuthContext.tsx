@@ -1,13 +1,11 @@
 import { ReactElement, createContext, useContext, useState, useEffect, Fragment } from 'react'
 import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
-import { GraphQLClient, gql } from 'graphql-request'
 import { useTranslation } from 'react-i18next'
-import { User } from 'services/evme.types'
+import { getAdminUserProfile } from 'services/web-bff/admin-user'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 import { ROLES, Role } from './roles'
-import { EVmeAuthError, ERROR_CODES } from './errors'
 
 export const STORAGE_KEYS = {
   ROLE: 'evme:user_role',
@@ -17,7 +15,6 @@ export const STORAGE_KEYS = {
 
 interface AuthProviderProps {
   fbase: Firebase
-  gqlClient: GraphQLClient
   children: ReactElement
 }
 
@@ -56,7 +53,7 @@ const Auth = createContext<AuthProps>({
   getUserId: () => undefined,
 })
 
-export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps): JSX.Element {
+export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
   const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { t } = useTranslation()
@@ -112,6 +109,8 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
         return t('role.customerSupport')
       case ROLES.OPERATION:
         return t('role.operation')
+      case ROLES.MARKETING:
+        return t('role.marketing')
       default:
         return '-'
     }
@@ -124,43 +123,15 @@ export function AuthProvider({ fbase, gqlClient, children }: AuthProviderProps):
   ): Promise<void> => {
     try {
       const { user } = await fbase.signInWithEmailAndPassword(email, password, isRememberMe)
-      const token = await user?.getIdToken()
-      const response = await gqlClient.request(
-        gql`
-          query GetMe {
-            me {
-              id
-              firebaseId
-              firstName
-              lastName
-              role
-              disabled
-            }
-          }
-        `,
-        {},
-        {
-          Authorization: `Bearer ${token}`,
-        }
-      )
-
-      if (response.me) {
-        const { disabled, role, id } = response.me as User
-
-        if (disabled) {
-          throw new EVmeAuthError('User disabled', ERROR_CODES.USER_DISABLED)
-        }
-
-        if (!Object.values(ROLES).includes(role.toLocaleLowerCase())) {
-          throw new EVmeAuthError('Role is invalid', ERROR_CODES.USER_NOT_FOUND)
-        }
-
-        setUserId(id)
-        setToken(token || '')
-        setRole(role)
-      } else {
-        throw new EVmeAuthError('User not found', ERROR_CODES.USER_NOT_FOUND)
+      if (!user) {
+        throw new Error('User not found')
       }
+      const token = await user.getIdToken()
+      const userProfile = await getAdminUserProfile({ accessToken: token })
+
+      setUserId(user.uid)
+      setToken(token || '')
+      setRole(userProfile.role.toLocaleLowerCase())
     } catch (error) {
       const message = errorMessage(error)
       throw new Error(message)

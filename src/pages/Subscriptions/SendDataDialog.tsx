@@ -12,6 +12,7 @@ import {
 import { Alert, Autocomplete } from '@material-ui/lab'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import { validateEmail } from 'utils'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
@@ -24,12 +25,6 @@ export interface SendDataDialogProps {
   open: boolean
   onClose: () => void
   onSubmitSend: (emails: string[]) => void
-}
-
-function validateEmail(email: string) {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  return re.test(String(email).toLowerCase())
 }
 
 export default function SendDataDialog({

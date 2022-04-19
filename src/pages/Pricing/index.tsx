@@ -57,7 +57,7 @@ export default function Pricing(): JSX.Element {
       direction: SortDirection.Desc,
     },
   ])
-  const { data: carModels } = useCarModels()
+  const { data: carModels } = useCarModels(config.maxInteger)
   const mutationCreatePrice = useCreatePrices()
 
   const idFilterOperators = getIdFilterOperators(t)
@@ -98,7 +98,7 @@ export default function Pricing(): JSX.Element {
 
   const carModelOptions = useMemo(
     () =>
-      carModels?.edges?.map(({ node }) => ({
+      carModels?.pages[0].edges?.map(({ node }) => ({
         id: node?.id,
         modelName: `${node?.brand} - ${node?.model}`,
       })) || [],

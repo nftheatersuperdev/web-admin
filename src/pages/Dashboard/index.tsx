@@ -4,25 +4,27 @@ import {
   DirectionsCar as CarIcon,
   Money as MoneyIcon,
   CardMembership as SubscriptionIcon,
+  PlayForWork as RequestedIcon,
+  HowToReg as ApprovedIcon,
+  CallMissed as RejectedIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { filter } from 'lodash/fp'
+import { filter, flow, pluck, some, sum } from 'lodash/fp'
 import { formatMoney, nowLowerUpper } from 'utils'
 import config from 'config'
+import { ROUTE_PATHS } from 'routes'
+import qs from 'qs'
+import { useQuery } from 'react-query'
+import { useAuth } from 'auth/AuthContext'
+import { getInformations } from 'services/web-bff/dashboard'
 import { Page } from 'layout/LayoutRoute'
-import CardStatus from 'components/CardStatus'
+import { CardStatus, DetailLink } from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
-import {
-  useCars,
-  usePayments,
-  useSubscriptions,
-  useSubscriptionsFilterAndSort,
-  useUsers,
-} from 'services/evme'
-import { CarEdge } from 'services/evme.types'
+import { useSubscriptionsFilterAndSort } from 'services/evme'
+import { Sub } from 'services/evme.types'
+import { SubEventStatus } from 'pages/Subscriptions/utils'
 import CarsDelivery from './CarsDelivery'
 import CarsReturn from './CarsReturn'
-import UserRegistration from './UserRegistration'
 
 const quickLinks = [
   {
@@ -70,36 +72,44 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
+  const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
-  const { data: cars } = useCars(config.maxInteger)
-  const { data: subscriptions } = useSubscriptions()
-  const { data: upcomingDelieverySubscriptions } = useSubscriptionsFilterAndSort({
-    startDate: { between: nowLowerUpper() },
-    events: { status: { eq: 'accepted' } },
-  })
-  const { data: upcomingReturnSubscriptions } = useSubscriptionsFilterAndSort({
-    endDate: { between: nowLowerUpper() },
-    events: { status: { eq: 'delivered' } },
-  })
-  const { data: payments } = usePayments()
-  const { data: users } = useUsers(config.tableRowsDefaultPageSize, {
-    // filter only "user"
-    role: {
-      eq: 'user',
+  const todayLowerUpper = nowLowerUpper()
+
+  const { data: dataInformations } = useQuery('dashboard-informations', () =>
+    getInformations(accessToken)
+  )
+  const informations = dataInformations?.data.dashboard
+
+  const todaySubscriptions = useSubscriptionsFilterAndSort(
+    {
+      startDate: {
+        between: todayLowerUpper,
+      },
     },
-  })
-  const totalCars = cars?.pages[0]?.totalCount || 0
-  const totalAvailableCars = filter((e: CarEdge) => e.node.latestStatus === 'available')(
-    cars?.pages[0]?.edges
-  ).length
-  const totalSubscriptions = subscriptions?.pages[0]?.totalCount || 0
+    undefined,
+    undefined,
+    config.maxInteger
+  )
 
+  const todaySubscriptionsData = todaySubscriptions?.data?.data || []
   const totalPaymentAmountToday =
-    payments?.edges.reduce((count, { node }) => count + node?.amount, 0) || 0
+    flow(
+      filter((sub: Sub) => !some({ status: SubEventStatus.CANCELLED })(sub.events)),
+      pluck('chargedPrice'),
+      sum
+    )(todaySubscriptionsData) || 0
 
-  const totalUsers = users?.pages[0]?.totalCount || 0
-  const totalUpcomingCarsDelivery = upcomingDelieverySubscriptions?.totalData || 0
-  const totalUpcomingCarsReturn = upcomingReturnSubscriptions?.totalData || 0
+  const totalCars = informations?.totalCars ?? 0
+  const totalAvailableCars = informations?.totalAvailableCars ?? 0
+  const totalSubscriptions = informations?.totalSubscriptions ?? 0
+  const totalUsers = informations?.totalUsers ?? 0
+  const totalUpcomingCarsDelivery = informations?.totalUpcomingCarsDelivery ?? 0
+  const totalUpcomingCarsReturn = informations?.totalUpcomingCarsReturn ?? 0
+  const totalKYC = informations?.totalKYC ?? 0
+  const totalKYCApproved = informations?.totalKYCApproved ?? 0
+  const totalKYCRejected = informations?.totalKYCRejected ?? 0
+
   return (
     <Page>
       <Grid container spacing={3}>
@@ -113,12 +123,13 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalCars.subTitle')}
             icon={<CarIcon />}
             iconColor="red"
+            detailLink={<DetailLink pathname={ROUTE_PATHS.CAR} />}
           />
         </Grid>
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalPayments.title')}
-            value={formatMoney(totalPaymentAmountToday)}
+            value={'-' || formatMoney(totalPaymentAmountToday)}
             subTitle={t('dashboard.totalPayments.subTitle')}
             icon={<MoneyIcon />}
             iconColor="green"
@@ -131,13 +142,57 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalUsers.subTitle')}
             icon={<PeopleIcon />}
             iconColor="#5d4037"
+            detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
           />
         </Grid>
         <Grid item xs={12}>
           <h1>{t('dashboard.kyc')}</h1>
         </Grid>
         <Grid item xs={12}>
-          <UserRegistration />
+          <Grid container spacing={3}>
+            <Grid item lg={4} sm={6} xl={4} xs={12}>
+              <CardStatus
+                title={t('dashboard.totalRequestedCases.title')}
+                value={totalKYC}
+                subTitle={t('dashboard.totalRequestedCases.subTitle')}
+                icon={<RequestedIcon />}
+                iconColor="#03a9f4"
+                detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
+              />
+            </Grid>
+
+            <Grid item lg={4} sm={6} xl={4} xs={12}>
+              <CardStatus
+                title={t('dashboard.totalApprovedCases.title')}
+                value={totalKYCApproved}
+                subTitle={t('dashboard.totalApprovedCases.subTitle')}
+                icon={<ApprovedIcon />}
+                iconColor="#4caf50"
+                detailLink={
+                  <DetailLink
+                    pathname={ROUTE_PATHS.USER}
+                    search={qs.stringify({ kycStatus: { eq: 'verified' } })}
+                  />
+                }
+              />
+            </Grid>
+
+            <Grid item lg={4} sm={6} xl={4} xs={12}>
+              <CardStatus
+                title={t('dashboard.totalRejectedCases.title')}
+                value={totalKYCRejected}
+                subTitle={t('dashboard.totalRejectedCases.subTitle')}
+                icon={<RejectedIcon />}
+                iconColor="#d32f2f"
+                detailLink={
+                  <DetailLink
+                    pathname={ROUTE_PATHS.USER}
+                    search={qs.stringify({ kycStatus: { eq: 'rejected' } })}
+                  />
+                }
+              />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12}>
           <h1>{t('dashboard.subscription')}</h1>
@@ -149,6 +204,7 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalSubscriptions.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
+            detailLink={<DetailLink pathname={ROUTE_PATHS.SUBSCRIPTION} />}
           />
         </Grid>
         <Grid item sm={4} xs={12}>
@@ -158,6 +214,17 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalUpcomingCarsDelivery.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
+            detailLink={
+              <DetailLink
+                pathname={ROUTE_PATHS.SUBSCRIPTION}
+                search={qs.stringify({
+                  and: {
+                    startDate: { between: todayLowerUpper },
+                    events: { status: { eq: 'accepted' } },
+                  },
+                })}
+              />
+            }
           />
         </Grid>
         <Grid item sm={4} xs={12}>
@@ -167,14 +234,25 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalUpcomingCarsReturn.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
+            detailLink={
+              <DetailLink
+                pathname={ROUTE_PATHS.SUBSCRIPTION}
+                search={qs.stringify({
+                  and: {
+                    endDate: { between: todayLowerUpper },
+                    events: { status: { eq: 'delivered' } },
+                  },
+                })}
+              />
+            }
           />
         </Grid>
         <Grid item xs={12} lg={6}>
-          <CarsDelivery />
+          <CarsDelivery accessToken={accessToken} />
         </Grid>
 
         <Grid item xs={12} lg={6}>
-          <CarsReturn />
+          <CarsReturn accessToken={accessToken} />
         </Grid>
 
         <Grid item xs={12}>

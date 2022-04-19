@@ -5,17 +5,25 @@ import {
   CallMissed as RejectedIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { ROUTE_PATHS } from 'routes'
+import qs from 'qs'
 import { useUserAggregate } from 'services/evme'
-import CardStatus from 'components/CardStatus'
+import { CardStatus, DetailLink } from 'components/CardStatus'
 
 export default function UserRegistration(): JSX.Element {
   const { t } = useTranslation()
   // backend not support filter by kyc date
   // const [reportDate, setReportDate] = useState<Date>(new Date())
 
-  const { data: pendingData } = useUserAggregate({ kycStatus: { eq: 'pending' } })
-  const { data: verifiedData } = useUserAggregate({ kycStatus: { eq: 'verified' } })
-  const { data: rejectedData } = useUserAggregate({ kycStatus: { eq: 'rejected' } })
+  const { data: pendingData } = useUserAggregate({ role: { eq: 'user' } })
+  const { data: verifiedData } = useUserAggregate({
+    kycStatus: { eq: 'verified' },
+    role: { eq: 'user' },
+  })
+  const { data: rejectedData } = useUserAggregate({
+    kycStatus: { eq: 'rejected' },
+    role: { eq: 'user' },
+  })
 
   const numberOfRequested = (pendingData || [])[0]?.count?.id || 0
   const numberOfApproved = (verifiedData || [])[0]?.count?.id || 0
@@ -52,6 +60,7 @@ export default function UserRegistration(): JSX.Element {
           subTitle={t('dashboard.totalRequestedCases.subTitle')}
           icon={<RequestedIcon />}
           iconColor="#03a9f4"
+          detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
         />
       </Grid>
 
@@ -62,6 +71,12 @@ export default function UserRegistration(): JSX.Element {
           subTitle={t('dashboard.totalApprovedCases.subTitle')}
           icon={<ApprovedIcon />}
           iconColor="#4caf50"
+          detailLink={
+            <DetailLink
+              pathname={ROUTE_PATHS.USER}
+              search={qs.stringify({ kycStatus: { eq: 'verified' } })}
+            />
+          }
         />
       </Grid>
 
@@ -72,6 +87,12 @@ export default function UserRegistration(): JSX.Element {
           subTitle={t('dashboard.totalRejectedCases.subTitle')}
           icon={<RejectedIcon />}
           iconColor="#d32f2f"
+          detailLink={
+            <DetailLink
+              pathname={ROUTE_PATHS.USER}
+              search={qs.stringify({ kycStatus: { eq: 'rejected' } })}
+            />
+          }
         />
       </Grid>
     </Grid>

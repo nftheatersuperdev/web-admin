@@ -7,32 +7,29 @@ import {
   GridPageChangeParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
+import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATETIME_FORMAT, columnFormatDate } from 'utils'
+import { DEFAULT_DATE_FORMAT, columnFormatDate } from 'utils'
 import styled from 'styled-components'
 import DataGridLocale from 'components/DataGridLocale'
-import DateTimePicker from 'components/DateTimePicker'
-import { useSubscriptions } from 'services/evme'
-import { SortDirection, SubSortFields } from 'services/evme.types'
-import { columnFormatSubEventStatus, SubEventStatus } from 'pages/Subscriptions/utils'
+import DatePicker from 'components/DatePicker'
+import { getList, status as subscriptionStatus } from 'services/web-bff/subscription'
+import { columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
 import CarReturnDialog from './CarReturnDialog'
 import { ReturnModelData, MISSING_VALUE } from './utils'
+
+interface CarsReturnProps {
+  accessToken: string
+}
 
 const GridInputItem = styled(Grid)`
   margin-bottom: 10px;
 `
 
-const START_DAYS = 1
-const NEXT_DAYS = 7
+const initSelectedDate = dayjs(new Date()).toDate()
 
-const initFromDate = dayjs(new Date()).add(START_DAYS, 'day').toDate()
-const initToDate = dayjs(new Date())
-  .add(START_DAYS + NEXT_DAYS, 'day')
-  .toDate()
-
-export default function CarsReturn(): JSX.Element {
-  const [fromDate, setFromDate] = useState(initFromDate)
-  const [toDate, setToDate] = useState(initToDate)
+export default function CarsReturn({ accessToken }: CarsReturnProps): JSX.Element {
+  const [selectedDate, setSelectedDate] = useState(initSelectedDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
   const [dialogData, setDialogData] = useState({} as ReturnModelData)
   const { t } = useTranslation()
@@ -40,35 +37,26 @@ export default function CarsReturn(): JSX.Element {
   const [pageSize, setPageSize] = useState(5)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
-  const { data, refetch, fetchNextPage, fetchPreviousPage } = useSubscriptions(
-    pageSize,
-    {
-      and: [
-        {
-          events: {
-            status: {
-              in: [SubEventStatus.DELIVERED, SubEventStatus.EXTENDED],
-            },
+  const { data, refetch, isFetching } = useQuery('cars-return', () =>
+    getList({
+      accessToken,
+      query: {
+        status: subscriptionStatus.DELIVERED,
+        startDate: {
+          between: {
+            lower: dayjs(selectedDate).startOf('day').format(),
+            upper: dayjs(selectedDate).endOf('day').format(),
           },
         },
-        {
-          endDate: {
-            gte: fromDate.toISOString(),
-          },
-        },
-        {
-          endDate: {
-            lte: toDate.toISOString(),
-          },
-        },
-      ],
-    },
-    [{ direction: SortDirection.Asc, field: SubSortFields.EndDate }]
+      },
+      limit: pageSize,
+      page: currentPageIndex + 1,
+    })
   )
 
   useEffect(() => {
     refetch()
-  }, [fromDate, toDate, refetch])
+  }, [selectedDate, refetch])
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -105,7 +93,7 @@ export default function CarsReturn(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'endDate',
+      field: 'startDate',
       headerName: t('dashboard.returnDate'),
       description: t('dashboard.returnDate'),
       valueFormatter: columnFormatDate,
@@ -123,31 +111,22 @@ export default function CarsReturn(): JSX.Element {
     },
   ]
 
+  const rowCount = data?.data.pagination.totalRecords
   const rows =
-    data?.pages[currentPageIndex]?.edges?.map(({ node }) => {
-      const { id, car, endDate, user, endAddress, events } = node
-      const { plateNumber, color, carModel } = car || {}
-      const { brand, model } = carModel || {}
+    data?.data.subscriptions.map((node) => {
+      const { id, car, startDate, user, returnAddress, status } = node
+      const { plateNumber, color, brand, name } = car || {}
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
-      const carDisplayName = `${brand}-${model} (${color})`
-      const { full, latitude, longitude, remark } = endAddress || {}
-
-      let status = '-'
-
-      if (events?.length) {
-        const latestEvent = events.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0]
-        status = latestEvent.status
-      }
+      const carDisplayName = `${brand}-${name} (${color})`
+      const { full, latitude, longitude, remark } = returnAddress || {}
 
       return {
         id,
         userName,
         carDisplayName,
         plateNumber,
-        endDate,
+        startDate,
         user,
         remark,
         address: full,
@@ -178,45 +157,26 @@ export default function CarsReturn(): JSX.Element {
     <Card>
       <CardContent>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid item xs={12} justifyContent="space-between" container>
             <Typography color="textSecondary" gutterBottom variant="h6">
               {t('dashboard.carReturn.title')}
             </Typography>
+            <GridInputItem item>
+              <DatePicker
+                label={t('dashboard.selectedDate')}
+                id="selectedDate"
+                name="selectedDate"
+                format={DEFAULT_DATE_FORMAT}
+                value={selectedDate}
+                onChange={(date) => {
+                  date && setSelectedDate(date.toDate())
+                }}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+              />
+            </GridInputItem>
           </Grid>
-
-          <GridInputItem item xs={6}>
-            <DateTimePicker
-              ampm={false}
-              label={t('dashboard.fromDate')}
-              id="fromDate"
-              name="fromDate"
-              format={DEFAULT_DATETIME_FORMAT}
-              value={fromDate}
-              onChange={(date) => {
-                date && setFromDate(date.toDate())
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-          </GridInputItem>
-
-          <GridInputItem item xs={6}>
-            <DateTimePicker
-              ampm={false}
-              label={t('dashboard.toDate')}
-              id="toDate"
-              name="toDate"
-              format={DEFAULT_DATETIME_FORMAT}
-              value={toDate}
-              onChange={(date) => {
-                date && setToDate(date.toDate())
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-          </GridInputItem>
         </Grid>
 
         <DataGridLocale
@@ -224,17 +184,15 @@ export default function CarsReturn(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={data?.pages[currentPageIndex]?.totalCount}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onFetchNextPage={fetchNextPage}
-          onFetchPreviousPage={fetchPreviousPage}
           onPageChange={setCurrentPageIndex}
+          onRowClick={handleRowClick}
           rows={rows}
           columns={columns}
-          onRowClick={handleRowClick}
+          loading={isFetching}
         />
-
         <CarReturnDialog
           open={isDetailDialogOpen}
           onClose={handleDialogClose}

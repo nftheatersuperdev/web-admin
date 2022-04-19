@@ -47,6 +47,32 @@ export const columnFormatSubEventStatus = (status: string, t: TFunction<Namespac
   }
 }
 
+export const PaymentEventStatus = {
+  PENDING: 'pending',
+  SUCCESSFUL: 'successful',
+  FAILED: 'failed',
+  AUTHORIZED_REFUND: 'authorized_refund',
+}
+
+export const columnFormatPaymentEventStatus = (status: string, t: TFunction<Namespace>): string => {
+  switch (status) {
+    case PaymentEventStatus.PENDING:
+      return t('paymentEvent.status.pending')
+
+    case PaymentEventStatus.SUCCESSFUL:
+      return t('paymentEvent.status.successful')
+
+    case PaymentEventStatus.FAILED:
+      return t('paymentEvent.status.failed')
+
+    case PaymentEventStatus.AUTHORIZED_REFUND:
+      return t('paymentEvent.status.authorizedRefund')
+
+    default:
+      return '-'
+  }
+}
+
 interface SelectOption {
   label: string
   value: string
@@ -97,23 +123,29 @@ export interface VisibilityColumns {
 
 export const defaultVisibilityColumns: VisibilityColumns = {
   id: true,
-  brand: true,
-  model: true,
-  color: true,
-  vin: false,
-  plateNumber: false,
-  bodyType: false,
-  totalPower: false,
-  batteryCapacity: false,
-  createdAt: false,
-  updatedAt: false,
-  topSpeed: false,
-  acceleration: false,
-  range: false,
-  connectorType: false,
-  chargeTime: false,
-  fastChargeTime: false,
+  userFirstName: true,
+  userLastName: true,
+  userEmail: true,
+  userPhoneNumber: true,
+  carId: true,
+  carName: true,
+  carBrand: true,
+  carPlateNumber: true,
+  carVin: false,
+  carSeats: false,
+  carTopSpeed: false,
+  carFastChargeTime: false,
+  price: true,
+  duration: true,
+  startDate: true,
+  endDate: true,
+  deliveryAddress: false,
+  returnAddress: false,
   status: true,
+  voucherCode: false,
+  paymentVersion: false,
+  createdDate: false,
+  updatedDate: false,
 }
 
 export const setVisibilityColumns = (columns: VisibilityColumns): void => {

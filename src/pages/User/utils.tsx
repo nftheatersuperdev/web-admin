@@ -11,9 +11,9 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   email: true,
   phoneNumber: true,
   kycStatus: true,
+  kycRejectReason: true,
   verifyDate: false,
   note: false,
-  rejectedReason: false,
   createdAt: false,
   updatedAt: false,
 }

@@ -39,6 +39,8 @@ export default function AdminUserDetailDialog({
         return t('role.customerSupport')
       case ROLES.OPERATION:
         return t('role.operation')
+      case ROLES.MARKETING:
+        return t('role.marketing')
       default:
         return '-'
     }
@@ -92,20 +94,6 @@ export default function AdminUserDetailDialog({
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <TextField
-              id="phoneNumber"
-              label={t('user.phone')}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                readOnly: true,
-              }}
-              fullWidth
-              value={user.phoneNumber || '-'}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
             <FormControl fullWidth>
               <TextField
                 fullWidth
@@ -113,7 +101,7 @@ export default function AdminUserDetailDialog({
                 label={t('user.role')}
                 id="role"
                 name="role"
-                value={user.role}
+                value={user.role?.toLocaleLowerCase()}
                 InputProps={{
                   readOnly: true,
                 }}

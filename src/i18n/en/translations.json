@@ -12,12 +12,21 @@
       "logout": "Logout"
     }
   },
+  "carAvailability": {
+    "selectedFromDate": "Start Date",
+    "selectedToDate": "End Date",
+    "search": "Search",
+    "available": "Available",
+    "inUse": "In Use"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "users": "Users",
     "userGroups": "User Groups",
     "cars": "Cars",
+    "carAvailability": "Car Availability",
     "pricing": "Pricing",
+    "modelAndPricing": "Model & Pricing",
     "vehicleManagement": "Vehicle Management",
     "subscriptionManagement": "Subscription Management",
     "voucherManagement": "Voucher Management",
@@ -43,7 +52,8 @@
     "search": "Search",
     "clear": "Clear",
     "back": "Back",
-    "invite": "Invite"
+    "invite": "Invite",
+    "inviteAmount": "Invite {{amount}} emails"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -69,7 +79,7 @@
       "userDisabled": "User is disabled",
       "userTokenExpired": "Token has expired",
       "userMismatch": "User mismatch",
-      "weakPassword": "Password must be at least 6 characters long",
+      "weakPassword": "Password must contain at least 8 characters, one uppercase, one number and one special case character",
       "requiresRecentLogin": "Please re-login again",
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
@@ -145,8 +155,7 @@
       "title": "Reports of User Registration",
       "periodDate": "Period Date"
     },
-    "fromDate": "From date",
-    "toDate": "To date",
+    "selectedDate": "Date",
     "subscriptionId": "Subscription ID",
     "userName": "User Name",
     "carDisplayName": "Car",
@@ -157,10 +166,17 @@
     "phone": "Phone Number",
     "remark": "Remark"
   },
+  "adminUser": {
+    "createDialog": {
+      "success": "The admin user has been created",
+      "failed": "Something went wrong ({{error}})"
+    }
+  },
   "user": {
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
+    "password": "Password",
     "role": "Role",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
@@ -172,7 +188,8 @@
       "status": "KYC Status",
       "pending": "Pending",
       "verified": "Verified",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "rejectReason": "Reject Reason"
     },
     "verifyDate": "Verify Date",
     "note": "Note",
@@ -224,9 +241,11 @@
     },
     "status": "Status",
     "statuses": {
+      "published": "Published",
       "available": "Available",
       "outOfService": "Out of service"
-    }
+    },
+    "subscriptionId": "Subscription ID"
   },
   "pricing": {
     "id": "ID",
@@ -237,12 +256,12 @@
     "price": "Price",
     "fullPrice": "Full Price",
     "description": "Description",
-    "pricePerThreeDays": "Price per 3 days",
-    "pricePerOneWeek": "Price per 1 week",
-    "pricePerOneMonth": "Price per 1 month",
-    "pricePerThreeMonths": "Price per 3 months",
-    "pricePerSixMonths": "Price per 6 months",
-    "pricePerTwelveMonths": "Price per 12 months",
+    "pricePerThreeDays": "3 Days",
+    "pricePerOneWeek": "1 Week",
+    "pricePerOneMonth": "1 Month",
+    "pricePerThreeMonths": "3 Months",
+    "pricePerSixMonths": "6 Months",
+    "pricePerTwelveMonths": "12 Months",
     "3d": "3 Days",
     "1w": "1 Week",
     "1m": "1 Month",
@@ -261,6 +280,10 @@
       "title": "Update Car",
       "success": "Updated car successfully",
       "error": "Failed to update car"
+    },
+    "plan": "Plan",
+    "currency": {
+      "thb": "THB"
     }
   },
   "subscription": {
@@ -294,6 +317,7 @@
     "bookingDetails": "Booking Details",
     "subscriptionId": "Subscription ID",
     "voucherCode": "Voucher Code",
+    "paymentVersion": "Payment Version",
     "status": {
       "title": "Status",
       "reserved": "Reserved",
@@ -305,6 +329,11 @@
       "completed": "Completed",
       "extended": "Extended",
       "manual_extended": "Manual Extended"
+    },
+    "payment": {
+      "status": "Payment Status",
+      "failureMessage": "Payment Failure Message",
+      "updatedDate": "Payment Updated Date"
     },
     "noData": "No data",
     "updateDialog": {
@@ -392,7 +421,8 @@
     "superAdmin": "Super Administrator",
     "admin": "Administrator",
     "customerSupport": "Customer Support",
-    "operation": "Operation"
+    "operation": "Operation",
+    "marketing": "Marketing"
   },
   "account": {
     "updatePassword": "Update password",
@@ -432,6 +462,30 @@
     "is": "Is",
     "true": "True/Enable",
     "false": "False/Disable"
+  },
+  "carModel": {
+    "brand": "Brand",
+    "model": "Model",
+    "seats": "Seats",
+    "modelYear": "Model Year",
+    "condition": "Condition",
+    "bodyType": "Body Type",
+    "acceleration": "Acceleration",
+    "topSpeed": "Top Speed",
+    "range": "Range",
+    "totalPower": "Total Power",
+    "horsePower": "Horse Power",
+    "batteryCapacity": "Battery Capacity",
+    "connectorType": "Connector Type",
+    "chargeTime": "Charge Time",
+    "fastChargeTime": "Fast Charge Time"
+  },
+  "modelForm": {
+    "overview": "Overview",
+    "performance": "Performance",
+    "charging": "Charging",
+    "success": "Model has been updated",
+    "error": "Something went wrong when updating the model"
   },
   "voucher": {
     "title": "Vouchers",
@@ -540,6 +594,7 @@
       "invitation": {
         "title": "Invite a user become to the user group",
         "button": "Invite a user",
+        "multipleUsersButton": "Invite multiple emails",
         "searchField": {
           "label": "Search a user or enter new email address",
           "example": "Ex. ptt or new email such as milano@italia.it",
@@ -548,6 +603,26 @@
         "success": "User has been added",
         "error": "Something went wrong!",
         "duplicated": "The email is duplicated"
+      },
+      "csvUpload": {
+        "title": "Add users from csv file",
+        "button": "Upload CSV file",
+        "uploadButton": "Upload {{length}} emails",
+        "selectFileButton": "Select CSV file",
+        "thereAreNoEmails": "There are no emails.",
+        "validation": {
+          "email": {
+            "warning": "Some emails are invalid, but you can still upload the valid emails.",
+            "error": "All emails are invalid.",
+            "success": "All emails are valid."
+          }
+        },
+        "accordion": {
+          "valid": "{{length}} valid emails",
+          "invalid": "{{length}} invalid emails"
+        },
+        "success": "Emails has been added",
+        "error": "Something went wrong!"
       }
     }
   },
@@ -567,5 +642,16 @@
     "invalidVoucherCode": "Invalid voucher code",
     "invalidName": "Invalid name",
     "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
+  },
+  "cardStatus": {
+    "detail": "Detail >"
+  },
+  "paymentEvent": {
+    "status": {
+      "pending": "Pending",
+      "successful": "Successful",
+      "failed": "Failed",
+      "authorizedRefund": "Authorized Refund"
+    }
   }
 }

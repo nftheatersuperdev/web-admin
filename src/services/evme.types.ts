@@ -688,6 +688,12 @@ export type CarInput = {
   status: Scalars['String']
 }
 
+export type CarUpdateInput = {
+  carModelId: Scalars['String']
+  color: Scalars['String']
+  colorHex: Scalars['String']
+}
+
 export type CarMaxAggregate = {
   __typename?: 'CarMaxAggregate'
   id?: Maybe<Scalars['ID']>
@@ -727,14 +733,15 @@ export type CarModel = {
   cars?: Maybe<Array<Car>>
   prices: Array<PackagePrice>
   totalTorque: Scalars['Float']
-  horsePower?: Maybe<Scalars['Float']>
-  modelYear?: Maybe<Scalars['Float']>
-  batteryCapacity?: Maybe<Scalars['Float']>
+  horsePower: Scalars['Float']
+  modelYear: Scalars['Float']
+  batteryCapacity: Scalars['Float']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   logo?: Maybe<CarModelImage>
   availabilityPercentage: Scalars['Float']
   colors: Array<AvailableCar>
+  condition?: Scalars['String']
 }
 
 export type CarModelCarsArgs = {
@@ -863,17 +870,23 @@ export type CarModelImage = {
 }
 
 export type CarModelInput = {
-  brand: Scalars['String']
-  model: Scalars['String']
-  seats: Scalars['Float']
-  acceleration: Scalars['Float']
-  topSpeed: Scalars['Float']
-  range: Scalars['Float']
-  totalPower: Scalars['Float']
-  connectorType: Scalars['String']
-  chargeTime: Scalars['Float']
-  fastChargeTime: Scalars['String']
-  bodyTypeId: Scalars['String']
+  id?: Scalars['String']
+  brand?: Scalars['String']
+  model?: Scalars['String']
+  seats?: Scalars['Float']
+  acceleration?: Scalars['Float']
+  topSpeed?: Scalars['Float']
+  range?: Scalars['Float']
+  totalPower?: Scalars['Float']
+  connectorType?: Scalars['String']
+  chargeTime?: Scalars['Float']
+  fastChargeTime?: Scalars['Float']
+  bodyTypeId?: Scalars['String']
+  condition?: Scalars['String']
+  horsePower?: Scalars['Float']
+  batteryCapacity?: Scalars['Float']
+  connectorTypeId?: Scalars['String']
+  modelYear?: Scalars['Float']
 }
 
 export type CarModelMaxAggregate = {
@@ -2110,6 +2123,7 @@ export type PaymentEvent = {
   id: Scalars['String']
   paymentId: Scalars['String']
   omiseTransactionId: Scalars['String']
+  omiseFailureMessage?: Scalars['String']
   payment?: Maybe<Payment>
   status: Scalars['String']
   createdAt: Scalars['DateTime']
@@ -2249,6 +2263,7 @@ export type PaymentFilter = {
   amount?: Maybe<NumberFieldComparison>
   currency?: Maybe<StringFieldComparison>
   type?: Maybe<StringFieldComparison>
+  createdAt?: Maybe<DateFieldComparison>
 }
 
 export type PaymentInput = {
@@ -2803,6 +2818,7 @@ export type Sub = {
   paymentsAggregate: Array<SubPaymentsAggregateResponse>
   additionalExpensesAggregate: Array<SubAdditionalExpensesAggregateResponse>
   voucher?: Maybe<Voucher>
+  paymentVersion: Scalars['Float']
 }
 
 export type SubEventsArgs = {
@@ -2998,8 +3014,14 @@ export type SubEventsMinAggregate = {
   createdAt?: Maybe<Scalars['DateTime']>
 }
 
+export type SubFilterAnd = {
+  startDate?: Maybe<DateFieldComparison>
+  endDate?: Maybe<DateFieldComparison>
+  events?: Maybe<SubFilterSubscriptionEventFilter>
+}
+
 export type SubFilter = {
-  and?: Maybe<Array<SubFilter>>
+  and?: Maybe<SubFilterAnd>
   or?: Maybe<Array<SubFilter>>
   id?: Maybe<IdFilterComparison>
   userId?: Maybe<StringFieldComparison>
@@ -3015,6 +3037,7 @@ export type SubFilter = {
   user?: Maybe<SubFilterUserFilter>
   events?: Maybe<SubFilterSubscriptionEventFilter>
   voucher?: Maybe<SubFilterVoucherFilter>
+  paymentVersion?: Maybe<NumberFieldComparison>
 }
 
 export type SubFilterCarFilter = {
@@ -3338,7 +3361,7 @@ export type UpdateOneCarInput = {
   /** The id of the record to update */
   id: Scalars['ID']
   /** The update to apply. */
-  update: CarInput
+  update: CarUpdateInput
 }
 
 export type UpdateOneCarStatusInput = {
@@ -3432,6 +3455,11 @@ export type RefIdAndRelationIds = {
   relationIds: Array<Scalars['ID']>
 }
 
+export type RefIdAndStrings = {
+  id: Scalars['ID']
+  values: Array<Scalars['String']>
+}
+
 export type User = {
   __typename?: 'User'
   id: Scalars['String']
@@ -3448,6 +3476,7 @@ export type User = {
   defaultAddress?: Maybe<UserAddress>
   favoriteChargingLocations?: Maybe<Array<ChargingLocation>>
   kycStatus: Scalars['String']
+  kycRejectReason?: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   creditCard?: Maybe<UserCreditCard>

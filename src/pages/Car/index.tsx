@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { useQuery } from 'react-query'
 import { Button, Card, IconButton } from '@material-ui/core'
 import {
   GridColDef,
@@ -22,18 +23,21 @@ import {
   stringToFilterContains,
 } from 'utils'
 import config from 'config'
+import { useAuth } from 'auth/AuthContext'
 import {
   useCarModels,
   useCreateCar,
+  useUpdateCar,
   useUpdateCarStatus,
   useDeleteCar,
-  useCarsFilterAndSort,
 } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
 import { CarInput, CarFilter, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
+import { getList } from 'services/web-bff/car'
+import { CarListQuery } from 'services/web-bff/car.type'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 import {
@@ -59,19 +63,27 @@ export default function Car(): JSX.Element {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentRowData, setCurrentRowData] = useState({} as GridRowData)
   const createCarMutation = useCreateCar()
-  // const updateCarMutation = useUpdateCar()
+  const updateCarMutation = useUpdateCar()
   const updateCarStatusMutation = useUpdateCarStatus()
   const deleteCarMutation = useDeleteCar()
   const [carFilter, setCarFilter] = useState<CarFilter>({})
   const [carSort, setCarSort] = useState<SubOrder>({})
 
+  const accessToken = useAuth().getToken() ?? ''
+  const [query] = useState<CarListQuery>()
   const {
     data: carData,
     refetch,
     isFetching,
-  } = useCarsFilterAndSort(carFilter, carSort, currentPageIndex, pageSize)
+  } = useQuery('cars', () =>
+    getList({
+      accessToken,
+      query,
+      sort: carSort,
+    })
+  )
 
-  const { data: carModels } = useCarModels()
+  const { data: carModels } = useCarModels(config.maxInteger)
 
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -162,10 +174,20 @@ export default function Car(): JSX.Element {
     }
 
     await toast.promise(
-      updateCarStatusMutation.mutateAsync({
-        carId: selectedCarId,
-        status: data.status,
-      }),
+      Promise.all([
+        updateCarStatusMutation.mutateAsync({
+          carId: selectedCarId,
+          status: data.status,
+        }),
+        updateCarMutation.mutateAsync({
+          id: selectedCarId,
+          update: {
+            carModelId: data.carModelId,
+            color: data.color,
+            colorHex: data.colorHex,
+          },
+        }),
+      ]),
       {
         loading: t('toast.loading'),
         success: t('car.updateDialog.success'),
@@ -193,7 +215,7 @@ export default function Car(): JSX.Element {
 
   const carModelOptions = useMemo(
     () =>
-      carModels?.edges?.map(({ node }) => ({
+      carModels?.pages[0].edges?.map(({ node }) => ({
         id: node?.id,
         modelName: `${node?.brand} - ${node?.model}`,
       })) || [],
@@ -201,13 +223,8 @@ export default function Car(): JSX.Element {
   )
 
   const openEditCarDialog = (param: GridRowData) => {
-    const selectedCar = carData?.data.find((car) => car.id === param.id)
-    const latestStatus = selectedCar?.latestStatus
-
     setSelectedCarId(param.id)
-    const { vin, plateNumber, carModelId, color, colorHex } = param.row
-
-    const status = latestStatus ? latestStatus : 'available'
+    const { vin, plateNumber, carModelId, color, colorHex, status } = param.row
 
     setCarInfo({
       vin,
@@ -240,64 +257,31 @@ export default function Car(): JSX.Element {
     setIsDeleteDialogOpen(false)
   }
 
-  const carStatuses = {
-    available: t('car.statuses.available'),
-    outOfService: t('car.statuses.outOfService'),
-  }
-
-  const cars =
-    carData?.data.map((car) => {
-      const {
-        id,
-        vin,
-        plateNumber,
-        color,
-        colorHex,
-        carModelId,
-        carModel,
-        latestStatus,
-        createdAt,
-        updatedAt,
-      } = car || {}
-
-      const {
-        brand,
-        model,
-        acceleration,
-        topSpeed,
-        range,
-        totalPower,
-        connectorType,
-        chargeTime,
-        fastChargeTime,
-        batteryCapacity,
-      } = carModel || {}
-
-      const status = latestStatus === 'available' ? carStatuses.available : carStatuses.outOfService
-
+  const rowCount = carData?.data.pagination.totalRecords
+  const rows =
+    carData?.data.cars.map((car) => {
       return {
-        carModelId,
-        brand,
-        topSpeed,
-        acceleration,
-        range,
-        totalPower,
-        connectorType: connectorType?.description,
-        chargeTime,
-        fastChargeTime,
-        bodyType: carModel?.bodyType?.bodyType,
-        model,
-        id,
-        vin,
-        plateNumber,
-        color,
-        colorHex,
-        createdAt,
-        updatedAt,
-        batteryCapacity,
-        status,
+        id: car.id,
+        name: car.name,
+        brand: car.brand,
+        vin: car.vin,
+        plateNumber: car.plateNumber,
+        color: car.color,
+        colorHex: car.colorHex,
+        topSpeed: car.topSpeed,
+        acceleration: car.acceleration,
+        range: car.range,
+        totalPower: car.totalPower,
+        batteryCapacity: car.batteryCapacity,
+        chargeTime: car.chargeTime,
+        fastChargeTime: car.fastChargeTime,
+        connectorType: car.connectorType.description,
+        bodyType: car.bodyType.description,
+        createdDate: car.createdDate,
+        updatedDate: car.updatedDate,
+        status: car.status,
       }
-    }) || []
+    }) ?? []
 
   const columns: GridColDef[] = [
     {
@@ -377,19 +361,19 @@ export default function Car(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'createdAt',
+      field: 'createdDate',
       headerName: t('car.createdDate'),
       description: t('car.createdDate'),
-      hide: !visibilityColumns.createdAt,
+      hide: !visibilityColumns.createdDate,
       valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
     },
     {
-      field: 'updatedAt',
+      field: 'updatedDate',
       headerName: t('car.updatedDate'),
       description: t('car.updatedDate'),
-      hide: !visibilityColumns.updatedAt,
+      hide: !visibilityColumns.updatedDate,
       valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
@@ -501,11 +485,11 @@ export default function Car(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={carData?.totalData}
+          rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
-          rows={cars}
+          rows={rows}
           columns={columns}
           checkboxSelection
           disableSelectionOnClick

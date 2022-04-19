@@ -93,7 +93,11 @@ export default function CarUpdateDialog({
     formik.resetForm()
   }
 
-  const isStatusHasNotChanged = originalStatus === formik.values.status
+  const isStatusHasNotChanged =
+    originalStatus === formik.values.status &&
+    originalColor === formik.values.carColor &&
+    originalColorHex === formik.values.carColorHex &&
+    originalModelId === formik.values.carModel
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -145,7 +149,6 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.carColor && Boolean(formik.errors.carColor)}
               helperText={formik.touched.carColor && formik.errors.carColor}
-              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -161,7 +164,6 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.carColorHex && Boolean(formik.errors.carColorHex)}
               helperText={formik.touched.carColorHex && formik.errors.carColorHex}
-              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -180,7 +182,6 @@ export default function CarUpdateDialog({
                 }}
                 error={formik.touched.carModel && Boolean(formik.errors.carModel)}
                 helperText={formik.touched.carModel && formik.errors.carModel}
-                disabled={forceDisableFields}
               >
                 {carModelOptions.map((model) => (
                   <MenuItem key={model.id} value={model.id}>

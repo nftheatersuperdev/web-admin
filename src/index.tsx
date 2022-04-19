@@ -2,13 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { GraphQLClient } from 'graphql-request'
 import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
-import { GraphQLRequestProvider } from 'hooks/GraphQLRequestContext'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
@@ -16,6 +14,8 @@ import GlobalStyles, { theme } from './GlobalStyles'
 
 // Ensure that internationalization is bundled into app
 import './i18n'
+
+const queryClient = new QueryClient()
 
 if (config.isProductionEnvironment) {
   // eslint-disable-next-line
@@ -35,9 +35,6 @@ if (config.isProductionEnvironment) {
   console.info('[Application] Running in development mode.')
 }
 
-const queryClient = new QueryClient()
-const gqlClient = new GraphQLClient(config.evme)
-
 // INFO: using es6 import here since require() is forbidden by eslint
 if (process.env.MSW === 'true') {
   import('./tests/mockWorker').then(({ worker }) => {
@@ -51,13 +48,11 @@ ReactDOM.render(
       <GlobalStyles />
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider fbase={new Firebase()} gqlClient={gqlClient}>
-            <GraphQLRequestProvider gqlClient={gqlClient}>
-              <App />
-            </GraphQLRequestProvider>
-          </AuthProvider>
-        </QueryClientProvider>
+        <AuthProvider fbase={new Firebase()}>
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
+        </AuthProvider>
       </ThemeProvider>
     </StylesProvider>
   </React.StrictMode>,

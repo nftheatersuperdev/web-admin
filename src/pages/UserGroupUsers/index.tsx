@@ -9,6 +9,8 @@ import { Page } from 'layout/LayoutRoute'
 import PageToolbar from 'layout/PageToolbar'
 import { useUserGroup } from 'services/evme'
 import InviteDialog from './InviteDialog'
+import GroupInviteDialog from './GroupInviteDialog'
+import UploadCSVDialog from './UploadCSVDialog'
 import UsersTab from './UsersTab'
 import WhitelistsTab from './WhitelistsTab'
 
@@ -24,6 +26,12 @@ interface TabPanelProps {
 
 const MarginBottom = styled.div`
   margin-bottom: 20px;
+`
+const ButtonSpace = styled(Button)`
+  margin-left: 10px;
+`
+const ButtonHidden = styled(Button)`
+  display: none;
 `
 
 function TabPanel(props: TabPanelProps) {
@@ -60,6 +68,8 @@ export default function UserGroupUsers(): JSX.Element {
 
   const [tabIndex, setTabIndex] = useState<number>(0)
   const [openInviteDialog, setOpenInviteDialog] = useState<boolean>(false)
+  const [openGroupInviteDialog, setOpenGroupInviteDialog] = useState<boolean>(false)
+  const [openUploadCSVDialog, setOpenUploadCSVDialog] = useState<boolean>(false)
   const [refetchData, setRefetchData] = useState<boolean>(false)
 
   const { data: userGroup } = useUserGroup(ugid)
@@ -72,9 +82,29 @@ export default function UserGroupUsers(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained" onClick={() => setOpenInviteDialog(true)}>
-          {t('userGroups.dialog.invitation.button')}
-        </Button>
+        <div>
+          <ButtonSpace
+            color="primary"
+            variant="contained"
+            onClick={() => setOpenUploadCSVDialog(true)}
+          >
+            {t('userGroups.dialog.csvUpload.button')}
+          </ButtonSpace>
+          <ButtonHidden
+            color="primary"
+            variant="contained"
+            onClick={() => setOpenInviteDialog(true)}
+          >
+            {t('userGroups.dialog.invitation.button')}
+          </ButtonHidden>
+          <ButtonSpace
+            color="primary"
+            variant="contained"
+            onClick={() => setOpenGroupInviteDialog(true)}
+          >
+            {t('userGroups.dialog.invitation.multipleUsersButton')}
+          </ButtonSpace>
+        </div>
       </PageToolbar>
 
       <MarginBottom>
@@ -108,6 +138,15 @@ export default function UserGroupUsers(): JSX.Element {
         </TabPanel>
       </Card>
 
+      <GroupInviteDialog
+        userGroupId={ugid}
+        open={openGroupInviteDialog}
+        onClose={() => {
+          setOpenGroupInviteDialog(false)
+          setRefetchData(true)
+        }}
+      />
+
       <InviteDialog
         userGroupId={ugid}
         open={openInviteDialog}
@@ -117,6 +156,16 @@ export default function UserGroupUsers(): JSX.Element {
           setRefetchData(true)
         }}
         currentTabIndex={tabIndex}
+      />
+
+      <UploadCSVDialog
+        userGroupId={ugid}
+        open={openUploadCSVDialog}
+        onClose={() => {
+          setTabIndex(tabIndex)
+          setOpenUploadCSVDialog(false)
+          setRefetchData(true)
+        }}
       />
     </Page>
   )
