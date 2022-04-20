@@ -14,14 +14,14 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useQuery } from 'react-query'
 import {
-  useFindUsersByNotInUserGroupAndKeyword,
-  useFindWhitelistUsersNotInUserGroupAndKeyword,
   useAddUsersToUserGroup,
   useAddWhitelistsToUserGroup,
   useCreateOneWhitelist,
 } from 'services/evme'
 import { User, UserWhitelist } from 'services/evme.types'
+import { getAllUser } from 'services/web-bff/user'
 
 interface InviteDialogProps {
   userGroupId: string
@@ -49,24 +49,40 @@ export default function InviteDialog({
   const [selectedWhitelist, setSelectedWhitelist] = useState<UserWhitelist | any | null>(null)
   const [selectedNewEmail, setSelectedNewEmail] = useState<string | null>(null)
 
+  /*const {
+    data: users,
+    refetch: usersRefetch,
+    isFetching: usersRefetching,
+  } = useFindUsersByNotInUserGroupAndKeyword(userGroupId, keyword)*/
+
   const {
     data: users,
     refetch: usersRefetch,
     isFetching: usersRefetching,
-  } = useFindUsersByNotInUserGroupAndKeyword(userGroupId, keyword)
-  const {
+  } = useQuery(['user-list', keyword], async () => {
+    const response = await getAllUser()
+    return response.data.users.filter(
+      (x) =>
+        x.userGroups.indexOf(userGroupId) > -1 ||
+        x.firstName?.includes(keyword) ||
+        x.lastName?.includes(keyword) ||
+        x.phoneNumber?.includes(keyword) ||
+        x.email.includes(keyword)
+    )
+  })
+
+  /*const {
     data: whitelistUsers,
     refetch: whitelistUsersRefetch,
     isFetching: whitelistUsersRefetching,
-  } = useFindWhitelistUsersNotInUserGroupAndKeyword(userGroupId, keyword)
+  } = useFindWhitelistUsersNotInUserGroupAndKeyword(userGroupId, keyword)*/
   const addUsersToUserGroup = useAddUsersToUserGroup()
   const addWhitelistsToUserGroup = useAddWhitelistsToUserGroup()
   const createOneWhitelist = useCreateOneWhitelist()
 
-  const isFetching = usersRefetching || whitelistUsersRefetching
+  const isFetching = usersRefetching
   const refetch = async () => {
     await usersRefetch()
-    await whitelistUsersRefetch()
   }
 
   const clearOptionData = async () => {
@@ -176,7 +192,7 @@ export default function InviteDialog({
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mergeUsers: any[] = []
-    if (whitelistUsers && whitelistUsers.length >= 1) {
+    /*if (whitelistUsers && whitelistUsers.length >= 1) {
       const whitelistUsersMapped = whitelistUsers.map((whitelistUser) => {
         return {
           isWhitelist: true,
@@ -184,12 +200,12 @@ export default function InviteDialog({
         }
       })
       mergeUsers = [...mergeUsers, ...whitelistUsersMapped]
-    }
+    }*/
     if (users && users.length >= 1) {
       mergeUsers = [...mergeUsers, ...users]
     }
     setSelectOptions(mergeUsers)
-  }, [users, whitelistUsers])
+  }, [users])
 
   const isInviteButtonDisabled =
     isLoading || (!selectedUser && !selectedWhitelist && !selectedNewEmail)

@@ -11,6 +11,7 @@ import { TFunction, Namespace } from 'react-i18next'
 import { DateFieldComparisonBetween, DateFieldComparisonGreaterOrLess } from 'services/evme.types'
 import GridFilterDatePicker from 'components/GridFilterDatePicker'
 import GridFilterBooleanRadio from 'components/GridFilterBooleanRadio'
+import GridFilterDatePickerV2 from 'components/GrideFilterDatePickerV2'
 
 export const DEFAULT_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm'
 export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY'
@@ -499,7 +500,7 @@ export const getEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOper
 export const geEqualtDateOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.equals'),
-    value: FieldComparisons.onDay,
+    value: FieldComparisons.equals,
     getApplyFilterFn: (filterItem: GridFilterItem) => {
       if (!filterItem.value) {
         return null
@@ -509,7 +510,7 @@ export const geEqualtDateOperators = (t: TFunction<Namespace>): GridFilterOperat
         return filterItem.value === value
       }
     },
-    InputComponent: GridFilterDatePicker,
+    InputComponent: GridFilterDatePickerV2,
   },
 ]
 

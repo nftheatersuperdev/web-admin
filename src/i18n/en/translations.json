@@ -561,8 +561,8 @@
     "title": "User Groups",
     "id": "ID",
     "name": "Name",
-    "createdAt": "Created Date",
-    "updatedAt": "Updated Date",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
     "button": {
       "createNew": "Create new user group",
       "addUser": {

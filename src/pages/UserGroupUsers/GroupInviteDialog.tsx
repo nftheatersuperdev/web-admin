@@ -15,12 +15,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { validateEmail } from 'utils'
-import {
-  useFindUsersByNotInUserGroupAndKeyword,
-  useFindWhitelistUsersNotInUserGroupAndKeyword,
-  useAddEmailsToUserGroup,
-} from 'services/evme'
+import { useQuery } from 'react-query'
+import { getAllUser, updateUserInUserGroup } from 'services/web-bff/user'
 
 interface GroupInviteDialogProps {
   userGroupId: string
@@ -42,44 +38,57 @@ export default function GroupInviteDialog({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [keyword, setKeyword] = useState<string>('')
   const [selectOptions, setSelectOptions] = useState<any[]>()
-  const [validEmails, setValidEmails] = useState<string[]>([])
+  const [validUserIdList, setValidUserIdList] = useState<string[]>([])
+
+  /*const {
+    data: users,
+    refetch: usersRefetch,
+    isFetching: usersRefetching,
+  } = useFindUsersByNotInUserGroupAndKeyword(userGroupId, keyword)*/
 
   const {
     data: users,
     refetch: usersRefetch,
     isFetching: usersRefetching,
-  } = useFindUsersByNotInUserGroupAndKeyword(userGroupId, keyword)
-  const {
-    data: whitelistUsers,
-    refetch: whitelistUsersRefetch,
-    isFetching: whitelistUsersRefetching,
-  } = useFindWhitelistUsersNotInUserGroupAndKeyword(userGroupId, keyword)
-  const addEmailsToUserGroup = useAddEmailsToUserGroup()
+  } = useQuery(['user-list', keyword], async () => {
+    const response = await getAllUser()
+    return response.data.users.filter(
+      (x) =>
+        x.userGroups.indexOf(userGroupId) > -1 ||
+        x.firstName?.includes(keyword) ||
+        x.lastName?.includes(keyword) ||
+        x.phoneNumber?.includes(keyword) ||
+        x.email.includes(keyword)
+    )
+  })
+  /* const {
+     data: whitelistUsers,
+     refetch: whitelistUsersRefetch,
+     isFetching: whitelistUsersRefetching,
+   } = useFindWhitelistUsersNotInUserGroupAndKeyword(userGroupId, keyword)*/
+  //const addEmailsToUserGroup = useAddEmailsToUserGroup()
+  // const addEmailsToUserGroup = updateUserInUserGroup()
 
-  const isFetching = usersRefetching || whitelistUsersRefetching
+  const isFetching = usersRefetching
   const refetch = async () => {
     await usersRefetch()
-    await whitelistUsersRefetch()
   }
 
   const clearOptionData = async () => {
     setKeyword('')
     await refetch()
-    setValidEmails([])
+    setValidUserIdList([])
     onClose()
   }
 
   const handleConfirmInviteUser = async () => {
     setIsLoading(true)
 
-    await toast.promise(
-      addEmailsToUserGroup.mutateAsync({ id: userGroupId, values: validEmails }),
-      {
-        loading: t('toast.loading'),
-        success: t('userGroups.dialog.invitation.success'),
-        error: t('userGroups.dialog.invitation.error'),
-      }
-    )
+    await toast.promise(updateUserInUserGroup({ id: userGroupId, users: validUserIdList }), {
+      loading: t('toast.loading'),
+      success: t('userGroups.dialog.invitation.success'),
+      error: t('userGroups.dialog.invitation.error'),
+    })
 
     await clearOptionData()
     setIsLoading(false)
@@ -88,15 +97,15 @@ export default function GroupInviteDialog({
   }
 
   const handleOnSelectedOption = (values: any) => {
-    const emails: string[] = values.map((value: any) => {
-      if (typeof value === 'string' && validateEmail(value)) {
+    const userIds: string[] = values.map((value: any) => {
+      if (typeof value === 'string') {
         return value
       } else if (value.isWhitelist) {
         return value.value
       }
-      return value.email
+      return value.id
     })
-    setValidEmails(emails.filter((email) => !!email))
+    setValidUserIdList(userIds.filter((userId) => !!userId))
   }
 
   const handleChangeKeyword = (event: ChangeEvent<{ value: unknown }>) => {
@@ -116,7 +125,7 @@ export default function GroupInviteDialog({
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mergeUsers: any[] = []
-    if (whitelistUsers && whitelistUsers.length >= 1) {
+    /*if (whitelistUsers && whitelistUsers.length >= 1) {
       const whitelistUsersMapped = whitelistUsers.map((whitelistUser) => {
         return {
           isWhitelist: true,
@@ -124,14 +133,14 @@ export default function GroupInviteDialog({
         }
       })
       mergeUsers = [...mergeUsers, ...whitelistUsersMapped]
-    }
+    }*/
     if (users && users.length >= 1) {
       mergeUsers = [...mergeUsers, ...users]
     }
     setSelectOptions(mergeUsers)
-  }, [users, whitelistUsers])
+  }, [users])
 
-  const isInviteButtonDisabled = isLoading || validEmails.length < 1
+  const isInviteButtonDisabled = isLoading || validUserIdList.length < 1
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -171,7 +180,7 @@ export default function GroupInviteDialog({
                 return label.join(', ')
               }}
               renderTags={(_, getTagProps) =>
-                validEmails.map((option, index) => (
+                validUserIdList.map((option, index) => (
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   <Chip key={index} label={option} {...getTagProps({ index })} />
                 ))
@@ -212,7 +221,7 @@ export default function GroupInviteDialog({
           color="primary"
           variant="contained"
         >
-          {t('button.inviteAmount', { amount: validEmails.length })}
+          {t('button.inviteAmount', { amount: validUserIdList.length })}
         </ButtonSpace>
       </DialogActions>
     </Dialog>
