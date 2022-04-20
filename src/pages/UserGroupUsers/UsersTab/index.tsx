@@ -13,9 +13,12 @@ import {
 import { getIdFilterOperators, getStringFilterOperators, stringToFilterContains } from 'utils'
 import { IconButton } from '@material-ui/core'
 import { Delete as DeleteIcon } from '@material-ui/icons'
-import { useUserGroupUsers, useRemoveUserGroupsFromUser } from 'services/evme'
+import { useQuery } from 'react-query'
+import { useRemoveUserGroupsFromUser } from 'services/evme'
 import DataGridLocale from 'components/DataGridLocale'
 import { UserFilter } from 'services/evme.types'
+import { UserMeProps } from 'services/web-bff/user.type'
+import { searchUserInUserGroup } from 'services/web-bff/user'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 interface UserGroupUsersTabProps {
@@ -34,11 +37,24 @@ export default function UsersTab({
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0)
   const [userFilter, setUserFilter] = useState<UserFilter>()
 
+  /* {
+    data: userGroupUsersData,
+    refetch,
+    isFetching,
+  } = useUserGroupUsers(ugid, currentPageIndex, pageSize, userFilter)*/
   const {
     data: userGroupUsersData,
     refetch,
     isFetching,
-  } = useUserGroupUsers(ugid, currentPageIndex, pageSize, userFilter)
+  } = useQuery('user-list', () =>
+    searchUserInUserGroup({
+      id: ugid,
+      data: userFilter,
+      page: currentPageIndex,
+      size: pageSize,
+    } as UserMeProps)
+  )
+
   const removeUserGroupsFromUser = useRemoveUserGroupsFromUser()
   const idFilterOperators = getIdFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
@@ -175,7 +191,7 @@ export default function UsersTab({
       width: 140,
       renderCell: (params: GridCellParams) => {
         return (
-          <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+          <IconButton aria-label="delete" disabled onClick={() => handleDeleteRow(params.row)}>
             <DeleteIcon />
           </IconButton>
         )
@@ -184,7 +200,7 @@ export default function UsersTab({
   ]
 
   const userGroupUsers =
-    userGroupUsersData?.data.map((userGroupUser) => {
+    userGroupUsersData?.data.userGroup.users.map((userGroupUser) => {
       return {
         id: userGroupUser.id,
         firstName: userGroupUser.firstName,
@@ -194,6 +210,8 @@ export default function UsersTab({
       }
     }) || []
 
+  const pagination = userGroupUsersData?.data.pagination || null
+
   return (
     <DataGridLocale
       className="sticky-header"
@@ -201,7 +219,7 @@ export default function UsersTab({
       pagination
       pageSize={pageSize}
       page={currentPageIndex}
-      rowCount={userGroupUsersData?.totalData}
+      rowCount={pagination?.totalRecords}
       paginationMode="server"
       onPageSizeChange={handlePageSizeChange}
       onPageChange={setCurrentPageIndex}

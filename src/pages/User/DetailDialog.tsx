@@ -134,7 +134,7 @@ export default function UserDetailDialog({
               label={t('user.createdDate')}
               margin="normal"
               variant="outlined"
-              value={formatDate(user?.createdAt)}
+              value={formatDate(user?.createdDate)}
               InputProps={{
                 readOnly: true,
               }}
@@ -146,7 +146,7 @@ export default function UserDetailDialog({
               label={t('user.updatedDate')}
               margin="normal"
               variant="outlined"
-              value={formatDate(user?.updatedAt)}
+              value={formatDate(user?.updatedDate)}
               InputProps={{
                 readOnly: true,
               }}

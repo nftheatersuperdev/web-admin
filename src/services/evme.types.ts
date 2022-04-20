@@ -3477,8 +3477,8 @@ export type User = {
   favoriteChargingLocations?: Maybe<Array<ChargingLocation>>
   kycStatus: Scalars['String']
   kycRejectReason?: Scalars['String']
-  createdAt: Scalars['DateTime']
-  updatedAt: Scalars['DateTime']
+  createdDate: Scalars['DateTime']
+  updatedDate: Scalars['DateTime']
   creditCard?: Maybe<UserCreditCard>
   tokenKyc?: Maybe<Scalars['String']>
   subscriptionsAggregate: Array<UserSubscriptionsAggregateResponse>
@@ -3909,8 +3909,8 @@ export type UserGroup = {
   __typename?: 'UserGroup'
   id: Scalars['String']
   name: Scalars['String']
-  createdAt: Scalars['DateTime']
-  updatedAt: Scalars['DateTime']
+  createdDate: Scalars['DateTime']
+  updatedDate: Scalars['DateTime']
 }
 
 export type Voucher = {

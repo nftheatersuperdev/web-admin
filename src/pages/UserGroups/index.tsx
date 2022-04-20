@@ -13,112 +13,87 @@ import {
   GridFilterItem,
   GridFilterModel,
   GridPageChangeParams,
-  GridSortModel,
   GridRowData,
   GridCellParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
-  getIdFilterOperators,
-  getStringFilterOperators,
-  getDateFilterMoreOperators,
-  dateToFilterOnDay,
-  dateToFilterNotOnDay,
-  dateToFilterGreaterOrLess,
-  stringToFilterContains,
+  getEqualFilterOperators,
+  getContainFilterOperators,
+  FieldComparisons,
+  FieldKeyOparators,
   columnFormatDate,
+  geEqualtDateOperators,
 } from 'utils'
 import config from 'config'
-import { useUserGroupsFilterAndSort, useDeleteUserGroup } from 'services/evme'
-import {
-  UserGroupFilter,
-  SortDirection,
-  SubOrder,
-  UserGroup as UserGroupType,
-} from 'services/evme.types'
+import { useQuery } from 'react-query'
+import { searchUserGroup } from 'services/web-bff/user'
+import { useDeleteUserGroup } from 'services/evme'
+import { UserGroup as UserGroupType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
+import { UserGroupInputRequest } from 'services/web-bff/user.type'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import CreateUpdateDialog from './CreateUpdateDialog'
 
 const MarginBottom = styled.div`
   margin-bottom: 20px;
 `
+const defaultFilter: UserGroupInputRequest = {} as UserGroupInputRequest
 
 export default function UserGroup(): JSX.Element {
   const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [userGroupFilter, setUserGroupFilter] = useState<UserGroupFilter>({})
-  const [userGroupSort, setUserGroupSort] = useState<SubOrder>({})
+  const [userGroupFilter, setUserGroupFilter] = useState<UserGroupInputRequest>({
+    ...defaultFilter,
+  })
   const [userGroupSelected, setUserGroupSelected] = useState<UserGroupType | null>()
   const [openCreateUpdateDialog, setOpenCreateUpdateDialog] = useState<boolean>(false)
-
   const {
     data: userGroupData,
     refetch,
     isFetching,
-  } = useUserGroupsFilterAndSort(userGroupFilter, userGroupSort, currentPageIndex, pageSize)
+  } = useQuery('user-group-list', () =>
+    searchUserGroup({
+      data: userGroupFilter,
+      page: currentPageIndex + 1,
+      size: pageSize,
+    })
+  )
 
   const deleteUserGroup = useDeleteUserGroup()
-
-  const idFilterOperators = getIdFilterOperators(t)
-  const stringFilterOperators = getStringFilterOperators(t)
-  const dateFilterOperators = getDateFilterMoreOperators(t)
+  const equalOperators = getEqualFilterOperators(t)
+  const containOperators = getContainFilterOperators(t)
+  const dateEqualOperators = geEqualtDateOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setCurrentPageIndex(0)
     setPageSize(params.pageSize)
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
+    let keyValue = ''
     setUserGroupFilter({
-      ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        let filterValue = value
-
-        if ((columnField === 'createdAt' || columnField === 'updatedAt') && value) {
-          const comparingValue = operatorValue as string
-          const comparingOperations = ['gt', 'lt', 'gte', 'lte']
-          const isUsingOperators = comparingOperations.includes(comparingValue)
-          const isGreaterThanOrLessThanEqual = ['gt', 'lte'].includes(comparingValue)
-
-          if (operatorValue === 'between') {
-            filterValue = dateToFilterOnDay(value)
-          } else if (operatorValue === 'notBetween') {
-            filterValue = dateToFilterNotOnDay(value)
-          } else if (isUsingOperators) {
-            filterValue = dateToFilterGreaterOrLess(value, isGreaterThanOrLessThanEqual)
+      ...params.items.reduce((filter, { columnField, value, operatorValue }: GridFilterItem) => {
+        if (value) {
+          switch (operatorValue) {
+            case FieldComparisons.equals:
+              keyValue = `${columnField}${FieldKeyOparators.equals}`
+              break
+            case FieldComparisons.contains:
+              keyValue = `${columnField}${FieldKeyOparators.contains}`
+              break
           }
+          filter = { [keyValue]: value }
         }
-
-        if (operatorValue === 'iLike' && value) {
-          filterValue = stringToFilterContains(value)
-        }
-
-        if (filterValue) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: filterValue,
-          }
-        }
-
-        if (
-          (columnField === 'amount' ||
-            columnField === 'percentDiscount' ||
-            columnField === 'limitPerUser') &&
-          value
-        ) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: +filterValue,
-          }
-        }
-
         return filter
-      }, {} as UserGroupFilter),
+      }, {} as UserGroupInputRequest),
     })
+
     // reset page
     setCurrentPageIndex(0)
   }
@@ -140,19 +115,6 @@ export default function UserGroup(): JSX.Element {
     visibilityColumns[params.field] = params.isVisible
 
     setVisibilityColumns(visibilityColumns)
-  }
-
-  const handleSortChange = (params: GridSortModel) => {
-    if (params?.length > 0 && !isFetching) {
-      const { field: refField, sort } = params[0]
-
-      const order: SubOrder = {
-        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
-      }
-
-      setUserGroupSort(order)
-      refetch()
-    }
   }
 
   const removeUserGroup = async (refId: string) => {
@@ -181,8 +143,8 @@ export default function UserGroup(): JSX.Element {
     const updateObject: UserGroupType = {
       id: rowData.id,
       name: rowData.name,
-      createdAt: rowData.createdAt,
-      updatedAt: rowData.updatedAt,
+      createdDate: rowData.createdDate,
+      updatedDate: rowData.updatedDate,
     }
     setUserGroupSelected(updateObject)
     setOpenCreateUpdateDialog(true)
@@ -190,7 +152,11 @@ export default function UserGroup(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [userGroupFilter, refetch])
+  }, [userGroupFilter, refetch, currentPageIndex])
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, pageSize])
 
   const columns: GridColDef[] = [
     {
@@ -200,7 +166,7 @@ export default function UserGroup(): JSX.Element {
       hide: !visibilityColumns.id,
       flex: 1,
       sortable: false,
-      filterOperators: idFilterOperators,
+      filterOperators: equalOperators,
     },
     {
       field: 'name',
@@ -209,27 +175,27 @@ export default function UserGroup(): JSX.Element {
       hide: !visibilityColumns.name,
       flex: 1,
       sortable: false,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
       editable: false,
     },
     {
-      field: 'createdAt',
-      headerName: t('userGroups.createdAt'),
-      description: t('userGroups.createdAt'),
-      hide: !visibilityColumns.createdAt,
+      field: 'createdDate',
+      headerName: t('userGroups.createdDate'),
+      description: t('userGroups.createdDate'),
+      hide: !visibilityColumns.createdDate,
       flex: 1,
-      sortable: true,
-      filterOperators: dateFilterOperators,
+      sortable: false,
+      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'updatedAt',
-      headerName: t('userGroups.updatedAt'),
-      description: t('userGroups.updatedAt'),
-      hide: !visibilityColumns.updatedAt,
+      field: 'updatedDate',
+      headerName: t('userGroups.updatedDate'),
+      description: t('userGroups.updatedDate'),
+      hide: !visibilityColumns.updatedDate,
       flex: 1,
-      sortable: true,
-      filterOperators: dateFilterOperators,
+      sortable: false,
+      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
     {
@@ -248,11 +214,11 @@ export default function UserGroup(): JSX.Element {
               <EditIcon />
             </IconButton>
             <Tooltip title={t('userGroups.button.addUser.tooltip', { name })} arrow>
-              <IconButton onClick={() => history.push(`/user-groups/${params.id}/users`)}>
+              <IconButton disabled onClick={() => history.push(`/user-groups/${params.id}/users`)}>
                 <GroupAddIcon />
               </IconButton>
             </Tooltip>
-            <IconButton aria-label="delete" onClick={() => handleDeleteRow(params.row)}>
+            <IconButton aria-label="delete" disabled onClick={() => handleDeleteRow(params.row)}>
               <DeleteIcon />
             </IconButton>
           </Fragment>
@@ -262,15 +228,19 @@ export default function UserGroup(): JSX.Element {
   ]
 
   const userGroups =
-    userGroupData?.data.map((userGroup) => {
+    userGroupData?.data.userGroups.map((userGroup) => {
       return {
         id: userGroup.id,
         name: userGroup.name,
-        createdAt: userGroup.createdAt,
-        updatedAt: userGroup.updatedAt,
+        createdDate: userGroup.createdDate,
+        updatedDate: userGroup.updatedDate,
       }
     }) || []
+  const pagination = userGroupData?.data.pagination || null
 
+  const handleFetchPage = (pageNumber: number) => {
+    setCurrentPageIndex(pageNumber)
+  }
   return (
     <Page>
       <PageToolbar>
@@ -292,7 +262,7 @@ export default function UserGroup(): JSX.Element {
           pagination
           pageSize={pageSize}
           page={currentPageIndex}
-          rowCount={userGroupData?.totalData}
+          rowCount={pagination?.totalRecords}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setCurrentPageIndex}
@@ -303,9 +273,9 @@ export default function UserGroup(): JSX.Element {
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
-          sortingMode="server"
-          onSortModelChange={handleSortChange}
           loading={isFetching}
+          onFetchNextPage={() => handleFetchPage(currentPageIndex + 1)}
+          onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
         />
       </Card>
 

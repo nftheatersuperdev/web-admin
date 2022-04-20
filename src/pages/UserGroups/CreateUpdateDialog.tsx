@@ -13,8 +13,9 @@ import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { useCreateUserGroup, useChangeUserGroup } from 'services/evme'
 import { UserGroupInput, UserGroup } from 'services/evme.types'
+import { creatUserGroup, updateUserGroup } from 'services/web-bff/user'
+import { UserGroupResponse } from 'services/web-bff/user.type'
 
 interface CreateDialogProps {
   open: boolean
@@ -35,8 +36,6 @@ export default function UserGroupCreateUpdateDialog({
   const isUpdate = !!userGroup
 
   const { t } = useTranslation()
-  const createUserGroup = useCreateUserGroup()
-  const changeUserGroup = useChangeUserGroup()
   const validationSchema = yup.object({
     name: yup
       .string()
@@ -46,6 +45,13 @@ export default function UserGroupCreateUpdateDialog({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isNoChange, setIsNoChange] = useState<boolean>(true)
+
+  const createUserGroup = (param: UserGroupInput): Promise<UserGroupResponse> => {
+    return creatUserGroup(param)
+  }
+  const changeUserGroup = (param: UserGroupInput): Promise<UserGroupResponse> => {
+    return updateUserGroup(param)
+  }
 
   const formik = useFormik({
     validationSchema,
@@ -70,7 +76,7 @@ export default function UserGroupCreateUpdateDialog({
         error: isUpdate ? t('userGroups.dialog.update.error') : t('userGroups.dialog.create.error'),
       }
 
-      toast.promise(mutateFunction.mutateAsync(mutateObject), {
+      toast.promise(mutateFunction(mutateObject), {
         loading: t('toast.loading'),
         success: () => {
           formik.resetForm()
@@ -152,3 +158,9 @@ export default function UserGroupCreateUpdateDialog({
     </Dialog>
   )
 }
+/*function UserGroupProps(
+  arg0: { data: UserGroupInput },
+  UserGroupProps: any
+): Promise<import('../../services/web-bff/user.type').UserGroupResponse> {
+  throw new Error('Function not implemented.')
+}*/

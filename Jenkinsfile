@@ -16,7 +16,7 @@ pipeline {
         }
         stage ('Copy Environment') {
              steps{
-                sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/admin-web-${DOMAIN_ENVIRONMENT}"
+                sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/admin-web-${INTERNAL_ENVIRONMENT}"
              }
         }
         stage ('Build Static File') {
@@ -31,12 +31,12 @@ pipeline {
         }
         stage ('Upload to S3') {
              steps{
-                sh "aws s3 cp ./build/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
+                sh "aws s3 cp ./build/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-${INTERNAL_ENVIRONMENT}/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
              }
         }
         stage ('Deploy') {
              steps{
-                sh "aws amplify start-deployment --app-id d2nztmvn1ui6cz --branch-name dev --source-url=s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
+                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://web-admin-${INTERNAL_ENVIRONMENT}/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
              }
         }
     }
