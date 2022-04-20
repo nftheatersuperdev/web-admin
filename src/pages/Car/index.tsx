@@ -17,7 +17,7 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
-  getSelectFilterOperators,
+  getSelectEqualFilterOperators,
   getEqualAndContainFilterOperators,
   FieldComparisons,
   FieldKeyOparators,
@@ -84,7 +84,7 @@ export default function Car(): JSX.Element {
   const { data: carModels } = useCarModels(config.maxInteger)
 
   const equalAndContainOperators = getEqualAndContainFilterOperators(t)
-  const selectFilterOperators = getSelectFilterOperators(t)
+  const selectFilterOperators = getSelectEqualFilterOperators(t)
   const statusOptions = getCarStatusOptions(t)
   const visibilityColumns = getVisibilityColumns()
 
@@ -100,15 +100,22 @@ export default function Car(): JSX.Element {
   const handleFilterChange = (params: GridFilterModel) => {
     setCarFilter(
       params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+        const isStatus = columnField === 'status'
+
         let keyOfValue = ''
         if (value) {
-          switch (operatorValue) {
-            case FieldComparisons.equals:
-              keyOfValue = `${columnField}${FieldKeyOparators.equals}`
-              break
-            case FieldComparisons.contains:
-              keyOfValue = `${columnField}${FieldKeyOparators.contains}`
-              break
+          if (isStatus) {
+            keyOfValue = 'isActive'
+            value = value === 'available'
+          } else {
+            switch (operatorValue) {
+              case FieldComparisons.equals:
+                keyOfValue = `${columnField}${FieldKeyOparators.equals}`
+                break
+              case FieldComparisons.contains:
+                keyOfValue = `${columnField}${FieldKeyOparators.contains}`
+                break
+            }
           }
           filter = { [keyOfValue]: value }
         }

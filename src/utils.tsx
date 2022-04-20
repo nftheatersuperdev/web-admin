@@ -441,6 +441,23 @@ export const getSelectFilterOperators = (t: TFunction<Namespace>): GridFilterOpe
   },
 ]
 
+export const getSelectEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+    InputComponentProps: { type: 'singleSelect' },
+  },
+]
+
 export const getBooleanFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.is'),
