@@ -16,7 +16,7 @@ pipeline {
         }
         stage ('Copy Environment') {
              steps{
-                sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/admin-web-${INTERNAL_ENVIRONMENT}"
+                sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/admin-web-${INTERNAL_ENVIRONMENT}/.env"
              }
         }
         stage ('Build Static File') {
