@@ -14,7 +14,7 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { UserGroupInput, UserGroup } from 'services/evme.types'
-import { creatUserGroup } from 'services/web-bff/user'
+import { creatUserGroup, updateUserGroup } from 'services/web-bff/user'
 import { UserGroupResponse } from 'services/web-bff/user.type'
 
 interface CreateDialogProps {
@@ -50,7 +50,7 @@ export default function UserGroupCreateUpdateDialog({
     return creatUserGroup(param)
   }
   const changeUserGroup = (param: UserGroupInput): Promise<UserGroupResponse> => {
-    return creatUserGroup(param)
+    return updateUserGroup(param)
   }
 
   const formik = useFormik({

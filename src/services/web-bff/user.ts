@@ -26,8 +26,6 @@ export const searchUserGroup = async ({
   page,
   size,
 }: UserGroupProps): Promise<UserGroupListResponse> => {
-  /*/v1/user-groups/search*/
-  /*123ca793-f4d3-4a53-8b4a-c8e15dcae876 */
   const response: UserGroupListResponse = await BaseApi.post('/v1/user-groups/search', data, {
     params: {
       page,
@@ -38,7 +36,6 @@ export const searchUserGroup = async ({
 }
 
 export const creatUserGroup = async (data: UserGroupInput): Promise<UserGroupResponse> => {
-  /*v1/user-groups*/
   const response: UserGroupResponse = await BaseApi.post('/v1/user-groups', data).then(
     (response) => response.data
   )
@@ -46,7 +43,6 @@ export const creatUserGroup = async (data: UserGroupInput): Promise<UserGroupRes
 }
 
 export const updateUserGroup = async (data: UserGroupInput): Promise<UserGroupResponse> => {
-  /* v1/user-groups/{id}*/
   const response: UserGroupResponse = await BaseApi.put('/v1/user-groups', data, {
     params: {
       id: data.id,
