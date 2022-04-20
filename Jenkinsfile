@@ -36,7 +36,7 @@ pipeline {
         }
         stage ('Deploy') {
              steps{
-                sh "aws amplify start-deployment --app-id d2nztmvn1ui6cz --branch-name dev --source-url=s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
+                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://web-admin-tesla/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
              }
         }
     }
