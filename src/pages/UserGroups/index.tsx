@@ -214,7 +214,7 @@ export default function UserGroup(): JSX.Element {
               <EditIcon />
             </IconButton>
             <Tooltip title={t('userGroups.button.addUser.tooltip', { name })} arrow>
-              <IconButton onClick={() => history.push(`/user-groups/${params.id}/users`)}>
+              <IconButton disabled onClick={() => history.push(`/user-groups/${params.id}/users`)}>
                 <GroupAddIcon />
               </IconButton>
             </Tooltip>
