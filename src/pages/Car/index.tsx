@@ -97,10 +97,6 @@ export default function Car(): JSX.Element {
     setPageSize(params.pageSize)
   }
 
-  const handleFetchData = (page: number) => {
-    setPage(page)
-  }
-
   const handleFilterChange = (params: GridFilterModel) => {
     setCarFilter(
       params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
@@ -486,8 +482,6 @@ export default function Car(): JSX.Element {
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setPage}
-          onFetchNextPage={() => handleFetchData(page + 1)}
-          onFetchPreviousPage={() => handleFetchData(page - 1)}
           rows={rows}
           columns={columns}
           disableSelectionOnClick
