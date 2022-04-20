@@ -277,7 +277,6 @@ export default function User(): JSX.Element {
 
   const handleFilterChange = (params: GridFilterModel) => {
     let keyValue = ''
-    console.log(params)
     setUserFilter({
       ...params.items.reduce((filter, { columnField, value, operatorValue }: GridFilterItem) => {
         if (columnField === 'userGroups') {
