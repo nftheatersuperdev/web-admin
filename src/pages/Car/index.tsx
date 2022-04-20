@@ -65,8 +65,8 @@ export default function Car(): JSX.Element {
   const updateCarMutation = useUpdateCar()
   const updateCarStatusMutation = useUpdateCarStatus()
   const deleteCarMutation = useDeleteCar()
-  const [carSort, setCarSort] = useState<SubOrder>({})
-  const [carFilter, setCarFilter] = useState<CarListFilterRequest>()
+  const [sort, setSort] = useState<SubOrder>({})
+  const [filter, setFilter] = useState<CarListFilterRequest>()
 
   const {
     data: carData,
@@ -74,8 +74,8 @@ export default function Car(): JSX.Element {
     isFetching,
   } = useQuery('cars', () =>
     getListBFF({
-      filter: carFilter,
-      sort: carSort,
+      filter,
+      sort,
       page,
       size: pageSize,
     })
@@ -90,7 +90,7 @@ export default function Car(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [page, pageSize, carFilter, refetch])
+  }, [page, pageSize, filter, refetch])
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPage(0)
@@ -98,7 +98,7 @@ export default function Car(): JSX.Element {
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
-    setCarFilter(
+    setFilter(
       params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
         const isStatus = columnField === 'status'
 
@@ -152,7 +152,7 @@ export default function Car(): JSX.Element {
         [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
       }
 
-      setCarSort(order)
+      setSort(order)
     }
   }
 

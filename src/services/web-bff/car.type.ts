@@ -86,7 +86,7 @@ export interface CarSku {
   updatedDate: string
 }
 
-export interface CarBBF {
+export interface CarBff {
   id: string
   carSku: CarSku
   carTrackId: string
@@ -95,6 +95,21 @@ export interface CarBBF {
   isActive: boolean
   createdDate: string
   updatedDate: string
+}
+
+export interface SubscriptionInCarAvailable {
+  id: string
+  carId: string
+  userId: string
+  status: string
+  startDate: string
+  endDate: string
+}
+
+export interface CarAvaiableBff {
+  availabilityStatus: 'In Use' | 'Available'
+  car: CarBff
+  subscriptions: SubscriptionInCarAvailable[]
 }
 
 export interface CarUpdate extends Partial<Car> {}
@@ -127,7 +142,16 @@ export interface CarListQuery {
   availableDate?: DateRangeFieldComparison
 }
 
+export interface CarListProps {
+  accessToken: string
+  query?: CarListQuery
+  sort?: CarListQuery
+  limit?: number
+  page?: number
+}
+
 export interface CarListFilterRequest {
+  carId?: string
   colorContain?: string
   colorEqual?: string
   vinContain?: string
@@ -137,16 +161,23 @@ export interface CarListFilterRequest {
   statusEqual?: string
 }
 
-export interface CarListProps {
-  accessToken: string
-  query?: CarListQuery
+export interface CarListFilterRequestProps {
+  filter?: CarListFilterRequest
   sort?: CarListQuery
-  limit?: number
+  size?: number
   page?: number
 }
 
-export interface CarListFilterRequestProps {
-  filter?: CarListFilterRequest
+export interface CarAvailableListFilterRequest {
+  carId?: string
+  plateNumberContain?: string
+  plateNumberEqual?: string
+  startDate?: string | any
+  endDate?: string | any
+}
+
+export interface CarAvailableListBffFilterRequestProps {
+  filter?: CarAvailableListFilterRequest
   sort?: CarListQuery
   size?: number
   page?: number
@@ -176,8 +207,14 @@ export type CarListResponse = {
   }
 } & ResponseWithPagination
 
-export type CarListBBFResponse = {
+export type CarListBffResponse = {
   data: {
-    cars: CarBBF[]
+    cars: CarBff[]
+  }
+} & ResponseWithPagination
+
+export type CarAvailableListBffResponse = {
+  data: {
+    records: CarAvaiableBff[]
   }
 } & ResponseWithPagination
