@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState, useEffect } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import { Button, Card, IconButton } from '@material-ui/core'
@@ -17,13 +17,12 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
-  getIdFilterOperators,
-  getStringFilterOperators,
   getSelectFilterOperators,
-  stringToFilterContains,
+  getEqualAndContainFilterOperators,
+  FieldComparisons,
+  FieldKeyOparators,
 } from 'utils'
 import config from 'config'
-import { useAuth } from 'auth/AuthContext'
 import {
   useCarModels,
   useCreateCar,
@@ -32,12 +31,12 @@ import {
   useDeleteCar,
 } from 'services/evme'
 import PageToolbar from 'layout/PageToolbar'
-import { CarInput, CarFilter, SortDirection, SubOrder } from 'services/evme.types'
+import { CarInput, SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import ConfirmDialog from 'components/ConfirmDialog'
-import { getList } from 'services/web-bff/car'
-import { CarListQuery } from 'services/web-bff/car.type'
+import { getListBFF } from 'services/web-bff/car'
+import { CarListFilterRequest } from 'services/web-bff/car.type'
 import CarCreateDialog from './CarCreateDialog'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 import {
@@ -55,7 +54,7 @@ const HideSection = styled(Button)`
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [page, setPage] = useState(0)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [selectedCarId, setSelectedCarId] = useState('')
@@ -66,56 +65,61 @@ export default function Car(): JSX.Element {
   const updateCarMutation = useUpdateCar()
   const updateCarStatusMutation = useUpdateCarStatus()
   const deleteCarMutation = useDeleteCar()
-  const [carFilter, setCarFilter] = useState<CarFilter>({})
   const [carSort, setCarSort] = useState<SubOrder>({})
+  const [carFilter, setCarFilter] = useState<CarListFilterRequest>()
 
-  const accessToken = useAuth().getToken() ?? ''
-  const [query] = useState<CarListQuery>()
   const {
     data: carData,
     refetch,
     isFetching,
   } = useQuery('cars', () =>
-    getList({
-      accessToken,
-      query,
+    getListBFF({
+      filter: carFilter,
       sort: carSort,
+      page,
+      size: pageSize,
     })
   )
 
   const { data: carModels } = useCarModels(config.maxInteger)
 
-  const idFilterOperators = getIdFilterOperators(t)
-  const stringFilterOperators = getStringFilterOperators(t)
+  const equalAndContainOperators = getEqualAndContainFilterOperators(t)
   const selectFilterOperators = getSelectFilterOperators(t)
   const statusOptions = getCarStatusOptions(t)
   const visibilityColumns = getVisibilityColumns()
 
+  useEffect(() => {
+    refetch()
+  }, [page, pageSize, carFilter, refetch])
+
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPage(0)
     setPageSize(params.pageSize)
+  }
+
+  const handleFetchData = (page: number) => {
+    setPage(page)
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
     setCarFilter(
       params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        let filterValue = value
-
-        if (operatorValue === 'iLike' && value) {
-          filterValue = stringToFilterContains(value)
-        }
-
-        if (filterValue) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: filterValue,
+        let keyOfValue = ''
+        if (value) {
+          switch (operatorValue) {
+            case FieldComparisons.equals:
+              keyOfValue = `${columnField}${FieldKeyOparators.equals}`
+              break
+            case FieldComparisons.contains:
+              keyOfValue = `${columnField}${FieldKeyOparators.contains}`
+              break
           }
+          filter = { [keyOfValue]: value }
         }
-
         return filter
-      }, {} as CarFilter)
+      }, {} as CarListFilterRequest)
     )
-    // reset page
-    setCurrentPageIndex(0)
+    setPage(0)
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -146,13 +150,8 @@ export default function Car(): JSX.Element {
       }
 
       setCarSort(order)
-      refetch()
     }
   }
-
-  useEffect(() => {
-    refetch()
-  }, [carFilter, refetch])
 
   const onCloseCreateDialog = (data: CarInput | null) => {
     setIsCreateDialogOpen(false)
@@ -260,26 +259,25 @@ export default function Car(): JSX.Element {
   const rowCount = carData?.data.pagination.totalRecords
   const rows =
     carData?.data.cars.map((car) => {
+      const connectorType = car.carSku.carModel.chargers.map((charger) => charger.description)
+
       return {
         id: car.id,
-        name: car.name,
-        brand: car.brand,
         vin: car.vin,
         plateNumber: car.plateNumber,
-        color: car.color,
-        colorHex: car.colorHex,
-        topSpeed: car.topSpeed,
-        acceleration: car.acceleration,
-        range: car.range,
-        totalPower: car.totalPower,
-        batteryCapacity: car.batteryCapacity,
-        chargeTime: car.chargeTime,
-        fastChargeTime: car.fastChargeTime,
-        connectorType: car.connectorType.description,
-        bodyType: car.bodyType.description,
-        createdDate: car.createdDate,
-        updatedDate: car.updatedDate,
-        status: car.status,
+        model: car.carSku.carModel.name,
+        brand: car.carSku.carModel.brand.name,
+        color: car.carSku.color,
+        bodyType: car.carSku.carModel.bodyType,
+        totalPower: car.carSku.carModel.totalPower,
+        batteryCapacity: car.carSku.carModel.batteryCapacity,
+        topSpeed: car.carSku.carModel.topSpeed,
+        range: car.carSku.carModel.range,
+        acceleration: car.carSku.carModel.acceleration,
+        chargeTime: car.carSku.carModel.chargeTime,
+        fastChargeTime: car.carSku.carModel.fastChargeTime,
+        connectorType: connectorType.length > 0 ? connectorType : '-',
+        status: '',
       }
     }) ?? []
 
@@ -290,8 +288,7 @@ export default function Car(): JSX.Element {
       description: t('car.id'),
       hide: !visibilityColumns.id,
       flex: 1,
-      filterOperators: idFilterOperators,
-      sortable: true,
+      filterable: false,
     },
     {
       field: 'brand',
@@ -313,7 +310,7 @@ export default function Car(): JSX.Element {
       field: 'color',
       headerName: t('car.color'),
       description: t('car.color'),
-      filterOperators: stringFilterOperators,
+      filterOperators: equalAndContainOperators,
       hide: !visibilityColumns.color,
       flex: 1,
     },
@@ -321,7 +318,7 @@ export default function Car(): JSX.Element {
       field: 'vin',
       headerName: t('car.vin'),
       description: t('car.vin'),
-      filterOperators: stringFilterOperators,
+      filterOperators: equalAndContainOperators,
       flex: 1,
       hide: !visibilityColumns.vin,
       sortable: false,
@@ -332,7 +329,7 @@ export default function Car(): JSX.Element {
       description: t('car.plateNumber'),
       hide: !visibilityColumns.plateNumber,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: equalAndContainOperators,
       sortable: false,
     },
     {
@@ -484,14 +481,15 @@ export default function Car(): JSX.Element {
           autoHeight
           pagination
           pageSize={pageSize}
-          page={currentPageIndex}
+          page={page}
           rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={setCurrentPageIndex}
+          onPageChange={setPage}
+          onFetchNextPage={() => handleFetchData(page + 1)}
+          onFetchPreviousPage={() => handleFetchData(page - 1)}
           rows={rows}
           columns={columns}
-          checkboxSelection
           disableSelectionOnClick
           onRowClick={openEditCarDialog}
           filterMode="server"

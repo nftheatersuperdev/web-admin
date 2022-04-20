@@ -1,7 +1,10 @@
 import axios from 'axios'
+import { BaseApi } from 'api/baseApi'
 import {
   CarListProps,
+  CarListFilterRequestProps,
   CarListResponse,
+  CarListBBFResponse,
   CarByIdProps,
   Car,
   CarBodyTypesProps,
@@ -31,6 +34,25 @@ export const getList = async ({
       },
     })
     .then((response) => response.data)
+
+  return response
+}
+
+export const getListBFF = async ({
+  filter,
+  sort,
+  size = 10,
+  page = 0,
+}: CarListFilterRequestProps): Promise<CarListBBFResponse> => {
+  const pageIndex = page + 1
+  const response: CarListBBFResponse = await BaseApi.get('/v1/cars', {
+    params: {
+      ...filter,
+      ...sort,
+      pageIndex,
+      size,
+    },
+  }).then((response) => response.data)
 
   return response
 }
