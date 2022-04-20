@@ -6,7 +6,6 @@ pipeline {
 
     parameters {
       string(name: 'RELEASE_VERSION', defaultValue: '0.0.1', description: 'Release Version')
-      string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Your environment (dev/staging)')
     }
 
     stages {
@@ -17,7 +16,7 @@ pipeline {
         }
         stage ('Copy Environment') {
              steps{
-                sh "cp /data/web-admin/.env /var/lib/jenkins/workspace/admin-web-tesla"
+                sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/admin-web-${DOMAIN_ENVIRONMENT}"
              }
         }
         stage ('Build Static File') {
