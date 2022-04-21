@@ -40,6 +40,78 @@ export interface Car {
   connectorTypes: CarConnectorType[] // Using for get all connector types on database.
 }
 
+export interface CarCharger {
+  id: string
+  type: string
+  description: string
+  chargingType: 'ac' | 'dc'
+  createdDate: string
+  updatedDate: string
+}
+export interface CarModel {
+  id: string
+  name: string
+  bodyType: string // 'SUV'
+  brand: {
+    name: string
+    imageUrl: string
+  }
+  carSkus: CarSku[]
+  chargers: CarCharger[]
+  year: number
+  chargeTime: number
+  acceleration: number
+  batteryCapacity: number
+  fastChargeTime: number
+  horsePower: number
+  priority: number
+  range: number
+  topSpeed: number
+  totalPower: number
+  totalTorque: number
+  seats: number
+  segment: string
+  subModelName: string
+  condition: string
+  rentalPackages: null
+  createdDate: string
+  updatedDate: string
+}
+export interface CarSku {
+  id: string
+  carModel: CarModel
+  color: string
+  colorHex: string
+  createdDate: string
+  updatedDate: string
+}
+
+export interface CarBff {
+  id: string
+  carSku: CarSku
+  carTrackId: string
+  plateNumber: string
+  vin: string
+  isActive: boolean
+  createdDate: string
+  updatedDate: string
+}
+
+export interface SubscriptionInCarAvailable {
+  id: string
+  carId: string
+  userId: string
+  status: string
+  startDate: string
+  endDate: string
+}
+
+export interface CarAvaiableBff {
+  availabilityStatus: 'In Use' | 'Available'
+  car: CarBff
+  subscriptions: SubscriptionInCarAvailable[]
+}
+
 export interface CarUpdate extends Partial<Car> {}
 
 export interface CarBodyType {
@@ -78,6 +150,39 @@ export interface CarListProps {
   page?: number
 }
 
+export interface CarListFilterRequest {
+  carId?: string
+  colorContain?: string
+  colorEqual?: string
+  vinContain?: string
+  vinEqual?: string
+  plateNumberContain?: string
+  plateNumberEqual?: string
+  statusEqual?: string
+}
+
+export interface CarListFilterRequestProps {
+  filter?: CarListFilterRequest
+  sort?: CarListQuery
+  size?: number
+  page?: number
+}
+
+export interface CarAvailableListFilterRequest {
+  carId?: string
+  plateNumberContain?: string
+  plateNumberEqual?: string
+  startDate?: string | any
+  endDate?: string | any
+}
+
+export interface CarAvailableListBffFilterRequestProps {
+  filter?: CarAvailableListFilterRequest
+  sort?: CarListQuery
+  size?: number
+  page?: number
+}
+
 export interface CarByIdProps {
   accessToken: string
   id: string
@@ -99,5 +204,17 @@ export interface CarUpdateProps {
 export type CarListResponse = {
   data: {
     cars: Car[]
+  }
+} & ResponseWithPagination
+
+export type CarListBffResponse = {
+  data: {
+    cars: CarBff[]
+  }
+} & ResponseWithPagination
+
+export type CarAvailableListBffResponse = {
+  data: {
+    records: CarAvaiableBff[]
   }
 } & ResponseWithPagination

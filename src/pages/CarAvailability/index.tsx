@@ -7,54 +7,57 @@ import {
   GridSortModel,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATE_FORMAT, getStringFilterOperators, stringToFilterContains } from 'utils'
+import {
+  DEFAULT_DATE_FORMAT,
+  getStringFilterOperators,
+  getEqualFilterOperators,
+  FieldComparisons,
+  FieldKeyOparators,
+} from 'utils'
 import config from 'config'
 import dayjs from 'dayjs'
 import { Box, Button, Card } from '@material-ui/core'
-import { flow, get, last, sortBy } from 'lodash/fp'
 import { useQuery } from 'react-query'
-import { useAuth } from 'auth/AuthContext'
-import { getList } from 'services/web-bff/car'
-import { CarListQuery } from 'services/web-bff/car.type'
+import { getAvailableListBFF } from 'services/web-bff/car'
+import { CarAvailableListFilterRequest } from 'services/web-bff/car.type'
 import DatePicker from 'components/DatePicker'
 import PageToolbar from 'layout/PageToolbar'
 import { SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import { CarStatus, getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 const initSelectedFromDate = dayjs(new Date()).startOf('day').toDate()
 const initSelectedToDate = dayjs(new Date()).endOf('day').toDate()
 
 export default function Car(): JSX.Element {
-  const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
   const [selectedToDate, setSelectedToDate] = useState(initSelectedToDate)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
-
-  const defaultQuery = {
-    status: {
-      eq: CarStatus.AVAILABLE,
-    },
-  }
+  const [page, setPage] = useState(0)
 
   const [sort, setSort] = useState<SubOrder>({})
-  const [query, setQuery] = useState<CarListQuery>({
-    ...defaultQuery,
-  })
+  const [filter, setFilter] = useState<CarAvailableListFilterRequest>()
 
   const {
-    data: cars,
+    data: carData,
     refetch,
     isFetching,
-  } = useQuery('availability-cars', () => getList({ accessToken, query, sort }))
+  } = useQuery('availability-cars', () =>
+    getAvailableListBFF({
+      filter,
+      sort,
+      page,
+      size: pageSize,
+    })
+  )
 
   useEffect(() => {
     refetch()
-  }, [query, refetch])
+  }, [filter, page, pageSize, refetch])
 
+  const equalFilterOperators = getEqualFilterOperators(t)
   const stringFilterOperators = getStringFilterOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
@@ -63,26 +66,30 @@ export default function Car(): JSX.Element {
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
-    setQuery(
+    setFilter(
       params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        let filterValue = value
+        const isId = columnField === 'id'
 
-        if (operatorValue === 'iLike' && value) {
-          filterValue = stringToFilterContains(value)
-        }
-
-        if (filterValue) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: filterValue,
+        let keyOfValue = ''
+        if (value) {
+          if (isId) {
+            keyOfValue = 'carId'
+          } else {
+            switch (operatorValue) {
+              case FieldComparisons.equals:
+                keyOfValue = `${columnField}${FieldKeyOparators.equals}`
+                break
+              case FieldComparisons.contains:
+                keyOfValue = `${columnField}${FieldKeyOparators.contains}`
+                break
+            }
           }
+          filter = { [keyOfValue]: value }
         }
-
-        return { ...filter, ...defaultQuery }
-      }, {} as CarListQuery)
+        return filter
+      }, {} as CarAvailableListFilterRequest)
     )
-    // reset page
-    setCurrentPageIndex(0)
+    setPage(0)
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -118,28 +125,26 @@ export default function Car(): JSX.Element {
   }
 
   const handleClickSearchButton = () => {
-    setQuery({
-      ...query,
-      subscription: {
-        startDate: dayjs(selectedFromDate).startOf('day').toDate(),
-        endDate: dayjs(selectedToDate).endOf('day').toDate(),
-      },
+    setFilter({
+      ...filter,
+      startDate: dayjs(selectedFromDate).startOf('day').toDate(),
+      endDate: dayjs(selectedToDate).endOf('day').toDate(),
     })
   }
 
-  const rowCount = cars?.data.pagination.totalRecords
+  const rowCount = carData?.data.pagination.totalRecords
   const rows =
-    cars?.data.cars.map((car) => {
-      const isAvailable = car.status === 'available'
-      const status = isAvailable ? t('carAvailability.available') : t('carAvailability.inUse')
-      const subscriptionId = isAvailable
-        ? '-'
-        : flow(sortBy('createdAt'), last, get('id'))(car.subscriptions)
-
+    carData?.data.records.map(({ car, availabilityStatus: status, subscriptions }) => {
       return {
-        ...car,
+        id: car.id,
+        vin: car.vin,
+        plateNumber: car.plateNumber,
+        model: car.carSku.carModel.name,
+        brand: car.carSku.carModel.brand.name,
+        color: car.carSku.color,
         status,
-        subscriptionId,
+        subscriptionId:
+          subscriptions.length < 1 ? '-' : subscriptions.map((subscription) => subscription.id),
       }
     }) || []
 
@@ -150,7 +155,7 @@ export default function Car(): JSX.Element {
       description: t('car.id'),
       hide: !visibilityColumns.id,
       flex: 1,
-      filterable: false,
+      filterOperators: equalFilterOperators,
       sortable: false,
     },
     {
@@ -181,10 +186,10 @@ export default function Car(): JSX.Element {
       sortable: false,
     },
     {
-      field: 'name',
+      field: 'model',
       headerName: t('car.model'),
       description: t('car.model'),
-      hide: !visibilityColumns.name,
+      hide: !visibilityColumns.model,
       flex: 1,
       filterable: false,
       sortable: false,
@@ -254,15 +259,13 @@ export default function Car(): JSX.Element {
           autoHeight
           pagination
           pageSize={pageSize}
-          page={currentPageIndex}
+          page={page}
           rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={setCurrentPageIndex}
+          onPageChange={setPage}
           rows={rows}
           columns={columns}
-          checkboxSelection
-          disableSelectionOnClick
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}

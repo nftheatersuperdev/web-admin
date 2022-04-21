@@ -442,6 +442,23 @@ export const getSelectFilterOperators = (t: TFunction<Namespace>): GridFilterOpe
   },
 ]
 
+export const getSelectEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+    InputComponentProps: { type: 'singleSelect' },
+  },
+]
+
 export const getBooleanFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.is'),
@@ -491,6 +508,38 @@ export const getEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOper
       }
       return ({ value }: GridCellParams): boolean => {
         return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+]
+
+export const getEqualAndContainFilterOperators = (
+  t: TFunction<Namespace>
+): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+  {
+    label: t('filter.contains'),
+    value: FieldComparisons.contains,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      const filterRegex = new RegExp(escapeRegExp(filterItem.value), 'i')
+      return ({ value }: GridCellParams): boolean => {
+        return filterRegex.test(value?.toString() || '')
       }
     },
     InputComponent: GridFilterInputValue,
