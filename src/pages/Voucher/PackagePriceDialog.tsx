@@ -1,27 +1,21 @@
-import { Fragment, useEffect, useState, ChangeEvent } from 'react'
+import { useEffect, useState, ChangeEvent } from 'react'
 import {
-  TextField,
   Grid,
   Dialog,
   DialogActions,
   DialogTitle,
   DialogContent,
   Button,
-  Checkbox,
   Radio,
   RadioGroup,
   FormControlLabel,
   CircularProgress,
 } from '@material-ui/core'
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Autocomplete'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { Voucher, PackagePrice } from 'services/evme.types'
 import {
-  useVouchersSearchPackagePrices,
   useAddPackagePricesToVoucher,
   useRemovePackagePricesFromVoucher,
   useUpdateVoucher,
@@ -31,8 +25,8 @@ const ButtonSpace = styled(Button)`
   margin: 0 15px 10px;
 `
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
-const checkedIcon = <CheckBoxIcon fontSize="small" />
+/*const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+const checkedIcon = <CheckBoxIcon fontSize="small" />*/
 
 interface PackagePriceDialogProps {
   voucher?: Voucher | null
@@ -52,8 +46,6 @@ export default function VoucherPackagePriceDialog({
 }: PackagePriceDialogProps): JSX.Element {
   const existsOption = voucher?.isAllPackages ? selectOptions.ALL : selectOptions.SELECT
   const { t } = useTranslation()
-  const [keyword] = useState<string>('')
-  const { data: masterPackagePrices } = useVouchersSearchPackagePrices(keyword)
   const addPackagePricesToVoucher = useAddPackagePricesToVoucher()
   const removePackagePricesFromVoucher = useRemovePackagePricesFromVoucher()
   const updateVoucher = useUpdateVoucher()
@@ -65,7 +57,7 @@ export default function VoucherPackagePriceDialog({
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
-  const optionLabel = (option: PackagePrice) => {
+  /* const optionLabel = (option: PackagePrice) => {
     let duration
     if (option.duration === '1w') {
       duration = t('pricing.1w')
@@ -85,9 +77,9 @@ export default function VoucherPackagePriceDialog({
       ${duration} /
       ${option.price.toLocaleString()} THB
     `
-  }
+  }*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     const voucherPackagePriceIds = voucher?.packagePrices.map(
       (voucherPackagePrice) => voucherPackagePrice.id
     )
@@ -96,7 +88,7 @@ export default function VoucherPackagePriceDialog({
     )
     setCurrentPackages(packages)
     setSelectedPackages(packages)
-  }, [masterPackagePrices, voucher?.packagePrices])
+  }, [masterPackagePrices, voucher?.packagePrices])*/
 
   useEffect(() => {
     if (JSON.stringify(currentPackages) !== JSON.stringify(selectedPackages)) {
@@ -232,7 +224,7 @@ export default function VoucherPackagePriceDialog({
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Autocomplete
+            {/*} <Autocomplete
               multiple
               id="package-price-select"
               value={selectedPackages}
@@ -255,7 +247,7 @@ export default function VoucherPackagePriceDialog({
                 />
               )}
               disabled={currentOption !== 'select'}
-            />
+              />*/}
           </Grid>
         </Grid>
       </DialogContent>

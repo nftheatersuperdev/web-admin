@@ -23,7 +23,7 @@ import {
   FieldComparisons,
   FieldKeyOparators,
   columnFormatDate,
-  geEqualtDateOperators,
+  geEqualtDateTimeOperators,
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
@@ -67,7 +67,7 @@ export default function UserGroup(): JSX.Element {
   const deleteUserGroup = useDeleteUserGroup()
   const equalOperators = getEqualFilterOperators(t)
   const containOperators = getContainFilterOperators(t)
-  const dateEqualOperators = geEqualtDateOperators(t)
+  const dateEqualOperators = geEqualtDateTimeOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
