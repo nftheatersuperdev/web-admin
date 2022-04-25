@@ -15,12 +15,9 @@ import DataGridLocale from 'components/DataGridLocale'
 import DatePicker from 'components/DatePicker'
 import { getList, status as subscriptionStatus } from 'services/web-bff/subscription'
 import { columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
+import { SubscriptionListQuery } from 'services/web-bff/subscription.type'
 import CarDeliveryDialog from './CarDeliveryDialog'
 import { DeliveryModelData, MISSING_VALUE } from './utils'
-
-interface CarsDeliveryProps {
-  accessToken: string
-}
 
 const GridInputItem = styled(Grid)`
   margin-bottom: 10px;
@@ -28,7 +25,7 @@ const GridInputItem = styled(Grid)`
 
 const initSelectedDate = dayjs(new Date()).toDate()
 
-export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.Element {
+export default function CarsDelivery(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(initSelectedDate)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
   const [dialogData, setDialogData] = useState({} as DeliveryModelData)
@@ -36,21 +33,16 @@ export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.El
 
   const [pageSize, setPageSize] = useState(5)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-
+  const defaultFilter: SubscriptionListQuery = {
+    statusList: [subscriptionStatus.ACCEPTED],
+    startDate: dayjs(selectedDate).startOf('day').format(),
+    endDate: dayjs(selectedDate).endOf('day').format(),
+    page: currentPageIndex + 1,
+    size: pageSize,
+  } as SubscriptionListQuery
   const { data, refetch, isFetching } = useQuery('cars-delivery', () =>
     getList({
-      accessToken,
-      query: {
-        status: subscriptionStatus.ACCEPTED,
-        startDate: {
-          between: {
-            lower: dayjs(selectedDate).startOf('day').format(),
-            upper: dayjs(selectedDate).endOf('day').format(),
-          },
-        },
-      },
-      limit: pageSize,
-      page: currentPageIndex + 1,
+      query: { ...defaultFilter },
     })
   )
 
@@ -113,13 +105,24 @@ export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.El
 
   const rowCount = data?.data.pagination.totalRecords
   const rows =
-    data?.data.subscriptions.map((node) => {
-      const { id, car, startDate, user, deliveryAddress, status } = node
-      const { plateNumber, color, brand, name } = car || {}
+    data?.data.records.map((node) => {
+      const {
+        id,
+        car,
+        startDate,
+        user,
+        status,
+        deliveryRemark,
+        deliveryFullAddress,
+        deliveryLatitude,
+        deliveryLongitude,
+      } = node
+      const { carSku, plateNumber } = car || {}
+      const { carModel, color } = carSku || {}
+      const { brand, name } = carModel || {}
       const userName =
         user?.firstName || user?.lastName ? `${user?.firstName} ${user?.lastName}` : MISSING_VALUE
       const carDisplayName = `${brand}-${name} (${color})`
-      const { full, latitude, longitude, remark } = deliveryAddress || {}
 
       return {
         id,
@@ -128,10 +131,10 @@ export default function CarsDelivery({ accessToken }: CarsDeliveryProps): JSX.El
         plateNumber,
         startDate,
         user,
-        remark,
-        address: full,
-        latitude,
-        longitude,
+        deliveryRemark,
+        address: deliveryFullAddress,
+        deliveryLatitude,
+        deliveryLongitude,
         status,
       }
     }) || []

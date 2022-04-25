@@ -317,6 +317,8 @@
     "subscriptionId": "หมายเลขการจอง",
     "voucherCode": "รหัสวอชเชอร์",
     "paymentVersion": "เวอร์ชันการชำระเงิน",
+    "deliveryDate": "วันที่จัดส่ง",
+    "returnDate": "วันที่รับคืน",
     "status": {
       "title": "สถานะ",
       "reserved": "สำรองแล้ว",

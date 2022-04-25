@@ -23,8 +23,6 @@ import CardQuickLink from 'components/CardQuickLink'
 import { useSubscriptionsFilterAndSort } from 'services/evme'
 import { Sub } from 'services/evme.types'
 import { SubEventStatus } from 'pages/Subscriptions/utils'
-import CarsDelivery from './CarsDelivery'
-import CarsReturn from './CarsReturn'
 
 const quickLinks = [
   {
@@ -246,13 +244,6 @@ export default function Dashboard(): JSX.Element {
               />
             }
           />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <CarsDelivery accessToken={accessToken} />
-        </Grid>
-
-        <Grid item xs={12} lg={6}>
-          <CarsReturn accessToken={accessToken} />
         </Grid>
 
         <Grid item xs={12}>
