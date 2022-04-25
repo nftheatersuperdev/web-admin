@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  SortDirection,
-  StringFieldComparison,
-  DateRangeFieldComparison,
-  BooleanFieldComparison,
-} from 'services/web-bff/general.type'
+import { SortDirection } from 'services/web-bff/general.type'
 import { UserGroup } from 'services/web-bff/user.type'
 import { PackagePrice } from 'services/web-bff/package-price.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
@@ -14,29 +9,24 @@ export interface Voucher {
   code: string
   descriptionEn?: string
   descriptionTh?: string
-  percentDiscount: number
-  amount: number
+  discountPercent: number
   limitPerUser: number
   isAllPackages: boolean
   userGroups: UserGroup[]
   packagePrices: PackagePrice[]
-  startDate: any
-  endDate: any
+  startAt: any
+  endAt: any
   createdDate: any
   updatedDate: any
+  quantity: number
 }
 
 export interface VoucherListQuery {
-  firebaseId?: StringFieldComparison
-  firstName?: StringFieldComparison
-  lastName?: StringFieldComparison
-  role?: StringFieldComparison
-  disabled?: BooleanFieldComparison
-  phoneNumber?: StringFieldComparison
-  email?: StringFieldComparison
-  kycStatus?: StringFieldComparison
-  createdAt?: DateRangeFieldComparison
-  updatedAt?: DateRangeFieldComparison
+  idEqual?: string
+  codeContain?: string
+  descriptionEnContain?: string
+  startAtEqual?: string
+  endAtEqual?: string
 }
 
 export interface VoucherOrder {
@@ -44,10 +34,8 @@ export interface VoucherOrder {
 }
 
 export interface VoucherListProps {
-  accessToken: string
-  query?: VoucherListQuery
-  sort?: VoucherOrder
-  limit?: number
+  data?: VoucherListQuery
+  size?: number
   page?: number
 }
 
@@ -58,7 +46,6 @@ export type VoucherListResponse = {
 } & ResponseWithPagination
 
 export interface VoucherByIdProps {
-  accessToken: string
   id: string
 }
 
@@ -68,7 +55,6 @@ export interface VoucherCreateProps {
 }
 
 export interface VoucherUpdateProps {
-  accessToken: string
   data: VoucherInput
 }
 

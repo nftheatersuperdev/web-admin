@@ -7,9 +7,8 @@ import DatePicker from './DatePicker'
 export default function GridFilterInputDatePickerV2(props: GridFilterInputValueProps): JSX.Element {
   const { item, applyValue } = props
   const { t } = useTranslation()
-
   const handleFilterChange = (date: MaterialUiPickersDate | null) => {
-    applyValue({ ...item, value: date?.format('YYYY-MM-DDTHH:mm:ssZ') })
+    applyValue({ ...item, value: date?.format('YYYY-MM-DD') })
   }
 
   return (

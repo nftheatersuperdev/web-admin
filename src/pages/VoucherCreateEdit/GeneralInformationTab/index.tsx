@@ -59,8 +59,8 @@ export default function VoucherGeneralInformationTab({
     endDate: datePlusOneDay.endOf('day'),
   }
   const currentDateTime = new Date()
-  const startAtDateTime = new Date(voucher?.startDate)
-  const endAtDateTime = new Date(voucher?.endDate)
+  const startAtDateTime = new Date(voucher?.startAt)
+  const endAtDateTime = new Date(voucher?.endAt)
   const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
   const isInactive = currentDateTime > endAtDateTime
 
@@ -111,8 +111,8 @@ export default function VoucherGeneralInformationTab({
       percentDiscount: undefined,
       amount: undefined,
       limitPerUser: undefined,
-      startDate: isEdit ? voucher?.startDate : defaultDate.startDate,
-      endDate: isEdit ? voucher?.endDate : defaultDate.endDate,
+      startDate: isEdit ? voucher?.startAt : defaultDate.startDate,
+      endDate: isEdit ? voucher?.endAt : defaultDate.endDate,
       ...voucher,
     },
     enableReinitialize: true,

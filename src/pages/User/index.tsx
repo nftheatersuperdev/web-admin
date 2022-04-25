@@ -15,7 +15,7 @@ import {
   getEqualFilterOperators,
   getContainFilterOperators,
   geEqualtDateOperators,
-  getEqualSelectFilterOperators,
+  getSelectEqualFilterOperators,
   FieldComparisons,
   FieldKeyOparators,
   /*dateToFilterOnDay,
@@ -59,7 +59,7 @@ export default function User(): JSX.Element {
   const containOperators = getContainFilterOperators(t)
   const dateEqualOperators = geEqualtDateOperators(t)
   const visibilityColumns = getVisibilityColumns()
-  const equalSelectFilterOperators = getEqualSelectFilterOperators(t)
+  const equalSelectFilterOperators = getSelectEqualFilterOperators(t)
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setCurrentPageIndex(0)
