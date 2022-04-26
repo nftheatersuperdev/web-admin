@@ -7,43 +7,43 @@ import { columnFormatDate, getIdFilterOperators } from 'utils'
 import config from 'config'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useQuery } from 'react-query'
-import { useAuth } from 'auth/AuthContext'
-import { getList } from 'services/web-bff/car'
+import { getListBFF } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 
 export default function ModelAndPricing(): JSX.Element {
-  const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
-  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [page, setPage] = useState<number>(0)
+  const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
 
   const {
     data: cars,
     refetch,
     isFetching,
-  } = useQuery('model-and-pricing-page', () => getList({ accessToken }))
+  } = useQuery('model-and-pricing-page', () => getListBFF({ page, size: pageSize }))
 
   const idFilterOperators = getIdFilterOperators(t)
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPage(0)
     setPageSize(params.pageSize)
   }
 
   useEffect(() => {
     refetch()
-  }, [refetch])
+  }, [page, pageSize, refetch])
 
   const rowCount = cars?.data.pagination.totalRecords
   const rows = useMemo(
     () =>
       cars?.data.cars?.map((car) => ({
-        id: car?.id,
-        brand: car?.brand,
-        name: car?.name,
-        createdDate: car?.createdDate,
-        updatedDate: car?.updatedDate,
+        id: car?.id || '-',
+        modelId: car?.carSku?.carModel?.id || '-',
+        brand: car?.carSku?.carModel?.brand?.name || '-',
+        name: car?.carSku?.carModel?.name || '-',
+        createdDate: car?.createdDate || '-',
+        updatedDate: car?.updatedDate || '-',
       })) || [],
     [cars]
   )
@@ -95,16 +95,14 @@ export default function ModelAndPricing(): JSX.Element {
       filterable: false,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params: GridCellParams) => {
-        return (
-          <IconButton
-            size="small"
-            onClick={() => history.push(`/model-and-pricing/${params.id}/edit`)}
-          >
-            <EditIcon />
-          </IconButton>
-        )
-      },
+      renderCell: ({ row }: GridCellParams) => (
+        <IconButton
+          size="small"
+          onClick={() => history.push(`/model-and-pricing/${row.modelId}/edit`)}
+        >
+          <EditIcon />
+        </IconButton>
+      ),
     },
   ]
 
@@ -115,15 +113,13 @@ export default function ModelAndPricing(): JSX.Element {
           autoHeight
           pagination
           pageSize={pageSize}
-          page={currentPageIndex}
+          page={page}
           rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={setCurrentPageIndex}
+          onPageChange={setPage}
           rows={rows}
           columns={columns}
-          checkboxSelection
-          disableSelectionOnClick
           filterMode="server"
           loading={isFetching}
         />

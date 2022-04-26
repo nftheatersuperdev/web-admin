@@ -3,6 +3,7 @@
 import { StringFieldComparison, DateRangeFieldComparison } from 'services/web-bff/general.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
 import { Subscription } from 'services/web-bff/subscription.type'
+import { RentalPackage } from './package-price.type'
 
 export interface Car {
   id: string
@@ -48,14 +49,16 @@ export interface CarCharger {
   createdDate: string
   updatedDate: string
 }
+
+export interface CarBrand {
+  name: string
+  imageUrl: string
+}
 export interface CarModel {
   id: string
   name: string
   bodyType: string // 'SUV'
-  brand: {
-    name: string
-    imageUrl: string
-  }
+  brand: CarBrand
   carSkus: CarSku[]
   chargers: CarCharger[]
   year: number
@@ -95,6 +98,45 @@ export interface CarBff {
   isActive: boolean
   createdDate: string
   updatedDate: string
+}
+
+export interface CarModelPriceBff {
+  id: string
+  modelId: string
+  vin: string
+  plateNumber: string
+  name: string
+  brand: CarBrand
+  color: string
+  colorHex: string
+  year: number
+  acceleration: number
+  batteryCapacity: number
+  chargeTime: number
+  fastChargeTime: number
+  range: number
+  topSpeed: number
+  totalPower: number
+  totalTorque: number
+  horsePower: number
+  priority: number
+  seats: number
+  segment: string
+  subModelName: string
+  connectorType: CarConnectorType
+  bodyType: string
+  status: 'out_of_service' | 'available'
+  condition: string
+  createdDate: string
+  updatedDate: string
+  carSkus: CarSku[]
+  chargers: CarCharger[]
+  rentalPackages: RentalPackage[]
+}
+
+export interface SubscriptionInCarModelPrice {
+  id: string
+  createdDate: string
 }
 
 export interface SubscriptionInCarAvailable {
@@ -196,22 +238,8 @@ export interface CarUpdateByIdProps {
   isActive: boolean
 }
 
-export interface CarByIdProps {
-  accessToken: string
+export interface CarModelPriceByIdProps {
   id: string
-}
-
-export interface CarBodyTypesProps {
-  accessToken: string
-}
-
-export interface CarConnectorTypesProps {
-  accessToken: string
-}
-
-export interface CarUpdateProps {
-  accessToken: string
-  updatedFields: CarUpdate
 }
 
 export type CarListResponse = {
