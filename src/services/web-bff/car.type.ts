@@ -183,6 +183,19 @@ export interface CarAvailableListBffFilterRequestProps {
   page?: number
 }
 
+export interface CarUpdateInput {
+  vin: string
+  plateNumber: string
+  status: string
+}
+
+export interface CarUpdateByIdProps {
+  id: string
+  vin: string
+  plateNumber: string
+  isActive: boolean
+}
+
 export interface CarByIdProps {
   accessToken: string
   id: string

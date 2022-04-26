@@ -14,6 +14,7 @@ import {
   CarConnectorTypesProps,
   CarConnectorType,
   CarUpdateProps,
+  CarUpdateByIdProps,
 } from 'services/web-bff/car.type'
 
 export const getList = async ({
@@ -122,6 +123,21 @@ export const update = async ({ accessToken, updatedFields }: CarUpdateProps): Pr
       },
     })
     .then((response) => response.data)
+
+  return true
+}
+
+export const updateById = async ({
+  id,
+  vin,
+  plateNumber,
+  isActive,
+}: CarUpdateByIdProps): Promise<boolean> => {
+  await BaseApi.patch(`/v1/cars/${id}`, {
+    vin,
+    plateNumber,
+    isActive,
+  })
 
   return true
 }

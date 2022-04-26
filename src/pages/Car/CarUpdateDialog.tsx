@@ -1,7 +1,5 @@
 import {
   Grid,
-  MenuItem,
-  FormControl,
   TextField,
   Dialog,
   DialogActions,
@@ -12,80 +10,58 @@ import {
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { CarModelItem } from 'types'
-import { CarInput } from 'services/evme.types'
+import { CarUpdateInput } from 'services/web-bff/car.type'
 import CarStatusSelect from 'components/CarStatusSelect'
 
 const validationSchema = yup.object({
+  vin: yup.string().required('Field is required'),
   plateNumber: yup.string().required('Field is required'),
-  carColor: yup.string().required('Field is required'),
-  carModel: yup.string().required('Field is required'),
+  status: yup.string().required('Field is required'),
 })
 
 export interface CarInfo {
   vin: string
   plateNumber: string
-  carModelId: string
   color: string
-  colorHex: string
   status: string
 }
 
 interface CarUpdateDialogProps {
   open: boolean
-  onClose: (newCarData: CarInput | null) => void
-  carModelOptions: CarModelItem[]
+  onClose: (newCarData: CarUpdateInput | null) => void
   carInfo: CarInfo
 }
 
 export default function CarUpdateDialog({
   open,
   onClose,
-  carModelOptions,
   carInfo,
 }: CarUpdateDialogProps): JSX.Element {
-  /**
-   * @DESCRIPTION The variable here is because our business doesn't need anyone to add or update a car in the MVP phase.
-   */
-  const forceDisableFields = true
-
   const {
     vin: originalVin,
-    plateNumber: originalPlate,
-    carModelId: originalModelId,
+    plateNumber: originalPlateNumber,
     color: originalColor,
-    colorHex: originalColorHex,
     status: originalStatus,
   } = carInfo
-
   const { t } = useTranslation()
 
   const formik = useFormik({
     validationSchema,
     initialValues: {
       vin: originalVin,
-      plateNumber: originalPlate,
-      carColor: originalColor,
-      carModel: originalModelId,
-      carColorHex: originalColorHex,
+      plateNumber: originalPlateNumber,
       status: originalStatus,
+      color: originalColor,
     },
     enableReinitialize: true,
     onSubmit: (values) => {
       onClose({
         vin: values.vin,
-        carModelId: values.carModel,
         plateNumber: values.plateNumber,
-        color: values.carColor,
-        colorHex: values.carColorHex,
         status: values.status,
       })
       formik.resetForm()
     },
-  })
-
-  const _selectedCarModel = carModelOptions.find((model: CarModelItem) => {
-    return model.id === originalModelId
   })
 
   const onFormCloseHandler = () => {
@@ -93,11 +69,10 @@ export default function CarUpdateDialog({
     formik.resetForm()
   }
 
-  const isStatusHasNotChanged =
-    originalStatus === formik.values.status &&
-    originalColor === formik.values.carColor &&
-    originalColorHex === formik.values.carColorHex &&
-    originalModelId === formik.values.carModel
+  const isHasNoChanged =
+    originalVin === formik.values.vin &&
+    originalPlateNumber === formik.values.plateNumber &&
+    originalStatus === formik.values.status
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -117,7 +92,6 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.vin && Boolean(formik.errors.vin)}
               helperText={formik.touched.vin && formik.errors.vin}
-              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
@@ -133,63 +107,23 @@ export default function CarUpdateDialog({
               }}
               error={formik.touched.plateNumber && Boolean(formik.errors.plateNumber)}
               helperText={formik.touched.plateNumber && formik.errors.plateNumber}
-              disabled={forceDisableFields}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
               label={t('car.color')}
-              id="carColor"
-              name="carColor"
-              value={formik.values.carColor}
+              id="color"
+              name="color"
+              value={formik.values.color}
               onChange={formik.handleChange}
               InputLabelProps={{
                 shrink: true,
               }}
-              error={formik.touched.carColor && Boolean(formik.errors.carColor)}
-              helperText={formik.touched.carColor && formik.errors.carColor}
+              error={formik.touched.color && Boolean(formik.errors.color)}
+              helperText={formik.touched.color && formik.errors.color}
+              disabled
             />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label={t('car.colorHex')}
-              id="carColorHex"
-              name="carColorHex"
-              value={formik.values.carColorHex}
-              onChange={formik.handleChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={formik.touched.carColorHex && Boolean(formik.errors.carColorHex)}
-              helperText={formik.touched.carColorHex && formik.errors.carColorHex}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth={true}>
-              <TextField
-                fullWidth
-                select
-                label={t('car.model')}
-                id="carModel"
-                name="carModel"
-                defaultValue={_selectedCarModel}
-                value={formik.values.carModel}
-                onChange={formik.handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                error={formik.touched.carModel && Boolean(formik.errors.carModel)}
-                helperText={formik.touched.carModel && formik.errors.carModel}
-              >
-                {carModelOptions.map((model) => (
-                  <MenuItem key={model.id} value={model.id}>
-                    {model.modelName}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
           </Grid>
           <Grid item xs={12}>
             <CarStatusSelect status={formik.values.status} onChange={formik.handleChange} />
@@ -204,7 +138,7 @@ export default function CarUpdateDialog({
           onClick={() => formik.handleSubmit()}
           color="primary"
           variant="contained"
-          disabled={isStatusHasNotChanged}
+          disabled={isHasNoChanged}
         >
           {t('button.update')}
         </Button>
