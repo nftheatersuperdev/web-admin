@@ -9,20 +9,14 @@ import {
   CallMissed as RejectedIcon,
 } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { filter, flow, pluck, some, sum } from 'lodash/fp'
-import { formatMoney, nowLowerUpper } from 'utils'
-import config from 'config'
+import { formatDate } from 'utils'
 import { ROUTE_PATHS } from 'routes'
 import qs from 'qs'
 import { useQuery } from 'react-query'
-import { useAuth } from 'auth/AuthContext'
 import { getInformations } from 'services/web-bff/dashboard'
 import { Page } from 'layout/LayoutRoute'
 import { CardStatus, DetailLink } from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
-import { useSubscriptionsFilterAndSort } from 'services/evme'
-import { Sub } from 'services/evme.types'
-import { SubEventStatus } from 'pages/Subscriptions/utils'
 
 const quickLinks = [
   {
@@ -70,43 +64,21 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
-  const accessToken = useAuth().getToken() ?? ''
   const { t } = useTranslation()
-  const todayLowerUpper = nowLowerUpper()
+  const todayLowerUpper = formatDate(Date(), 'YYYY-MM-DD')
 
-  const { data: dataInformations } = useQuery('dashboard-informations', () =>
-    getInformations(accessToken)
-  )
-  const informations = dataInformations?.data.dashboard
+  const { data: dataInformations } = useQuery('dashboard-informations', () => getInformations())
+  const informations = dataInformations?.data.summary
 
-  const todaySubscriptions = useSubscriptionsFilterAndSort(
-    {
-      startDate: {
-        between: todayLowerUpper,
-      },
-    },
-    undefined,
-    undefined,
-    config.maxInteger
-  )
-
-  const todaySubscriptionsData = todaySubscriptions?.data?.data || []
-  const totalPaymentAmountToday =
-    flow(
-      filter((sub: Sub) => !some({ status: SubEventStatus.CANCELLED })(sub.events)),
-      pluck('chargedPrice'),
-      sum
-    )(todaySubscriptionsData) || 0
-
-  const totalCars = informations?.totalCars ?? 0
-  const totalAvailableCars = informations?.totalAvailableCars ?? 0
-  const totalSubscriptions = informations?.totalSubscriptions ?? 0
-  const totalUsers = informations?.totalUsers ?? 0
-  const totalUpcomingCarsDelivery = informations?.totalUpcomingCarsDelivery ?? 0
-  const totalUpcomingCarsReturn = informations?.totalUpcomingCarsReturn ?? 0
-  const totalKYC = informations?.totalKYC ?? 0
-  const totalKYCApproved = informations?.totalKYCApproved ?? 0
-  const totalKYCRejected = informations?.totalKYCRejected ?? 0
+  const totalCars = informations?.car.total ?? 0
+  const totalAvailableCars = informations?.car.numberOfCarInService ?? 0
+  const totalSubscriptions = informations?.subscription.total ?? 0
+  const totalUsers = informations?.user.total ?? 0
+  const totalUpcomingCarsDelivery = informations?.subscription.numberOfDeliveryTaskInThisDay ?? 0
+  const totalUpcomingCarsReturn = informations?.subscription.numberOfReturnTaskInThisDay ?? 0
+  const totalKYCPending = informations?.user.numberOfKycPendingStatus ?? 0
+  const totalKYCApproved = informations?.user.numberOfKycVerifiedStatus ?? 0
+  const totalKYCRejected = informations?.user.numberOfKycRejectedStatus ?? 0
 
   return (
     <Page>
@@ -127,7 +99,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalPayments.title')}
-            value={'-' || formatMoney(totalPaymentAmountToday)}
+            value="-"
             subTitle={t('dashboard.totalPayments.subTitle')}
             icon={<MoneyIcon />}
             iconColor="green"
@@ -151,7 +123,7 @@ export default function Dashboard(): JSX.Element {
             <Grid item lg={4} sm={6} xl={4} xs={12}>
               <CardStatus
                 title={t('dashboard.totalRequestedCases.title')}
-                value={totalKYC}
+                value={totalKYCPending}
                 subTitle={t('dashboard.totalRequestedCases.subTitle')}
                 icon={<RequestedIcon />}
                 iconColor="#03a9f4"
@@ -216,10 +188,8 @@ export default function Dashboard(): JSX.Element {
               <DetailLink
                 pathname={ROUTE_PATHS.SUBSCRIPTION}
                 search={qs.stringify({
-                  and: {
-                    startDate: { between: todayLowerUpper },
-                    events: { status: { eq: 'accepted' } },
-                  },
+                  startDate: todayLowerUpper,
+                  status: 'accepted',
                 })}
               />
             }
@@ -236,10 +206,8 @@ export default function Dashboard(): JSX.Element {
               <DetailLink
                 pathname={ROUTE_PATHS.SUBSCRIPTION}
                 search={qs.stringify({
-                  and: {
-                    endDate: { between: todayLowerUpper },
-                    events: { status: { eq: 'delivered' } },
-                  },
+                  endDate: todayLowerUpper,
+                  status: 'delivered',
                 })}
               />
             }

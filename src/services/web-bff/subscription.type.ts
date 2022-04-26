@@ -80,7 +80,7 @@ export interface SubscriptionCarSku {
   updatedDate: string
 }
 
-export class SubscriptionListQuery {
+export interface SubscriptionListQuery {
   id?: string
   carId?: string
   customerId?: string
@@ -89,23 +89,9 @@ export class SubscriptionListQuery {
   returnDate?: string
   startDate?: string
   endDate?: string
-  statusList?: string[] = []
+  statusList?: string[]
   size?: number
   page?: number
-
-  constructor(size: number, page: number) {
-    this.id = ''
-    this.carId = ''
-    this.customerId = ''
-    this.voucherId = ''
-    this.deliverDate = ''
-    this.returnDate = ''
-    this.startDate = ''
-    this.endDate = ''
-    this.statusList = []
-    this.size = size
-    this.page = page
-  }
 }
 
 export interface SubscriptionOrder {

@@ -1,16 +1,10 @@
-import axios from 'axios'
-import { DashboardProps, DashboardResponse } from 'services/web-bff/dashboard.type'
+import { BaseApi } from 'api/baseApi'
+import { DashboardResponse } from 'services/web-bff/dashboard.type'
 
-export const getInformations: DashboardProps = async (
-  accessToken: string
-): Promise<DashboardResponse> => {
-  const response: DashboardResponse = await axios
-    .get(`https://run.mocky.io/v3/96c4fd29-072f-427e-915c-974dc5422457`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data)
+export const getInformations = async (): Promise<DashboardResponse> => {
+  const response: DashboardResponse = await BaseApi.get('v1/dashboard/summary').then(
+    (response) => response.data
+  )
 
   return response
 }
