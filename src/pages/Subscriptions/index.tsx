@@ -132,6 +132,8 @@ export default function Subscription(): JSX.Element {
       createdDate: subscription.createdDate,
       updatedDate: subscription.updatedDate,
       paymentStatus: getLastedPaymentStatus(subscription.payments as unknown as Payment[]),
+      deliveryDate: '2022-04-26T15:00:00+07',
+      returnDate: subscription.returnDateTime,
     })) ?? []
 
   useEffect(() => {
@@ -371,7 +373,6 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.deliveryDate'),
       flex: 1,
       hide: !visibilityColumns.deliveryDate,
-      filterable: true,
       sortable: false,
       filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
@@ -381,7 +382,7 @@ export default function Subscription(): JSX.Element {
       headerName: t('subscription.returnDate'),
       description: t('subscription.returnDate'),
       flex: 1,
-      hide: !visibilityColumns.updatedDate,
+      hide: !visibilityColumns.returnDate,
       filterable: true,
       sortable: false,
       filterOperators: dateEqualOperators,
