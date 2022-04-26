@@ -318,6 +318,8 @@
     "subscriptionId": "Subscription ID",
     "voucherCode": "Voucher Code",
     "paymentVersion": "Payment Version",
+    "deliveryDate": "Delivery Date",
+    "returnDate": "Return Date",
     "status": {
       "title": "Status",
       "reserved": "Reserved",

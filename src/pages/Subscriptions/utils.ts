@@ -49,7 +49,7 @@ export const columnFormatSubEventStatus = (status: string, t: TFunction<Namespac
 
 export const PaymentEventStatus = {
   PENDING: 'pending',
-  SUCCESSFUL: 'successful',
+  SUCCESSFUL: 'success',
   FAILED: 'failed',
   AUTHORIZED_REFUND: 'authorized_refund',
 }
@@ -146,6 +146,9 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   paymentVersion: false,
   createdDate: false,
   updatedDate: false,
+  paymentStatus: false,
+  deliveryDate: false,
+  returnDate: false,
 }
 
 export const setVisibilityColumns = (columns: VisibilityColumns): void => {

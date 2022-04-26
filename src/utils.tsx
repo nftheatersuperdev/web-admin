@@ -17,10 +17,34 @@ import GridFilterInputDateTimePicker from 'components/GridFilterDateTimePicker'
 export const DEFAULT_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm'
 export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY'
 
+export const DEFAULT_DATETIME_FORMAT_ISO = 'YYYY-MM-DDTHH:mm:ssZ'
+
 export function formatDate(dateStr?: string, pattern: string = DEFAULT_DATETIME_FORMAT): string {
   return dateStr ? dayjs(dateStr).format(pattern) : '-'
 }
 
+export function formatStringToDate(
+  dateStr?: string,
+  pattern: string = DEFAULT_DATETIME_FORMAT_ISO
+): Date {
+  return dayjs(dateStr, pattern).toDate()
+}
+
+export function compareDateIsBefore(
+  dateStr1?: string,
+  dateStr2?: string,
+  pattern: string = DEFAULT_DATETIME_FORMAT_ISO
+): boolean {
+  return dayjs(dateStr1, pattern).isBefore(dayjs(dateStr2, pattern))
+}
+
+export function compareDateIsAfter(
+  dateStr1?: string,
+  dateStr2?: string,
+  pattern: string = DEFAULT_DATETIME_FORMAT_ISO
+): boolean {
+  return dayjs(dateStr1, pattern).isAfter(dayjs(dateStr2, pattern))
+}
 export function formatDateWithPattern(params: GridValueFormatterParams, pattern: string): string {
   return params.value ? dayjs(params.value as Date).format(pattern || 'DD/MM/YYYY') : ''
 }
