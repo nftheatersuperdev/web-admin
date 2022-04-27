@@ -1,7 +1,7 @@
 import { Voucher } from 'services/web-bff/voucher.type'
 
 export interface VoucherCreateEditParams {
-  voucherId: string
+  voucherCode: string
 }
 
 export interface VoucherDataAndRefetchProps {

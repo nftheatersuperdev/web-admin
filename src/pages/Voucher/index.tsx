@@ -32,13 +32,10 @@ import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
 import { getList, deleteById } from 'services/web-bff/voucher'
 import { VoucherListQuery } from 'services/web-bff/voucher.type'
-import { Voucher as VoucherType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
-import CreateUpdateDialog from './CreateUpdateDialog'
-import PackagePriceDialog from './PackagePriceDialog'
 
 export default function Voucher(): JSX.Element {
   const defaultFilter: VoucherListQuery = {} as VoucherListQuery
@@ -48,9 +45,6 @@ export default function Voucher(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [voucherQuery, setVoucherQuery] = useState<VoucherListQuery>({ ...defaultFilter })
-  const [createUpdateDialogOpen, setCreateUpdateDialogOpen] = useState<boolean>(false)
-  const [packagePriceDialogOpen, setPackagePriceDialogOpen] = useState<boolean>(false)
-  const [selectedVoucher, setSelectedVoucher] = useState<VoucherType | null>()
 
   const {
     data: voucherData,
@@ -180,19 +174,19 @@ export default function Voucher(): JSX.Element {
       valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
     },
     {
-      field: 'percentDiscount',
-      headerName: t('voucher.percentDiscount'),
-      description: t('voucher.percentDiscount'),
-      hide: !visibilityColumns.percentDiscount,
+      field: 'discountPercent',
+      headerName: t('voucher.discountPercent'),
+      description: t('voucher.discountPercent'),
+      hide: !visibilityColumns.discountPercent,
       flex: 1,
       filterable: false,
       sortable: false,
     },
     {
-      field: 'amount',
-      headerName: t('voucher.amount'),
-      description: t('voucher.amount'),
-      hide: !visibilityColumns.amount,
+      field: 'quantity',
+      headerName: t('voucher.quantity'),
+      description: t('voucher.quantity'),
+      hide: !visibilityColumns.quantity,
       flex: 1,
       filterable: false,
       sortable: false,
@@ -269,18 +263,17 @@ export default function Voucher(): JSX.Element {
       align: 'center',
       headerAlign: 'center',
       renderCell: (params: GridCellParams) => {
+        const code = params.row.code
         return (
           <Fragment>
-            <IconButton size="small" onClick={() => history.push(`/vouchers/${params.id}/edit`)}>
+            <IconButton size="small" onClick={() => history.push(`/vouchers/${code}/edit`)}>
               <EditIcon />
             </IconButton>
             <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
               <IconButton
                 disabled
                 size="small"
-                onClick={() =>
-                  history.push(`/vouchers/${params.id}/events?code=${params.row.code}`)
-                }
+                onClick={() => history.push(`/vouchers/${params.id}/events?code=${code}`)}
               >
                 <NoteIcon />
               </IconButton>
@@ -307,8 +300,8 @@ export default function Voucher(): JSX.Element {
         code: voucher.code,
         descriptionEn: voucher.descriptionEn,
         descriptionTh: voucher.descriptionTh,
-        percentDiscount: voucher.discountPercent,
-        amount: voucher.quantity,
+        discountPercent: voucher.discountPercent,
+        quantity: voucher.quantity,
         limitPerUser: voucher.limitPerUser,
         isAllPackages: voucher.isAllPackages,
         userGroups: voucher.userGroups,
@@ -351,26 +344,6 @@ export default function Voucher(): JSX.Element {
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
           loading={isFetching}
-        />
-
-        <CreateUpdateDialog
-          open={createUpdateDialogOpen}
-          voucher={selectedVoucher}
-          onClose={() => {
-            setCreateUpdateDialogOpen(false)
-            setSelectedVoucher(null)
-            refetch()
-          }}
-        />
-
-        <PackagePriceDialog
-          open={packagePriceDialogOpen}
-          voucher={selectedVoucher}
-          onClose={() => {
-            setPackagePriceDialogOpen(false)
-            setSelectedVoucher(null)
-            refetch()
-          }}
         />
       </Card>
     </Page>

@@ -6,6 +6,7 @@ import {
   VoucherListResponse,
   VoucherByIdProps,
   VoucherCreateProps,
+  VoucherBff,
   VoucherUpdateProps,
   VoucherDeleteByIdProps,
 } from 'services/web-bff/voucher.type'
@@ -66,10 +67,39 @@ export const deleteById = async ({ accessToken, id }: VoucherDeleteByIdProps): P
   return response
 }
 
+export const createBff = async (data: VoucherBff): Promise<string> => {
+  const voucherId: string = await BaseApi.post('/v1/vouchers', data).then(
+    (response) => response.data.data.id
+  )
+
+  return voucherId
+}
+
+export const updateBff = async (data: VoucherBff): Promise<string> => {
+  const updateData = { ...data }
+  delete updateData.id
+  const voucherId: string = await BaseApi.put(`/v1/vouchers/${data.id}`, updateData).then(
+    (response) => response.data.data.id
+  )
+
+  return voucherId
+}
+
+export const getByCodeBff = async (code: string): Promise<Voucher> => {
+  const response: Voucher = await BaseApi.get(`/v1/vouchers/${code}`).then(
+    (response) => response.data.data.voucher
+  )
+
+  return response
+}
+
 export default {
   getList,
   getById,
+  getByCodeBff,
   create,
+  createBff,
   update,
+  updateBff,
   deleteById,
 }

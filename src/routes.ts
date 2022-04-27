@@ -21,7 +21,7 @@ export const ROUTE_PATHS = Object.freeze({
   CAR_AVAILABILITY: '/car-availability',
   VOUCHER: '/vouchers',
   VOUCHER_CREATE: '/vouchers/create',
-  VOUCHER_EDIT: '/vouchers/:voucherId/edit',
+  VOUCHER_EDIT: '/vouchers/:voucherCode/edit',
   VOUCHER_EVENTS: '/vouchers/:voucherId/events',
   CHARGING_LOCATIONS: '/charging-locations',
   ADDITIONAL_EXPENSE: '/additional-expense',

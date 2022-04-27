@@ -125,8 +125,8 @@ export default function ChangesDialog({
           {renderHtml(t('voucher.code'), codeDiff)}
           {renderHtml(t('voucher.startAt'), startAtDiff)}
           {renderHtml(t('voucher.endAt'), endAtDiff)}
-          {renderHtml(t('voucher.percentDiscount'), percentDiscountDiff)}
-          {renderHtml(t('voucher.amount'), amountDiff)}
+          {renderHtml(t('voucher.discountPercent'), percentDiscountDiff)}
+          {renderHtml(t('voucher.quantity'), amountDiff)}
           {renderHtml(t('voucher.limitPerUser'), limitPerUserDiff)}
           {renderHtml(t('voucher.description.en'), descriptionEnDiff)}
           {renderHtml(t('voucher.description.th'), descriptionThDiff)}

@@ -463,8 +463,8 @@
     "title": "วอชเชอร์",
     "id": "วอชเชอร์ ไอดี",
     "code": "รหัส",
-    "percentDiscount": "ส่วนลด",
-    "amount": "จำนวน",
+    "discountPercent": "ส่วนลด",
+    "quantity": "จำนวน",
     "description": {
       "en": "รายละเอียด ภาษาอังกฤษ",
       "th": "รายละเอียด ภาษาไทย"

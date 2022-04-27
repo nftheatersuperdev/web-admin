@@ -493,8 +493,8 @@
     "title": "Vouchers",
     "id": "Voucher ID",
     "code": "Code",
-    "percentDiscount": "Percent Discount",
-    "amount": "Limit",
+    "discountPercent": "Discount Percent",
+    "quantity": "Quantity",
     "description": {
       "en": "Description (English)",
       "th": "Description (Thai)"
