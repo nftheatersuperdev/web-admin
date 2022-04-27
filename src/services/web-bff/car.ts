@@ -7,13 +7,9 @@ import {
   CarListBffResponse,
   CarAvailableListBffResponse,
   CarAvailableListBffFilterRequestProps,
-  CarByIdProps,
-  Car,
-  CarBodyTypesProps,
-  CarBodyType,
-  CarConnectorTypesProps,
-  CarConnectorType,
-  CarUpdateProps,
+  CarModelPriceBff,
+  CarUpdateByIdProps,
+  CarModelPriceByIdProps,
 } from 'services/web-bff/car.type'
 
 export const getList = async ({
@@ -76,60 +72,33 @@ export const getAvailableListBFF = async ({
   return response
 }
 
-export const getById = async ({ accessToken, id }: CarByIdProps): Promise<Car> => {
-  const response: Car = await axios
-    .get(`https://run.mocky.io/v3/61fa6035-4660-47c8-9f3f-7d18f92fcc69/${id}`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data.data.car)
+export const getModelPriceById = async ({
+  id,
+}: CarModelPriceByIdProps): Promise<CarModelPriceBff> => {
+  const response: CarModelPriceBff = await BaseApi.get(`/v1/car-models/${id}`).then(
+    (response) => response.data.data
+  )
 
   return response
 }
 
-export const getBodyTypes = async ({ accessToken }: CarBodyTypesProps): Promise<CarBodyType[]> => {
-  const response: CarBodyType[] = await axios
-    .get(`https://run.mocky.io/v3/9ac8ded1-5e70-483c-9847-af36c35eeb41`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data.data.bodyTypes)
-
-  return response
-}
-
-export const getConnectorTypes = async ({
-  accessToken,
-}: CarConnectorTypesProps): Promise<CarConnectorType[]> => {
-  const response: CarConnectorType[] = await axios
-    .get(`https://run.mocky.io/v3/866fbe05-0b7f-48f6-a52f-29c8032fbfea`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data.data.connectorTypes)
-
-  return response
-}
-
-export const update = async ({ accessToken, updatedFields }: CarUpdateProps): Promise<boolean> => {
-  await axios
-    .patch(`https://run.mocky.io/v3/866fbe05-0b7f-48f6-a52f-29c8032fbfea`, updatedFields, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data)
+export const updateById = async ({
+  id,
+  vin,
+  plateNumber,
+  isActive,
+}: CarUpdateByIdProps): Promise<boolean> => {
+  await BaseApi.patch(`/v1/cars/${id}`, {
+    vin,
+    plateNumber,
+    isActive,
+  })
 
   return true
 }
 
 export default {
   getList,
-  getById,
-  getBodyTypes,
-  getConnectorTypes,
-  update,
+  getModelPriceById,
+  updateById,
 }

@@ -1,7 +1,6 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Button, Card, IconButton } from '@material-ui/core'
+import { Card, IconButton } from '@material-ui/core'
 import {
   GridColDef,
   GridRowData,
@@ -23,21 +22,11 @@ import {
   FieldKeyOparators,
 } from 'utils'
 import config from 'config'
-import {
-  useCarModels,
-  useCreateCar,
-  useUpdateCar,
-  useUpdateCarStatus,
-  useDeleteCar,
-} from 'services/evme'
-import PageToolbar from 'layout/PageToolbar'
-import { CarInput, SortDirection, SubOrder } from 'services/evme.types'
+import { SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import ConfirmDialog from 'components/ConfirmDialog'
-import { getListBFF } from 'services/web-bff/car'
-import { CarListFilterRequest } from 'services/web-bff/car.type'
-import CarCreateDialog from './CarCreateDialog'
+import { getListBFF, updateById } from 'services/web-bff/car'
+import { CarListFilterRequest, CarUpdateInput } from 'services/web-bff/car.type'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 import {
   getCarStatusOptions,
@@ -45,26 +34,16 @@ import {
   getVisibilityColumns,
   setVisibilityColumns,
   VisibilityColumns,
+  CarStatus,
 } from './utils'
-
-const HideSection = styled(Button)`
-  display: none;
-`
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
-  const [selectedCarId, setSelectedCarId] = useState('')
+  const [selectedCarId, setSelectedCarId] = useState<string>('')
   const [carInfo, setCarInfo] = useState({} as CarInfo)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [currentRowData, setCurrentRowData] = useState({} as GridRowData)
-  const createCarMutation = useCreateCar()
-  const updateCarMutation = useUpdateCar()
-  const updateCarStatusMutation = useUpdateCarStatus()
-  const deleteCarMutation = useDeleteCar()
   const [sort, setSort] = useState<SubOrder>({})
   const [filter, setFilter] = useState<CarListFilterRequest>()
 
@@ -80,8 +59,6 @@ export default function Car(): JSX.Element {
       size: pageSize,
     })
   )
-
-  const { data: carModels } = useCarModels(config.maxInteger)
 
   const equalAndContainOperators = getEqualAndContainFilterOperators(t)
   const selectFilterOperators = getSelectEqualFilterOperators(t)
@@ -156,40 +133,19 @@ export default function Car(): JSX.Element {
     }
   }
 
-  const onCloseCreateDialog = (data: CarInput | null) => {
-    setIsCreateDialogOpen(false)
-    if (!data) {
-      return
-    }
-
-    toast.promise(createCarMutation.mutateAsync(data), {
-      loading: t('toast.loading'),
-      success: t('car.createDialog.success'),
-      error: t('car.createDialog.error'),
-    })
-  }
-
-  const onCloseEditDialog = async (data: CarInput | null) => {
+  const onCloseEditDialog = async (data: CarUpdateInput | null) => {
     setIsUpdateDialogOpen(false)
     if (!data) {
       return
     }
 
     await toast.promise(
-      Promise.all([
-        updateCarStatusMutation.mutateAsync({
-          carId: selectedCarId,
-          status: data.status,
-        }),
-        updateCarMutation.mutateAsync({
-          id: selectedCarId,
-          update: {
-            carModelId: data.carModelId,
-            color: data.color,
-            colorHex: data.colorHex,
-          },
-        }),
-      ]),
+      updateById({
+        id: selectedCarId,
+        vin: data.vin,
+        plateNumber: data.plateNumber,
+        isActive: data.status === CarStatus.AVAILABLE,
+      }),
       {
         loading: t('toast.loading'),
         success: t('car.updateDialog.success'),
@@ -198,65 +154,19 @@ export default function Car(): JSX.Element {
     )
 
     refetch()
-
-    /**
-     * @DESCRIPTION Disable the update following as our backend disabled this function
-     */
-    // toast.promise(
-    //   updateCarMutation.mutateAsync({
-    //     update: data,
-    //     id: selectedCarId,
-    //   }),
-    //   {
-    //     loading: t('toast.loading'),
-    //     success: t('car.updateDialog.success'),
-    //     error: t('car.updateDialog.error'),
-    //   }
-    // )
   }
-
-  const carModelOptions = useMemo(
-    () =>
-      carModels?.pages[0].edges?.map(({ node }) => ({
-        id: node?.id,
-        modelName: `${node?.brand} - ${node?.model}`,
-      })) || [],
-    [carModels]
-  )
 
   const openEditCarDialog = (param: GridRowData) => {
     setSelectedCarId(param.id)
-    const { vin, plateNumber, carModelId, color, colorHex, status } = param.row
+    const { vin, plateNumber, color, status } = param.row
 
     setCarInfo({
       vin,
       plateNumber,
-      carModelId,
       color,
-      colorHex,
       status,
     })
     setIsUpdateDialogOpen(true)
-  }
-
-  const handleDeleteIconClick = (rowData: GridRowData) => {
-    setCurrentRowData(rowData)
-    setIsDeleteDialogOpen(true)
-  }
-
-  const handleConfirmDelete = (rowData: GridRowData) => {
-    toast.promise(
-      deleteCarMutation.mutateAsync({
-        id: rowData.id,
-      }),
-      {
-        loading: t('toast.loading'),
-        success: t('car.deleteDialog.success'),
-        error: t('car.deleteDialog.error'),
-      }
-    )
-
-    setIsDeleteDialogOpen(false)
   }
 
   const rowCount = carData?.data.pagination.totalRecords
@@ -280,7 +190,7 @@ export default function Car(): JSX.Element {
         chargeTime: car.carSku.carModel.chargeTime,
         fastChargeTime: car.carSku.carModel.fastChargeTime,
         connectorType: connectorType.length > 0 ? connectorType : '-',
-        status: '',
+        status: car.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
       }
     }) ?? []
 
@@ -456,7 +366,7 @@ export default function Car(): JSX.Element {
           >
             <EditIcon />
           </IconButton>
-          <IconButton aria-label="delete" onClick={() => handleDeleteIconClick(params.row)}>
+          <IconButton aria-label="delete" disabled>
             <DeleteIcon />
           </IconButton>
         </Fragment>
@@ -466,19 +376,6 @@ export default function Car(): JSX.Element {
 
   return (
     <Page>
-      <PageToolbar>
-        <HideSection>
-          <Button
-            color="primary"
-            disabled
-            variant="contained"
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
-            {t('car.createButton')}
-          </Button>
-        </HideSection>
-      </PageToolbar>
-
       <Card>
         <DataGridLocale
           autoHeight
@@ -492,7 +389,6 @@ export default function Car(): JSX.Element {
           rows={rows}
           columns={columns}
           disableSelectionOnClick
-          onRowClick={openEditCarDialog}
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
@@ -502,27 +398,10 @@ export default function Car(): JSX.Element {
         />
       </Card>
 
-      <CarCreateDialog
-        open={isCreateDialogOpen}
-        onClose={onCloseCreateDialog}
-        carModelOptions={carModelOptions}
-      />
-
       <CarUpdateDialog
         open={isUpdateDialogOpen}
         onClose={(data) => onCloseEditDialog(data)}
-        carModelOptions={carModelOptions}
         carInfo={carInfo}
-      />
-
-      <ConfirmDialog
-        open={isDeleteDialogOpen}
-        title={t('car.deleteDialog.title')}
-        message={`${t('car.deleteDialog.message')}: ${currentRowData.brand} - ${
-          currentRowData.model
-        }, ${currentRowData.color}, ${currentRowData.plateNumber} ?`}
-        onConfirm={() => handleConfirmDelete(currentRowData)}
-        onCancel={() => setIsDeleteDialogOpen(false)}
       />
     </Page>
   )
