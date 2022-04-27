@@ -9,6 +9,14 @@ pipeline {
     }
 
     stages {
+        stage ('Get Latest Version') {
+            steps {
+                script {
+                    latestTag = sh(returnStdout:  true, script: "git tag --sort=-creatordate | head -n 1").trim()
+                    env.RELEASE_VERSION = latestTag
+                }
+            }
+        }
         stage ('Install Package') {
             steps {
                 sh 'npm install'
@@ -26,17 +34,17 @@ pipeline {
         }
         stage ('Zip') {
              steps{
-                sh "cd build && zip -r admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip ./* && cd -"
+                sh "cd build && zip -r ${env.RELEASE_VERSION}-${currentBuild.number}.zip ./* && cd -"
              }
         }
         stage ('Upload to S3') {
              steps{
-                sh "aws s3 cp ./build/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-${INTERNAL_ENVIRONMENT}/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
+                sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-${INTERNAL_ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
              }
         }
         stage ('Deploy') {
              steps{
-                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://web-admin-${INTERNAL_ENVIRONMENT}/admin-web-${ENVIRONMENT}-${RELEASE_VERSION}-${currentBuild.number}.zip"
+                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://web-admin-${INTERNAL_ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip"
              }
         }
     }
