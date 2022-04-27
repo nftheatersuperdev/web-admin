@@ -50,7 +50,9 @@ export function formatDateWithPattern(params: GridValueFormatterParams, pattern:
 }
 
 export function columnFormatDate(params: GridValueFormatterParams): string {
-  return formatDate(params.value as string)
+  return formatDate(params.value as string) === 'Invalid Date'
+    ? '-'
+    : formatDate(params.value as string)
 }
 
 export function formatMoney(amount: number, fractionDigits = 0): string {

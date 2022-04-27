@@ -3,19 +3,30 @@ import { SubscriptionListResponse, SubscriptionStatus } from 'services/web-bff/s
 
 export interface DashboardResponse extends Response {
   data: {
-    dashboard: {
-      totalCars: number
-      totalAvailableCars: number
-      totalSubscriptions: number
-      totalUsers: number
-      totalPayments: number
-      totalKYC: number
-      totalKYCApproved: number
-      totalKYCRejected: number
-      totalUpcomingCarsDelivery: number
-      totalUpcomingCarsReturn: number
+    summary: {
+      car: CarSummaryResponse
+      subscription: SubscriptionSummaryResponse
+      user: UserSummaryResponse
     }
   }
+}
+
+export interface CarSummaryResponse extends Response {
+  numberOfCarInService: number
+  total: number
+}
+
+export interface SubscriptionSummaryResponse extends Response {
+  numberOfDeliveryTaskInThisDay: number
+  numberOfReturnTaskInThisDay: number
+  total: number
+}
+
+export interface UserSummaryResponse extends Response {
+  numberOfKycPendingStatus: number
+  numberOfKycRejectedStatus: number
+  numberOfKycVerifiedStatus: number
+  total: number
 }
 
 export interface DashboardProps {

@@ -49,16 +49,25 @@ const customToolbar = () => (
 
 export default function Subscription(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
+  const queryString = new URLSearchParams(window.location.search)
+  const statusList = queryString.get('status') === null ? [] : [queryString.get('status')]
+  const startDate = queryString.get('startDate')
+  const endDate = queryString.get('endDate')
+
   const { t } = useTranslation()
   const visibilityColumns = getVisibilityColumns()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
-  const defaultFilter: SubscriptionListQuery = new SubscriptionListQuery(
-    currentPageIndex + 1,
-    pageSize
-  )
+  const defaultFilter: SubscriptionListQuery = {
+    startDate: startDate || null,
+    endDate: endDate || null,
+    statusList,
+    size: pageSize,
+    page: currentPageIndex + 1,
+  } as SubscriptionListQuery
+
   const equalOperators = getEqualFilterOperators(t)
   const equalSelectFilterOperators = getSelectEqualFilterOperators(t)
   const dateEqualOperators = geEqualtDateOperators(t)
@@ -66,6 +75,7 @@ export default function Subscription(): JSX.Element {
   const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionListQuery>({
     ...defaultFilter,
   })
+
   const {
     data: response,
     isFetching,
@@ -122,11 +132,13 @@ export default function Subscription(): JSX.Element {
       createdDate: subscription.createdDate,
       updatedDate: subscription.updatedDate,
       paymentStatus: getLastedPaymentStatus(subscription.payments as unknown as Payment[]),
+      deliveryDate: '2022-04-26T15:00:00+07',
+      returnDate: subscription.returnDateTime,
     })) ?? []
 
   useEffect(() => {
     refetch()
-  }, [subscriptionFilter, refetch, currentPageIndex])
+  }, [subscriptionFilter, refetch])
 
   useEffect(() => {
     refetch()
@@ -361,7 +373,6 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.deliveryDate'),
       flex: 1,
       hide: !visibilityColumns.deliveryDate,
-      filterable: true,
       sortable: false,
       filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
@@ -371,7 +382,7 @@ export default function Subscription(): JSX.Element {
       headerName: t('subscription.returnDate'),
       description: t('subscription.returnDate'),
       flex: 1,
-      hide: !visibilityColumns.updatedDate,
+      hide: !visibilityColumns.returnDate,
       filterable: true,
       sortable: false,
       filterOperators: dateEqualOperators,
@@ -399,14 +410,17 @@ export default function Subscription(): JSX.Element {
   }
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setSubscriptionFilter({ ...subscriptionFilter, size: params.pageSize, page: 1 })
     setPageSize(params.pageSize)
+    setCurrentPageIndex(0)
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
-    const _defaultFilter: SubscriptionListQuery = new SubscriptionListQuery(
-      currentPageIndex + 1,
-      pageSize
-    )
+    const _defaultFilter: SubscriptionListQuery = {
+      size: pageSize,
+      page: currentPageIndex + 1,
+      statusList: [],
+    } as SubscriptionListQuery
 
     setSubscriptionFilter({
       ...params.items.reduce((filter, { columnField, value }: GridFilterItem) => {
@@ -431,6 +445,7 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleFetchPage = (pageNumber: number) => {
+    setSubscriptionFilter({ ...subscriptionFilter, page: pageNumber + 1 })
     setCurrentPageIndex(pageNumber)
   }
 
