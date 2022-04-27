@@ -11,21 +11,48 @@ import { TFunction, Namespace } from 'react-i18next'
 import { DateFieldComparisonBetween, DateFieldComparisonGreaterOrLess } from 'services/evme.types'
 import GridFilterDatePicker from 'components/GridFilterDatePicker'
 import GridFilterBooleanRadio from 'components/GridFilterBooleanRadio'
-import GridFilterDatePickerV2 from 'components/GrideFilterDatePickerV2'
+import GridFilterDatePickerV2 from 'components/GridFilterDatePickerV2'
+import GridFilterInputDateTimePicker from 'components/GridFilterDateTimePicker'
 
 export const DEFAULT_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm'
 export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY'
+
+export const DEFAULT_DATETIME_FORMAT_ISO = 'YYYY-MM-DDTHH:mm:ssZ'
 
 export function formatDate(dateStr?: string, pattern: string = DEFAULT_DATETIME_FORMAT): string {
   return dateStr ? dayjs(dateStr).format(pattern) : '-'
 }
 
+export function formatStringToDate(
+  dateStr?: string,
+  pattern: string = DEFAULT_DATETIME_FORMAT_ISO
+): Date {
+  return dayjs(dateStr, pattern).toDate()
+}
+
+export function compareDateIsBefore(
+  dateStr1?: string,
+  dateStr2?: string,
+  pattern: string = DEFAULT_DATETIME_FORMAT_ISO
+): boolean {
+  return dayjs(dateStr1, pattern).isBefore(dayjs(dateStr2, pattern))
+}
+
+export function compareDateIsAfter(
+  dateStr1?: string,
+  dateStr2?: string,
+  pattern: string = DEFAULT_DATETIME_FORMAT_ISO
+): boolean {
+  return dayjs(dateStr1, pattern).isAfter(dayjs(dateStr2, pattern))
+}
 export function formatDateWithPattern(params: GridValueFormatterParams, pattern: string): string {
   return params.value ? dayjs(params.value as Date).format(pattern || 'DD/MM/YYYY') : ''
 }
 
 export function columnFormatDate(params: GridValueFormatterParams): string {
-  return formatDate(params.value as string)
+  return formatDate(params.value as string) === 'Invalid Date'
+    ? '-'
+    : formatDate(params.value as string)
 }
 
 export function formatMoney(amount: number, fractionDigits = 0): string {
@@ -442,6 +469,23 @@ export const getSelectFilterOperators = (t: TFunction<Namespace>): GridFilterOpe
   },
 ]
 
+export const getSelectEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+    InputComponentProps: { type: 'singleSelect' },
+  },
+]
+
 export const getBooleanFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.is'),
@@ -497,6 +541,38 @@ export const getEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOper
   },
 ]
 
+export const getEqualAndContainFilterOperators = (
+  t: TFunction<Namespace>
+): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+  {
+    label: t('filter.contains'),
+    value: FieldComparisons.contains,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      const filterRegex = new RegExp(escapeRegExp(filterItem.value), 'i')
+      return ({ value }: GridCellParams): boolean => {
+        return filterRegex.test(value?.toString() || '')
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+]
+
 export const geEqualtDateOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.equals'),
@@ -514,7 +590,7 @@ export const geEqualtDateOperators = (t: TFunction<Namespace>): GridFilterOperat
   },
 ]
 
-export const getEqualSelectFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+export const geEqualtDateTimeOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.equals'),
     value: FieldComparisons.equals,
@@ -522,11 +598,11 @@ export const getEqualSelectFilterOperators = (t: TFunction<Namespace>): GridFilt
       if (!filterItem.value) {
         return null
       }
+
       return ({ value }: GridCellParams): boolean => {
         return filterItem.value === value
       }
     },
-    InputComponent: GridFilterInputValue,
-    InputComponentProps: { type: 'singleSelect' },
+    InputComponent: GridFilterInputDateTimePicker,
   },
 ]

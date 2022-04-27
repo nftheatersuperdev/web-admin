@@ -5,7 +5,7 @@ import config from 'config'
 
 export const BaseApi = axios.create({
   baseURL: config.evmeBff,
-  /*baseURL: 'https://run.mocky.io/v3/',*/
+  /* baseURL: 'https://run.mocky.io/v3/',*/
 })
 
 BaseApi.interceptors.request.use(

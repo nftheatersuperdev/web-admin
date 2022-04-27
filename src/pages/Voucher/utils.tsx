@@ -17,8 +17,8 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   percentDiscount: true,
   amount: true,
   limitPerUser: false,
-  startAt: false,
-  endAt: false,
+  startDate: true,
+  endDate: true,
   createdAt: false,
   updatedAt: false,
 }

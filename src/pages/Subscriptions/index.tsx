@@ -7,24 +7,37 @@ import {
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
   GridPageChangeParams,
-  GridSortModel,
   GridRowData,
+  GridFilterModel,
+  GridFilterItem,
+  GridValueFormatterParams,
 } from '@material-ui/data-grid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
+import {
+  columnFormatDate,
+  compareDateIsAfter,
+  compareDateIsBefore,
+  geEqualtDateOperators,
+  getEqualFilterOperators,
+  getSelectEqualFilterOperators,
+} from 'utils'
 import { getList } from 'services/web-bff/subscription'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import {
+  columnFormatPaymentEventStatus,
+  columnFormatSubEventStatus,
+  getSubEventStatusOptions,
   getVisibilityColumns,
   setVisibilityColumns,
   VisibilityColumns,
 } from 'pages/Subscriptions/utils'
 import UpdateDialog from 'pages/Subscriptions/UpdateDialog'
-import { SortDirection } from 'services/web-bff/general.type'
-import { SubscriptionListQuery, SubscriptionOrder } from 'services/web-bff/subscription.type'
+import { SubscriptionListQuery } from 'services/web-bff/subscription.type'
+import { Payment } from 'services/web-bff/payment.type'
 
 const customToolbar = () => (
   <GridToolbarContainer>
@@ -36,58 +49,100 @@ const customToolbar = () => (
 
 export default function Subscription(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
+  const queryString = new URLSearchParams(window.location.search)
+  const statusList = queryString.get('status') === null ? [] : [queryString.get('status')]
+  const startDate = queryString.get('startDate')
+  const endDate = queryString.get('endDate')
+
   const { t } = useTranslation()
   const visibilityColumns = getVisibilityColumns()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
-  const [sort, setSort] = useState<SubscriptionOrder>({ createdAt: SortDirection.Desc })
-  const [query] = useState<SubscriptionListQuery>()
+  const defaultFilter: SubscriptionListQuery = {
+    startDate: startDate || null,
+    endDate: endDate || null,
+    statusList,
+    size: pageSize,
+    page: currentPageIndex + 1,
+  } as SubscriptionListQuery
+
+  const equalOperators = getEqualFilterOperators(t)
+  const equalSelectFilterOperators = getSelectEqualFilterOperators(t)
+  const dateEqualOperators = geEqualtDateOperators(t)
+
+  const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionListQuery>({
+    ...defaultFilter,
+  })
+
   const {
     data: response,
     isFetching,
     refetch,
-  } = useQuery('subscriptions', () =>
-    getList({ accessToken, query, sort, limit: pageSize, page: currentPageIndex + 1 })
-  )
+  } = useQuery('subscriptions', () => getList({ query: subscriptionFilter }))
+
+  const getLastedPaymentStatus = (payments: Payment[]) => {
+    const sortedList = payments.sort((n1, n2) => {
+      if (compareDateIsBefore(n1.updatedDate, n2.updatedDate)) {
+        return 1
+      }
+
+      if (compareDateIsAfter(n1.updatedDate, n2.updatedDate)) {
+        return -1
+      }
+
+      return 0
+    })
+    return columnFormatPaymentEventStatus(sortedList[0]?.status, t) || '-'
+  }
 
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
-    response?.data.subscriptions.map((subscription) => ({
+    response?.data.records.map((subscription) => ({
       id: subscription.id,
       userFirstName: subscription.user.firstName,
       userLastName: subscription.user.lastName,
       userEmail: subscription.user.email,
       userPhoneNumber: subscription.user.phoneNumber,
       carId: subscription.car.id,
-      carModelId: subscription.car.modelId,
-      carName: subscription.car.name,
-      carBrand: subscription.car.brand,
-      carColor: subscription.car.color,
+      carModelId: subscription.car.carSku?.carModel.id,
+      carName: subscription.car.carSku?.carModel.name,
+      carBrand: subscription.car.carSku?.carModel.brand.name,
+      carColor: subscription.car.carSku?.color,
       carPlateNumber: subscription.car.plateNumber,
       carVin: subscription.car.vin,
-      carSeats: subscription.car.seats,
-      carTopSpeed: subscription.car.topSpeed,
-      carFastChargeTime: subscription.car.fastChargeTime,
-      price: subscription.price,
-      duration: subscription.duration,
+      carSeats: subscription.car.carSku?.carModel.seats,
+      carTopSpeed: subscription.car.carSku?.carModel.topSpeed,
+      carFastChargeTime: subscription.car.carSku?.carModel.fastChargeTime,
+      price: subscription.chargedPrice,
+      duration: subscription.durationDay,
       startDate: subscription.startDate,
       endDate: subscription.endDate,
-      deliveryAddress: subscription.deliveryAddress?.full,
-      deliveryLatitude: subscription.deliveryAddress?.latitude,
-      deliveryLongitude: subscription.deliveryAddress?.longitude,
-      deliveryRemark: subscription.deliveryAddress?.remark,
-      returnAddress: subscription.returnAddress?.full,
-      returnLatitude: subscription.returnAddress?.latitude,
-      returnLongitude: subscription.returnAddress?.longitude,
-      returnRemark: subscription.returnAddress?.remark,
+      deliveryAddress: subscription.deliveryFullAddress,
+      deliveryLatitude: subscription.deliveryLatitude,
+      deliveryLongitude: subscription.deliveryLongitude,
+      deliveryRemark: subscription.deliveryRemark,
+      returnAddress: subscription.returnFullAddress,
+      returnLatitude: subscription.returnLatitude,
+      returnLongitude: subscription.returnLongitude,
+      returnRemark: subscription.returnRemark,
       status: subscription.status,
-      voucherCode: subscription.voucherCode,
-      paymentVersion: subscription.paymentVersion,
+      voucherCode: subscription.voucherId,
       createdDate: subscription.createdDate,
       updatedDate: subscription.updatedDate,
+      paymentStatus: getLastedPaymentStatus(subscription.payments as unknown as Payment[]),
+      deliveryDate: '2022-04-26T15:00:00+07',
+      returnDate: subscription.returnDateTime,
     })) ?? []
+
+  useEffect(() => {
+    refetch()
+  }, [subscriptionFilter, refetch])
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, pageSize])
 
   const columns: GridColDef[] = [
     {
@@ -96,6 +151,7 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.id'),
       hide: !visibilityColumns.id,
       flex: 1,
+      filterOperators: equalOperators,
     },
     {
       field: 'userFirstName',
@@ -104,6 +160,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.userFirstName,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'userLastName',
@@ -112,6 +169,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.userLastName,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'userEmail',
@@ -120,6 +178,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.userEmail,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'userPhoneNumber',
@@ -128,6 +187,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.userPhoneNumber,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'carId',
@@ -136,6 +196,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.carId,
       sortable: false,
+      filterOperators: equalOperators,
     },
     {
       field: 'carName',
@@ -180,6 +241,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.carPlateNumber,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'carVin',
@@ -188,6 +250,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.carVin,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'carFastChargeTime',
@@ -205,6 +268,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.price,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'duration',
@@ -213,6 +277,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.duration,
       sortable: false,
+      filterable: false,
     },
     {
       field: 'startDate',
@@ -221,6 +286,8 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.startDate,
       sortable: true,
+      filterOperators: dateEqualOperators,
+      valueFormatter: columnFormatDate,
     },
     {
       field: 'endDate',
@@ -228,7 +295,9 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.endDate'),
       flex: 1,
       hide: !visibilityColumns.endDate,
-      sortable: true,
+      sortable: false,
+      filterOperators: dateEqualOperators,
+      valueFormatter: columnFormatDate,
     },
     {
       field: 'deliveryAddress',
@@ -255,6 +324,11 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.status,
       sortable: false,
+      valueFormatter: (params: GridValueFormatterParams): string => {
+        return columnFormatSubEventStatus(params.value as string, t)
+      },
+      filterOperators: equalSelectFilterOperators,
+      valueOptions: getSubEventStatusOptions(t),
     },
     {
       field: 'voucherCode',
@@ -264,15 +338,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.voucherCode,
       filterable: true,
       sortable: false,
-    },
-    {
-      field: 'paymentVersion',
-      headerName: t('subscription.paymentVersion'),
-      description: t('subscription.paymentVersion'),
-      flex: 1,
-      hide: !visibilityColumns.paymentVersion,
-      filterable: true,
-      sortable: false,
+      filterOperators: equalOperators,
     },
     {
       field: 'createdDate',
@@ -281,7 +347,7 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.createdDate,
       filterable: false,
-      sortable: true,
+      sortable: false,
     },
     {
       field: 'updatedDate',
@@ -290,7 +356,37 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.updatedDate,
       filterable: false,
-      sortable: true,
+      sortable: false,
+    },
+    {
+      field: 'paymentStatus',
+      headerName: t('subscription.payment.status'),
+      description: t('subscription.payment.status'),
+      flex: 1,
+      hide: !visibilityColumns.paymentStatus,
+      filterable: false,
+      sortable: false,
+    },
+    {
+      field: 'deliveryDate',
+      headerName: t('subscription.deliveryDate'),
+      description: t('subscription.deliveryDate'),
+      flex: 1,
+      hide: !visibilityColumns.deliveryDate,
+      sortable: false,
+      filterOperators: dateEqualOperators,
+      valueFormatter: columnFormatDate,
+    },
+    {
+      field: 'returnDate',
+      headerName: t('subscription.returnDate'),
+      description: t('subscription.returnDate'),
+      flex: 1,
+      hide: !visibilityColumns.returnDate,
+      filterable: true,
+      sortable: false,
+      filterOperators: dateEqualOperators,
+      valueFormatter: columnFormatDate,
     },
   ]
 
@@ -313,26 +409,44 @@ export default function Subscription(): JSX.Element {
     setVisibilityColumns(visibilityColumns)
   }
 
-  const handleSortChange = (params: GridSortModel) => {
-    if (params?.length > 0 && !isFetching) {
-      const { field: refField, sort } = params[0]
-
-      const order: SubscriptionOrder = {
-        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
-      }
-
-      setSort(order)
-      refetch()
-    }
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setSubscriptionFilter({ ...subscriptionFilter, size: params.pageSize, page: 1 })
+    setPageSize(params.pageSize)
+    setCurrentPageIndex(0)
   }
 
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPageSize(params.pageSize)
+  const handleFilterChange = (params: GridFilterModel) => {
+    const _defaultFilter: SubscriptionListQuery = {
+      size: pageSize,
+      page: currentPageIndex + 1,
+      statusList: [],
+    } as SubscriptionListQuery
+
+    setSubscriptionFilter({
+      ...params.items.reduce((filter, { columnField, value }: GridFilterItem) => {
+        if (columnField) {
+          if (columnField === 'status') {
+            filter = { ..._defaultFilter, statusList: [value] }
+          } else {
+            filter = { ..._defaultFilter, [columnField]: value }
+          }
+        }
+        return filter
+      }, {} as SubscriptionListQuery),
+    })
+
+    // reset page
+    setCurrentPageIndex(0)
   }
 
   const handleRowClick = (data: GridRowData) => {
     setUpdateDialogOpen(true)
     setSelectedSubscription(data.row)
+  }
+
+  const handleFetchPage = (pageNumber: number) => {
+    setSubscriptionFilter({ ...subscriptionFilter, page: pageNumber + 1 })
+    setCurrentPageIndex(pageNumber)
   }
 
   return (
@@ -351,13 +465,12 @@ export default function Subscription(): JSX.Element {
           columns={columns}
           onColumnVisibilityChange={onColumnVisibilityChange}
           onRowClick={handleRowClick}
-          /**
-           * @TODO add filter from server
-           */
-          sortingMode="server"
-          onSortModelChange={handleSortChange}
+          filterMode="server"
+          onFilterModelChange={handleFilterChange}
           loading={isFetching}
           customToolbar={customToolbar}
+          onFetchNextPage={() => handleFetchPage(currentPageIndex + 1)}
+          onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
         />
       </Card>
 

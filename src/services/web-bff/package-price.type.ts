@@ -2,6 +2,16 @@
 import { Car } from 'services/web-bff/car.type'
 import { PackagePriceInput } from 'services/evme.types'
 
+export interface RentalPackage {
+  id: string
+  description: string
+  durationDay: number
+  durationLabel: string
+  fullPrice: number
+  price: number
+  disabled: boolean
+}
+
 export interface PackagePrice {
   id: string
   carId: string

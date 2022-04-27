@@ -1,10 +1,9 @@
-import { Car } from 'services/web-bff/car.type'
+import { CarModelPriceBff } from 'services/web-bff/car.type'
 
 export interface ModelAndPricingEditParams {
   id: string
 }
 
 export interface CarModelDataAndRefetchProps {
-  car?: Car
-  refetch: () => void
+  car?: CarModelPriceBff
 }

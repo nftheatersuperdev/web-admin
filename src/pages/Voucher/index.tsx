@@ -1,7 +1,7 @@
 import toast from 'react-hot-toast'
 import { useHistory } from 'react-router-dom'
 import { useState, useEffect, Fragment } from 'react'
-import { Card, Button, IconButton, Chip, Tooltip } from '@material-ui/core'
+import { Card, Button, IconButton, Tooltip } from '@material-ui/core'
 import {
   Delete as DeleteIcon,
   Edit as EditIcon,
@@ -14,29 +14,25 @@ import {
   GridFilterItem,
   GridFilterModel,
   GridPageChangeParams,
-  GridSortModel,
   GridRowData,
   GridCellParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import {
-  getIdFilterOperators,
-  getNumericFilterOperators,
-  getStringFilterOperators,
-  getDateFilterMoreOperators,
-  dateToFilterOnDay,
-  dateToFilterNotOnDay,
-  dateToFilterGreaterOrLess,
-  stringToFilterContains,
   columnFormatDate,
+  getEqualFilterOperators,
+  getContainFilterOperators,
+  geEqualtDateOperators,
+  FieldComparisons,
+  FieldKeyOparators,
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
 import { getList, deleteById } from 'services/web-bff/voucher'
 import { VoucherListQuery } from 'services/web-bff/voucher.type'
-import { SortDirection, SubOrder, Voucher as VoucherType } from 'services/evme.types'
+import { Voucher as VoucherType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
@@ -45,13 +41,13 @@ import CreateUpdateDialog from './CreateUpdateDialog'
 import PackagePriceDialog from './PackagePriceDialog'
 
 export default function Voucher(): JSX.Element {
+  const defaultFilter: VoucherListQuery = {} as VoucherListQuery
   const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [voucherQuery, setVoucherQuery] = useState<VoucherListQuery>({})
-  const [voucherSort, setVoucherSort] = useState<SubOrder>({})
+  const [voucherQuery, setVoucherQuery] = useState<VoucherListQuery>({ ...defaultFilter })
   const [createUpdateDialogOpen, setCreateUpdateDialogOpen] = useState<boolean>(false)
   const [packagePriceDialogOpen, setPackagePriceDialogOpen] = useState<boolean>(false)
   const [selectedVoucher, setSelectedVoucher] = useState<VoucherType | null>()
@@ -62,73 +58,37 @@ export default function Voucher(): JSX.Element {
     isFetching,
   } = useQuery('voucher-list', () =>
     getList({
-      accessToken,
-      sort: voucherSort,
-      query: voucherQuery,
+      data: voucherQuery,
       page: currentPageIndex + 1,
-      limit: pageSize,
+      size: pageSize,
     })
   )
 
-  const idFilterOperators = getIdFilterOperators(t)
-  const numericFilterOperators = getNumericFilterOperators(t)
-  const stringFilterOperators = getStringFilterOperators(t)
-  const dateFilterOperators = getDateFilterMoreOperators(t)
+  const equalOperators = getEqualFilterOperators(t)
+  const containOperators = getContainFilterOperators(t)
+  const dateEqualOperators = geEqualtDateOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setCurrentPageIndex(0)
     setPageSize(params.pageSize)
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
+    let keyValue = ''
     setVoucherQuery({
       ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        let filterValue = value
-
-        if (
-          (columnField === 'createdAt' ||
-            columnField === 'updatedAt' ||
-            columnField === 'startAt' ||
-            columnField === 'endAt') &&
-          value
-        ) {
-          const comparingValue = operatorValue as string
-          const comparingOperations = ['gt', 'lt', 'gte', 'lte']
-          const isUsingOperators = comparingOperations.includes(comparingValue)
-          const isGreaterThanOrLessThanEqual = ['gt', 'lte'].includes(comparingValue)
-
-          if (operatorValue === 'between') {
-            filterValue = dateToFilterOnDay(value)
-          } else if (operatorValue === 'notBetween') {
-            filterValue = dateToFilterNotOnDay(value)
-          } else if (isUsingOperators) {
-            filterValue = dateToFilterGreaterOrLess(value, isGreaterThanOrLessThanEqual)
+        if (value) {
+          switch (operatorValue) {
+            case FieldComparisons.equals:
+              keyValue = `${columnField}${FieldKeyOparators.equals}`
+              break
+            case FieldComparisons.contains:
+              keyValue = `${columnField}${FieldKeyOparators.contains}`
+              break
           }
+          filter = { [keyValue]: value }
         }
-
-        if (operatorValue === 'iLike' && value) {
-          filterValue = stringToFilterContains(value)
-        }
-
-        if (filterValue) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: filterValue,
-          }
-        }
-
-        if (
-          (columnField === 'amount' ||
-            columnField === 'percentDiscount' ||
-            columnField === 'limitPerUser') &&
-          value
-        ) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: +filterValue,
-          }
-        }
-
         return filter
       }, {} as VoucherListQuery),
     })
@@ -155,19 +115,6 @@ export default function Voucher(): JSX.Element {
     setVisibilityColumns(visibilityColumns)
   }
 
-  const handleSortChange = (params: GridSortModel) => {
-    if (params?.length > 0 && !isFetching) {
-      const { field: refField, sort } = params[0]
-
-      const order: SubOrder = {
-        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
-      }
-
-      setVoucherSort(order)
-      refetch()
-    }
-  }
-
   const handleDeleteRow = (data: GridRowData) => {
     // eslint-disable-next-line no-alert
     const confirmed = window.confirm(t('voucher.dialog.delete.confirmationMessage'))
@@ -187,7 +134,11 @@ export default function Voucher(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [voucherQuery, refetch])
+  }, [voucherQuery, refetch, currentPageIndex])
+
+  useEffect(() => {
+    refetch()
+  }, [pageSize, refetch])
 
   const columns: GridColDef[] = [
     {
@@ -196,8 +147,8 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.id'),
       hide: !visibilityColumns.id,
       flex: 1,
-      sortable: true,
-      filterOperators: idFilterOperators,
+      sortable: false,
+      filterOperators: equalOperators,
     },
     {
       field: 'code',
@@ -205,8 +156,8 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.code'),
       hide: !visibilityColumns.code,
       flex: 1,
-      sortable: true,
-      filterOperators: stringFilterOperators,
+      sortable: false,
+      filterOperators: containOperators,
     },
     {
       field: 'descriptionEn',
@@ -215,7 +166,7 @@ export default function Voucher(): JSX.Element {
       hide: !visibilityColumns.descriptionEn,
       flex: 1,
       sortable: false,
-      filterOperators: stringFilterOperators,
+      filterOperators: containOperators,
       valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
     },
     {
@@ -225,7 +176,7 @@ export default function Voucher(): JSX.Element {
       hide: !visibilityColumns.descriptionTh,
       flex: 1,
       sortable: false,
-      filterOperators: stringFilterOperators,
+      filterable: false,
       valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
     },
     {
@@ -234,8 +185,8 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.percentDiscount'),
       hide: !visibilityColumns.percentDiscount,
       flex: 1,
-      sortable: true,
-      filterOperators: numericFilterOperators,
+      filterable: false,
+      sortable: false,
     },
     {
       field: 'amount',
@@ -243,8 +194,8 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.amount'),
       hide: !visibilityColumns.amount,
       flex: 1,
-      sortable: true,
-      filterOperators: numericFilterOperators,
+      filterable: false,
+      sortable: false,
     },
     {
       field: 'limitPerUser',
@@ -252,27 +203,27 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.limitPerUser'),
       hide: !visibilityColumns.limitPerUser,
       flex: 1,
-      sortable: true,
-      filterOperators: numericFilterOperators,
+      filterable: false,
+      sortable: false,
     },
     {
-      field: 'startDate',
+      field: 'startAt',
       headerName: t('voucher.startAt'),
       description: t('voucher.startAt'),
       hide: !visibilityColumns.startAt,
       flex: 1,
-      sortable: true,
-      filterOperators: dateFilterOperators,
+      sortable: false,
+      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'endDate',
+      field: 'endAt',
       headerName: t('voucher.endAt'),
       description: t('voucher.endAt'),
       hide: !visibilityColumns.endAt,
       flex: 1,
-      sortable: true,
-      filterOperators: dateFilterOperators,
+      sortable: false,
+      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
     {
@@ -294,8 +245,8 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.createdAt'),
       hide: !visibilityColumns.createdAt,
       flex: 1,
-      sortable: true,
-      filterOperators: dateFilterOperators,
+      sortable: false,
+      filterable: false,
       valueFormatter: columnFormatDate,
     },
     {
@@ -304,38 +255,9 @@ export default function Voucher(): JSX.Element {
       description: t('voucher.updatedAt'),
       hide: !visibilityColumns.updatedAt,
       flex: 1,
-      sortable: true,
-      filterOperators: dateFilterOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'status',
-      headerName: t('voucher.status'),
-      description: t('voucher.status'),
-      hide: !visibilityColumns.status,
-      flex: 0,
       sortable: false,
       filterable: false,
-      filterOperators: dateFilterOperators,
       valueFormatter: columnFormatDate,
-      renderCell: (params: GridCellParams) => {
-        const currentDateTime = new Date()
-        const startAtDateTime = new Date(params.row.startAt)
-        const endAtDateTime = new Date(params.row.endAt)
-
-        const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
-        const isInactive = currentDateTime > endAtDateTime
-        const isPending = currentDateTime < startAtDateTime
-
-        if (isActive) {
-          return <Chip label={t('voucher.statuses.active')} color="primary" />
-        } else if (isInactive) {
-          return <Chip label={t('voucher.statuses.inactive')} color="secondary" />
-        } else if (isPending) {
-          return <Chip label={t('voucher.statuses.pending')} color="default" />
-        }
-        return '-'
-      },
     },
     {
       field: 'actions',
@@ -354,6 +276,7 @@ export default function Voucher(): JSX.Element {
             </IconButton>
             <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
               <IconButton
+                disabled
                 size="small"
                 onClick={() =>
                   history.push(`/vouchers/${params.id}/events?code=${params.row.code}`)
@@ -363,6 +286,7 @@ export default function Voucher(): JSX.Element {
               </IconButton>
             </Tooltip>
             <IconButton
+              disabled
               size="small"
               aria-label="delete"
               onClick={() => handleDeleteRow(params.row)}
@@ -383,14 +307,14 @@ export default function Voucher(): JSX.Element {
         code: voucher.code,
         descriptionEn: voucher.descriptionEn,
         descriptionTh: voucher.descriptionTh,
-        percentDiscount: voucher.percentDiscount,
-        amount: voucher.amount,
+        percentDiscount: voucher.discountPercent,
+        amount: voucher.quantity,
         limitPerUser: voucher.limitPerUser,
         isAllPackages: voucher.isAllPackages,
         userGroups: voucher.userGroups,
         packagePrices: voucher.packagePrices,
-        startDate: voucher.startDate,
-        endDate: voucher.endDate,
+        startAt: voucher.startAt,
+        endAt: voucher.endAt,
         createdDate: voucher.createdDate,
         updatedDate: voucher.updatedDate,
       }
@@ -426,8 +350,6 @@ export default function Voucher(): JSX.Element {
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
-          sortingMode="server"
-          onSortModelChange={handleSortChange}
           loading={isFetching}
         />
 

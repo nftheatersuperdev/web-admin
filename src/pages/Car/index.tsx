@@ -1,7 +1,6 @@
-import { Fragment, useMemo, useState, useEffect } from 'react'
-import styled from 'styled-components'
+import { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Button, Card, IconButton } from '@material-ui/core'
+import { Card, IconButton } from '@material-ui/core'
 import {
   GridColDef,
   GridRowData,
@@ -17,28 +16,17 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
-  getIdFilterOperators,
-  getStringFilterOperators,
-  getSelectFilterOperators,
-  stringToFilterContains,
+  getSelectEqualFilterOperators,
+  getEqualAndContainFilterOperators,
+  FieldComparisons,
+  FieldKeyOparators,
 } from 'utils'
 import config from 'config'
-import { useAuth } from 'auth/AuthContext'
-import {
-  useCarModels,
-  useCreateCar,
-  useUpdateCar,
-  useUpdateCarStatus,
-  useDeleteCar,
-} from 'services/evme'
-import PageToolbar from 'layout/PageToolbar'
-import { CarInput, CarFilter, SortDirection, SubOrder } from 'services/evme.types'
+import { SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import ConfirmDialog from 'components/ConfirmDialog'
-import { getList } from 'services/web-bff/car'
-import { CarListQuery } from 'services/web-bff/car.type'
-import CarCreateDialog from './CarCreateDialog'
+import { getListBFF, updateById } from 'services/web-bff/car'
+import { CarListFilterRequest, CarUpdateInput } from 'services/web-bff/car.type'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 import {
   getCarStatusOptions,
@@ -46,76 +34,72 @@ import {
   getVisibilityColumns,
   setVisibilityColumns,
   VisibilityColumns,
+  CarStatus,
 } from './utils'
-
-const HideSection = styled(Button)`
-  display: none;
-`
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [page, setPage] = useState(0)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
-  const [selectedCarId, setSelectedCarId] = useState('')
+  const [selectedCarId, setSelectedCarId] = useState<string>('')
   const [carInfo, setCarInfo] = useState({} as CarInfo)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [currentRowData, setCurrentRowData] = useState({} as GridRowData)
-  const createCarMutation = useCreateCar()
-  const updateCarMutation = useUpdateCar()
-  const updateCarStatusMutation = useUpdateCarStatus()
-  const deleteCarMutation = useDeleteCar()
-  const [carFilter, setCarFilter] = useState<CarFilter>({})
-  const [carSort, setCarSort] = useState<SubOrder>({})
+  const [sort, setSort] = useState<SubOrder>({})
+  const [filter, setFilter] = useState<CarListFilterRequest>()
 
-  const accessToken = useAuth().getToken() ?? ''
-  const [query] = useState<CarListQuery>()
   const {
     data: carData,
     refetch,
     isFetching,
   } = useQuery('cars', () =>
-    getList({
-      accessToken,
-      query,
-      sort: carSort,
+    getListBFF({
+      filter,
+      sort,
+      page,
+      size: pageSize,
     })
   )
 
-  const { data: carModels } = useCarModels(config.maxInteger)
-
-  const idFilterOperators = getIdFilterOperators(t)
-  const stringFilterOperators = getStringFilterOperators(t)
-  const selectFilterOperators = getSelectFilterOperators(t)
+  const equalAndContainOperators = getEqualAndContainFilterOperators(t)
+  const selectFilterOperators = getSelectEqualFilterOperators(t)
   const statusOptions = getCarStatusOptions(t)
   const visibilityColumns = getVisibilityColumns()
 
+  useEffect(() => {
+    refetch()
+  }, [page, pageSize, filter, refetch])
+
   const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPage(0)
     setPageSize(params.pageSize)
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
-    setCarFilter(
+    setFilter(
       params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        let filterValue = value
+        const isStatus = columnField === 'status'
 
-        if (operatorValue === 'iLike' && value) {
-          filterValue = stringToFilterContains(value)
-        }
-
-        if (filterValue) {
-          /* @ts-expect-error TODO */
-          filter[columnField] = {
-            [operatorValue as string]: filterValue,
+        let keyOfValue = ''
+        if (value) {
+          if (isStatus) {
+            keyOfValue = 'isActive'
+            value = value === 'available'
+          } else {
+            switch (operatorValue) {
+              case FieldComparisons.equals:
+                keyOfValue = `${columnField}${FieldKeyOparators.equals}`
+                break
+              case FieldComparisons.contains:
+                keyOfValue = `${columnField}${FieldKeyOparators.contains}`
+                break
+            }
           }
+          filter = { [keyOfValue]: value }
         }
-
         return filter
-      }, {} as CarFilter)
+      }, {} as CarListFilterRequest)
     )
-    // reset page
-    setCurrentPageIndex(0)
+    setPage(0)
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -145,49 +129,23 @@ export default function Car(): JSX.Element {
         [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
       }
 
-      setCarSort(order)
-      refetch()
+      setSort(order)
     }
   }
 
-  useEffect(() => {
-    refetch()
-  }, [carFilter, refetch])
-
-  const onCloseCreateDialog = (data: CarInput | null) => {
-    setIsCreateDialogOpen(false)
-    if (!data) {
-      return
-    }
-
-    toast.promise(createCarMutation.mutateAsync(data), {
-      loading: t('toast.loading'),
-      success: t('car.createDialog.success'),
-      error: t('car.createDialog.error'),
-    })
-  }
-
-  const onCloseEditDialog = async (data: CarInput | null) => {
+  const onCloseEditDialog = async (data: CarUpdateInput | null) => {
     setIsUpdateDialogOpen(false)
     if (!data) {
       return
     }
 
     await toast.promise(
-      Promise.all([
-        updateCarStatusMutation.mutateAsync({
-          carId: selectedCarId,
-          status: data.status,
-        }),
-        updateCarMutation.mutateAsync({
-          id: selectedCarId,
-          update: {
-            carModelId: data.carModelId,
-            color: data.color,
-            colorHex: data.colorHex,
-          },
-        }),
-      ]),
+      updateById({
+        id: selectedCarId,
+        vin: data.vin,
+        plateNumber: data.plateNumber,
+        isActive: data.status === CarStatus.AVAILABLE,
+      }),
       {
         loading: t('toast.loading'),
         success: t('car.updateDialog.success'),
@@ -196,90 +154,43 @@ export default function Car(): JSX.Element {
     )
 
     refetch()
-
-    /**
-     * @DESCRIPTION Disable the update following as our backend disabled this function
-     */
-    // toast.promise(
-    //   updateCarMutation.mutateAsync({
-    //     update: data,
-    //     id: selectedCarId,
-    //   }),
-    //   {
-    //     loading: t('toast.loading'),
-    //     success: t('car.updateDialog.success'),
-    //     error: t('car.updateDialog.error'),
-    //   }
-    // )
   }
-
-  const carModelOptions = useMemo(
-    () =>
-      carModels?.pages[0].edges?.map(({ node }) => ({
-        id: node?.id,
-        modelName: `${node?.brand} - ${node?.model}`,
-      })) || [],
-    [carModels]
-  )
 
   const openEditCarDialog = (param: GridRowData) => {
     setSelectedCarId(param.id)
-    const { vin, plateNumber, carModelId, color, colorHex, status } = param.row
+    const { vin, plateNumber, color, status } = param.row
 
     setCarInfo({
       vin,
       plateNumber,
-      carModelId,
       color,
-      colorHex,
       status,
     })
     setIsUpdateDialogOpen(true)
   }
 
-  const handleDeleteIconClick = (rowData: GridRowData) => {
-    setCurrentRowData(rowData)
-    setIsDeleteDialogOpen(true)
-  }
-
-  const handleConfirmDelete = (rowData: GridRowData) => {
-    toast.promise(
-      deleteCarMutation.mutateAsync({
-        id: rowData.id,
-      }),
-      {
-        loading: t('toast.loading'),
-        success: t('car.deleteDialog.success'),
-        error: t('car.deleteDialog.error'),
-      }
-    )
-
-    setIsDeleteDialogOpen(false)
-  }
-
   const rowCount = carData?.data.pagination.totalRecords
   const rows =
     carData?.data.cars.map((car) => {
+      const connectorType = car.carSku.carModel.chargers.map((charger) => charger.description)
+
       return {
         id: car.id,
-        name: car.name,
-        brand: car.brand,
         vin: car.vin,
         plateNumber: car.plateNumber,
-        color: car.color,
-        colorHex: car.colorHex,
-        topSpeed: car.topSpeed,
-        acceleration: car.acceleration,
-        range: car.range,
-        totalPower: car.totalPower,
-        batteryCapacity: car.batteryCapacity,
-        chargeTime: car.chargeTime,
-        fastChargeTime: car.fastChargeTime,
-        connectorType: car.connectorType.description,
-        bodyType: car.bodyType.description,
-        createdDate: car.createdDate,
-        updatedDate: car.updatedDate,
-        status: car.status,
+        model: car.carSku.carModel.name,
+        brand: car.carSku.carModel.brand.name,
+        color: car.carSku.color,
+        bodyType: car.carSku.carModel.bodyType,
+        totalPower: car.carSku.carModel.totalPower,
+        batteryCapacity: car.carSku.carModel.batteryCapacity,
+        topSpeed: car.carSku.carModel.topSpeed,
+        range: car.carSku.carModel.range,
+        acceleration: car.carSku.carModel.acceleration,
+        chargeTime: car.carSku.carModel.chargeTime,
+        fastChargeTime: car.carSku.carModel.fastChargeTime,
+        connectorType: connectorType.length > 0 ? connectorType : '-',
+        status: car.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
       }
     }) ?? []
 
@@ -290,8 +201,7 @@ export default function Car(): JSX.Element {
       description: t('car.id'),
       hide: !visibilityColumns.id,
       flex: 1,
-      filterOperators: idFilterOperators,
-      sortable: true,
+      filterable: false,
     },
     {
       field: 'brand',
@@ -313,7 +223,7 @@ export default function Car(): JSX.Element {
       field: 'color',
       headerName: t('car.color'),
       description: t('car.color'),
-      filterOperators: stringFilterOperators,
+      filterOperators: equalAndContainOperators,
       hide: !visibilityColumns.color,
       flex: 1,
     },
@@ -321,7 +231,7 @@ export default function Car(): JSX.Element {
       field: 'vin',
       headerName: t('car.vin'),
       description: t('car.vin'),
-      filterOperators: stringFilterOperators,
+      filterOperators: equalAndContainOperators,
       flex: 1,
       hide: !visibilityColumns.vin,
       sortable: false,
@@ -332,7 +242,7 @@ export default function Car(): JSX.Element {
       description: t('car.plateNumber'),
       hide: !visibilityColumns.plateNumber,
       flex: 1,
-      filterOperators: stringFilterOperators,
+      filterOperators: equalAndContainOperators,
       sortable: false,
     },
     {
@@ -456,7 +366,7 @@ export default function Car(): JSX.Element {
           >
             <EditIcon />
           </IconButton>
-          <IconButton aria-label="delete" onClick={() => handleDeleteIconClick(params.row)}>
+          <IconButton aria-label="delete" disabled>
             <DeleteIcon />
           </IconButton>
         </Fragment>
@@ -466,34 +376,19 @@ export default function Car(): JSX.Element {
 
   return (
     <Page>
-      <PageToolbar>
-        <HideSection>
-          <Button
-            color="primary"
-            disabled
-            variant="contained"
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
-            {t('car.createButton')}
-          </Button>
-        </HideSection>
-      </PageToolbar>
-
       <Card>
         <DataGridLocale
           autoHeight
           pagination
           pageSize={pageSize}
-          page={currentPageIndex}
+          page={page}
           rowCount={rowCount}
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
-          onPageChange={setCurrentPageIndex}
+          onPageChange={setPage}
           rows={rows}
           columns={columns}
-          checkboxSelection
           disableSelectionOnClick
-          onRowClick={openEditCarDialog}
           filterMode="server"
           onFilterModelChange={handleFilterChange}
           onColumnVisibilityChange={onColumnVisibilityChange}
@@ -503,27 +398,10 @@ export default function Car(): JSX.Element {
         />
       </Card>
 
-      <CarCreateDialog
-        open={isCreateDialogOpen}
-        onClose={onCloseCreateDialog}
-        carModelOptions={carModelOptions}
-      />
-
       <CarUpdateDialog
         open={isUpdateDialogOpen}
         onClose={(data) => onCloseEditDialog(data)}
-        carModelOptions={carModelOptions}
         carInfo={carInfo}
-      />
-
-      <ConfirmDialog
-        open={isDeleteDialogOpen}
-        title={t('car.deleteDialog.title')}
-        message={`${t('car.deleteDialog.message')}: ${currentRowData.brand} - ${
-          currentRowData.model
-        }, ${currentRowData.color}, ${currentRowData.plateNumber} ?`}
-        onConfirm={() => handleConfirmDelete(currentRowData)}
-        onCancel={() => setIsDeleteDialogOpen(false)}
       />
     </Page>
   )

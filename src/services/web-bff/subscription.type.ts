@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SortDirection } from 'services/web-bff/general.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
-import { User, UserAddress } from 'services/web-bff/user.type'
-import { Car } from 'services/web-bff/car.type'
+import { User } from 'services/web-bff/user.type'
+import { CarModel } from 'services/web-bff/car.type'
+import { Payment } from 'services/evme.types'
 
 export enum SubscriptionDuration {
   threeDays = '3d',
@@ -29,36 +30,68 @@ export enum SubscriptionStatus {
 
 export interface Subscription {
   id: string
-  user: User
-  car: Partial<Car>
-  duration: SubscriptionDuration
   startDate: string
   endDate: string
-  deliveryAddress: UserAddress
-  returnAddress: UserAddress
-  voucherCode: string
-  status: SubscriptionStatus
-  paymentVersion: number
-  paymentStatus: string
-  price: number
+  cleaningDate: string
+  userId: string
+  carId: string
+  status: string
+  voucherId: string
+  packagePriceId: string
+  chargedPrice: number
+  discountPrice: number
+  tenantPrice: number
+  durationDay: number
+  deliveryDateTime: string
+  deliveryFullAddress: string
+  deliveryLatitude: string
+  deliveryLongitude: string
+  deliveryRemark: string
+  returnDateTime: string
+  returnFullAddress: string
+  returnLatitude: string
+  returnLongitude: string
+  returnRemark: string
+  car: Partial<SubscriptionCar>
+  createdDate: string
+  updatedDate: string
+  user: User
+  payments: Payment[]
+}
+
+export interface SubscriptionCar {
+  id: string
+  plateNumber: string
+  vin: string
+  carTrackId: string
+  isActive: boolean
+  carSku: SubscriptionCarSku
+  createdDate: string
+  updatedDate: string
+}
+
+export interface SubscriptionCarSku {
+  id: string
+  images: []
+  carModel: CarModel
+  color: string
+  colorHex: string
   createdDate: string
   updatedDate: string
 }
 
 export interface SubscriptionListQuery {
-  status?: string
-  startDate?: {
-    between: {
-      lower: string
-      upper: string
-    }
-  }
-  endDate?: {
-    between: {
-      lower: string
-      upper: string
-    }
-  }
+  id?: string
+  carId?: string
+  customerId?: string
+  voucherId?: string
+  deliverDate?: string
+  returnDate?: string
+  startDate?: string
+  endDate?: string
+  statusList?: string[]
+  size?: number
+  page?: number
 }
 
 export interface SubscriptionOrder {
@@ -66,16 +99,12 @@ export interface SubscriptionOrder {
 }
 
 export interface SubscriptionListProps {
-  accessToken: string
   query?: SubscriptionListQuery
-  sort?: SubscriptionOrder
-  limit?: number
-  page?: number
 }
 
 export type SubscriptionListResponse = {
   data: {
-    subscriptions: Subscription[]
+    records: Subscription[]
   }
 } & ResponseWithPagination
 
