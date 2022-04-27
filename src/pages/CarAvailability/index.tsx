@@ -139,9 +139,9 @@ export default function Car(): JSX.Element {
         id: car.id,
         vin: car.vin,
         plateNumber: car.plateNumber,
-        model: car.carSku.carModel.name,
-        brand: car.carSku.carModel.brand.name,
-        color: car.carSku.color,
+        model: car.carSku?.carModel.name || '-',
+        brand: car.carSku?.carModel.brand.name || '-',
+        color: car.carSku?.color || '-',
         status,
         subscriptionId:
           subscriptions.length < 1 ? '-' : subscriptions.map((subscription) => subscription.id),
