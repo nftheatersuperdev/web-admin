@@ -11,25 +11,29 @@ import {
   GridFilterModel,
   GridFilterItem,
   GridValueFormatterParams,
+  GridToolbarExport,
 } from '@material-ui/data-grid'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from 'auth/AuthContext'
 import {
   columnFormatDate,
-  compareDateIsAfter,
-  compareDateIsBefore,
+  columnFormatText,
+  convertMoneyFormat,
   geEqualtDateOperators,
   getEqualFilterOperators,
   getSelectEqualFilterOperators,
 } from 'utils'
+import { useLocation } from 'react-router-dom'
 import { getList } from 'services/web-bff/subscription'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import {
   columnFormatPaymentEventStatus,
   columnFormatSubEventStatus,
+  convertToDuration,
+  getLastedPayment,
+  getListFromQueryParam,
   getSubEventStatusOptions,
   getVisibilityColumns,
   setVisibilityColumns,
@@ -44,25 +48,26 @@ const customToolbar = () => (
     <GridToolbarColumnsButton />
     <GridToolbarFilterButton />
     <GridToolbarDensitySelector />
+    <GridToolbarExport csvOptions={{ allColumns: true }} />
   </GridToolbarContainer>
 )
 
 export default function Subscription(): JSX.Element {
-  const accessToken = useAuth().getToken() ?? ''
-  const queryString = new URLSearchParams(window.location.search)
-  const statusList = queryString.get('status') === null ? [] : [queryString.get('status')]
-  const startDate = queryString.get('startDate')
-  const endDate = queryString.get('endDate')
-
   const { t } = useTranslation()
+  const searchParams = useLocation().search
+  const queryString = new URLSearchParams(searchParams)
+  const statusList: string[] = getListFromQueryParam(queryString, 'status')
+  const deliverDate = queryString.get('deliverDate')
+  const returnDate = queryString.get('returnDate')
+
   const visibilityColumns = getVisibilityColumns()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
   const defaultFilter: SubscriptionListQuery = {
-    startDate: startDate || null,
-    endDate: endDate || null,
+    deliverDate: deliverDate || null,
+    returnDate: returnDate || null,
     statusList,
     size: pageSize,
     page: currentPageIndex + 1,
@@ -82,59 +87,60 @@ export default function Subscription(): JSX.Element {
     refetch,
   } = useQuery('subscriptions', () => getList({ query: subscriptionFilter }))
 
-  const getLastedPaymentStatus = (payments: Payment[]) => {
-    const sortedList = payments.sort((n1, n2) => {
-      if (compareDateIsBefore(n1.updatedDate, n2.updatedDate)) {
-        return 1
-      }
-
-      if (compareDateIsAfter(n1.updatedDate, n2.updatedDate)) {
-        return -1
-      }
-
-      return 0
-    })
-    return columnFormatPaymentEventStatus(sortedList[0]?.status, t) || '-'
-  }
-
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
-    response?.data.records.map((subscription) => ({
-      id: subscription.id,
-      userFirstName: subscription.user.firstName,
-      userLastName: subscription.user.lastName,
-      userEmail: subscription.user.email,
-      userPhoneNumber: subscription.user.phoneNumber,
-      carId: subscription.car.id,
-      carModelId: subscription.car.carSku?.carModel.id,
-      carName: subscription.car.carSku?.carModel.name,
-      carBrand: subscription.car.carSku?.carModel.brand.name,
-      carColor: subscription.car.carSku?.color,
-      carPlateNumber: subscription.car.plateNumber,
-      carVin: subscription.car.vin,
-      carSeats: subscription.car.carSku?.carModel.seats,
-      carTopSpeed: subscription.car.carSku?.carModel.topSpeed,
-      carFastChargeTime: subscription.car.carSku?.carModel.fastChargeTime,
-      price: subscription.chargedPrice,
-      duration: subscription.durationDay,
-      startDate: subscription.startDate,
-      endDate: subscription.endDate,
-      deliveryAddress: subscription.deliveryFullAddress,
-      deliveryLatitude: subscription.deliveryLatitude,
-      deliveryLongitude: subscription.deliveryLongitude,
-      deliveryRemark: subscription.deliveryRemark,
-      returnAddress: subscription.returnFullAddress,
-      returnLatitude: subscription.returnLatitude,
-      returnLongitude: subscription.returnLongitude,
-      returnRemark: subscription.returnRemark,
-      status: subscription.status,
-      voucherCode: subscription.voucherId,
-      createdDate: subscription.createdDate,
-      updatedDate: subscription.updatedDate,
-      paymentStatus: getLastedPaymentStatus(subscription.payments as unknown as Payment[]),
-      deliveryDate: '2022-04-26T15:00:00+07',
-      returnDate: subscription.returnDateTime,
-    })) ?? []
+    response?.data.records && response?.data.records.length > 0
+      ? response?.data.records.map((subscription) => {
+          const lastedPayment = getLastedPayment(subscription.payments as unknown as Payment[])
+          const paymentStatus = lastedPayment
+            ? columnFormatPaymentEventStatus(lastedPayment.status, t)
+            : '-'
+          const subscriptionPrice = convertMoneyFormat(subscription?.chargedPrice)
+          const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
+
+          return (
+            {
+              id: subscription.id,
+              userFirstName: subscription.user.firstName,
+              userLastName: subscription.user.lastName,
+              userEmail: subscription.user.email,
+              userPhoneNumber: subscription.user.phoneNumber,
+              carId: subscription.car.id,
+              carModelId: subscription.car.carSku?.carModel.id,
+              carName: subscription.car.carSku?.carModel.name,
+              carBrand: subscription.car.carSku?.carModel.brand.name,
+              carColor: subscription.car.carSku?.color,
+              carPlateNumber: subscription.car.plateNumber,
+              carVin: subscription.car.vin,
+              carSeats: subscription.car.carSku?.carModel.seats,
+              carTopSpeed: subscription.car.carSku?.carModel.topSpeed,
+              carFastChargeTime: subscription.car.carSku?.carModel.fastChargeTime,
+              price: subscriptionPriceFullFormat,
+              duration: convertToDuration(subscription.durationDay, t),
+              startDate: subscription.startDate,
+              endDate: subscription.endDate,
+              deliveryAddress: subscription.deliveryFullAddress,
+              deliveryLatitude: subscription.deliveryLatitude,
+              deliveryLongitude: subscription.deliveryLongitude,
+              deliveryRemark: subscription.deliveryRemark,
+              returnAddress: subscription.returnFullAddress,
+              returnLatitude: subscription.returnLatitude,
+              returnLongitude: subscription.returnLongitude,
+              returnRemark: subscription.returnRemark,
+              status: subscription.status,
+              voucherCode: subscription.voucherId,
+              createdDate: subscription.createdDate,
+              updatedDate: subscription.updatedDate,
+              paymentStatus,
+              paymentCreateDate: lastedPayment?.createdDate || '-',
+              deliverDate: subscription.deliveryDateTime,
+              returnDate: subscription.returnDateTime,
+              failureMessage: lastedPayment?.statusMessage,
+              payments: subscription.payments,
+            } ?? {}
+          )
+        }) ?? []
+      : []
 
   useEffect(() => {
     refetch()
@@ -152,6 +158,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.id,
       flex: 1,
       filterOperators: equalOperators,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'userFirstName',
@@ -161,6 +168,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.userFirstName,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'userLastName',
@@ -170,6 +178,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.userLastName,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'userEmail',
@@ -179,6 +188,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.userEmail,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'userPhoneNumber',
@@ -188,6 +198,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.userPhoneNumber,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carId',
@@ -197,6 +208,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carId,
       sortable: false,
       filterOperators: equalOperators,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carName',
@@ -206,6 +218,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carName,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carBrand',
@@ -215,6 +228,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carBrand,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carSeats',
@@ -224,6 +238,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carSeats,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carTopSpeed',
@@ -233,6 +248,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carTopSpeed,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carPlateNumber',
@@ -242,6 +258,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carPlateNumber,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carVin',
@@ -251,6 +268,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carVin,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'carFastChargeTime',
@@ -260,6 +278,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.carFastChargeTime,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'price',
@@ -269,6 +288,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.price,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'duration',
@@ -278,6 +298,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.duration,
       sortable: false,
       filterable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'startDate',
@@ -307,6 +328,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.deliveryAddress,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'returnAddress',
@@ -316,6 +338,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.returnAddress,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'status',
@@ -339,6 +362,7 @@ export default function Subscription(): JSX.Element {
       filterable: true,
       sortable: false,
       filterOperators: equalOperators,
+      valueFormatter: columnFormatText,
     },
     {
       field: 'createdDate',
@@ -348,6 +372,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.createdDate,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatDate,
     },
     {
       field: 'updatedDate',
@@ -357,6 +382,7 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.updatedDate,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatDate,
     },
     {
       field: 'paymentStatus',
@@ -366,9 +392,30 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.paymentStatus,
       filterable: false,
       sortable: false,
+      valueFormatter: columnFormatText,
     },
     {
-      field: 'deliveryDate',
+      field: 'failureMessage',
+      headerName: t('subscription.payment.failureMessage'),
+      description: t('subscription.payment.failureMessage'),
+      flex: 1,
+      hide: !visibilityColumns.failureMessage,
+      filterable: false,
+      sortable: false,
+      valueFormatter: columnFormatText,
+    },
+    {
+      field: 'paymentCreateDate',
+      headerName: t('subscription.payment.updatedDate'),
+      description: t('subscription.payment.updatedDate'),
+      flex: 1,
+      hide: !visibilityColumns.paymentCreateDate,
+      filterable: false,
+      sortable: false,
+      valueFormatter: columnFormatDate,
+    },
+    {
+      field: 'deliverDate',
       headerName: t('subscription.deliveryDate'),
       description: t('subscription.deliveryDate'),
       flex: 1,
@@ -475,7 +522,6 @@ export default function Subscription(): JSX.Element {
       </Card>
 
       <UpdateDialog
-        accessToken={accessToken}
         open={isUpdateDialogOpen}
         onClose={(needRefetch) => {
           if (needRefetch) {

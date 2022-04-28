@@ -319,6 +319,17 @@
     "paymentVersion": "เวอร์ชันการชำระเงิน",
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
+    "payments": "ประวัติการชำระเงิน",
+    "paymentColumn": {
+      "amount": "Amount",
+      "updateDate": "Update Date",
+      "createDate": "Create Date",
+      "externalTrxId": "Id",
+      "paymentType": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message"
+    },
     "status": {
       "title": "สถานะ",
       "reserved": "สำรองแล้ว",

@@ -44,13 +44,13 @@ export interface Subscription {
   durationDay: number
   deliveryDateTime: string
   deliveryFullAddress: string
-  deliveryLatitude: string
-  deliveryLongitude: string
+  deliveryLatitude: number
+  deliveryLongitude: number
   deliveryRemark: string
   returnDateTime: string
   returnFullAddress: string
-  returnLatitude: string
-  returnLongitude: string
+  returnLatitude: number
+  returnLongitude: number
   returnRemark: string
   car: Partial<SubscriptionCar>
   createdDate: string
@@ -85,8 +85,8 @@ export interface SubscriptionListQuery {
   carId?: string
   customerId?: string
   voucherId?: string
-  deliverDate?: string
-  returnDate?: string
+  deliveryDateTime?: string
+  returnDateTime?: string
   startDate?: string
   endDate?: string
   statusList?: string[]
@@ -109,9 +109,10 @@ export type SubscriptionListResponse = {
 } & ResponseWithPagination
 
 export interface SubscriptionChangeCarProps {
-  accessToken: string
-  subscriptionId: string
-  carId: string
+  id: string
+  vin: string
+  plateNumber: string
+  isActive: boolean
 }
 
 export interface SubscriptionExtendEndDateProps {

@@ -15,22 +15,32 @@ import {
   FormHelperText,
 } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import toast from 'react-hot-toast'
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { formatDate, DEFAULT_DATETIME_FORMAT } from 'utils'
+import { formatDate, columnFormatDate } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
-import dayjs from 'dayjs'
 import * as yup from 'yup'
 import { useQuery } from 'react-query'
-import { useAuth } from 'auth/AuthContext'
-import { ROLES } from 'auth/roles'
-import { columnFormatDuration } from 'pages/Pricing/utils'
-import DateTimePicker from 'components/DateTimePicker'
-import { changeCar, extend } from 'services/web-bff/subscription'
-import { getList } from 'services/web-bff/car'
+import {
+  GridColDef,
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+} from '@material-ui/data-grid'
+import toast from 'react-hot-toast'
+import { getAvailableListBFF } from 'services/web-bff/car'
+import {
+  CarAvailableListBffFilterRequestProps,
+  CarAvailableListFilterRequest,
+} from 'services/web-bff/car.type'
+import DataGridLocale from 'components/DataGridLocale'
+import { Payment } from 'services/web-bff/payment.type'
+import { SubscriptionChangeCarProps } from 'services/web-bff/subscription.type'
+import { changeCar } from 'services/web-bff/subscription'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
@@ -47,6 +57,16 @@ const MapWrapper = styled.div`
 const validationSchema = yup.object({
   plateNumber: yup.string().required('Field is required'),
 })
+
+const disableToolbar = true
+const dataGridDisableToobar = () => (
+  <GridToolbarContainer hidden>
+    {disableToolbar ? null : <GridToolbarExport />}
+    {disableToolbar ? null : <GridToolbarColumnsButton />}
+    {disableToolbar ? null : <GridToolbarFilterButton />}
+    {disableToolbar ? null : <GridToolbarDensitySelector />}
+  </GridToolbarContainer>
+)
 
 interface Subscription {
   id: string
@@ -81,10 +101,13 @@ interface Subscription {
   paymentVersion: string
   createdDate: string
   updatedDate: string
+  paymentStatus: string
+  deliveryDate: string
+  returnDate: string
+  payments: Payment[]
 }
 
 interface SubscriptionProps {
-  accessToken: string
   subscription: Subscription | undefined
   open: boolean
   onClose: (needRefetch?: boolean) => void
@@ -95,48 +118,48 @@ interface SubscriptionUpdateValuesProps {
 }
 
 export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
-  const { accessToken, open, onClose, subscription } = props
+  const { open, onClose, subscription } = props
 
   if (!subscription) {
     return <div>{` `}</div>
   }
 
   const { t } = useTranslation()
-  const { getRole } = useAuth()
-  const currentUserRole = getRole()
-  const isSuperAdminRole = currentUserRole === ROLES.SUPER_ADMIN
+  /*const { getRole } = useAuth()*/
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const [filter] = useState({
+    carId: subscription.carModelId,
+    startDate: subscription.startDate,
+    endDate: subscription.endDate,
+  } as CarAvailableListFilterRequest)
   const { data: availableCarsResponse } = useQuery('available-cars', () =>
-    getList({
-      accessToken,
-      query: {
-        modeId: {
-          eq: subscription.carModelId,
-        },
-        availableDate: {
-          startDate: subscription.startDate,
-          endDate: subscription.endDate,
-        },
-      },
-      limit: 500,
-    })
+    getAvailableListBFF({
+      filter,
+      size: 50,
+    } as CarAvailableListBffFilterRequestProps)
   )
-  const availableCars = availableCarsResponse?.data.cars || []
+
+  const availableCars = availableCarsResponse?.data.records || []
 
   const handleOnSubmit = async ({ plateNumber }: SubscriptionUpdateValuesProps) => {
     try {
       setIsLoading(true)
-      const carSelected = availableCars.find((car) => car.plateNumber === plateNumber)
-      const carId = carSelected?.id
+      const carSelected = availableCars.find((data) => data.car.plateNumber === plateNumber)
+      const vin = carSelected?.car.vin
+      const carId = carSelected?.car.id
+      const isActive = carSelected?.car.isActive
       const subscriptionId = subscription?.id
 
       if (carId && subscriptionId) {
-        await toast.promise(changeCar({ accessToken, subscriptionId, carId }), {
-          loading: t('toast.loading'),
-          success: t('subscription.updateDialog.success'),
-          error: t('subscription.updateDialog.error'),
-        })
+        await toast.promise(
+          changeCar({ vin, plateNumber, isActive, id: carId } as SubscriptionChangeCarProps),
+          {
+            loading: t('toast.loading'),
+            success: t('subscription.updateDialog.success'),
+            error: t('subscription.updateDialog.error'),
+          }
+        )
       }
     } finally {
       setIsLoading(false)
@@ -164,7 +187,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     formik.resetForm()
   }
 
-  const availablePlateNumbers = availableCars?.map((car) => car.plateNumber) || []
+  const availablePlateNumbers = availableCars?.map((data) => data.car.plateNumber) || []
   if (
     !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.carPlateNumber) &&
     subscription?.carPlateNumber
@@ -176,7 +199,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     subscription &&
     ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
 
-  const handleExtendEndDateDays = async (
+  /*const handleExtendEndDateDays = (
     subscriptionId: string,
     originalDate: string,
     newDate: string
@@ -202,13 +225,80 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
 
       onClose(true)
     }
-  }
+  }*/
 
-  const subscriptionPrice = subscription?.price.toLocaleString('th', { minimumFractionDigits: 2 })
-  const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
+  const rowPaymentCount = subscription.payments.length
+  const paymentColumns: GridColDef[] = [
+    {
+      field: 'externalTrxId',
+      headerName: t('subscription.paymentColumn.externalTrxId'),
+      description: t('subscription.paymentColumn.externalTrxId'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'amount',
+      headerName: t('subscription.paymentColumn.amount'),
+      description: t('subscription.paymentColumn.amount'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'updateDate',
+      headerName: t('subscription.paymentColumn.updateDate'),
+      description: t('subscription.paymentColumn.updateDate'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      valueFormatter: columnFormatDate,
+    },
+    {
+      field: 'createDate',
+      headerName: t('subscription.paymentColumn.createDate'),
+      description: t('subscription.paymentColumn.createDate'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      valueFormatter: columnFormatDate,
+    },
+    {
+      field: 'paymentType',
+      headerName: t('subscription.paymentColumn.paymentType'),
+      description: t('subscription.paymentColumn.paymentType'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'purpose',
+      headerName: t('subscription.paymentColumn.purpose'),
+      description: t('subscription.paymentColumn.purpose'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'status',
+      headerName: t('subscription.paymentColumn.status'),
+      description: t('subscription.paymentColumn.status'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'statusMessage',
+      headerName: t('subscription.paymentColumn.statusMessage'),
+      description: t('subscription.paymentColumn.statusMessage'),
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+  ]
 
   return (
-    <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
+    <Dialog open={open} fullWidth maxWidth="lg" aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
         {t('subscription.updateSubscriptionDetails')}
       </DialogTitle>
@@ -260,7 +350,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.price')}
-              value={subscriptionPriceFullFormat}
+              value={subscription.price}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -270,7 +360,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.duration')}
-              value={columnFormatDuration(subscription?.duration || '', t)}
+              value={subscription?.duration || ''}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -328,45 +418,14 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            {!isSuperAdminRole && (
-              <TextField
-                label={t('subscription.endDate')}
-                value={formatDate(subscription?.endDate)}
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            )}
-            {isSuperAdminRole && subscription?.endDate && (
-              <DateTimePicker
-                fullWidth
-                disablePast
-                ampm={false}
-                label={t('subscription.endDate')}
-                id="extendEndDate"
-                name="extendEndDate"
-                format={DEFAULT_DATETIME_FORMAT}
-                minDate={dayjs(subscription?.endDate).add(1, 'day')}
-                minDateMessage=""
-                defaultValue={subscription?.endDate}
-                value={subscription?.endDate}
-                onChange={(date) =>
-                  date &&
-                  handleExtendEndDateDays(
-                    subscription.id,
-                    subscription?.endDate,
-                    date?.toISOString()
-                  )
-                }
-                KeyboardButtonProps={{
-                  'aria-label': 'change date',
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            )}
+            <TextField
+              label={t('subscription.endDate')}
+              value={formatDate(subscription?.endDate)}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
@@ -416,7 +475,22 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               }}
             />
           </Grid>
-
+          <Grid item xs={12} md={12}>
+            <Typography variant="subtitle1">{t('subscription.payments')}</Typography>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <DataGridLocale
+              autoHeight
+              pagination
+              rowCount={rowPaymentCount}
+              paginationMode="server"
+              rows={subscription.payments}
+              columns={paymentColumns}
+              customToolbar={dataGridDisableToobar}
+              hideFooterPagination
+              hideFooter
+            />
+          </Grid>
           <Grid item xs={12} md={12}>
             <Typography variant="subtitle1">{t('subscription.carDetails')}</Typography>
           </Grid>
@@ -549,6 +623,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           </Grid>
         </Grid>
       </DialogContent>
+      Î
       <DialogActions>
         {isLoading && <CircularProgress size={24} />}
         <Button onClick={onFormCloseHandler} color="primary" disabled={isLoading}>

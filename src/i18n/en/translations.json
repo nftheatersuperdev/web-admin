@@ -320,6 +320,17 @@
     "paymentVersion": "Payment Version",
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
+    "payments": "Payments",
+    "paymentColumn": {
+      "amount": "Amount",
+      "updateDate": "Update Date",
+      "createDate": "Create Date",
+      "externalTrxId": "Id",
+      "paymentType": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message"
+    },
     "status": {
       "title": "Status",
       "reserved": "Reserved",
