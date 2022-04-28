@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { AppBar, Box, Breadcrumbs, Card, Grid, Tab, Tabs, Typography } from '@material-ui/core'
 import { useQuery } from 'react-query'
-import { getById } from 'services/web-bff/voucher'
+import { getByCodeBff } from 'services/web-bff/voucher'
 import { Page } from 'layout/LayoutRoute'
 import { VoucherCreateEditParams } from 'pages/VoucherCreateEdit/types'
 import GeneralInformationTab from 'pages/VoucherCreateEdit/GeneralInformationTab'
@@ -51,11 +51,11 @@ function a11yProps(index: number) {
 }
 
 export default function VoucherCreateEdit(): JSX.Element {
-  const { voucherId } = useParams<VoucherCreateEditParams>()
-  const isEdit = !!voucherId
+  const { voucherCode } = useParams<VoucherCreateEditParams>()
+  const isEdit = !!voucherCode
   const [tabIndex, setTabIndex] = useState<number>(0)
 
-  const { data: voucher, refetch } = useQuery('voucher', () => getById({ id: voucherId }))
+  const { data: voucher, refetch } = useQuery('voucher', () => getByCodeBff(voucherCode))
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue)

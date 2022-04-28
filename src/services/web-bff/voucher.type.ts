@@ -54,6 +54,21 @@ export interface VoucherCreateProps {
   data: VoucherInput
 }
 
+export interface VoucherBff {
+  id?: string
+  code: string
+  descriptionEn?: string
+  descriptionTh?: string
+  discountPercent: number
+  quantity: number
+  limitPerUser: number
+  startAt: string
+  endAt: string
+  isAllPackages?: boolean
+  packagePrices?: PackagePrice[]
+  userGroups?: UserGroup[]
+}
+
 export interface VoucherUpdateProps {
   data: VoucherInput
 }

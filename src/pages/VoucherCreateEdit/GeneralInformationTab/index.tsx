@@ -9,9 +9,8 @@ import { Button, Divider, Grid, TextField } from '@material-ui/core'
 import { useFormik } from 'formik'
 import { useHistory } from 'react-router-dom'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
-import { useAuth } from 'auth/AuthContext'
 import voucherService from 'services/web-bff/voucher'
-import { VoucherInput } from 'services/web-bff/voucher.type'
+import { VoucherBff } from 'services/web-bff/voucher.type'
 import { VoucherAbleToEditProps } from 'pages/VoucherCreateEdit/types'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
@@ -28,7 +27,6 @@ export default function VoucherGeneralInformationTab({
   isEdit,
   refetch,
 }: VoucherAbleToEditProps): JSX.Element {
-  const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -41,12 +39,12 @@ export default function VoucherGeneralInformationTab({
       .matches(/^[a-zA-Z0-9]+$/, t('validation.invalidVoucherCode'))
       .required(t('validation.required')),
     description: yup.string(),
-    percentDiscount: yup
+    discountPercent: yup
       .number()
       .min(1, t('validation.minimumIsOne'))
       .max(100, t('validation.maximumIsOneHundred'))
       .required(t('validation.required')),
-    amount: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
+    quantity: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
     limitPerUser: yup
       .number()
       .min(1, t('validation.minimumIsOne'))
@@ -55,8 +53,8 @@ export default function VoucherGeneralInformationTab({
 
   const datePlusOneDay = dayjs().add(1, 'day')
   const defaultDate = {
-    startDate: datePlusOneDay.startOf('day'),
-    endDate: datePlusOneDay.endOf('day'),
+    startAt: datePlusOneDay.startOf('day'),
+    endAt: datePlusOneDay.endOf('day'),
   }
   const currentDateTime = new Date()
   const startAtDateTime = new Date(voucher?.startAt)
@@ -108,37 +106,40 @@ export default function VoucherGeneralInformationTab({
     validationSchema,
     initialValues: {
       code: '',
-      percentDiscount: undefined,
-      amount: undefined,
-      limitPerUser: undefined,
-      startDate: isEdit ? voucher?.startAt : defaultDate.startDate,
-      endDate: isEdit ? voucher?.endAt : defaultDate.endDate,
+      discountPercent: 0,
+      quantity: 0,
+      limitPerUser: 0,
+      startAt: isEdit ? voucher?.startAt : defaultDate.startAt,
+      endAt: isEdit ? voucher?.endAt : defaultDate.endAt,
       ...voucher,
     },
     enableReinitialize: true,
     onSubmit: (values) => {
       setIsLoading(true)
 
-      const requestBody: VoucherInput = {
+      const requestBody: VoucherBff = {
         code: values.code,
         descriptionEn: descriptionEnTemp ?? voucher?.descriptionEn,
         descriptionTh: descriptionThTemp ?? voucher?.descriptionTh,
-        percentDiscount: values?.percentDiscount,
-        amount: values?.amount,
+        discountPercent: values?.discountPercent,
+        quantity: values?.quantity,
         limitPerUser: values?.limitPerUser,
-        startDate: values.startDate,
-        endDate: values.endDate,
+        startAt: values.startAt,
+        endAt: values.endAt,
+        isAllPackages: values.isAllPackages,
+        packagePrices: values.packagePrices,
+        userGroups: values.userGroups,
       }
-      const mutateFunction = isEdit ? voucherService.update : voucherService.create
+      const mutateFunction = isEdit ? voucherService.updateBff : voucherService.createBff
       const data = isEdit ? { id: voucher?.id, ...requestBody } : requestBody
       const toastMessages = {
         success: isEdit ? t('voucher.dialog.update.success') : t('voucher.dialog.create.success'),
         error: isEdit ? t('voucher.dialog.update.error') : t('voucher.dialog.create.error'),
       }
 
-      toast.promise(mutateFunction({ accessToken, data }), {
+      toast.promise(mutateFunction(data), {
         loading: t('toast.loading'),
-        success: ({ id }) => {
+        success: (id) => {
           formik.resetForm()
           setIsLoading(false)
           refetch()
@@ -198,7 +199,7 @@ export default function VoucherGeneralInformationTab({
             }}
             error={formik.touched.code && Boolean(formik.errors.code)}
             helperText={formik.touched.code && formik.errors.code}
-            disabled={isInactive || isActive}
+            disabled={isInactive || isActive || isEdit}
             onInput={handleValidateCodeValue}
             onKeyPress={handleValidateCodeKeyPress}
           />
@@ -212,16 +213,16 @@ export default function VoucherGeneralInformationTab({
             disablePast
             ampm={false}
             label={t('voucher.startAt')}
-            id="startDate"
-            name="startDate"
+            id="startAt"
+            name="startAt"
             format={DEFAULT_DATETIME_FORMAT}
-            minDate={isEdit ? formik.values.startDate : defaultDate.startDate}
+            minDate={isEdit ? formik.values.startAt : defaultDate.startAt}
             minDateMessage=""
-            defaultValue={formik.values.startDate}
-            value={formik.values.startDate}
+            defaultValue={formik.values.startAt}
+            value={formik.values.startAt}
             onChange={(date) => {
-              formik.setFieldValue('startDate', date)
-              formik.setFieldValue('endDate', dayjs(date ?? new Date()).endOf('day'))
+              formik.setFieldValue('startAt', date)
+              formik.setFieldValue('endAt', dayjs(date ?? new Date()).endOf('day'))
             }}
             KeyboardButtonProps={{
               'aria-label': 'change date',
@@ -242,13 +243,13 @@ export default function VoucherGeneralInformationTab({
             disablePast
             ampm={false}
             label={t('voucher.endAt')}
-            id="endDate"
-            name="endDate"
+            id="endAt"
+            name="endAt"
             format={DEFAULT_DATETIME_FORMAT}
-            minDate={formik.values.startDate}
+            minDate={formik.values.startAt}
             minDateMessage=""
-            defaultValue={formik.values.endDate}
-            value={formik.values.endDate}
+            defaultValue={formik.values.endAt}
+            value={formik.values.endAt}
             onChange={(date) => {
               formik.setFieldValue('endAt', date)
             }}
@@ -270,16 +271,16 @@ export default function VoucherGeneralInformationTab({
           <TextField
             fullWidth
             type="number"
-            label={t('voucher.percentDiscount')}
-            id="percentDiscount"
-            name="percentDiscount"
+            label={t('voucher.discountPercent')}
+            id="discountPercent"
+            name="discountPercent"
             variant="outlined"
-            value={formik.values.percentDiscount}
+            value={formik.values.discountPercent}
             onChange={formik.handleChange}
             InputLabelProps={{ shrink: true }}
             inputProps={{ min: 1, max: 100, step: 1 }}
-            error={formik.touched.percentDiscount && Boolean(formik.errors.percentDiscount)}
-            helperText={formik.touched.percentDiscount && formik.errors.percentDiscount}
+            error={formik.touched.discountPercent && Boolean(formik.errors.discountPercent)}
+            helperText={formik.touched.discountPercent && formik.errors.discountPercent}
             disabled={isInactive || isActive}
             onInput={handleValidatePercentageValue}
             onKeyPress={handleValidateNumericKeyPress}
@@ -292,18 +293,18 @@ export default function VoucherGeneralInformationTab({
           <TextField
             fullWidth
             type="number"
-            label={t('voucher.amount')}
-            id="amount"
-            name="amount"
+            label={t('voucher.quantity')}
+            id="quantity"
+            name="quantity"
             variant="outlined"
-            value={formik.values.amount}
+            value={formik.values.quantity}
             onChange={formik.handleChange}
             InputLabelProps={{
               shrink: true,
             }}
             inputProps={{ min: 1 }}
-            error={formik.touched.amount && Boolean(formik.errors.amount)}
-            helperText={formik.touched.amount && formik.errors.amount}
+            error={formik.touched.quantity && Boolean(formik.errors.quantity)}
+            helperText={formik.touched.quantity && formik.errors.quantity}
             disabled={isInactive || isActive}
             onKeyPress={handleValidateNumericKeyPress}
             onCut={handleDisableEvent}
