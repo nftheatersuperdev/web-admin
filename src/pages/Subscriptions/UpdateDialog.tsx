@@ -254,7 +254,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       filterable: false,
       valueFormatter: columnFormatDate,
     },
-    {
+    /* {
       field: 'createDate',
       headerName: t('subscription.paymentColumn.createDate'),
       description: t('subscription.paymentColumn.createDate'),
@@ -262,7 +262,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       sortable: false,
       filterable: false,
       valueFormatter: columnFormatDate,
-    },
+    },*/
     {
       field: 'paymentType',
       headerName: t('subscription.paymentColumn.paymentType'),

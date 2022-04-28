@@ -320,7 +320,7 @@
     "paymentVersion": "Payment Version",
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
-    "payments": "Payments",
+    "payments": "Payment history",
     "paymentColumn": {
       "amount": "Amount",
       "updateDate": "Update Date",

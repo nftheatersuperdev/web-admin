@@ -322,13 +322,13 @@
     "payments": "ประวัติการชำระเงิน",
     "paymentColumn": {
       "amount": "Amount",
-      "updateDate": "Update Date",
+      "updateDate": "วันที่อัพเดปการชำระเงิน",
       "createDate": "Create Date",
       "externalTrxId": "Id",
-      "paymentType": "Payment Type",
-      "purpose": "Purpose",
-      "status": "Status",
-      "statusMessage": "Status Message"
+      "paymentType": "ประเภทการชำระเงิน",
+      "purpose": "จุดประสงค์การชำระเงิน",
+      "status": "สถานะการชำระเงิน",
+      "statusMessage": "ข้อความสถานะการชำระเงิน"
     },
     "status": {
       "title": "สถานะ",
