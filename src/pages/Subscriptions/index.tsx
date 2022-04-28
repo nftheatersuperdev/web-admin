@@ -139,7 +139,7 @@ export default function Subscription(): JSX.Element {
               payments: subscription.payments,
             } ?? {}
           )
-        }) ?? []
+        })
       : []
 
   useEffect(() => {

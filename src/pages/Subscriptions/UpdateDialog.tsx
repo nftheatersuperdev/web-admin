@@ -18,7 +18,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { formatDate, columnFormatDate } from 'utils'
+import { formatDate, columnFormatDate, convertMoneyFormat } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
 import * as yup from 'yup'
@@ -228,9 +228,24 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   }*/
 
   const rowPaymentCount = subscription.payments.length
+
+  const paymentRow = subscription.payments.map((value) => {
+    const price = convertMoneyFormat(value?.amount)
+    const priceFullFormat = `${price} ${t('pricing.currency.thb')}`
+
+    return {
+      id: value.externalTrxId,
+      amount: priceFullFormat,
+      updateDate: value.updatedDate,
+      paymentType: value.paymentType,
+      purpose: value.purpose,
+      status: value.status,
+      statusMessage: value.statusMessage,
+    }
+  })
   const paymentColumns: GridColDef[] = [
     {
-      field: 'externalTrxId',
+      field: 'id',
       headerName: t('subscription.paymentColumn.externalTrxId'),
       description: t('subscription.paymentColumn.externalTrxId'),
       flex: 1,
@@ -484,7 +499,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               pagination
               rowCount={rowPaymentCount}
               paginationMode="server"
-              rows={subscription.payments}
+              rows={paymentRow}
               columns={paymentColumns}
               customToolbar={dataGridDisableToobar}
               hideFooterPagination

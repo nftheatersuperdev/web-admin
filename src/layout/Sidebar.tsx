@@ -19,7 +19,6 @@ import {
   People as UserIcon,
   Shop as PackageIcon,
   BatteryChargingFull as ChargingIcon,
-  MonetizationOn as AdditionalExpenseIcon,
   Person as ProfileIcon,
   Settings as SettingsIcon,
   SupervisedUserCircle as AdminUsersIcon,
@@ -135,13 +134,12 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.MARKETING,
         ],
       },
-      {
+      /*{
         title: t('sidebar.additionalExpense'),
         path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
         icon: <AdditionalExpenseIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
-      },
-
+      },*/
       {
         subHeader: t('sidebar.voucherManagement'),
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING],
