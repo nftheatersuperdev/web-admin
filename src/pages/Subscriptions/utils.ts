@@ -1,5 +1,7 @@
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
+import { compareDateIsAfter, compareDateIsBefore } from 'utils'
+import { Payment } from 'services/web-bff/payment.type'
 
 export const SubEventStatus = {
   RESERVED: 'reserved',
@@ -149,6 +151,19 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   paymentStatus: false,
   deliveryDate: false,
   returnDate: false,
+  failureMessage: false,
+  paymentCreateDate: false,
+}
+
+export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: string): string[] => {
+  const results: string[] = []
+  queryString.forEach((value, key) => {
+    if (key.indexOf(valueKey) > -1) {
+      results.push(value)
+    }
+  })
+
+  return results
 }
 
 export const setVisibilityColumns = (columns: VisibilityColumns): void => {
@@ -160,4 +175,41 @@ export const getVisibilityColumns = (): VisibilityColumns => {
     ls.get<VisibilityColumns | undefined>(STORAGE_KEYS.VISIBILITY_COLUMNS) ||
     defaultVisibilityColumns
   )
+}
+
+export const getLastedPayment = (payments: Payment[]): Payment => {
+  if (payments && payments.length === 0) {
+    return {} as Payment
+  }
+  const sortedList = [...payments].sort((n1, n2) => {
+    if (compareDateIsBefore(n1.updatedDate, n2.updatedDate)) {
+      return 1
+    }
+
+    if (compareDateIsAfter(n1.updatedDate, n2.updatedDate)) {
+      return -1
+    }
+
+    return 0
+  })
+
+  return sortedList.length > 0 ? sortedList[0] : ({} as Payment)
+}
+
+export const convertToDuration = (value: number, t: TFunction<Namespace>): string => {
+  switch (value) {
+    case 3:
+      return t('pricing.3d')
+    case 7:
+      return t('pricing.1w')
+    case 30:
+      return t('pricing.1m')
+    case 90:
+      return t('pricing.3m')
+    case 180:
+      return t('pricing.6m')
+    case 360:
+      return t('pricing.12m')
+  }
+  return value.toString()
 }
