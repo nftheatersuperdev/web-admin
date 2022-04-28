@@ -36,22 +36,16 @@ export const getList = async ({
  * This function allows operators to update a car with changing plate numbers.
  */
 export const changeCar = async ({
-  accessToken,
-  subscriptionId,
-  carId,
+  id,
+  vin,
+  plateNumber,
+  isActive,
 }: SubscriptionChangeCarProps): Promise<boolean> => {
-  await axios.patch(
-    `https://run.mocky.io/v3/bf06262b-712b-48de-9808-0b71c8c3958d`,
-    {
-      subscriptionId,
-      carId,
-    },
-    {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    }
-  )
+  await BaseApi.patch(`/v1/cars/${id}`, {
+    vin,
+    plateNumber,
+    isActive,
+  })
 
   return true
 }

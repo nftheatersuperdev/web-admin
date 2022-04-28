@@ -319,6 +319,17 @@
     "paymentVersion": "เวอร์ชันการชำระเงิน",
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
+    "payments": "ประวัติการชำระเงิน",
+    "paymentColumn": {
+      "amount": "จำนวนเงิน",
+      "updateDate": "วันที่อัพเดปการชำระเงิน",
+      "createDate": "Create Date",
+      "externalTrxId": "Id",
+      "paymentType": "ประเภทการชำระเงิน",
+      "purpose": "จุดประสงค์การชำระเงิน",
+      "status": "สถานะการชำระเงิน",
+      "statusMessage": "ข้อความสถานะการชำระเงิน"
+    },
     "status": {
       "title": "สถานะ",
       "reserved": "สำรองแล้ว",
@@ -330,6 +341,11 @@
       "completed": "คืนรถแล้ว",
       "extended": "ต่ออายุการจอง",
       "manual_extended": "กำหนด ต่ออายุการจอง"
+    },
+    "payment": {
+      "status": "สถานะการชำระเงิน",
+      "failureMessage": "ข้อความการชำระเงินล้มเหลว",
+      "updatedDate": "วันที่อัปเดตการชำระเงิน"
     },
     "noData": "ไม่มีข้อมูล",
     "updateDialog": {
