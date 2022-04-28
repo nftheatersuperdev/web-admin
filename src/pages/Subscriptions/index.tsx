@@ -466,6 +466,7 @@ export default function Subscription(): JSX.Element {
           onColumnVisibilityChange={onColumnVisibilityChange}
           onRowClick={handleRowClick}
           filterMode="server"
+          checkboxSelection
           onFilterModelChange={handleFilterChange}
           loading={isFetching}
           customToolbar={customToolbar}
