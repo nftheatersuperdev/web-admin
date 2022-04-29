@@ -32,6 +32,7 @@ import {
   columnFormatPaymentEventStatus,
   columnFormatSubEventStatus,
   convertToDuration,
+  getIsParentOptions,
   getLastedPayment,
   getListFromQueryParam,
   getSubEventStatusOptions,
@@ -137,6 +138,7 @@ export default function Subscription(): JSX.Element {
               returnDate: subscription.returnDateTime,
               failureMessage: lastedPayment?.statusMessage,
               payments: subscription.payments,
+              parentId: subscription.parentId,
             } ?? {}
           )
         })
@@ -352,6 +354,28 @@ export default function Subscription(): JSX.Element {
       },
       filterOperators: equalSelectFilterOperators,
       valueOptions: getSubEventStatusOptions(t),
+    },
+    {
+      field: 'parentId',
+      headerName: t('subscription.parentId'),
+      description: t('subscription.parentId'),
+      flex: 1,
+      hide: !visibilityColumns.parentId,
+      filterable: false,
+      sortable: false,
+      valueFormatter: columnFormatText,
+    },
+    {
+      field: 'isExtendedSubscription',
+      headerName: t('subscription.isExtendedSubscription'),
+      description: t('subscription.isExtendedSubscription'),
+      flex: 1,
+      hide: true,
+      filterable: true,
+      sortable: false,
+      disableColumnMenu: true,
+      filterOperators: equalSelectFilterOperators,
+      valueOptions: getIsParentOptions(t),
     },
     {
       field: 'voucherCode',

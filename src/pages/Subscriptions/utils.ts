@@ -109,9 +109,12 @@ export const getSubEventStatusOptions = (t: TFunction<Namespace>): SelectOption[
     label: t('subscription.status.completed'),
     value: SubEventStatus.COMPLETED,
   },
+]
+
+export const getIsParentOptions = (t: TFunction<Namespace>): SelectOption[] => [
   {
-    label: t('subscription.status.extended'),
-    value: SubEventStatus.EXTENDED,
+    label: t('subscription.isParentValue'),
+    value: 'true',
   },
 ]
 
@@ -137,7 +140,7 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   carSeats: false,
   carTopSpeed: false,
   carFastChargeTime: false,
-  price: true,
+  price: false,
   duration: true,
   startDate: true,
   endDate: true,
@@ -153,6 +156,8 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   returnDate: false,
   failureMessage: false,
   paymentCreateDate: false,
+  parentId: false,
+  isParent: false,
 }
 
 export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: string): string[] => {

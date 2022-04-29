@@ -36,15 +36,11 @@ export const getList = async ({
  * This function allows operators to update a car with changing plate numbers.
  */
 export const changeCar = async ({
-  id,
-  vin,
-  plateNumber,
-  isActive,
+  subscriptionId,
+  carId,
 }: SubscriptionChangeCarProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/cars/${id}`, {
-    vin,
-    plateNumber,
-    isActive,
+  await BaseApi.patch(`/v1/subscriptions/${subscriptionId}/delivery/cars`, {
+    carId,
   })
 
   return true

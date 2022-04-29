@@ -321,6 +321,9 @@
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
     "payments": "Payment history",
+    "parentId": "Parent Id",
+    "isParentValue": "True",
+    "isExtendedSubscription": "Is Extended Subscription",
     "paymentColumn": {
       "amount": "Amount",
       "updateDate": "Update Date",

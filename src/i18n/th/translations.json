@@ -320,6 +320,9 @@
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
     "payments": "ประวัติการชำระเงิน",
+    "parentId": "Parent Id",
+    "isParentValue": "ใช่",
+    "isExtendedSubscription": "Is Extended Subscription",
     "paymentColumn": {
       "amount": "จำนวนเงิน",
       "updateDate": "วันที่อัพเดปการชำระเงิน",
