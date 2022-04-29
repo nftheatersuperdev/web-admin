@@ -57,6 +57,7 @@ export interface Subscription {
   updatedDate: string
   user: User
   payments: Payment[]
+  parentId: string
 }
 
 export interface SubscriptionCar {
@@ -92,6 +93,8 @@ export interface SubscriptionListQuery {
   statusList?: string[]
   size?: number
   page?: number
+  parentId?: string
+  isParent?: boolean
 }
 
 export interface SubscriptionOrder {
@@ -109,10 +112,8 @@ export type SubscriptionListResponse = {
 } & ResponseWithPagination
 
 export interface SubscriptionChangeCarProps {
-  id: string
-  vin: string
-  plateNumber: string
-  isActive: boolean
+  subscriptionId: string
+  carId: string
 }
 
 export interface SubscriptionExtendEndDateProps {

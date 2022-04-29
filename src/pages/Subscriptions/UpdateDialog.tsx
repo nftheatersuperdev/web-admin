@@ -32,11 +32,10 @@ import {
   GridToolbarFilterButton,
 } from '@material-ui/data-grid'
 import toast from 'react-hot-toast'
-import { getAvailableListBFF } from 'services/web-bff/car'
-import {
-  CarAvailableListBffFilterRequestProps,
-  CarAvailableListFilterRequest,
-} from 'services/web-bff/car.type'
+import { useAuth } from 'auth/AuthContext'
+import { ROLES } from 'auth/roles'
+import { getListBFF } from 'services/web-bff/car'
+import { CarListFilterRequestProps } from 'services/web-bff/car.type'
 import DataGridLocale from 'components/DataGridLocale'
 import { Payment } from 'services/web-bff/payment.type'
 import { SubscriptionChangeCarProps } from 'services/web-bff/subscription.type'
@@ -125,41 +124,33 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   }
 
   const { t } = useTranslation()
-  /*const { getRole } = useAuth()*/
+  const { getRole } = useAuth()
+  const currentUserRole = getRole()
+  const isOperationRole = currentUserRole === ROLES.OPERATION
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const [filter] = useState({
-    carId: subscription.carModelId,
-    startDate: subscription.startDate,
-    endDate: subscription.endDate,
-  } as CarAvailableListFilterRequest)
   const { data: availableCarsResponse } = useQuery('available-cars', () =>
-    getAvailableListBFF({
-      filter,
-      size: 50,
-    } as CarAvailableListBffFilterRequestProps)
+    getListBFF({
+      size: 500,
+    } as CarListFilterRequestProps)
   )
 
-  const availableCars = availableCarsResponse?.data.records || []
+  const availableCars = availableCarsResponse?.data.cars || []
 
   const handleOnSubmit = async ({ plateNumber }: SubscriptionUpdateValuesProps) => {
     try {
       setIsLoading(true)
-      const carSelected = availableCars.find((data) => data.car.plateNumber === plateNumber)
-      const vin = carSelected?.car.vin
-      const carId = carSelected?.car.id
-      const isActive = carSelected?.car.isActive
+      const carSelected = availableCars.find((data) => data.plateNumber === plateNumber)
+      const carId = carSelected?.id
       const subscriptionId = subscription?.id
 
       if (carId && subscriptionId) {
-        await toast.promise(
-          changeCar({ vin, plateNumber, isActive, id: carId } as SubscriptionChangeCarProps),
-          {
-            loading: t('toast.loading'),
-            success: t('subscription.updateDialog.success'),
-            error: t('subscription.updateDialog.error'),
-          }
-        )
+        await toast.promise(changeCar({ subscriptionId, carId } as SubscriptionChangeCarProps), {
+          loading: t('toast.loading'),
+          success: t('subscription.updateDialog.success'),
+          error: t('subscription.updateDialog.error'),
+        })
       }
     } finally {
       setIsLoading(false)
@@ -187,7 +178,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     formik.resetForm()
   }
 
-  const availablePlateNumbers = availableCars?.map((data) => data.car.plateNumber) || []
+  const availablePlateNumbers = availableCars?.map((data) => data.plateNumber) || []
   if (
     !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.carPlateNumber) &&
     subscription?.carPlateNumber
@@ -195,9 +186,19 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     availablePlateNumbers.push(subscription.carPlateNumber)
   }
 
-  const disableToChangePlateNumber =
-    subscription &&
-    ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
+  const disableToChangePlateNumber = (): boolean => {
+    if (isOperationRole) {
+      return ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
+    }
+    return true
+  }
+
+  const [disableUpdateButton, setDisableUpdateButton] = useState(true)
+
+  const handlePlateNumberChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setDisableUpdateButton(subscription.carPlateNumber === event.target.value)
+    formik.setFieldValue('plateNumber', event.target.value || '')
+  }
 
   /*const handleExtendEndDateDays = (
     subscriptionId: string,
@@ -542,8 +543,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                 id="plateNumber"
                 name="plateNumber"
                 value={formik.values.plateNumber}
-                onChange={formik.handleChange}
-                disabled={disableToChangePlateNumber}
+                onChange={handlePlateNumberChange}
+                disabled={disableToChangePlateNumber()}
               >
                 {availablePlateNumbers.map((plateNumber) => (
                   <MenuItem key={plateNumber} value={plateNumber}>
@@ -648,7 +649,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           onClick={() => formik.handleSubmit()}
           color="primary"
           variant="contained"
-          disabled={isLoading}
+          disabled={isLoading || disableUpdateButton}
         >
           {t('button.update')}
         </Button>
