@@ -69,6 +69,10 @@ export function columnFormatMoney(params: GridValueFormatterParams): string {
   return formatMoney(params.value as number)
 }
 
+export function columnFormatText(params: GridValueFormatterParams): string {
+  return params.value ? (params.value as string) : '-'
+}
+
 export function renderEmailLink(params: GridCellParams): JSX.Element {
   return (
     <Link href={`mailto:${params.value}`} target="_top">
@@ -606,3 +610,7 @@ export const geEqualtDateTimeOperators = (t: TFunction<Namespace>): GridFilterOp
     InputComponent: GridFilterInputDateTimePicker,
   },
 ]
+
+export const convertMoneyFormat = (value: number, minimunDigit = 2): string => {
+  return value.toLocaleString('th', { minimumFractionDigits: minimunDigit })
+}

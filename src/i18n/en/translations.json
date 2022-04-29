@@ -320,6 +320,20 @@
     "paymentVersion": "Payment Version",
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
+    "payments": "Payment history",
+    "parentId": "Parent Id",
+    "isParentValue": "True",
+    "isExtendedSubscription": "Is Extended Subscription",
+    "paymentColumn": {
+      "amount": "Amount",
+      "updateDate": "Update Date",
+      "createDate": "Create Date",
+      "externalTrxId": "Id",
+      "paymentType": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message"
+    },
     "status": {
       "title": "Status",
       "reserved": "Reserved",
@@ -493,8 +507,8 @@
     "title": "Vouchers",
     "id": "Voucher ID",
     "code": "Code",
-    "percentDiscount": "Percent Discount",
-    "amount": "Limit",
+    "discountPercent": "Discount Percent",
+    "quantity": "Quantity",
     "description": {
       "en": "Description (English)",
       "th": "Description (Thai)"

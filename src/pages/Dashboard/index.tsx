@@ -80,6 +80,11 @@ export default function Dashboard(): JSX.Element {
   const totalKYCApproved = informations?.user.numberOfKycVerifiedStatus ?? 0
   const totalKYCRejected = informations?.user.numberOfKycRejectedStatus ?? 0
 
+  const searchReturn = qs.stringify({
+    returnDate: todayLowerUpper,
+    status: ['delivered', 'cancelled'],
+  })
+
   return (
     <Page>
       <Grid container spacing={3}>
@@ -188,7 +193,7 @@ export default function Dashboard(): JSX.Element {
               <DetailLink
                 pathname={ROUTE_PATHS.SUBSCRIPTION}
                 search={qs.stringify({
-                  startDate: todayLowerUpper,
+                  deliverDate: todayLowerUpper,
                   status: 'accepted',
                 })}
               />
@@ -202,15 +207,7 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalUpcomingCarsReturn.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
-            detailLink={
-              <DetailLink
-                pathname={ROUTE_PATHS.SUBSCRIPTION}
-                search={qs.stringify({
-                  endDate: todayLowerUpper,
-                  status: 'delivered',
-                })}
-              />
-            }
+            detailLink={<DetailLink pathname={ROUTE_PATHS.SUBSCRIPTION} search={searchReturn} />}
           />
         </Grid>
 

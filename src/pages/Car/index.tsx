@@ -172,25 +172,26 @@ export default function Car(): JSX.Element {
   const rowCount = carData?.data.pagination.totalRecords
   const rows =
     carData?.data.cars.map((car) => {
-      const connectorType = car.carSku.carModel.chargers.map((charger) => charger.description)
+      const connectorType =
+        car?.carSku?.carModel.chargers.map((charger) => charger.description) || '-'
 
       return {
-        id: car.id,
-        vin: car.vin,
-        plateNumber: car.plateNumber,
-        model: car.carSku.carModel.name,
-        brand: car.carSku.carModel.brand.name,
-        color: car.carSku.color,
-        bodyType: car.carSku.carModel.bodyType,
-        totalPower: car.carSku.carModel.totalPower,
-        batteryCapacity: car.carSku.carModel.batteryCapacity,
-        topSpeed: car.carSku.carModel.topSpeed,
-        range: car.carSku.carModel.range,
-        acceleration: car.carSku.carModel.acceleration,
-        chargeTime: car.carSku.carModel.chargeTime,
-        fastChargeTime: car.carSku.carModel.fastChargeTime,
+        id: car?.id,
+        vin: car?.vin,
+        plateNumber: car?.plateNumber,
+        model: car?.carSku?.carModel.name,
+        brand: car?.carSku?.carModel.brand.name,
+        color: car?.carSku?.color,
+        bodyType: car?.carSku?.carModel.bodyType,
+        totalPower: car?.carSku?.carModel.totalPower,
+        batteryCapacity: car?.carSku?.carModel.batteryCapacity,
+        topSpeed: car?.carSku?.carModel.topSpeed,
+        range: car?.carSku?.carModel.range,
+        acceleration: car?.carSku?.carModel.acceleration,
+        chargeTime: car?.carSku?.carModel.chargeTime,
+        fastChargeTime: car?.carSku?.carModel.fastChargeTime,
         connectorType: connectorType.length > 0 ? connectorType : '-',
-        status: car.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
+        status: car?.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
       }
     }) ?? []
 
