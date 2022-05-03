@@ -62,11 +62,26 @@ export interface VoucherBff {
   discountPercent: number
   quantity: number
   limitPerUser: number
-  startAt: string
-  endAt: string
+  startAt: any
+  endAt: any
   isAllPackages?: boolean
   packagePrices?: PackagePrice[]
   userGroups?: UserGroup[]
+}
+
+export interface VoucherInputBff {
+  id?: string
+  code: string
+  descriptionEn?: string
+  descriptionTh?: string
+  discountPercent: number
+  quantity: number
+  limitPerUser: number
+  startAt: string
+  endAt: string
+  isAllPackages?: boolean
+  packagePrices?: string[] | PackagePrice[]
+  userGroups?: string[] | UserGroup[]
 }
 
 export interface VoucherUpdateProps {

@@ -53,7 +53,7 @@ export default function VoucherUserGroupTab({
   )
   const addUserGroupsToVoucher = useAddUserGroupsToVoucher()
   const removeUserGroupsFromVoucher = useRemoveUserGroupsFromVoucher()
-  const isApplyAllUsers = voucher && voucher?.userGroups.length === 0
+  const isApplyAllUsers = voucher && voucher?.userGroups?.length === 0
   const existsOption = isApplyAllUsers ? selectOptions.ALL : selectOptions.SELECT
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedUserGroups, setSelectedUserGroups] = useState<UserGroup[]>()
@@ -72,7 +72,8 @@ export default function VoucherUserGroupTab({
       currentOption === selectOptions.ALL &&
       voucherId &&
       voucher &&
-      voucher.userGroups.length > 0
+      voucher?.userGroups &&
+      voucher?.userGroups?.length > 0
     ) {
       await removeUserGroupsFromVoucher.mutateAsync({
         id: voucherId,
@@ -90,11 +91,12 @@ export default function VoucherUserGroupTab({
       currentOption === selectOptions.SELECT &&
       voucherId &&
       voucher &&
-      voucher.userGroups.length > 0
+      voucher?.userGroups &&
+      voucher?.userGroups?.length > 0
     ) {
       await removeUserGroupsFromVoucher.mutateAsync({
         id: voucherId,
-        relationIds: voucher.userGroups?.map((userGroup) => userGroup.id),
+        relationIds: voucher?.userGroups?.map((userGroup) => userGroup.id),
       })
     }
 
@@ -126,7 +128,7 @@ export default function VoucherUserGroupTab({
   }
 
   useEffect(() => {
-    const voucherUserGroupIds = voucher?.userGroups.map((voucherUserGroup) => voucherUserGroup.id)
+    const voucherUserGroupIds = voucher?.userGroups?.map((voucherUserGroup) => voucherUserGroup.id)
     const userGroups = masterUserGroups?.filter((masterUserGroup) =>
       voucherUserGroupIds?.includes(masterUserGroup.id)
     )

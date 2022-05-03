@@ -16,16 +16,13 @@ import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Au
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import {
-  useAddPackagePricesToVoucher,
-  useRemovePackagePricesFromVoucher,
-  useUpdateVoucher,
-} from 'services/evme'
+import { useTranslation } from 'react-i18next'
 import { VoucherDataAndRefetchProps } from 'pages/VoucherCreateEdit/types'
+import { updateBff } from 'services/web-bff/voucher'
 import { getActive } from 'services/web-bff/package-price'
 import { PackagePriceBff } from 'services/web-bff/package-price.type'
+import { VoucherInputBff } from 'services/web-bff/voucher.type'
 
 const ButtonSpace = styled(Button)`
   margin: 0;
@@ -48,9 +45,6 @@ export default function VoucherPackagePriceTab({
 }: VoucherDataAndRefetchProps): JSX.Element {
   const existsOption = voucher?.isAllPackages ? selectOptions.ALL : selectOptions.SELECT
   const { t } = useTranslation()
-  const addPackagePricesToVoucher = useAddPackagePricesToVoucher()
-  const removePackagePricesFromVoucher = useRemovePackagePricesFromVoucher()
-  const updateVoucher = useUpdateVoucher()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedPackages, setSelectedPackages] = useState<PackagePriceBff[]>([])
   const [currentPackages, setCurrentPackages] = useState<PackagePriceBff[]>([])
@@ -59,11 +53,10 @@ export default function VoucherPackagePriceTab({
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
-  const { data: masterPackagePrices } = useQuery('master-package-prices', () => getActive())
-
-  console.log('voucher ->', voucher)
-  console.log('masterPackagePrices ->', masterPackagePrices)
-  console.log('currentOption ->', currentOption)
+  const { data: masterPackagePrices, isSuccess: isSuccessToGetMasterPackagePrices } = useQuery(
+    'master-package-prices',
+    () => getActive()
+  )
 
   const optionLabel = (option: PackagePriceBff) => {
     let durationLabel
@@ -89,17 +82,18 @@ export default function VoucherPackagePriceTab({
     `
   }
 
-  /* useEffect(() => {
-    const voucherPackagePriceIds = voucher?.packagePrices.map(
-      (voucherPackagePrice) => voucherPackagePrice.id
-    )
+  useEffect(() => {
+    const voucherPackagePriceIds =
+      voucher?.packagePrices?.map((voucherPackagePrice) => voucherPackagePrice.id) || []
     const packages = masterPackagePrices?.filter((masterPackagePrice) =>
       voucherPackagePriceIds?.includes(masterPackagePrice.id)
     )
-    setCurrentPackages(packages)
-    setSelectedPackages(packages)
+    if (packages && packages.length > 0) {
+      setCurrentPackages(packages)
+      setSelectedPackages(packages)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessToGetMasterPackagePrices])*/
+  }, [isSuccessToGetMasterPackagePrices])
 
   useEffect(() => {
     if (JSON.stringify(currentPackages) !== JSON.stringify(selectedPackages)) {
@@ -139,26 +133,6 @@ export default function VoucherPackagePriceTab({
     }
   }, [voucher])
 
-  const requestToUpdate = async (
-    voucherId: string,
-    currentIds: string[],
-    selectedIds: string[]
-  ) => {
-    if (voucherId && currentIds && currentIds?.length > 0) {
-      await removePackagePricesFromVoucher.mutateAsync({
-        id: voucherId,
-        relationIds: currentIds,
-      })
-    }
-    if (voucherId && selectedIds && selectedIds?.length > 0) {
-      await addPackagePricesToVoucher.mutateAsync({
-        id: voucherId,
-        relationIds: selectedIds,
-      })
-    }
-    return true
-  }
-
   const handleOnSubmitted = () => {
     if (currentOption === selectOptions.ALL) {
       setSelectedPackages([])
@@ -172,35 +146,21 @@ export default function VoucherPackagePriceTab({
 
   const handleUpdatePackagePrices = async () => {
     setIsLoading(true)
-    const voucherId = voucher?.id
-    const currentOptionIsALL = currentOption === selectOptions.ALL
-    const currentOptionIsNotALL = !currentOptionIsALL
-    const currentIds = currentPackages?.map((row) => row.id)
-    const selectedIds = selectedPackages?.map((row) => row.id)
+    if (voucher) {
+      const packagePriceIds: string[] = selectedPackages?.map((row) => row.id)
+      const userGroupIds: string[] = voucher.userGroups?.map((row) => row.id) || []
 
-    const toastMessages = {
-      loading: t('toast.loading'),
-      success: t('voucher.dialog.packagePrice.success'),
-      error: t('voucher.dialog.packagePrice.error'),
-    }
+      const updateObject: VoucherInputBff = { ...voucher }
+      updateObject.packagePrices = packagePriceIds
+      updateObject.userGroups = userGroupIds
 
-    await updateVoucher.mutateAsync({
-      id: voucherId,
-      isAllPackages: currentOptionIsALL ? true : false,
-    })
-    if (currentOptionIsNotALL && voucherId && currentIds && selectedIds) {
-      await toast.promise(requestToUpdate(voucherId, currentIds, selectedIds), toastMessages)
-      setCurrentPackages(selectedPackages)
-    } else if (currentOptionIsALL && voucherId && currentIds) {
-      await toast.promise(
-        removePackagePricesFromVoucher.mutateAsync({
-          id: voucherId,
-          relationIds: currentIds,
-        }),
-        toastMessages
-      )
+      await toast.promise(updateBff(updateObject), {
+        loading: t('toast.loading'),
+        success: t('voucher.dialog.packagePrice.success'),
+        error: t('voucher.dialog.packagePrice.error'),
+      })
+      handleOnSubmitted()
     }
-    handleOnSubmitted()
   }
 
   const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {
@@ -248,6 +208,7 @@ export default function VoucherPackagePriceTab({
           <Autocomplete
             multiple
             id="package-price-select"
+            value={selectedPackages}
             options={masterPackagePrices ?? []}
             onChange={(_, newValue) => setSelectedPackages([...newValue])}
             getOptionLabel={(option) => optionLabel(option)}
