@@ -169,9 +169,9 @@ export default function Car(): JSX.Element {
     setIsUpdateDialogOpen(true)
   }
 
-  const rowCount = carData?.data.pagination.totalRecords
+  const rowCount = carData?.data?.pagination?.totalRecords ?? 0
   const rows =
-    carData?.data.cars.map((car) => {
+    carData?.data?.cars?.map((car) => {
       const connectorType =
         car?.carSku?.carModel.chargers.map((charger) => charger.description) || '-'
 
