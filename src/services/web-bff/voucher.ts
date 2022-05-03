@@ -78,7 +78,6 @@ export const createBff = async (data: VoucherInputBff): Promise<string> => {
 export const updateBff = async (data: VoucherInputBff): Promise<string> => {
   const updateData = { ...data }
   delete updateData.id
-  console.log('updateData ->', updateData)
   const voucherId: string = await BaseApi.put(`/v1/vouchers/${data.id}`, updateData).then(
     (response) => response.data.data.id
   )

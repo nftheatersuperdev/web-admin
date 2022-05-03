@@ -147,12 +147,15 @@ export default function VoucherPackagePriceTab({
   const handleUpdatePackagePrices = async () => {
     setIsLoading(true)
     if (voucher) {
+      const isAllPackages = currentOption === selectOptions.ALL
       const packagePriceIds: string[] = selectedPackages?.map((row) => row.id)
       const userGroupIds: string[] = voucher.userGroups?.map((row) => row.id) || []
 
-      const updateObject: VoucherInputBff = { ...voucher }
-      updateObject.packagePrices = packagePriceIds
-      updateObject.userGroups = userGroupIds
+      const updateObject: VoucherInputBff = {
+        ...voucher,
+        userGroups: userGroupIds,
+        packagePrices: isAllPackages ? [] : packagePriceIds,
+      }
 
       await toast.promise(updateBff(updateObject), {
         loading: t('toast.loading'),
