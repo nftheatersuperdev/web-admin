@@ -1,24 +1,31 @@
 /* eslint-disable react/forbid-component-props */
 import { Fragment, useEffect, useState, ChangeEvent } from 'react'
+import { useQuery } from 'react-query'
 import {
   Button,
+  Checkbox,
   CircularProgress,
   Divider,
   FormControlLabel,
   Grid,
   Radio,
   RadioGroup,
+  TextField,
 } from '@material-ui/core'
+import Autocomplete, { AutocompleteRenderOptionState } from '@material-ui/lab/Autocomplete'
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { PackagePrice } from 'services/evme.types'
 import {
   useAddPackagePricesToVoucher,
   useRemovePackagePricesFromVoucher,
   useUpdateVoucher,
 } from 'services/evme'
 import { VoucherDataAndRefetchProps } from 'pages/VoucherCreateEdit/types'
+import { getActive } from 'services/web-bff/package-price'
+import { PackagePriceBff } from 'services/web-bff/package-price.type'
 
 const ButtonSpace = styled(Button)`
   margin: 0;
@@ -27,8 +34,8 @@ const DividerSpace = styled(Divider)`
   margin: 20px 0;
 `
 
-/*const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
-const checkedIcon = <CheckBoxIcon fontSize="small" />*/
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+const checkedIcon = <CheckBoxIcon fontSize="small" />
 
 const selectOptions = {
   ALL: 'all',
@@ -45,36 +52,42 @@ export default function VoucherPackagePriceTab({
   const removePackagePricesFromVoucher = useRemovePackagePricesFromVoucher()
   const updateVoucher = useUpdateVoucher()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedPackages, setSelectedPackages] = useState<PackagePrice[]>()
-  const [currentPackages, setCurrentPackages] = useState<PackagePrice[]>()
+  const [selectedPackages, setSelectedPackages] = useState<PackagePriceBff[]>([])
+  const [currentPackages, setCurrentPackages] = useState<PackagePriceBff[]>([])
   const [packageIsEmpty, setPackageIsEmpty] = useState<boolean>(true)
   const [packageIsEqualToExists, setPackageIsEqualToExists] = useState<boolean>(true)
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
-  /*const optionLabel = (option: PackagePrice) => {
-    let duration
-    if (option.duration === '3d') {
-      duration = t('pricing.3d')
-    } else if (option.duration === '1w') {
-      duration = t('pricing.1w')
-    } else if (option.duration === '1m') {
-      duration = t('pricing.1m')
-    } else if (option.duration === '3m') {
-      duration = t('pricing.3m')
-    } else if (option.duration === '6m') {
-      duration = t('pricing.6m')
-    } else if (option.duration === '12m') {
-      duration = t('pricing.12m')
+  const { data: masterPackagePrices } = useQuery('master-package-prices', () => getActive())
+
+  console.log('voucher ->', voucher)
+  console.log('masterPackagePrices ->', masterPackagePrices)
+  console.log('currentOption ->', currentOption)
+
+  const optionLabel = (option: PackagePriceBff) => {
+    let durationLabel
+    if (option.durationLabel === '3d') {
+      durationLabel = t('pricing.3d')
+    } else if (option.durationLabel === '1w') {
+      durationLabel = t('pricing.1w')
+    } else if (option.durationLabel === '1m') {
+      durationLabel = t('pricing.1m')
+    } else if (option.durationLabel === '3m') {
+      durationLabel = t('pricing.3m')
+    } else if (option.durationLabel === '6m') {
+      durationLabel = t('pricing.6m')
+    } else if (option.durationLabel === '12m') {
+      durationLabel = t('pricing.12m')
     }
 
     return `
       ${option.carModel?.brand} /
-      ${option.carModel?.model} /
-      ${duration} /
+      ${option.carModel?.name} /
+      ${durationLabel} /
       ${option.price.toLocaleString()} THB
     `
-  }*/
+  }
 
   /* useEffect(() => {
     const voucherPackagePriceIds = voucher?.packagePrices.map(
@@ -232,11 +245,9 @@ export default function VoucherPackagePriceTab({
       </Grid>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          {/* <pre>{JSON.stringify(selectedPackages, null, 2)}</pre> */}
-          {/* <Autocomplete
+          <Autocomplete
             multiple
             id="package-price-select"
-            value={selectedPackages ?? []}
             options={masterPackagePrices ?? []}
             onChange={(_, newValue) => setSelectedPackages([...newValue])}
             getOptionLabel={(option) => optionLabel(option)}
@@ -256,7 +267,7 @@ export default function VoucherPackagePriceTab({
               />
             )}
             disabled={currentOption !== 'select'}
-            />*/}
+          />
         </Grid>
       </Grid>
     </Fragment>
