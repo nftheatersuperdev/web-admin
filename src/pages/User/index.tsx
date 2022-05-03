@@ -14,7 +14,7 @@ import {
   columnFormatDate,
   getEqualFilterOperators,
   getContainFilterOperators,
-  geEqualtDateOperators,
+  geEqualtDateTimeOperators,
   getSelectEqualFilterOperators,
   FieldComparisons,
   FieldKeyOparators,
@@ -57,7 +57,7 @@ export default function User(): JSX.Element {
 
   const equalOperators = getEqualFilterOperators(t)
   const containOperators = getContainFilterOperators(t)
-  const dateEqualOperators = geEqualtDateOperators(t)
+  const dateEqualOperators = geEqualtDateTimeOperators(t)
   const visibilityColumns = getVisibilityColumns()
   const equalSelectFilterOperators = getSelectEqualFilterOperators(t)
 

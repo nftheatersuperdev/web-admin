@@ -323,7 +323,7 @@
     "payments": "Payment history",
     "parentId": "Parent Id",
     "isParentValue": "True",
-    "isExtendedSubscription": "Is Extended Subscription",
+    "isExtendedSubscription": "Is Extended",
     "paymentColumn": {
       "amount": "Amount",
       "updateDate": "Update Date",
