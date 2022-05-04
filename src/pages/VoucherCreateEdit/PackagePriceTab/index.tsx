@@ -53,10 +53,12 @@ export default function VoucherPackagePriceTab({
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
-  const { data: masterPackagePrices, isSuccess: isSuccessToGetMasterPackagePrices } = useQuery(
+  const { data: masterPackagePricesData, isSuccess: isSuccessToGetMasterPackagePrices } = useQuery(
     'master-package-prices',
     () => getActive()
   )
+
+  const masterPackagePrices = masterPackagePricesData || []
 
   const optionLabel = (option: PackagePriceBff) => {
     let durationLabel
@@ -212,7 +214,7 @@ export default function VoucherPackagePriceTab({
             multiple
             id="package-price-select"
             value={selectedPackages}
-            options={masterPackagePrices ?? []}
+            options={masterPackagePrices}
             onChange={(_, newValue) => setSelectedPackages([...newValue])}
             getOptionLabel={(option) => optionLabel(option)}
             disableCloseOnSelect
