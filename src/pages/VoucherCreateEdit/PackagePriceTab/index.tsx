@@ -172,9 +172,6 @@ export default function VoucherPackagePriceTab({
     setCurrentOption(value)
   }
 
-  console.log('voucher ->', voucher)
-  console.log('currentOption ->', currentOption)
-
   return (
     <Fragment>
       <Grid container spacing={3}>
