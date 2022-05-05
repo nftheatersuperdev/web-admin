@@ -128,7 +128,7 @@ export default function VoucherPackagePriceTab({
   }, [currentOption, existsOption])
 
   useEffect(() => {
-    if (voucher?.isAllPackages === true) {
+    if (voucher?.packagePrices && voucher?.packagePrices.length < 1) {
       setCurrentOption(selectOptions.ALL)
     } else {
       setCurrentOption(selectOptions.SELECT)
@@ -171,6 +171,9 @@ export default function VoucherPackagePriceTab({
   const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {
     setCurrentOption(value)
   }
+
+  console.log('voucher ->', voucher)
+  console.log('currentOption ->', currentOption)
 
   return (
     <Fragment>
