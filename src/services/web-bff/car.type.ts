@@ -238,6 +238,27 @@ export interface CarUpdateByIdProps {
   isActive: boolean
 }
 
+export interface CarModelInput {
+  name: string
+  seats: number
+  bodyType: string
+  year: number
+  condition: string
+  acceleration: number
+  topSpeed: number
+  range: number
+  batteryCapacity: number
+  horsePower: number
+  fastChargeTime: number
+  chargeTime: number
+  chargers: string[]
+}
+
+export interface CarModelInputProps {
+  id?: string
+  carModel: CarModelInput
+}
+
 export interface CarModelPriceByIdProps {
   id: string
 }

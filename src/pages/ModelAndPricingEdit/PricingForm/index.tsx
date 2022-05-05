@@ -58,6 +58,7 @@ export default function PricingForm({ rentalPackages }: CarModelPricingProps): J
               InputProps={{
                 startAdornment: <InputAdornment position="start">฿</InputAdornment>,
               }}
+              disabled
             />
           </Grid>
           <Grid item xs={4}>
@@ -72,6 +73,7 @@ export default function PricingForm({ rentalPackages }: CarModelPricingProps): J
               InputProps={{
                 startAdornment: <InputAdornment position="start">฿</InputAdornment>,
               }}
+              disabled
             />
           </Grid>
           <Grid item xs={4}>
@@ -86,6 +88,7 @@ export default function PricingForm({ rentalPackages }: CarModelPricingProps): J
               InputLabelProps={{
                 shrink: true,
               }}
+              disabled
             />
           </Grid>
         </Fragment>
