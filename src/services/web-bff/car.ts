@@ -10,6 +10,7 @@ import {
   CarModelPriceBff,
   CarUpdateByIdProps,
   CarModelPriceByIdProps,
+  CarModelInputProps,
 } from 'services/web-bff/car.type'
 
 export const getList = async ({
@@ -97,8 +98,18 @@ export const updateById = async ({
   return true
 }
 
+export const updateCarModelById = async ({
+  id,
+  carModel,
+}: CarModelInputProps): Promise<boolean> => {
+  await BaseApi.patch(`/v1/car-models/${id}`, carModel)
+
+  return true
+}
+
 export default {
   getList,
   getModelPriceById,
   updateById,
+  updateCarModelById,
 }

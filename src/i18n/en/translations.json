@@ -486,15 +486,15 @@
     "modelYear": "Model Year",
     "condition": "Condition",
     "bodyType": "Body Type",
-    "acceleration": "Acceleration",
-    "topSpeed": "Top Speed",
-    "range": "Range",
+    "acceleration": "Acceleration (sec)",
+    "topSpeed": "Top Speed (km/h)",
+    "range": "Range (km)",
     "totalPower": "Total Power",
-    "horsePower": "Horse Power",
-    "batteryCapacity": "Battery Capacity",
+    "horsePower": "Horse Power (hp)",
+    "batteryCapacity": "Battery Capacity (kWh)",
     "connectorType": "Connector Type",
-    "chargeTime": "Charge Time",
-    "fastChargeTime": "Fast Charge Time"
+    "chargeTime": "Charge Time (min)",
+    "fastChargeTime": "Fast Charge Time (min)"
   },
   "modelForm": {
     "overview": "Overview",
