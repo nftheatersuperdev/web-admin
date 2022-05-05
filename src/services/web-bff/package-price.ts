@@ -1,6 +1,8 @@
+import { BaseApi } from 'api/baseApi'
 import axios from 'axios'
 import {
   PackagePrice,
+  PackagePriceBff,
   PackagePriceByCarIdProps,
   PackagePriceCreateByCarIdProps,
 } from 'services/web-bff/package-price.type'
@@ -33,7 +35,16 @@ export const createByCarId = async ({
   return true
 }
 
+export const getActive = async (): Promise<PackagePriceBff[]> => {
+  const response: PackagePriceBff[] = await BaseApi.get('/v1/package-prices/active').then(
+    (response) => response.data.data.packages
+  )
+
+  return response
+}
+
 export default {
   getByCarId,
+  getActive,
   createByCarId,
 }

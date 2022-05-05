@@ -545,9 +545,9 @@
         "error": "Something went wrong!"
       },
       "packagePrice": {
-        "title": "Package Price",
-        "selectAvailablePackages": "Select Available Packages",
-        "availablePackages": "Available Packages",
+        "title": "Package price",
+        "selectAvailablePackages": "Select available packages",
+        "availablePackages": "Available packages",
         "success": "Package price has been updated",
         "error": "Something went wrong when updating the package price into a voucher"
       },

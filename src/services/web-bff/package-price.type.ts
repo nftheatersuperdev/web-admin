@@ -42,3 +42,18 @@ export interface PackagePriceCreateByCarIdProps {
   accessToken: string
   data: PackagePriceInput[]
 }
+
+export interface PackagePriceBff {
+  id: string
+  price: number
+  fullprice: number
+  durationDay: number
+  durationLabel: string
+  description: string
+  disabled: boolean
+  carModel: {
+    id: string
+    brand: string
+    name: string
+  }
+}
