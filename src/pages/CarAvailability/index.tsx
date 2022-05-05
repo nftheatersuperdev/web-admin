@@ -132,7 +132,7 @@ export default function Car(): JSX.Element {
     })
   }
 
-  const rowCount = carData?.data.pagination.totalRecords
+  const rowCount = carData?.data?.pagination?.totalRecords ?? 0
   const rows =
     carData?.data.records.map(({ car, availabilityStatus: status, subscriptions }) => {
       return {

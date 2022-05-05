@@ -240,10 +240,7 @@ export default function AdminUsers(): JSX.Element {
     },
   ]
 
-  /**
-   * @TODO After backend finished the pagination will be update the rowCount again.
-   */
-  const rowCount = adminUsersData?.data.adminUsers.length
+  const rowCount = adminUsersData?.data.adminUsers?.length ?? 0
   const rows = adminUsersData?.data.adminUsers ?? []
 
   return (

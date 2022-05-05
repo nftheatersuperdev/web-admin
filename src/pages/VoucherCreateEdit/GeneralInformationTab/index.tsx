@@ -10,7 +10,7 @@ import { useFormik } from 'formik'
 import { useHistory } from 'react-router-dom'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import voucherService from 'services/web-bff/voucher'
-import { VoucherBff } from 'services/web-bff/voucher.type'
+import { VoucherInputBff } from 'services/web-bff/voucher.type'
 import { VoucherAbleToEditProps } from 'pages/VoucherCreateEdit/types'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
@@ -57,8 +57,8 @@ export default function VoucherGeneralInformationTab({
     endAt: datePlusOneDay.endOf('day'),
   }
   const currentDateTime = new Date()
-  const startAtDateTime = new Date(voucher?.startAt)
-  const endAtDateTime = new Date(voucher?.endAt)
+  const startAtDateTime = new Date(voucher?.startAt || new Date())
+  const endAtDateTime = new Date(voucher?.endAt || new Date())
   const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
   const isInactive = currentDateTime > endAtDateTime
 
@@ -117,7 +117,16 @@ export default function VoucherGeneralInformationTab({
     onSubmit: (values) => {
       setIsLoading(true)
 
-      const requestBody: VoucherBff = {
+      const packagePrices =
+        values.packagePrices && values.packagePrices?.length > 0
+          ? values.packagePrices.map((packagePrice) => packagePrice.id)
+          : []
+      const userGroups =
+        values.userGroups && values.userGroups?.length > 0
+          ? values.userGroups.map((userGroup) => userGroup.id)
+          : []
+
+      const requestBody: VoucherInputBff = {
         code: values.code,
         descriptionEn: descriptionEnTemp ?? voucher?.descriptionEn,
         descriptionTh: descriptionThTemp ?? voucher?.descriptionTh,
@@ -127,8 +136,8 @@ export default function VoucherGeneralInformationTab({
         startAt: values.startAt,
         endAt: values.endAt,
         isAllPackages: values.isAllPackages,
-        packagePrices: values.packagePrices,
-        userGroups: values.userGroups,
+        packagePrices,
+        userGroups,
       }
       const mutateFunction = isEdit ? voucherService.updateBff : voucherService.createBff
       const data = isEdit ? { id: voucher?.id, ...requestBody } : requestBody

@@ -322,7 +322,7 @@
     "payments": "ประวัติการชำระเงิน",
     "parentId": "Parent Id",
     "isParentValue": "ใช่",
-    "isExtendedSubscription": "Is Extended Subscription",
+    "isExtendedSubscription": "Is Extended",
     "paymentColumn": {
       "amount": "จำนวนเงิน",
       "updateDate": "วันที่อัพเดปการชำระเงิน",

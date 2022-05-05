@@ -323,7 +323,7 @@
     "payments": "Payment history",
     "parentId": "Parent Id",
     "isParentValue": "True",
-    "isExtendedSubscription": "Is Extended Subscription",
+    "isExtendedSubscription": "Is Extended",
     "paymentColumn": {
       "amount": "Amount",
       "updateDate": "Update Date",
@@ -486,15 +486,15 @@
     "modelYear": "Model Year",
     "condition": "Condition",
     "bodyType": "Body Type",
-    "acceleration": "Acceleration",
-    "topSpeed": "Top Speed",
-    "range": "Range",
+    "acceleration": "Acceleration (sec)",
+    "topSpeed": "Top Speed (km/h)",
+    "range": "Range (km)",
     "totalPower": "Total Power",
-    "horsePower": "Horse Power",
-    "batteryCapacity": "Battery Capacity",
+    "horsePower": "Horse Power (hp)",
+    "batteryCapacity": "Battery Capacity (kWh)",
     "connectorType": "Connector Type",
-    "chargeTime": "Charge Time",
-    "fastChargeTime": "Fast Charge Time"
+    "chargeTime": "Charge Time (min)",
+    "fastChargeTime": "Fast Charge Time (min)"
   },
   "modelForm": {
     "overview": "Overview",
@@ -545,9 +545,9 @@
         "error": "Something went wrong!"
       },
       "packagePrice": {
-        "title": "Package Price",
-        "selectAvailablePackages": "Select Available Packages",
-        "availablePackages": "Available Packages",
+        "title": "Package price",
+        "selectAvailablePackages": "Select available packages",
+        "availablePackages": "Available packages",
         "success": "Package price has been updated",
         "error": "Something went wrong when updating the package price into a voucher"
       },
