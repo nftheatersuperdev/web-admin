@@ -23,9 +23,9 @@ pipeline {
             }
         }
         stage ('Copy Environment') {
-             steps{
+            steps{
                 sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/web-admin-${INTERNAL_ENVIRONMENT}"
-             }
+            }
         }
         stage ('Build Static File') {
             steps {
@@ -33,19 +33,26 @@ pipeline {
             }
         }
         stage ('Zip') {
-             steps{
+            steps{
                 sh "cd build && zip -r ${env.RELEASE_VERSION}-${currentBuild.number}.zip ./* && cd -"
-             }
+            }
         }
         stage ('Upload to S3') {
-             steps{
-                sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://web-admin-${INTERNAL_ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
-             }
+            steps{
+                script {
+                    if (ENVIRONMENT == 'staging') {
+                        sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://evme-web-admin-${ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
+                        sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://evme-web-admin-prod/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
+                    } else {
+                        sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://evme-web-admin-${ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
+                    }
+                }
+            }
         }
         stage ('Deploy') {
-             steps{
-                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://web-admin-${INTERNAL_ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip"
-             }
+            steps{
+                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://evme-web-admin-${ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip"
+            }
         }
     }
 
