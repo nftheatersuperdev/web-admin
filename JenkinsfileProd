@@ -1,0 +1,26 @@
+@Library('shared-jenkins-library@master') _
+
+pipeline {
+    agent { label "master" }
+    tools { nodejs 'NodeJS' }
+
+    parameters {
+      string(name: 'APP_VERSION', defaultValue: '1.x.x-x', description: 'Release Version')
+    }
+
+    stages {
+        stage ('Deploy') {
+            steps{
+                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://evme-web-admin-prod/${APP_VERSION}.zip"
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sendNotifications(currentBuild.result)
+            }
+        }
+    }
+}

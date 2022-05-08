@@ -1,6 +1,10 @@
 {
   "name": "evme-admin",
+<<<<<<< HEAD
   "version": "1.0.0",
+=======
+  "version": "1.0.1",
+>>>>>>> hotfix/1.0.1
   "private": true,
   "engines": {
     "node": ">=16",
