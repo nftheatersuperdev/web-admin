@@ -4,10 +4,6 @@ pipeline {
     agent { label "master" }
     tools { nodejs 'NodeJS' }
 
-    parameters {
-      string(name: 'RELEASE_VERSION', defaultValue: '0.0.1', description: 'Release Version')
-    }
-
     stages {
         stage ('Get Latest Version') {
             steps {
