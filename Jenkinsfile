@@ -22,36 +22,25 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage ('Copy Environment') {
-            steps{
-                sh "cp /data/web-admin/${ENVIRONMENT}/.env /var/lib/jenkins/workspace/web-admin-${INTERNAL_ENVIRONMENT}"
-            }
-        }
-        stage ('Build Static File') {
+        stage ('Build And Push Bundle To S3') {
             steps {
-                sh 'npm run build'
-            }
-        }
-        stage ('Zip') {
-            steps{
-                sh "cd build && zip -r ${env.RELEASE_VERSION}-${currentBuild.number}.zip ./* && cd -"
-            }
-        }
-        stage ('Upload to S3') {
-            steps{
                 script {
-                    if (ENVIRONMENT == 'staging') {
-                        sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://evme-web-admin-${ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
-                        sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://evme-web-admin-prod/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
-                    } else {
-                        sh "aws s3 cp ./build/${env.RELEASE_VERSION}-${currentBuild.number}.zip s3://evme-web-admin-${ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip --acl public-read"
-                    }
+                    webBuildAndPushS3(
+                        env.RELEASE_VERSION + currentBuild.number,
+                        params.ENVIRONMENT
+                    )
                 }
             }
         }
         stage ('Deploy') {
-            steps{
-                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://evme-web-admin-${ENVIRONMENT}/${env.RELEASE_VERSION}-${currentBuild.number}.zip"
+            steps {
+                script {
+                    webDeploy(
+                        params.AMPLIFY_APP_ID
+                        env.RELEASE_VERSION + currentBuild.number,
+                        params.ENVIRONMENT
+                    )
+                }
             }
         }
     }

@@ -10,8 +10,14 @@ pipeline {
 
     stages {
         stage ('Deploy') {
-            steps{
-                sh "aws amplify start-deployment --app-id ${AMPLIFY_APP_ID} --branch-name ${ENVIRONMENT} --source-url=s3://evme-web-admin-prod/${APP_VERSION}.zip"
+            steps {
+                script {
+                    webDeployProd(
+                       params.AMPLIFY_APP_ID,
+                       params.APP_VERSION,
+                       params.ENVIRONMENT 
+                    )
+                }
             }
         }
     }
