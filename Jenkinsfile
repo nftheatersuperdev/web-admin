@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     latestTag = sh(returnStdout:  true, script: "git tag --sort=-creatordate | head -n 1").trim()
-                    env.APP_VERSION = latestTag + currentBuild.number
+                    env.APP_VERSION = latestTag + "-" + currentBuild.number
                 }
             }
         }
