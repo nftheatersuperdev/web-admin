@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     webDeploy(
-                        params.AMPLIFY_APP_ID
+                        params.AMPLIFY_APP_ID,
                         env.APP_VERSION,
                         params.ENVIRONMENT
                     )
