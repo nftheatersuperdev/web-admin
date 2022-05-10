@@ -317,7 +317,7 @@ export default function User(): JSX.Element {
         // these fields not support from backend
         verifyDate: null,
         note: '',
-        kycRejectReason: user.kycRejectReason,
+        kycRejectReason: user.kycReason,
         userGroups: user.userGroups,
       }
     }) || []

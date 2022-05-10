@@ -16,6 +16,8 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   note: false,
   createdAt: true,
   updatedAt: true,
+  updatedDate: true,
+  createdDate: true,
 }
 
 export interface VisibilityColumns {
