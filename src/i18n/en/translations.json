@@ -669,5 +669,8 @@
       "failed": "Failed",
       "authorizedRefund": "Authorized Refund"
     }
+  },
+  "actionsEvent": {
+    "copy": "Copied !!"
   }
 }

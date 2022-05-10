@@ -636,5 +636,8 @@
   },
   "cardStatus": {
     "detail": "Detail >"
+  },
+  "actionsEvent": {
+    "copy": "คัดลอก !!"
   }
 }
