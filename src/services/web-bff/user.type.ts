@@ -16,7 +16,7 @@ export interface User {
   carTrackId: string | null
   defaultAddress: string | null
   kycStatus: 'pending' | 'verified' | 'rejected'
-  kycRejectReason: string | null
+  kycReason: string | null
   locale: 'TH' | 'EN'
   creditCard: string | null
   userGroups: string[]
