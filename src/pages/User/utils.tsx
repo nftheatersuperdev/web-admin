@@ -5,7 +5,7 @@ const STORAGE_KEYS = {
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
-  id: false,
+  id: true,
   firstName: true,
   lastName: true,
   email: true,
@@ -14,8 +14,8 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   kycRejectReason: true,
   verifyDate: false,
   note: false,
-  createdAt: false,
-  updatedAt: false,
+  createdAt: true,
+  updatedAt: true,
 }
 
 export interface VisibilityColumns {
