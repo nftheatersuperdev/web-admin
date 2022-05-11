@@ -76,7 +76,7 @@ export default function Dashboard(): JSX.Element {
   const totalUsers = informations?.user.total ?? 0
   const totalUpcomingCarsDelivery = informations?.subscription.numberOfDeliveryTaskInThisDay ?? 0
   const totalUpcomingCarsReturn = informations?.subscription.numberOfReturnTaskInThisDay ?? 0
-  const totalKYCPending = informations?.user.numberOfKycPendingStatus ?? 0
+  const totalKYC = informations?.user.total ?? 0
   const totalKYCApproved = informations?.user.numberOfKycVerifiedStatus ?? 0
   const totalKYCRejected = informations?.user.numberOfKycRejectedStatus ?? 0
 
@@ -128,7 +128,7 @@ export default function Dashboard(): JSX.Element {
             <Grid item lg={4} sm={6} xl={4} xs={12}>
               <CardStatus
                 title={t('dashboard.totalRequestedCases.title')}
-                value={totalKYCPending}
+                value={totalKYC}
                 subTitle={t('dashboard.totalRequestedCases.subTitle')}
                 icon={<RequestedIcon />}
                 iconColor="#03a9f4"
@@ -146,7 +146,7 @@ export default function Dashboard(): JSX.Element {
                 detailLink={
                   <DetailLink
                     pathname={ROUTE_PATHS.USER}
-                    search={qs.stringify({ kycStatus: { eq: 'verified' } })}
+                    search={qs.stringify({ kycStatus: 'verified' })}
                   />
                 }
               />
@@ -162,7 +162,7 @@ export default function Dashboard(): JSX.Element {
                 detailLink={
                   <DetailLink
                     pathname={ROUTE_PATHS.USER}
-                    search={qs.stringify({ kycStatus: { eq: 'rejected' } })}
+                    search={qs.stringify({ kycStatus: 'rejected' })}
                   />
                 }
               />
