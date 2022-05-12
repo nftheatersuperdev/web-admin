@@ -193,6 +193,8 @@ export default function Car(): JSX.Element {
         fastChargeTime: car?.carSku?.carModel.fastChargeTime,
         connectorType: connectorType.length > 0 ? connectorType : '-',
         status: car?.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
+        createdDate: car?.createdDate,
+        updatedDate: car?.updatedDate,
       }
     }) ?? []
 
