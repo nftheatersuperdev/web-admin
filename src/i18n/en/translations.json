@@ -35,6 +35,7 @@
     "additionalExpense": "Additional Expense",
     "others": "Others",
     "chargingLocations": "Charging Locations",
+    "documents": "Documents",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -668,6 +669,44 @@
       "successful": "Successful",
       "failed": "Failed",
       "authorizedRefund": "Authorized Refund"
+    }
+  },
+  "documents": {
+    "header": "Document Management",
+    "overview": {
+      "title": "Overview",
+      "id": "Document ID",
+      "nameEN": "Document Name (EN)",
+      "nameTH": "Document Name (TH)",
+      "codeName": "Document Code Name",
+      "activeVersion": "Active Version",
+      "lastUpdated": "Last updated"
+    },
+    "versions": {
+      "title": "Document Versions",
+      "no": "No",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "version": "Version",
+      "status": "Status",
+      "effectiveDate": "Effective Date",
+      "revisionSummary": "Revision summary",
+      "buttons": {
+        "addNewVersion": "Add New Version"
+      }
+    },
+    "overviewAndVersions": "Overview & Versions",
+    "addEdit": {
+      "titles": {
+        "add": "Add New Version",
+        "edit": "Edit exist"
+      },
+      "effectiveDateTime": "Effective Date & Time",
+      "revisionSummary": "Revision summary",
+      "titleEN": "Title English",
+      "titleTH": "Title Thai",
+      "contentEN": "Content English",
+      "contentTH": "Content Thai"
     }
   }
 }
