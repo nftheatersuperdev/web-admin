@@ -39,7 +39,7 @@ export const defaultVisibilityColumns: VisibilityColumns = {
 
 export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
   {
-    label: t('car.statuses.available'),
+    label: t('car.statuses.published'),
     value: CarStatus.AVAILABLE,
   },
   {
@@ -53,7 +53,7 @@ export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): 
 
   switch (enforceStatus) {
     case CarStatus.AVAILABLE:
-      return t('car.statuses.available')
+      return t('car.statuses.published')
 
     case CarStatus.OUT_OF_SERVICE:
       return t('car.statuses.outOfService')
