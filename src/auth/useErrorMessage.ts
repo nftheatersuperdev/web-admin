@@ -1,42 +1,15 @@
 import { useTranslation } from 'react-i18next'
-import { ClientError } from 'graphql-request'
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import { EVmeAuthError, ERROR_CODES } from './errors'
+import { ERROR_CODES } from './errors'
 
 interface ErrorMessage {
-  (error: firebase.auth.Error | ClientError | EVmeAuthError | Error): string
+  (code: string): string
 }
 
 function useErrorMessage(): ErrorMessage {
   const { t } = useTranslation()
 
-  const errorMessage = (
-    error: firebase.auth.Error | ClientError | EVmeAuthError | Error
-  ): string => {
-    let errorCode = ''
-
-    if (error instanceof ClientError) {
-      const { response } = error as ClientError
-      const { errors } = response
-
-      if (errors?.length) {
-        errorCode = ERROR_CODES.AUTHENTICATION_FAILED
-        console.error('GraphQL error:', errors[0].message)
-      }
-    } else if (error instanceof EVmeAuthError) {
-      const { code, message } = error as EVmeAuthError
-      console.error('Auth error:', message)
-      errorCode = code
-    } else if ((error as firebase.auth.Error).code) {
-      const { code, message } = error as firebase.auth.Error
-      errorCode = code
-      console.error('Firebase error:', message)
-    } else {
-      return error.message
-    }
-
-    switch (errorCode) {
+  const errorMessage = (code: string): string => {
+    switch (code) {
       case 'auth/invalid-email':
         return t('authentication.error.invalidEmail')
 

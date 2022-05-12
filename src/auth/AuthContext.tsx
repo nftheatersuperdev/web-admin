@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactElement, createContext, useContext, useState, useEffect, Fragment } from 'react'
 import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
@@ -132,8 +133,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       setUserId(user.uid)
       setToken(token || '')
       setRole(userProfile.role.toLocaleLowerCase())
-    } catch (error) {
-      const message = errorMessage(error)
+    } catch (error: any) {
+      const message = errorMessage(error.code as string)
       throw new Error(message)
     }
   }
@@ -143,8 +144,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       await fbase.signOut()
       ls.remove(STORAGE_KEYS.TOKEN)
       ls.remove(STORAGE_KEYS.ROLE)
-    } catch (error) {
-      const message = errorMessage(error.code)
+    } catch (error: any) {
+      const message = errorMessage(error.code as string)
       throw new Error(message)
     }
   }
@@ -152,8 +153,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
   const updatePassword = async (currentPassword: string, newPassword: string): Promise<void> => {
     try {
       await fbase.updatePassword(currentPassword, newPassword)
-    } catch (error) {
-      const message = errorMessage(error.code)
+    } catch (error: any) {
+      const message = errorMessage(error.code as string)
       throw new Error(message)
     }
   }
