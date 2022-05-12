@@ -16,10 +16,8 @@ export const CarStatus = {
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
-  firstName: true,
-  lastName: true,
-  email: true,
-  phoneNumber: true,
+  id: true,
+  carTrackId: true,
   brand: true,
   model: true,
   price: true,

@@ -177,6 +177,7 @@ export default function Car(): JSX.Element {
 
       return {
         id: car?.id,
+        carTrackId: car?.carTrackId,
         vin: car?.vin,
         plateNumber: car?.plateNumber,
         model: car?.carSku?.carModel.name,
@@ -201,6 +202,14 @@ export default function Car(): JSX.Element {
       headerName: t('car.id'),
       description: t('car.id'),
       hide: !visibilityColumns.id,
+      flex: 1,
+      filterable: false,
+    },
+    {
+      field: 'carTrackId',
+      headerName: t('car.carTrackId'),
+      description: t('car.carTrackId'),
+      hide: !visibilityColumns.carTrackId,
       flex: 1,
       filterable: false,
     },
