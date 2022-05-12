@@ -67,7 +67,7 @@ export default function Car(): JSX.Element {
 
   const handleFilterChange = (params: GridFilterModel) => {
     setFilter(
-      params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+      params.items.reduce((filterItem, { columnField, operatorValue, value }: GridFilterItem) => {
         const isId = columnField === 'id'
 
         let keyOfValue = ''
@@ -84,9 +84,14 @@ export default function Car(): JSX.Element {
                 break
             }
           }
-          filter = { [keyOfValue]: value }
+          filterItem = { [keyOfValue]: value }
         }
-        return filter
+        filterItem = {
+          ...filterItem,
+          startDate: dayjs(selectedFromDate).startOf('day').toDate(),
+          endDate: dayjs(selectedToDate).endOf('day').toDate(),
+        }
+        return filterItem
       }, {} as CarAvailableListFilterRequest)
     )
     setPage(0)

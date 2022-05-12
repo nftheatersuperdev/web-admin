@@ -204,6 +204,7 @@
   },
   "car": {
     "id": "ID",
+    "carTrackId": "Cartrack ID",
     "brand": "Brand",
     "model": "Model",
     "color": "Color",

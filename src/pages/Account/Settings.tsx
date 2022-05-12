@@ -16,18 +16,21 @@ export default function Settings(): JSX.Element {
   const { t } = useTranslation()
   const { updatePassword } = useAuth()
 
+  const passwordMinimumLength = 8
+  const passwordMinimumLengthLimitText = t(
+    'settings.updatePassword.errors.passwordMinimumLengthLimit',
+    {
+      length: passwordMinimumLength,
+    }
+  )
+
   const validationSchema = Yup.object({
     currentPassword: Yup.string().required(
       t('settings.updatePassword.errors.currentPasswordRequired')
     ),
     newPassword: Yup.string()
       .required(t('settings.updatePassword.errors.newPasswordRequired'))
-      .min(
-        6,
-        t('settings.updatePassword.errors.passwordMinimumLengthLimit', {
-          length: 6,
-        })
-      ),
+      .min(passwordMinimumLength, passwordMinimumLengthLimitText),
     confirmNewPassword: Yup.string()
       .required(t('settings.updatePassword.errors.confirmNewPasswordRequired'))
       .oneOf([Yup.ref('newPassword'), null], t('settings.updatePassword.errors.passwordMismatch')),
@@ -43,7 +46,7 @@ export default function Settings(): JSX.Element {
           formik.resetForm()
           return t('settings.updatePassword.success')
         },
-        error: (err) => err,
+        error: (error) => error.message,
       })
     },
   })
@@ -79,7 +82,7 @@ export default function Settings(): JSX.Element {
               value={formik.values.newPassword}
               onChange={formik.handleChange}
               error={Boolean(formik.errors.newPassword)}
-              helperText={formik.errors.newPassword}
+              helperText={formik.errors.newPassword || passwordMinimumLengthLimitText}
             />
             <TextField
               fullWidth
