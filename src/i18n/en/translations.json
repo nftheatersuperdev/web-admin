@@ -318,6 +318,7 @@
     "bookingDetails": "Booking Details",
     "subscriptionId": "Subscription ID",
     "voucherCode": "Voucher Code",
+    "voucherId": "Voucher ID",
     "paymentVersion": "Payment Version",
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
