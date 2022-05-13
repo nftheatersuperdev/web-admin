@@ -30,7 +30,11 @@ export default function Settings(): JSX.Element {
     ),
     newPassword: Yup.string()
       .required(t('settings.updatePassword.errors.newPasswordRequired'))
-      .min(passwordMinimumLength, passwordMinimumLengthLimitText),
+      .min(passwordMinimumLength, passwordMinimumLengthLimitText)
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
+        t('settings.updatePassword.errors.invalidFormat')
+      ),
     confirmNewPassword: Yup.string()
       .required(t('settings.updatePassword.errors.confirmNewPasswordRequired'))
       .oneOf([Yup.ref('newPassword'), null], t('settings.updatePassword.errors.passwordMismatch')),

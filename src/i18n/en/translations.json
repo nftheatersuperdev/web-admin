@@ -463,7 +463,8 @@
         "newPasswordRequired": "New password is required",
         "confirmNewPasswordRequired": "Current password is required",
         "passwordMismatch": "Password mismatch",
-        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long"
+        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long",
+        "invalidFormat": "Require at least 1 uppercase, lowercase and number (special character is optional)"
       }
     }
   },
