@@ -147,17 +147,18 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   deliveryAddress: false,
   returnAddress: false,
   status: true,
-  voucherCode: false,
+  voucherId: false,
   paymentVersion: false,
   createdDate: false,
   updatedDate: false,
   paymentStatus: false,
-  deliveryDate: false,
+  deliverDate: false,
   returnDate: false,
   failureMessage: false,
   paymentCreateDate: false,
   parentId: false,
   isParent: false,
+  isExtendedSubscription: false,
 }
 
 export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: string): string[] => {

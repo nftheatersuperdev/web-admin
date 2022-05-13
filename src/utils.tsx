@@ -612,5 +612,5 @@ export const geEqualtDateTimeOperators = (t: TFunction<Namespace>): GridFilterOp
 ]
 
 export const convertMoneyFormat = (value: number, minimunDigit = 2): string => {
-  return value.toLocaleString('th', { minimumFractionDigits: minimunDigit })
+  return value ? value.toLocaleString('th', { minimumFractionDigits: minimunDigit }) : ''
 }
