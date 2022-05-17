@@ -10,6 +10,7 @@ import { useQuery } from 'react-query'
 import { getListBFF } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
+import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 export default function ModelAndPricing(): JSX.Element {
   const history = useHistory()
@@ -24,10 +25,30 @@ export default function ModelAndPricing(): JSX.Element {
   } = useQuery('model-and-pricing-page', () => getListBFF({ page, size: pageSize }))
 
   const idFilterOperators = getIdFilterOperators(t)
+  const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPage(0)
     setPageSize(params.pageSize)
+  }
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
   }
 
   useEffect(() => {
@@ -53,6 +74,7 @@ export default function ModelAndPricing(): JSX.Element {
       field: 'id',
       headerName: t('pricing.id'),
       description: t('pricing.id'),
+      hide: !visibilityColumns.id,
       flex: 1,
       filterOperators: idFilterOperators,
     },
@@ -60,6 +82,7 @@ export default function ModelAndPricing(): JSX.Element {
       field: 'brand',
       headerName: t('pricing.brand'),
       description: t('pricing.brand'),
+      hide: !visibilityColumns.brand,
       flex: 1,
       filterable: false,
     },
@@ -67,6 +90,7 @@ export default function ModelAndPricing(): JSX.Element {
       field: 'name',
       headerName: t('pricing.model'),
       description: t('pricing.model'),
+      hide: !visibilityColumns.name,
       flex: 1,
       filterable: false,
     },
@@ -74,6 +98,7 @@ export default function ModelAndPricing(): JSX.Element {
       field: 'createdDate',
       headerName: t('pricing.createdDate'),
       description: t('pricing.createdDate'),
+      hide: !visibilityColumns.createdDate,
       valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
@@ -82,6 +107,7 @@ export default function ModelAndPricing(): JSX.Element {
       field: 'updatedDate',
       headerName: t('pricing.updatedDate'),
       description: t('pricing.updatedDate'),
+      hide: !visibilityColumns.updatedDate,
       valueFormatter: columnFormatDate,
       flex: 1,
       filterable: false,
@@ -90,6 +116,7 @@ export default function ModelAndPricing(): JSX.Element {
       field: 'actions',
       headerName: t('car.actions'),
       description: t('car.actions'),
+      hide: !visibilityColumns.actions,
       flex: 1,
       sortable: false,
       filterable: false,
@@ -118,6 +145,7 @@ export default function ModelAndPricing(): JSX.Element {
           paginationMode="server"
           onPageSizeChange={handlePageSizeChange}
           onPageChange={setPage}
+          onColumnVisibilityChange={onColumnVisibilityChange}
           rows={rows}
           columns={columns}
           filterMode="server"
