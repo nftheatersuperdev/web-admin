@@ -55,7 +55,7 @@ export default function VoucherCreateEdit(): JSX.Element {
   const isEdit = !!voucherCode
   const [tabIndex, setTabIndex] = useState<number>(0)
 
-  const { data: voucher, refetch } = useQuery('voucher', () => getByCodeBff(voucherCode))
+  const { data: voucher, refetch } = useQuery('voucher', () => getByCodeBff(voucherCode, isEdit))
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue)
