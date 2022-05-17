@@ -143,6 +143,7 @@ export default function Subscription(): JSX.Element {
               payments: subscription.payments,
               parentId: subscription.parentId,
               voucherCode: subscription.voucher ? subscription.voucher.code : '',
+              isExtendedSubscription: subscription.parentId ? 'True' : 'False',
             } ?? {}
           )
         })
@@ -374,7 +375,7 @@ export default function Subscription(): JSX.Element {
       headerName: t('subscription.isExtendedSubscription'),
       description: t('subscription.isExtendedSubscription'),
       flex: 1,
-      hide: !visibilityColumns.parentId,
+      hide: !visibilityColumns.isExtendedSubscription,
       filterable: true,
       sortable: false,
       disableColumnMenu: true,
