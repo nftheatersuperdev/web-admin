@@ -238,13 +238,13 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     const priceFullFormat = `${price} ${t('pricing.currency.thb')}`
 
     return {
-      id: value.externalTrxId,
-      amount: priceFullFormat,
-      updateDate: value.updatedDate,
-      paymentType: value.paymentType,
-      purpose: value.purpose,
-      status: value.status,
-      statusMessage: value.statusMessage,
+      id: value.externalTrxId || '',
+      amount: priceFullFormat || '',
+      updateDate: value.updatedDate || '',
+      paymentType: value.paymentType || '',
+      purpose: value.purpose || '',
+      status: value.status || '',
+      statusMessage: value.statusMessage || '',
     }
   })
   const paymentColumns: GridColDef[] = [
@@ -608,8 +608,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
-              label={t('subscription.voucherId')}
-              value={subscription?.voucherId}
+              label={t('subscription.voucherCode')}
+              value={subscription?.voucherCode}
               fullWidth
               InputProps={{
                 readOnly: true,

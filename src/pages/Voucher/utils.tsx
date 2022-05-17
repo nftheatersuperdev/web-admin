@@ -19,8 +19,8 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   limitPerUser: true,
   startAt: true,
   endAt: true,
-  createdAt: false,
-  updatedAt: false,
+  createdDate: false,
+  updatedDate: false,
 }
 
 export interface VisibilityColumns {
