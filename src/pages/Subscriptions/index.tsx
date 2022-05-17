@@ -142,6 +142,7 @@ export default function Subscription(): JSX.Element {
               failureMessage: lastedPayment?.statusMessage,
               payments: subscription.payments,
               parentId: subscription.parentId,
+              voucherCode: subscription.voucher ? subscription.voucher.code : '',
             } ?? {}
           )
         })
