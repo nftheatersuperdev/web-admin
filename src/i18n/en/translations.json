@@ -672,5 +672,11 @@
       "failed": "Failed",
       "authorizedRefund": "Authorized Refund"
     }
+  },
+  "modelAndPricing": {
+    "editDialog": {
+      "success": "Edit model and pricing success",
+      "error": "something went wrong"
+    }
   }
 }

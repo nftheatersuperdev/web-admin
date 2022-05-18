@@ -639,5 +639,19 @@
   },
   "cardStatus": {
     "detail": "Detail >"
+  },
+  "paymentEvent": {
+    "status": {
+      "pending": "กำลังดำเนินการ",
+      "successful": "เสร็จสมบูรณ์",
+      "failed": "การชำระล้มเหลว",
+      "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
+    }
+  },
+  "modelAndPricing": {
+    "editDialog": {
+      "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
+      "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
+    }
   }
 }

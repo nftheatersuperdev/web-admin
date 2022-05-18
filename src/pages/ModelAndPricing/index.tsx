@@ -79,6 +79,14 @@ export default function ModelAndPricing(): JSX.Element {
       filterOperators: idFilterOperators,
     },
     {
+      field: 'modelId',
+      headerName: t('pricing.modelId'),
+      description: t('pricing.modelId'),
+      hide: !visibilityColumns.modelId,
+      flex: 1,
+      filterOperators: idFilterOperators,
+    },
+    {
       field: 'brand',
       headerName: t('pricing.brand'),
       description: t('pricing.brand'),
