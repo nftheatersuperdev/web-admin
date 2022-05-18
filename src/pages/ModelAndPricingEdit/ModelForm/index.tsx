@@ -46,9 +46,9 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
           loading: t('toast.loading'),
           success: () => {
             history.goBack()
-            return t('additionalExpense.createDialog.success')
+            return t('modelAndPricing.editDialog.success')
           },
-          error: t('additionalExpense.createDialog.error'),
+          error: t('modelAndPricing.editDialog.error'),
         }
       )
     } finally {
@@ -71,8 +71,7 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
       horsePower: car?.horsePower || 0,
       fastChargeTime: car?.fastChargeTime || 0,
       chargeTime: car?.chargeTime || 0,
-      chargers: [],
-      connectorTypeIds: car?.chargers.map((x) => x.id),
+      chargers: car?.chargers && car?.chargers.length > 0 ? car?.chargers.map((x) => x.type) : [],
     },
     enableReinitialize: true,
     onSubmit: handleOnSubmit,
@@ -97,7 +96,9 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
                 onChange={formik.handleChange}
                 InputLabelProps={{
                   shrink: true,
+                  disabled: true,
                 }}
+                disabled
               />
             </Grid>
             <Grid item xs={4}>
@@ -272,12 +273,12 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
                   <FormControlLabel
                     control={
                       <Checkbox
-                        key={connectorType.id}
+                        key={connectorType.type}
                         onChange={formik.handleChange}
-                        name="connectorTypeIds"
+                        name="chargers"
                         color="primary"
-                        value={connectorType.id}
-                        checked={includes(connectorType.id)(formik.values.connectorTypeIds)}
+                        value={connectorType.type}
+                        checked={includes(connectorType.type)(formik.values.chargers)}
                       />
                     }
                     label={connectorType.type}
