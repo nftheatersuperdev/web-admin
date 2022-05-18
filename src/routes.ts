@@ -24,6 +24,9 @@ export const ROUTE_PATHS = Object.freeze({
   VOUCHER_EDIT: '/vouchers/:voucherCode/edit',
   VOUCHER_EVENTS: '/vouchers/:voucherId/events',
   CHARGING_LOCATIONS: '/charging-locations',
+  DOCUMENTS: '/documents',
+  DOCUMENT_VERSIONS: '/documents/:documentId/versions',
+  DOCUMENT_VERSION_EDIT: '/documents/:documentId/versions/:versionId',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
   FORBIDDEN: '/403',
@@ -154,6 +157,21 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CHARGING_LOCATIONS,
     component: lazy(() => import('./pages/ChargingLocations' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENT_VERSION_EDIT,
+    component: lazy(() => import('./pages/DocumentVersionEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENT_VERSIONS,
+    component: lazy(() => import('./pages/DocumentVersions' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENTS,
+    component: lazy(() => import('./pages/Documents' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
   },
   {
