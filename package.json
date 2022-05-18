@@ -1,6 +1,6 @@
 {
   "name": "evme-admin",
-  "version": "1.0.3",
+  "version": "1.0.14",
   "private": true,
   "engines": {
     "node": ">=16",

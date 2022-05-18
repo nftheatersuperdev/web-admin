@@ -14,13 +14,13 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   id: false,
   code: true,
   description: true,
-  percentDiscount: true,
+  discountPercent: true,
   amount: true,
-  limitPerUser: false,
-  startDate: true,
-  endDate: true,
-  createdAt: false,
-  updatedAt: false,
+  limitPerUser: true,
+  startAt: true,
+  endAt: true,
+  createdDate: false,
+  updatedDate: false,
 }
 
 export interface VisibilityColumns {

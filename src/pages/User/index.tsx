@@ -24,6 +24,7 @@ import {
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
+import { useLocation } from 'react-router-dom'
 import { UserInputRequest, UserMeProps } from 'services/web-bff/user.type'
 import { User as UserType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
@@ -33,12 +34,17 @@ import { searchUser } from 'services/web-bff/user'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import DetailDialog from './DetailDialog'
 
-const defaultFilter: UserInputRequest = {} as UserInputRequest
-
 export default function User(): JSX.Element {
   const { t } = useTranslation()
+  const searchParams = useLocation().search
+  const queryString = new URLSearchParams(searchParams)
+  const kycStatus = queryString.get('kycStatus')
+
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const defaultFilter: UserInputRequest = {
+    kycStatusEqual: kycStatus || null,
+  } as UserInputRequest
   const [userFilter, setUserFilter] = useState<UserInputRequest>({ ...defaultFilter })
   const [userDetail, setUserDetail] = useState<UserType>()
   const [openUserDetailDialog, setOpenUserDetailDialog] = useState<boolean>(false)
@@ -317,7 +323,7 @@ export default function User(): JSX.Element {
         // these fields not support from backend
         verifyDate: null,
         note: '',
-        kycRejectReason: user.kycRejectReason,
+        kycRejectReason: user.kycReason,
         userGroups: user.userGroups,
       }
     }) || []

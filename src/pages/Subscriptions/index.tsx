@@ -96,7 +96,10 @@ export default function Subscription(): JSX.Element {
           const paymentStatus = lastedPayment
             ? columnFormatPaymentEventStatus(lastedPayment.status, t)
             : '-'
-          const subscriptionPrice = convertMoneyFormat(subscription?.chargedPrice)
+          const subscriptionPrice =
+            subscription?.chargedPrice !== null
+              ? convertMoneyFormat(subscription?.chargedPrice)
+              : '-'
           const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
 
           return (
@@ -129,7 +132,7 @@ export default function Subscription(): JSX.Element {
               returnLongitude: subscription.returnLongitude,
               returnRemark: subscription.returnRemark,
               status: subscription.status,
-              voucherCode: subscription.voucherId,
+              voucherId: subscription.voucherId,
               createdDate: subscription.createdDate,
               updatedDate: subscription.updatedDate,
               paymentStatus,
@@ -139,6 +142,8 @@ export default function Subscription(): JSX.Element {
               failureMessage: lastedPayment?.statusMessage,
               payments: subscription.payments,
               parentId: subscription.parentId,
+              voucherCode: subscription.voucher ? subscription.voucher.code : '',
+              isExtendedSubscription: subscription.parentId ? 'True' : 'False',
             } ?? {}
           )
         })
@@ -370,7 +375,7 @@ export default function Subscription(): JSX.Element {
       headerName: t('subscription.isExtendedSubscription'),
       description: t('subscription.isExtendedSubscription'),
       flex: 1,
-      hide: true,
+      hide: !visibilityColumns.isExtendedSubscription,
       filterable: true,
       sortable: false,
       disableColumnMenu: true,
@@ -378,11 +383,11 @@ export default function Subscription(): JSX.Element {
       valueOptions: getIsParentOptions(t),
     },
     {
-      field: 'voucherCode',
-      headerName: t('subscription.voucherCode'),
-      description: t('subscription.voucherCode'),
+      field: 'voucherId',
+      headerName: t('subscription.voucherId'),
+      description: t('subscription.voucherId'),
       flex: 1,
-      hide: !visibilityColumns.voucherCode,
+      hide: !visibilityColumns.voucherId,
       filterable: true,
       sortable: false,
       filterOperators: equalOperators,
@@ -443,7 +448,7 @@ export default function Subscription(): JSX.Element {
       headerName: t('subscription.deliveryDate'),
       description: t('subscription.deliveryDate'),
       flex: 1,
-      hide: !visibilityColumns.deliveryDate,
+      hide: !visibilityColumns.deliverDate,
       sortable: false,
       filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,

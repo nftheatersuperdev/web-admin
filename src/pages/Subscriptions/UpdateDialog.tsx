@@ -34,8 +34,8 @@ import {
 import toast from 'react-hot-toast'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
-import { getListBFF } from 'services/web-bff/car'
-import { CarListFilterRequestProps } from 'services/web-bff/car.type'
+import { getAvailableListBFF } from 'services/web-bff/car'
+import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import DataGridLocale from 'components/DataGridLocale'
 import { Payment } from 'services/web-bff/payment.type'
 import { SubscriptionChangeCarProps } from 'services/web-bff/subscription.type'
@@ -101,9 +101,10 @@ interface Subscription {
   createdDate: string
   updatedDate: string
   paymentStatus: string
-  deliveryDate: string
+  deliverDate: string
   returnDate: string
   payments: Payment[]
+  voucherId: string
 }
 
 interface SubscriptionProps {
@@ -131,18 +132,18 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const { data: availableCarsResponse } = useQuery('available-cars', () =>
-    getListBFF({
+    getAvailableListBFF({
       size: 500,
-    } as CarListFilterRequestProps)
+    } as CarAvailableListBffFilterRequestProps)
   )
 
-  const availableCars = availableCarsResponse?.data.cars || []
+  const availableCars = availableCarsResponse?.data.records || []
 
   const handleOnSubmit = async ({ plateNumber }: SubscriptionUpdateValuesProps) => {
     try {
       setIsLoading(true)
-      const carSelected = availableCars.find((data) => data.plateNumber === plateNumber)
-      const carId = carSelected?.id
+      const carSelected = availableCars.find((data) => data.car.plateNumber === plateNumber)
+      const carId = carSelected?.car.id
       const subscriptionId = subscription?.id
 
       if (carId && subscriptionId) {
@@ -178,7 +179,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     formik.resetForm()
   }
 
-  const availablePlateNumbers = availableCars?.map((data) => data.plateNumber) || []
+  const availablePlateNumbers = availableCars?.map((data) => data.car.plateNumber) || []
   if (
     !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.carPlateNumber) &&
     subscription?.carPlateNumber
@@ -193,10 +194,12 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     return true
   }
 
-  const [disableUpdateButton, setDisableUpdateButton] = useState(true)
+  let disableUpdateButton =
+    !isOperationRole ||
+    ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
 
   const handlePlateNumberChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setDisableUpdateButton(subscription.carPlateNumber === event.target.value)
+    disableUpdateButton = subscription.carPlateNumber === event.target.value
     formik.setFieldValue('plateNumber', event.target.value || '')
   }
 
@@ -235,13 +238,13 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     const priceFullFormat = `${price} ${t('pricing.currency.thb')}`
 
     return {
-      id: value.externalTrxId,
-      amount: priceFullFormat,
-      updateDate: value.updatedDate,
-      paymentType: value.paymentType,
-      purpose: value.purpose,
-      status: value.status,
-      statusMessage: value.statusMessage,
+      id: value.externalTrxId || '',
+      amount: priceFullFormat || '',
+      updateDate: value.updatedDate || '',
+      paymentType: value.paymentType || '',
+      purpose: value.purpose || '',
+      status: value.status || '',
+      statusMessage: value.statusMessage || '',
     }
   })
   const paymentColumns: GridColDef[] = [
@@ -491,6 +494,30 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
               }}
             />
           </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.deliveryDate')}
+              value={formatDate(subscription?.deliverDate)}
+              fullWidth
+              multiline
+              maxRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.returnDate')}
+              value={formatDate(subscription?.returnDate)}
+              fullWidth
+              multiline
+              maxRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
           <Grid item xs={12} md={12}>
             <Typography variant="subtitle1">{t('subscription.payments')}</Typography>
           </Grid>
@@ -573,6 +600,16 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             <TextField
               label={t('subscription.seats')}
               value={subscription?.carSeats}
+              fullWidth
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={t('subscription.voucherCode')}
+              value={subscription?.voucherCode}
               fullWidth
               InputProps={{
                 readOnly: true,

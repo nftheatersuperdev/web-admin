@@ -9,6 +9,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import {
   DEFAULT_DATE_FORMAT,
+  DEFAULT_DATE_FORMAT_BFF,
   getStringFilterOperators,
   getEqualFilterOperators,
   FieldComparisons,
@@ -16,6 +17,8 @@ import {
 } from 'utils'
 import config from 'config'
 import dayjs from 'dayjs'
+import dayjsUtc from 'dayjs/plugin/utc'
+import dayjsTimezone from 'dayjs/plugin/timezone'
 import { Box, Button, Card } from '@material-ui/core'
 import { useQuery } from 'react-query'
 import { getAvailableListBFF } from 'services/web-bff/car'
@@ -27,8 +30,11 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
-const initSelectedFromDate = dayjs(new Date()).startOf('day').toDate()
-const initSelectedToDate = dayjs(new Date()).endOf('day').toDate()
+dayjs.extend(dayjsUtc)
+dayjs.extend(dayjsTimezone)
+
+const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
+const initSelectedToDate = dayjs().tz(config.timezone).endOf('day').toDate()
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
@@ -37,8 +43,15 @@ export default function Car(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
 
+  const generateFilterDates = () => {
+    return {
+      startDate: dayjs(selectedFromDate).startOf('day').format(DEFAULT_DATE_FORMAT_BFF),
+      endDate: dayjs(selectedToDate).endOf('day').format(DEFAULT_DATE_FORMAT_BFF),
+    }
+  }
+
   const [sort, setSort] = useState<SubOrder>({})
-  const [filter, setFilter] = useState<CarAvailableListFilterRequest>()
+  const [filter, setFilter] = useState<CarAvailableListFilterRequest>(generateFilterDates())
 
   const {
     data: carData,
@@ -67,7 +80,7 @@ export default function Car(): JSX.Element {
 
   const handleFilterChange = (params: GridFilterModel) => {
     setFilter(
-      params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
+      params.items.reduce((filterItem, { columnField, operatorValue, value }: GridFilterItem) => {
         const isId = columnField === 'id'
 
         let keyOfValue = ''
@@ -84,9 +97,13 @@ export default function Car(): JSX.Element {
                 break
             }
           }
-          filter = { [keyOfValue]: value }
+          filterItem = { [keyOfValue]: value }
         }
-        return filter
+        filterItem = {
+          ...filterItem,
+          ...generateFilterDates(),
+        }
+        return filterItem
       }, {} as CarAvailableListFilterRequest)
     )
     setPage(0)
@@ -127,8 +144,7 @@ export default function Car(): JSX.Element {
   const handleClickSearchButton = () => {
     setFilter({
       ...filter,
-      startDate: dayjs(selectedFromDate).startOf('day').toDate(),
-      endDate: dayjs(selectedToDate).endOf('day').toDate(),
+      ...generateFilterDates(),
     })
   }
 

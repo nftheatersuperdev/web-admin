@@ -204,6 +204,7 @@
   },
   "car": {
     "id": "เลขไอดี",
+    "carTrackId": "Cartrack ไอดี",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
     "color": "สี",
@@ -317,6 +318,7 @@
     "bookingDetails": "รายละเอียดการจอง",
     "subscriptionId": "หมายเลขการจอง",
     "voucherCode": "รหัสวอชเชอร์",
+    "voucherId": "รหัสวอชเชอร์",
     "paymentVersion": "เวอร์ชันการชำระเงิน",
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
@@ -461,7 +463,8 @@
         "newPasswordRequired": "กรุณาระบุรหัสผ่านใหม่",
         "confirmNewPasswordRequired": "กรุณาระบุยืนยันรหัสผ่านใหม่",
         "passwordMismatch": "รหัสผ่านไม่ตรงกัน",
-        "passwordMinimumLengthLimit": "รหัสผ่านต้องมีความยาวอย่างน้อย {{length}} ตัวอักษร"
+        "passwordMinimumLengthLimit": "รหัสผ่านต้องมีความยาวอย่างน้อย {{length}} ตัวอักษร",
+        "invalidFormat": "รหัสผ่านต้องมีอย่างน้อย 1 ตัวพิมพ์ใหญ่ 1 ตัวพิมพ์เล็ก และ 1 ตัวเลข ตัวอักษรพิเศษเพิ่มเติมได้"
       }
     }
   },
@@ -674,6 +677,9 @@
       "titleTH": "หัวข้อภาษาไทย",
       "contentEN": "เนื้อหาภาษาอังกฤษ",
       "contentTH": "เนื้อหาภาษาไทย"
-    }
+    },
+  "actionsEvent": {
+    "copy": "คัดลอก !!"
   }
+}
 }

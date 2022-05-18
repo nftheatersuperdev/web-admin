@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import {
   Card,
   Checkbox,
-  FormGroup,
   FormControlLabel,
   FormControl,
   FormLabel,
@@ -18,9 +17,11 @@ import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 import { useFormik } from 'formik'
 import { useState } from 'react'
+import { includes } from 'lodash/fp'
 import { CarModelDataAndRefetchProps } from 'pages/ModelAndPricingEdit/types'
 import { updateCarModelById } from 'services/web-bff/car'
 import { CarModelInput, CarModelInputProps } from 'services/web-bff/car.type'
+import { carConnectorTypes } from './CarConnectorType'
 
 const CardSpacing = styled(Card)`
   padding: 20px;
@@ -71,6 +72,7 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
       fastChargeTime: car?.fastChargeTime || 0,
       chargeTime: car?.chargeTime || 0,
       chargers: [],
+      connectorTypeIds: car?.chargers.map((x) => x.id),
     },
     enableReinitialize: true,
     onSubmit: handleOnSubmit,
@@ -266,23 +268,22 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
             <Grid item xs={12}>
               <FormControl component="fieldset">
                 <CheckBoxGroupLabel>{t('carModel.connectorType')}</CheckBoxGroupLabel>
-                <FormGroup row>
-                  {car?.chargers.map((charger) => (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          key={charger.id}
-                          name="connectorTypeIds"
-                          color="primary"
-                          value={charger.id}
-                          checked
-                        />
-                      }
-                      label={`${charger.description} [${charger.type}]`}
-                      key={charger.id}
-                    />
-                  ))}
-                </FormGroup>
+                {carConnectorTypes?.map((connectorType) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        key={connectorType.id}
+                        onChange={formik.handleChange}
+                        name="connectorTypeIds"
+                        color="primary"
+                        value={connectorType.id}
+                        checked={includes(connectorType.id)(formik.values.connectorTypeIds)}
+                      />
+                    }
+                    label={connectorType.type}
+                    key={connectorType.id}
+                  />
+                ))}
               </FormControl>
             </Grid>
             <Grid item xs={4}>

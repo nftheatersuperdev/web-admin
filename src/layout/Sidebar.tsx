@@ -70,19 +70,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.users'),
         path: ROUTE_PATHS.USER,
         icon: <UserIcon />,
-        allowedRoles: [
-          ROLES.SUPER_ADMIN,
-          ROLES.ADMIN,
-          ROLES.OPERATION,
-          ROLES.CUSTOMER_SUPPORT,
-          ROLES.MARKETING,
-        ],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
       },
       {
         title: t('sidebar.userGroups'),
         path: ROUTE_PATHS.USER_GROUPS,
         icon: <GroupAddIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING],
       },
 
       {
