@@ -128,6 +128,7 @@ export interface VisibilityColumns {
 
 export const defaultVisibilityColumns: VisibilityColumns = {
   id: true,
+  customerId: false,
   userFirstName: true,
   userLastName: true,
   userEmail: true,
@@ -148,6 +149,7 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   returnAddress: false,
   status: true,
   voucherId: false,
+  voucherCode: false,
   paymentVersion: false,
   createdDate: false,
   updatedDate: false,
