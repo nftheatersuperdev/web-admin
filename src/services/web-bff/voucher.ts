@@ -85,7 +85,11 @@ export const updateBff = async (data: VoucherInputBff): Promise<string> => {
   return voucherId
 }
 
-export const getByCodeBff = async (code: string): Promise<Voucher> => {
+export const getByCodeBff = async (code: string, isEdit = false): Promise<Voucher | undefined> => {
+  if (!isEdit) {
+    return undefined
+  }
+
   const response: Voucher = await BaseApi.get(`/v1/vouchers/${code}`).then(
     (response) => response.data.data.voucher
   )

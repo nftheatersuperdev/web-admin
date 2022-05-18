@@ -59,7 +59,9 @@ export default function VoucherGeneralInformationTab({
   const currentDateTime = new Date()
   const startAtDateTime = new Date(voucher?.startAt || new Date())
   const endAtDateTime = new Date(voucher?.endAt || new Date())
-  const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+  const isActive = isEdit
+    ? currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+    : false
   const isInactive = currentDateTime > endAtDateTime
 
   const handleValidateCodeKeyPress = (event: React.KeyboardEvent) => {

@@ -290,6 +290,7 @@
   },
   "subscription": {
     "id": "Subscription ID",
+    "customerId": "Customer ID",
     "brand": "Car Brand",
     "model": "Car Model",
     "modelId": "Car Model ID",
@@ -710,9 +711,15 @@
       "titleTH": "Title Thai",
       "contentEN": "Content English",
       "contentTH": "Content Thai"
-    },
+    }
+  },
+  "modelAndPricing": {
+    "editDialog": {
+      "success": "Edit model and pricing success",
+      "error": "something went wrong"
+    }
+  },
   "actionsEvent": {
     "copy": "Copied !!"
   }
-}
 }

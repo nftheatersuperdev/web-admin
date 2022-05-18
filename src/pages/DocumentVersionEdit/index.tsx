@@ -3,7 +3,6 @@ import * as yup from 'yup'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
-import { useState } from 'react'
 import { useHistory, Link as RouterLink, useParams } from 'react-router-dom'
 import { Breadcrumbs, Button, Divider, Grid, Link, Typography, TextField } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
@@ -34,9 +33,8 @@ export default function DocumentVersionEdit(): JSX.Element {
   const isEdit = versionId !== 'add'
   const title = isEdit ? t('documents.addEdit.titles.edit') : t('documents.addEdit.titles.add')
 
-  // const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [contentThTemp, setcontentThTemp] = useState<string | null>()
-  const [contentEnTemp, setcontentEnTemp] = useState<string | null>()
+  /*const [contentThTemp, setcontentThTemp] = useState<string | null>()
+  const [contentEnTemp, setcontentEnTemp] = useState<string | null>()*/
 
   const validationSchema = yup.object({
     titleTH: yup.string().required(t('validation.required')),
@@ -54,28 +52,28 @@ export default function DocumentVersionEdit(): JSX.Element {
       contentTH: '',
       contentEN: '',
     },
-    onSubmit: (values) => {
-      console.log('values ->', values)
-      console.log('contentThTemp ->', contentThTemp)
-      console.log('contentEnTemp ->', contentEnTemp)
+    onSubmit: () => {
+      /*  console.log('values ->', values)
+        console.log('contentThTemp ->', contentThTemp)
+        console.log('contentEnTemp ->', contentEnTemp)*/
     },
   })
 
   const handleOnDescriptionChange = (value: string, language: string) => {
     if (language === 'th') {
-      setcontentThTemp(value)
+      /*setcontentThTemp(value)*/
       formik.setFieldValue('contentTH', value)
       return true
     }
-    setcontentEnTemp(value)
+    /*setcontentEnTemp(value)*/
     formik.setFieldValue('contentEN', value)
     return true
   }
 
   const resetForm = () => {
     formik.resetForm()
-    setcontentThTemp('')
-    setcontentEnTemp('')
+    /*setcontentThTemp('')
+    setcontentEnTemp('')*/
     history.push(`/documents/${documentId}/versions`)
   }
 
