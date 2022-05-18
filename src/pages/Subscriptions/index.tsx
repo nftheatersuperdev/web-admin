@@ -144,6 +144,7 @@ export default function Subscription(): JSX.Element {
               parentId: subscription.parentId,
               voucherCode: subscription.voucher ? subscription.voucher.code : '',
               isExtendedSubscription: subscription.parentId ? 'True' : 'False',
+              customerId: subscription.userId || '-',
             } ?? {}
           )
         })
@@ -163,6 +164,15 @@ export default function Subscription(): JSX.Element {
       headerName: t('subscription.id'),
       description: t('subscription.id'),
       hide: !visibilityColumns.id,
+      flex: 1,
+      filterOperators: equalOperators,
+      valueFormatter: columnFormatText,
+    },
+    {
+      field: 'customerId',
+      headerName: t('subscription.customerId'),
+      description: t('subscription.customerId'),
+      hide: !visibilityColumns.customerId,
       flex: 1,
       filterOperators: equalOperators,
       valueFormatter: columnFormatText,
@@ -388,6 +398,17 @@ export default function Subscription(): JSX.Element {
       description: t('subscription.voucherId'),
       flex: 1,
       hide: !visibilityColumns.voucherId,
+      filterable: true,
+      sortable: false,
+      filterOperators: equalOperators,
+      valueFormatter: columnFormatText,
+    },
+    {
+      field: 'voucherCode',
+      headerName: t('subscription.voucherCode'),
+      description: t('subscription.voucherCode'),
+      flex: 1,
+      hide: !visibilityColumns.voucherCode,
       filterable: true,
       sortable: false,
       filterOperators: equalOperators,
