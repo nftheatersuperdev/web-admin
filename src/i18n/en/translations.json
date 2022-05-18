@@ -294,6 +294,7 @@
     "brand": "Car Brand",
     "model": "Car Model",
     "modelId": "Car Model ID",
+    "carId": "Car ID",
     "seats": "Seats",
     "topSpeed": "Top Speed",
     "plateNumber": "Plate Number",
