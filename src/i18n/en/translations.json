@@ -36,6 +36,7 @@
     "others": "Others",
     "chargingLocations": "Charging Locations",
     "documents": "Documents",
+    "consentLog": "Consent Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -722,5 +723,33 @@
   },
   "actionsEvent": {
     "copy": "Copied !!"
-  }
+  },
+  "consentLog": {
+    "header": "Consent Log Activity",
+    "documentTypeLabel": "Document Name",
+    "statusNameLabel": "Status name",
+    "searchLabel": "Search Email",
+    "userId": "User ID",
+    "email": "Email",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "documentNameEn": "Document name (EN)",
+    "documentNameTh": "Document name (TH)",
+    "acceptedDate": "Date",
+    "status": "Status",
+    "documentVersion": "Version",
+    "documentTypes": {
+      "termAndCondition": "Terms and Condition",
+      "privacyNotice": "Privacy Notice",
+      "marketing": "Marketing",
+      "idAndCriminal": "ID & Criminal",
+      "dataSharing": "Data Sharing"
+    },
+    "documentStatus": {
+      "decline": "Decline",
+      "accept": "Accept"
+    }
+  },
+  "all": "All"
 }
