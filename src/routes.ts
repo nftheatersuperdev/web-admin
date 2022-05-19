@@ -27,6 +27,7 @@ export const ROUTE_PATHS = Object.freeze({
   DOCUMENTS: '/documents',
   DOCUMENT_VERSIONS: '/documents/:documentId/versions',
   DOCUMENT_VERSION_EDIT: '/documents/:documentId/versions/:versionId',
+  CONSENT_LOG: '/consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
   FORBIDDEN: '/403',
@@ -185,6 +186,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.DOCUMENTS,
     component: lazy(() => import('./pages/Documents' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.CONSENT_LOG,
+    component: lazy(() => import('./pages/ConsentLog' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,

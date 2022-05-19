@@ -25,6 +25,7 @@ import {
   LoyaltyOutlined as LoyaltyOutlinedIcon,
   GroupAdd as GroupAddIcon,
   LibraryBooks as LibraryBooksIcon,
+  Laptop as LaptopIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -161,6 +162,12 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.OPERATION,
           ROLES.MARKETING,
         ],
+      },
+      {
+        title: t('sidebar.consentLog'),
+        path: ROUTE_PATHS.CONSENT_LOG,
+        icon: <LaptopIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
         title: t('sidebar.chargingLocations'),
