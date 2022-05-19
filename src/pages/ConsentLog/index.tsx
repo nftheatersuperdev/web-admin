@@ -77,7 +77,7 @@ export default function ConsentLog(): JSX.Element {
     data: response,
     isFetching,
     refetch,
-  } = useQuery('consent-log', () => getList(filter), {
+  } = useQuery('consent-log', () => getList(), {
     refetchOnWindowFocus: false,
     enabled: false,
   })
@@ -142,6 +142,7 @@ export default function ConsentLog(): JSX.Element {
     setFilter({ ...filter, pageIndex: pageNumber + 1 })
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const onColumnVisibilityChange = (params: any) => {
     if (params.field === '__check__') {
       return

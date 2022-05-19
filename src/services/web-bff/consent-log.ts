@@ -1,4 +1,4 @@
-import { ConsentLogListProps, ConsentLogListResponse } from './consent-log.type'
+import { ConsentLogListResponse } from './consent-log.type'
 
 /*export const getList = async ({
  email,
@@ -21,7 +21,7 @@ import { ConsentLogListProps, ConsentLogListResponse } from './consent-log.type'
  ).then((response) => response.data)
  return response
 }*/
-export const getList = async ({}: ConsentLogListProps): Promise<ConsentLogListResponse> => {
+export const getList = async (): Promise<ConsentLogListResponse> => {
   const response: ConsentLogListResponse = await {
     status: 'success',
     data: {

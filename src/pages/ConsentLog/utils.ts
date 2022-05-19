@@ -1,3 +1,4 @@
+import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
 
 export interface VisibilityColumns {
@@ -11,7 +12,14 @@ export const setVisibilityColumns = (columns: VisibilityColumns): void => {
   ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
 }
 
-export const getDocumentTypeList = (t: any) => {
+interface SelectOption {
+  key: string
+  label: string
+  value: string
+  isDefault?: boolean
+}
+
+export const getDocumentTypeList = (t: TFunction<Namespace>): SelectOption[] => {
   return [
     {
       key: 'all',
@@ -47,7 +55,7 @@ export const getDocumentTypeList = (t: any) => {
   ]
 }
 
-export const getStatusList = (t: any) => {
+export const getStatusList = (t: TFunction<Namespace>): SelectOption[] => {
   return [
     {
       key: 'all',
@@ -59,7 +67,6 @@ export const getStatusList = (t: any) => {
       key: 'accept',
       value: 'accept',
       label: t('consentLog.documentStatus.accept'),
-      isDefault: true,
     },
     {
       key: 'decline',
