@@ -5,7 +5,7 @@ export interface ConsentLogListProps {
   codeName?: string
   isAccepted?: string
   size?: number
-  pageIndex?: number
+  page?: number
 }
 
 export interface ConsentLog {
@@ -13,14 +13,14 @@ export interface ConsentLog {
   createdDate: string
   isAccepted: boolean
   customer: CustomerConsentLog
-  document: DocumentConsentLog
+  documentContent: DocumentConsentLog
 }
 
 export interface CustomerConsentLog {
   id: string
   email: string
-  firstname: string
-  lastname: string
+  firstName: string
+  lastName: string
   phoneNumber: string
 }
 

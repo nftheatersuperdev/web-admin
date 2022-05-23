@@ -24,8 +24,8 @@ import {
   GridToolbarContainer,
   GridToolbarDensitySelector,
 } from '@material-ui/data-grid'
-import { useQuery } from 'react-query'
 import { columnFormatDate, columnFormatText } from 'utils'
+import { useQuery } from 'react-query'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { ConsentLogListProps } from 'services/web-bff/consent-log.type'
@@ -61,11 +61,7 @@ export default function ConsentLog(): JSX.Element {
   const classes = useStyles()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const defaultFilter = {
-    pageIndex: currentPageIndex + 1,
-    size: pageSize,
-  } as ConsentLogListProps
-  const [filter, setFilter] = useState({ ...defaultFilter })
+  const [filter, setFilter] = useState({})
   const visibilityColumns = getVisibilityColumns()
   const statusList = getStatusList(t)
   const documentTypeList = getDocumentTypeList(t)
@@ -73,13 +69,13 @@ export default function ConsentLog(): JSX.Element {
   const defaultStatus = statusList.find((status) => status.isDefault)
 
   const {
-    status,
     data: response,
     isFetching,
+    status,
     refetch,
-  } = useQuery('consent-log', () => getList(), {
-    refetchOnWindowFocus: false,
+  } = useQuery('consent-log', () => getList(filter), {
     enabled: false,
+    refetchOnWindowFocus: false,
   })
 
   const formik = useFormik({
@@ -90,56 +86,92 @@ export default function ConsentLog(): JSX.Element {
     },
     enableReinitialize: true,
     onSubmit: (value) => {
-      const isAccepted = value.status === 'all' ? '' : (value.status === 'accept').toString()
-      const codeName = value.documentType || ''
-      setFilter({ email: value.email, codeName, isAccepted, pageIndex: 1, size: pageSize })
+      let updateObj: ConsentLogListProps = {
+        ...filter,
+        page: 1,
+        size: pageSize,
+      }
+
+      if (value.email) {
+        updateObj = { ...updateObj, email: value.email }
+      } else {
+        delete updateObj.email
+      }
+
+      if (value.status !== 'all') {
+        updateObj = { ...updateObj, isAccepted: value.status }
+      } else {
+        delete updateObj.isAccepted
+      }
+
+      if (value.documentType !== 'all') {
+        updateObj = { ...updateObj, codeName: value.documentType }
+      } else {
+        delete updateObj.codeName
+      }
+
+      setFilter(updateObj)
+      setCurrentPageIndex(0)
       refetch()
     },
   })
+
+  useEffect(() => {
+    if (status !== 'idle') {
+      refetch()
+    }
+  }, [status, filter, refetch])
+
+  useEffect(() => {
+    if (status !== 'idle') {
+      refetch()
+    }
+  }, [status, currentPageIndex, refetch])
 
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
     response?.data.agreements && response?.data.agreements.length > 0
       ? response?.data.agreements.map((log) => {
           return {
-            id: log.customer.id,
+            id: log.id,
+            userId: log.customer.id,
             email: log.customer.email,
-            firstName: log.customer.firstname,
-            lastName: log.customer.lastname,
+            firstName: log.customer.firstName,
+            lastName: log.customer.lastName,
             phoneNumber: log.customer.phoneNumber,
-            documentNameEn: log.document.nameEn,
-            documentNameTh: log.document.nameTh,
+            documentNameEn: log.documentContent.nameEn,
+            documentNameTh: log.documentContent.nameTh,
             acceptedDate: log.createdDate,
             status: log.isAccepted
               ? t('consentLog.documentStatus.accept')
               : t('consentLog.documentStatus.decline'),
-            documentVersion: log.document.version,
+            documentVersion: log.documentContent.version,
           }
         })
       : []
-
-  useEffect(() => {
-    if (status !== 'idle') {
-      refetch()
-    }
-  }, [refetch, status, filter])
-
-  useEffect(() => {
-    if (status !== 'idle') {
-      refetch()
-    }
-  }, [refetch, currentPageIndex, status])
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     //  setSubscriptionFilter({ ...subscriptionFilter, size: params.pageSize, page: 1 })
     setPageSize(params.pageSize)
     setCurrentPageIndex(0)
-    setFilter({ ...filter, pageIndex: 1, size: params.pageSize })
+    const updateObj: ConsentLogListProps = {
+      ...filter,
+      page: 1,
+      size: params.pageSize,
+    }
+    setFilter(updateObj)
+    refetch()
   }
 
   const handleFetchPage = (pageNumber: number) => {
     setCurrentPageIndex(pageNumber)
-    setFilter({ ...filter, pageIndex: pageNumber + 1 })
+    const updateObj: ConsentLogListProps = {
+      ...filter,
+      page: pageNumber + 1,
+      size: pageSize,
+    }
+    setFilter(updateObj)
+    refetch()
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -164,6 +196,15 @@ export default function ConsentLog(): JSX.Element {
   const columns: GridColDef[] = [
     {
       field: 'id',
+      headerName: t('consentLog.id'),
+      description: t('consentLog.id'),
+      hide: !visibilityColumns.id,
+      flex: 1,
+      filterable: false,
+      valueFormatter: columnFormatText,
+    },
+    {
+      field: 'userId',
       headerName: t('consentLog.userId'),
       description: t('consentLog.userId'),
       hide: !visibilityColumns.userId,

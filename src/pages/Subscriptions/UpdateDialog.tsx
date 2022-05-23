@@ -105,6 +105,7 @@ interface Subscription {
   returnDate: string
   payments: Payment[]
   voucherId: string
+  cleaningDate: string
 }
 
 interface SubscriptionProps {
@@ -133,7 +134,11 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
 
   const { data: availableCarsResponse } = useQuery('available-cars', () =>
     getAvailableListBFF({
-      size: 500,
+      filter: {
+        startDate: subscription.startDate,
+        endDate: subscription.cleaningDate,
+      },
+      size: config.maxInteger,
     } as CarAvailableListBffFilterRequestProps)
   )
 
