@@ -729,6 +729,7 @@
     "documentTypeLabel": "Document Name",
     "statusNameLabel": "Status name",
     "searchLabel": "Search Email",
+    "id": "ID",
     "userId": "User ID",
     "email": "Email",
     "firstName": "First name",

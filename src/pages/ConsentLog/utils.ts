@@ -28,28 +28,28 @@ export const getDocumentTypeList = (t: TFunction<Namespace>): SelectOption[] => 
       isDefault: true,
     },
     {
-      key: 'termAndCondition',
-      value: 'termAndCondition',
+      key: 'TermsAndConditionApplication',
+      value: 'TermsAndConditionApplication',
       label: t('consentLog.documentTypes.termAndCondition'),
     },
     {
-      key: 'privacyNotice',
-      value: 'privacyNotice',
+      key: 'PrivacyNotices',
+      value: 'PrivacyNotices',
       label: t('consentLog.documentTypes.privacyNotice'),
     },
     {
-      key: 'marketing',
-      value: 'marketing',
+      key: 'PersonalisedMarketing',
+      value: 'PersonalisedMarketing',
       label: t('consentLog.documentTypes.marketing'),
     },
     {
-      key: 'idAndCriminal',
-      value: 'idAndCriminal',
+      key: 'IdCardConsent',
+      value: 'IdCardConsent',
       label: t('consentLog.documentTypes.idAndCriminal'),
     },
     {
-      key: 'dataSharing',
-      value: 'dataSharing',
+      key: 'DataAnalytics',
+      value: 'DataAnalytics',
       label: t('consentLog.documentTypes.dataSharing'),
     },
   ]
@@ -65,12 +65,12 @@ export const getStatusList = (t: TFunction<Namespace>): SelectOption[] => {
     },
     {
       key: 'accept',
-      value: 'accept',
+      value: 'True',
       label: t('consentLog.documentStatus.accept'),
     },
     {
       key: 'decline',
-      value: 'decline',
+      value: 'False',
       label: t('consentLog.documentStatus.decline'),
     },
   ]
