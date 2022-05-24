@@ -150,12 +150,12 @@ export default function VoucherGeneralInformationTab({
 
       toast.promise(mutateFunction(data), {
         loading: t('toast.loading'),
-        success: (id) => {
+        success: () => {
           formik.resetForm()
           setIsLoading(false)
           refetch()
           if (!isEdit) {
-            history.push(`/vouchers/${id}/edit`)
+            history.push('/vouchers')
           }
           return toastMessages.success
         },
