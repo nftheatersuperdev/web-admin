@@ -56,6 +56,10 @@ export default function VoucherUserGroupTab({
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
+  const currentDateTime = new Date()
+  const endAtDateTime = new Date(voucher?.endAt || new Date())
+  const isInactive = currentDateTime > endAtDateTime
+
   const { data: masterUserGroupsData, isSuccess: isSuccessToGetMasterUserGroups } = useQuery(
     'master-user-groups',
     () => searchUserGroup({ data: {}, size: 1000 })
@@ -156,7 +160,11 @@ export default function VoucherUserGroupTab({
         <Grid item xs={12} style={{ textAlign: 'right' }}>
           <ButtonSpace
             disabled={
-              isLoading || optionIsEqualToExists || userGroupIsEqualToExists || userGroupEmpty
+              isInactive ||
+              isLoading ||
+              optionIsEqualToExists ||
+              userGroupIsEqualToExists ||
+              userGroupEmpty
             }
             onClick={() => handleUpdateUserGroups()}
             color="primary"
@@ -181,11 +189,13 @@ export default function VoucherUserGroupTab({
               value={selectOptions.ALL}
               control={<Radio />}
               label="All User Groups"
+              disabled={isInactive}
             />
             <FormControlLabel
               value={selectOptions.SELECT}
               control={<Radio />}
               label={t('voucher.dialog.userGroups.selectAvailableUserGroups')}
+              disabled={isInactive}
             />
           </RadioGroup>
         </Grid>
