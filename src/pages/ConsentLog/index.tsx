@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 import { Search as SearchIcon } from '@material-ui/icons'
 import { useFormik } from 'formik'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import config from 'config'
 import {
   GridColDef,
@@ -25,10 +25,9 @@ import {
   GridToolbarDensitySelector,
 } from '@material-ui/data-grid'
 import { columnFormatDate, columnFormatText } from 'utils'
-import { useQuery } from 'react-query'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import { ConsentLogListProps } from 'services/web-bff/consent-log.type'
+import { ConsentLogListProps, ConsentLogListResponse } from 'services/web-bff/consent-log.type'
 import { getList } from 'services/web-bff/consent-log'
 import {
   getDocumentTypeList,
@@ -67,16 +66,18 @@ export default function ConsentLog(): JSX.Element {
   const documentTypeList = getDocumentTypeList(t)
   const defaultDocument = documentTypeList.find((document) => document.isDefault)
   const defaultStatus = statusList.find((status) => status.isDefault)
+  const [response, setResponse] = useState<ConsentLogListResponse>()
+  const [isFetching, setIsFetching] = useState(false)
 
-  const {
-    data: response,
-    isFetching,
-    status,
-    refetch,
-  } = useQuery('consent-log', () => getList(filter), {
-    enabled: false,
-    refetchOnWindowFocus: false,
-  })
+  const search = async (filter: ConsentLogListProps) => {
+    const res = await getList(filter)
+    setResponse(res)
+    setIsFetching(true)
+
+    setTimeout(() => {
+      setIsFetching(false)
+    })
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -112,21 +113,9 @@ export default function ConsentLog(): JSX.Element {
 
       setFilter(updateObj)
       setCurrentPageIndex(0)
-      refetch()
+      search(updateObj)
     },
   })
-
-  useEffect(() => {
-    if (status !== 'idle') {
-      refetch()
-    }
-  }, [status, filter, refetch])
-
-  useEffect(() => {
-    if (status !== 'idle') {
-      refetch()
-    }
-  }, [status, currentPageIndex, refetch])
 
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
@@ -160,18 +149,19 @@ export default function ConsentLog(): JSX.Element {
       size: params.pageSize,
     }
     setFilter(updateObj)
-    refetch()
+    search(updateObj)
   }
 
   const handleFetchPage = (pageNumber: number) => {
-    setCurrentPageIndex(pageNumber)
+    const _pageNumber = pageNumber
+    setCurrentPageIndex(_pageNumber)
     const updateObj: ConsentLogListProps = {
       ...filter,
       page: pageNumber + 1,
       size: pageSize,
     }
     setFilter(updateObj)
-    refetch()
+    search(updateObj)
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
