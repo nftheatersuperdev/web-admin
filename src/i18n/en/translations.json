@@ -35,6 +35,8 @@
     "additionalExpense": "Additional Expense",
     "others": "Others",
     "chargingLocations": "Charging Locations",
+    "documents": "Documents",
+    "consentLog": "Consent Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -675,10 +677,80 @@
       "authorizedRefund": "Authorized Refund"
     }
   },
+  "documents": {
+    "header": "Document Management",
+    "overview": {
+      "title": "Overview",
+      "id": "Document ID",
+      "nameEN": "Document Name (EN)",
+      "nameTH": "Document Name (TH)",
+      "codeName": "Document Code Name",
+      "activeVersion": "Active Version",
+      "lastUpdated": "Last updated"
+    },
+    "versions": {
+      "title": "Document Versions",
+      "no": "No",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "version": "Version",
+      "status": "Status",
+      "effectiveDate": "Effective Date",
+      "revisionSummary": "Revision summary",
+      "buttons": {
+        "addNewVersion": "Add New Version"
+      }
+    },
+    "overviewAndVersions": "Overview & Versions",
+    "addEdit": {
+      "titles": {
+        "add": "Add New Version",
+        "edit": "Edit exist"
+      },
+      "effectiveDateTime": "Effective Date & Time",
+      "revisionSummary": "Revision summary",
+      "titleEN": "Title English",
+      "titleTH": "Title Thai",
+      "contentEN": "Content English",
+      "contentTH": "Content Thai"
+    }
+  },
   "modelAndPricing": {
     "editDialog": {
       "success": "Edit model and pricing success",
       "error": "something went wrong"
     }
-  }
+  },
+  "actionsEvent": {
+    "copy": "Copied !!"
+  },
+  "consentLog": {
+    "header": "Consent Log Activity",
+    "documentTypeLabel": "Document Name",
+    "statusNameLabel": "Status name",
+    "searchLabel": "Search Email",
+    "id": "ID",
+    "userId": "User ID",
+    "email": "Email",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "documentNameEn": "Document name (EN)",
+    "documentNameTh": "Document name (TH)",
+    "acceptedDate": "Date",
+    "status": "Status",
+    "documentVersion": "Version",
+    "documentTypes": {
+      "termAndCondition": "Terms and Condition",
+      "privacyNotice": "Privacy Notice",
+      "marketing": "Marketing",
+      "idAndCriminal": "ID & Criminal",
+      "dataSharing": "Data Sharing"
+    },
+    "documentStatus": {
+      "decline": "Decline",
+      "accept": "Accept"
+    }
+  },
+  "all": "All"
 }

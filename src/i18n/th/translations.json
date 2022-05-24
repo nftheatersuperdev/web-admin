@@ -35,6 +35,8 @@
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "others": "อื่นๆ",
     "chargingLocations": "สถานีชาร์จ",
+    "documents": "เอกสาร",
+    "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
     "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
     "profile": "โปรไฟล์",
@@ -640,18 +642,79 @@
   "cardStatus": {
     "detail": "Detail >"
   },
-  "paymentEvent": {
-    "status": {
-      "pending": "กำลังดำเนินการ",
-      "successful": "เสร็จสมบูรณ์",
-      "failed": "การชำระล้มเหลว",
-      "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
+  "documents": {
+    "header": "จัดการเอกสาร",
+    "overview": {
+      "title": "ภาพรวม",
+      "id": "เอกสารไอดี",
+      "nameEN": "ชื่อเอกสาร (ภาษาอังกฤษ)",
+      "nameTH": "ชื่อเอกสาร (ภาษาไทย)",
+      "codeName": "รหัสเอกสาร",
+      "activeVersion": "เวอร์ชั่นที่ใช้งานอยุ่",
+      "lastUpdated": "แก้ไขล่าสุด"
+    },
+    "versions": {
+      "title": "เวอร์ชั่นของเอกสาร",
+      "no": "หมายเลข",
+      "createdDate": "วันที่สร้าง",
+      "createdBy": "ผู้ที่สร้าง",
+      "version": "เวอร์ชั่น",
+      "status": "สถานะ",
+      "effectiveDate": "วันที่มีผลบังคับใช้",
+      "revisionSummary": "สรุปการแก้ไข",
+      "buttons": {
+        "addNewVersion": "เพิ่มเวอร์ชั่นใหม่"
+      }
+    },
+    "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
+    "addEdit": {
+      "titles": {
+        "add": "เพิ่มเวอร์ชั่นใหม่",
+        "edit": "แก้ไข"
+      },
+      "effectiveDateTime": "วันและเวลาที่มีผลบังคับใช้",
+      "revisionSummary": "สรุปการแก้ไข",
+      "titleEN": "หัวข้อภาษาอังกฤษ",
+      "titleTH": "หัวข้อภาษาไทย",
+      "contentEN": "เนื้อหาภาษาอังกฤษ",
+      "contentTH": "เนื้อหาภาษาไทย"
+    },
+    "paymentEvent": {
+      "status": {
+        "pending": "กำลังดำเนินการ",
+        "successful": "เสร็จสมบูรณ์",
+        "failed": "การชำระล้มเหลว",
+        "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
+      }
+    },
+    "modelAndPricing": {
+      "editDialog": {
+        "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
+        "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
+      }
     }
   },
-  "modelAndPricing": {
-    "editDialog": {
-      "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
-      "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
+  "actionsEvent": {
+    "copy": "คัดลอก !!"
+  },
+  "consentLog": {
+    "header": "บันทึกกิจกรรมการขอความยินยอม",
+    "documentTypeLabel": "ชื่อเอกสาร",
+    "searchLabel": "ค้นหาอีเมล",
+    "statusNameLabel": "สถานะ",
+    "userId": "เลขไอดี",
+    "email": "อีเมล",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "phoneNumber": "เบอร์โทรศัพท์",
+    "documentNameEn": "ชื่อเอกสาร (EN)",
+    "documentNameTh": "ชื่อเอกสาร (TH)",
+    "acceptedDate": "วันที่กดรับ",
+    "status": "สถานะ",
+    "documentVersion": "เวอร์ชั่น",
+    "documentStatus": {
+      "decline": "ปฏิเสธ",
+      "accept": "ยอมรับ"
     }
   }
 }
