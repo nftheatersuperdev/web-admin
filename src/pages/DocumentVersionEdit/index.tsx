@@ -33,12 +33,8 @@ export default function DocumentVersionEdit(): JSX.Element {
   const isEdit = versionId !== 'add'
   const title = isEdit ? t('documents.addEdit.titles.edit') : t('documents.addEdit.titles.add')
 
-  /*const [contentThTemp, setcontentThTemp] = useState<string | null>()
-  const [contentEnTemp, setcontentEnTemp] = useState<string | null>()*/
-
   const validationSchema = yup.object({
-    titleTH: yup.string().required(t('validation.required')),
-    titleEN: yup.string().required(t('validation.required')),
+    remark: yup.string().required(t('validation.required')),
     effectiveDateTime: yup.date().required(t('validation.required')),
   })
 
@@ -47,33 +43,26 @@ export default function DocumentVersionEdit(): JSX.Element {
     validationSchema,
     initialValues: {
       effectiveDateTime: datePlusOneDay,
-      titleTH: '',
-      titleEN: '',
-      contentTH: '',
-      contentEN: '',
+      remark: '',
+      contentTh: '',
+      contentEn: '',
     },
-    onSubmit: () => {
-      /*  console.log('values ->', values)
-        console.log('contentThTemp ->', contentThTemp)
-        console.log('contentEnTemp ->', contentEnTemp)*/
+    onSubmit: (values) => {
+      console.log('values ->', values)
     },
   })
 
   const handleOnDescriptionChange = (value: string, language: string) => {
     if (language === 'th') {
-      /*setcontentThTemp(value)*/
-      formik.setFieldValue('contentTH', value)
+      formik.setFieldValue('contentTh', value)
       return true
     }
-    /*setcontentEnTemp(value)*/
-    formik.setFieldValue('contentEN', value)
+    formik.setFieldValue('contentEn', value)
     return true
   }
 
   const resetForm = () => {
     formik.resetForm()
-    /*setcontentThTemp('')
-    setcontentEnTemp('')*/
     history.push(`/documents/${documentCode}/versions`)
   }
 
@@ -132,53 +121,39 @@ export default function DocumentVersionEdit(): JSX.Element {
       </Grid>
       <DividerSpace />
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <TextField
             fullWidth
-            label={t('documents.addEdit.titleTH')}
-            id="titleTH"
-            name="titleTH"
+            label={t('documents.addEdit.revisionSummary')}
+            id="remark"
+            name="remark"
             variant="outlined"
-            value={formik.values.titleTH}
+            value={formik.values.remark}
             onChange={formik.handleChange}
             InputLabelProps={{
               shrink: true,
             }}
-            error={formik.touched.titleTH && Boolean(formik.errors.titleTH)}
-            helperText={formik.touched.titleTH && formik.errors.titleTH}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label={t('documents.addEdit.titleEN')}
-            id="titleEN"
-            name="titleEN"
-            variant="outlined"
-            value={formik.values.titleEN}
-            onChange={formik.handleChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            error={formik.touched.titleEN && Boolean(formik.errors.titleEN)}
-            helperText={formik.touched.titleEN && formik.errors.titleEN}
+            error={formik.touched.remark && Boolean(formik.errors.remark)}
+            helperText={formik.touched.remark && formik.errors.remark}
+            multiline
+            rows={5}
           />
         </Grid>
       </Grid>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <HTMLEditor
-            id="contentTH"
-            label={t('documents.addEdit.contentTH')}
-            initialValue={formik.values.contentTH}
+            id="contentTh"
+            label={t('documents.addEdit.contentTh')}
+            initialValue={formik.values.contentTh}
             handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'th')}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <HTMLEditor
-            id="contentEN"
-            label={t('documents.addEdit.contentEN')}
-            initialValue={formik.values.contentEN}
+            id="contentEn"
+            label={t('documents.addEdit.contentEn')}
+            initialValue={formik.values.contentEn}
             handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'en')}
           />
         </Grid>

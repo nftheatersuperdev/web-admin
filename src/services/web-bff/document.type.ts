@@ -9,7 +9,8 @@ export interface Document {
   contentEn: string
   contentTh: string
   version: number
-  remark: string
+  status: 'Active' | 'Inactive'
+  remark: string | null
   accepted: string
   effectiveDate: string
   createdBy: User['id']
@@ -18,12 +19,37 @@ export interface Document {
 }
 
 export interface GetDocumentProps {
+  code: string
+}
+
+export interface GetDocumentsProps {
   page: number
   size: number
+}
+
+export interface GetDocumentVersionsProps {
+  code: string
+  page: number
+  size: number
+}
+
+export interface CreateOrUpdateDocumentInput {
+  code?: string | undefined
+  version?: number | undefined
+  contentEn: string
+  contentTh: string
+  effectiveDate: string
+  remark?: string | null
 }
 
 export type DocumentListResponse = {
   data: {
     documents: Document[]
+  }
+} & ResponseWithPagination
+
+export type DocumentVersionListResponse = {
+  data: {
+    versions: Document[]
   }
 } & ResponseWithPagination

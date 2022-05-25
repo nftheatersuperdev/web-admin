@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATE_FORMAT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/document'
 
@@ -34,7 +34,7 @@ export default function Documents(): JSX.Element {
 
   const { data: response } = useQuery('documents', () => getList({ page, size }))
 
-  const rows = response?.documents.map((document) => document) || []
+  const rows = response?.documents?.map((document) => document) || []
 
   return (
     <Page>
@@ -66,7 +66,7 @@ export default function Documents(): JSX.Element {
                 <TableCell>{row.nameEn}</TableCell>
                 <TableCell>{row.codeName}</TableCell>
                 <TableCell>{row.version}</TableCell>
-                <TableCell>{dayjs(row.updatedDate).format(DEFAULT_DATE_FORMAT)}</TableCell>
+                <TableCell>{dayjs(row.updatedDate).format(DEFAULT_DATETIME_FORMAT)}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => history.push(`/documents/${row.codeName}/versions`)}>
                     <EditIcon />

@@ -1,5 +1,8 @@
 /* eslint-disable react/forbid-component-props */
+import dayjs from 'dayjs'
 import styled from 'styled-components'
+import { useState } from 'react'
+import { useQuery } from 'react-query'
 import { useHistory, Link as RouterLink, useParams } from 'react-router-dom'
 import {
   Button,
@@ -19,7 +22,9 @@ import {
 } from '@material-ui/core'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
+import { getDetail, getVersionList } from 'services/web-bff/document'
 
 interface DocumentVersionsParams {
   documentCode: string
@@ -52,55 +57,21 @@ const DivOverviewValue = styled.div`
   float: left;
 `
 
-const createData = (
-  id: string,
-  no: number,
-  createdDate: string,
-  createdBy: string,
-  version: string,
-  status: string,
-  effectiveDate: string,
-  revisionSummary: string
-) => {
-  return {
-    id,
-    no,
-    createdDate,
-    createdBy,
-    version,
-    status,
-    effectiveDate,
-    revisionSummary,
-  }
-}
-
 export default function DocumentVersions(): JSX.Element {
   const { documentCode } = useParams<DocumentVersionsParams>()
   const history = useHistory()
   const { t } = useTranslation()
+  const [page] = useState<number>(1)
+  const [size] = useState<number>(10)
 
-  const rows = [
-    createData(
-      'version_002',
-      2,
-      '10/05/2022 13:00',
-      'SuperAdmin',
-      '1.2',
-      'Scheduled',
-      '15/05/2022 12:00',
-      'Fix typo'
-    ),
-    createData(
-      'version_001',
-      1,
-      '10/05/2022 12:00',
-      'SuperAdmin',
-      '1.1',
-      'Scheduled',
-      '15/05/2022 12:00',
-      'Update accoring to new regulation blah blah'
-    ),
-  ]
+  const { data: documentDetail } = useQuery('document-detail', () =>
+    getDetail({ code: documentCode })
+  )
+  const { data: documents } = useQuery('documents', () =>
+    getVersionList({ code: documentCode, page, size })
+  )
+
+  const rows = documents?.versions?.map((document) => document) || []
 
   return (
     <Page>
@@ -124,23 +95,23 @@ export default function DocumentVersions(): JSX.Element {
         <UiOverviewWrapper>
           <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.id')}</DivOverviewTitle>
-            <DivOverviewValue>document_001</DivOverviewValue>
+            <DivOverviewValue>{documentDetail?.id}</DivOverviewValue>
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.nameEN')}</DivOverviewTitle>
-            <DivOverviewValue>Terms & Condition</DivOverviewValue>
+            <DivOverviewValue>{documentDetail?.nameEn}</DivOverviewValue>
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.nameTH')}</DivOverviewTitle>
-            <DivOverviewValue>ข้อกำหนดและเงื่อนไข</DivOverviewValue>
+            <DivOverviewValue>{documentDetail?.nameTh}</DivOverviewValue>
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.codeName')}</DivOverviewTitle>
-            <DivOverviewValue>TermsAndCondition</DivOverviewValue>
+            <DivOverviewValue>{documentDetail?.codeName}</DivOverviewValue>
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.activeVersion')}</DivOverviewTitle>
-            <DivOverviewValue>1.2</DivOverviewValue>
+            <DivOverviewValue>{documentDetail?.version}</DivOverviewValue>
           </UiLiOverviewWrapper>
         </UiOverviewWrapper>
       </CardWrapper>
@@ -177,13 +148,13 @@ export default function DocumentVersions(): JSX.Element {
             <TableBody>
               {rows.map((row) => (
                 <TableRow key={`${documentCode}-${row.id}`}>
-                  <TableCell>{row.no}</TableCell>
-                  <TableCell>{row.createdDate}</TableCell>
+                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{dayjs(row.createdDate).format(DEFAULT_DATETIME_FORMAT)}</TableCell>
                   <TableCell>{row.createdBy}</TableCell>
                   <TableCell>{row.version}</TableCell>
                   <TableCell>{row.status}</TableCell>
-                  <TableCell>{row.effectiveDate}</TableCell>
-                  <TableCell>{row.revisionSummary}</TableCell>
+                  <TableCell>{dayjs(row.effectiveDate).format(DEFAULT_DATETIME_FORMAT)}</TableCell>
+                  <TableCell>{row.remark || '-'}</TableCell>
                   <TableCell>
                     <IconButton
                       onClick={() => history.push(`/documents/${documentCode}/versions/${row.id}`)}
