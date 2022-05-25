@@ -634,9 +634,6 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                     lng: subscription?.deliveryLongitude ?? 0,
                   }}
                   zoom={15}
-                  options={{
-                    gestureHandling: 'none',
-                  }}
                 >
                   <InfoWindow
                     position={{
