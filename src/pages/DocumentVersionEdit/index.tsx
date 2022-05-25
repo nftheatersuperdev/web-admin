@@ -12,7 +12,7 @@ import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
 
 interface DocumentVersionEditParams {
-  documentId: string
+  documentCode: string
   versionId: string
 }
 
@@ -28,7 +28,7 @@ const ButtonSpace = styled(Button)`
 
 export default function DocumentVersionEdit(): JSX.Element {
   const history = useHistory()
-  const { documentId, versionId } = useParams<DocumentVersionEditParams>()
+  const { documentCode, versionId } = useParams<DocumentVersionEditParams>()
   const { t } = useTranslation()
   const isEdit = versionId !== 'add'
   const title = isEdit ? t('documents.addEdit.titles.edit') : t('documents.addEdit.titles.add')
@@ -74,7 +74,7 @@ export default function DocumentVersionEdit(): JSX.Element {
     formik.resetForm()
     /*setcontentThTemp('')
     setcontentEnTemp('')*/
-    history.push(`/documents/${documentId}/versions`)
+    history.push(`/documents/${documentCode}/versions`)
   }
 
   return (
@@ -93,7 +93,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           underline="hover"
           color="inherit"
           component={RouterLink}
-          to={`/documents/${documentId}/versions`}
+          to={`/documents/${documentCode}/versions`}
         >
           {t('documents.overviewAndVersions')}
         </Link>
