@@ -3,7 +3,7 @@ import { SortDirection } from 'services/web-bff/general.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
 import { User } from 'services/web-bff/user.type'
 import { CarModel } from 'services/web-bff/car.type'
-import { Payment } from 'services/evme.types'
+import { Payment, Voucher } from 'services/evme.types'
 
 export enum SubscriptionDuration {
   threeDays = '3d',
@@ -29,10 +29,10 @@ export enum SubscriptionStatus {
 }
 
 export interface Subscription {
-  id: string
-  startDate: string
-  endDate: string
-  cleaningDate: string
+  id?: string
+  startDate?: string
+  endDate?: string
+  cleaningDate?: string
   userId: string
   carId: string
   status: string
@@ -58,6 +58,7 @@ export interface Subscription {
   user: User
   payments: Payment[]
   parentId: string
+  voucher: Voucher
 }
 
 export interface SubscriptionCar {

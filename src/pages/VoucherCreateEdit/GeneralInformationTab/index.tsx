@@ -59,7 +59,9 @@ export default function VoucherGeneralInformationTab({
   const currentDateTime = new Date()
   const startAtDateTime = new Date(voucher?.startAt || new Date())
   const endAtDateTime = new Date(voucher?.endAt || new Date())
-  const isActive = currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+  const isActive = isEdit
+    ? currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+    : false
   const isInactive = currentDateTime > endAtDateTime
 
   const handleValidateCodeKeyPress = (event: React.KeyboardEvent) => {
@@ -148,12 +150,12 @@ export default function VoucherGeneralInformationTab({
 
       toast.promise(mutateFunction(data), {
         loading: t('toast.loading'),
-        success: (id) => {
+        success: () => {
           formik.resetForm()
           setIsLoading(false)
           refetch()
           if (!isEdit) {
-            history.push(`/vouchers/${id}/edit`)
+            history.push('/vouchers')
           }
           return toastMessages.success
         },

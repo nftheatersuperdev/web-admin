@@ -35,6 +35,8 @@
     "additionalExpense": "Additional Expense",
     "others": "Others",
     "chargingLocations": "Charging Locations",
+    "documents": "Documents",
+    "consentLog": "Consent Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -289,9 +291,11 @@
   },
   "subscription": {
     "id": "Subscription ID",
+    "customerId": "Customer ID",
     "brand": "Car Brand",
     "model": "Car Model",
     "modelId": "Car Model ID",
+    "carId": "Car ID",
     "seats": "Seats",
     "topSpeed": "Top Speed",
     "plateNumber": "Plate Number",
@@ -463,7 +467,8 @@
         "newPasswordRequired": "New password is required",
         "confirmNewPasswordRequired": "Current password is required",
         "passwordMismatch": "Password mismatch",
-        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long"
+        "passwordMinimumLengthLimit": "Password must be at least {{length}} characters long",
+        "invalidFormat": "Require at least 1 uppercase, lowercase and number (special character is optional)"
       }
     }
   },
@@ -672,7 +677,80 @@
       "authorizedRefund": "Authorized Refund"
     }
   },
+  "documents": {
+    "header": "Document Management",
+    "overview": {
+      "title": "Overview",
+      "id": "Document ID",
+      "nameEN": "Document Name (EN)",
+      "nameTH": "Document Name (TH)",
+      "codeName": "Document Code Name",
+      "activeVersion": "Active Version",
+      "lastUpdated": "Last updated"
+    },
+    "versions": {
+      "title": "Document Versions",
+      "no": "No",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "version": "Version",
+      "status": "Status",
+      "effectiveDate": "Effective Date",
+      "revisionSummary": "Revision summary",
+      "buttons": {
+        "addNewVersion": "Add New Version"
+      }
+    },
+    "overviewAndVersions": "Overview & Versions",
+    "addEdit": {
+      "titles": {
+        "add": "Add New Version",
+        "edit": "Edit exist"
+      },
+      "effectiveDateTime": "Effective Date & Time",
+      "revisionSummary": "Revision summary",
+      "titleEN": "Title English",
+      "titleTH": "Title Thai",
+      "contentEN": "Content English",
+      "contentTH": "Content Thai"
+    }
+  },
+  "modelAndPricing": {
+    "editDialog": {
+      "success": "Edit model and pricing success",
+      "error": "something went wrong"
+    }
+  },
   "actionsEvent": {
     "copy": "Copied !!"
-  }
+  },
+  "consentLog": {
+    "header": "Consent Log Activity",
+    "documentTypeLabel": "Document Name",
+    "statusNameLabel": "Status name",
+    "searchLabel": "Search Email",
+    "id": "ID",
+    "userId": "User ID",
+    "email": "Email",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "documentNameEn": "Document name (EN)",
+    "documentNameTh": "Document name (TH)",
+    "acceptedDate": "Date",
+    "status": "Status",
+    "documentVersion": "Version",
+    "documentTypes": {
+      "termAndCondition": "Terms and Conditions",
+      "privacyNotice": "Privacy Policy",
+      "marketing": "Marketing Consent",
+      "idAndCriminal": "ID card and Criminal Record Consent",
+      "dataSharing": "Data Sharing Consent"
+    },
+    "documentStatus": {
+      "decline": "Decline",
+      "accept": "Accept"
+    }
+  },
+  "all": "All"
 }

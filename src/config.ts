@@ -14,6 +14,7 @@ interface Config {
   googleMapsApiKey: string
   firebase: Record<string, string>
   maxInteger: number
+  timezone: string
 }
 
 const config: Config = {
@@ -40,6 +41,7 @@ const config: Config = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID || '',
   },
   maxInteger: 2147483647,
+  timezone: 'Asia/Bangkok',
 }
 
 export default config
