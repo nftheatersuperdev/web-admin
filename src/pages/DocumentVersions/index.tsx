@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { Page } from 'layout/LayoutRoute'
 
 interface DocumentVersionsParams {
-  documentId: string
+  documentCode: string
 }
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
@@ -75,7 +75,7 @@ const createData = (
 }
 
 export default function DocumentVersions(): JSX.Element {
-  const { documentId } = useParams<DocumentVersionsParams>()
+  const { documentCode } = useParams<DocumentVersionsParams>()
   const history = useHistory()
   const { t } = useTranslation()
 
@@ -153,7 +153,7 @@ export default function DocumentVersions(): JSX.Element {
           <Button
             color="primary"
             variant="contained"
-            onClick={() => history.push(`/documents/${documentId}/versions/add`)}
+            onClick={() => history.push(`/documents/${documentCode}/versions/add`)}
           >
             {t('documents.versions.buttons.addNewVersion')}
           </Button>
@@ -176,7 +176,7 @@ export default function DocumentVersions(): JSX.Element {
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={`${documentId}-${row.id}`}>
+                <TableRow key={`${documentCode}-${row.id}`}>
                   <TableCell>{row.no}</TableCell>
                   <TableCell>{row.createdDate}</TableCell>
                   <TableCell>{row.createdBy}</TableCell>
@@ -186,7 +186,7 @@ export default function DocumentVersions(): JSX.Element {
                   <TableCell>{row.revisionSummary}</TableCell>
                   <TableCell>
                     <IconButton
-                      onClick={() => history.push(`/documents/${documentId}/versions/${row.id}`)}
+                      onClick={() => history.push(`/documents/${documentCode}/versions/${row.id}`)}
                     >
                       <EditIcon />
                     </IconButton>

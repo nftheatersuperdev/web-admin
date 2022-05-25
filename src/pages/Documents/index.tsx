@@ -1,4 +1,7 @@
+import dayjs from 'dayjs'
 import styled from 'styled-components'
+import { useState } from 'react'
+import { useQuery } from 'react-query'
 import { useHistory, Link as RouterLink } from 'react-router-dom'
 import {
   Breadcrumbs,
@@ -15,44 +18,23 @@ import {
 } from '@material-ui/core'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
+import { DEFAULT_DATE_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
+import { getList } from 'services/web-bff/document'
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
   margin: 10px 0 20px 0;
 `
 
-const createData = (
-  id: string,
-  nameEn: string,
-  nameTh: string,
-  code: string,
-  activeVersion: string,
-  lastUpdated: string
-) => {
-  return {
-    id,
-    nameEn,
-    nameTh,
-    code,
-    activeVersion,
-    lastUpdated,
-  }
-}
-
 export default function Documents(): JSX.Element {
   const history = useHistory()
   const { t } = useTranslation()
+  const [page] = useState<number>(1)
+  const [size] = useState<number>(10)
 
-  const rows = [
-    createData(
-      'document_001',
-      'Terms and Conditions',
-      'ข้อกำหนดและเงื่อนไข',
-      'TermsAndCondition',
-      '1.2',
-      '16/04/2022'
-    ),
-  ]
+  const { data: response } = useQuery('documents', () => getList({ page, size }))
+
+  const rows = response?.documents.map((document) => document) || []
 
   return (
     <Page>
@@ -82,11 +64,11 @@ export default function Documents(): JSX.Element {
               <TableRow key={row.id}>
                 <TableCell>{row.nameTh}</TableCell>
                 <TableCell>{row.nameEn}</TableCell>
-                <TableCell>{row.code}</TableCell>
-                <TableCell>{row.activeVersion}</TableCell>
-                <TableCell>{row.lastUpdated}</TableCell>
+                <TableCell>{row.codeName}</TableCell>
+                <TableCell>{row.version}</TableCell>
+                <TableCell>{dayjs(row.updatedDate).format(DEFAULT_DATE_FORMAT)}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => history.push(`/documents/${row.id}/versions`)}>
+                  <IconButton onClick={() => history.push(`/documents/${row.codeName}/versions`)}>
                     <EditIcon />
                   </IconButton>
                 </TableCell>
