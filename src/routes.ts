@@ -26,7 +26,7 @@ export const ROUTE_PATHS = Object.freeze({
   CHARGING_LOCATIONS: '/charging-locations',
   DOCUMENTS: '/documents',
   DOCUMENT_VERSIONS: '/documents/:documentCode/versions',
-  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:versionId',
+  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version',
   CONSENT_LOG: '/consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',

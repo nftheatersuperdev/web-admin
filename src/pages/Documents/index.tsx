@@ -38,7 +38,7 @@ export default function Documents(): JSX.Element {
 
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {t('documents.header')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">

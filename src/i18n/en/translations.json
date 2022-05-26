@@ -704,15 +704,18 @@
     "overviewAndVersions": "Overview & Versions",
     "addEdit": {
       "titles": {
-        "add": "Add New Version",
-        "edit": "Edit exist"
+        "add": "Add a new version of {{name}}",
+        "edit": "Edit {{name}}, version {{version}}."
       },
-      "effectiveDateTime": "Effective Date & Time",
+      "effectiveDate": "Effective Date & Time",
       "revisionSummary": "Revision summary",
       "titleEn": "Title English",
       "titleTh": "Title Thai",
       "contentEn": "Content English",
-      "contentTh": "Content Thai"
+      "contentTh": "Content Thai",
+      "helpers": {
+        "effectiveDateGreaterThanLastVersion": "Can select the date that is greater than the last version. (Today +1)"
+      }
     }
   },
   "modelAndPricing": {

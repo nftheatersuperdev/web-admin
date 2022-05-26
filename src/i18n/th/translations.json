@@ -650,7 +650,7 @@
       "nameEN": "ชื่อเอกสาร (ภาษาอังกฤษ)",
       "nameTH": "ชื่อเอกสาร (ภาษาไทย)",
       "codeName": "รหัสเอกสาร",
-      "activeVersion": "เวอร์ชั่นที่ใช้งานอยุ่",
+      "activeVersion": "เวอร์ชั่นที่เปิดใช้งาน",
       "lastUpdated": "แก้ไขล่าสุด"
     },
     "versions": {
@@ -669,15 +669,18 @@
     "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
     "addEdit": {
       "titles": {
-        "add": "เพิ่มเวอร์ชั่นใหม่",
-        "edit": "แก้ไข"
+        "add": "เพิ่มเวอร์ชั่นใหม่ของ {{name}}",
+        "edit": "แก้ไข {{name}} เวอร์ชั่น {{version}}"
       },
-      "effectiveDateTime": "วันและเวลาที่มีผลบังคับใช้",
+      "effectiveDate": "วันและเวลาที่มีผลบังคับใช้",
       "revisionSummary": "สรุปการแก้ไข",
       "titleEn": "หัวข้อภาษาอังกฤษ",
       "titleTh": "หัวข้อภาษาไทย",
       "contentEn": "เนื้อหาภาษาอังกฤษ",
-      "contentTh": "เนื้อหาภาษาไทย"
+      "contentTh": "เนื้อหาภาษาไทย",
+      "helpers": {
+        "effectiveDateGreaterThanLastVersion": "สามารถเลือกวันที่มากกว่าเวอร์ชั่นล่าสุด (Today +1)"
+      }
     },
     "paymentEvent": {
       "status": {

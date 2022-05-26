@@ -62,7 +62,7 @@ export default function DocumentVersions(): JSX.Element {
   const history = useHistory()
   const { t } = useTranslation()
   const [page] = useState<number>(1)
-  const [size] = useState<number>(10)
+  const [size] = useState<number>(1000)
 
   const { data: documentDetail } = useQuery('document-detail', () =>
     getDetail({ code: documentCode })
@@ -75,7 +75,7 @@ export default function DocumentVersions(): JSX.Element {
 
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {t('documents.overviewAndVersions')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">
@@ -88,7 +88,7 @@ export default function DocumentVersions(): JSX.Element {
         <Typography color="textPrimary">ข้อกำหนดและเงื่อนไข (Terms & Condition)</Typography>
       </BreadcrumbsWrapper>
 
-      <Typography variant="h4" color="inherit" component="h2">
+      <Typography variant="h6" color="inherit" component="h2">
         {t('documents.overview.title')}
       </Typography>
       <CardWrapper>
@@ -117,7 +117,7 @@ export default function DocumentVersions(): JSX.Element {
       </CardWrapper>
 
       <ToolbarWrapper>
-        <Typography variant="h4" color="inherit" component="h2" style={{ flex: 1 }}>
+        <Typography variant="h6" color="inherit" component="h2" style={{ flex: 1 }}>
           {t('documents.versions.title')}
         </Typography>
         <div>
@@ -157,7 +157,9 @@ export default function DocumentVersions(): JSX.Element {
                   <TableCell>{row.remark || '-'}</TableCell>
                   <TableCell>
                     <IconButton
-                      onClick={() => history.push(`/documents/${documentCode}/versions/${row.id}`)}
+                      onClick={() =>
+                        history.push(`/documents/${documentCode}/versions/${row.version}`)
+                      }
                     >
                       <EditIcon />
                     </IconButton>
