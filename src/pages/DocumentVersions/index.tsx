@@ -127,6 +127,7 @@ export default function DocumentVersions(): JSX.Element {
           <Button
             color="primary"
             variant="contained"
+            disabled
             onClick={() => history.push(`/documents/${documentCode}/versions/add`)}
           >
             {t('documents.versions.buttons.addNewVersion')}
@@ -160,6 +161,7 @@ export default function DocumentVersions(): JSX.Element {
                   <TableCell>{row.remark || '-'}</TableCell>
                   <TableCell>
                     <IconButton
+                      disabled
                       onClick={() =>
                         history.push(`/documents/${documentCode}/versions/${row.version}`)
                       }
