@@ -709,10 +709,10 @@
       },
       "effectiveDateTime": "Effective Date & Time",
       "revisionSummary": "Revision summary",
-      "titleEN": "Title English",
-      "titleTH": "Title Thai",
-      "contentEN": "Content English",
-      "contentTH": "Content Thai"
+      "titleEn": "Title English",
+      "titleTh": "Title Thai",
+      "contentEn": "Content English",
+      "contentTh": "Content Thai"
     }
   },
   "modelAndPricing": {

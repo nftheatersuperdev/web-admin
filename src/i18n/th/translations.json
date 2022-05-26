@@ -674,10 +674,10 @@
       },
       "effectiveDateTime": "วันและเวลาที่มีผลบังคับใช้",
       "revisionSummary": "สรุปการแก้ไข",
-      "titleEN": "หัวข้อภาษาอังกฤษ",
-      "titleTH": "หัวข้อภาษาไทย",
-      "contentEN": "เนื้อหาภาษาอังกฤษ",
-      "contentTH": "เนื้อหาภาษาไทย"
+      "titleEn": "หัวข้อภาษาอังกฤษ",
+      "titleTh": "หัวข้อภาษาไทย",
+      "contentEn": "เนื้อหาภาษาอังกฤษ",
+      "contentTh": "เนื้อหาภาษาไทย"
     },
     "paymentEvent": {
       "status": {
