@@ -686,7 +686,8 @@
       "nameTH": "Document Name (TH)",
       "codeName": "Document Code Name",
       "activeVersion": "Active Version",
-      "lastUpdated": "Last updated"
+      "lastUpdated": "Last updated",
+      "action": "Action"
     },
     "versions": {
       "title": "Document Versions",
@@ -705,7 +706,7 @@
     "addEdit": {
       "titles": {
         "add": "Add a new version of {{name}}",
-        "edit": "Edit {{name}}, version {{version}}."
+        "edit": "Edit Document {{name}}, version {{version}}."
       },
       "effectiveDate": "Effective Date & Time",
       "revisionSummary": "Revision summary",

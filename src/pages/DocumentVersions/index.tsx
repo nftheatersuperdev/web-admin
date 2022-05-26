@@ -60,9 +60,10 @@ const DivOverviewValue = styled.div`
 export default function DocumentVersions(): JSX.Element {
   const { documentCode } = useParams<DocumentVersionsParams>()
   const history = useHistory()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [page] = useState<number>(1)
   const [size] = useState<number>(1000)
+  const isThaiLanguage = i18n.language === 'th'
 
   const { data: documentDetail } = useQuery('document-detail', () =>
     getDetail({ code: documentCode })
@@ -85,7 +86,9 @@ export default function DocumentVersions(): JSX.Element {
         <Link underline="hover" color="inherit" component={RouterLink} to="/documents">
           {t('documents.header')}
         </Link>
-        <Typography color="textPrimary">ข้อกำหนดและเงื่อนไข (Terms & Condition)</Typography>
+        <Typography color="textPrimary">
+          {isThaiLanguage ? documentDetail?.nameTh : documentDetail?.nameEn}
+        </Typography>
       </BreadcrumbsWrapper>
 
       <Typography variant="h6" color="inherit" component="h2">
@@ -142,7 +145,7 @@ export default function DocumentVersions(): JSX.Element {
                 <TableCell>{t('documents.versions.status')}</TableCell>
                 <TableCell>{t('documents.versions.effectiveDate')}</TableCell>
                 <TableCell>{t('documents.versions.revisionSummary')}</TableCell>
-                <TableCell>&nbsp;</TableCell>
+                <TableCell>{t('documents.overview.action')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

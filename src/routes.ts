@@ -181,17 +181,17 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DOCUMENT_VERSION_EDIT,
     component: lazy(() => import('./pages/DocumentVersionEdit' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.DOCUMENT_VERSIONS,
     component: lazy(() => import('./pages/DocumentVersions' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.DOCUMENTS,
     component: lazy(() => import('./pages/Documents' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.CONSENT_LOG,

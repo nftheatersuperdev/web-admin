@@ -56,7 +56,7 @@ export default function Documents(): JSX.Element {
               <TableCell>{t('documents.overview.codeName')}</TableCell>
               <TableCell>{t('documents.overview.activeVersion')}</TableCell>
               <TableCell>{t('documents.overview.lastUpdated')}</TableCell>
-              <TableCell>&nbsp;</TableCell>
+              <TableCell>{t('documents.overview.action')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

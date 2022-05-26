@@ -651,7 +651,8 @@
       "nameTH": "ชื่อเอกสาร (ภาษาไทย)",
       "codeName": "รหัสเอกสาร",
       "activeVersion": "เวอร์ชั่นที่เปิดใช้งาน",
-      "lastUpdated": "แก้ไขล่าสุด"
+      "lastUpdated": "แก้ไขล่าสุด",
+      "action": "ดำเนินการ"
     },
     "versions": {
       "title": "เวอร์ชั่นของเอกสาร",
@@ -670,7 +671,7 @@
     "addEdit": {
       "titles": {
         "add": "เพิ่มเวอร์ชั่นใหม่ของ {{name}}",
-        "edit": "แก้ไข {{name}} เวอร์ชั่น {{version}}"
+        "edit": "แก้ไขเอกสาร {{name}} เวอร์ชั่น {{version}}"
       },
       "effectiveDate": "วันและเวลาที่มีผลบังคับใช้",
       "revisionSummary": "สรุปการแก้ไข",
