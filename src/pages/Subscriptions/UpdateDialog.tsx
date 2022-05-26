@@ -184,7 +184,11 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     formik.resetForm()
   }
 
-  const availablePlateNumbers = availableCars?.map((data) => data.car.plateNumber) || []
+  const availablePlateNumbers =
+    availableCars
+      .filter((data) => data.availabilityStatus.toLowerCase() === 'available')
+      .map((data) => data.car.plateNumber) || []
+
   if (
     !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.carPlateNumber) &&
     subscription?.carPlateNumber

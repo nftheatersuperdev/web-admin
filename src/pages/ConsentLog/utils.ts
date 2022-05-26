@@ -12,47 +12,11 @@ export const setVisibilityColumns = (columns: VisibilityColumns): void => {
   ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
 }
 
-interface SelectOption {
+export interface SelectOption {
   key: string
   label: string
   value: string
   isDefault?: boolean
-}
-
-export const getDocumentTypeList = (t: TFunction<Namespace>): SelectOption[] => {
-  return [
-    {
-      key: 'all',
-      value: 'all',
-      label: t('all'),
-      isDefault: true,
-    },
-    {
-      key: 'TermsAndConditionApplication',
-      value: 'TermsAndConditionApplication',
-      label: t('consentLog.documentTypes.termAndCondition'),
-    },
-    {
-      key: 'PrivacyNotices',
-      value: 'PrivacyNotices',
-      label: t('consentLog.documentTypes.privacyNotice'),
-    },
-    {
-      key: 'PersonalisedMarketing',
-      value: 'PersonalisedMarketing',
-      label: t('consentLog.documentTypes.marketing'),
-    },
-    {
-      key: 'IdCardConsent',
-      value: 'IdCardConsent',
-      label: t('consentLog.documentTypes.idAndCriminal'),
-    },
-    {
-      key: 'DataAnalytics',
-      value: 'DataAnalytics',
-      label: t('consentLog.documentTypes.dataSharing'),
-    },
-  ]
 }
 
 export const getStatusList = (t: TFunction<Namespace>): SelectOption[] => {

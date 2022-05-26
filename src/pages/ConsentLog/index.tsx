@@ -25,14 +25,16 @@ import {
   GridToolbarDensitySelector,
 } from '@material-ui/data-grid'
 import { columnFormatDate, columnFormatText } from 'utils'
+import { useQuery } from 'react-query'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { ConsentLogListProps, ConsentLogListResponse } from 'services/web-bff/consent-log.type'
 import { getList } from 'services/web-bff/consent-log'
+import { getList as getDocumentList } from 'services/web-bff/document'
 import {
-  getDocumentTypeList,
   getStatusList,
   getVisibilityColumns,
+  SelectOption,
   setVisibilityColumns,
   VisibilityColumns,
 } from './utils'
@@ -63,8 +65,6 @@ export default function ConsentLog(): JSX.Element {
   const [filter, setFilter] = useState({})
   const visibilityColumns = getVisibilityColumns()
   const statusList = getStatusList(t)
-  const documentTypeList = getDocumentTypeList(t)
-  const defaultDocument = documentTypeList.find((document) => document.isDefault)
   const defaultStatus = statusList.find((status) => status.isDefault)
   const [response, setResponse] = useState<ConsentLogListResponse>()
   const [isFetching, setIsFetching] = useState(false)
@@ -78,6 +78,27 @@ export default function ConsentLog(): JSX.Element {
       setIsFetching(false)
     })
   }
+  const { data: documentTypeListResponse } = useQuery('document-type-list', () =>
+    getDocumentList({ size: config.maxInteger, page: 1 })
+  )
+
+  const allSelect: SelectOption = {
+    key: 'all',
+    label: 'All',
+    value: 'all',
+    isDefault: true,
+  }
+  const documents: SelectOption[] =
+    documentTypeListResponse?.documents.map((doc) => {
+      return {
+        key: doc.codeName,
+        label: doc.nameEn,
+        value: doc.codeName,
+        isDefault: false,
+      } as SelectOption
+    }) || []
+  documents.unshift(allSelect)
+  const defaultDocument = documents?.find((x: SelectOption) => x.isDefault)
 
   const formik = useFormik({
     initialValues: {
@@ -329,8 +350,8 @@ export default function ConsentLog(): JSX.Element {
               shrink: true,
             }}
           >
-            {documentTypeList.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
+            {documents?.map((option) => (
+              <MenuItem key={option.key} value={option.value}>
                 {option.label}
               </MenuItem>
             ))}
