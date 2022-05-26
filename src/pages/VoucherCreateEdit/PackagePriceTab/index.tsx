@@ -53,6 +53,10 @@ export default function VoucherPackagePriceTab({
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
+  const currentDateTime = new Date()
+  const endAtDateTime = new Date(voucher?.endAt || new Date())
+  const isInactive = currentDateTime > endAtDateTime
+
   const { data: masterPackagePricesData, isSuccess: isSuccessToGetMasterPackagePrices } = useQuery(
     'master-package-prices',
     () => getActive()
@@ -178,7 +182,11 @@ export default function VoucherPackagePriceTab({
         <Grid item xs={12} style={{ textAlign: 'right' }}>
           <ButtonSpace
             disabled={
-              isLoading || optionIsEqualToExists || packageIsEqualToExists || packageIsEmpty
+              isInactive ||
+              isLoading ||
+              optionIsEqualToExists ||
+              packageIsEqualToExists ||
+              packageIsEmpty
             }
             onClick={() => handleUpdatePackagePrices()}
             color="primary"
@@ -199,11 +207,17 @@ export default function VoucherPackagePriceTab({
             defaultValue={currentOption}
             value={currentOption}
           >
-            <FormControlLabel value={selectOptions.ALL} control={<Radio />} label="All Packages" />
+            <FormControlLabel
+              value={selectOptions.ALL}
+              control={<Radio />}
+              label="All Packages"
+              disabled={isInactive}
+            />
             <FormControlLabel
               value={selectOptions.SELECT}
               control={<Radio />}
               label={t('voucher.dialog.packagePrice.selectAvailablePackages')}
+              disabled={isInactive}
             />
           </RadioGroup>
         </Grid>

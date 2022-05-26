@@ -24,6 +24,10 @@ export const ROUTE_PATHS = Object.freeze({
   VOUCHER_EDIT: '/vouchers/:voucherCode/edit',
   VOUCHER_EVENTS: '/vouchers/:voucherId/events',
   CHARGING_LOCATIONS: '/charging-locations',
+  DOCUMENTS: '/documents',
+  DOCUMENT_VERSIONS: '/documents/:documentCode/versions',
+  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version',
+  CONSENT_LOG: '/consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
   FORBIDDEN: '/403',
@@ -77,7 +81,13 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.USER,
     component: lazy(() => import('./pages/User' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+    ],
   },
   {
     path: ROUTE_PATHS.USER_GROUP_USERS,
@@ -167,6 +177,26 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.CHARGING_LOCATIONS,
     component: lazy(() => import('./pages/ChargingLocations' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENT_VERSION_EDIT,
+    component: lazy(() => import('./pages/DocumentVersionEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENT_VERSIONS,
+    component: lazy(() => import('./pages/DocumentVersions' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENTS,
+    component: lazy(() => import('./pages/Documents' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.CONSENT_LOG,
+    component: lazy(() => import('./pages/ConsentLog' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,

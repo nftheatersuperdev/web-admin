@@ -145,6 +145,7 @@ export default function Subscription(): JSX.Element {
               voucherCode: subscription.voucher ? subscription.voucher.code : '',
               isExtendedSubscription: subscription.parentId ? 'True' : 'False',
               customerId: subscription.userId || '-',
+              cleaningDate: subscription.cleaningDate,
             } ?? {}
           )
         })

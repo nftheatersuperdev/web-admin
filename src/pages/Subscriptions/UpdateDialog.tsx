@@ -105,6 +105,7 @@ interface Subscription {
   returnDate: string
   payments: Payment[]
   voucherId: string
+  cleaningDate: string
 }
 
 interface SubscriptionProps {
@@ -133,7 +134,11 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
 
   const { data: availableCarsResponse } = useQuery('available-cars', () =>
     getAvailableListBFF({
-      size: 500,
+      filter: {
+        startDate: subscription.startDate,
+        endDate: subscription.cleaningDate,
+      },
+      size: config.maxInteger,
     } as CarAvailableListBffFilterRequestProps)
   )
 
@@ -179,7 +184,11 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     formik.resetForm()
   }
 
-  const availablePlateNumbers = availableCars?.map((data) => data.car.plateNumber) || []
+  const availablePlateNumbers =
+    availableCars
+      .filter((data) => data.availabilityStatus.toLowerCase() === 'available')
+      .map((data) => data.car.plateNumber) || []
+
   if (
     !availablePlateNumbers.find((plateNumber) => plateNumber === subscription?.carPlateNumber) &&
     subscription?.carPlateNumber
@@ -629,9 +638,6 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
                     lng: subscription?.deliveryLongitude ?? 0,
                   }}
                   zoom={15}
-                  options={{
-                    gestureHandling: 'none',
-                  }}
                 >
                   <InfoWindow
                     position={{
