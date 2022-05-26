@@ -48,6 +48,7 @@ export default function DocumentVersionEdit(): JSX.Element {
       contentEn: '',
     },
     onSubmit: (values) => {
+      /* eslint-disable no-console */
       console.log('values ->', values)
     },
   })
