@@ -161,13 +161,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.documents'),
         path: ROUTE_PATHS.DOCUMENTS,
         icon: <LibraryBooksIcon />,
-        allowedRoles: [
-          ROLES.SUPER_ADMIN,
-          ROLES.ADMIN,
-          ROLES.CUSTOMER_SUPPORT,
-          ROLES.OPERATION,
-          ROLES.MARKETING,
-        ],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
         title: t('sidebar.consentLog'),

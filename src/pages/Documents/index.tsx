@@ -38,7 +38,7 @@ export default function Documents(): JSX.Element {
 
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {t('documents.header')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">
@@ -56,7 +56,7 @@ export default function Documents(): JSX.Element {
               <TableCell>{t('documents.overview.codeName')}</TableCell>
               <TableCell>{t('documents.overview.activeVersion')}</TableCell>
               <TableCell>{t('documents.overview.lastUpdated')}</TableCell>
-              <TableCell>&nbsp;</TableCell>
+              <TableCell>{t('documents.overview.action')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

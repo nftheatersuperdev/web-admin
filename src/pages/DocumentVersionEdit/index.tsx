@@ -2,18 +2,28 @@
 import * as yup from 'yup'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
+import toast from 'react-hot-toast'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
+import { useEffect, useState } from 'react'
 import { useHistory, Link as RouterLink, useParams } from 'react-router-dom'
 import { Breadcrumbs, Button, Divider, Grid, Link, Typography, TextField } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
+import { useQuery } from 'react-query'
 import { Page } from 'layout/LayoutRoute'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
+import {
+  getDetail,
+  getVersionDetail,
+  getLatestVersion,
+  createNew,
+  updateByVersion,
+} from 'services/web-bff/document'
 
 interface DocumentVersionEditParams {
   documentCode: string
-  versionId: string
+  version: string
 }
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
@@ -28,48 +38,120 @@ const ButtonSpace = styled(Button)`
 
 export default function DocumentVersionEdit(): JSX.Element {
   const history = useHistory()
-  const { documentCode, versionId } = useParams<DocumentVersionEditParams>()
-  const { t } = useTranslation()
-  const isEdit = versionId !== 'add'
-  const title = isEdit ? t('documents.addEdit.titles.edit') : t('documents.addEdit.titles.add')
+  const { documentCode, version } = useParams<DocumentVersionEditParams>()
+  const { t, i18n } = useTranslation()
+  const currentVersion = +version
+  const currentLanguage = i18n.language
+  const isEdit = version !== 'add'
+  const isTherePreviousVersion = currentVersion > 1
+  const [contentThTemp, setContentThTemp] = useState<string | undefined>()
+  const [contentEnTemp, setContentEnTemp] = useState<string | undefined>()
 
+  const { data: documentDetail } = useQuery('document-detail', () =>
+    getDetail({ code: documentCode })
+  )
+  const { data: document, isFetched } = useQuery(
+    'document-current-version',
+    () => (isEdit ? getVersionDetail({ code: documentCode, version: currentVersion }) : undefined),
+    {
+      cacheTime: 0,
+    }
+  )
+  const { data: documentPreviousVersion, isFetched: isFetchedPreviousVersion } = useQuery(
+    'document-previous-version',
+    () =>
+      isTherePreviousVersion
+        ? getVersionDetail({ code: documentCode, version: currentVersion - 1 })
+        : undefined,
+    {
+      cacheTime: 0,
+    }
+  )
+  const { data: documentLatestVersion, isFetched: isFetchedLastVersion } = useQuery(
+    'document-latest-version',
+    () => (!isEdit ? getLatestVersion(documentCode) : undefined),
+    {
+      cacheTime: 0,
+    }
+  )
+
+  const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
+  const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
+  const title = t(documentTitle, { name: documentName, version })
+  const isAllDataFetched = isFetched || isFetchedPreviousVersion || isFetchedLastVersion
   const validationSchema = yup.object({
-    remark: yup.string().required(t('validation.required')),
-    effectiveDateTime: yup.date().required(t('validation.required')),
+    effectiveDate: yup.date().required(t('validation.required')),
   })
+  const dateAvailableToSelect = dayjs(
+    isEdit ? documentPreviousVersion?.effectiveDate : documentLatestVersion?.effectiveDate
+  ).add(1, 'day')
 
-  const datePlusOneDay = dayjs().add(1, 'day')
   const formik = useFormik({
     validationSchema,
     initialValues: {
-      effectiveDateTime: datePlusOneDay,
+      effectiveDate: dateAvailableToSelect,
       remark: '',
       contentTh: '',
       contentEn: '',
     },
     onSubmit: (values) => {
-      /* eslint-disable no-console */
-      console.log('values ->', values)
+      const documentObject = {
+        ...values,
+        code: documentCode,
+        version: currentVersion,
+        contentTh: contentThTemp,
+        contentEn: contentEnTemp,
+      }
+      const requestFunction = isEdit ? updateByVersion : createNew
+      toast.promise(requestFunction(documentObject), {
+        loading: t('toast.loading'),
+        success: () => {
+          resetForm()
+          return 'Success'
+        },
+        error: (err) => {
+          return err.message
+        },
+      })
     },
   })
 
   const handleOnDescriptionChange = (value: string, language: string) => {
     if (language === 'th') {
+      setContentThTemp(value)
       formik.setFieldValue('contentTh', value)
       return true
     }
+    setContentEnTemp(value)
     formik.setFieldValue('contentEn', value)
     return true
   }
 
   const resetForm = () => {
     formik.resetForm()
+    setContentThTemp('')
+    setContentEnTemp('')
     history.push(`/documents/${documentCode}/versions`)
   }
 
+  useEffect(() => {
+    formik.setFieldValue('effectiveDate', dayjs(document?.effectiveDate))
+    formik.setFieldValue('remark', document?.remark ?? '')
+    formik.setFieldValue('contentTh', document?.contentTh)
+    formik.setFieldValue('contentEn', document?.contentEn)
+    setContentThTemp(document?.contentTh)
+    setContentEnTemp(document?.contentEn)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetched, isFetchedPreviousVersion])
+
+  useEffect(() => {
+    formik.setFieldValue('effectiveDate', dateAvailableToSelect)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFetchedLastVersion])
+
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {title}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">
@@ -97,16 +179,16 @@ export default function DocumentVersionEdit(): JSX.Element {
             fullWidth
             disablePast
             ampm={false}
-            label={t('documents.addEdit.effectiveDateTime')}
-            id="effectiveDateTime"
-            name="effectiveDateTime"
+            label={t('documents.addEdit.effectiveDate')}
+            id="effectiveDate"
+            name="effectiveDate"
             format={DEFAULT_DATETIME_FORMAT}
-            minDate={formik.values.effectiveDateTime}
+            minDate={dateAvailableToSelect}
             minDateMessage=""
-            defaultValue={formik.values.effectiveDateTime}
-            value={formik.values.effectiveDateTime}
+            defaultValue={formik.values.effectiveDate}
+            value={formik.values.effectiveDate}
             onChange={(date) => {
-              formik.setFieldValue('effectiveDateTime', date)
+              formik.setFieldValue('effectiveDate', date)
             }}
             KeyboardButtonProps={{
               'aria-label': 'change date',
@@ -117,6 +199,7 @@ export default function DocumentVersionEdit(): JSX.Element {
             InputProps={{
               readOnly: true,
             }}
+            helperText={t('documents.addEdit.helpers.effectiveDateGreaterThanLastVersion')}
           />
         </Grid>
       </Grid>
@@ -146,7 +229,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           <HTMLEditor
             id="contentTh"
             label={t('documents.addEdit.contentTh')}
-            initialValue={formik.values.contentTh}
+            initialValue={document?.contentTh}
             handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'th')}
           />
         </Grid>
@@ -154,7 +237,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           <HTMLEditor
             id="contentEn"
             label={t('documents.addEdit.contentEn')}
-            initialValue={formik.values.contentEn}
+            initialValue={document?.contentEn}
             handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'en')}
           />
         </Grid>
@@ -168,6 +251,7 @@ export default function DocumentVersionEdit(): JSX.Element {
             onClick={() => formik.handleSubmit()}
             color="primary"
             variant="contained"
+            disabled={!isAllDataFetched}
           >
             {t(isEdit ? 'button.update' : 'button.create')}
           </ButtonSpace>

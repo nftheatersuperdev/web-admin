@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { User } from 'services/web-bff/user.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
 
@@ -22,6 +23,11 @@ export interface GetDocumentProps {
   code: string
 }
 
+export interface GetDocumentVersionProps {
+  code: string
+  version?: number
+}
+
 export interface GetDocumentsProps {
   page: number
   size: number
@@ -36,9 +42,9 @@ export interface GetDocumentVersionsProps {
 export interface CreateOrUpdateDocumentInput {
   code?: string | undefined
   version?: number | undefined
-  contentEn: string
-  contentTh: string
-  effectiveDate: string
+  contentEn?: string | undefined
+  contentTh?: string | undefined
+  effectiveDate: string | dayjs.Dayjs
   remark?: string | null
 }
 
