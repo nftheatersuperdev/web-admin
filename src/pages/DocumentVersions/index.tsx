@@ -65,6 +65,11 @@ export default function DocumentVersions(): JSX.Element {
   const [size] = useState<number>(1000)
   const isThaiLanguage = i18n.language === 'th'
 
+  /**
+   * The variable is set for holding because our QA doesn't test yet.
+   */
+  const forceDisableToEditAndCreate = true
+
   const { data: documentDetail } = useQuery('document-detail', () =>
     getDetail({ code: documentCode })
   )
@@ -72,7 +77,16 @@ export default function DocumentVersions(): JSX.Element {
     getVersionList({ code: documentCode, page, size })
   )
 
-  const rows = documents?.versions?.map((document) => document) || []
+  const rows =
+    documents?.versions?.map((document) => {
+      // const isDisableToEdit = document.status !== 'Scheduled'
+      const isDisableToEdit = forceDisableToEditAndCreate
+
+      return {
+        ...document,
+        isDisableToEdit,
+      }
+    }) || []
 
   return (
     <Page>
@@ -127,7 +141,7 @@ export default function DocumentVersions(): JSX.Element {
           <Button
             color="primary"
             variant="contained"
-            disabled
+            disabled={forceDisableToEditAndCreate}
             onClick={() => history.push(`/documents/${documentCode}/versions/add`)}
           >
             {t('documents.versions.buttons.addNewVersion')}
@@ -161,7 +175,7 @@ export default function DocumentVersions(): JSX.Element {
                   <TableCell>{row.remark || '-'}</TableCell>
                   <TableCell>
                     <IconButton
-                      disabled
+                      disabled={row.isDisableToEdit}
                       onClick={() =>
                         history.push(`/documents/${documentCode}/versions/${row.version}`)
                       }
