@@ -756,5 +756,8 @@
       "accept": "Accept"
     }
   },
-  "all": "All"
+  "all": "All",
+  "browserEvents": {
+    "leaveSite": "Do you want to Cancel? Changes that you made may not be saved."
+  }
 }
