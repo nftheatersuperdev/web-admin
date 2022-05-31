@@ -16,7 +16,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
-import { Edit as EditIcon } from '@material-ui/icons'
+import { Edit as EditIcon, Search as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
@@ -68,6 +68,13 @@ export default function Documents(): JSX.Element {
                 <TableCell>{row.version}</TableCell>
                 <TableCell>{dayjs(row.updatedDate).format(DEFAULT_DATETIME_FORMAT)}</TableCell>
                 <TableCell>
+                  <IconButton
+                    onClick={() =>
+                      history.push(`/documents/${row.codeName}/versions/${row.version}`)
+                    }
+                  >
+                    <SearchIcon />
+                  </IconButton>
                   <IconButton onClick={() => history.push(`/documents/${row.codeName}/versions`)}>
                     <EditIcon />
                   </IconButton>
