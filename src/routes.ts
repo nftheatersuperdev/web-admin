@@ -26,7 +26,8 @@ export const ROUTE_PATHS = Object.freeze({
   CHARGING_LOCATIONS: '/charging-locations',
   DOCUMENTS: '/documents',
   DOCUMENT_VERSIONS: '/documents/:documentCode/versions',
-  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version',
+  DOCUMENT_VERSION_VIEW: '/documents/:documentCode/versions/:version',
+  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version/edit',
   CONSENT_LOG: '/consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
@@ -181,6 +182,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DOCUMENT_VERSION_EDIT,
     component: lazy(() => import('./pages/DocumentVersionEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.DOCUMENT_VERSION_VIEW,
+    component: lazy(() => import('./pages/DocumentVersionView' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {

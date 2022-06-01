@@ -20,7 +20,7 @@ import {
   TableRow,
   Toolbar,
 } from '@material-ui/core'
-import { Edit as EditIcon } from '@material-ui/icons'
+import { Edit as EditIcon, Search as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
@@ -135,7 +135,7 @@ export default function DocumentVersions(): JSX.Element {
           <Button
             color="primary"
             variant="contained"
-            onClick={() => history.push(`/documents/${documentCode}/versions/add`)}
+            onClick={() => history.push(`/documents/${documentCode}/versions/add/edit`)}
           >
             {t('documents.versions.buttons.addNewVersion')}
           </Button>
@@ -168,9 +168,16 @@ export default function DocumentVersions(): JSX.Element {
                   <TableCell>{row.remark || '-'}</TableCell>
                   <TableCell>
                     <IconButton
-                      disabled={row.isDisableToEdit}
                       onClick={() =>
                         history.push(`/documents/${documentCode}/versions/${row.version}`)
+                      }
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                    <IconButton
+                      disabled={row.isDisableToEdit}
+                      onClick={() =>
+                        history.push(`/documents/${documentCode}/versions/${row.version}/edit`)
                       }
                     >
                       <EditIcon />
