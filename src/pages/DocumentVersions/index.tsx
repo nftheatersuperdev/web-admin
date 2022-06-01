@@ -135,7 +135,7 @@ export default function DocumentVersions(): JSX.Element {
           <Button
             color="primary"
             variant="contained"
-            onClick={() => history.push(`/documents/${documentCode}/versions/add`)}
+            onClick={() => history.push(`/documents/${documentCode}/versions/add/edit`)}
           >
             {t('documents.versions.buttons.addNewVersion')}
           </Button>
