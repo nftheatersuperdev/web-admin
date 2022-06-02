@@ -202,7 +202,13 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CONSENT_LOG,
     component: lazy(() => import('./pages/ConsentLog' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.MARKETING,
+    ],
   },
   {
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
