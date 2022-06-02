@@ -117,8 +117,8 @@ export default function DocumentVersions(): JSX.Element {
             <DivOverviewValue>{documentDetail?.nameTh}</DivOverviewValue>
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
-            <DivOverviewTitle>{t('documents.overview.codeName')}</DivOverviewTitle>
-            <DivOverviewValue>{documentDetail?.codeName}</DivOverviewValue>
+            {/* <DivOverviewTitle>{t('documents.overview.codeName')}</DivOverviewTitle>
+            <DivOverviewValue>{documentDetail?.codeName}</DivOverviewValue> */}
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.activeVersion')}</DivOverviewTitle>
