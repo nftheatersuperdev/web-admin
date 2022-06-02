@@ -167,7 +167,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.consentLog'),
         path: ROUTE_PATHS.CONSENT_LOG,
         icon: <LaptopIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.OPERATION,
+          ROLES.CUSTOMER_SUPPORT,
+          ROLES.MARKETING,
+        ],
       },
       {
         title: t('sidebar.chargingLocations'),
