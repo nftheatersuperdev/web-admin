@@ -55,6 +55,7 @@ const DivOverviewValue = styled.div`
   float: left;
 `
 
+const formatDate = (date: string): string => dayjs(date).format(DEFAULT_DATETIME_FORMAT)
 const customToolbar = () => (
   <GridToolbarContainer>
     <GridToolbarColumnsButton />
@@ -133,9 +134,7 @@ export default function DocumentVersions(): JSX.Element {
       flex: 1,
       sortable: false,
       filterable: false,
-      valueFormatter: ({ row }: GridValueFormatterParams): string => {
-        return dayjs(row.effectiveDate).format(DEFAULT_DATETIME_FORMAT)
-      },
+      valueFormatter: ({ row }: GridValueFormatterParams): string => formatDate(row.effectiveDate),
     },
     {
       field: 'remark',
@@ -157,9 +156,7 @@ export default function DocumentVersions(): JSX.Element {
       flex: 1,
       sortable: false,
       filterable: false,
-      valueFormatter: ({ row }: GridValueFormatterParams): string => {
-        return dayjs(row.createdDate).format(DEFAULT_DATETIME_FORMAT)
-      },
+      valueFormatter: ({ row }: GridValueFormatterParams): string => formatDate(row.createdDate),
     },
     {
       field: 'createdBy',
