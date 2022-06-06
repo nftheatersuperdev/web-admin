@@ -1,30 +1,26 @@
 /* eslint-disable react/forbid-component-props */
 import dayjs from 'dayjs'
 import styled from 'styled-components'
-import { useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory, Link as RouterLink, useParams } from 'react-router-dom'
+import { Button, Breadcrumbs, Card, IconButton, Link, Typography, Toolbar } from '@material-ui/core'
 import {
-  Button,
-  Breadcrumbs,
-  Card,
-  IconButton,
-  Link,
-  Typography,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Toolbar,
-} from '@material-ui/core'
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarDensitySelector,
+  GridColDef,
+  GridCellParams,
+  GridPageChangeParams,
+  GridValueFormatterParams,
+} from '@material-ui/data-grid'
 import { Edit as EditIcon, Search as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
 import { getDetail, getVersionList } from 'services/web-bff/document'
+import DataGridLocale from 'components/DataGridLocale'
+import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 interface DocumentVersionsParams {
   documentCode: string
@@ -40,7 +36,9 @@ const CardWrapper = styled(Card)`
 const ToolbarWrapper = styled(Toolbar)`
   padding: 0;
 `
-const TableWrapper = styled.div``
+const TableWrapper = styled.div`
+  background-color: #fff;
+`
 const UiOverviewWrapper = styled.ul`
   list-style: none;
 `
@@ -57,30 +55,171 @@ const DivOverviewValue = styled.div`
   float: left;
 `
 
+const formatDate = (date: string): string => dayjs(date).format(DEFAULT_DATETIME_FORMAT)
+const customToolbar = () => (
+  <GridToolbarContainer>
+    <GridToolbarColumnsButton />
+    <GridToolbarDensitySelector />
+  </GridToolbarContainer>
+)
+
 export default function DocumentVersions(): JSX.Element {
   const { documentCode } = useParams<DocumentVersionsParams>()
   const history = useHistory()
   const { t, i18n } = useTranslation()
-  const [page] = useState<number>(1)
-  const [size] = useState<number>(1000)
+  const [page, setPage] = useState<number>(0)
+  const [size, setSize] = useState<number>(10)
   const isThaiLanguage = i18n.language === 'th'
 
   const { data: documentDetail } = useQuery('document-detail', () =>
     getDetail({ code: documentCode })
   )
-  const { data: documents } = useQuery('documents', () =>
-    getVersionList({ code: documentCode, page, size })
-  )
+  const {
+    data: documents,
+    isFetching,
+    refetch: refetchDocuments,
+  } = useQuery('documents', () => getVersionList({ code: documentCode, page: page + 1, size }))
 
+  const visibilityColumns = getVisibilityColumns()
+
+  useEffect(() => {
+    refetchDocuments()
+  }, [refetchDocuments, page, size])
+
+  const rowCount = documents?.pagination.totalRecords || 0
   const rows =
-    documents?.versions?.map((document) => {
+    documents?.versions?.map((document, key) => {
       const isDisableToEdit = document.status !== 'Scheduled'
 
       return {
+        no: key + 1,
         ...document,
         isDisableToEdit,
       }
     }) || []
+
+  const columns: GridColDef[] = [
+    {
+      field: 'no',
+      headerName: t('documents.versions.no'),
+      description: t('documents.versions.no'),
+      hide: !visibilityColumns.no,
+      flex: 1,
+      sortable: true,
+      filterable: false,
+    },
+    {
+      field: 'version',
+      headerName: t('documents.versions.version'),
+      description: t('documents.versions.version'),
+      hide: !visibilityColumns.version,
+      flex: 1,
+      sortable: true,
+      filterable: false,
+    },
+    {
+      field: 'status',
+      headerName: t('documents.versions.status'),
+      description: t('documents.versions.status'),
+      hide: !visibilityColumns.status,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'effectiveDate',
+      headerName: t('documents.versions.effectiveDate'),
+      description: t('documents.versions.effectiveDate'),
+      hide: !visibilityColumns.effectiveDate,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      valueFormatter: ({ row }: GridValueFormatterParams): string => formatDate(row.effectiveDate),
+    },
+    {
+      field: 'remark',
+      headerName: t('documents.versions.revisionSummary'),
+      description: t('documents.versions.revisionSummary'),
+      hide: !visibilityColumns.remark,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      valueFormatter: ({ value }: GridValueFormatterParams): string => {
+        return String(value !== null ? value : '-')
+      },
+    },
+    {
+      field: 'createdDate',
+      headerName: t('documents.versions.createdDate'),
+      description: t('documents.versions.createdDate'),
+      hide: !visibilityColumns.createdDate,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      valueFormatter: ({ row }: GridValueFormatterParams): string => formatDate(row.createdDate),
+    },
+    {
+      field: 'createdBy',
+      headerName: t('documents.versions.createdBy'),
+      description: t('documents.versions.createdBy'),
+      hide: !visibilityColumns.createdBy,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'action',
+      headerName: t('documents.overview.action'),
+      description: t('documents.overview.action'),
+      hide: !visibilityColumns.action,
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }: GridCellParams) => (
+        <Fragment>
+          <IconButton
+            onClick={() => history.push(`/documents/${documentCode}/versions/${row.version}`)}
+          >
+            <SearchIcon />
+          </IconButton>
+          <IconButton
+            disabled={row.isDisableToEdit}
+            onClick={() => history.push(`/documents/${documentCode}/versions/${row.version}/edit`)}
+          >
+            <EditIcon />
+          </IconButton>
+        </Fragment>
+      ),
+    },
+  ]
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPage(0)
+    setSize(params.pageSize)
+  }
+
+  const handleFetchPage = (pageNumber: number) => {
+    setPage(pageNumber)
+  }
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
+  }
 
   return (
     <Page>
@@ -117,10 +256,6 @@ export default function DocumentVersions(): JSX.Element {
             <DivOverviewValue>{documentDetail?.nameTh}</DivOverviewValue>
           </UiLiOverviewWrapper>
           <UiLiOverviewWrapper>
-            {/* <DivOverviewTitle>{t('documents.overview.codeName')}</DivOverviewTitle>
-            <DivOverviewValue>{documentDetail?.codeName}</DivOverviewValue> */}
-          </UiLiOverviewWrapper>
-          <UiLiOverviewWrapper>
             <DivOverviewTitle>{t('documents.overview.activeVersion')}</DivOverviewTitle>
             <DivOverviewValue>{documentDetail?.version}</DivOverviewValue>
           </UiLiOverviewWrapper>
@@ -142,52 +277,25 @@ export default function DocumentVersions(): JSX.Element {
         </div>
       </ToolbarWrapper>
       <TableWrapper>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('documents.versions.no')}</TableCell>
-                <TableCell>{t('documents.versions.createdDate')}</TableCell>
-                <TableCell>{t('documents.versions.createdBy')}</TableCell>
-                <TableCell>{t('documents.versions.version')}</TableCell>
-                <TableCell>{t('documents.versions.status')}</TableCell>
-                <TableCell>{t('documents.versions.effectiveDate')}</TableCell>
-                <TableCell>{t('documents.versions.revisionSummary')}</TableCell>
-                <TableCell>{t('documents.overview.action')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow key={`${documentCode}-${row.id}`}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{dayjs(row.createdDate).format(DEFAULT_DATETIME_FORMAT)}</TableCell>
-                  <TableCell>{row.createdBy}</TableCell>
-                  <TableCell>{row.version}</TableCell>
-                  <TableCell>{row.status}</TableCell>
-                  <TableCell>{dayjs(row.effectiveDate).format(DEFAULT_DATETIME_FORMAT)}</TableCell>
-                  <TableCell>{row.remark || '-'}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() =>
-                        history.push(`/documents/${documentCode}/versions/${row.version}`)
-                      }
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                    <IconButton
-                      disabled={row.isDisableToEdit}
-                      onClick={() =>
-                        history.push(`/documents/${documentCode}/versions/${row.version}/edit`)
-                      }
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <DataGridLocale
+          autoHeight
+          pagination
+          pageSize={size}
+          page={page}
+          rowCount={rowCount}
+          paginationMode="server"
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={setPage}
+          rows={rows}
+          columns={columns}
+          disableSelectionOnClick
+          filterMode="client"
+          onColumnVisibilityChange={onColumnVisibilityChange}
+          loading={isFetching}
+          customToolbar={customToolbar}
+          onFetchNextPage={() => handleFetchPage(page + 1)}
+          onFetchPreviousPage={() => handleFetchPage(page - 1)}
+        />
       </TableWrapper>
     </Page>
   )
