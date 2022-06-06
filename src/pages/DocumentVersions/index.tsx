@@ -86,13 +86,14 @@ export default function DocumentVersions(): JSX.Element {
     refetchDocuments()
   }, [refetchDocuments, page, size])
 
+  const startNo = page * size
   const rowCount = documents?.pagination.totalRecords || 0
   const rows =
     documents?.versions?.map((document, key) => {
       const isDisableToEdit = document.status !== 'Scheduled'
 
       return {
-        no: key + 1,
+        no: startNo + (key + 1),
         ...document,
         isDisableToEdit,
       }
