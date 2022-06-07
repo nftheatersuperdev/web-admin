@@ -86,9 +86,18 @@ export default function DocumentVersionEdit(): JSX.Element {
   const validationSchema = yup.object({
     effectiveDate: yup.date().required(t('validation.required')),
   })
+  const isTodayGreaterThenLatestVersionEffectiveDate =
+    dayjs() > dayjs(documentLatestVersion?.effectiveDate)
   const dateAvailableToSelect = dayjs(
-    isEdit ? documentPreviousVersion?.effectiveDate : documentLatestVersion?.effectiveDate
-  ).add(1, 'day')
+    // eslint-disable-next-line no-nested-ternary
+    isEdit
+      ? documentPreviousVersion?.effectiveDate
+      : isTodayGreaterThenLatestVersionEffectiveDate
+      ? dayjs()
+      : documentLatestVersion?.effectiveDate
+  )
+    .add(1, 'day')
+    .startOf('day')
 
   const formik = useFormik({
     validationSchema,
