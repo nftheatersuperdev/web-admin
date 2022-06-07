@@ -26,6 +26,7 @@ import {
   GroupAdd as GroupAddIcon,
   LibraryBooks as LibraryBooksIcon,
   Laptop as LaptopIcon,
+  PersonAddDisabled as UserDeleteLogIcon,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -174,6 +175,12 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.MARKETING,
         ],
+      },
+      {
+        title: t('sidebar.userDeleteLog'),
+        path: ROUTE_PATHS.USER_DELETE_LOG,
+        icon: <UserDeleteLogIcon />,
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CUSTOMER_SUPPORT],
       },
       {
         title: t('sidebar.chargingLocations'),
