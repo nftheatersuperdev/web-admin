@@ -81,7 +81,7 @@ export default function DocumentVersionEdit(): JSX.Element {
 
   const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
   const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
-  const title = t(documentTitle, { name: documentName, version })
+  const title = t(documentTitle, { version })
   const isAllDataFetched = isFetched || isFetchedPreviousVersion || isFetchedLastVersion
   const validationSchema = yup.object({
     effectiveDate: yup.date().required(t('validation.required')),
@@ -202,7 +202,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           component={RouterLink}
           to={`/documents/${documentCode}/versions`}
         >
-          {t('documents.overviewAndVersions')}
+          {documentName}
         </Link>
         <Typography color="textPrimary">{title}</Typography>
       </BreadcrumbsWrapper>

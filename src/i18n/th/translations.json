@@ -201,7 +201,8 @@
     "actions": "ดำเนินการ",
     "detailDialog": {
       "title": "ข้อมูลผู้ใช้"
-    }
+    },
+    "accountStatus": "สถานะบัญชี"
   },
   "car": {
     "id": "เลขไอดี",
@@ -656,7 +657,7 @@
     },
     "versions": {
       "title": "เวอร์ชั่นของเอกสาร",
-      "no": "หมายเลข",
+      "no": "ลำดับ",
       "createdDate": "วันที่สร้าง",
       "createdBy": "ผู้ที่สร้าง",
       "version": "เวอร์ชั่น",
@@ -670,8 +671,8 @@
     "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
     "addEdit": {
       "titles": {
-        "add": "เพิ่มเวอร์ชั่นใหม่ของ {{name}}",
-        "edit": "แก้ไขเอกสาร {{name}} เวอร์ชั่น {{version}}"
+        "add": "เพิ่มเวอร์ชั่นใหม่",
+        "edit": "แก้ไขเวอร์ชั่น {{version}}"
       },
       "effectiveDate": "วันและเวลาที่มีผลบังคับใช้",
       "revisionSummary": "สรุปการแก้ไข",
@@ -682,6 +683,9 @@
       "helpers": {
         "effectiveDateGreaterThanLastVersion": "สามารถเลือกวันที่มากกว่าเวอร์ชั่นล่าสุด (Today +1)"
       }
+    },
+    "views": {
+      "title": "มุมมองของเวอร์ชั่น {{version}}"
     },
     "paymentEvent": {
       "status": {

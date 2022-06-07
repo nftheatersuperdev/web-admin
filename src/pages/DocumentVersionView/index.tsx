@@ -41,7 +41,7 @@ export default function DocumentVersionView(): JSX.Element {
   )
 
   const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
-  const title = `${documentName} (${t('documents.versions.title')} ${version})`
+  const title = t('documents.views.title', { version })
 
   return (
     <Page>
@@ -61,7 +61,7 @@ export default function DocumentVersionView(): JSX.Element {
           component={RouterLink}
           to={`/documents/${documentCode}/versions`}
         >
-          {t('documents.overviewAndVersions')}
+          {documentName}
         </Link>
         <Typography color="textPrimary">{title}</Typography>
       </BreadcrumbsWrapper>
