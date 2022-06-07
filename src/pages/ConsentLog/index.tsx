@@ -58,7 +58,7 @@ const customToolbar = () => (
 )
 
 export default function ConsentLog(): JSX.Element {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const classes = useStyles()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
@@ -84,7 +84,7 @@ export default function ConsentLog(): JSX.Element {
 
   const allSelect: SelectOption = {
     key: 'all',
-    label: 'All',
+    label: t('all'),
     value: 'all',
     isDefault: true,
   }
@@ -92,7 +92,7 @@ export default function ConsentLog(): JSX.Element {
     documentTypeListResponse?.documents.map((doc) => {
       return {
         key: doc.codeName,
-        label: doc.nameEn,
+        label: i18n.language === 'en' ? doc.nameEn : doc.nameTh,
         value: doc.codeName,
         isDefault: false,
       } as SelectOption
