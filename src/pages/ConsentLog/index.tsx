@@ -68,6 +68,7 @@ export default function ConsentLog(): JSX.Element {
   const defaultStatus = statusList.find((status) => status.isDefault)
   const [response, setResponse] = useState<ConsentLogListResponse>()
   const [isFetching, setIsFetching] = useState(false)
+  const isEnglish = i18n.language === 'en'
 
   const search = async (filter: ConsentLogListProps) => {
     const res = await getList(filter)
@@ -92,7 +93,7 @@ export default function ConsentLog(): JSX.Element {
     documentTypeListResponse?.documents.map((doc) => {
       return {
         key: doc.codeName,
-        label: i18n.language === 'en' ? doc.nameEn : doc.nameTh,
+        label: isEnglish ? doc.nameEn : doc.nameTh,
         value: doc.codeName,
         isDefault: false,
       } as SelectOption
