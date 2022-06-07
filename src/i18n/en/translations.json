@@ -37,6 +37,7 @@
     "chargingLocations": "Charging Locations",
     "documents": "Documents",
     "consentLog": "Consent Log",
+    "userDeleteLog": "Delete Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -759,5 +760,22 @@
   "all": "All",
   "browserEvents": {
     "leaveSite": "Do you want to Cancel? Changes that you made may not be saved."
+  },
+  "userDeleteLog": {
+    "header": "User Deletion History",
+    "id": "ID",
+    "userId": "User ID",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "createdDate": "Date",
+    "action": "Action",
+    "createdBy": "Action by",
+    "actions": {
+      "deleted": "Deleted",
+      "reactivated": "Reactivated"
+    },
+    "column": "Column",
+    "searchLabel": "Search"
   }
 }
