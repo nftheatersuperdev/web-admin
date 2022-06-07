@@ -81,14 +81,23 @@ export default function DocumentVersionEdit(): JSX.Element {
 
   const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
   const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
-  const title = t(documentTitle, { name: documentName, version })
+  const title = t(documentTitle, { version })
   const isAllDataFetched = isFetched || isFetchedPreviousVersion || isFetchedLastVersion
   const validationSchema = yup.object({
     effectiveDate: yup.date().required(t('validation.required')),
   })
+  const isTodayGreaterThenLatestVersionEffectiveDate =
+    dayjs() > dayjs(documentLatestVersion?.effectiveDate)
   const dateAvailableToSelect = dayjs(
-    isEdit ? documentPreviousVersion?.effectiveDate : documentLatestVersion?.effectiveDate
-  ).add(1, 'day')
+    // eslint-disable-next-line no-nested-ternary
+    isEdit
+      ? documentPreviousVersion?.effectiveDate
+      : isTodayGreaterThenLatestVersionEffectiveDate
+      ? dayjs()
+      : documentLatestVersion?.effectiveDate
+  )
+    .add(1, 'day')
+    .startOf('day')
 
   const formik = useFormik({
     validationSchema,
@@ -193,7 +202,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           component={RouterLink}
           to={`/documents/${documentCode}/versions`}
         >
-          {t('documents.overviewAndVersions')}
+          {documentName}
         </Link>
         <Typography color="textPrimary">{title}</Typography>
       </BreadcrumbsWrapper>

@@ -203,7 +203,8 @@
     "actions": "Actions",
     "detailDialog": {
       "title": "User Detail"
-    }
+    },
+    "accountStatus": "Account Status"
   },
   "car": {
     "id": "ID",
@@ -706,8 +707,8 @@
     "overviewAndVersions": "Overview & Versions",
     "addEdit": {
       "titles": {
-        "add": "Add a new version of {{name}}",
-        "edit": "Edit Document {{name}}, version {{version}}."
+        "add": "Add a new version",
+        "edit": "Editing of version {{version}}."
       },
       "effectiveDate": "Effective Date & Time",
       "revisionSummary": "Revision summary",
@@ -718,6 +719,9 @@
       "helpers": {
         "effectiveDateGreaterThanLastVersion": "Can select the date that is greater than the last version. (Today +1)"
       }
+    },
+    "views": {
+      "title": "Views of version {{version}}"
     }
   },
   "modelAndPricing": {
