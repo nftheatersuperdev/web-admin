@@ -92,7 +92,7 @@ export const getAllUserDeleteLog = async ({
   size = 10,
 }: UserDeleteLogProps): Promise<UserDeleteLogListResponse> => {
   const response: UserDeleteLogListResponse = await BaseApi.get(
-    `/v1/account-deletion/logs/search`,
+    `/v1/account-deactivation/logs/search`,
     {
       params: {
         userId,
