@@ -97,18 +97,19 @@ export default function DocumentVersionEdit(): JSX.Element {
     contentTh: yup.string().required(t('validation.required')),
     contentEn: yup.string().required(t('validation.required')),
   })
-  const isTodayGreaterThenLatestVersionEffectiveDate =
-    dayjs() > dayjs(documentLatestVersion?.effectiveDate)
-  const dateAvailableToSelect = dayjs(
-    // eslint-disable-next-line no-nested-ternary
-    isEdit
-      ? documentPreviousVersion?.effectiveDate
-      : isTodayGreaterThenLatestVersionEffectiveDate
-      ? dayjs()
-      : documentLatestVersion?.effectiveDate
-  )
-    .add(1, 'day')
-    .startOf('day')
+  const generateDateToSelect = () => {
+    if (isEdit) {
+      if (dayjs() > dayjs(documentPreviousVersion?.effectiveDate)) {
+        return dayjs()
+      }
+      return documentPreviousVersion?.effectiveDate
+    }
+    if (dayjs() > dayjs(documentLatestVersion?.effectiveDate)) {
+      return dayjs()
+    }
+    return documentLatestVersion?.effectiveDate
+  }
+  const dateAvailableToSelect = dayjs(generateDateToSelect()).add(1, 'day').startOf('day')
 
   const formik = useFormik({
     validationSchema,
