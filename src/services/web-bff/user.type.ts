@@ -92,6 +92,17 @@ export interface UserInputRequest {
   createdDateEqual?: string
   updatedDateEqual?: string
 }
+
+export interface UserDeleteLog {
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+  createdDate: string
+  action: string
+  createdBy: string
+}
+
 export interface UserMeResponse extends Response {
   data: {
     user: User
@@ -103,6 +114,15 @@ export interface UserGroupInputRequest {
   nameContain?: string
   createdDateEqual?: string
   updatedDateEqual?: string
+}
+
+export interface UserDeleteLogProps {
+  userId?: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  size?: number
+  page?: number
 }
 
 export type UserListResponse = {
@@ -126,5 +146,11 @@ export interface UserGroupResponse {
 export type UserByUserGroupListResponse = {
   data: {
     userGroup: UserGroup
+  }
+} & ResponseWithPagination
+
+export type UserDeleteLogListResponse = {
+  data: {
+    logs: UserDeleteLog[]
   }
 } & ResponseWithPagination

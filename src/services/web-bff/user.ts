@@ -2,6 +2,8 @@ import { BaseApi } from 'api/baseApi'
 import { UserGroupInput } from 'services/evme.types'
 import {
   UserByUserGroupListResponse,
+  UserDeleteLogListResponse,
+  UserDeleteLogProps,
   UserGroupListResponse,
   UserGroupProps,
   UserGroupResponse,
@@ -78,5 +80,29 @@ export const updateUserInUserGroup = async ({
     `a3644dec-12b4-4000-bfb9-f4ecbaa9320f`,
     users
   ).then((response) => response.data.userGroup)
+  return response
+}
+
+export const getAllUserDeleteLog = async ({
+  userId,
+  firstName,
+  lastName,
+  email,
+  page = 1,
+  size = 10,
+}: UserDeleteLogProps): Promise<UserDeleteLogListResponse> => {
+  const response: UserDeleteLogListResponse = await BaseApi.get(
+    `/v1/account-deactivation/logs/search`,
+    {
+      params: {
+        userId,
+        firstName,
+        lastName,
+        email,
+        page,
+        size,
+      },
+    }
+  ).then((response) => response.data)
   return response
 }

@@ -58,7 +58,7 @@ const customToolbar = () => (
 )
 
 export default function ConsentLog(): JSX.Element {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const classes = useStyles()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
@@ -68,6 +68,7 @@ export default function ConsentLog(): JSX.Element {
   const defaultStatus = statusList.find((status) => status.isDefault)
   const [response, setResponse] = useState<ConsentLogListResponse>()
   const [isFetching, setIsFetching] = useState(false)
+  const isEnglish = i18n.language === 'en'
 
   const search = async (filter: ConsentLogListProps) => {
     const res = await getList(filter)
@@ -84,7 +85,7 @@ export default function ConsentLog(): JSX.Element {
 
   const allSelect: SelectOption = {
     key: 'all',
-    label: 'All',
+    label: t('all'),
     value: 'all',
     isDefault: true,
   }
@@ -92,7 +93,7 @@ export default function ConsentLog(): JSX.Element {
     documentTypeListResponse?.documents.map((doc) => {
       return {
         key: doc.codeName,
-        label: doc.nameEn,
+        label: isEnglish ? doc.nameEn : doc.nameTh,
         value: doc.codeName,
         isDefault: false,
       } as SelectOption
@@ -307,7 +308,7 @@ export default function ConsentLog(): JSX.Element {
   ]
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {t('consentLog.header')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">

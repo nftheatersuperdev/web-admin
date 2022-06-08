@@ -37,12 +37,14 @@
     "chargingLocations": "Charging Locations",
     "documents": "Documents",
     "consentLog": "Consent Log",
+    "userDeleteLog": "Delete Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
     "settings": "Settings"
   },
   "button": {
+    "add": "Add",
     "signIn": "Sign in",
     "signOut": "Sign out",
     "create": "Create",
@@ -202,7 +204,8 @@
     "actions": "Actions",
     "detailDialog": {
       "title": "User Detail"
-    }
+    },
+    "accountStatus": "Account Status"
   },
   "car": {
     "id": "ID",
@@ -705,18 +708,24 @@
     "overviewAndVersions": "Overview & Versions",
     "addEdit": {
       "titles": {
-        "add": "Add a new version of {{name}}",
-        "edit": "Edit Document {{name}}, version {{version}}."
+        "add": "Add New Version",
+        "edit": "Edit Version {{version}}."
       },
       "effectiveDate": "Effective Date & Time",
       "revisionSummary": "Revision summary",
       "titleEn": "Title English",
       "titleTh": "Title Thai",
-      "contentEn": "Content English",
-      "contentTh": "Content Thai",
+      "contentEn": "Content (EN)",
+      "contentTh": "Content (TH)",
       "helpers": {
         "effectiveDateGreaterThanLastVersion": "Can select the date that is greater than the last version. (Today +1)"
       }
+    },
+    "views": {
+      "title": "View {{version}}"
+    },
+    "error": {
+      "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time."
     }
   },
   "modelAndPricing": {
@@ -759,5 +768,26 @@
   "all": "All",
   "browserEvents": {
     "leaveSite": "Do you want to Cancel? Changes that you made may not be saved."
+  },
+  "userDeleteLog": {
+    "header": "User Deletion History",
+    "breadcrumb": "Delete Account Log",
+    "id": "ID",
+    "userId": "User ID",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "createdDate": "Date",
+    "action": "Action",
+    "createdBy": "Action by",
+    "actions": {
+      "deleted": "Deleted",
+      "reactivated": "Reactivated"
+    },
+    "column": "Column",
+    "searchLabel": "Search"
+  },
+  "error": {
+    "unknown": "something went wrong"
   }
 }
