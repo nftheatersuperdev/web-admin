@@ -698,7 +698,8 @@
       "title": "มุมมองของเวอร์ชั่น {{version}}"
     },
     "error": {
-      "effectiveDateLessThanToday": "กรุณาใส่วันที่เริ่มต้นที่มากกว่าเวลาปัจจุบัน"
+      "effectiveDateLessThanToday": "กรุณาใส่วันที่เริ่มต้นที่มากกว่าเวลาปัจจุบัน",
+      "effectiveDateLessThanNextVersion": "กรุณาใส่วันที่เริ่มต้นที่น้อยกว่า {{nextEffectiveDate}}"
     }
   },
   "modelAndPricing": {
