@@ -644,6 +644,14 @@
   "cardStatus": {
     "detail": "Detail >"
   },
+  "paymentEvent": {
+    "status": {
+      "pending": "กำลังดำเนินการ",
+      "successful": "เสร็จสมบูรณ์",
+      "failed": "การชำระล้มเหลว",
+      "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
+    }
+  },
   "documents": {
     "header": "จัดการเอกสาร",
     "overview": {
@@ -688,19 +696,14 @@
     "views": {
       "title": "มุมมองของเวอร์ชั่น {{version}}"
     },
-    "paymentEvent": {
-      "status": {
-        "pending": "กำลังดำเนินการ",
-        "successful": "เสร็จสมบูรณ์",
-        "failed": "การชำระล้มเหลว",
-        "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
-      }
-    },
-    "modelAndPricing": {
-      "editDialog": {
-        "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
-        "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
-      }
+    "error": {
+      "effectiveDateLessThanToday": "กรุณาใส่วันที่เริ่มต้นที่มากกว่าเวลาปัจจุบัน"
+    }
+  },
+  "modelAndPricing": {
+    "editDialog": {
+      "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
+      "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
     }
   },
   "actionsEvent": {
@@ -740,5 +743,8 @@
     "action": "ประเภทรายการ",
     "createdBy": "ผู้ทำรายการ",
     "searchLabel": "ค้นหา"
+  },
+  "error": {
+    "unknown": "เกิดข้อผิดพลาดบางอย่าง"
   }
 }

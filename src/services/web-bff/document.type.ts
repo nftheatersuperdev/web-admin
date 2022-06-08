@@ -59,3 +59,9 @@ export type DocumentVersionListResponse = {
     versions: Document[]
   }
 } & ResponseWithPagination
+
+export interface ResponseError {
+  data?: string | null
+  message: string
+  status: string
+}

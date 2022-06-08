@@ -23,6 +23,7 @@ import {
   createNew,
   updateByVersion,
 } from 'services/web-bff/document'
+import { mapErrorMessage } from './error'
 
 interface DocumentVersionEditParams {
   documentCode: string
@@ -122,9 +123,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           resetForm()
           return 'Success'
         },
-        error: (err) => {
-          return err.message
-        },
+        error: (error) => mapErrorMessage(error, t),
       })
     },
   })

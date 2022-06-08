@@ -708,7 +708,7 @@
     "addEdit": {
       "titles": {
         "add": "Add a new version",
-        "edit": "Editing of version {{version}}."
+        "edit": "Edit Version {{version}}."
       },
       "effectiveDate": "Effective Date & Time",
       "revisionSummary": "Revision summary",
@@ -721,7 +721,10 @@
       }
     },
     "views": {
-      "title": "Views of version {{version}}"
+      "title": "View {{version}}"
+    },
+    "error": {
+      "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time."
     }
   },
   "modelAndPricing": {
@@ -781,5 +784,8 @@
     },
     "column": "Column",
     "searchLabel": "Search"
+  },
+  "error": {
+    "unknown": "something went wrong"
   }
 }

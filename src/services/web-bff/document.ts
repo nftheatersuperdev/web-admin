@@ -114,7 +114,11 @@ export const updateByVersion = async (
   const documentId: string = await BaseApi.put(
     `/v1/document-contents/${code}/versions/${version}`,
     documentObject
-  ).then((result) => result.data)
+  )
+    .then((result) => result.data)
+    .catch((error) => {
+      throw error.response.data
+    })
 
   return documentId
 }
