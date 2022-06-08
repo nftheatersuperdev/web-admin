@@ -98,16 +98,19 @@ export default function DocumentVersionEdit(): JSX.Element {
     contentEn: yup.string().required(t('validation.required')),
   })
   const generateDateToSelect = () => {
+    const currentDate = dayjs()
     if (isEdit) {
-      if (dayjs() > dayjs(documentPreviousVersion?.effectiveDate)) {
-        return dayjs()
+      const effectiveDate = dayjs(documentPreviousVersion?.effectiveDate)
+      if (currentDate > effectiveDate) {
+        return currentDate
       }
-      return documentPreviousVersion?.effectiveDate
+      return effectiveDate
     }
-    if (dayjs() > dayjs(documentLatestVersion?.effectiveDate)) {
-      return dayjs()
+    const effectiveDate = dayjs(documentLatestVersion?.effectiveDate)
+    if (currentDate > effectiveDate) {
+      return currentDate
     }
-    return documentLatestVersion?.effectiveDate
+    return effectiveDate
   }
   const dateAvailableToSelect = dayjs(generateDateToSelect()).add(1, 'day').startOf('day')
 
