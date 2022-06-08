@@ -771,6 +771,7 @@
   },
   "userDeleteLog": {
     "header": "User Deletion History",
+    "breadcrumb": "Delete Account Log",
     "id": "ID",
     "userId": "User ID",
     "firstName": "First Name",

@@ -188,15 +188,6 @@ export default function UserDeleteLog(): JSX.Element {
       valueFormatter: columnFormatText,
     },
     {
-      field: 'createdDate',
-      headerName: t('userDeleteLog.createdDate'),
-      description: t('userDeleteLog.createdDate'),
-      hide: !visibilityColumns.createdDate,
-      flex: 1,
-      filterable: false,
-      valueFormatter: columnFormatDate,
-    },
-    {
       field: 'email',
       headerName: t('userDeleteLog.email'),
       description: t('userDeleteLog.email'),
@@ -204,6 +195,15 @@ export default function UserDeleteLog(): JSX.Element {
       flex: 1,
       filterable: false,
       valueFormatter: columnFormatText,
+    },
+    {
+      field: 'createdDate',
+      headerName: t('userDeleteLog.createdDate'),
+      description: t('userDeleteLog.createdDate'),
+      hide: !visibilityColumns.createdDate,
+      flex: 1,
+      filterable: false,
+      valueFormatter: columnFormatDate,
     },
     {
       field: 'action',
@@ -234,7 +234,7 @@ export default function UserDeleteLog(): JSX.Element {
         <Link underline="hover" color="inherit" component={RouterLink} to="/">
           {t('sidebar.others')}
         </Link>
-        <Typography color="textPrimary">{t('userDeleteLog.header')}</Typography>
+        <Typography color="textPrimary">{t('userDeleteLog.breadcrumb')}</Typography>
       </BreadcrumbsWrapper>
       <Grid className={classes.searchBar} container spacing={3}>
         <Grid item xs={2}>
