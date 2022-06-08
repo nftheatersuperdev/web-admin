@@ -7,7 +7,7 @@ export const mapAlertErrorField = (
 ): string => {
   switch (key) {
     case 'remark':
-      return t('documents.addEdit.effectiveDate')
+      return t('documents.addEdit.revisionSummary')
     case 'contentTh':
       return t('documents.addEdit.contentTh')
     case 'contentEn':
