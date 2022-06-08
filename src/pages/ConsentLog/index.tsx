@@ -308,7 +308,7 @@ export default function ConsentLog(): JSX.Element {
   ]
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {t('consentLog.header')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">
