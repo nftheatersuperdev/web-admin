@@ -10,7 +10,6 @@ import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { useEffect, useState } from 'react'
 import { useHistory, Link as RouterLink, useParams } from 'react-router-dom'
 import { Breadcrumbs, Button, Divider, Grid, Link, Typography, TextField } from '@material-ui/core'
-import Alert from '@material-ui/lab/Alert'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { useQuery } from 'react-query'
@@ -24,7 +23,7 @@ import {
   createNew,
   updateByVersion,
 } from 'services/web-bff/document'
-import { mapErrorMessage, mapAlertErrorField } from './error'
+import { mapErrorMessage } from './error'
 
 interface DocumentVersionEditParams {
   documentCode: string
@@ -33,12 +32,6 @@ interface DocumentVersionEditParams {
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
   margin: 10px 0 20px 0;
-`
-const AlertWrapper = styled.div`
-  margin: 10px 0 20px 0;
-`
-const AlertItem = styled(Alert)`
-  margin: 2px 0;
 `
 const DividerSpace = styled(Divider)`
   margin: 20px 0;
@@ -79,6 +72,13 @@ export default function DocumentVersionEdit(): JSX.Element {
       cacheTime: 0,
     }
   )
+  const { data: documentNextVersion, isFetched: isFetchedNextVersion } = useQuery(
+    'document-next-version',
+    () => getVersionDetail({ code: documentCode, version: currentVersion + 1 }),
+    {
+      cacheTime: 0,
+    }
+  )
   const { data: documentLatestVersion, isFetched: isFetchedLastVersion } = useQuery(
     'document-latest-version',
     () => (!isEdit ? getLatestVersion(documentCode) : undefined),
@@ -90,7 +90,8 @@ export default function DocumentVersionEdit(): JSX.Element {
   const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
   const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
   const title = t(documentTitle, { version })
-  const isAllDataFetched = isFetched || isFetchedPreviousVersion || isFetchedLastVersion
+  const isAllDataFetched =
+    isFetched || isFetchedPreviousVersion || isFetchedLastVersion || isFetchedNextVersion
   const validationSchema = yup.object({
     remark: yup.string().required(t('validation.required')),
     effectiveDate: yup.date().required(t('validation.required')),
@@ -137,7 +138,12 @@ export default function DocumentVersionEdit(): JSX.Element {
           resetForm()
           return 'Success'
         },
-        error: (error) => mapErrorMessage(error, t),
+        error: (error) =>
+          mapErrorMessage(error, t, {
+            nextEffectiveDate: documentNextVersion?.effectiveDate
+              ? dayjs(documentNextVersion?.effectiveDate).format(DEFAULT_DATETIME_FORMAT)
+              : undefined,
+          }),
       })
     },
   })
@@ -197,36 +203,7 @@ export default function DocumentVersionEdit(): JSX.Element {
     }
   }, [])
 
-  /**
-   * Render errors
-   * X 1111, 2222, 3333
-   */
-  const renderErrorAlert =
-    Object.keys(formik.errors).length > 0 ? (
-      <AlertItem severity="error">
-        {Object.entries(formik.errors)
-          .map(([key, value]) => {
-            return `${mapAlertErrorField(key, t)} ${value}`
-          })
-          .join(', ')}
-      </AlertItem>
-    ) : (
-      ''
-    )
-  const isDisabledSubmitButton = !isAllDataFetched || !!renderErrorAlert
-
-  /**
-   * Render errors
-   * X 1111
-   * X 2222
-   * X 3333
-   */
-  // const renderErrorAlert = Object.entries(formik.errors).map(([key, value]) => {
-  //   return (
-  //     <AlertItem severity="error" key={key}>{`${mapAlertErrorField(key, t)} ${value}`}</AlertItem>
-  //   )
-  // })
-  // const isDisabledSubmitButton = !isAllDataFetched || renderErrorAlert.length > 0
+  const isDisabledSubmitButton = !isAllDataFetched || Object.keys(formik.errors).length > 0
 
   return (
     <Page>
@@ -251,7 +228,6 @@ export default function DocumentVersionEdit(): JSX.Element {
         <Typography color="textPrimary">{title}</Typography>
       </BreadcrumbsWrapper>
 
-      <AlertWrapper>{renderErrorAlert}</AlertWrapper>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <DateTimePicker
