@@ -725,7 +725,8 @@
       "title": "View {{version}}"
     },
     "error": {
-      "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time."
+      "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time.",
+      "effectiveDateLessThanNextVersion": "Please enter an effective date-time that is less than {{nextEffectiveDate}}."
     }
   },
   "modelAndPricing": {
