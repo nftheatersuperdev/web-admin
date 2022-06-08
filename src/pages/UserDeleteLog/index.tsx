@@ -227,7 +227,7 @@ export default function UserDeleteLog(): JSX.Element {
 
   return (
     <Page>
-      <Typography variant="h3" color="inherit" component="h1">
+      <Typography variant="h5" color="inherit" component="h1">
         {t('userDeleteLog.header')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">

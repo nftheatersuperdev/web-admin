@@ -44,6 +44,7 @@
     "settings": "ตั้งค่า"
   },
   "button": {
+    "add": "เพิ่ม",
     "signIn": "เข้าสู่ระบบ",
     "signOut": "ออกจากระบบ",
     "create": "สร้าง",
@@ -683,12 +684,12 @@
         "add": "เพิ่มเวอร์ชั่นใหม่",
         "edit": "แก้ไขเวอร์ชั่น {{version}}"
       },
-      "effectiveDate": "วันและเวลาที่มีผลบังคับใช้",
+      "effectiveDate": "วันที่มีผลบังคับใช้",
       "revisionSummary": "สรุปการแก้ไข",
       "titleEn": "หัวข้อภาษาอังกฤษ",
       "titleTh": "หัวข้อภาษาไทย",
-      "contentEn": "เนื้อหาภาษาอังกฤษ",
-      "contentTh": "เนื้อหาภาษาไทย",
+      "contentEn": "เนื้อหา (EN)",
+      "contentTh": "เนื้อหา (TH)",
       "helpers": {
         "effectiveDateGreaterThanLastVersion": "สามารถเลือกวันที่มากกว่าเวอร์ชั่นล่าสุด (Today +1)"
       }
