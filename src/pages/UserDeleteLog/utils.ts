@@ -53,6 +53,7 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   createdDate: true,
   action: true,
   createdBy: true,
+  index: false,
 }
 export const getVisibilityColumns = (): VisibilityColumns => {
   return (

@@ -140,13 +140,15 @@ export default function UserDeleteLog(): JSX.Element {
       setIsFetching(false)
     })
   }
-
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
     response?.data.logs && response?.data.logs.length > 0
-      ? response?.data.logs.map((log) => {
+      ? response?.data.logs.map((log, i) => {
+          const index = i
+            ? (pageSize * currentPageIndex + i + 1).toString()
+            : (pageSize * currentPageIndex + 1).toString()
           return {
-            id: log.userId,
+            id: index,
             email: log.email,
             firstName: log.firstName,
             lastName: log.lastName,
@@ -156,6 +158,7 @@ export default function UserDeleteLog(): JSX.Element {
           }
         })
       : []
+
   const columns: GridColDef[] = [
     {
       field: 'id',
