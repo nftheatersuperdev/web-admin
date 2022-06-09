@@ -25,8 +25,7 @@ import {
 import config from 'config'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
-import { UserInputRequest, UserMeProps } from 'services/web-bff/user.type'
-import { User as UserType } from 'services/evme.types'
+import { User as UserType, UserInputRequest, UserMeProps } from 'services/web-bff/user.type'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
@@ -146,6 +145,33 @@ export default function User(): JSX.Element {
       filterOperators: containOperators,
     },
     {
+      field: 'isActive',
+      headerName: t('user.status'),
+      description: t('user.status'),
+      hide: !visibilityColumns.isActive,
+      flex: 1,
+      sortable: false,
+      filterOperators: equalSelectFilterOperators,
+      valueOptions: [
+        {
+          label: t('user.statuses.active'),
+          value: 'active',
+        },
+        {
+          label: t('user.statuses.deleted'),
+          value: 'deleted',
+        },
+      ],
+      valueFormatter: (params: GridValueFormatterParams): string => {
+        switch (params.value) {
+          case true:
+            return t('user.statuses.active')
+          default:
+            return t('user.statuses.deleted')
+        }
+      },
+    },
+    {
       field: 'kycStatus',
       headerName: t('user.kyc.status'),
       description: t('user.kyc.status'),
@@ -200,10 +226,10 @@ export default function User(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'kycRejectReason',
+      field: 'kycReason',
       headerName: t('user.rejectedReason'),
       description: t('user.rejectedReason'),
-      hide: !visibilityColumns.kycRejectReason,
+      hide: !visibilityColumns.kycReason,
       flex: 1,
       sortable: false,
       filterable: false,
@@ -253,23 +279,20 @@ export default function User(): JSX.Element {
               firstName: params.row.firstName,
               lastName: params.row.lastName,
               role: params.row.role,
-              subscriptions: params.row.subscriptions,
               disabled: params.row.disabled,
               phoneNumber: params.row.phoneNumber,
               email: params.row.email,
               omiseId: params.row.omiseId,
               carTrackId: params.row.carTrackId,
               defaultAddress: params.row.defaultAddress,
-              favoriteChargingLocations: params.row.favoriteChargingLocations,
               kycStatus: params.row.kycStatus,
-              kycRejectReason: params.row.kycRejectReason,
+              kycReason: params.row.kycReason,
+              isActive: params.row.isActive,
               createdDate: params.row.createdDate,
               updatedDate: params.row.updatedDate,
               creditCard: params.row.creditCard,
-              tokenKyc: params.row.tokenKyc,
-              subscriptionsAggregate: params.row.subscriptionsAggregate,
-              favoriteChargingLocationsAggregate: params.row.favoriteChargingLocationsAggregate,
               userGroups: params.row.userGroups,
+              locale: params.row.locale,
             }
             setUserDetail(userDetail)
             setOpenUserDetailDialog(true)
@@ -285,6 +308,13 @@ export default function User(): JSX.Element {
     let keyValue = ''
     setUserFilter({
       ...params.items.reduce((filter, { columnField, value, operatorValue }: GridFilterItem) => {
+        if (columnField === 'isActive' && !value) {
+          filter = {}
+          return filter
+        } else if (columnField === 'isActive') {
+          filter = { isActive: value === 'active' }
+          return filter
+        }
         if (columnField === 'userGroups') {
           filter = { userGroupNameContain: value }
           return filter
@@ -318,12 +348,13 @@ export default function User(): JSX.Element {
         email: user.email,
         phoneNumber: user.phoneNumber,
         kycStatus: user.kycStatus,
+        isActive: user.isActive,
         createdDate: user.createdDate,
         updatedDate: user.updatedDate,
         // these fields not support from backend
         verifyDate: null,
         note: '',
-        kycRejectReason: user.kycReason,
+        kycReason: user.kycReason,
         userGroups: user.userGroups,
       }
     }) || []
@@ -368,7 +399,12 @@ export default function User(): JSX.Element {
       <DetailDialog
         open={openUserDetailDialog}
         user={userDetail}
-        onClose={() => setOpenUserDetailDialog(false)}
+        onClose={(needRefetch) => {
+          if (needRefetch) {
+            refetch()
+          }
+          setOpenUserDetailDialog(false)
+        }}
       />
     </Page>
   )

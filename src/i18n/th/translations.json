@@ -187,7 +187,11 @@
     "firstName": "ชื่อ",
     "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
-    "status": "สถานะ",
+    "status": "สถานะบัญชี",
+    "statuses": {
+      "active": "ใช้งานอยู่",
+      "deleted": "ลบข้อมูลแล้ว"
+    },
     "kyc": {
       "status": "สถานะ KYC",
       "pending": "รอการตรวจสอบ",
@@ -202,9 +206,11 @@
     "disabled": "ปิด",
     "actions": "ดำเนินการ",
     "detailDialog": {
-      "title": "ข้อมูลผู้ใช้"
-    },
-    "accountStatus": "สถานะบัญชี"
+      "title": "ข้อมูลผู้ใช้",
+      "reActivate": {
+        "success": "บัญชีถูกเปิดใช้งานอีกครั้งแล้ว"
+      }
+    }
   },
   "car": {
     "id": "เลขไอดี",
