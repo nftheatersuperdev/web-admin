@@ -1,8 +1,11 @@
+/* eslint-disable no-alert */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/forbid-component-props */
 import * as yup from 'yup'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
 import toast from 'react-hot-toast'
+import { useBeforeunload } from 'react-beforeunload'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { useEffect, useState } from 'react'
 import { useHistory, Link as RouterLink, useParams } from 'react-router-dom'
@@ -20,6 +23,7 @@ import {
   createNew,
   updateByVersion,
 } from 'services/web-bff/document'
+import { mapErrorMessage } from './error'
 
 interface DocumentVersionEditParams {
   documentCode: string
@@ -46,6 +50,7 @@ export default function DocumentVersionEdit(): JSX.Element {
   const isTherePreviousVersion = currentVersion > 1
   const [contentThTemp, setContentThTemp] = useState<string | undefined>()
   const [contentEnTemp, setContentEnTemp] = useState<string | undefined>()
+  const [getBackOrOutFinish, setGetBackOrOutFinish] = useState<boolean>(false)
 
   const { data: documentDetail } = useQuery('document-detail', () =>
     getDetail({ code: documentCode })
@@ -67,6 +72,13 @@ export default function DocumentVersionEdit(): JSX.Element {
       cacheTime: 0,
     }
   )
+  const { data: documentNextVersion, isFetched: isFetchedNextVersion } = useQuery(
+    'document-next-version',
+    () => getVersionDetail({ code: documentCode, version: currentVersion + 1 }),
+    {
+      cacheTime: 0,
+    }
+  )
   const { data: documentLatestVersion, isFetched: isFetchedLastVersion } = useQuery(
     'document-latest-version',
     () => (!isEdit ? getLatestVersion(documentCode) : undefined),
@@ -77,14 +89,31 @@ export default function DocumentVersionEdit(): JSX.Element {
 
   const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
   const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
-  const title = t(documentTitle, { name: documentName, version })
-  const isAllDataFetched = isFetched || isFetchedPreviousVersion || isFetchedLastVersion
+  const title = t(documentTitle, { version })
+  const isAllDataFetched =
+    isFetched || isFetchedPreviousVersion || isFetchedLastVersion || isFetchedNextVersion
   const validationSchema = yup.object({
+    remark: yup.string().required(t('validation.required')),
     effectiveDate: yup.date().required(t('validation.required')),
+    contentTh: yup.string().required(t('validation.required')),
+    contentEn: yup.string().required(t('validation.required')),
   })
-  const dateAvailableToSelect = dayjs(
-    isEdit ? documentPreviousVersion?.effectiveDate : documentLatestVersion?.effectiveDate
-  ).add(1, 'day')
+  const generateDateToSelect = () => {
+    const currentDate = dayjs()
+    if (isEdit) {
+      const effectiveDate = dayjs(documentPreviousVersion?.effectiveDate)
+      if (currentDate > effectiveDate) {
+        return currentDate
+      }
+      return effectiveDate
+    }
+    const effectiveDate = dayjs(documentLatestVersion?.effectiveDate)
+    if (currentDate > effectiveDate) {
+      return currentDate
+    }
+    return effectiveDate
+  }
+  const dateAvailableToSelect = dayjs(generateDateToSelect()).add(1, 'day').startOf('day')
 
   const formik = useFormik({
     validationSchema,
@@ -109,9 +138,12 @@ export default function DocumentVersionEdit(): JSX.Element {
           resetForm()
           return 'Success'
         },
-        error: (err) => {
-          return err.message
-        },
+        error: (error) =>
+          mapErrorMessage(error, t, {
+            nextEffectiveDate: documentNextVersion?.effectiveDate
+              ? dayjs(documentNextVersion?.effectiveDate).format(DEFAULT_DATETIME_FORMAT)
+              : undefined,
+          }),
       })
     },
   })
@@ -131,7 +163,7 @@ export default function DocumentVersionEdit(): JSX.Element {
     formik.resetForm()
     setContentThTemp('')
     setContentEnTemp('')
-    history.push(`/documents/${documentCode}/versions`)
+    return history.push(`/documents/${documentCode}/versions`)
   }
 
   useEffect(() => {
@@ -148,6 +180,30 @@ export default function DocumentVersionEdit(): JSX.Element {
     formik.setFieldValue('effectiveDate', dateAvailableToSelect)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFetchedLastVersion])
+
+  const onBeforeLeavePage = (event: PopStateEvent | BeforeUnloadEvent) => {
+    event.preventDefault()
+    if (!getBackOrOutFinish) {
+      if (window.confirm(t('browserEvents.leaveSite'))) {
+        setGetBackOrOutFinish(true)
+        return history.goBack()
+      }
+      setGetBackOrOutFinish(false)
+      return window.history.pushState(null, '', window.location.pathname)
+    }
+  }
+
+  useBeforeunload((event: BeforeUnloadEvent) => onBeforeLeavePage(event))
+
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.pathname)
+    window.addEventListener('popstate', onBeforeLeavePage)
+    return () => {
+      window.removeEventListener('popstate', onBeforeLeavePage)
+    }
+  }, [])
+
+  const isDisabledSubmitButton = !isAllDataFetched || Object.keys(formik.errors).length > 0
 
   return (
     <Page>
@@ -167,7 +223,7 @@ export default function DocumentVersionEdit(): JSX.Element {
           component={RouterLink}
           to={`/documents/${documentCode}/versions`}
         >
-          {t('documents.overviewAndVersions')}
+          {documentName}
         </Link>
         <Typography color="textPrimary">{title}</Typography>
       </BreadcrumbsWrapper>
@@ -245,15 +301,15 @@ export default function DocumentVersionEdit(): JSX.Element {
       <DividerSpace />
       <Grid container spacing={3}>
         <Grid item xs={12} style={{ textAlign: 'right' }}>
-          <Button onClick={() => resetForm()}>{t('button.cancel')}</Button>
+          <Button onClick={() => history.goBack()}>{t('button.cancel')}</Button>
           <ButtonSpace
             type="submit"
             onClick={() => formik.handleSubmit()}
             color="primary"
             variant="contained"
-            disabled={!isAllDataFetched}
+            disabled={isDisabledSubmitButton}
           >
-            {t(isEdit ? 'button.update' : 'button.create')}
+            {t(isEdit ? 'button.update' : 'button.add')}
           </ButtonSpace>
         </Grid>
       </Grid>

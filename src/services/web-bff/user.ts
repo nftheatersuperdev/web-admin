@@ -2,6 +2,8 @@ import { BaseApi } from 'api/baseApi'
 import { UserGroupInput } from 'services/evme.types'
 import {
   UserByUserGroupListResponse,
+  UserDeleteLogListResponse,
+  UserDeleteLogProps,
   UserGroupListResponse,
   UserGroupProps,
   UserGroupResponse,
@@ -9,6 +11,7 @@ import {
   UserListResponse,
   /*UserListResponse,*/
   UserMeProps,
+  CustomerReActivateResponse,
 } from './user.type'
 
 export const searchUser = async ({ data, size, page }: UserMeProps): Promise<UserListResponse> => {
@@ -79,4 +82,35 @@ export const updateUserInUserGroup = async ({
     users
   ).then((response) => response.data.userGroup)
   return response
+}
+
+export const getAllUserDeleteLog = async ({
+  userId,
+  firstName,
+  lastName,
+  email,
+  page = 1,
+  size = 10,
+}: UserDeleteLogProps): Promise<UserDeleteLogListResponse> => {
+  const response: UserDeleteLogListResponse = await BaseApi.get(
+    `/v1/account-deactivation/logs/search`,
+    {
+      params: {
+        userId,
+        firstName,
+        lastName,
+        email,
+        page,
+        size,
+      },
+    }
+  ).then((response) => response.data)
+  return response
+}
+
+export const reActivateCustomer = async (customerId: string): Promise<boolean> => {
+  const response: CustomerReActivateResponse = await BaseApi.post(
+    `/v1/customers/${customerId}/activation`
+  ).then((response) => response.data)
+  return response.status === 'success'
 }

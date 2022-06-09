@@ -26,8 +26,10 @@ export const ROUTE_PATHS = Object.freeze({
   CHARGING_LOCATIONS: '/charging-locations',
   DOCUMENTS: '/documents',
   DOCUMENT_VERSIONS: '/documents/:documentCode/versions',
-  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version',
+  DOCUMENT_VERSION_VIEW: '/documents/:documentCode/versions/:version',
+  DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version/edit',
   CONSENT_LOG: '/consent-log',
+  USER_DELETE_LOG: '/user-delete-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
   FORBIDDEN: '/403',
@@ -184,6 +186,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
   },
   {
+    path: ROUTE_PATHS.DOCUMENT_VERSION_VIEW,
+    component: lazy(() => import('./pages/DocumentVersionView' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+  },
+  {
     path: ROUTE_PATHS.DOCUMENT_VERSIONS,
     component: lazy(() => import('./pages/DocumentVersions' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
@@ -196,7 +203,18 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CONSENT_LOG,
     component: lazy(() => import('./pages/ConsentLog' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.MARKETING,
+    ],
+  },
+  {
+    path: ROUTE_PATHS.USER_DELETE_LOG,
+    component: lazy(() => import('./pages/UserDeleteLog' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CUSTOMER_SUPPORT],
   },
   {
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,

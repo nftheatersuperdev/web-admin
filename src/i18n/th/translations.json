@@ -37,12 +37,14 @@
     "chargingLocations": "สถานีชาร์จ",
     "documents": "เอกสาร",
     "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
+    "userDeleteLog": "ประวัติการลบบัญชีลูกค้า",
     "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
     "profile": "โปรไฟล์",
     "settings": "ตั้งค่า"
   },
   "button": {
+    "add": "เพิ่ม",
     "signIn": "เข้าสู่ระบบ",
     "signOut": "ออกจากระบบ",
     "create": "สร้าง",
@@ -185,7 +187,11 @@
     "firstName": "ชื่อ",
     "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
-    "status": "สถานะ",
+    "status": "สถานะบัญชี",
+    "statuses": {
+      "active": "ใช้งานอยู่",
+      "deleted": "ลบข้อมูลแล้ว"
+    },
     "kyc": {
       "status": "สถานะ KYC",
       "pending": "รอการตรวจสอบ",
@@ -200,7 +206,10 @@
     "disabled": "ปิด",
     "actions": "ดำเนินการ",
     "detailDialog": {
-      "title": "ข้อมูลผู้ใช้"
+      "title": "ข้อมูลผู้ใช้",
+      "reActivate": {
+        "success": "บัญชีถูกเปิดใช้งานอีกครั้งแล้ว"
+      }
     }
   },
   "car": {
@@ -642,6 +651,14 @@
   "cardStatus": {
     "detail": "Detail >"
   },
+  "paymentEvent": {
+    "status": {
+      "pending": "กำลังดำเนินการ",
+      "successful": "เสร็จสมบูรณ์",
+      "failed": "การชำระล้มเหลว",
+      "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
+    }
+  },
   "documents": {
     "header": "จัดการเอกสาร",
     "overview": {
@@ -656,7 +673,7 @@
     },
     "versions": {
       "title": "เวอร์ชั่นของเอกสาร",
-      "no": "หมายเลข",
+      "no": "ลำดับ",
       "createdDate": "วันที่สร้าง",
       "createdBy": "ผู้ที่สร้าง",
       "version": "เวอร์ชั่น",
@@ -670,32 +687,31 @@
     "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
     "addEdit": {
       "titles": {
-        "add": "เพิ่มเวอร์ชั่นใหม่ของ {{name}}",
-        "edit": "แก้ไขเอกสาร {{name}} เวอร์ชั่น {{version}}"
+        "add": "เพิ่มเวอร์ชั่นใหม่",
+        "edit": "แก้ไขเวอร์ชั่น {{version}}"
       },
-      "effectiveDate": "วันและเวลาที่มีผลบังคับใช้",
+      "effectiveDate": "วันที่มีผลบังคับใช้",
       "revisionSummary": "สรุปการแก้ไข",
       "titleEn": "หัวข้อภาษาอังกฤษ",
       "titleTh": "หัวข้อภาษาไทย",
-      "contentEn": "เนื้อหาภาษาอังกฤษ",
-      "contentTh": "เนื้อหาภาษาไทย",
+      "contentEn": "เนื้อหา (EN)",
+      "contentTh": "เนื้อหา (TH)",
       "helpers": {
         "effectiveDateGreaterThanLastVersion": "สามารถเลือกวันที่มากกว่าเวอร์ชั่นล่าสุด (Today +1)"
       }
     },
-    "paymentEvent": {
-      "status": {
-        "pending": "กำลังดำเนินการ",
-        "successful": "เสร็จสมบูรณ์",
-        "failed": "การชำระล้มเหลว",
-        "authorizedRefund": "มีสิทธิ์ขอคืนเงิน"
-      }
+    "views": {
+      "title": "มุมมองของเวอร์ชั่น {{version}}"
     },
-    "modelAndPricing": {
-      "editDialog": {
-        "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
-        "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
-      }
+    "error": {
+      "effectiveDateLessThanToday": "กรุณาใส่วันที่เริ่มต้นที่มากกว่าเวลาปัจจุบัน",
+      "effectiveDateLessThanNextVersion": "กรุณาใส่วันที่เริ่มต้นที่น้อยกว่า {{nextEffectiveDate}}"
+    }
+  },
+  "modelAndPricing": {
+    "editDialog": {
+      "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
+      "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
     }
   },
   "actionsEvent": {
@@ -721,5 +737,22 @@
       "accept": "ยอมรับ"
     }
   },
-  "all": "ทั้งหมด "
+  "all": "ทั้งหมด ",
+  "browserEvents": {
+    "leaveSite": "คุณแน่ใจหรือไม่ที่จะยกเลิก? หากกดยกเลิก ข้อมูลของคุณจะไม่ถูกบันทึก"
+  },
+  "userDeleteLog": {
+    "header": "ประวัติการลบบัญชีลูกค้า",
+    "id": "ไอดี",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "email": "อีเมล",
+    "createdDate": "วันที่ทำรายการ",
+    "action": "ประเภทรายการ",
+    "createdBy": "ผู้ทำรายการ",
+    "searchLabel": "ค้นหา"
+  },
+  "error": {
+    "unknown": "เกิดข้อผิดพลาดบางอย่าง"
+  }
 }

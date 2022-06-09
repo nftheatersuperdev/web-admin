@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import {
   Grid,
   TextField,
@@ -6,18 +7,29 @@ import {
   DialogTitle,
   DialogContent,
   Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@material-ui/core'
 import styled from 'styled-components'
 import { formatDate } from 'utils'
+import { useAuth } from 'auth/AuthContext'
+import { ROLES } from 'auth/roles'
 import { useTranslation } from 'react-i18next'
-import { User } from 'services/evme.types'
+import { reActivateCustomer } from 'services/web-bff/user'
+import { User } from 'services/web-bff/user.type'
 
 interface UserDetailDialogProps {
   open: boolean
   user?: User | null
-  onClose: () => void
+  onClose: (refetch?: boolean) => void
 }
 
+const SelectFormControl = styled(FormControl)`
+  margin: 15px 0 0 0;
+  width: 100%;
+`
 const ButtonSpace = styled(Button)`
   margin: 0 15px 10px;
 `
@@ -28,6 +40,29 @@ export default function UserDetailDialog({
   onClose,
 }: UserDetailDialogProps): JSX.Element {
   const { t } = useTranslation()
+  const { getRole } = useAuth()
+  const currentUserRole = getRole()
+  const isDeletedUser = user?.isActive !== true
+  const isUserOperator = currentUserRole === ROLES.ADMIN || currentUserRole === ROLES.SUPER_ADMIN
+  const isEnableToUpdateStatus = isUserOperator && isDeletedUser
+
+  const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    if (isEnableToUpdateStatus && user) {
+      const isActive = Boolean(event.target.value) === true
+      if (isActive) {
+        toast.promise(reActivateCustomer(user.id), {
+          loading: t('toast.loading'),
+          success: () => {
+            onClose(true)
+            return t('user.detailDialog.reActivate.success')
+          },
+          error: (error) => {
+            return error.message
+          },
+        })
+      }
+    }
+  }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -112,6 +147,28 @@ export default function UserDetailDialog({
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <SelectFormControl variant="outlined">
+              <InputLabel id="isActive">{t('user.status')}</InputLabel>
+              <Select
+                fullWidth
+                labelId="isActive"
+                id="isActive"
+                name="isActive"
+                label={t('user.status')}
+                value={String(user?.isActive)}
+                readOnly={!isEnableToUpdateStatus}
+                onChange={handleStatusChange}
+              >
+                <MenuItem key="active" value="true">
+                  {t('user.statuses.active')}
+                </MenuItem>
+                <MenuItem key="deleted" value="false">
+                  {t('user.statuses.deleted')}
+                </MenuItem>
+              </Select>
+            </SelectFormControl>
+          </Grid>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -120,7 +177,7 @@ export default function UserDetailDialog({
               label={t('user.rejectedReason')}
               margin="normal"
               variant="outlined"
-              value={user?.kycRejectReason}
+              value={user?.kycReason}
               InputProps={{
                 readOnly: true,
               }}

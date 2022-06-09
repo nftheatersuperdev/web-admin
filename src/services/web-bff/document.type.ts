@@ -10,7 +10,7 @@ export interface Document {
   contentEn: string
   contentTh: string
   version: number
-  status: 'Active' | 'Inactive'
+  status: 'Active' | 'Inactive' | 'Scheduled'
   remark: string | null
   accepted: string
   effectiveDate: string
@@ -59,3 +59,9 @@ export type DocumentVersionListResponse = {
     versions: Document[]
   }
 } & ResponseWithPagination
+
+export interface ResponseError {
+  data?: string | null
+  message: string
+  status: string
+}

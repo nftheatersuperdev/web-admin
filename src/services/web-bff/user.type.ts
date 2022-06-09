@@ -12,6 +12,7 @@ export interface User {
   disabled: false
   phoneNumber?: string | null
   email: string
+  isActive: boolean
   omiseId: string | null
   carTrackId: string | null
   defaultAddress: string | null
@@ -89,9 +90,21 @@ export interface UserInputRequest {
   phoneNumberContain?: string
   kycStatusEqual?: string
   userGroupNameContain?: string
+  isActive?: boolean
   createdDateEqual?: string
   updatedDateEqual?: string
 }
+
+export interface UserDeleteLog {
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+  createdDate: string
+  action: string
+  createdBy: string
+}
+
 export interface UserMeResponse extends Response {
   data: {
     user: User
@@ -103,6 +116,15 @@ export interface UserGroupInputRequest {
   nameContain?: string
   createdDateEqual?: string
   updatedDateEqual?: string
+}
+
+export interface UserDeleteLogProps {
+  userId?: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  size?: number
+  page?: number
 }
 
 export type UserListResponse = {
@@ -128,3 +150,13 @@ export type UserByUserGroupListResponse = {
     userGroup: UserGroup
   }
 } & ResponseWithPagination
+
+export type UserDeleteLogListResponse = {
+  data: {
+    logs: UserDeleteLog[]
+  }
+} & ResponseWithPagination
+
+export interface CustomerReActivateResponse {
+  status: string
+}
