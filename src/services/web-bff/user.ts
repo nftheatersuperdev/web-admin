@@ -11,6 +11,7 @@ import {
   UserListResponse,
   /*UserListResponse,*/
   UserMeProps,
+  CustomerReActivateResponse,
 } from './user.type'
 
 export const searchUser = async ({ data, size, page }: UserMeProps): Promise<UserListResponse> => {
@@ -105,4 +106,11 @@ export const getAllUserDeleteLog = async ({
     }
   ).then((response) => response.data)
   return response
+}
+
+export const reActivateCustomer = async (customerId: string): Promise<boolean> => {
+  const response: CustomerReActivateResponse = await BaseApi.post(
+    `/v1/customers/${customerId}/activation`
+  ).then((response) => response.data)
+  return response.status === 'success'
 }

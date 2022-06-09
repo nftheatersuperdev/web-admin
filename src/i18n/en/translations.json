@@ -187,7 +187,11 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "fullName": "Full Name",
-    "status": "Status",
+    "status": "Account Status",
+    "statuses": {
+      "active": "Active",
+      "deleted": "Deleted"
+    },
     "kyc": {
       "status": "KYC Status",
       "pending": "Pending",
@@ -203,9 +207,11 @@
     "disabled": "Disabled",
     "actions": "Actions",
     "detailDialog": {
-      "title": "User Detail"
-    },
-    "accountStatus": "Account Status"
+      "title": "User Detail",
+      "reActivate": {
+        "success": "The account has been reactivated"
+      }
+    }
   },
   "car": {
     "id": "ID",

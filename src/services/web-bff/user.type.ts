@@ -12,6 +12,7 @@ export interface User {
   disabled: false
   phoneNumber?: string | null
   email: string
+  isActive: boolean
   omiseId: string | null
   carTrackId: string | null
   defaultAddress: string | null
@@ -89,6 +90,7 @@ export interface UserInputRequest {
   phoneNumberContain?: string
   kycStatusEqual?: string
   userGroupNameContain?: string
+  isActive?: boolean
   createdDateEqual?: string
   updatedDateEqual?: string
 }
@@ -154,3 +156,7 @@ export type UserDeleteLogListResponse = {
     logs: UserDeleteLog[]
   }
 } & ResponseWithPagination
+
+export interface CustomerReActivateResponse {
+  status: string
+}
