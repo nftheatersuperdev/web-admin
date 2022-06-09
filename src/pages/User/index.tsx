@@ -166,8 +166,10 @@ export default function User(): JSX.Element {
         switch (params.value) {
           case true:
             return t('user.statuses.active')
-          default:
+          case false:
             return t('user.statuses.deleted')
+          default:
+            return '-'
         }
       },
     },
