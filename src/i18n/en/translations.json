@@ -712,6 +712,7 @@
       }
     },
     "overviewAndVersions": "Overview & Versions",
+    "editDocument": "Edit Document",
     "addEdit": {
       "titles": {
         "add": "Add New Version",

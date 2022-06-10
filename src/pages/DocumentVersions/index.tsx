@@ -225,7 +225,7 @@ export default function DocumentVersions(): JSX.Element {
   return (
     <Page>
       <Typography variant="h5" color="inherit" component="h1">
-        {t('documents.overviewAndVersions')}
+        {t('documents.editDocument')}
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">
         <Link underline="hover" color="inherit" component={RouterLink} to="/">
