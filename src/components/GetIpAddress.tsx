@@ -25,7 +25,7 @@ export const storeInLocalStorage = (ip: string): void => {
 }
 
 export const getIpInLocalStorage = (): string => {
-  return localStorage.getItem(FETCH_IP_ADDRESS_TIME) || ''
+  return localStorage.getItem(USER_IP_ADDRESS) || ''
 }
 
 export const ensureToFetchAgain = (): boolean => {
