@@ -135,6 +135,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       filter: {
         startDate: subscription.startDate,
         endDate: subscription.cleaningDate,
+        isSkuNotNull: true,
       },
       size: config.maxInteger,
     } as CarAvailableListBffFilterRequestProps)
