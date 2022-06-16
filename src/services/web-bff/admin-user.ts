@@ -1,4 +1,3 @@
-import axios from 'axios'
 import config from 'config'
 import { BaseApi } from 'api/baseApi'
 import {
@@ -12,13 +11,11 @@ import {
 export const getAdminUserProfile = async ({
   accessToken,
 }: GetAdminUserProfileProps): Promise<AdminUser> => {
-  const response: AdminUserProfileResponse = await axios
-    .get(`${config.evmeBff}/v1/admin-users/profiles`, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data)
+  const response: AdminUserProfileResponse = await BaseApi.get('/v1/admin-users/profiles', {
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  }).then((response) => response.data)
 
   return response.data
 }
@@ -38,22 +35,20 @@ export const createNewAdminUser = async ({
   lastname,
   role,
 }: CreateNewAdminUserProps): Promise<AdminUser> => {
-  const response: AdminUserProfileResponse = await axios
-    .post(
-      `${config.evmeBff}/v1/admin-users`,
-      {
-        firebaseToken,
-        firstname,
-        lastname,
-        role,
+  const response: AdminUserProfileResponse = await BaseApi.post(
+    `${config.evmeBff}/v1/admin-users`,
+    {
+      firebaseToken,
+      firstname,
+      lastname,
+      role,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
-    .then((response) => response.data)
+    }
+  ).then((response) => response.data)
 
   return response.data
 }
