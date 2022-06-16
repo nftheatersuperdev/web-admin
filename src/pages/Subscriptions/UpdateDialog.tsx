@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable @typescript-eslint/ban-types */
 import { useState } from 'react'
 import {
   Grid,
@@ -6,15 +8,11 @@ import {
   DialogActions,
   DialogTitle,
   DialogContent,
-  FormControl,
-  MenuItem,
   Button,
   Typography,
-  InputLabel,
-  Select,
-  FormHelperText,
 } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Autocomplete from '@material-ui/lab/Autocomplete'
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -207,9 +205,10 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     !isOperationRole ||
     ![SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(subscription?.status)
 
-  const handlePlateNumberChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    disableUpdateButton = subscription.carPlateNumber === event.target.value
-    formik.setFieldValue('plateNumber', event.target.value || '')
+  const handlePlateNumberChange = (_event: React.ChangeEvent<{}>, value: string | null) => {
+    disableUpdateButton = subscription.carPlateNumber === value
+    formik.setFieldValue('plateNumber', value || '')
+    return true
   }
 
   /*const handleExtendEndDateDays = (
@@ -567,33 +566,15 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <FormControl
-              fullWidth
-              error={formik.touched.plateNumber && Boolean(formik.errors.plateNumber)}
-            >
-              <InputLabel shrink id="plateNumber">
-                {t('subscription.plateNumber')}
-              </InputLabel>
-              <Select
-                labelId="plateNumber"
-                id="plateNumber"
-                name="plateNumber"
-                value={formik.values.plateNumber}
-                onChange={handlePlateNumberChange}
-                disabled={disableToChangePlateNumber()}
-              >
-                {availablePlateNumbers.map((plateNumber) => (
-                  <MenuItem key={plateNumber} value={plateNumber}>
-                    {plateNumber}
-                  </MenuItem>
-                ))}
-                {formik.touched.plateNumber && Boolean(formik.errors.plateNumber) && (
-                  <FormHelperText>
-                    {formik.touched.plateNumber && formik.errors.plateNumber}
-                  </FormHelperText>
-                )}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              value={formik.values.plateNumber}
+              options={availablePlateNumbers}
+              onChange={handlePlateNumberChange}
+              renderInput={(param) => (
+                <TextField {...param} label={t('subscription.plateNumber')} />
+              )}
+              disabled={disableToChangePlateNumber()}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
