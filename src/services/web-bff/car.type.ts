@@ -216,6 +216,8 @@ export interface CarAvailableListFilterRequest {
   plateNumberEqual?: string
   startDate?: string | any
   endDate?: string | any
+  isActive?: boolean | undefined
+  isSkuNotNull?: boolean | undefined
 }
 
 export interface CarAvailableListBffFilterRequestProps {

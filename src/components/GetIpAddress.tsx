@@ -39,9 +39,12 @@ export const ensureToFetchAgain = (): boolean => {
 
 export const fetchIpAddress = async (): Promise<string> => {
   try {
-    if (!ensureToFetchAgain()) {
-      return getIpInLocalStorage()
-    }
+    /**
+     * Disable cache but still keep the code
+     */
+    // if (!ensureToFetchAgain()) {
+    //   return getIpInLocalStorage()
+    // }
 
     const { IPv4 } = await axios
       .get('https://geolocation-db.com/json/')
