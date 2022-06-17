@@ -797,5 +797,6 @@
   },
   "error": {
     "unknown": "something went wrong"
-  }
+  },
+  "version": "Version: {{version}}"
 }
