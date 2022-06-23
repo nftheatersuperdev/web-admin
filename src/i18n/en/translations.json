@@ -712,6 +712,7 @@
       }
     },
     "overviewAndVersions": "Overview & Versions",
+    "editDocument": "Edit Document",
     "addEdit": {
       "titles": {
         "add": "Add New Version",
@@ -796,5 +797,6 @@
   },
   "error": {
     "unknown": "something went wrong"
-  }
+  },
+  "version": "Version: {{version}}"
 }

@@ -685,6 +685,7 @@
       }
     },
     "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
+    "editDocument": "แก้ไขเอกสาร",
     "addEdit": {
       "titles": {
         "add": "เพิ่มเวอร์ชั่นใหม่",
@@ -754,5 +755,6 @@
   },
   "error": {
     "unknown": "เกิดข้อผิดพลาดบางอย่าง"
-  }
+  },
+  "version": "เวอร์ชั่น: {{version}}"
 }

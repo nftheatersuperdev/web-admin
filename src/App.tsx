@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { routes, ROUTE_PATHS } from './routes'
 import LayoutRoute from './layout/LayoutRoute'
 import ValidateToken from './components/ValidateToken'
+import GetIpAddress from './components/GetIpAddress'
 
 function App(): JSX.Element {
   return (
@@ -21,6 +22,7 @@ function App(): JSX.Element {
         </Box>
       }
     >
+      <GetIpAddress />
       <Router>
         <Toaster />
         <ValidateToken />

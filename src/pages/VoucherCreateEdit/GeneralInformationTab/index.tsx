@@ -114,6 +114,8 @@ export default function VoucherGeneralInformationTab({
       startAt: isEdit ? voucher?.startAt : defaultDate.startAt,
       endAt: isEdit ? voucher?.endAt : defaultDate.endAt,
       ...voucher,
+      descriptionTh: isEdit && voucher?.descriptionTh ? voucher.descriptionTh : '',
+      descriptionEn: isEdit && voucher?.descriptionEn ? voucher.descriptionEn : '',
     },
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -352,7 +354,7 @@ export default function VoucherGeneralInformationTab({
           <HTMLEditor
             id="description-en"
             label={t('voucher.description.en')}
-            initialValue={voucher?.descriptionEn}
+            initialValue={formik.values.descriptionEn}
             handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'en')}
             disabled={isInactive || isActive}
           />
@@ -363,7 +365,7 @@ export default function VoucherGeneralInformationTab({
           <HTMLEditor
             id="description-th"
             label={t('voucher.description.th')}
-            initialValue={voucher?.descriptionTh}
+            initialValue={formik.values.descriptionTh}
             handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'th')}
             disabled={isInactive || isActive}
           />
