@@ -25,6 +25,7 @@
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
     "carAvailability": "สถานะการใช้รถ",
+    "carActivity": "การใช้งานรถ",
     "pricing": "ราคาแพ็คเกจ",
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
