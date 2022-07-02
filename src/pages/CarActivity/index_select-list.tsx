@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react/jsx-props-no-spreading */
 import dayjs, { Dayjs } from 'dayjs'
 import { useEffect, useState, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
@@ -23,7 +21,6 @@ import {
   TableRow,
 } from '@material-ui/core'
 import Pagination from '@material-ui/lab/Pagination'
-import Autocomplete from '@material-ui/lab/Autocomplete'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
 import carBrandsJson from 'data/car-brands.json'
@@ -105,18 +102,24 @@ export interface CarColor {
   model_id: string
 }
 export enum CarStatus {
-  InUse = 'in_use',
   Available = 'available',
   OutOfService = 'out_of_service',
+}
+export interface SearchValues {
+  plate?: string
+}
+export interface FilterValues {
+  brand?: string
+  model?: string
+  color?: string
+  status?: string
+  startDate?: string
 }
 
 export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
 
-  const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
-  const [filterModelObject, setFilterModelObject] = useState<CarModel | null>()
-  const [filterColorObject, setFilterColorObject] = useState<CarColor | null>()
   const [filterBrand, setFilterBrand] = useState<string>('')
   const [filterModel, setFilterModel] = useState<string>('')
   const [filterColor, setFilterColor] = useState<string>('')
@@ -133,11 +136,8 @@ export default function CarActivity(): JSX.Element {
 
   const clearFilters = () => {
     setFilterBrand('')
-    setFilterBrandObject(null)
     setFilterModel('')
-    setFilterModelObject(null)
     setFilterColor('')
-    setFilterColorObject(null)
     setFilterStatus('')
     setFilterStartDate(dayjs())
     setCarModels([])
@@ -154,26 +154,28 @@ export default function CarActivity(): JSX.Element {
     })
   }
 
-  const handleOnBrandChange = (brandId: string) => {
-    setCarModels([])
-    setFilterModelObject(null)
-    setFilterColorObject(null)
+  const handleOnBrandChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const brandId = event.target.value as CarBrand['id']
     if (brandId) {
       setFilterBrand(brandId)
       setCarModels(carModelsJson.filter(({ brand_id }) => brand_id === brandId) || [])
+    } else {
+      setCarModels([])
     }
   }
 
-  const handleOnModelChange = (modelId: string) => {
-    setCarColors([])
-    setFilterColorObject(null)
+  const handleOnModelChange = (event: ChangeEvent<{ name?: string; value: unknown }>) => {
+    const modelId = event.target.value as CarModel['id']
     if (modelId) {
       setFilterModel(modelId)
       setCarColors(carColorsJson.filter((carColor) => carColor.model_id === modelId) || [])
+    } else {
+      setCarColors([])
     }
   }
 
-  const handleOnColorChange = (colorId: string) => {
+  const handleOnColorChange = (event: ChangeEvent<{ name?: string; value: unknown }>) => {
+    const colorId = event.target.value as CarColor['id']
     if (colorId) {
       setFilterColor(colorId)
     }
@@ -246,57 +248,69 @@ export default function CarActivity(): JSX.Element {
           className={classes.gridContainer}
         >
           <Grid item className="filter-brand" xs={6} sm={4} md={2} lg={2} xl={1}>
-            <Autocomplete
-              autoHighlight
-              id="brand-select-list"
-              options={carBrands}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Brand" variant="outlined" />}
-              value={filterBrandObject || null}
-              defaultValue={filterBrandObject || null}
-              onChange={(_event, value) => {
-                if (value || value === '') {
-                  setFilterBrandObject(value)
-                  handleOnBrandChange(value.id)
-                }
-              }}
-            />
+            <FormControl variant="outlined" className={classes.fullWidth}>
+              <InputLabel id="brand-label">Brand</InputLabel>
+              <Select
+                labelId="brand-label"
+                id="brand"
+                label="Brand"
+                onChange={handleOnBrandChange}
+                value={filterBrand}
+                defaultValue={filterBrand}
+              >
+                {carBrands.map((brand) => (
+                  <MenuItem key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item className="filter-model" xs={6} sm={4} md={2} lg={2} xl={1}>
-            <Autocomplete
-              autoHighlight
-              id="model-select-list"
+            <FormControl
+              variant="outlined"
+              className={classes.fullWidth}
               disabled={carModels.length < 1}
-              options={carModels}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Model" variant="outlined" />}
-              value={filterModelObject || null}
-              defaultValue={filterModelObject || null}
-              onChange={(_event, value) => {
-                if (value || value === '') {
-                  setFilterModelObject(value)
-                  handleOnModelChange(value.id)
-                }
-              }}
-            />
+            >
+              <InputLabel id="model-label">Model</InputLabel>
+              <Select
+                labelId="model-label"
+                id="model"
+                label="Model"
+                onChange={handleOnModelChange}
+                value={filterModel}
+                defaultValue={filterModel}
+              >
+                {carModels.map((model) => (
+                  <MenuItem key={model.id} value={model.id}>
+                    {model.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item className="filter-color" xs={6} sm={4} md={2} lg={1} xl={1}>
-            <Autocomplete
-              autoHighlight
-              id="color-select-list"
+            <FormControl
+              variant="outlined"
+              className={classes.fullWidth}
               disabled={carColors.length < 1}
-              options={carColors}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Color" variant="outlined" />}
-              value={filterColorObject || null}
-              defaultValue={filterColorObject || null}
-              onChange={(_event, value) => {
-                if (value || value === '') {
-                  setFilterColorObject(value)
-                  handleOnColorChange(value.id)
-                }
-              }}
-            />
+            >
+              <InputLabel id="color-label">Color</InputLabel>
+              <Select
+                labelId="color-label"
+                id="color"
+                label="Color"
+                onChange={handleOnColorChange}
+                value={filterColor}
+                defaultValue={filterColor}
+              >
+                {carColors.map((color) => (
+                  <MenuItem key={color.id} value={color.id}>
+                    {color.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item className="filter-status" xs={6} sm={4} md={2} lg={1} xl={1}>
             <FormControl variant="outlined" className={classes.fullWidth}>
@@ -309,7 +323,6 @@ export default function CarActivity(): JSX.Element {
                 value={filterStatus}
                 defaultValue={filterStatus}
               >
-                <MenuItem value="in_use">In Use</MenuItem>
                 <MenuItem value="available">Available</MenuItem>
                 <MenuItem value="out_of_service">Out Of Service</MenuItem>
               </Select>
