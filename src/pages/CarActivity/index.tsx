@@ -29,8 +29,10 @@ import { makeStyles } from '@material-ui/core/styles'
 import carBrandsJson from 'data/car-brands.json'
 import carModelsJson from 'data/car-models.json'
 import carColorsJson from 'data/car-colors.json'
+import carActivitiesJson from 'data/car-activity.json'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
+import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 
 const useStyles = makeStyles({
   displayNone: {
@@ -114,6 +116,10 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
 
+  const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
+  const [searchPlate, setSearchPlate] = useState<string>('')
+  const [statePlate, setStatePlate] = useState<string>('')
+  const [searchPlateError, setSearchPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
   const [filterModelObject, setFilterModelObject] = useState<CarModel | null>()
   const [filterColorObject, setFilterColorObject] = useState<CarColor | null>()
@@ -131,7 +137,42 @@ export default function CarActivity(): JSX.Element {
     setCarBrands(carBrandsJson)
   }, [])
 
+  const carActivities =
+    carActivitiesJson.cars.map((carActivity) => {
+      return (
+        <TableRow key={carActivity.id}>
+          <TableCell className={classes.tableColumnCarInfo}>
+            <div>{carActivity.carModel.brand_name}</div>
+            <div>{carActivity.plateNumber}</div>
+          </TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate} colSpan={2}>
+            Reparing #1
+          </TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnActions}>
+            <Button onClick={() => setVisibleScheduleDialog(true)} type="button">
+              +
+            </Button>
+          </TableCell>
+        </TableRow>
+      )
+    }) || []
+  const carActivitiesTotal = carActivitiesJson.cars.length || 0
+
+  const handleOnScheduleDialogClose = () => {
+    setVisibleScheduleDialog(false)
+  }
+
   const clearFilters = () => {
+    setStatePlate('')
+    setSearchPlate('')
     setFilterBrand('')
     setFilterBrandObject(null)
     setFilterModel('')
@@ -144,6 +185,12 @@ export default function CarActivity(): JSX.Element {
     setCarColors([])
   }
 
+  const handleOnSearchPlate = () => {
+    console.log('handleOnSearchPlate ->', {
+      searchPlate,
+    })
+  }
+
   const handleOnClickFilters = () => {
     console.log('handleOnClickFilters ->', {
       filterBrand,
@@ -152,6 +199,23 @@ export default function CarActivity(): JSX.Element {
       filterStatus,
       filterStartDate,
     })
+  }
+
+  const handleOnPlateChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    const keywordRule = /^[ก-ฮa-zA-Z0-9]{2,}$/g
+    const isKeywordAccepted = keywordRule.test(value)
+
+    setStatePlate(value)
+    setSearchPlateError('')
+
+    if (isKeywordAccepted) {
+      setSearchPlate(value)
+    } else if (value !== '') {
+      setSearchPlateError('Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters.')
+    } else {
+      setSearchPlate('')
+    }
   }
 
   const handleOnBrandChange = (brandId: string) => {
@@ -207,6 +271,8 @@ export default function CarActivity(): JSX.Element {
               <Grid item xs={8} sm={9}>
                 <FormControl variant="outlined" className={classes.fullWidth}>
                   <TextField
+                    error={!!searchPlateError}
+                    helperText={searchPlateError}
                     fullWidth
                     variant="outlined"
                     label="Plate"
@@ -214,6 +280,8 @@ export default function CarActivity(): JSX.Element {
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    onChange={handleOnPlateChange}
+                    value={statePlate}
                   />
                 </FormControl>
               </Grid>
@@ -223,6 +291,8 @@ export default function CarActivity(): JSX.Element {
                   color="primary"
                   className={classes.buttonWithoutShadow}
                   type="submit"
+                  disabled={!searchPlate || !!searchPlateError}
+                  onClick={() => handleOnSearchPlate()}
                 >
                   Search
                 </Button>
@@ -371,70 +441,19 @@ export default function CarActivity(): JSX.Element {
               <TableCell className={classes.tableColumnActions}>Actions</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell className={classes.tableColumnCarInfo}>
-                <div>TESLA</div>
-                <div>กก 1234</div>
-              </TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate} colSpan={2}>
-                Reparing #1
-              </TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnActions}>+</TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell className={classes.tableColumnCarInfo}>
-                <div>TESLA</div>
-                <div>กก 1234</div>
-              </TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate} colSpan={2}>
-                Reparing #1
-              </TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>Reparing #2</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate} colSpan={2}>
-                Reparing #3
-              </TableCell>
-              <TableCell className={classes.tableColumnActions}>+</TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell className={classes.tableColumnCarInfo}>
-                <div>TESLA</div>
-                <div>กก 1234</div>
-              </TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate} colSpan={2}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti optio facere,
-                vitae tenetur corporis accusamus, quo placeat assumenda doloremque consequuntur sunt
-                adipisci. Quidem dolorum, ad tempore aliquid obcaecati quaerat et.
-              </TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-              <TableCell className={classes.tableColumnActions}>+</TableCell>
-            </TableRow>
-          </TableBody>
+          <TableBody>{carActivities}</TableBody>
         </Table>
       </TableContainer>
-      <Pagination className={classes.pagination} count={10} variant="outlined" shape="rounded" />
+      <Pagination
+        className={classes.pagination}
+        count={carActivitiesTotal}
+        variant="outlined"
+        shape="rounded"
+      />
+      <ActivityScheduleDialog
+        visible={visibleScheduleDialog}
+        onClose={handleOnScheduleDialogClose}
+      />
     </Page>
   )
 }
