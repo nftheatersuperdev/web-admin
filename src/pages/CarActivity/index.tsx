@@ -234,19 +234,19 @@ export default function CarActivity(): JSX.Element {
   }
 
   const handleOnSearchPlate = () => {
-    console.log('handleOnSearchPlate ->', {
-      searchPlate,
-    })
+    // console.log('handleOnSearchPlate ->', {
+    //   searchPlate,
+    // })
   }
 
   const handleOnClickFilters = () => {
-    console.log('handleOnClickFilters ->', {
-      filterBrand,
-      filterModel,
-      filterColor,
-      filterStatus,
-      filterStartDate,
-    })
+    // console.log('handleOnClickFilters ->', {
+    //   filterBrand,
+    //   filterModel,
+    //   filterColor,
+    //   filterStatus,
+    //   filterStartDate,
+    // })
   }
 
   const handleOnPlateChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -256,7 +256,7 @@ export default function CarActivity(): JSX.Element {
     setStatePlate(value)
     setSearchPlateError('')
 
-    if (isKeywordAccepted) {
+    if (isKeywordAccepted && value.length >= 2) {
       setSearchPlate(value)
     } else if (value !== '') {
       setSearchPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
@@ -523,6 +523,27 @@ export default function CarActivity(): JSX.Element {
           />
         </div>
       </Card>
+
+      <br />
+      <Card>
+        <pre>Plate: {JSON.stringify(searchPlate, null, 2)}</pre>
+        <pre>
+          Filters:
+          <br />
+          {JSON.stringify(
+            {
+              filterBrand,
+              filterModel,
+              filterColor,
+              filterStatus,
+              filterStartDate,
+            },
+            null,
+            2
+          )}
+        </pre>
+      </Card>
+
       <ActivityScheduleDialog
         visible={visibleScheduleDialog}
         onClose={handleOnScheduleDialogClose}

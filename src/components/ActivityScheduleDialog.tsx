@@ -13,7 +13,9 @@ import MenuItem from '@material-ui/core/MenuItem'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
+import Alert from '@material-ui/lab/Alert'
 import styled from 'styled-components'
+import { validateRemarkText } from 'utils'
 import DatePicker from 'components/DatePicker'
 
 interface Props {
@@ -25,6 +27,7 @@ interface DataState {
   startDate: MaterialUiPickersDate | Dayjs
   endDate: MaterialUiPickersDate | Dayjs
   service: string
+  remarks: string
 }
 
 const SpaceButtons = styled.div`
@@ -35,16 +38,28 @@ const SpaceButtons = styled.div`
   }
 `
 
+const defaultState = {
+  startDate: dayjs(),
+  endDate: dayjs().add(1, 'day'),
+  service: '',
+  remarks: '',
+}
+const maxDate = dayjs().add(5, 'year')
+
 export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX.Element {
   const { t } = useTranslation()
-  const [state, setState] = useState<DataState>({
-    startDate: dayjs(),
-    endDate: dayjs(),
-    service: '',
-  })
+  const [state, setState] = useState<DataState>(defaultState)
+  const [mockError, setMockError] = useState<boolean>(false)
+  const [remarkError, setRemarkError] = useState<string>('')
 
   const handleOnClose = () => {
+    setState(defaultState)
+    setMockError(false)
     onClose()
+  }
+
+  const handleOnSave = () => {
+    setMockError(true)
   }
 
   const handleOnStartDateChange = (date: MaterialUiPickersDate | Dayjs) => {
@@ -68,6 +83,26 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
     })
   }
 
+  const handleOnRemarksChange = (value: string) => {
+    setRemarkError('')
+    setState({
+      ...state,
+      remarks: '',
+    })
+    const isRemarkAccepted = validateRemarkText(value)
+
+    if (!isRemarkAccepted) {
+      setRemarkError(t('carActivity.remarks.errors.invalidFormat'))
+    } else if (value.length > 100) {
+      setRemarkError(t('carActivity.remarks.errors.invalidLength'))
+    } else {
+      setState({
+        ...state,
+        remarks: value,
+      })
+    }
+  }
+
   return (
     <div>
       <Dialog open={visible} onClose={handleOnClose} aria-labelledby="form-dialog-title">
@@ -76,6 +111,7 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <DatePicker
+                fullWidth
                 inputVariant="outlined"
                 label={t('carActivity.startDate.label')}
                 id="selectedFromDate"
@@ -83,10 +119,12 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
                 format="DD/MM/YYYY"
                 value={state.startDate}
                 onChange={handleOnStartDateChange}
+                minDate={dayjs()}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <DatePicker
+                fullWidth
                 inputVariant="outlined"
                 label={t('carActivity.endDate.label')}
                 id="selectedFromDate"
@@ -94,6 +132,8 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
                 format="DD/MM/YYYY"
                 value={state.endDate}
                 onChange={handleOnEndDateChange}
+                minDate={state.startDate}
+                maxDate={maxDate}
               />
             </Grid>
           </Grid>
@@ -133,16 +173,37 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField label={t('carActivity.remarks.label')} fullWidth variant="outlined" />
+              <TextField
+                error={!!remarkError}
+                helperText={remarkError}
+                fullWidth
+                label={t('carActivity.remarks.label')}
+                variant="outlined"
+                onChange={(event) => handleOnRemarksChange(event.target.value)}
+              />
             </Grid>
           </Grid>
+          {mockError && (
+            <div>
+              <br />
+              <Alert severity="error">
+                Sorry, Your schedule is overlap with Schedule ID{' '}
+                <u>595de56d-aaa8-411d-a36c-ed64868fcb96</u> Please choose new date.
+              </Alert>
+            </div>
+          )}
         </DialogContent>
         <DialogActions>
           <SpaceButtons>
             <Button onClick={handleOnClose} variant="contained" color="secondary">
               {t('button.cancel')}
             </Button>
-            <Button onClick={handleOnClose} variant="contained" color="primary">
+            <Button
+              onClick={handleOnSave}
+              variant="contained"
+              color="primary"
+              disabled={!state.startDate || !state.endDate || !state.service}
+            >
               {t('button.save')}
             </Button>
           </SpaceButtons>

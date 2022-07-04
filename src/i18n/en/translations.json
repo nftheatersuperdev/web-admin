@@ -834,7 +834,11 @@
       "label": "Service status"
     },
     "remarks": {
-      "label": "Remarks"
+      "label": "Remarks",
+      "errors": {
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9)",
+        "invalidLength": "Please input valid less than or equal 100 characters."
+      }
     },
     "statuses": {
       "preventiveMaintenance": "Preventive Maintenance",
