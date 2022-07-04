@@ -58,7 +58,11 @@
     "clear": "Clear",
     "back": "Back",
     "invite": "Invite",
-    "inviteAmount": "Invite {{amount}} emails"
+    "inviteAmount": "Invite {{amount}} emails",
+    "filter": "Filter",
+    "export": "Export",
+    "clearAll": "Clear all",
+    "save": "Save"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -799,5 +803,59 @@
   "error": {
     "unknown": "something went wrong"
   },
-  "version": "Version: {{version}}"
+  "version": "Version: {{version}}",
+  "carActivity": {
+    "plateNumber": {
+      "label": "Plate",
+      "placeholder": "Please type at lease 2 charators",
+      "errors": {
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
+      }
+    },
+    "brand": {
+      "label": "Brand"
+    },
+    "model": {
+      "label": "Model"
+    },
+    "color": {
+      "label": "Color"
+    },
+    "status": {
+      "label": "Status"
+    },
+    "startDate": {
+      "label": "Start date"
+    },
+    "endDate": {
+      "label": "End date"
+    },
+    "serviceStatus": {
+      "label": "Service status"
+    },
+    "remarks": {
+      "label": "Remarks",
+      "errors": {
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9)",
+        "invalidLength": "Please input valid less than or equal 100 characters."
+      }
+    },
+    "statuses": {
+      "preventiveMaintenance": "Preventive Maintenance",
+      "reserved": "Reserved",
+      "pr": "PR",
+      "marketing": "Marketing",
+      "breakdown": "Breakdown",
+      "repair": "Repair",
+      "internal": "EVme internal",
+      "carpool": "Carpool",
+      "b2bDelivered": "B2B delivered",
+      "b2bPendingDelivered": "B2B pending delivery",
+      "redPlate": "Red plate",
+      "other": "Others"
+    },
+    "breadcrumbs": {
+      "vehicle": "Vehicle"
+    }
+  }
 }

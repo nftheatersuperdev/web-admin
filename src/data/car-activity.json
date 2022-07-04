@@ -1,13 +1,16 @@
 {
-  "cars": [
+  "pagination": {
+    "total": 12,
+    "page": 1,
+    "pages": 2,
+    "pageSize": 10
+  },
+  "activities": [
     {
       "id": "ACT001",
       "carModel": {
-        "brand": "BRAND002",
         "brand_name": "Tesla",
-        "model_id": "MODEL002",
         "model_name": "Long Range",
-        "color_id": "COLOR004",
         "color_name": "White"
       },
       "plateNumber": "กก1234 กทม"
@@ -15,11 +18,8 @@
     {
       "id": "ACT002",
       "carModel": {
-        "brand": "BRAND002",
         "brand_name": "Tesla",
-        "model_id": "MODEL002",
         "model_name": "Long Range",
-        "color_id": "COLOR005",
         "color_name": "Black"
       },
       "plateNumber": "ขข1234 กทม"
@@ -27,11 +27,8 @@
     {
       "id": "ACT003",
       "carModel": {
-        "brand": "BRAND002",
         "brand_name": "Tesla",
-        "model_id": "MODEL002",
         "model_name": "Long Range",
-        "color_id": "COLOR006",
         "color_name": "Gray"
       },
       "plateNumber": "คค1234 กทม"
@@ -39,11 +36,8 @@
     {
       "id": "ACT004",
       "carModel": {
-        "brand": "BRAND002",
         "brand_name": "Tesla",
-        "model_id": "MODEL002",
         "model_name": "Long Range",
-        "color_id": "COLOR007",
         "color_name": "Blue"
       },
       "plateNumber": "งง1234 กทม"
@@ -51,14 +45,65 @@
     {
       "id": "ACT005",
       "carModel": {
-        "brand": "BRAND002",
         "brand_name": "Tesla",
-        "model_id": "MODEL002",
         "model_name": "Long Range",
-        "color_id": "COLOR008",
         "color_name": "Red"
       },
       "plateNumber": "จจ1234 กทม"
+    },
+    {
+      "id": "ACT006",
+      "carModel": {
+        "brand_name": "Lexus",
+        "model_name": "UX 300e",
+        "color_name": "White"
+      },
+      "plateNumber": "ฉฉ1234 กทม"
+    },
+    {
+      "id": "ACT008",
+      "carModel": {
+        "brand_name": "BMW",
+        "model_name": "iX3",
+        "color_name": "White"
+      },
+      "plateNumber": "ชช1234 กทม"
+    },
+    {
+      "id": "ACT009",
+      "carModel": {
+        "brand_name": "Volvo",
+        "model_name": "XC40 Recharge Pure Electric",
+        "color_name": "White"
+      },
+      "plateNumber": "ญญ1234 กทม"
+    },
+    {
+      "id": "ACT010",
+      "carModel": {
+        "brand_name": "Prosche",
+        "model_name": "Taycan Base Model",
+        "color_name": "Red"
+      },
+      "plateNumber": "ฏฏ1234 กทม"
+    },
+    {
+      "id": "ACT011",
+      "carModel": {
+        "brand_name": "Audi",
+        "model_name": "e-tron Sportback 55 quattro S Line",
+        "color_name": "White"
+      },
+      "plateNumber": "ดด1234 กทม"
+    },
+    {
+      "id": "ACT012",
+      "carModel": {
+        "brand_name": "Hyundai",
+        "model_name": "IONIQ 6",
+        "color_name": "White"
+      },
+      "plateNumber": "ศศ1234 กทม"
     }
   ]
 }

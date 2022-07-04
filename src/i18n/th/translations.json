@@ -58,7 +58,11 @@
     "clear": "เคลียร์",
     "back": "กลับ",
     "invite": "เชิญชวน",
-    "inviteAmount": "เชิญชวน {{amount}} อีเมล"
+    "inviteAmount": "เชิญชวน {{amount}} อีเมล",
+    "filter": "กรองข้อมูล",
+    "export": "ส่งออกข้อมูล",
+    "clearAll": "ล้างทั้งหมด",
+    "save": "บันทึก"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -757,5 +761,55 @@
   "error": {
     "unknown": "เกิดข้อผิดพลาดบางอย่าง"
   },
-  "version": "เวอร์ชั่น: {{version}}"
+  "version": "เวอร์ชั่น: {{version}}",
+  "carActivity": {
+    "plateNumber": {
+      "label": "ป้ายทะเบียน",
+      "placeholder": "กรุณากรอกอย่างน้อย 2 ตัวอักษร",
+      "errors": {
+        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร"
+      }
+    },
+    "brand": {
+      "label": "ยี่ห้อ"
+    },
+    "model": {
+      "label": "รุ่น"
+    },
+    "color": {
+      "label": "สี"
+    },
+    "status": {
+      "label": "สถานะ"
+    },
+    "startDate": {
+      "label": "วันที่เริ่ม"
+    },
+    "endDate": {
+      "label": "วันที่สิ้นสุด"
+    },
+    "serviceStatus": {
+      "label": "สถานะบริการ"
+    },
+    "remarks": {
+      "label": "หมายเหตุ"
+    },
+    "statuses": {
+      "preventiveMaintenance": "เข้าศูนย์ตามรอบ",
+      "reserved": "สำรองรถทดแทน",
+      "pr": "ประชาสัมพันธ์",
+      "marketing": "การตลาด",
+      "breakdown": "เสีย",
+      "repair": "ส่งซ่อม",
+      "internal": "รถผู้บริหารและพนักงาน",
+      "carpool": "รถรับส่ง ATP",
+      "b2bDelivered": "รถอยู่กับลูกค้า B2B",
+      "b2bPendingDelivered": "รอส่งรถให้ B2B",
+      "redPlate": "รถป้ายแดง",
+      "other": "อื่นๆ"
+    },
+    "breadcrumbs": {
+      "vehicle": "ยานพาหนะ"
+    }
+  }
 }

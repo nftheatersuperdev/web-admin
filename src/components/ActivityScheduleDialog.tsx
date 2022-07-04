@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import dayjs, { Dayjs } from 'dayjs'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -12,7 +13,9 @@ import MenuItem from '@material-ui/core/MenuItem'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
+import Alert from '@material-ui/lab/Alert'
 import styled from 'styled-components'
+import { validateRemarkText } from 'utils'
 import DatePicker from 'components/DatePicker'
 
 interface Props {
@@ -24,6 +27,7 @@ interface DataState {
   startDate: MaterialUiPickersDate | Dayjs
   endDate: MaterialUiPickersDate | Dayjs
   service: string
+  remarks: string
 }
 
 const SpaceButtons = styled.div`
@@ -34,20 +38,31 @@ const SpaceButtons = styled.div`
   }
 `
 
+const defaultState = {
+  startDate: dayjs(),
+  endDate: dayjs().add(1, 'day'),
+  service: '',
+  remarks: '',
+}
+const maxDate = dayjs().add(5, 'year')
+
 export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX.Element {
-  const [state, setState] = useState<DataState>({
-    startDate: dayjs(),
-    endDate: dayjs(),
-    service: '',
-  })
-  console.log('state ->', state)
+  const { t } = useTranslation()
+  const [state, setState] = useState<DataState>(defaultState)
+  const [mockError, setMockError] = useState<boolean>(false)
+  const [remarkError, setRemarkError] = useState<string>('')
 
   const handleOnClose = () => {
+    setState(defaultState)
+    setMockError(false)
     onClose()
   }
 
+  const handleOnSave = () => {
+    setMockError(true)
+  }
+
   const handleOnStartDateChange = (date: MaterialUiPickersDate | Dayjs) => {
-    console.log(handleOnStartDateChange.name, date)
     setState({
       ...state,
       startDate: date,
@@ -55,7 +70,6 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
   }
 
   const handleOnEndDateChange = (date: MaterialUiPickersDate | Dayjs) => {
-    console.log(handleOnEndDateChange.name, date)
     setState({
       ...state,
       endDate: date,
@@ -69,6 +83,26 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
     })
   }
 
+  const handleOnRemarksChange = (value: string) => {
+    setRemarkError('')
+    setState({
+      ...state,
+      remarks: '',
+    })
+    const isRemarkAccepted = validateRemarkText(value)
+
+    if (!isRemarkAccepted) {
+      setRemarkError(t('carActivity.remarks.errors.invalidFormat'))
+    } else if (value.length > 100) {
+      setRemarkError(t('carActivity.remarks.errors.invalidLength'))
+    } else {
+      setState({
+        ...state,
+        remarks: value,
+      })
+    }
+  }
+
   return (
     <div>
       <Dialog open={visible} onClose={handleOnClose} aria-labelledby="form-dialog-title">
@@ -77,24 +111,29 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <DatePicker
+                fullWidth
                 inputVariant="outlined"
-                label="Start Date"
+                label={t('carActivity.startDate.label')}
                 id="selectedFromDate"
                 name="selectedFromDate"
                 format="DD/MM/YYYY"
                 value={state.startDate}
                 onChange={handleOnStartDateChange}
+                minDate={dayjs()}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <DatePicker
+                fullWidth
                 inputVariant="outlined"
-                label="End Date"
+                label={t('carActivity.endDate.label')}
                 id="selectedFromDate"
                 name="selectedFromDate"
                 format="DD/MM/YYYY"
                 value={state.endDate}
                 onChange={handleOnEndDateChange}
+                minDate={state.startDate}
+                maxDate={maxDate}
               />
             </Grid>
           </Grid>
@@ -102,9 +141,11 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel htmlFor="service-status">Service status</InputLabel>
+                <InputLabel htmlFor="service-status">
+                  {t('carActivity.serviceStatus.label')}
+                </InputLabel>
                 <Select
-                  label="Service status"
+                  label={t('carActivity.serviceStatus.label')}
                   value={state.service}
                   onChange={handleOnServiceChange}
                   inputProps={{
@@ -112,33 +153,58 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
                     id: 'service-status',
                   }}
                 >
-                  <MenuItem value="service_1">Preventive Maintenance</MenuItem>
-                  <MenuItem value="service_2">Reserved</MenuItem>
-                  <MenuItem value="service_3">PR</MenuItem>
-                  <MenuItem value="service_4">Marketing</MenuItem>
-                  <MenuItem value="service_5">Breakdown</MenuItem>
-                  <MenuItem value="service_6">Repair</MenuItem>
-                  <MenuItem value="service_7">EVme internal</MenuItem>
-                  <MenuItem value="service_8">Carpool</MenuItem>
-                  <MenuItem value="service_9">B2B delivered</MenuItem>
-                  <MenuItem value="service_10">B2B pending delivery</MenuItem>
-                  <MenuItem value="service_11">Red plate</MenuItem>
-                  <MenuItem value="service_12">Others</MenuItem>
+                  <MenuItem value="preventiveMaintenance">
+                    {t('carActivity.statuses.preventiveMaintenance')}
+                  </MenuItem>
+                  <MenuItem value="reserved">{t('carActivity.statuses.reserved')}</MenuItem>
+                  <MenuItem value="pr">{t('carActivity.statuses.pr')}</MenuItem>
+                  <MenuItem value="marketing">{t('carActivity.statuses.marketing')}</MenuItem>
+                  <MenuItem value="breakdown">{t('carActivity.statuses.breakdown')}</MenuItem>
+                  <MenuItem value="repair">{t('carActivity.statuses.repair')}</MenuItem>
+                  <MenuItem value="internal">{t('carActivity.statuses.internal')}</MenuItem>
+                  <MenuItem value="carpool">{t('carActivity.statuses.carpool')}</MenuItem>
+                  <MenuItem value="b2bDelivered">{t('carActivity.statuses.b2bDelivered')}</MenuItem>
+                  <MenuItem value="b2bPendingDelivered">
+                    {t('carActivity.statuses.b2bPendingDelivered')}
+                  </MenuItem>
+                  <MenuItem value="redPlate">{t('carActivity.statuses.redPlate')}</MenuItem>
+                  <MenuItem value="other">{t('carActivity.statuses.other')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField label="Remarks" fullWidth variant="outlined" />
+              <TextField
+                error={!!remarkError}
+                helperText={remarkError}
+                fullWidth
+                label={t('carActivity.remarks.label')}
+                variant="outlined"
+                onChange={(event) => handleOnRemarksChange(event.target.value)}
+              />
             </Grid>
           </Grid>
+          {mockError && (
+            <div>
+              <br />
+              <Alert severity="error">
+                Sorry, Your schedule is overlap with Schedule ID{' '}
+                <u>595de56d-aaa8-411d-a36c-ed64868fcb96</u> Please choose new date.
+              </Alert>
+            </div>
+          )}
         </DialogContent>
         <DialogActions>
           <SpaceButtons>
             <Button onClick={handleOnClose} variant="contained" color="secondary">
-              Cancel
+              {t('button.cancel')}
             </Button>
-            <Button onClick={handleOnClose} variant="contained" color="primary">
-              Save
+            <Button
+              onClick={handleOnSave}
+              variant="contained"
+              color="primary"
+              disabled={!state.startDate || !state.endDate || !state.service}
+            >
+              {t('button.save')}
             </Button>
           </SpaceButtons>
         </DialogActions>

@@ -513,6 +513,16 @@ export const validateEmail = (email: string): boolean => {
   return re.test(String(email).toLowerCase())
 }
 
+export const validateKeywordText = (value: string): boolean => {
+  const keywordRule = /^[ก-ฮa-zA-Z0-9]{2,}$/g
+  return keywordRule.test(value)
+}
+
+export const validateRemarkText = (value: string): boolean => {
+  const remarkRule = /^[ก-๛a-zA-Z0-9]/g
+  return remarkRule.test(value)
+}
+
 export const getContainFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.contains'),
