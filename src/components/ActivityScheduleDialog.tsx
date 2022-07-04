@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import dayjs, { Dayjs } from 'dayjs'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -35,19 +36,18 @@ const SpaceButtons = styled.div`
 `
 
 export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX.Element {
+  const { t } = useTranslation()
   const [state, setState] = useState<DataState>({
     startDate: dayjs(),
     endDate: dayjs(),
     service: '',
   })
-  console.log('state ->', state)
 
   const handleOnClose = () => {
     onClose()
   }
 
   const handleOnStartDateChange = (date: MaterialUiPickersDate | Dayjs) => {
-    console.log(handleOnStartDateChange.name, date)
     setState({
       ...state,
       startDate: date,
@@ -55,7 +55,6 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
   }
 
   const handleOnEndDateChange = (date: MaterialUiPickersDate | Dayjs) => {
-    console.log(handleOnEndDateChange.name, date)
     setState({
       ...state,
       endDate: date,
@@ -78,7 +77,7 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
             <Grid item xs={12} sm={6}>
               <DatePicker
                 inputVariant="outlined"
-                label="Start Date"
+                label={t('carActivity.startDate.label')}
                 id="selectedFromDate"
                 name="selectedFromDate"
                 format="DD/MM/YYYY"
@@ -89,7 +88,7 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
             <Grid item xs={12} sm={6}>
               <DatePicker
                 inputVariant="outlined"
-                label="End Date"
+                label={t('carActivity.endDate.label')}
                 id="selectedFromDate"
                 name="selectedFromDate"
                 format="DD/MM/YYYY"
@@ -102,9 +101,11 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel htmlFor="service-status">Service status</InputLabel>
+                <InputLabel htmlFor="service-status">
+                  {t('carActivity.serviceStatus.label')}
+                </InputLabel>
                 <Select
-                  label="Service status"
+                  label={t('carActivity.serviceStatus.label')}
                   value={state.service}
                   onChange={handleOnServiceChange}
                   inputProps={{
@@ -112,33 +113,37 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
                     id: 'service-status',
                   }}
                 >
-                  <MenuItem value="service_1">Preventive Maintenance</MenuItem>
-                  <MenuItem value="service_2">Reserved</MenuItem>
-                  <MenuItem value="service_3">PR</MenuItem>
-                  <MenuItem value="service_4">Marketing</MenuItem>
-                  <MenuItem value="service_5">Breakdown</MenuItem>
-                  <MenuItem value="service_6">Repair</MenuItem>
-                  <MenuItem value="service_7">EVme internal</MenuItem>
-                  <MenuItem value="service_8">Carpool</MenuItem>
-                  <MenuItem value="service_9">B2B delivered</MenuItem>
-                  <MenuItem value="service_10">B2B pending delivery</MenuItem>
-                  <MenuItem value="service_11">Red plate</MenuItem>
-                  <MenuItem value="service_12">Others</MenuItem>
+                  <MenuItem value="preventiveMaintenance">
+                    {t('carActivity.statuses.preventiveMaintenance')}
+                  </MenuItem>
+                  <MenuItem value="reserved">{t('carActivity.statuses.reserved')}</MenuItem>
+                  <MenuItem value="pr">{t('carActivity.statuses.pr')}</MenuItem>
+                  <MenuItem value="marketing">{t('carActivity.statuses.marketing')}</MenuItem>
+                  <MenuItem value="breakdown">{t('carActivity.statuses.breakdown')}</MenuItem>
+                  <MenuItem value="repair">{t('carActivity.statuses.repair')}</MenuItem>
+                  <MenuItem value="internal">{t('carActivity.statuses.internal')}</MenuItem>
+                  <MenuItem value="carpool">{t('carActivity.statuses.carpool')}</MenuItem>
+                  <MenuItem value="b2bDelivered">{t('carActivity.statuses.b2bDelivered')}</MenuItem>
+                  <MenuItem value="b2bPendingDelivered">
+                    {t('carActivity.statuses.b2bPendingDelivered')}
+                  </MenuItem>
+                  <MenuItem value="redPlate">{t('carActivity.statuses.redPlate')}</MenuItem>
+                  <MenuItem value="other">{t('carActivity.statuses.other')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField label="Remarks" fullWidth variant="outlined" />
+              <TextField label={t('carActivity.remarks.label')} fullWidth variant="outlined" />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <SpaceButtons>
             <Button onClick={handleOnClose} variant="contained" color="secondary">
-              Cancel
+              {t('button.cancel')}
             </Button>
             <Button onClick={handleOnClose} variant="contained" color="primary">
-              Save
+              {t('button.save')}
             </Button>
           </SpaceButtons>
         </DialogActions>

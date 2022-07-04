@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/jsx-props-no-spreading */
 import dayjs, { Dayjs } from 'dayjs'
@@ -7,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Breadcrumbs,
   Button,
+  Card,
   FormControl,
   Grid,
   InputLabel,
@@ -30,11 +32,18 @@ import carBrandsJson from 'data/car-brands.json'
 import carModelsJson from 'data/car-models.json'
 import carColorsJson from 'data/car-colors.json'
 import carActivitiesJson from 'data/car-activity.json'
+import { validateKeywordText } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 
 const useStyles = makeStyles({
+  formControl: {
+    minWidth: 120,
+  },
+  inlineElement: {
+    display: 'inline-flex',
+  },
   displayNone: {
     display: 'none',
   },
@@ -76,7 +85,6 @@ const useStyles = makeStyles({
   },
   tableColumnDate: {
     minWidth: '200px',
-    // whiteSpace: 'nowrap',
     borderLeft: '1px solid #DDD',
     borderRight: '1px solid #DDD',
   },
@@ -86,8 +94,12 @@ const useStyles = makeStyles({
     background: '#fff',
     textAlign: 'center',
   },
-  pagination: {
-    margin: '10px 0',
+  paginationContrainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '20px',
   },
 })
 
@@ -106,6 +118,15 @@ export interface CarColor {
   brand_id: string
   model_id: string
 }
+export interface Activity {
+  id: string
+  carModel: {
+    brand_name: string
+    model_name: string
+    color_name: string
+  }
+  plateNumber: string
+}
 export enum CarStatus {
   InUse = 'in_use',
   Available = 'available',
@@ -116,6 +137,10 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
 
+  const [page, setPage] = useState<number>(1)
+  const [pages, setPages] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [activities, setActivities] = useState<Activity[]>([])
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [searchPlate, setSearchPlate] = useState<string>('')
   const [statePlate, setStatePlate] = useState<string>('')
@@ -133,12 +158,36 @@ export default function CarActivity(): JSX.Element {
   const [carColors, setCarColors] = useState<CarColor[]>([])
   const applyFilters = !!filterBrand || !!filterModel || !!filterColor || !!filterStatus
 
+  const fetchData = () => {
+    const filterIndex = (page - 1) * pageSize
+    const minIndex = filterIndex
+    const maxIndex = filterIndex + pageSize
+    const data = carActivitiesJson.activities.filter((activity, index) => {
+      if (index < maxIndex && index >= minIndex) {
+        return activity
+      }
+      return null
+    })
+    setActivities(data)
+
+    const totalPages = Math.ceil(carActivitiesJson.activities.length / pageSize)
+    setPages(totalPages)
+  }
+
   useEffect(() => {
     setCarBrands(carBrandsJson)
   }, [])
 
+  useEffect(() => {
+    fetchData()
+  }, [pages, page, pageSize])
+
+  useEffect(() => {
+    setPage(1)
+  }, [pageSize])
+
   const carActivities =
-    carActivitiesJson.cars.map((carActivity) => {
+    activities.map((carActivity) => {
       return (
         <TableRow key={carActivity.id}>
           <TableCell className={classes.tableColumnCarInfo}>
@@ -164,7 +213,6 @@ export default function CarActivity(): JSX.Element {
         </TableRow>
       )
     }) || []
-  const carActivitiesTotal = carActivitiesJson.cars.length || 0
 
   const handleOnScheduleDialogClose = () => {
     setVisibleScheduleDialog(false)
@@ -203,8 +251,7 @@ export default function CarActivity(): JSX.Element {
 
   const handleOnPlateChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const keywordRule = /^[ก-ฮa-zA-Z0-9]{2,}$/g
-    const isKeywordAccepted = keywordRule.test(value)
+    const isKeywordAccepted = validateKeywordText(value)
 
     setStatePlate(value)
     setSearchPlateError('')
@@ -212,7 +259,7 @@ export default function CarActivity(): JSX.Element {
     if (isKeywordAccepted) {
       setSearchPlate(value)
     } else if (value !== '') {
-      setSearchPlateError('Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters.')
+      setSearchPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
     } else {
       setSearchPlate('')
     }
@@ -260,7 +307,7 @@ export default function CarActivity(): JSX.Element {
         {t('sidebar.carActivity')}
       </Typography>
       <Breadcrumbs>
-        <Link to="/">Venicle</Link>
+        <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
         <Typography color="textPrimary">{t('sidebar.carActivity')}</Typography>
       </Breadcrumbs>
 
@@ -275,8 +322,8 @@ export default function CarActivity(): JSX.Element {
                     helperText={searchPlateError}
                     fullWidth
                     variant="outlined"
-                    label="Plate"
-                    placeholder="Please type at lease 2 charators"
+                    label={t('carActivity.plateNumber.label')}
+                    placeholder={t('carActivity.plateNumber.placeholder')}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -294,7 +341,7 @@ export default function CarActivity(): JSX.Element {
                   disabled={!searchPlate || !!searchPlateError}
                   onClick={() => handleOnSearchPlate()}
                 >
-                  Search
+                  {t('button.search')}
                 </Button>
               </Grid>
             </Grid>
@@ -302,7 +349,7 @@ export default function CarActivity(): JSX.Element {
           <Grid item xs={3} sm={3} lg={7}>
             <div className={classes.textRight}>
               <Button variant="contained" color="primary" className={classes.buttonWithoutShadow}>
-                Export
+                {t('button.export')}
               </Button>
             </div>
           </Grid>
@@ -321,7 +368,9 @@ export default function CarActivity(): JSX.Element {
               id="brand-select-list"
               options={carBrands}
               getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Brand" variant="outlined" />}
+              renderInput={(params) => (
+                <TextField {...params} label={t('carActivity.brand.label')} variant="outlined" />
+              )}
               value={filterBrandObject || null}
               defaultValue={filterBrandObject || null}
               onChange={(_event, value) => {
@@ -339,7 +388,9 @@ export default function CarActivity(): JSX.Element {
               disabled={carModels.length < 1}
               options={carModels}
               getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Model" variant="outlined" />}
+              renderInput={(params) => (
+                <TextField {...params} label={t('carActivity.model.label')} variant="outlined" />
+              )}
               value={filterModelObject || null}
               defaultValue={filterModelObject || null}
               onChange={(_event, value) => {
@@ -357,7 +408,9 @@ export default function CarActivity(): JSX.Element {
               disabled={carColors.length < 1}
               options={carColors}
               getOptionLabel={(option) => option.name}
-              renderInput={(params) => <TextField {...params} label="Color" variant="outlined" />}
+              renderInput={(params) => (
+                <TextField {...params} label={t('carActivity.color.label')} variant="outlined" />
+              )}
               value={filterColorObject || null}
               defaultValue={filterColorObject || null}
               onChange={(_event, value) => {
@@ -370,11 +423,11 @@ export default function CarActivity(): JSX.Element {
           </Grid>
           <Grid item className="filter-status" xs={6} sm={4} md={2} lg={1} xl={1}>
             <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel id="status-label">Status</InputLabel>
+              <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
               <Select
                 labelId="status-label"
                 id="status"
-                label="Status"
+                label={t('carActivity.status.label')}
                 onChange={handleOnStatusChange}
                 value={filterStatus}
                 defaultValue={filterStatus}
@@ -389,7 +442,7 @@ export default function CarActivity(): JSX.Element {
             <FormControl variant="outlined" className={classes.fullWidth}>
               <DatePicker
                 inputVariant="outlined"
-                label="Start Date"
+                label={t('carActivity.startDate.label')}
                 id="selectedFromDate"
                 name="selectedFromDate"
                 format="DD/MM/YYYY"
@@ -407,7 +460,7 @@ export default function CarActivity(): JSX.Element {
               onClick={() => handleOnClickFilters()}
               disabled={!applyFilters}
             >
-              Filter
+              {t('button.filter')}
             </Button>
             <Button
               color="secondary"
@@ -417,7 +470,7 @@ export default function CarActivity(): JSX.Element {
               ].join(' ')}
               onClick={() => clearFilters()}
             >
-              X CLEAR ALL
+              X {t('button.clearAll')}
             </Button>
           </Grid>
         </Grid>
@@ -444,12 +497,32 @@ export default function CarActivity(): JSX.Element {
           <TableBody>{carActivities}</TableBody>
         </Table>
       </TableContainer>
-      <Pagination
-        className={classes.pagination}
-        count={carActivitiesTotal}
-        variant="outlined"
-        shape="rounded"
-      />
+      <Card>
+        <div className={classes.paginationContrainer}>
+          Rows per page:&nbsp;
+          <FormControl className={classes.inlineElement}>
+            <Select
+              value={pageSize}
+              defaultValue={pageSize}
+              onChange={(event: ChangeEvent<{ name?: string; value: unknown }>) =>
+                setPageSize(event.target.value as number)
+              }
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </Select>
+          </FormControl>
+          <Pagination
+            count={pages}
+            variant="text"
+            shape="rounded"
+            onChange={(_event: ChangeEvent<unknown>, value: number) => {
+              setPage(value)
+            }}
+          />
+        </div>
+      </Card>
       <ActivityScheduleDialog
         visible={visibleScheduleDialog}
         onClose={handleOnScheduleDialogClose}
