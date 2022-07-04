@@ -38,8 +38,8 @@ import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 
 const useStyles = makeStyles({
-  formControl: {
-    minWidth: 120,
+  textBold: {
+    fontWeight: 'bold',
   },
   inlineElement: {
     display: 'inline-flex',
@@ -191,8 +191,10 @@ export default function CarActivity(): JSX.Element {
       return (
         <TableRow key={carActivity.id}>
           <TableCell className={classes.tableColumnCarInfo}>
-            <div>{carActivity.carModel.brand_name}</div>
-            <div>{carActivity.plateNumber}</div>
+            <div className={classes.textBold}>{carActivity.carModel.brand_name}</div>
+            <div className={classes.textBold}>{carActivity.plateNumber}</div>
+            <div>{carActivity.carModel.model_name}</div>
+            <div>{carActivity.carModel.color_name}</div>
           </TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
