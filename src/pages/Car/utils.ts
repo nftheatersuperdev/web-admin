@@ -11,6 +11,8 @@ const STORAGE_KEYS = {
 }
 
 export const CarStatus = {
+  PUBLISHED: 'published',
+  IN_USE: 'in_use',
   AVAILABLE: 'available',
   OUT_OF_SERVICE: 'out_of_service',
 }

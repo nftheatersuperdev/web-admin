@@ -1,0 +1,64 @@
+{
+  "cars": [
+    {
+      "id": "ACT001",
+      "carModel": {
+        "brand": "BRAND002",
+        "brand_name": "Tesla",
+        "model_id": "MODEL002",
+        "model_name": "Long Range",
+        "color_id": "COLOR004",
+        "color_name": "White"
+      },
+      "plateNumber": "กก1234 กทม"
+    },
+    {
+      "id": "ACT002",
+      "carModel": {
+        "brand": "BRAND002",
+        "brand_name": "Tesla",
+        "model_id": "MODEL002",
+        "model_name": "Long Range",
+        "color_id": "COLOR005",
+        "color_name": "Black"
+      },
+      "plateNumber": "ขข1234 กทม"
+    },
+    {
+      "id": "ACT003",
+      "carModel": {
+        "brand": "BRAND002",
+        "brand_name": "Tesla",
+        "model_id": "MODEL002",
+        "model_name": "Long Range",
+        "color_id": "COLOR006",
+        "color_name": "Gray"
+      },
+      "plateNumber": "คค1234 กทม"
+    },
+    {
+      "id": "ACT004",
+      "carModel": {
+        "brand": "BRAND002",
+        "brand_name": "Tesla",
+        "model_id": "MODEL002",
+        "model_name": "Long Range",
+        "color_id": "COLOR007",
+        "color_name": "Blue"
+      },
+      "plateNumber": "งง1234 กทม"
+    },
+    {
+      "id": "ACT005",
+      "carModel": {
+        "brand": "BRAND002",
+        "brand_name": "Tesla",
+        "model_id": "MODEL002",
+        "model_name": "Long Range",
+        "color_id": "COLOR008",
+        "color_name": "Red"
+      },
+      "plateNumber": "จจ1234 กทม"
+    }
+  ]
+}
