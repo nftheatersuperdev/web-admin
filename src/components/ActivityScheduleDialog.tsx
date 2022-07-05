@@ -22,7 +22,7 @@ import type { ServiceSchedule } from 'pages/CarActivityDetail'
 
 interface Props {
   visible: boolean
-  serviceSchedule?: ServiceSchedule
+  serviceSchedule?: ServiceSchedule | null
   onClose: (refetch?: boolean) => void
 }
 
@@ -61,6 +61,12 @@ export default function ActivityScheduleDialog({
   const [state, setState] = useState<DataState>(defaultState)
   const [mockError, setMockError] = useState<boolean>(false)
   const [remarkError, setRemarkError] = useState<string>('')
+
+  useEffect(() => {
+    if (!isEdit) {
+      setState(defaultState)
+    }
+  }, [isEdit])
 
   useEffect(() => {
     if (isEdit && serviceSchedule) {

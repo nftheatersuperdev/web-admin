@@ -92,7 +92,7 @@ export default function CarActivityDetail(): JSX.Element {
   const activityServiceList = useActivityServiceList(t)
 
   const [visibleConfirmDialog, setVisibleConfirmDialog] = useState<boolean>(false)
-  const [serviceSchedule, setServiceSchedule] = useState<ServiceSchedule>()
+  const [serviceSchedule, setServiceSchedule] = useState<ServiceSchedule | null>(null)
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(
     dayjs().startOf('day')
@@ -147,7 +147,7 @@ export default function CarActivityDetail(): JSX.Element {
     )
   }
 
-  const generatelConfirmDeleteHtml = (schedule: ServiceSchedule | undefined): string => {
+  const generatelConfirmDeleteHtml = (schedule: ServiceSchedule | null): string => {
     if (!schedule) {
       return ''
     }
@@ -433,7 +433,10 @@ export default function CarActivityDetail(): JSX.Element {
         <ActivityScheduleDialog
           visible={visibleScheduleDialog}
           serviceSchedule={serviceSchedule}
-          onClose={() => setVisibleScheduleDialog(false)}
+          onClose={() => {
+            setServiceSchedule(null)
+            setVisibleScheduleDialog(false)
+          }}
         />
         <ConfirmDialog
           open={visibleConfirmDialog}
