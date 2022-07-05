@@ -48,6 +48,14 @@ export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => 
     label: t('car.statuses.outOfService'),
     value: CarStatus.OUT_OF_SERVICE,
   },
+  {
+    label: t('car.statuses.published'),
+    value: CarStatus.PUBLISHED,
+  },
+  {
+    label: t('car.statuses.inUse'),
+    value: CarStatus.IN_USE,
+  },
 ]
 
 export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): string => {
@@ -55,10 +63,16 @@ export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): 
 
   switch (enforceStatus) {
     case CarStatus.AVAILABLE:
-      return t('car.statuses.published')
+      return t('car.statuses.available')
 
     case CarStatus.OUT_OF_SERVICE:
       return t('car.statuses.outOfService')
+
+    case CarStatus.PUBLISHED:
+      return t('car.statuses.published')
+
+    case CarStatus.IN_USE:
+      return t('car.statuses.inUse')
 
     default:
       return '-'

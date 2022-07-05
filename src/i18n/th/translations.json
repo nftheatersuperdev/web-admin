@@ -258,6 +258,7 @@
     "status": "สถานะ",
     "statuses": {
       "published": "เปิด",
+      "inUse": "กำลังใช้งาน",
       "available": "พร้อมใช้งาน",
       "outOfService": "ไม่พร้อมใช้งาน"
     },
@@ -763,12 +764,27 @@
   },
   "version": "เวอร์ชั่น: {{version}}",
   "carActivity": {
+    "overview": {
+      "header": "ภาพรวม"
+    },
+    "addSchedule": {
+      "header": "เพิ่มกำหนดการ"
+    },
+    "editSchedule": {
+      "header": "แก้ไขกำหนดการ"
+    },
+    "activityId": {
+      "label": "กิจกรรมเลขที่"
+    },
     "plateNumber": {
       "label": "ป้ายทะเบียน",
       "placeholder": "กรุณากรอกอย่างน้อย 2 ตัวอักษร",
       "errors": {
         "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร"
       }
+    },
+    "visibility": {
+      "label": "การมองเห็น"
     },
     "brand": {
       "label": "ยี่ห้อ"
@@ -788,13 +804,30 @@
     "endDate": {
       "label": "วันที่สิ้นสุด"
     },
-    "serviceStatus": {
+    "service": {
       "label": "สถานะบริการ"
     },
-    "remarks": {
-      "label": "หมายเหตุ"
+    "remark": {
+      "label": "หมายเหตุ",
+      "errors": {
+        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9)",
+        "invalidLength": "กรุณากรอกข้อมูลน้อยกว่า 100 ตัวอักษร"
+      }
+    },
+    "scheduleId": {
+      "label": "กำหนดการเลขที่"
+    },
+    "modifyDate": {
+      "label": "แก้ไขล่าสุด"
+    },
+    "modifyBy": {
+      "label": "แก้ไขโดย"
+    },
+    "action": {
+      "label": "จัดการ"
     },
     "statuses": {
+      "subscription": "อยู่ระหว่างการจอง",
       "preventiveMaintenance": "เข้าศูนย์ตามรอบ",
       "reserved": "สำรองรถทดแทน",
       "pr": "ประชาสัมพันธ์",

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import dayjs, { Dayjs } from 'dayjs'
 import Button from '@material-ui/core/Button'
@@ -17,9 +17,12 @@ import Alert from '@material-ui/lab/Alert'
 import styled from 'styled-components'
 import { validateRemarkText } from 'utils'
 import DatePicker from 'components/DatePicker'
+import { useActivityServiceList } from 'pages/CarActivity/utils'
+import type { ServiceSchedule } from 'pages/CarActivityDetail'
 
 interface Props {
   visible: boolean
+  serviceSchedule?: ServiceSchedule
   onClose: (refetch?: boolean) => void
 }
 
@@ -27,7 +30,7 @@ interface DataState {
   startDate: MaterialUiPickersDate | Dayjs
   endDate: MaterialUiPickersDate | Dayjs
   service: string
-  remarks: string
+  remark: string
 }
 
 const SpaceButtons = styled.div`
@@ -42,18 +45,42 @@ const defaultState = {
   startDate: dayjs(),
   endDate: dayjs().add(1, 'day'),
   service: '',
-  remarks: '',
+  remark: '',
 }
 const maxDate = dayjs().add(5, 'year')
 
-export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX.Element {
+export default function ActivityScheduleDialog({
+  visible,
+  serviceSchedule,
+  onClose,
+}: Props): JSX.Element {
   const { t } = useTranslation()
+  const activityServiceList = useActivityServiceList(t)
+  const isEdit = !!serviceSchedule
+
   const [state, setState] = useState<DataState>(defaultState)
   const [mockError, setMockError] = useState<boolean>(false)
   const [remarkError, setRemarkError] = useState<string>('')
 
+  useEffect(() => {
+    if (isEdit && serviceSchedule) {
+      setState({
+        startDate: dayjs(serviceSchedule?.startDate),
+        endDate: dayjs(serviceSchedule?.endDate),
+        service: serviceSchedule?.service || '',
+        remark: serviceSchedule?.remark || '',
+      })
+    }
+  }, [isEdit, serviceSchedule])
+
+  const isUnableToSave =
+    !state.startDate ||
+    !state.service ||
+    !state.service ||
+    (state.endDate && state.endDate < state.startDate) ||
+    !!remarkError
+
   const handleOnClose = () => {
-    setState(defaultState)
     setMockError(false)
     onClose()
   }
@@ -63,10 +90,13 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
   }
 
   const handleOnStartDateChange = (date: MaterialUiPickersDate | Dayjs) => {
-    setState({
-      ...state,
-      startDate: date,
-    })
+    if (date) {
+      setState({
+        ...state,
+        startDate: date,
+        endDate: date.add(1, 'day'),
+      })
+    }
   }
 
   const handleOnEndDateChange = (date: MaterialUiPickersDate | Dayjs) => {
@@ -87,18 +117,23 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
     setRemarkError('')
     setState({
       ...state,
-      remarks: '',
+      remark: '',
     })
     const isRemarkAccepted = validateRemarkText(value)
 
-    if (!isRemarkAccepted) {
-      setRemarkError(t('carActivity.remarks.errors.invalidFormat'))
+    if (value === '') {
+      setState({
+        ...state,
+        remark: value,
+      })
+    } else if (!isRemarkAccepted) {
+      setRemarkError(t('carActivity.remark.errors.invalidFormat'))
     } else if (value.length > 100) {
-      setRemarkError(t('carActivity.remarks.errors.invalidLength'))
+      setRemarkError(t('carActivity.remark.errors.invalidLength'))
     } else {
       setState({
         ...state,
-        remarks: value,
+        remark: value,
       })
     }
   }
@@ -106,7 +141,9 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
   return (
     <div>
       <Dialog open={visible} onClose={handleOnClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add schedule</DialogTitle>
+        <DialogTitle id="form-dialog-title">
+          {isEdit ? t('carActivity.editSchedule.header') : t('carActivity.addSchedule.header')}
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -119,7 +156,7 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
                 format="DD/MM/YYYY"
                 value={state.startDate}
                 onChange={handleOnStartDateChange}
-                minDate={dayjs()}
+                minDate={isEdit ? state.startDate : dayjs()}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -141,34 +178,24 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel htmlFor="service-status">
-                  {t('carActivity.serviceStatus.label')}
-                </InputLabel>
+                <InputLabel htmlFor="service">{t('carActivity.service.label')}</InputLabel>
                 <Select
-                  label={t('carActivity.serviceStatus.label')}
+                  label={t('carActivity.service.label')}
+                  defaultValue={state.service}
                   value={state.service}
                   onChange={handleOnServiceChange}
                   inputProps={{
-                    name: 'service-status',
-                    id: 'service-status',
+                    name: 'service',
+                    id: 'service',
                   }}
                 >
-                  <MenuItem value="preventiveMaintenance">
-                    {t('carActivity.statuses.preventiveMaintenance')}
-                  </MenuItem>
-                  <MenuItem value="reserved">{t('carActivity.statuses.reserved')}</MenuItem>
-                  <MenuItem value="pr">{t('carActivity.statuses.pr')}</MenuItem>
-                  <MenuItem value="marketing">{t('carActivity.statuses.marketing')}</MenuItem>
-                  <MenuItem value="breakdown">{t('carActivity.statuses.breakdown')}</MenuItem>
-                  <MenuItem value="repair">{t('carActivity.statuses.repair')}</MenuItem>
-                  <MenuItem value="internal">{t('carActivity.statuses.internal')}</MenuItem>
-                  <MenuItem value="carpool">{t('carActivity.statuses.carpool')}</MenuItem>
-                  <MenuItem value="b2bDelivered">{t('carActivity.statuses.b2bDelivered')}</MenuItem>
-                  <MenuItem value="b2bPendingDelivered">
-                    {t('carActivity.statuses.b2bPendingDelivered')}
-                  </MenuItem>
-                  <MenuItem value="redPlate">{t('carActivity.statuses.redPlate')}</MenuItem>
-                  <MenuItem value="other">{t('carActivity.statuses.other')}</MenuItem>
+                  {activityServiceList.map((service, index) => {
+                    return (
+                      <MenuItem key={`${index}-${service.id}`} value={service.id}>
+                        {service.label}
+                      </MenuItem>
+                    )
+                  })}
                 </Select>
               </FormControl>
             </Grid>
@@ -177,7 +204,7 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
                 error={!!remarkError}
                 helperText={remarkError}
                 fullWidth
-                label={t('carActivity.remarks.label')}
+                label={t('carActivity.remark.label')}
                 variant="outlined"
                 onChange={(event) => handleOnRemarksChange(event.target.value)}
               />
@@ -202,7 +229,7 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
               onClick={handleOnSave}
               variant="contained"
               color="primary"
-              disabled={!state.startDate || !state.endDate || !state.service}
+              disabled={isUnableToSave}
             >
               {t('button.save')}
             </Button>

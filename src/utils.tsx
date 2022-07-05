@@ -519,7 +519,7 @@ export const validateKeywordText = (value: string): boolean => {
 }
 
 export const validateRemarkText = (value: string): boolean => {
-  const remarkRule = /^[ก-๛a-zA-Z0-9]/g
+  const remarkRule = /^[ก-๛a-zA-Z0-9 ]*$/g
   return remarkRule.test(value)
 }
 

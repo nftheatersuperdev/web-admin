@@ -38,8 +38,17 @@ import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 
 const useStyles = makeStyles({
+  hide: {
+    display: 'none',
+  },
+  link: {
+    color: '#333',
+  },
   textBold: {
     fontWeight: 'bold',
+  },
+  subText: {
+    color: '#AAA',
   },
   inlineElement: {
     display: 'inline-flex',
@@ -191,12 +200,19 @@ export default function CarActivity(): JSX.Element {
       return (
         <TableRow key={carActivity.id}>
           <TableCell className={classes.tableColumnCarInfo}>
-            <div className={classes.textBold}>{carActivity.carModel.brand_name}</div>
-            <div className={classes.textBold}>{carActivity.plateNumber}</div>
-            <div>{carActivity.carModel.model_name}</div>
-            <div>{carActivity.carModel.color_name}</div>
+            <Link to={`/car-activity/${carActivity.id}`} className={classes.link}>
+              <div className={classes.textBold}>{carActivity.carModel.brand_name}</div>
+              <div className={classes.textBold}>{carActivity.plateNumber}</div>
+              <div className={classes.subText}>
+                <div>{carActivity.carModel.model_name}</div>
+                <div>{carActivity.carModel.color_name}</div>
+              </div>
+            </Link>
           </TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate} colSpan={10}>
+            &nbsp;
+          </TableCell>
+          {/* <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
@@ -206,10 +222,10 @@ export default function CarActivity(): JSX.Element {
           </TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell> */}
           <TableCell className={classes.tableColumnActions}>
             <Button onClick={() => setVisibleScheduleDialog(true)} type="button">
-              +
+              <span className={classes.textBold}>+</span>
             </Button>
           </TableCell>
         </TableRow>
@@ -482,18 +498,45 @@ export default function CarActivity(): JSX.Element {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableColumnCarInfo}>Car</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>1 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>2 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>3 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>4 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>5 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>6 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>7 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>8 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>9 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnDateHeader}>10 TUE JUNE</TableCell>
-              <TableCell className={classes.tableColumnActions}>Actions</TableCell>
+              <TableCell className={classes.tableColumnCarInfo}>
+                <div className={classes.textBold}>Car</div>
+                <div className={classes.subText}>
+                  Total {carActivitiesJson.pagination.total} Cars
+                </div>
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                1 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                2 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                3 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                4 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                5 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                6 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                7 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                8 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                9 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
+                10 TUE JUNE
+              </TableCell>
+              <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{carActivities}</TableBody>
@@ -526,8 +569,7 @@ export default function CarActivity(): JSX.Element {
         </div>
       </Card>
 
-      <br />
-      <Card>
+      <Card className={classes.hide}>
         <pre>Plate: {JSON.stringify(searchPlate, null, 2)}</pre>
         <pre>
           Filters:

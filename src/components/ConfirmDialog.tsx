@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import {
   Dialog,
   DialogActions,
@@ -11,6 +12,7 @@ interface ConfirmDialogProps {
   open: boolean
   title?: string
   message?: string
+  htmlContent?: string
   confirmText?: string
   cancelText?: string
   onConfirm?: () => void
@@ -18,13 +20,15 @@ interface ConfirmDialogProps {
 }
 
 export default function ConfirmDialog(props: ConfirmDialogProps): JSX.Element {
-  const { open, title, message, confirmText, cancelText, onConfirm, onCancel } = props
+  const { open, title, message, htmlContent, confirmText, cancelText, onConfirm, onCancel } = props
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
+        <DialogContentText>
+          {htmlContent ? <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> : message}
+        </DialogContentText>
         <DialogActions>
           <Button onClick={onCancel} color="primary" aria-label="cancel">
             {cancelText || 'Cancel'}
