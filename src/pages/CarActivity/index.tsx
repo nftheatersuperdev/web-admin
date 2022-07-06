@@ -423,7 +423,7 @@ export default function CarActivity(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item className="filter-color" xs={6} sm={4} md={2} lg={1} xl={1}>
+          <Grid item className="filter-color" xs={6} sm={4} md={2} lg={2} xl={1}>
             <Autocomplete
               autoHighlight
               id="color-select-list"
@@ -443,7 +443,7 @@ export default function CarActivity(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item className="filter-status" xs={6} sm={4} md={2} lg={1} xl={1}>
+          <Grid item className="filter-status" xs={6} sm={4} md={2} lg={2} xl={1}>
             <FormControl variant="outlined" className={classes.fullWidth}>
               <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
               <Select
@@ -474,7 +474,7 @@ export default function CarActivity(): JSX.Element {
               />
             </FormControl>
           </Grid>
-          <Grid item className="filter-buttons" xs={12} sm={12} md={12} lg={3}>
+          <Grid item className="filter-buttons" xs={12} sm={12} md={12} lg={2}>
             <Button
               variant="contained"
               color="primary"
