@@ -47,8 +47,6 @@ const defaultState = {
   service: '',
   remark: '',
 }
-const startMaxDate = defaultState.startDate.add(1, 'year')
-const endDateMaxDate = startMaxDate.add(4, 'year')
 
 export default function ActivityScheduleDialog({
   visible,
@@ -62,6 +60,9 @@ export default function ActivityScheduleDialog({
   const [state, setState] = useState<DataState>(defaultState)
   const [mockError, setMockError] = useState<boolean>(false)
   const [remarkError, setRemarkError] = useState<string>('')
+
+  const startMaxDate = defaultState.startDate.add(1, 'year')
+  const endDateMaxDate = state.startDate ? state.startDate.add(5, 'year') : dayjs().add(5, 'years')
 
   useEffect(() => {
     if (!isEdit) {
