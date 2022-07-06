@@ -47,7 +47,8 @@ const defaultState = {
   service: '',
   remark: '',
 }
-const maxDate = dayjs().add(5, 'year')
+const startMaxDate = defaultState.startDate.add(1, 'year')
+const endDateMaxDate = startMaxDate.add(4, 'year')
 
 export default function ActivityScheduleDialog({
   visible,
@@ -163,6 +164,7 @@ export default function ActivityScheduleDialog({
                 value={state.startDate}
                 onChange={handleOnStartDateChange}
                 minDate={isEdit ? state.startDate : dayjs()}
+                maxDate={startMaxDate}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -176,7 +178,7 @@ export default function ActivityScheduleDialog({
                 value={state.endDate}
                 onChange={handleOnEndDateChange}
                 minDate={state.startDate}
-                maxDate={maxDate}
+                maxDate={endDateMaxDate}
               />
             </Grid>
           </Grid>
