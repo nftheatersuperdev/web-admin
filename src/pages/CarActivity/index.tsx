@@ -32,7 +32,7 @@ import carBrandsJson from 'data/car-brands.json'
 import carModelsJson from 'data/car-models.json'
 import carColorsJson from 'data/car-colors.json'
 import carActivitiesJson from 'data/car-activity.json'
-import { validateKeywordText } from 'utils'
+import { DEFAULT_DATE_FORMAT, validateKeywordText } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
@@ -152,7 +152,6 @@ export default function CarActivity(): JSX.Element {
   const [activities, setActivities] = useState<Activity[]>([])
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [searchPlate, setSearchPlate] = useState<string>('')
-  const [statePlate, setStatePlate] = useState<string>('')
   const [searchPlateError, setSearchPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
   const [filterModelObject, setFilterModelObject] = useState<CarModel | null>()
@@ -165,7 +164,13 @@ export default function CarActivity(): JSX.Element {
   const [carBrands, setCarBrands] = useState<CarBrand[]>([])
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
-  const applyFilters = !!filterBrand || !!filterModel || !!filterColor || !!filterStatus
+  const applyFilters =
+    !!searchPlate ||
+    !!filterBrand ||
+    !!filterModel ||
+    !!filterColor ||
+    !!filterStatus ||
+    filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
 
   const fetchData = () => {
     const filterIndex = (page - 1) * pageSize
@@ -237,7 +242,6 @@ export default function CarActivity(): JSX.Element {
   }
 
   const clearFilters = () => {
-    setStatePlate('')
     setSearchPlate('')
     setFilterBrand('')
     setFilterBrandObject(null)
@@ -271,7 +275,7 @@ export default function CarActivity(): JSX.Element {
     const { value } = event.target
     const isKeywordAccepted = validateKeywordText(value)
 
-    setStatePlate(value)
+    setSearchPlate(value)
     setSearchPlateError('')
 
     if (isKeywordAccepted && value.length >= 2) {
@@ -346,7 +350,7 @@ export default function CarActivity(): JSX.Element {
                       shrink: true,
                     }}
                     onChange={handleOnPlateChange}
-                    value={statePlate}
+                    value={searchPlate}
                   />
                 </FormControl>
               </Grid>
