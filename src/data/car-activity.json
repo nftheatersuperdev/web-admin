@@ -1,6 +1,6 @@
 {
   "pagination": {
-    "total": 12,
+    "total": 15,
     "page": 1,
     "pages": 2,
     "pageSize": 10
@@ -99,6 +99,16 @@
       "status": "available"
     },
     {
+      "id": "ACT007",
+      "carModel": {
+        "brand_name": "Lexus",
+        "model_name": "UX 300e",
+        "color_name": "White"
+      },
+      "plateNumber": "ฉฉ5678 กทม",
+      "status": "available"
+    },
+    {
       "id": "ACT008",
       "carModel": {
         "brand_name": "BMW",
@@ -147,6 +157,58 @@
       },
       "plateNumber": "ศศ1234 กทม",
       "status": "available"
+    },
+    {
+      "id": "ACT013",
+      "carModel": {
+        "brand_name": "Hyundai",
+        "model_name": "IONIQ 6",
+        "color_name": "White"
+      },
+      "plateNumber": "ศศ5678 กทม",
+      "status": "available"
+    },
+    {
+      "id": "ACT014",
+      "carModel": {
+        "brand_name": "Hyundai",
+        "model_name": "IONIQ 6",
+        "color_name": "White"
+      },
+      "plateNumber": "ศศ91011 กทม",
+      "status": "available"
+    },
+    {
+      "id": "ACT015",
+      "carModel": {
+        "brand_name": "Tesla",
+        "model_name": "Long Range",
+        "color_name": "Red"
+      },
+      "plateNumber": "จจ5678 กทม",
+      "status": "in_use",
+      "activities": [
+        {
+          "id": "48627b9e-f0f1-4a09-9cf4-0b2d840bb229",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-10-08T03:00:00.000Z",
+          "service": "reserved",
+          "status": "available",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io"
+        },
+        {
+          "id": "6adfe68e-3fec-4002-911a-ad5f8e85d260",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "marketing",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io"
+        }
+      ]
     }
   ]
 }
