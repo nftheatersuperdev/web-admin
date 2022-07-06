@@ -43,7 +43,7 @@ const SpaceButtons = styled.div`
 
 const defaultState = {
   startDate: dayjs(),
-  endDate: dayjs().add(1, 'day'),
+  endDate: dayjs(),
   service: '',
   remark: '',
 }
