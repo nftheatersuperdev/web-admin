@@ -65,12 +65,6 @@ export default function ActivityScheduleDialog({
   const endDateMaxDate = state.startDate ? state.startDate.add(5, 'year') : dayjs().add(5, 'years')
 
   useEffect(() => {
-    if (!isEdit) {
-      setState(defaultState)
-    }
-  }, [isEdit])
-
-  useEffect(() => {
     if (isEdit && serviceSchedule) {
       setState({
         startDate: dayjs(serviceSchedule?.startDate),
@@ -89,6 +83,8 @@ export default function ActivityScheduleDialog({
     !!remarkError
 
   const handleOnClose = () => {
+    setState(defaultState)
+    setRemarkError('')
     setMockError(false)
     onClose()
   }
