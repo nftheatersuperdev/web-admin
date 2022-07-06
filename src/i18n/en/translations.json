@@ -259,6 +259,7 @@
     "status": "Status",
     "statuses": {
       "published": "Published",
+      "inUse": "In Use",
       "available": "Available",
       "outOfService": "Out of service"
     },
@@ -805,12 +806,27 @@
   },
   "version": "Version: {{version}}",
   "carActivity": {
+    "overview": {
+      "header": "Overview"
+    },
+    "addSchedule": {
+      "header": "Add new schedule"
+    },
+    "editSchedule": {
+      "header": "Edit a schedule"
+    },
+    "activityId": {
+      "label": "ID"
+    },
     "plateNumber": {
       "label": "Plate",
       "placeholder": "Please type at lease 2 charators",
       "errors": {
         "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
       }
+    },
+    "visibility": {
+      "label": "Visibility"
     },
     "brand": {
       "label": "Brand"
@@ -830,17 +846,30 @@
     "endDate": {
       "label": "End date"
     },
-    "serviceStatus": {
+    "service": {
       "label": "Service status"
     },
-    "remarks": {
-      "label": "Remarks",
+    "remark": {
+      "label": "Remark",
       "errors": {
         "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9)",
         "invalidLength": "Please input valid less than or equal 100 characters."
       }
     },
+    "scheduleId": {
+      "label": "Schedule ID"
+    },
+    "modifyDate": {
+      "label": "Last modify"
+    },
+    "modifyBy": {
+      "label": "Modify by"
+    },
+    "action": {
+      "label": "Actions"
+    },
     "statuses": {
+      "subscription": "Subscription",
       "preventiveMaintenance": "Preventive Maintenance",
       "reserved": "Reserved",
       "pr": "PR",

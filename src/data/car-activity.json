@@ -13,7 +13,40 @@
         "model_name": "Long Range",
         "color_name": "White"
       },
-      "plateNumber": "กก1234 กทม"
+      "plateNumber": "กก1234 กทม",
+      "status": "in_use",
+      "activities": [
+        {
+          "id": "8b1898a7-5c46-4940-3213-49c4dc3a91ac",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-10-08T03:00:00.000Z",
+          "service": "reserved",
+          "status": "available",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io"
+        },
+        {
+          "id": "8b1898a7-5c46-4940-b7d7-49c4dc3a91ac",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "marketing",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io"
+        },
+        {
+          "id": "56a7ad7c-a23f-4260-aa84-621bb58e40c7",
+          "startDate": "2022-06-30T16:59:59.999Z",
+          "endDate": "2022-07-01T22:00:00.000Z",
+          "service": "redPlate",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io"
+        }
+      ]
     },
     {
       "id": "ACT002",
@@ -22,7 +55,8 @@
         "model_name": "Long Range",
         "color_name": "Black"
       },
-      "plateNumber": "ขข1234 กทม"
+      "plateNumber": "ขข1234 กทม",
+      "status": "in_use"
     },
     {
       "id": "ACT003",
@@ -31,7 +65,8 @@
         "model_name": "Long Range",
         "color_name": "Gray"
       },
-      "plateNumber": "คค1234 กทม"
+      "plateNumber": "คค1234 กทม",
+      "status": "in_use"
     },
     {
       "id": "ACT004",
@@ -40,7 +75,8 @@
         "model_name": "Long Range",
         "color_name": "Blue"
       },
-      "plateNumber": "งง1234 กทม"
+      "plateNumber": "งง1234 กทม",
+      "status": "in_use"
     },
     {
       "id": "ACT005",
@@ -49,7 +85,8 @@
         "model_name": "Long Range",
         "color_name": "Red"
       },
-      "plateNumber": "จจ1234 กทม"
+      "plateNumber": "จจ1234 กทม",
+      "status": "in_use"
     },
     {
       "id": "ACT006",
@@ -58,7 +95,8 @@
         "model_name": "UX 300e",
         "color_name": "White"
       },
-      "plateNumber": "ฉฉ1234 กทม"
+      "plateNumber": "ฉฉ1234 กทม",
+      "status": "available"
     },
     {
       "id": "ACT008",
@@ -67,7 +105,8 @@
         "model_name": "iX3",
         "color_name": "White"
       },
-      "plateNumber": "ชช1234 กทม"
+      "plateNumber": "ชช1234 กทม",
+      "status": "in_use"
     },
     {
       "id": "ACT009",
@@ -76,7 +115,8 @@
         "model_name": "XC40 Recharge Pure Electric",
         "color_name": "White"
       },
-      "plateNumber": "ญญ1234 กทม"
+      "plateNumber": "ญญ1234 กทม",
+      "status": "available"
     },
     {
       "id": "ACT010",
@@ -85,7 +125,8 @@
         "model_name": "Taycan Base Model",
         "color_name": "Red"
       },
-      "plateNumber": "ฏฏ1234 กทม"
+      "plateNumber": "ฏฏ1234 กทม",
+      "status": "out_of_service"
     },
     {
       "id": "ACT011",
@@ -94,7 +135,8 @@
         "model_name": "e-tron Sportback 55 quattro S Line",
         "color_name": "White"
       },
-      "plateNumber": "ดด1234 กทม"
+      "plateNumber": "ดด1234 กทม",
+      "status": "available"
     },
     {
       "id": "ACT012",
@@ -103,7 +145,8 @@
         "model_name": "IONIQ 6",
         "color_name": "White"
       },
-      "plateNumber": "ศศ1234 กทม"
+      "plateNumber": "ศศ1234 กทม",
+      "status": "available"
     }
   ]
 }
