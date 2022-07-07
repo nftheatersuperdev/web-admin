@@ -64,6 +64,9 @@ export default function ActivityScheduleDialog({
   const startMaxDate = defaultState.startDate.add(1, 'year')
   const endDateMaxDate = state.startDate ? state.startDate.add(5, 'year') : dayjs().add(5, 'years')
 
+  const isEndDateDisabled =
+    isEdit && state.endDate && state?.endDate.diff(dayjs()) < 0 ? true : false
+
   useEffect(() => {
     if (isEdit && serviceSchedule) {
       setState({
@@ -176,6 +179,7 @@ export default function ActivityScheduleDialog({
                 onChange={handleOnEndDateChange}
                 minDate={state.startDate}
                 maxDate={endDateMaxDate}
+                disabled={isEndDateDisabled}
               />
             </Grid>
           </Grid>

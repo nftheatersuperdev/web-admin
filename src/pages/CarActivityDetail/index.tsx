@@ -28,8 +28,8 @@ import carActivitiesJson from 'data/car-activity.json'
 import { DEFAULT_DATE_FORMAT } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
-import { columnFormatCarStatus } from 'pages/Car/utils'
-import { getServiceLabel, useActivityServiceList } from 'pages/CarActivity/utils'
+import { columnFormatCarStatus, CarStatus } from 'pages/Car/utils'
+import { getServiceLabel } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -67,6 +67,9 @@ const useStyles = makeStyles({
   textAlignRight: {
     textAlign: 'right',
   },
+  hide: {
+    display: 'none',
+  },
   fullWidth: {
     width: '100%',
   },
@@ -89,7 +92,6 @@ export default function CarActivityDetail(): JSX.Element {
   const classes = useStyles()
   const { id } = useParams<CarActivityDetailParams>()
   const { t } = useTranslation()
-  const activityServiceList = useActivityServiceList(t)
 
   const [visibleConfirmDialog, setVisibleConfirmDialog] = useState<boolean>(false)
   const [serviceSchedule, setServiceSchedule] = useState<ServiceSchedule | null>(null)
@@ -100,7 +102,7 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterEndDate, setFilterEndDate] = useState<MaterialUiPickersDate | Dayjs>(
     dayjs().endOf('day').add(1, 'day')
   )
-  const [filterService, setFilterService] = useState<string>('')
+  const [filterCarStatus, setFilterCarStatus] = useState<string>('')
 
   const carActivity = carActivitiesJson.activities.find((activity) => activity.id === id)
   const schedules =
@@ -181,14 +183,6 @@ export default function CarActivityDetail(): JSX.Element {
 
   const columns: GridColDef[] = [
     {
-      field: 'id',
-      headerName: t('carActivity.scheduleId.label'),
-      description: t('carActivity.scheduleId.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
-    {
       field: 'startDate',
       headerName: t('carActivity.startDate.label'),
       description: t('carActivity.startDate.label'),
@@ -209,13 +203,12 @@ export default function CarActivityDetail(): JSX.Element {
         dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
     },
     {
-      field: 'service',
-      headerName: t('carActivity.service.label'),
-      description: t('carActivity.service.label'),
+      field: 'id',
+      headerName: t('carActivity.scheduleId.label'),
+      description: t('carActivity.scheduleId.label'),
       flex: 1,
       filterable: false,
       sortable: false,
-      renderCell: (params: GridCellParams) => getServiceLabel(params.value as string, t),
     },
     {
       field: 'status',
@@ -225,6 +218,24 @@ export default function CarActivityDetail(): JSX.Element {
       filterable: false,
       sortable: false,
       renderCell: (params: GridCellParams) => columnFormatCarStatus(params.value as string, t),
+    },
+    {
+      field: 'service',
+      headerName: t('carActivity.service.label'),
+      description: t('carActivity.service.label'),
+      flex: 1,
+      filterable: false,
+      sortable: false,
+      renderCell: (params: GridCellParams) => getServiceLabel(params.value as string, t),
+    },
+    {
+      field: 'remark',
+      headerName: t('carActivity.remark.label'),
+      description: t('carActivity.remark.label'),
+      flex: 1,
+      filterable: false,
+      sortable: false,
+      renderCell: (params: GridCellParams) => params.value || '-',
     },
     {
       field: 'modifyDate',
@@ -251,15 +262,18 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       renderCell: (params: GridCellParams) => {
         const isUnableToDelete = dayjs() > dayjs(params.row.endDate)
+        const hideButton = params.row.status !== CarStatus.OUT_OF_SERVICE ? classes.hide : ''
         return (
           <Fragment>
             <IconButton
+              className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
               disabled={isUnableToDelete}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
+              className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
             >
               <EditIcon />
@@ -381,22 +395,18 @@ export default function CarActivityDetail(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={2}>
             <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel id="service-label">{t('carActivity.service.label')}</InputLabel>
+              <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
               <Select
-                labelId="service-label"
-                id="service"
-                label={t('carActivity.service.label')}
-                onChange={({ target: { value } }) => setFilterService(value as string)}
-                value={filterService}
-                defaultValue={filterService}
+                labelId="status-label"
+                id="status"
+                label={t('carActivity.status.label')}
+                onChange={({ target: { value } }) => setFilterCarStatus(value as string)}
+                value={filterCarStatus}
+                defaultValue={filterCarStatus}
               >
-                {activityServiceList.map((service) => {
-                  return (
-                    <MenuItem key={service.id} value={service.id}>
-                      {service.label}
-                    </MenuItem>
-                  )
-                })}
+                <MenuItem value="in_use">In Use</MenuItem>
+                <MenuItem value="available">Available</MenuItem>
+                <MenuItem value="out_of_service">Out Of Service</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -445,7 +455,7 @@ export default function CarActivityDetail(): JSX.Element {
           confirmText="Confirm Delete"
           cancelText="Close"
           onConfirm={handleOnCloseConfirmDialog}
-          onCancel={handleOnCloseConfirmDialog}
+          onCancel={() => setVisibleConfirmDialog(false)}
         />
       </Card>
     </Page>
