@@ -826,6 +826,12 @@
     "action": {
       "label": "จัดการ"
     },
+    "car": {
+      "label": "รถยนต์"
+    },
+    "totalCars": {
+      "label": "ทั้งหมด {{total}} คัน"
+    },
     "statuses": {
       "subscription": "อยู่ระหว่างการจอง",
       "preventiveMaintenance": "เข้าศูนย์ตามรอบ",
@@ -843,6 +849,15 @@
     },
     "breadcrumbs": {
       "vehicle": "ยานพาหนะ"
+    },
+    "deleteDialog": {
+      "title": "ยืนยันการลบ",
+      "message": "คุณยืนยันที่จะลบ",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "service": "เหตุผล",
+      "close": "ปิด",
+      "confirm": "ยืนยัน"
     }
   }
 }

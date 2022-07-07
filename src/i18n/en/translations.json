@@ -868,6 +868,12 @@
     "action": {
       "label": "Actions"
     },
+    "car": {
+      "label": "Car"
+    },
+    "totalCars": {
+      "label": "Total {{total}} cars"
+    },
     "statuses": {
       "subscription": "Subscription",
       "preventiveMaintenance": "Preventive Maintenance",
@@ -885,6 +891,15 @@
     },
     "breadcrumbs": {
       "vehicle": "Vehicle"
+    },
+    "deleteDialog": {
+      "title": "Delete Confirmation",
+      "message": "Are you sure to delete schedule ID?",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "service": "Service",
+      "close": "Close",
+      "confirm": "Confirm Delete"
     }
   }
 }

@@ -454,9 +454,9 @@ export default function CarActivity(): JSX.Element {
                 value={filterStatus}
                 defaultValue={filterStatus}
               >
-                <MenuItem value="in_use">In Use</MenuItem>
-                <MenuItem value="available">Available</MenuItem>
-                <MenuItem value="out_of_service">Out Of Service</MenuItem>
+                <MenuItem value="in_use">{t('car.statuses.inUse')}</MenuItem>
+                <MenuItem value="available">{t('car.statuses.available')}</MenuItem>
+                <MenuItem value="out_of_service">{t('car.statuses.outOfService')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -503,9 +503,9 @@ export default function CarActivity(): JSX.Element {
           <TableHead>
             <TableRow>
               <TableCell className={classes.tableColumnCarInfo}>
-                <div className={classes.textBold}>Car</div>
+                <div className={classes.textBold}>{t('carActivity.car.label')}</div>
                 <div className={classes.subText}>
-                  Total {carActivitiesJson.pagination.total} Cars
+                  {t('carActivity.totalCars.label', { total: carActivitiesJson.pagination.total })}
                 </div>
               </TableCell>
               <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
@@ -539,7 +539,7 @@ export default function CarActivity(): JSX.Element {
                 10 TUE JUNE
               </TableCell>
               <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
-                Actions
+                {t('carActivity.action.label')}
               </TableCell>
             </TableRow>
           </TableHead>

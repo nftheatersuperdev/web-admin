@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
 import { Fragment, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import {
   Breadcrumbs,
   Button,
@@ -149,25 +149,36 @@ export default function CarActivityDetail(): JSX.Element {
     )
   }
 
-  const generatelConfirmDeleteHtml = (schedule: ServiceSchedule | null): string => {
+  const generatelConfirmDeleteHtml = (
+    schedule: ServiceSchedule | null,
+    t: TFunction<Namespace>
+  ): string => {
     if (!schedule) {
       return ''
     }
 
     const template = `
       <div>
-        <p style="margin-bottom: 20px">Are you sure to schedule ID <strong>:scheduleId</strong>?</p>
+        <p style="margin-bottom: 20px">${t(
+          'carActivity.deleteDialog.title'
+        )} <strong>:scheduleId</strong>?</p>
         <div>
           <div style="clear: both;">
-            <div style="width: 100px; float: left; font-weight: bold;">Start Date</div>
+            <div style="width: 100px; float: left; font-weight: bold;">${t(
+              'carActivity.deleteDialog.startDate'
+            )}</div>
             <div style="float: left">:startDate</div>
           </div>
           <div style="clear: both;">
-            <div style="width: 100px; float: left; font-weight: bold;">End Date</div>
+            <div style="width: 100px; float: left; font-weight: bold;">${t(
+              'carActivity.deleteDialog.endDate'
+            )}</div>
             <div style="float: left">:endDate</div>
           </div>
           <div style="clear: both;">
-            <div style="width: 100px; float: left; font-weight: bold;">Service</div>
+            <div style="width: 100px; float: left; font-weight: bold;">${t(
+              'carActivity.deleteDialog.service'
+            )}</div>
             <div style="float: left">:service</div>
           </div>
         </div>
@@ -404,9 +415,9 @@ export default function CarActivityDetail(): JSX.Element {
                 value={filterCarStatus}
                 defaultValue={filterCarStatus}
               >
-                <MenuItem value="in_use">In Use</MenuItem>
-                <MenuItem value="available">Available</MenuItem>
-                <MenuItem value="out_of_service">Out Of Service</MenuItem>
+                <MenuItem value="in_use">{t('car.statuses.inUse')}</MenuItem>
+                <MenuItem value="available">{t('car.statuses.available')}</MenuItem>
+                <MenuItem value="out_of_service">{t('car.statuses.outOfService')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -450,10 +461,10 @@ export default function CarActivityDetail(): JSX.Element {
         />
         <ConfirmDialog
           open={visibleConfirmDialog}
-          title="Delete Confirmation"
-          htmlContent={generatelConfirmDeleteHtml(serviceSchedule)}
-          confirmText="Confirm Delete"
-          cancelText="Close"
+          title={t('carActivity.deleteDialog.title')}
+          htmlContent={generatelConfirmDeleteHtml(serviceSchedule, t)}
+          confirmText={t('carActivity.deleteDialog.confirm')}
+          cancelText={t('carActivity.deleteDialog.close')}
           onConfirm={handleOnCloseConfirmDialog}
           onCancel={() => setVisibleConfirmDialog(false)}
         />
