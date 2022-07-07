@@ -73,6 +73,9 @@ const useStyles = makeStyles({
     boxShadow: 'none',
     padding: '16px 20px',
   },
+  buttonOverridePadding: {
+    padding: '16px',
+  },
   gridContainer: {
     marginBottom: '10px',
   },
@@ -488,6 +491,7 @@ export default function CarActivity(): JSX.Element {
               color="secondary"
               className={[
                 classes.buttonWithoutShadow,
+                classes.buttonOverridePadding,
                 !applyFilters ? classes.displayNone : '',
               ].join(' ')}
               onClick={() => clearFilters()}

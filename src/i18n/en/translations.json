@@ -839,7 +839,7 @@
       "label": "Color"
     },
     "status": {
-      "label": "Status"
+      "label": "Car Status"
     },
     "startDate": {
       "label": "Start date"
@@ -848,7 +848,7 @@
       "label": "End date"
     },
     "service": {
-      "label": "Service status"
+      "label": "Services"
     },
     "remark": {
       "label": "Remark",

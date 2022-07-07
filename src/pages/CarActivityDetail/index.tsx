@@ -78,6 +78,11 @@ const useStyles = makeStyles({
     boxShadow: 'none',
     padding: '16px 20px',
   },
+  table: {
+    '& .MuiDataGrid-columnHeaderTitle': {
+      fontWeight: 'bold',
+    },
+  },
 })
 
 function CustomToolBar() {
@@ -461,7 +466,7 @@ export default function CarActivityDetail(): JSX.Element {
         </Grid>
 
         <DataGridLocale
-          className={classes.marginSpace}
+          className={[classes.marginSpace, classes.table].join(' ')}
           autoHeight
           pagination
           pageSize={10}
