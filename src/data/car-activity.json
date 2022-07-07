@@ -17,24 +17,136 @@
       "status": "in_use",
       "activities": [
         {
-          "id": "8b1898a7-5c46-4940-3213-49c4dc3a91ac",
+          "id": "6093fcf3-b7a6-4776-b532-4149d79d005f",
           "startDate": "2022-07-01T23:00:00.000Z",
-          "endDate": "2022-10-08T03:00:00.000Z",
-          "service": "reserved",
-          "status": "available",
+          "endDate": "2022-08-01T03:00:00.000Z",
+          "service": "subscription",
+          "status": "in_use",
           "remark": "",
           "modifyDate": "2022-07-01T23:00:00.000Z",
-          "modifyBy": "mockup@evme.io"
+          "modifyBy": "-",
+          "subscriptionId": "c937db62-0586-494f-9434-32c800bbcf47"
         },
         {
-          "id": "8b1898a7-5c46-4940-b7d7-49c4dc3a91ac",
+          "id": "8b1898a7-5c46-4940-3213-49c4dc3a91ac",
+          "startDate": "2022-06-29T17:00:00.000Z",
+          "endDate": "2022-06-30T16:59:59.999Z",
+          "service": "reserved",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "515b804a-df0e-4191-9669-87fc73a45a50",
+          "startDate": "2022-06-27T17:00:00.000Z",
+          "endDate": "2022-06-28T16:59:59.999Z",
+          "service": "preventiveMaintenance",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "e80a08be-1fcb-4bad-b982-26fb73ef5b99",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "reserved",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "0af86006-bf87-4021-8df9-54f9dde08ee1",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "PR",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "15037b59-eec4-4b63-9c58-1932385986fe",
           "startDate": "2022-07-01T23:00:00.000Z",
           "endDate": "2022-07-03T03:00:00.000Z",
           "service": "marketing",
           "status": "out_of_service",
           "remark": "",
           "modifyDate": "2022-07-01T23:00:00.000Z",
-          "modifyBy": "mockup@evme.io"
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "be8f10f8-948c-478c-bd08-770c5e975837",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "breakdown",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "1e2fe56f-ed67-4fcd-9a89-89cfb480951c",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "repair",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "d69be34a-2863-47af-abde-67eb25bc991b",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "internal",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "45c5fa2e-3fd0-4daf-9d07-45ea2cfef017",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "carpool",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "993eda24-2a6e-4ed7-9e83-1e0ee72c88f4",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "b2bDelivered",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "8b1898a7-5c46-4940-b7d7-49c4dc3a91ac",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-07-03T03:00:00.000Z",
+          "service": "B2BPendingDelivered",
+          "status": "out_of_service",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
         },
         {
           "id": "56a7ad7c-a23f-4260-aa84-621bb58e40c7",
@@ -44,7 +156,19 @@
           "status": "out_of_service",
           "remark": "",
           "modifyDate": "2022-07-01T23:00:00.000Z",
-          "modifyBy": "mockup@evme.io"
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "afe0da34-44ca-40a8-adf7-ae60ce9212e4",
+          "startDate": "2022-07-01T23:00:00.000Z",
+          "endDate": "2022-10-08T03:00:00.000Z",
+          "service": "reserved",
+          "status": "available",
+          "remark": "",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
         }
       ]
     },
@@ -196,7 +320,8 @@
           "status": "available",
           "remark": "",
           "modifyDate": "2022-07-01T23:00:00.000Z",
-          "modifyBy": "mockup@evme.io"
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
         },
         {
           "id": "6adfe68e-3fec-4002-911a-ad5f8e85d260",
@@ -206,7 +331,8 @@
           "status": "out_of_service",
           "remark": "",
           "modifyDate": "2022-07-01T23:00:00.000Z",
-          "modifyBy": "mockup@evme.io"
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
         }
       ]
     }

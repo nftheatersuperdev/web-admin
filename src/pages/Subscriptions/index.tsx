@@ -1,5 +1,5 @@
 import config from 'config'
-import { Card } from '@material-ui/core'
+import { Button, Card } from '@material-ui/core'
 import {
   GridColDef,
   GridToolbarContainer,
@@ -24,8 +24,9 @@ import {
   getEqualFilterOperators,
   getSelectEqualFilterOperators,
 } from 'utils'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { getList } from 'services/web-bff/subscription'
+import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import {
@@ -58,6 +59,7 @@ export default function Subscription(): JSX.Element {
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
   const statusList: string[] = getListFromQueryParam(queryString, 'status')
+  const subscriptionId: string = getListFromQueryParam(queryString, 'subscriptionId')[0]
   const deliverDate = queryString.get('deliverDate')
   const returnDate = queryString.get('returnDate')
 
@@ -80,6 +82,7 @@ export default function Subscription(): JSX.Element {
 
   const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionListQuery>({
     ...defaultFilter,
+    id: subscriptionId,
   })
 
   const {
@@ -547,8 +550,21 @@ export default function Subscription(): JSX.Element {
     setCurrentPageIndex(pageNumber)
   }
 
+  const handleOnClearFilterId = () => {
+    setSubscriptionFilter(defaultFilter)
+  }
+
   return (
     <Page>
+      <PageToolbar>
+        {subscriptionId && (
+          <Link to="/subscription">
+            <Button color="primary" variant="contained" onClick={() => handleOnClearFilterId()}>
+              {t('subscription.clearFilterId')}
+            </Button>
+          </Link>
+        )}
+      </PageToolbar>
       <Card>
         <DataGridLocale
           autoHeight
@@ -572,7 +588,6 @@ export default function Subscription(): JSX.Element {
           onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
         />
       </Card>
-
       <UpdateDialog
         open={isUpdateDialogOpen}
         onClose={(needRefetch) => {

@@ -398,7 +398,8 @@
           "cancel": "ยกเลิก"
         }
       }
-    }
+    },
+    "clearFilterId": "ลบกรองข้อมูลด้วยไอดี"
   },
   "additionalExpense": {
     "id": "เลขไอดี",
@@ -826,6 +827,15 @@
     "action": {
       "label": "จัดการ"
     },
+    "car": {
+      "label": "รถยนต์"
+    },
+    "totalCars": {
+      "label": "ทั้งหมด {{total}} คัน"
+    },
+    "view": {
+      "label": "แสดง"
+    },
     "statuses": {
       "subscription": "อยู่ระหว่างการจอง",
       "preventiveMaintenance": "เข้าศูนย์ตามรอบ",
@@ -843,6 +853,15 @@
     },
     "breadcrumbs": {
       "vehicle": "ยานพาหนะ"
+    },
+    "deleteDialog": {
+      "title": "ยืนยันการลบ",
+      "message": "คุณยืนยันที่จะลบ",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "service": "เหตุผล",
+      "close": "ปิด",
+      "confirm": "ยืนยัน"
     }
   }
 }

@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
 import { Fragment, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import {
   Breadcrumbs,
   Button,
@@ -28,8 +28,8 @@ import carActivitiesJson from 'data/car-activity.json'
 import { DEFAULT_DATE_FORMAT } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
-import { columnFormatCarStatus } from 'pages/Car/utils'
-import { getServiceLabel, useActivityServiceList } from 'pages/CarActivity/utils'
+import { columnFormatCarStatus, CarStatus } from 'pages/Car/utils'
+import { getServiceLabel, ActivityServices } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -67,6 +67,9 @@ const useStyles = makeStyles({
   textAlignRight: {
     textAlign: 'right',
   },
+  hide: {
+    display: 'none',
+  },
   fullWidth: {
     width: '100%',
   },
@@ -89,7 +92,6 @@ export default function CarActivityDetail(): JSX.Element {
   const classes = useStyles()
   const { id } = useParams<CarActivityDetailParams>()
   const { t } = useTranslation()
-  const activityServiceList = useActivityServiceList(t)
 
   const [visibleConfirmDialog, setVisibleConfirmDialog] = useState<boolean>(false)
   const [serviceSchedule, setServiceSchedule] = useState<ServiceSchedule | null>(null)
@@ -100,7 +102,7 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterEndDate, setFilterEndDate] = useState<MaterialUiPickersDate | Dayjs>(
     dayjs().endOf('day').add(1, 'day')
   )
-  const [filterService, setFilterService] = useState<string>('')
+  const [filterCarStatus, setFilterCarStatus] = useState<string>('')
 
   const carActivity = carActivitiesJson.activities.find((activity) => activity.id === id)
   const schedules =
@@ -147,25 +149,36 @@ export default function CarActivityDetail(): JSX.Element {
     )
   }
 
-  const generatelConfirmDeleteHtml = (schedule: ServiceSchedule | null): string => {
+  const generatelConfirmDeleteHtml = (
+    schedule: ServiceSchedule | null,
+    t: TFunction<Namespace>
+  ): string => {
     if (!schedule) {
       return ''
     }
 
     const template = `
       <div>
-        <p style="margin-bottom: 20px">Are you sure to schedule ID <strong>:scheduleId</strong>?</p>
+        <p style="margin-bottom: 20px">${t(
+          'carActivity.deleteDialog.title'
+        )} <strong>:scheduleId</strong>?</p>
         <div>
           <div style="clear: both;">
-            <div style="width: 100px; float: left; font-weight: bold;">Start Date</div>
+            <div style="width: 100px; float: left; font-weight: bold;">${t(
+              'carActivity.deleteDialog.startDate'
+            )}</div>
             <div style="float: left">:startDate</div>
           </div>
           <div style="clear: both;">
-            <div style="width: 100px; float: left; font-weight: bold;">End Date</div>
+            <div style="width: 100px; float: left; font-weight: bold;">${t(
+              'carActivity.deleteDialog.endDate'
+            )}</div>
             <div style="float: left">:endDate</div>
           </div>
           <div style="clear: both;">
-            <div style="width: 100px; float: left; font-weight: bold;">Service</div>
+            <div style="width: 100px; float: left; font-weight: bold;">${t(
+              'carActivity.deleteDialog.service'
+            )}</div>
             <div style="float: left">:service</div>
           </div>
         </div>
@@ -179,15 +192,11 @@ export default function CarActivityDetail(): JSX.Element {
       .replace(':service', getServiceLabel(schedule.service, t))
   }
 
+  const generateLinkToSubscription = (subscriptionId: string) => {
+    return `/subscription?subscriptionId=${subscriptionId}`
+  }
+
   const columns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: t('carActivity.scheduleId.label'),
-      description: t('carActivity.scheduleId.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
     {
       field: 'startDate',
       headerName: t('carActivity.startDate.label'),
@@ -209,13 +218,12 @@ export default function CarActivityDetail(): JSX.Element {
         dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
     },
     {
-      field: 'service',
-      headerName: t('carActivity.service.label'),
-      description: t('carActivity.service.label'),
+      field: 'id',
+      headerName: t('carActivity.scheduleId.label'),
+      description: t('carActivity.scheduleId.label'),
       flex: 1,
       filterable: false,
       sortable: false,
-      renderCell: (params: GridCellParams) => getServiceLabel(params.value as string, t),
     },
     {
       field: 'status',
@@ -225,6 +233,36 @@ export default function CarActivityDetail(): JSX.Element {
       filterable: false,
       sortable: false,
       renderCell: (params: GridCellParams) => columnFormatCarStatus(params.value as string, t),
+    },
+    {
+      field: 'service',
+      headerName: t('carActivity.service.label'),
+      description: t('carActivity.service.label'),
+      flex: 1,
+      filterable: false,
+      sortable: false,
+      renderCell: (params: GridCellParams) => {
+        if (
+          params.value === ActivityServices.Subscription &&
+          params.row.status === CarStatus.IN_USE
+        ) {
+          return (
+            <Link to={generateLinkToSubscription(params.row.subscriptionId)}>
+              {getServiceLabel(params.value as string, t)}
+            </Link>
+          )
+        }
+        return getServiceLabel(params.value as string, t)
+      },
+    },
+    {
+      field: 'remark',
+      headerName: t('carActivity.remark.label'),
+      description: t('carActivity.remark.label'),
+      flex: 1,
+      filterable: false,
+      sortable: false,
+      renderCell: (params: GridCellParams) => params.value || '-',
     },
     {
       field: 'modifyDate',
@@ -251,15 +289,29 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       renderCell: (params: GridCellParams) => {
         const isUnableToDelete = dayjs() > dayjs(params.row.endDate)
+        const hideButton = params.row.status !== CarStatus.OUT_OF_SERVICE ? classes.hide : ''
+        const hideViewLink =
+          params.value !== ActivityServices.Subscription && params.row.status !== CarStatus.IN_USE
+            ? classes.hide
+            : ''
+
         return (
           <Fragment>
+            <Link
+              className={hideViewLink}
+              to={generateLinkToSubscription(params.row.subscriptionId)}
+            >
+              {t('carActivity.view.label')}
+            </Link>
             <IconButton
+              className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
               disabled={isUnableToDelete}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
+              className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
             >
               <EditIcon />
@@ -381,22 +433,18 @@ export default function CarActivityDetail(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={2}>
             <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel id="service-label">{t('carActivity.service.label')}</InputLabel>
+              <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
               <Select
-                labelId="service-label"
-                id="service"
-                label={t('carActivity.service.label')}
-                onChange={({ target: { value } }) => setFilterService(value as string)}
-                value={filterService}
-                defaultValue={filterService}
+                labelId="status-label"
+                id="status"
+                label={t('carActivity.status.label')}
+                onChange={({ target: { value } }) => setFilterCarStatus(value as string)}
+                value={filterCarStatus}
+                defaultValue={filterCarStatus}
               >
-                {activityServiceList.map((service) => {
-                  return (
-                    <MenuItem key={service.id} value={service.id}>
-                      {service.label}
-                    </MenuItem>
-                  )
-                })}
+                <MenuItem value="in_use">{t('car.statuses.inUse')}</MenuItem>
+                <MenuItem value="available">{t('car.statuses.available')}</MenuItem>
+                <MenuItem value="out_of_service">{t('car.statuses.outOfService')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -440,12 +488,12 @@ export default function CarActivityDetail(): JSX.Element {
         />
         <ConfirmDialog
           open={visibleConfirmDialog}
-          title="Delete Confirmation"
-          htmlContent={generatelConfirmDeleteHtml(serviceSchedule)}
-          confirmText="Confirm Delete"
-          cancelText="Close"
+          title={t('carActivity.deleteDialog.title')}
+          htmlContent={generatelConfirmDeleteHtml(serviceSchedule, t)}
+          confirmText={t('carActivity.deleteDialog.confirm')}
+          cancelText={t('carActivity.deleteDialog.close')}
           onConfirm={handleOnCloseConfirmDialog}
-          onCancel={handleOnCloseConfirmDialog}
+          onCancel={() => setVisibleConfirmDialog(false)}
         />
       </Card>
     </Page>

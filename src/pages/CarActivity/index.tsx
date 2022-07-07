@@ -423,7 +423,7 @@ export default function CarActivity(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item className="filter-color" xs={6} sm={4} md={2} lg={1} xl={1}>
+          <Grid item className="filter-color" xs={6} sm={4} md={2} lg={2} xl={1}>
             <Autocomplete
               autoHighlight
               id="color-select-list"
@@ -443,7 +443,7 @@ export default function CarActivity(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item className="filter-status" xs={6} sm={4} md={2} lg={1} xl={1}>
+          <Grid item className="filter-status" xs={6} sm={4} md={2} lg={2} xl={1}>
             <FormControl variant="outlined" className={classes.fullWidth}>
               <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
               <Select
@@ -454,9 +454,9 @@ export default function CarActivity(): JSX.Element {
                 value={filterStatus}
                 defaultValue={filterStatus}
               >
-                <MenuItem value="in_use">In Use</MenuItem>
-                <MenuItem value="available">Available</MenuItem>
-                <MenuItem value="out_of_service">Out Of Service</MenuItem>
+                <MenuItem value="in_use">{t('car.statuses.inUse')}</MenuItem>
+                <MenuItem value="available">{t('car.statuses.available')}</MenuItem>
+                <MenuItem value="out_of_service">{t('car.statuses.outOfService')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -474,7 +474,7 @@ export default function CarActivity(): JSX.Element {
               />
             </FormControl>
           </Grid>
-          <Grid item className="filter-buttons" xs={12} sm={12} md={12} lg={3}>
+          <Grid item className="filter-buttons" xs={12} sm={12} md={12} lg={2}>
             <Button
               variant="contained"
               color="primary"
@@ -503,9 +503,9 @@ export default function CarActivity(): JSX.Element {
           <TableHead>
             <TableRow>
               <TableCell className={classes.tableColumnCarInfo}>
-                <div className={classes.textBold}>Car</div>
+                <div className={classes.textBold}>{t('carActivity.car.label')}</div>
                 <div className={classes.subText}>
-                  Total {carActivitiesJson.pagination.total} Cars
+                  {t('carActivity.totalCars.label', { total: carActivitiesJson.pagination.total })}
                 </div>
               </TableCell>
               <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
@@ -539,7 +539,7 @@ export default function CarActivity(): JSX.Element {
                 10 TUE JUNE
               </TableCell>
               <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
-                Actions
+                {t('carActivity.action.label')}
               </TableCell>
             </TableRow>
           </TableHead>
