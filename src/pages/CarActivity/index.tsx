@@ -246,6 +246,7 @@ export default function CarActivity(): JSX.Element {
 
   const clearFilters = () => {
     setSearchPlate('')
+    setSearchPlateError('')
     setFilterBrand('')
     setFilterBrandObject(null)
     setFilterModel('')
