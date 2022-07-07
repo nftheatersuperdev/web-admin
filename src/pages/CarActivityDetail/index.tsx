@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import {
@@ -20,6 +21,7 @@ import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridCellParams,
+  GridPageChangeParams,
 } from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
@@ -98,7 +100,11 @@ export default function CarActivityDetail(): JSX.Element {
   const { id } = useParams<CarActivityDetailParams>()
   const { t } = useTranslation()
 
+  const [page, setPage] = useState<number>(0)
+  const [pageSize, setPageSize] = useState<number>(10)
   const [visibleConfirmDialog, setVisibleConfirmDialog] = useState<boolean>(false)
+  const [totalSchedules, setTotalSchedules] = useState<number>(0)
+  const [serviceSchedules, setServiceSchedules] = useState<ServiceSchedule[]>([])
   const [serviceSchedule, setServiceSchedule] = useState<ServiceSchedule | null>(null)
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(
@@ -110,12 +116,28 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterCarStatus, setFilterCarStatus] = useState<string>('')
 
   const carActivity = carActivitiesJson.activities.find((activity) => activity.id === id)
-  const schedules =
-    carActivity?.activities && carActivity?.activities.length > 0
-      ? carActivity.activities.map((activity) => {
-          return activity
-        })
-      : []
+
+  const fetchData = () => {
+    if (!carActivity?.schedules || carActivity?.schedules?.length < 1) {
+      return null
+    }
+    const filterIndex = page * pageSize
+    const minIndex = filterIndex
+    const maxIndex = filterIndex + pageSize
+    const data = carActivity.schedules.filter((activity, index) => {
+      if (index < maxIndex && index >= minIndex) {
+        return activity
+      }
+      return null
+    })
+    setServiceSchedules(data)
+
+    setTotalSchedules(carActivity.schedules.length)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [totalSchedules, page, pageSize])
 
   const handleOnClickFilters = () => {
     // console.log('handleOnClickFilters ->', {
@@ -126,7 +148,7 @@ export default function CarActivityDetail(): JSX.Element {
   }
 
   const handleOnClickButton = (scheduleId: string, action: ScheduleActions) => {
-    const schedule = schedules.find((row) => row.id === scheduleId)
+    const schedule = serviceSchedules.find((row) => row.id === scheduleId)
     if (!schedule) {
       return false
     }
@@ -471,13 +493,13 @@ export default function CarActivityDetail(): JSX.Element {
           className={[classes.marginSpace, classes.table].join(' ')}
           autoHeight
           pagination
-          pageSize={10}
-          page={1}
-          rowCount={10}
+          pageSize={pageSize}
+          page={page}
+          rowCount={totalSchedules}
           paginationMode="server"
-          // onPageSizeChange={handlePageSizeChange}
-          // onPageChange={setPage}
-          rows={schedules}
+          onPageSizeChange={(param: GridPageChangeParams) => setPageSize(param.pageSize)}
+          onPageChange={(index: number) => setPage(index)}
+          rows={serviceSchedules}
           columns={columns}
           disableSelectionOnClick
           components={{
