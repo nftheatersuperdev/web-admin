@@ -293,10 +293,11 @@ export default function CarActivityDetail(): JSX.Element {
       description: t('carActivity.action.label'),
       flex: 1,
       renderCell: (params: GridCellParams) => {
-        const isUnableToDelete = dayjs() > dayjs(params.row.endDate)
+        const isUnableToEditOrDelete = dayjs(params.row.endDate).diff(dayjs()) < 0
         const hideButton = params.row.status !== CarStatus.OUT_OF_SERVICE ? classes.hide : ''
         const hideViewLink =
-          params.value !== ActivityServices.Subscription && params.row.status !== CarStatus.IN_USE
+          params.row.service !== ActivityServices.Subscription &&
+          params.row.status !== CarStatus.IN_USE
             ? classes.hide
             : ''
 
@@ -311,13 +312,14 @@ export default function CarActivityDetail(): JSX.Element {
             <IconButton
               className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
-              disabled={isUnableToDelete}
+              disabled={isUnableToEditOrDelete}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
               className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
+              disabled={isUnableToEditOrDelete}
             >
               <EditIcon />
             </IconButton>

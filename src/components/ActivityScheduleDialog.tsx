@@ -17,7 +17,7 @@ import Alert from '@material-ui/lab/Alert'
 import styled from 'styled-components'
 import { validateRemarkText } from 'utils'
 import DatePicker from 'components/DatePicker'
-import { useActivityServiceList } from 'pages/CarActivity/utils'
+import { useActivityServiceList, ActivityServices } from 'pages/CarActivity/utils'
 import type { ServiceSchedule } from 'pages/CarActivityDetail'
 
 interface Props {
@@ -198,13 +198,15 @@ export default function ActivityScheduleDialog({
                     id: 'service',
                   }}
                 >
-                  {activityServiceList.map((service, index) => {
-                    return (
-                      <MenuItem key={`${index}-${service.id}`} value={service.id}>
-                        {service.label}
-                      </MenuItem>
-                    )
-                  })}
+                  {activityServiceList
+                    .filter((service) => service.id !== ActivityServices.Subscription)
+                    .map((service, index) => {
+                      return (
+                        <MenuItem key={`${index}-${service.id}`} value={service.id}>
+                          {service.label}
+                        </MenuItem>
+                      )
+                    })}
                 </Select>
               </FormControl>
             </Grid>
