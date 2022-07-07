@@ -401,7 +401,8 @@
           "cancel": "Cancel"
         }
       }
-    }
+    },
+    "clearFilterId": "Clear filter by ID"
   },
   "additionalExpense": {
     "id": "ID",
@@ -873,6 +874,9 @@
     },
     "totalCars": {
       "label": "Total {{total}} cars"
+    },
+    "view": {
+      "label": "View"
     },
     "statuses": {
       "subscription": "Subscription",

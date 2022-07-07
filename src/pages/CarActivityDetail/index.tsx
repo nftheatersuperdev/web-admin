@@ -29,7 +29,7 @@ import { DEFAULT_DATE_FORMAT } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatCarStatus, CarStatus } from 'pages/Car/utils'
-import { getServiceLabel } from 'pages/CarActivity/utils'
+import { getServiceLabel, ActivityServices } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -192,6 +192,10 @@ export default function CarActivityDetail(): JSX.Element {
       .replace(':service', getServiceLabel(schedule.service, t))
   }
 
+  const generateLinkToSubscription = (subscriptionId: string) => {
+    return `/subscription?subscriptionId=${subscriptionId}`
+  }
+
   const columns: GridColDef[] = [
     {
       field: 'startDate',
@@ -237,7 +241,19 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       filterable: false,
       sortable: false,
-      renderCell: (params: GridCellParams) => getServiceLabel(params.value as string, t),
+      renderCell: (params: GridCellParams) => {
+        if (
+          params.value === ActivityServices.Subscription &&
+          params.row.status === CarStatus.IN_USE
+        ) {
+          return (
+            <Link to={generateLinkToSubscription(params.row.subscriptionId)}>
+              {getServiceLabel(params.value as string, t)}
+            </Link>
+          )
+        }
+        return getServiceLabel(params.value as string, t)
+      },
     },
     {
       field: 'remark',
@@ -274,8 +290,19 @@ export default function CarActivityDetail(): JSX.Element {
       renderCell: (params: GridCellParams) => {
         const isUnableToDelete = dayjs() > dayjs(params.row.endDate)
         const hideButton = params.row.status !== CarStatus.OUT_OF_SERVICE ? classes.hide : ''
+        const hideViewLink =
+          params.value !== ActivityServices.Subscription && params.row.status !== CarStatus.IN_USE
+            ? classes.hide
+            : ''
+
         return (
           <Fragment>
+            <Link
+              className={hideViewLink}
+              to={generateLinkToSubscription(params.row.subscriptionId)}
+            >
+              {t('carActivity.view.label')}
+            </Link>
             <IconButton
               className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
