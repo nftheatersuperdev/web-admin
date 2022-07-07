@@ -101,7 +101,7 @@ export default function ActivityScheduleDialog({
       setState({
         ...state,
         startDate: date,
-        endDate: date.add(1, 'day'),
+        endDate: date,
       })
     }
   }
