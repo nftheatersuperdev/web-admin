@@ -63,6 +63,9 @@ const useStyles = makeStyles({
   marginSpace: {
     margin: '20px 0',
   },
+  marginTextButton: {
+    marginLeft: '18px',
+  },
   textBold: {
     fontWeight: 'bold',
   },
@@ -326,7 +329,7 @@ export default function CarActivityDetail(): JSX.Element {
         return (
           <Fragment>
             <Link
-              className={hideViewLink}
+              className={[hideViewLink, classes.marginTextButton].join(' ')}
               to={generateLinkToSubscription(params.row.subscriptionId)}
             >
               {t('carActivity.view.label')}
