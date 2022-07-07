@@ -217,6 +217,7 @@ export default function ActivityScheduleDialog({
                 fullWidth
                 label={t('carActivity.remark.label')}
                 variant="outlined"
+                value={state.remark}
                 onChange={(event) => handleOnRemarksChange(event.target.value)}
               />
             </Grid>

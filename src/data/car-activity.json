@@ -39,6 +39,28 @@
           "subscriptionId": ""
         },
         {
+          "id": "fcfc63d2-538b-4193-b147-16413a34dbca",
+          "startDate": "2022-07-07T17:00:00.000Z",
+          "endDate": "2022-07-08T16:59:59.999Z",
+          "service": "repair",
+          "status": "out_of_service",
+          "remark": "Wrap body color",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
+          "id": "fcfc63d2-538b-4193-b147-16413a34dbbb",
+          "startDate": "2022-07-05T17:00:00.000Z",
+          "endDate": "2022-07-07T16:59:59.999Z",
+          "service": "repair",
+          "status": "out_of_service",
+          "remark": "Maintenance of July",
+          "modifyDate": "2022-07-01T23:00:00.000Z",
+          "modifyBy": "mockup@evme.io",
+          "subscriptionId": ""
+        },
+        {
           "id": "6093fcf3-b7a6-4776-b532-4149d79d005f",
           "startDate": "2022-07-01T23:00:00.000Z",
           "endDate": "2022-08-01T03:00:00.000Z",
