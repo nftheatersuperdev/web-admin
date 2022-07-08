@@ -41,13 +41,6 @@ const SpaceButtons = styled.div`
   }
 `
 
-const defaultState = {
-  startDate: dayjs(),
-  endDate: dayjs(),
-  service: '',
-  remark: '',
-}
-
 export default function ActivityScheduleDialog({
   visible,
   serviceSchedule,
@@ -57,6 +50,13 @@ export default function ActivityScheduleDialog({
   const activityServiceList = useActivityServiceList(t)
   const isEdit = !!serviceSchedule
 
+  const defaultState = {
+    startDate: dayjs().startOf('day'),
+    endDate: dayjs().endOf('day'),
+    service: '',
+    remark: '',
+  }
+
   const [state, setState] = useState<DataState>(defaultState)
   const [mockError, setMockError] = useState<boolean>(false)
   const [remarkError, setRemarkError] = useState<string>('')
@@ -65,7 +65,7 @@ export default function ActivityScheduleDialog({
   const endDateMaxDate = state.startDate ? state.startDate.add(5, 'year') : dayjs().add(5, 'years')
 
   const isEndDateDisabled =
-    isEdit && state.endDate && state?.endDate.diff(dayjs()) < 0 ? true : false
+    isEdit && state.endDate && state?.endDate.diff(dayjs(), 'day') < 0 ? true : false
 
   useEffect(() => {
     if (isEdit && serviceSchedule) {
