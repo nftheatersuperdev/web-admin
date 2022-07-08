@@ -898,7 +898,7 @@
     },
     "deleteDialog": {
       "title": "Delete Confirmation",
-      "message": "Are you sure to delete schedule ID?",
+      "message": "Are you sure to delete schedule ID",
       "startDate": "Start Date",
       "endDate": "End Date",
       "service": "Service",

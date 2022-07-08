@@ -190,7 +190,7 @@ export default function CarActivityDetail(): JSX.Element {
     const template = `
       <div>
         <p style="margin-bottom: 20px">${t(
-          'carActivity.deleteDialog.title'
+          'carActivity.deleteDialog.message'
         )} <strong>:scheduleId</strong>?</p>
         <div>
           <div style="clear: both;">
