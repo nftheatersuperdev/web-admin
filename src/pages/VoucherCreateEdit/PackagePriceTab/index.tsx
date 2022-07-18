@@ -43,7 +43,10 @@ export default function VoucherPackagePriceTab({
   voucher,
   refetch,
 }: VoucherDataAndRefetchProps): JSX.Element {
-  const existsOption = voucher?.isAllPackages ? selectOptions.ALL : selectOptions.SELECT
+  const existsOption =
+    voucher?.packagePrices && voucher?.packagePrices?.length > 0
+      ? selectOptions.SELECT
+      : selectOptions.ALL
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedPackages, setSelectedPackages] = useState<PackagePriceBff[]>([])
