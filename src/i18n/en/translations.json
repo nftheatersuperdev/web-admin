@@ -536,6 +536,7 @@
       "en": "Description (English)",
       "th": "Description (Thai)"
     },
+    "isAllPackages": "All Packages",
     "limitPerUser": "Limit Per User",
     "status": "Status",
     "statuses": {
