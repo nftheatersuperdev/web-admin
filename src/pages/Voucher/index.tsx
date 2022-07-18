@@ -222,8 +222,8 @@ export default function Voucher(): JSX.Element {
     },
     {
       field: 'isAllPackages',
-      headerName: 'ALL Packages',
-      description: 'ALL Packages',
+      headerName: t('voucher.isAllPackages'),
+      description: t('voucher.isAllPackages'),
       hide: !visibilityColumns.isAllPackages,
       flex: 1,
       sortable: false,
