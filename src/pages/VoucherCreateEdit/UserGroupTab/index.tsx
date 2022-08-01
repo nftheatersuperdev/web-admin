@@ -132,7 +132,6 @@ export default function VoucherUserGroupTab({
         packagePrices: packagePriceIds,
         userGroups: isAllUserGroups ? [] : userGroupIds,
       }
-      console.log('updateObject ->', updateObject)
 
       await toast.promise(updateBff(updateObject), {
         loading: t('toast.loading'),
@@ -146,8 +145,6 @@ export default function VoucherUserGroupTab({
   const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {
     setCurrentOption(value)
   }
-
-  console.log('currentOption ->', currentOption)
 
   return (
     <Fragment>
