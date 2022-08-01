@@ -109,6 +109,14 @@ export default function VoucherUserGroupTab({
     }
   }, [currentOption, existsOption])
 
+  useEffect(() => {
+    if (voucher?.userGroups === null) {
+      setCurrentOption(selectOptions.ALL)
+    } else {
+      setCurrentOption(selectOptions.SELECT)
+    }
+  }, [voucher])
+
   const handleOnSubmitted = () => {
     if (currentOption === selectOptions.ALL) {
       setSelectedUserGroups([])
