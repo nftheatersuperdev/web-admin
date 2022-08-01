@@ -43,10 +43,15 @@ export default function VoucherPackagePriceTab({
   voucher,
   refetch,
 }: VoucherDataAndRefetchProps): JSX.Element {
-  const existsOption =
-    voucher?.packagePrices && voucher?.packagePrices?.length > 0
-      ? selectOptions.SELECT
-      : selectOptions.ALL
+  const getExistsOption = () => {
+    if (!voucher?.isAllPackages && voucher?.packagePrices && voucher?.packagePrices?.length > 0) {
+      return selectOptions.SELECT
+    } else if (voucher?.isAllPackages === true) {
+      return selectOptions.ALL
+    }
+    return undefined
+  }
+  const existsOption = getExistsOption()
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedPackages, setSelectedPackages] = useState<PackagePriceBff[]>([])
@@ -54,7 +59,7 @@ export default function VoucherPackagePriceTab({
   const [packageIsEmpty, setPackageIsEmpty] = useState<boolean>(true)
   const [packageIsEqualToExists, setPackageIsEqualToExists] = useState<boolean>(true)
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
-  const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
+  const [currentOption, setCurrentOption] = useState<string | undefined>(existsOption)
 
   const currentDateTime = new Date()
   const endAtDateTime = new Date(voucher?.endAt || new Date())
@@ -135,9 +140,9 @@ export default function VoucherPackagePriceTab({
   }, [currentOption, existsOption])
 
   useEffect(() => {
-    if (voucher?.packagePrices && voucher?.packagePrices.length < 1) {
+    if (voucher?.isAllPackages) {
       setCurrentOption(selectOptions.ALL)
-    } else {
+    } else if (voucher?.packagePrices && voucher?.packagePrices.length >= 1) {
       setCurrentOption(selectOptions.SELECT)
     }
   }, [voucher])
@@ -164,6 +169,7 @@ export default function VoucherPackagePriceTab({
         ...voucher,
         userGroups: userGroupIds,
         packagePrices: isAllPackages ? [] : packagePriceIds,
+        isAllPackages,
       }
 
       await toast.promise(updateBff(updateObject), {
