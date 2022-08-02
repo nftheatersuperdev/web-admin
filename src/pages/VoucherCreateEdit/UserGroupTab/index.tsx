@@ -110,7 +110,7 @@ export default function VoucherUserGroupTab({
   }, [currentOption, existsOption])
 
   useEffect(() => {
-    if (voucher?.userGroups === null) {
+    if (voucher?.userGroups === null || (voucher?.userGroups && voucher?.userGroups.length < 1)) {
       setCurrentOption(selectOptions.ALL)
     } else {
       setCurrentOption(selectOptions.SELECT)
