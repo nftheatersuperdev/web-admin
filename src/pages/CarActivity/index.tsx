@@ -153,6 +153,7 @@ export default function CarActivity(): JSX.Element {
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [activities, setActivities] = useState<Activity[]>([])
+  const [carId, setCarId] = useState<string>('')
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [searchPlate, setSearchPlate] = useState<string>('')
   const [searchPlateError, setSearchPlateError] = useState<string>('')
@@ -232,7 +233,16 @@ export default function CarActivity(): JSX.Element {
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell> */}
           <TableCell className={classes.tableColumnActions}>
-            <Button onClick={() => setVisibleScheduleDialog(true)} type="button">
+            <Button
+              onClick={() => {
+                /**
+                 * @TODO need to set the carId below
+                 */
+                setCarId(carActivity.id)
+                setVisibleScheduleDialog(true)
+              }}
+              type="button"
+            >
               <span className={classes.textBold}>+</span>
             </Button>
           </TableCell>
@@ -599,6 +609,7 @@ export default function CarActivity(): JSX.Element {
 
       <ActivityScheduleDialog
         visible={visibleScheduleDialog}
+        carId={carId}
         onClose={handleOnScheduleDialogClose}
       />
     </Page>

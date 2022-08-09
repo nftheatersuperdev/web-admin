@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
 import dayjs, { Dayjs } from 'dayjs'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -15,13 +16,15 @@ import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import Alert from '@material-ui/lab/Alert'
 import styled from 'styled-components'
-import { validateRemarkText } from 'utils'
+import { validateRemarkText, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
-import { useActivityServiceList, ActivityServices } from 'pages/CarActivity/utils'
 import type { ServiceSchedule } from 'pages/CarActivityDetail'
+import { create, getServices } from 'services/web-bff/car-activity'
+import { CarActivityCreateProps } from 'services/web-bff/car-activity.type'
 
 interface Props {
   visible: boolean
+  carId?: string
   serviceSchedule?: ServiceSchedule | null
   onClose: (refetch?: boolean) => void
 }
@@ -43,11 +46,11 @@ const SpaceButtons = styled.div`
 
 export default function ActivityScheduleDialog({
   visible,
+  carId,
   serviceSchedule,
   onClose,
 }: Props): JSX.Element {
   const { t } = useTranslation()
-  const activityServiceList = useActivityServiceList(t)
   const isEdit = !!serviceSchedule
 
   const defaultState = {
@@ -60,6 +63,11 @@ export default function ActivityScheduleDialog({
   const [state, setState] = useState<DataState>(defaultState)
   const [mockError, setMockError] = useState<boolean>(false)
   const [remarkError, setRemarkError] = useState<string>('')
+
+  const { data: activityServiceList, isFetched: isFetchedServices } = useQuery(
+    'car-activity-service-types',
+    () => getServices()
+  )
 
   const startMaxDate = defaultState.startDate.add(1, 'year')
   const endDateMaxDate = state.startDate ? state.startDate.add(5, 'year') : dayjs().add(5, 'years')
@@ -92,7 +100,19 @@ export default function ActivityScheduleDialog({
     onClose()
   }
 
-  const handleOnSave = () => {
+  const handleOnSave = async () => {
+    const requestToApi = isEdit ? create : create
+    if (carId && state.startDate && state.endDate) {
+      const body: CarActivityCreateProps = {
+        carId,
+        bookingTypeId: state.service,
+        remark: state.remark,
+        startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
+        endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
+      }
+      await requestToApi(body)
+      return true
+    }
     setMockError(true)
   }
 
@@ -197,13 +217,14 @@ export default function ActivityScheduleDialog({
                     name: 'service',
                     id: 'service',
                   }}
+                  disabled={!isFetchedServices}
                 >
-                  {activityServiceList
-                    .filter((service) => service.id !== ActivityServices.Subscription)
-                    .map((service, index) => {
+                  {activityServiceList &&
+                    activityServiceList.length > 0 &&
+                    activityServiceList.map((service, index) => {
                       return (
                         <MenuItem key={`${index}-${service.id}`} value={service.id}>
-                          {service.label}
+                          {service.name}
                         </MenuItem>
                       )
                     })}
