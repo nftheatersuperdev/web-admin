@@ -1,3 +1,5 @@
+import { AdminUser } from 'services/web-bff/admin-user.type'
+import { Car } from 'services/web-bff/car.type'
 import { Response, ResponseWithPagination } from 'services/web-bff/response.type'
 
 export interface CarActivity {
@@ -11,7 +13,20 @@ export interface CarActivity {
   carId: string
 }
 
-export interface CarActivityCreateProps {
+export interface CarActivitySchedule {
+  bookingId: string
+  bookingDetailId: string
+  carId: Car['id']
+  startDate: string
+  endDate: string
+  status: string
+  bookingType: CarActivityService
+  remark: string | null
+  updatedBy: AdminUser['id']
+  updatedDate: string
+}
+
+export interface CarActivityCreateScheduleProps {
   carId: string
   startDate: string
   endDate: string
@@ -19,14 +34,14 @@ export interface CarActivityCreateProps {
   remark: string | null
 }
 
-export interface CarActivityServices {
+export interface CarActivityService {
   id: string
   name: string
 }
 
-export type CarActivityResponse = {
+export type CarActivityScheduleResponse = {
   data: {
-    activities: CarActivity[]
+    activities: CarActivitySchedule[]
   }
 } & ResponseWithPagination
 
@@ -39,6 +54,6 @@ export type CarActivityCreatedResponse = {
   }
 } & Response
 
-export type CarActivityServicesResponse = {
-  data: CarActivityServices[]
+export type CarActivityServiceResponse = {
+  data: CarActivityService[]
 } & Response
