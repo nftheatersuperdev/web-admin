@@ -857,6 +857,13 @@
     "breadcrumbs": {
       "vehicle": "ยานพาหนะ"
     },
+    "createDialog": {
+      "success": "ตารางถูกสร้างขึ้นแล้ว",
+      "error": {
+        "invalidRequest": "[TH] Invalid Request Error",
+        "badRequest": "[TH] Bad Request Error"
+      }
+    },
     "deleteDialog": {
       "title": "ยืนยันการลบ",
       "message": "คุณยืนยันที่จะลบ",

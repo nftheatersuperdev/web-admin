@@ -897,6 +897,13 @@
     "breadcrumbs": {
       "vehicle": "Vehicle"
     },
+    "createDialog": {
+      "success": "The schedule has been added",
+      "error": {
+        "invalidRequest": "[EN] Invalid Request Error",
+        "badRequest": "[EN] Bad Request Error"
+      }
+    },
     "deleteDialog": {
       "title": "Delete Confirmation",
       "message": "Are you sure to delete schedule ID",
