@@ -15,12 +15,13 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import Alert from '@material-ui/lab/Alert'
+import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { validateRemarkText, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import type { ServiceSchedule } from 'pages/CarActivityDetail'
-import { create, getServices } from 'services/web-bff/car-activity'
-import { CarActivityCreateProps } from 'services/web-bff/car-activity.type'
+import { createSchedule, getServices } from 'services/web-bff/car-activity'
+import { CarActivityCreateScheduleProps } from 'services/web-bff/car-activity.type'
 
 interface Props {
   visible: boolean
@@ -61,7 +62,7 @@ export default function ActivityScheduleDialog({
   }
 
   const [state, setState] = useState<DataState>(defaultState)
-  const [mockError, setMockError] = useState<boolean>(false)
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string>('')
   const [remarkError, setRemarkError] = useState<string>('')
 
   const { data: activityServiceList, isFetched: isFetchedServices } = useQuery(
@@ -96,24 +97,33 @@ export default function ActivityScheduleDialog({
   const handleOnClose = () => {
     setState(defaultState)
     setRemarkError('')
-    setMockError(false)
+    setSubmitErrorMessage('')
     onClose()
   }
 
   const handleOnSave = async () => {
-    const requestToApi = isEdit ? create : create
+    const requestToApi = isEdit ? createSchedule : createSchedule
     if (carId && state.startDate && state.endDate) {
-      const body: CarActivityCreateProps = {
+      const body: CarActivityCreateScheduleProps = {
         carId,
         bookingTypeId: state.service,
         remark: state.remark,
         startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
         endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
       }
-      await requestToApi(body)
-      return true
+
+      await toast.promise(requestToApi(body), {
+        loading: t('toast.loading'),
+        success: () => {
+          handleOnClose()
+          return t('carActivity.createDialog.success')
+        },
+        error: (err) => {
+          setSubmitErrorMessage(err.message)
+          return err.message
+        },
+      })
     }
-    setMockError(true)
   }
 
   const handleOnStartDateChange = (date: MaterialUiPickersDate | Dayjs) => {
@@ -243,13 +253,10 @@ export default function ActivityScheduleDialog({
               />
             </Grid>
           </Grid>
-          {mockError && (
+          {submitErrorMessage && (
             <div>
               <br />
-              <Alert severity="error">
-                Sorry, Your schedule is overlap with Schedule ID{' '}
-                <u>595de56d-aaa8-411d-a36c-ed64868fcb96</u> Please choose new date.
-              </Alert>
+              <Alert severity="error">{submitErrorMessage}</Alert>
             </div>
           )}
         </DialogContent>
