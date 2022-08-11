@@ -51,8 +51,9 @@ export default function ActivityScheduleDialog({
   serviceSchedule,
   onClose,
 }: Props): JSX.Element {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const isEdit = !!serviceSchedule
+  const isThaiLanguage = i18n.language === 'th'
 
   const defaultState = {
     startDate: dayjs().startOf('day'),
@@ -234,7 +235,7 @@ export default function ActivityScheduleDialog({
                     activityServiceList.map((service, index) => {
                       return (
                         <MenuItem key={`${index}-${service.id}`} value={service.id}>
-                          {service.name}
+                          {isThaiLanguage ? service.nameTh : service.nameEn}
                         </MenuItem>
                       )
                     })}

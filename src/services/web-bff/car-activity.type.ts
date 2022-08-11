@@ -36,7 +36,8 @@ export interface CarActivityCreateScheduleProps {
 
 export interface CarActivityService {
   id: string
-  name: string
+  nameEn: string
+  nameTh: string
 }
 
 export type CarActivityScheduleResponse = {
