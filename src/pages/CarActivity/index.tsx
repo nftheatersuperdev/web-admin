@@ -10,6 +10,7 @@ import {
   Breadcrumbs,
   Button,
   Card,
+  CardContent,
   FormControl,
   Grid,
   InputLabel,
@@ -116,6 +117,12 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '20px',
+  },
+  noResultMessage: {
+    textAlign: 'center',
+    fontSize: '1.4em',
+    fontWeight: 'bold',
+    padding: '80px 0',
   },
 })
 
@@ -499,7 +506,11 @@ export default function CarActivity(): JSX.Element {
       </div>
 
       {isNoData ? (
-        t('warning.noResult')
+        <Card>
+          <CardContent>
+            <div className={classes.noResultMessage}>{t('warning.noResult')}</div>
+          </CardContent>
+        </Card>
       ) : (
         <Fragment>
           <TableContainer component={Paper} className={classes.table}>
