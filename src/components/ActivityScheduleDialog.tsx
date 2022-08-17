@@ -162,10 +162,6 @@ export default function ActivityScheduleDialog({
 
   const handleOnRemarksChange = (value: string) => {
     setRemarkError('')
-    setState({
-      ...state,
-      remark: '',
-    })
     const isRemarkAccepted = validateRemarkText(value)
 
     if (value === '') {
@@ -177,12 +173,11 @@ export default function ActivityScheduleDialog({
       setRemarkError(t('carActivity.remark.errors.invalidFormat'))
     } else if (value.length > 100) {
       setRemarkError(t('carActivity.remark.errors.invalidLength'))
-    } else {
-      setState({
-        ...state,
-        remark: value,
-      })
     }
+    setState({
+      ...state,
+      remark: value,
+    })
   }
 
   return (
