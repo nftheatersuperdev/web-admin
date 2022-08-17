@@ -266,6 +266,8 @@ export default function CarActivityDetail(): JSX.Element {
           return '-'
         }
 
+        console.log('bookingType ->', bookingType)
+
         const mapBookingTypeLabel = () => {
           if (isThaiLanguage) {
             if (bookingType.nameTh) {
@@ -279,7 +281,7 @@ export default function CarActivityDetail(): JSX.Element {
         if (bookingType.id === CarActivityBookingTypeIds.RENT) {
           return (
             <Link to={generateLinkToSubscription(params.row.bookingDetailId)}>
-              {getServiceLabel(params.value as string, t)}
+              {mapBookingTypeLabel()}
             </Link>
           )
         }
