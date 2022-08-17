@@ -32,7 +32,7 @@ import { DEFAULT_DATE_FORMAT } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatCarStatus, CarStatus } from 'pages/Car/utils'
-import { getServiceLabel, ActivityServices } from 'pages/CarActivity/utils'
+import { getServiceLabel } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -297,7 +297,7 @@ export default function CarActivityDetail(): JSX.Element {
       renderCell: (params: GridCellParams) => params.value || '-',
     },
     {
-      field: 'modifyDate',
+      field: 'updatedDate',
       headerName: t('carActivity.modifyDate.label'),
       description: t('carActivity.modifyDate.label'),
       flex: 1,
@@ -307,7 +307,7 @@ export default function CarActivityDetail(): JSX.Element {
         dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
     },
     {
-      field: 'modifyBy',
+      field: 'updatedBy',
       headerName: t('carActivity.modifyBy.label'),
       description: t('carActivity.modifyBy.label'),
       flex: 1,
@@ -321,18 +321,15 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       renderCell: (params: GridCellParams) => {
         const isUnableToEditOrDelete = dayjs(params.row.endDate).diff(dayjs()) < 0
+        const isInRent = params.row.bookingType.id === CarActivityBookingTypeIds.RENT
         const hideButton = params.row.status !== CarStatus.OUT_OF_SERVICE ? classes.hide : ''
-        const hideViewLink =
-          params.row.service !== ActivityServices.Subscription &&
-          params.row.status !== CarStatus.IN_USE
-            ? classes.hide
-            : ''
+        const hideSubscriptionLink = isInRent ? '' : classes.hide
 
         return (
           <Fragment>
             <Link
-              className={[hideViewLink, classes.marginTextButton].join(' ')}
-              to={generateLinkToSubscription(params.row.subscriptionId)}
+              className={[hideSubscriptionLink, classes.marginTextButton].join(' ')}
+              to={generateLinkToSubscription(params.row.bookingDetailId)}
             >
               {t('carActivity.view.label')}
             </Link>
