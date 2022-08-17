@@ -266,8 +266,6 @@ export default function CarActivityDetail(): JSX.Element {
           return '-'
         }
 
-        console.log('bookingType ->', bookingType)
-
         const mapBookingTypeLabel = () => {
           if (isThaiLanguage) {
             if (bookingType.nameTh) {
