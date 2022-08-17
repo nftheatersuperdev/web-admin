@@ -261,7 +261,9 @@
       "published": "Published",
       "inUse": "In Use",
       "available": "Available",
-      "outOfService": "Out of service"
+      "outOfService": "Out of service",
+      "reserved": "Reserved",
+      "accepted": "Accepted"
     },
     "subscriptionId": "Subscription ID"
   },
@@ -805,6 +807,9 @@
   },
   "error": {
     "unknown": "something went wrong"
+  },
+  "warning": {
+    "noResult": "No Result. Please try again"
   },
   "version": "Version: {{version}}",
   "carActivity": {

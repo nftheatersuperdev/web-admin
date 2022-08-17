@@ -19,14 +19,17 @@ import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { validateRemarkText, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
-import type { ServiceSchedule } from 'pages/CarActivityDetail'
 import { createSchedule, getServices } from 'services/web-bff/car-activity'
-import { CarActivityCreateScheduleProps } from 'services/web-bff/car-activity.type'
+import {
+  CarActivityCreateScheduleProps,
+  CarActivitySchedule,
+  CarActivityBookingTypeIds,
+} from 'services/web-bff/car-activity.type'
 
 interface Props {
   visible: boolean
   carId?: string
-  serviceSchedule?: ServiceSchedule | null
+  serviceSchedule?: CarActivitySchedule | null
   onClose: (refetch?: boolean) => void
 }
 
@@ -82,7 +85,7 @@ export default function ActivityScheduleDialog({
       setState({
         startDate: dayjs(serviceSchedule?.startDate),
         endDate: dayjs(serviceSchedule?.endDate),
-        service: serviceSchedule?.service || '',
+        service: serviceSchedule?.bookingType.nameEn || '',
         remark: serviceSchedule?.remark || '',
       })
     }
@@ -119,9 +122,15 @@ export default function ActivityScheduleDialog({
           handleOnClose()
           return t('carActivity.createDialog.success')
         },
-        error: (err) => {
-          setSubmitErrorMessage(err.message)
-          return err.message
+        error: (error) => {
+          if (error.message) {
+            setSubmitErrorMessage(error.message)
+            return error.message
+          } else if (error.data.status) {
+            setSubmitErrorMessage(error.data.message)
+            return error.data.message
+          }
+          return t('error.unknown')
         },
       })
     }
@@ -232,13 +241,15 @@ export default function ActivityScheduleDialog({
                 >
                   {activityServiceList &&
                     activityServiceList.length > 0 &&
-                    activityServiceList.map((service, index) => {
-                      return (
-                        <MenuItem key={`${index}-${service.id}`} value={service.id}>
-                          {isThaiLanguage ? service.nameTh : service.nameEn}
-                        </MenuItem>
-                      )
-                    })}
+                    activityServiceList
+                      .filter((service) => service.id !== CarActivityBookingTypeIds.RENT)
+                      .map((service, index) => {
+                        return (
+                          <MenuItem key={`${index}-${service.id}`} value={service.id}>
+                            {isThaiLanguage ? service.nameTh : service.nameEn}
+                          </MenuItem>
+                        )
+                      })}
                 </Select>
               </FormControl>
             </Grid>
