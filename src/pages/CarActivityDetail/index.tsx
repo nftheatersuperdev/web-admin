@@ -517,6 +517,7 @@ export default function CarActivityDetail(): JSX.Element {
           serviceSchedule={serviceSchedule}
           carId={id}
           onClose={() => {
+            refetch()
             setServiceSchedule(null)
             setVisibleScheduleDialog(false)
           }}
