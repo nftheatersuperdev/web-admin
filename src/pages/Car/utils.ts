@@ -15,6 +15,8 @@ export const CarStatus = {
   IN_USE: 'in_use',
   AVAILABLE: 'available',
   OUT_OF_SERVICE: 'out_of_service',
+  RESERVED: 'reserved',
+  ACCEPTED: 'accepted',
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
@@ -59,8 +61,11 @@ export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => 
 ]
 
 export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): string => {
-  const enforceStatus = status.toLocaleLowerCase().replaceAll(' ', '_')
+  if (!status) {
+    return '-'
+  }
 
+  const enforceStatus = status.toLocaleLowerCase().replaceAll(' ', '_')
   switch (enforceStatus) {
     case CarStatus.AVAILABLE:
       return t('car.statuses.available')
@@ -73,6 +78,12 @@ export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): 
 
     case CarStatus.IN_USE:
       return t('car.statuses.inUse')
+
+    case CarStatus.RESERVED:
+      return t('car.statuses.reserved')
+
+    case CarStatus.ACCEPTED:
+      return t('car.statuses.accepted')
 
     default:
       return '-'

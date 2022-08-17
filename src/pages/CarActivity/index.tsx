@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/jsx-props-no-spreading */
 import dayjs, { Dayjs } from 'dayjs'
-import { useEffect, useState, ChangeEvent } from 'react'
+import { Fragment, useEffect, useState, ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
 import {
   Breadcrumbs,
   Button,
@@ -31,11 +32,11 @@ import { makeStyles } from '@material-ui/core/styles'
 import carBrandsJson from 'data/car-brands.json'
 import carModelsJson from 'data/car-models.json'
 import carColorsJson from 'data/car-colors.json'
-import carActivitiesJson from 'data/car-activity.json'
 import { DEFAULT_DATE_FORMAT, validateKeywordText } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
+import { getActivities } from 'services/web-bff/car-activity'
 
 const useStyles = makeStyles({
   hide: {
@@ -94,6 +95,9 @@ const useStyles = makeStyles({
     whiteSpace: 'nowrap',
     borderLeft: '1px solid #DDD',
     borderRight: '1px solid #DDD',
+
+    // Hide the mock data
+    color: '#FFF',
   },
   tableColumnDate: {
     minWidth: '200px',
@@ -130,20 +134,6 @@ export interface CarColor {
   brand_id: string
   model_id: string
 }
-export interface Activity {
-  id: string
-  carModel: {
-    brand_name: string
-    model_name: string
-    color_name: string
-  }
-  plateNumber: string
-}
-export enum CarStatus {
-  InUse = 'in_use',
-  Available = 'available',
-  OutOfService = 'out_of_service',
-}
 
 export default function CarActivity(): JSX.Element {
   const classes = useStyles()
@@ -152,7 +142,7 @@ export default function CarActivity(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [activities, setActivities] = useState<Activity[]>([])
+  const [carId, setCarId] = useState<string>('')
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [searchPlate, setSearchPlate] = useState<string>('')
   const [searchPlateError, setSearchPlateError] = useState<string>('')
@@ -175,52 +165,30 @@ export default function CarActivity(): JSX.Element {
     !!filterStatus ||
     filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
 
-  const fetchData = () => {
-    const filterIndex = (page - 1) * pageSize
-    const minIndex = filterIndex
-    const maxIndex = filterIndex + pageSize
-    const data = carActivitiesJson.activities.filter((activity, index) => {
-      if (index < maxIndex && index >= minIndex) {
-        return activity
-      }
-      return null
-    })
-    setActivities(data)
-
-    const totalPages = Math.ceil(carActivitiesJson.activities.length / pageSize)
-    setPages(totalPages)
-  }
-
-  useEffect(() => {
-    setCarBrands(carBrandsJson)
-  }, [])
-
-  useEffect(() => {
-    fetchData()
-  }, [pages, page, pageSize])
-
-  useEffect(() => {
-    setPage(1)
-  }, [pageSize])
+  const { data: carActivitiesData, refetch } = useQuery('get-car-activities', () =>
+    getActivities({ page, size: pageSize })
+  )
 
   const carActivities =
-    activities.map((carActivity) => {
-      return (
-        <TableRow key={carActivity.id}>
-          <TableCell className={classes.tableColumnCarInfo}>
-            <Link to={`/car-activity/${carActivity.id}`} className={classes.link}>
-              <div className={classes.textBold}>{carActivity.carModel.brand_name}</div>
-              <div className={classes.textBold}>{carActivity.plateNumber}</div>
-              <div className={classes.subText}>
-                <div>{carActivity.carModel.model_name}</div>
-                <div>{carActivity.carModel.color_name}</div>
-              </div>
-            </Link>
-          </TableCell>
-          <TableCell className={classes.tableColumnDate} colSpan={10}>
-            &nbsp;
-          </TableCell>
-          {/* <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
+    (carActivitiesData &&
+      carActivitiesData.cars?.length > 0 &&
+      carActivitiesData.cars.map((carActivity) => {
+        return (
+          <TableRow key={`car-activity-${carActivity.carId}`}>
+            <TableCell className={classes.tableColumnCarInfo}>
+              <Link to={`/car-activity/${carActivity.carId}`} className={classes.link}>
+                <div className={classes.textBold}>{carActivity.brandName}</div>
+                <div className={classes.textBold}>{carActivity.plateNumer}</div>
+                <div className={classes.subText}>
+                  <div>{carActivity.modelName}</div>
+                  <div>{carActivity.color}</div>
+                </div>
+              </Link>
+            </TableCell>
+            <TableCell className={classes.tableColumnDate} colSpan={10}>
+              &nbsp;
+            </TableCell>
+            {/* <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
@@ -231,14 +199,42 @@ export default function CarActivity(): JSX.Element {
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
           <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell> */}
-          <TableCell className={classes.tableColumnActions}>
-            <Button onClick={() => setVisibleScheduleDialog(true)} type="button">
-              <span className={classes.textBold}>+</span>
-            </Button>
-          </TableCell>
-        </TableRow>
-      )
-    }) || []
+            <TableCell className={classes.tableColumnActions}>
+              <Button
+                onClick={() => {
+                  /**
+                   * @TODO need to set the carId below
+                   */
+                  setCarId(carActivity.carId)
+                  setVisibleScheduleDialog(true)
+                }}
+                type="button"
+              >
+                <span className={classes.textBold}>+</span>
+              </Button>
+            </TableCell>
+          </TableRow>
+        )
+      })) ||
+    []
+
+  const isNoData = carActivities.length < 1
+
+  useEffect(() => {
+    setCarBrands(carBrandsJson)
+  }, [])
+
+  useEffect(() => {
+    refetch()
+  }, [pages, page, pageSize])
+
+  useEffect(() => {
+    if (carActivitiesData?.pagination) {
+      setPage(carActivitiesData.pagination.page)
+      setPageSize(carActivitiesData.pagination.size)
+      setPages(carActivitiesData.pagination.totalPage)
+    }
+  }, [])
 
   const handleOnScheduleDialogClose = () => {
     setVisibleScheduleDialog(false)
@@ -317,7 +313,7 @@ export default function CarActivity(): JSX.Element {
   }
 
   const handleOnStatusChange = (event: ChangeEvent<{ name?: string; value: unknown }>) => {
-    const status = event.target.value as CarStatus
+    const status = event.target.value as string
     if (status) {
       setFilterStatus(status)
     }
@@ -336,7 +332,6 @@ export default function CarActivity(): JSX.Element {
         <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
         <Typography color="textPrimary">{t('sidebar.carActivity')}</Typography>
       </Breadcrumbs>
-
       <div className={classes.searchWrapper}>
         <Grid container spacing={2} className={classes.gridContainer}>
           <Grid item xs={9} sm={9} lg={5}>
@@ -503,102 +498,114 @@ export default function CarActivity(): JSX.Element {
         </Grid>
       </div>
 
-      <TableContainer component={Paper} className={classes.table}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableColumnCarInfo}>
-                <div className={classes.textBold}>{t('carActivity.car.label')}</div>
-                <div className={classes.subText}>
-                  {t('carActivity.totalCars.label', { total: carActivitiesJson.pagination.total })}
-                </div>
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                1 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                2 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                3 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                4 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                5 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                6 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                7 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                8 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                9 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}>
-                10 TUE JUNE
-              </TableCell>
-              <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
-                {t('carActivity.action.label')}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{carActivities}</TableBody>
-        </Table>
-      </TableContainer>
-      <Card>
-        <div className={classes.paginationContrainer}>
-          Rows per page:&nbsp;
-          <FormControl className={classes.inlineElement}>
-            <Select
-              value={pageSize}
-              defaultValue={pageSize}
-              onChange={(event: ChangeEvent<{ name?: string; value: unknown }>) =>
-                setPageSize(event.target.value as number)
-              }
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </Select>
-          </FormControl>
-          <Pagination
-            count={pages}
-            variant="text"
-            shape="rounded"
-            onChange={(_event: ChangeEvent<unknown>, value: number) => {
-              setPage(value)
-            }}
-          />
-        </div>
-      </Card>
-
-      <Card className={classes.hide}>
-        <pre>Plate: {JSON.stringify(searchPlate, null, 2)}</pre>
-        <pre>
-          Filters:
-          <br />
-          {JSON.stringify(
-            {
-              filterBrand,
-              filterModel,
-              filterColor,
-              filterStatus,
-              filterStartDate,
-            },
-            null,
-            2
-          )}
-        </pre>
-      </Card>
-
+      {isNoData ? (
+        t('warning.noResult')
+      ) : (
+        <Fragment>
+          <TableContainer component={Paper} className={classes.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell className={classes.tableColumnCarInfo}>
+                    <div className={classes.textBold}>{t('carActivity.car.label')}</div>
+                    <div className={classes.subText}>
+                      {t('carActivity.totalCars.label', {
+                        total: carActivitiesData?.pagination?.totalRecords || 0,
+                      })}
+                    </div>
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    1 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    2 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    3 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    4 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    5 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    6 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    7 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    8 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    9 TUE JUNE
+                  </TableCell>
+                  <TableCell
+                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
+                  >
+                    10 TUE JUNE
+                  </TableCell>
+                  <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
+                    {t('carActivity.action.label')}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{carActivities}</TableBody>
+            </Table>
+          </TableContainer>
+          <Card>
+            <div className={classes.paginationContrainer}>
+              Rows per page:&nbsp;
+              <FormControl className={classes.inlineElement}>
+                <Select
+                  value={carActivitiesData?.pagination?.size || pageSize}
+                  defaultValue={carActivitiesData?.pagination?.size || pageSize}
+                  onChange={(event: ChangeEvent<{ name?: string; value: unknown }>) => {
+                    setPage(1)
+                    setPageSize(event.target.value as number)
+                  }}
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={50}>50</MenuItem>
+                </Select>
+              </FormControl>
+              <Pagination
+                count={carActivitiesData?.pagination?.totalPage || pages}
+                page={carActivitiesData?.pagination?.page || page}
+                defaultPage={carActivitiesData?.pagination?.page || page}
+                variant="text"
+                shape="rounded"
+                onChange={(_event: ChangeEvent<unknown>, value: number) => {
+                  setPage(value)
+                }}
+              />
+            </div>
+          </Card>
+        </Fragment>
+      )}
       <ActivityScheduleDialog
         visible={visibleScheduleDialog}
+        carId={carId}
         onClose={handleOnScheduleDialogClose}
       />
     </Page>

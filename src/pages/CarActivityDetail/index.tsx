@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { TFunction, Namespace, useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
 import {
   Breadcrumbs,
   Button,
@@ -35,19 +36,11 @@ import { getServiceLabel, ActivityServices } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
+import { getSchedulesByCarId } from 'services/web-bff/car-activity'
+import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
 
 interface CarActivityDetailParams {
   id: string
-}
-export interface ServiceSchedule {
-  id: string
-  startDate: string
-  endDate: string
-  service: string
-  status: string
-  remark: string
-  modifyDate: string
-  modifyBy: string
 }
 enum ScheduleActions {
   Edit = 'edit',
@@ -101,14 +94,14 @@ function CustomToolBar() {
 export default function CarActivityDetail(): JSX.Element {
   const classes = useStyles()
   const { id } = useParams<CarActivityDetailParams>()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const isThaiLanguage = i18n.language === 'th'
 
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(10)
   const [visibleConfirmDialog, setVisibleConfirmDialog] = useState<boolean>(false)
-  const [totalSchedules, setTotalSchedules] = useState<number>(0)
-  const [serviceSchedules, setServiceSchedules] = useState<ServiceSchedule[]>([])
-  const [serviceSchedule, setServiceSchedule] = useState<ServiceSchedule | null>(null)
+  const [totalSchedules] = useState<number>(0)
+  const [serviceSchedule, setServiceSchedule] = useState<CarActivitySchedule | null>(null)
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
   const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(
     dayjs().startOf('day')
@@ -119,27 +112,23 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterCarStatus, setFilterCarStatus] = useState<string>('')
 
   const carActivity = carActivitiesJson.activities.find((activity) => activity.id === id)
+  const { data: carActivityData, refetch } = useQuery('get-car-activities', () =>
+    getSchedulesByCarId(id)
+  )
 
-  const fetchData = () => {
-    if (!carActivity?.schedules || carActivity?.schedules?.length < 1) {
-      return null
-    }
-    const filterIndex = page * pageSize
-    const minIndex = filterIndex
-    const maxIndex = filterIndex + pageSize
-    const data = carActivity.schedules.filter((activity, index) => {
-      if (index < maxIndex && index >= minIndex) {
-        return activity
-      }
-      return null
-    })
-    setServiceSchedules(data)
-
-    setTotalSchedules(carActivity.schedules.length)
-  }
+  const serviceSchedules =
+    (carActivityData &&
+      carActivityData.length > 0 &&
+      carActivityData.map((carActivity) => {
+        return {
+          id: carActivity.bookingId,
+          ...carActivity,
+        }
+      })) ||
+    []
 
   useEffect(() => {
-    fetchData()
+    refetch()
   }, [totalSchedules, page, pageSize])
 
   const handleOnClickFilters = () => {
@@ -180,7 +169,7 @@ export default function CarActivityDetail(): JSX.Element {
   }
 
   const generatelConfirmDeleteHtml = (
-    schedule: ServiceSchedule | null,
+    schedule: CarActivitySchedule | null,
     t: TFunction<Namespace>
   ): string => {
     if (!schedule) {
@@ -216,10 +205,10 @@ export default function CarActivityDetail(): JSX.Element {
     `
 
     return template
-      .replace(':scheduleId', schedule.id)
+      .replace(':scheduleId', schedule.bookingDetailId)
       .replace(':startDate', dayjs(schedule.startDate).format(DEFAULT_DATE_FORMAT))
       .replace(':endDate', dayjs(schedule.endDate).format(DEFAULT_DATE_FORMAT))
-      .replace(':service', getServiceLabel(schedule.service, t))
+      .replace(':service', getServiceLabel(schedule.bookingType.nameEn, t))
   }
 
   const generateLinkToSubscription = (subscriptionId: string) => {
@@ -248,7 +237,7 @@ export default function CarActivityDetail(): JSX.Element {
         dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
     },
     {
-      field: 'id',
+      field: 'bookingId',
       headerName: t('carActivity.scheduleId.label'),
       description: t('carActivity.scheduleId.label'),
       flex: 1,
@@ -265,24 +254,37 @@ export default function CarActivityDetail(): JSX.Element {
       renderCell: (params: GridCellParams) => columnFormatCarStatus(params.value as string, t),
     },
     {
-      field: 'service',
+      field: 'bookingType',
       headerName: t('carActivity.service.label'),
       description: t('carActivity.service.label'),
       flex: 1,
       filterable: false,
       sortable: false,
       renderCell: (params: GridCellParams) => {
-        if (
-          params.value === ActivityServices.Subscription &&
-          params.row.status === CarStatus.IN_USE
-        ) {
+        const bookingType = params.value as CarActivitySchedule['bookingType']
+        if (!bookingType) {
+          return '-'
+        }
+
+        const mapBookingTypeLabel = () => {
+          if (isThaiLanguage) {
+            if (bookingType.nameTh) {
+              return bookingType.nameTh
+            }
+            return `[${bookingType.nameEn}]`
+          }
+          return bookingType.nameEn
+        }
+
+        if (bookingType.id === CarActivityBookingTypeIds.RENT) {
           return (
-            <Link to={generateLinkToSubscription(params.row.subscriptionId)}>
+            <Link to={generateLinkToSubscription(params.row.bookingDetailId)}>
               {getServiceLabel(params.value as string, t)}
             </Link>
           )
         }
-        return getServiceLabel(params.value as string, t)
+
+        return mapBookingTypeLabel()
       },
     },
     {
@@ -513,6 +515,7 @@ export default function CarActivityDetail(): JSX.Element {
         <ActivityScheduleDialog
           visible={visibleScheduleDialog}
           serviceSchedule={serviceSchedule}
+          carId={id}
           onClose={() => {
             setServiceSchedule(null)
             setVisibleScheduleDialog(false)

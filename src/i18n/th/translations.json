@@ -260,7 +260,9 @@
       "published": "เปิด",
       "inUse": "กำลังใช้งาน",
       "available": "พร้อมใช้งาน",
-      "outOfService": "ไม่พร้อมใช้งาน"
+      "outOfService": "ไม่พร้อมใช้งาน",
+      "reserved": "[Reserved]",
+      "accepted": "[Accepted]"
     },
     "subscriptionId": "หมายเลขการจอง"
   },
@@ -766,6 +768,9 @@
   "error": {
     "unknown": "เกิดข้อผิดพลาดบางอย่าง"
   },
+  "warning": {
+    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่"
+  },
   "version": "เวอร์ชั่น: {{version}}",
   "carActivity": {
     "overview": {
@@ -856,6 +861,13 @@
     },
     "breadcrumbs": {
       "vehicle": "ยานพาหนะ"
+    },
+    "createDialog": {
+      "success": "ตารางถูกสร้างขึ้นแล้ว",
+      "error": {
+        "invalidRequest": "[TH] Invalid Request Error",
+        "badRequest": "[TH] Bad Request Error"
+      }
     },
     "deleteDialog": {
       "title": "ยืนยันการลบ",
