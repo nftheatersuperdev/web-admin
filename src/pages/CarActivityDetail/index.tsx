@@ -37,7 +37,7 @@ import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import { getSchedulesByCarId } from 'services/web-bff/car-activity'
-import { CarActivitySchedule } from 'services/web-bff/car-activity.type'
+import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
 
 interface CarActivityDetailParams {
   id: string
@@ -276,17 +276,13 @@ export default function CarActivityDetail(): JSX.Element {
           return bookingType.nameEn
         }
 
-        // if (
-        //   params.value === ActivityServices.Subscription &&
-        //   params.row.status === CarStatus.IN_USE
-        // ) {
-        //   return (
-        //     <Link to={generateLinkToSubscription(params.row.subscriptionId)}>
-        //       {getServiceLabel(params.value as string, t)}
-        //     </Link>
-        //   )
-        // }
-        // return getServiceLabel(params.value as string, t)
+        if (bookingType.id === CarActivityBookingTypeIds.RENT) {
+          return (
+            <Link to={generateLinkToSubscription(params.row.bookingDetailId)}>
+              {getServiceLabel(params.value as string, t)}
+            </Link>
+          )
+        }
 
         return mapBookingTypeLabel()
       },
