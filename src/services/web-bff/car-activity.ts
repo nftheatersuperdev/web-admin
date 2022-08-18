@@ -40,6 +40,9 @@ export const getActivities = async (
 }
 
 export const getSchedulesByCarId = async (carId: string): Promise<CarActivitySchedule[]> => {
+  /**
+   * The API doesn't has pagination right now.
+   */
   const response: CarActivitySchedule[] = await BaseApi.get(`/v1/bookings/carId/${carId}`).then(
     (response) => response.data.data
   )

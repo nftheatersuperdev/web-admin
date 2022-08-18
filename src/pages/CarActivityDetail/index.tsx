@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable react-hooks/exhaustive-deps */
 import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
@@ -36,6 +37,7 @@ import { getServiceLabel } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
+import NoResultCard from 'components/NoResultCard'
 import { getSchedulesByCarId } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
 
@@ -126,6 +128,8 @@ export default function CarActivityDetail(): JSX.Element {
         }
       })) ||
     []
+
+  const isNoData = serviceSchedules.length < 1
 
   useEffect(() => {
     refetch()
@@ -491,23 +495,27 @@ export default function CarActivityDetail(): JSX.Element {
           </Grid>
         </Grid>
 
-        <DataGridLocale
-          className={[classes.marginSpace, classes.table].join(' ')}
-          autoHeight
-          pagination
-          pageSize={pageSize}
-          page={page}
-          rowCount={totalSchedules}
-          paginationMode="server"
-          onPageSizeChange={(param: GridPageChangeParams) => setPageSize(param.pageSize)}
-          onPageChange={(index: number) => setPage(index)}
-          rows={serviceSchedules}
-          columns={columns}
-          disableSelectionOnClick
-          components={{
-            Toolbar: CustomToolBar,
-          }}
-        />
+        {isNoData ? (
+          <NoResultCard />
+        ) : (
+          <DataGridLocale
+            className={[classes.marginSpace, classes.table].join(' ')}
+            autoHeight
+            pagination
+            pageSize={pageSize}
+            page={page}
+            rowCount={totalSchedules}
+            paginationMode="server"
+            onPageSizeChange={(param: GridPageChangeParams) => setPageSize(param.pageSize)}
+            onPageChange={(index: number) => setPage(index)}
+            rows={serviceSchedules}
+            columns={columns}
+            disableSelectionOnClick
+            components={{
+              Toolbar: CustomToolBar,
+            }}
+          />
+        )}
 
         <ActivityScheduleDialog
           visible={visibleScheduleDialog}
