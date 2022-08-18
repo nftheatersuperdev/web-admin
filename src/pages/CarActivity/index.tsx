@@ -94,16 +94,23 @@ const useStyles = makeStyles({
   tableColumnDateHeader: {
     minWidth: '200px',
     whiteSpace: 'nowrap',
-    borderLeft: '1px solid #DDD',
-    borderRight: '1px solid #DDD',
+    // borderLeft: '1px solid #DDD',
+    // borderRight: '1px solid #DDD',
 
     // Hide the mock data
     color: '#FFF',
+    borderLeft: 'none',
+    borderRight: 'none',
   },
   tableColumnDate: {
     minWidth: '200px',
-    borderLeft: '1px solid #DDD',
-    borderRight: '1px solid #DDD',
+    // borderLeft: '1px solid #DDD',
+    // borderRight: '1px solid #DDD',
+
+    // Hide the mock data
+    color: '#FFF',
+    borderLeft: 'none',
+    borderRight: 'none',
   },
   tableColumnActions: {
     position: 'sticky',
@@ -536,54 +543,34 @@ export default function CarActivity(): JSX.Element {
                   </TableCell>
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    1 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    2 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    3 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    4 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    5 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    6 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    7 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    8 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    9 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell
                     className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  >
-                    10 TUE JUNE
-                  </TableCell>
+                  />
                   <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
                     {t('carActivity.action.label')}
                   </TableCell>
