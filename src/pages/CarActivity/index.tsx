@@ -10,7 +10,6 @@ import {
   Breadcrumbs,
   Button,
   Card,
-  CardContent,
   FormControl,
   Grid,
   InputLabel,
@@ -37,6 +36,7 @@ import { DEFAULT_DATE_FORMAT, validateKeywordText } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
+import NoResultCard from 'components/NoResultCard'
 import { getActivities } from 'services/web-bff/car-activity'
 
 const useStyles = makeStyles({
@@ -124,12 +124,6 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '20px',
-  },
-  noResultMessage: {
-    textAlign: 'center',
-    fontSize: '1.4em',
-    fontWeight: 'bold',
-    padding: '80px 0',
   },
 })
 
@@ -522,11 +516,7 @@ export default function CarActivity(): JSX.Element {
       </div>
 
       {isNoData ? (
-        <Card>
-          <CardContent>
-            <div className={classes.noResultMessage}>{t('warning.noResult')}</div>
-          </CardContent>
-        </Card>
+        <NoResultCard />
       ) : (
         <Fragment>
           <TableContainer component={Paper} className={classes.table}>
