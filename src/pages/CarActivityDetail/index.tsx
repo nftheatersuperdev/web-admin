@@ -251,7 +251,13 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       filterable: false,
       sortable: false,
-      renderCell: (params: GridCellParams) => columnFormatCarStatus(params.value as string, t),
+      renderCell: (params: GridCellParams) => {
+        if (params.row.bookingType.id === CarActivityBookingTypeIds.RENT) {
+          return t('car.statuses.inUse')
+        }
+
+        return t('car.statuses.outOfService')
+      },
     },
     {
       field: 'bookingType',
@@ -279,7 +285,7 @@ export default function CarActivityDetail(): JSX.Element {
         if (bookingType.id === CarActivityBookingTypeIds.RENT) {
           return (
             <Link to={generateLinkToSubscription(params.row.bookingDetailId)}>
-              {mapBookingTypeLabel()}
+              {t('carActivity.statuses.rent')}
             </Link>
           )
         }
@@ -313,6 +319,7 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       filterable: false,
       sortable: false,
+      renderCell: () => '-',
     },
     {
       field: 'action',
@@ -523,7 +530,7 @@ export default function CarActivityDetail(): JSX.Element {
           open={visibleConfirmDialog}
           title={t('carActivity.deleteDialog.title')}
           htmlContent={generatelConfirmDeleteHtml(serviceSchedule, t)}
-          confirmText={t('carActivity.deleteDialog.confirm')}
+          confirmText={`t('carActivity.deleteDialog.confirm')`}
           cancelText={t('carActivity.deleteDialog.close')}
           onConfirm={handleOnCloseConfirmDialog}
           onCancel={() => setVisibleConfirmDialog(false)}

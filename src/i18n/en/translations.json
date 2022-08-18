@@ -885,6 +885,7 @@
       "label": "View"
     },
     "statuses": {
+      "rent": "SUBSCRIPTION",
       "subscription": "Subscription",
       "preventiveMaintenance": "Preventive Maintenance",
       "reserved": "Reserved",

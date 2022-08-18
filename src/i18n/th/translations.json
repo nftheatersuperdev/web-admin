@@ -845,6 +845,7 @@
       "label": "แสดง"
     },
     "statuses": {
+      "rent": "อยู่ระหว่างการจอง",
       "subscription": "อยู่ระหว่างการจอง",
       "preventiveMaintenance": "เข้าศูนย์ตามรอบ",
       "reserved": "สำรองรถทดแทน",
