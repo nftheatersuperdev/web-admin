@@ -176,6 +176,13 @@ export default function CarActivity(): JSX.Element {
     getActivities({ page, size: pageSize })
   )
 
+  const checkAndRenderValue = (value: string) => {
+    if (!value) {
+      return '-'
+    }
+    return value
+  }
+
   const carActivities =
     (carActivitiesData &&
       carActivitiesData.cars?.length > 0 &&
@@ -184,13 +191,13 @@ export default function CarActivity(): JSX.Element {
           <TableRow key={`car-activity-${carActivity.carId}`}>
             <TableCell className={classes.tableColumnCarInfo}>
               <Link to={`/car-activity/${carActivity.carId}`} className={classes.link}>
+                <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
                 <div className={classes.textBold}>
-                  {carActivity.brandName ? carActivity.brandName : '-'}
+                  {checkAndRenderValue(carActivity.plateNumber)}
                 </div>
-                <div className={classes.textBold}>{carActivity.plateNumber}</div>
                 <div className={classes.subText}>
-                  <div>{carActivity.modelName ? carActivity.modelName : '-'}</div>
-                  <div>{carActivity.color ? carActivity.color : '-'}</div>
+                  <div>{checkAndRenderValue(carActivity.modelName)}</div>
+                  <div>{checkAndRenderValue(carActivity.color)}</div>
                 </div>
               </Link>
             </TableCell>
