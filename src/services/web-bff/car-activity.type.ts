@@ -24,7 +24,7 @@ export interface CarActivity {
   subModelName: string
   modelYear: string
   color: string
-  plateNumer: string
+  plateNumber: string
   status: string
   carId: string
 }

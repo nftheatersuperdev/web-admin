@@ -185,7 +185,7 @@ export default function CarActivity(): JSX.Element {
             <TableCell className={classes.tableColumnCarInfo}>
               <Link to={`/car-activity/${carActivity.carId}`} className={classes.link}>
                 <div className={classes.textBold}>{carActivity.brandName}</div>
-                <div className={classes.textBold}>{carActivity.plateNumer}</div>
+                <div className={classes.textBold}>{carActivity.plateNumber}</div>
                 <div className={classes.subText}>
                   <div>{carActivity.modelName}</div>
                   <div>{carActivity.color}</div>
