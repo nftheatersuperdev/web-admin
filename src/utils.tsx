@@ -514,7 +514,7 @@ export const validateEmail = (email: string): boolean => {
 }
 
 export const validateKeywordText = (value: string): boolean => {
-  const keywordRule = /^[ก-ฮa-zA-Z0-9]{2,}$/g
+  const keywordRule = /^[ก-ฮa-zA-Z0-9 ]{2,}$/g
   return keywordRule.test(value)
 }
 
