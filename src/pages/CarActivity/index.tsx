@@ -370,24 +370,31 @@ export default function CarActivity(): JSX.Element {
     }
   }
 
-  const handleOnBrandChange = (brand: CarBrand) => {
-    setFilterBrand(brand.id)
-    setFilterBrandObject(brand)
+  const handleOnBrandChange = (brand: CarBrand | null) => {
+    setFilterBrand(brand?.id || '')
+    setFilterBrandObject(brand || null)
+    setFilterModel('')
     setFilterModelObject(null)
+    setFilterColor('')
     setFilterColorObject(null)
-    setCarModels(brand.carModels)
+    setCarModels(brand?.carModels || [])
+
+    if (!brand) {
+      setResetFilters(true)
+    }
   }
 
-  const handleOnModelChange = (model: CarModel) => {
-    setFilterModelObject(model)
+  const handleOnModelChange = (model: CarModel | null) => {
+    setFilterModel(model?.id || '')
+    setFilterModelObject(model || null)
+    setFilterColor('')
     setFilterColorObject(null)
-    setFilterModel(model.id)
-    setCarColors(model.carSkus)
+    setCarColors(model?.carSkus || [])
   }
 
-  const handleOnColorChange = (color: CarColor) => {
-    setFilterColor(color.id)
-    setFilterColorObject(color)
+  const handleOnColorChange = (color: CarColor | null) => {
+    setFilterColor(color?.id || '')
+    setFilterColorObject(color || null)
   }
 
   const handleOnStatusChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
@@ -461,11 +468,7 @@ export default function CarActivity(): JSX.Element {
               )}
               value={filterBrandObject || null}
               defaultValue={filterBrandObject || null}
-              onChange={(_event, value) => {
-                if (value) {
-                  handleOnBrandChange(value)
-                }
-              }}
+              onChange={(_event, value) => handleOnBrandChange(value)}
             />
           </Grid>
           <Grid item className="filter-model" xs={6} sm={4} md={2} lg={2} xl={1}>
@@ -480,11 +483,7 @@ export default function CarActivity(): JSX.Element {
               )}
               value={filterModelObject || null}
               defaultValue={filterModelObject || null}
-              onChange={(_event, value) => {
-                if (value) {
-                  handleOnModelChange(value)
-                }
-              }}
+              onChange={(_event, value) => handleOnModelChange(value)}
             />
           </Grid>
           <Grid item className="filter-color" xs={6} sm={4} md={2} lg={2} xl={1}>
@@ -499,11 +498,7 @@ export default function CarActivity(): JSX.Element {
               )}
               value={filterColorObject || null}
               defaultValue={filterColorObject || null}
-              onChange={(_event, value) => {
-                if (value) {
-                  handleOnColorChange(value)
-                }
-              }}
+              onChange={(_event, value) => handleOnColorChange(value)}
             />
           </Grid>
           <Grid item className="filter-status" xs={6} sm={4} md={2} lg={2} xl={1}>
