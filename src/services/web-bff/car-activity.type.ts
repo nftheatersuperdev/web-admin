@@ -59,6 +59,10 @@ export interface CarActivityService {
 export interface CarActivityListProps {
   page: number
   size: number
+  carBrandId?: string
+  carModelId?: string
+  carSkuId?: string // In the UI we called as color
+  plateNumber?: string
 }
 
 export type CarActivityResponse = {

@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react-hooks/exhaustive-deps */
 import dayjs, { Dayjs } from 'dayjs'
-import { Fragment, useEffect, useState, ChangeEvent } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Fragment, useEffect, useState, useMemo } from 'react'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
@@ -29,15 +28,14 @@ import Pagination from '@material-ui/lab/Pagination'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
-import carBrandsJson from 'data/car-brands.json'
-import carModelsJson from 'data/car-models.json'
-import carColorsJson from 'data/car-colors.json'
 import { DEFAULT_DATE_FORMAT, validateKeywordText } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import NoResultCard from 'components/NoResultCard'
 import { getActivities } from 'services/web-bff/car-activity'
+import { getCarBrands } from 'services/web-bff/car-brand'
+import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
 
 const useStyles = makeStyles({
   hide: {
@@ -127,33 +125,25 @@ const useStyles = makeStyles({
   },
 })
 
-export interface CarBrand {
-  id: string
-  name: string
-}
-export interface CarModel {
-  id: string
-  name: string
-  brand_id: string
-}
-export interface CarColor {
-  id: string
-  name: string
-  brand_id: string
-  model_id: string
+const useQueryString = () => {
+  const { search } = useLocation()
+
+  return useMemo(() => new URLSearchParams(search), [search])
 }
 
 export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
+  const history = useHistory()
+  const queryString = useQueryString()
 
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [carId, setCarId] = useState<string>('')
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
-  const [searchPlate, setSearchPlate] = useState<string>('')
-  const [searchPlateError, setSearchPlateError] = useState<string>('')
+  const [filterPlate, setFilterPlate] = useState<string>('')
+  const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
   const [filterModelObject, setFilterModelObject] = useState<CarModel | null>()
   const [filterColorObject, setFilterColorObject] = useState<CarColor | null>()
@@ -162,19 +152,33 @@ export default function CarActivity(): JSX.Element {
   const [filterColor, setFilterColor] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('')
   const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(dayjs())
-  const [carBrands, setCarBrands] = useState<CarBrand[]>([])
+  const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
   const applyFilters =
-    !!searchPlate ||
+    !!filterPlate ||
     !!filterBrand ||
     !!filterModel ||
     !!filterColor ||
     !!filterStatus ||
     filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
 
-  const { data: carActivitiesData, refetch } = useQuery('get-car-activities', () =>
-    getActivities({ page, size: pageSize })
+  const { data: carBrands, isFetched: isFetchedBrands } = useQuery('get-car-brands', () =>
+    getCarBrands()
+  )
+  const {
+    data: carActivitiesData,
+    refetch,
+    isFetched: isFetchedActivities,
+  } = useQuery('get-car-activities', () =>
+    getActivities({
+      page,
+      size: pageSize,
+      carBrandId: filterBrand,
+      carModelId: filterModel,
+      carSkuId: filterColor,
+      plateNumber: filterPlate,
+    })
   )
 
   const checkAndRenderValue = (value: string) => {
@@ -237,14 +241,9 @@ export default function CarActivity(): JSX.Element {
 
   const isNoData = carActivities.length < 1
 
-  useEffect(() => {
-    setCarBrands(carBrandsJson)
-  }, [])
-
-  useEffect(() => {
-    refetch()
-  }, [pages, page, pageSize])
-
+  /**
+   * Init pagination depends on data from the API.
+   */
   useEffect(() => {
     if (carActivitiesData?.pagination) {
       setPage(carActivitiesData.pagination.page)
@@ -253,13 +252,60 @@ export default function CarActivity(): JSX.Element {
     }
   }, [])
 
+  /**
+   * Managing the pagination variables that will send to the API.
+   */
+  useEffect(() => {
+    refetch()
+  }, [pages, page, pageSize])
+
+  /**
+   * Use for filtering data by query strings.
+   */
+  useEffect(() => {
+    if (isFetchedBrands && carBrands && carBrands?.length > 0) {
+      const plate = queryString.get('plate')
+      const brandId = queryString.get('brand')
+      const modelId = queryString.get('model')
+      const colorId = queryString.get('color')
+
+      setFilterPlate(plate || '')
+
+      const brand = carBrands.find((carBrand) => carBrand.id === brandId)
+      setFilterBrand(brand?.id || '')
+      setFilterBrandObject(brand)
+      setCarModels(brand?.carModels || [])
+
+      const model = brand?.carModels.find((carModel) => carModel.id === modelId)
+      setFilterModel(model?.id || '')
+      setFilterModelObject(model)
+      setCarColors(model?.carSkus || [])
+
+      const color = model?.carSkus.find((carSku) => carSku.id === colorId)
+      setFilterColor(color?.id || '')
+      setFilterColorObject(color)
+
+      refetch()
+    }
+  }, [isFetchedBrands, isFetchedActivities])
+
+  /**
+   * Use for triggering to reset all filters and fetch data again.
+   */
+  useEffect(() => {
+    if (resetFilters) {
+      refetch()
+      setResetFilters(false)
+    }
+  }, [resetFilters])
+
   const handleOnScheduleDialogClose = () => {
     setVisibleScheduleDialog(false)
   }
 
   const clearFilters = () => {
-    setSearchPlate('')
-    setSearchPlateError('')
+    setFilterPlate('')
+    setFilterPlateError('')
     setFilterBrand('')
     setFilterBrandObject(null)
     setFilterModel('')
@@ -270,66 +316,81 @@ export default function CarActivity(): JSX.Element {
     setFilterStartDate(dayjs())
     setCarModels([])
     setCarColors([])
-  }
-
-  const handleOnSearchPlate = () => {
-    // console.log('handleOnSearchPlate ->', {
-    //   searchPlate,
-    // })
+    setResetFilters(true)
+    history.push({
+      search: '',
+    })
   }
 
   const handleOnClickFilters = () => {
-    // console.log('handleOnClickFilters ->', {
-    //   filterBrand,
-    //   filterModel,
-    //   filterColor,
-    //   filterStatus,
-    //   filterStartDate,
-    // })
+    setPage(1) // reset current page to be 1
+
+    const searchParams = new URLSearchParams()
+    if (filterBrand) {
+      searchParams.append('brand', filterBrand)
+    }
+    if (filterModel) {
+      searchParams.append('model', filterModel)
+    }
+    if (filterColor) {
+      searchParams.append('color', filterColor)
+    }
+    if (filterPlate) {
+      searchParams.append('plate', filterPlate)
+    }
+    if (filterStatus) {
+      searchParams.append('status', filterStatus)
+    }
+    history.push({
+      search: `?${searchParams.toString()}`,
+    })
+
+    setResetFilters(true)
   }
 
-  const handleOnPlateChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleOnPlateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const isKeywordAccepted = validateKeywordText(value)
 
-    setSearchPlate(value)
-    setSearchPlateError('')
+    setFilterPlate(value)
+    setFilterPlateError('')
 
     if (isKeywordAccepted && value.length >= 2) {
-      setSearchPlate(value)
+      setFilterPlate(value)
     } else if (value !== '') {
-      setSearchPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
+      setFilterPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
     } else {
-      setSearchPlate('')
+      setFilterPlate('')
     }
   }
 
-  const handleOnBrandChange = (brandId: string) => {
-    setCarModels([])
+  const handleOnEnterPlateChange = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleOnClickFilters()
+    }
+  }
+
+  const handleOnBrandChange = (brand: CarBrand) => {
+    setFilterBrand(brand.id)
+    setFilterBrandObject(brand)
     setFilterModelObject(null)
     setFilterColorObject(null)
-    if (brandId) {
-      setFilterBrand(brandId)
-      setCarModels(carModelsJson.filter(({ brand_id }) => brand_id === brandId) || [])
-    }
+    setCarModels(brand.carModels)
   }
 
-  const handleOnModelChange = (modelId: string) => {
-    setCarColors([])
+  const handleOnModelChange = (model: CarModel) => {
+    setFilterModelObject(model)
     setFilterColorObject(null)
-    if (modelId) {
-      setFilterModel(modelId)
-      setCarColors(carColorsJson.filter((carColor) => carColor.model_id === modelId) || [])
-    }
+    setFilterModel(model.id)
+    setCarColors(model.carSkus)
   }
 
-  const handleOnColorChange = (colorId: string) => {
-    if (colorId) {
-      setFilterColor(colorId)
-    }
+  const handleOnColorChange = (color: CarColor) => {
+    setFilterColor(color.id)
+    setFilterColorObject(color)
   }
 
-  const handleOnStatusChange = (event: ChangeEvent<{ name?: string; value: unknown }>) => {
+  const handleOnStatusChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     const status = event.target.value as string
     if (status) {
       setFilterStatus(status)
@@ -356,8 +417,8 @@ export default function CarActivity(): JSX.Element {
               <Grid item xs={8} sm={9}>
                 <FormControl variant="outlined" className={classes.fullWidth}>
                   <TextField
-                    error={!!searchPlateError}
-                    helperText={searchPlateError}
+                    error={!!filterPlateError}
+                    helperText={filterPlateError}
                     fullWidth
                     variant="outlined"
                     label={t('carActivity.plateNumber.label')}
@@ -366,21 +427,10 @@ export default function CarActivity(): JSX.Element {
                       shrink: true,
                     }}
                     onChange={handleOnPlateChange}
-                    value={searchPlate}
+                    onKeyDown={handleOnEnterPlateChange}
+                    value={filterPlate}
                   />
                 </FormControl>
-              </Grid>
-              <Grid item xs={4} sm={3}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.buttonWithoutShadow}
-                  type="submit"
-                  disabled={!searchPlate || !!searchPlateError}
-                  onClick={() => handleOnSearchPlate()}
-                >
-                  {t('button.search')}
-                </Button>
               </Grid>
             </Grid>
           </Grid>
@@ -404,7 +454,7 @@ export default function CarActivity(): JSX.Element {
             <Autocomplete
               autoHighlight
               id="brand-select-list"
-              options={carBrands}
+              options={carBrands || []}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField {...params} label={t('carActivity.brand.label')} variant="outlined" />
@@ -412,9 +462,8 @@ export default function CarActivity(): JSX.Element {
               value={filterBrandObject || null}
               defaultValue={filterBrandObject || null}
               onChange={(_event, value) => {
-                if (value || value === '') {
-                  setFilterBrandObject(value)
-                  handleOnBrandChange(value.id)
+                if (value) {
+                  handleOnBrandChange(value)
                 }
               }}
             />
@@ -432,9 +481,8 @@ export default function CarActivity(): JSX.Element {
               value={filterModelObject || null}
               defaultValue={filterModelObject || null}
               onChange={(_event, value) => {
-                if (value || value === '') {
-                  setFilterModelObject(value)
-                  handleOnModelChange(value.id)
+                if (value) {
+                  handleOnModelChange(value)
                 }
               }}
             />
@@ -445,16 +493,15 @@ export default function CarActivity(): JSX.Element {
               id="color-select-list"
               disabled={carColors.length < 1}
               options={carColors}
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => option.color}
               renderInput={(params) => (
                 <TextField {...params} label={t('carActivity.color.label')} variant="outlined" />
               )}
               value={filterColorObject || null}
               defaultValue={filterColorObject || null}
               onChange={(_event, value) => {
-                if (value || value === '') {
-                  setFilterColorObject(value)
-                  handleOnColorChange(value.id)
+                if (value) {
+                  handleOnColorChange(value)
                 }
               }}
             />
@@ -576,7 +623,7 @@ export default function CarActivity(): JSX.Element {
                 <Select
                   value={carActivitiesData?.pagination?.size || pageSize}
                   defaultValue={carActivitiesData?.pagination?.size || pageSize}
-                  onChange={(event: ChangeEvent<{ name?: string; value: unknown }>) => {
+                  onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
                     setPage(1)
                     setPageSize(event.target.value as number)
                   }}
@@ -592,7 +639,7 @@ export default function CarActivity(): JSX.Element {
                 defaultPage={carActivitiesData?.pagination?.page || page}
                 variant="text"
                 shape="rounded"
-                onChange={(_event: ChangeEvent<unknown>, value: number) => {
+                onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
                   setPage(value)
                 }}
               />
