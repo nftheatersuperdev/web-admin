@@ -68,6 +68,9 @@ const useStyles = makeStyles({
   searchWrapper: {
     margin: '20px 0',
   },
+  buttonClearAllFilters: {
+    padding: '16px 9px 16px 9px !important',
+  },
   buttonWithoutShadow: {
     display: 'inline-flexbox',
     boxShadow: 'none',
@@ -122,6 +125,9 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '20px',
+  },
+  filter: {
+    height: '90px',
   },
 })
 
@@ -418,7 +424,7 @@ export default function CarActivity(): JSX.Element {
         <Typography color="textPrimary">{t('sidebar.carActivity')}</Typography>
       </Breadcrumbs>
       <div className={classes.searchWrapper}>
-        <Grid container spacing={2} className={classes.gridContainer}>
+        {/* <Grid container spacing={2} className={classes.gridContainer}>
           <Grid item xs={9} sm={9} lg={5}>
             <Grid container spacing={1}>
               <Grid item xs={8} sm={9}>
@@ -448,30 +454,69 @@ export default function CarActivity(): JSX.Element {
               </Button>
             </div>
           </Grid>
-        </Grid>
+        </Grid> */}
         <Grid
           container
-          spacing={2}
+          spacing={1}
           direction="row"
           justifyContent="flex-start"
           alignItems="center"
           className={classes.gridContainer}
         >
-          <Grid item className="filter-brand" xs={6} sm={4} md={2} lg={2} xl={1}>
+          <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
+            <FormControl variant="outlined" className={classes.fullWidth}>
+              <TextField
+                error={!!filterPlateError}
+                helperText={filterPlateError}
+                fullWidth
+                variant="outlined"
+                label={t('carActivity.plateNumber.label')}
+                placeholder={t('carActivity.plateNumber.placeholder')}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={handleOnPlateChange}
+                onKeyDown={handleOnEnterPlateChange}
+                value={filterPlate}
+              />
+            </FormControl>
+          </Grid>
+          <Grid
+            item
+            className={[classes.filter, 'filter-brand'].join(' ')}
+            xs={12}
+            sm={6}
+            md={6}
+            lg={2}
+            xl={2}
+          >
             <Autocomplete
               autoHighlight
               id="brand-select-list"
               options={carBrands || []}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
-                <TextField {...params} label={t('carActivity.brand.label')} variant="outlined" />
+                <TextField
+                  {...params}
+                  label={t('carActivity.brand.label')}
+                  variant="outlined"
+                  placeholder="All"
+                />
               )}
               value={filterBrandObject || null}
               defaultValue={filterBrandObject || null}
               onChange={(_event, value) => handleOnBrandChange(value)}
             />
           </Grid>
-          <Grid item className="filter-model" xs={6} sm={4} md={2} lg={2} xl={1}>
+          <Grid
+            item
+            className={[classes.filter, 'filter-model'].join(' ')}
+            xs={12}
+            sm={6}
+            md={3}
+            lg={2}
+            xl={2}
+          >
             <Autocomplete
               autoHighlight
               id="model-select-list"
@@ -486,7 +531,15 @@ export default function CarActivity(): JSX.Element {
               onChange={(_event, value) => handleOnModelChange(value)}
             />
           </Grid>
-          <Grid item className="filter-color" xs={6} sm={4} md={2} lg={2} xl={1}>
+          <Grid
+            item
+            className={[classes.filter, 'filter-color'].join(' ')}
+            xs={12}
+            sm={6}
+            md={3}
+            lg={2}
+            xl={2}
+          >
             <Autocomplete
               autoHighlight
               id="color-select-list"
@@ -501,7 +554,15 @@ export default function CarActivity(): JSX.Element {
               onChange={(_event, value) => handleOnColorChange(value)}
             />
           </Grid>
-          <Grid item className="filter-status" xs={6} sm={4} md={2} lg={2} xl={1}>
+          <Grid
+            item
+            className={[classes.hide, 'filter-status'].join(' ')}
+            xs={12}
+            sm={6}
+            md={2}
+            lg={2}
+            xl={1}
+          >
             <FormControl variant="outlined" className={classes.fullWidth}>
               <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
               <Select
@@ -518,7 +579,15 @@ export default function CarActivity(): JSX.Element {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item className="filter-start-date" xs={12} sm={8} md={4} lg={2} xl={2}>
+          <Grid
+            item
+            className={[classes.hide, 'filter-start-date'].join(' ')}
+            xs={12}
+            sm={6}
+            md={4}
+            lg={2}
+            xl={2}
+          >
             <FormControl variant="outlined" className={classes.fullWidth}>
               <DatePicker
                 inputVariant="outlined"
@@ -532,7 +601,15 @@ export default function CarActivity(): JSX.Element {
               />
             </FormControl>
           </Grid>
-          <Grid item className="filter-buttons" xs={12} sm={12} md={12} lg={2}>
+          <Grid
+            item
+            className={[classes.filter, 'filter-buttons'].join(' ')}
+            xs={6}
+            sm={6}
+            md={4}
+            lg={2}
+            xl={2}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -545,6 +622,7 @@ export default function CarActivity(): JSX.Element {
             <Button
               color="secondary"
               className={[
+                classes.buttonClearAllFilters,
                 classes.buttonWithoutShadow,
                 classes.buttonOverridePadding,
                 !applyFilters ? classes.displayNone : '',
@@ -552,6 +630,19 @@ export default function CarActivity(): JSX.Element {
               onClick={() => clearFilters()}
             >
               X {t('button.clearAll')}
+            </Button>
+          </Grid>
+          <Grid
+            item
+            className={[classes.filter, classes.textRight].join(' ')}
+            xs={6}
+            sm={6}
+            md={2}
+            lg={1}
+            xl={1}
+          >
+            <Button variant="contained" color="primary" className={classes.buttonWithoutShadow}>
+              {t('button.export')}
             </Button>
           </Grid>
         </Grid>
