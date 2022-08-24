@@ -405,12 +405,13 @@ export default function CarActivity(): JSX.Element {
     setFilterModel('')
     setFilterModelObject(defaultSelectList.modelAll)
     setFilterColor('')
+    setFilterColorObject(defaultSelectList.colorEmpty)
     setCarModels(brand?.carModels || [])
+    setCarColors([])
 
     if (!brand) {
       setFilterModelObject(defaultSelectList.modelEmpty)
       setFilterColorObject(defaultSelectList.colorEmpty)
-      setCarColors([])
       setResetFilters(true)
       adjustBrowserHistory()
     }
