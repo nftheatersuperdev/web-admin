@@ -500,7 +500,7 @@ export default function CarActivity(): JSX.Element {
                   {...params}
                   label={t('carActivity.brand.label')}
                   variant="outlined"
-                  placeholder="All"
+                  placeholder={t('all')}
                 />
               )}
               value={filterBrandObject || null}
@@ -524,7 +524,12 @@ export default function CarActivity(): JSX.Element {
               options={carModels}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
-                <TextField {...params} label={t('carActivity.model.label')} variant="outlined" />
+                <TextField
+                  {...params}
+                  label={t('carActivity.model.label')}
+                  variant="outlined"
+                  placeholder={t('all')}
+                />
               )}
               value={filterModelObject || null}
               defaultValue={filterModelObject || null}
@@ -547,7 +552,12 @@ export default function CarActivity(): JSX.Element {
               options={carColors}
               getOptionLabel={(option) => option.color}
               renderInput={(params) => (
-                <TextField {...params} label={t('carActivity.color.label')} variant="outlined" />
+                <TextField
+                  {...params}
+                  label={t('carActivity.color.label')}
+                  variant="outlined"
+                  placeholder={t('all')}
+                />
               )}
               value={filterColorObject || null}
               defaultValue={filterColorObject || null}
