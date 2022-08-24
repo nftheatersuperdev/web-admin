@@ -839,10 +839,12 @@
       "label": "Brand"
     },
     "model": {
-      "label": "Model"
+      "label": "Model",
+      "emptyValue": "Select Brand"
     },
     "color": {
-      "label": "Color"
+      "label": "Color",
+      "emptyValue": "Select Model"
     },
     "status": {
       "label": "Car Status"

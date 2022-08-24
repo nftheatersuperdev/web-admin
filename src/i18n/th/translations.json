@@ -799,10 +799,12 @@
       "label": "ยี่ห้อ"
     },
     "model": {
-      "label": "รุ่น"
+      "label": "รุ่น",
+      "emptyValue": "เลือก ยี่ห้อ"
     },
     "color": {
-      "label": "สี"
+      "label": "สี",
+      "emptyValue": "เลือก รุ่น"
     },
     "status": {
       "label": "สถานะ"

@@ -70,6 +70,10 @@ const useStyles = makeStyles({
   },
   buttonClearAllFilters: {
     padding: '16px 9px 16px 9px !important',
+    color: '#3f51b5',
+    '&:hover, &:focus': {
+      background: 'none',
+    },
   },
   buttonWithoutShadow: {
     display: 'inline-flexbox',
@@ -142,6 +146,26 @@ export default function CarActivity(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
   const queryString = useQueryString()
+
+  const defaultSelectList = {
+    brandAll: { id: 'all', name: t('all'), carModels: [] },
+    modelEmpty: {
+      id: 'empty',
+      name: `-${t('carActivity.model.emptyValue')}-`,
+      subModelName: '',
+      year: 0,
+      carSkus: [],
+    },
+    modelAll: {
+      id: 'all',
+      name: t('all'),
+      subModelName: '',
+      year: 0,
+      carSkus: [],
+    },
+    colorEmpty: { id: 'empty', color: `-${t('carActivity.color.emptyValue')}-`, cars: [] },
+    colorAll: { id: 'all', color: t('all'), cars: [] },
+  }
 
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
@@ -309,6 +333,10 @@ export default function CarActivity(): JSX.Element {
     setVisibleScheduleDialog(false)
   }
 
+  const adjustBrowserHistory = (search = '') => {
+    history.push({ search })
+  }
+
   const clearFilters = () => {
     setFilterPlate('')
     setFilterPlateError('')
@@ -323,9 +351,7 @@ export default function CarActivity(): JSX.Element {
     setCarModels([])
     setCarColors([])
     setResetFilters(true)
-    history.push({
-      search: '',
-    })
+    adjustBrowserHistory()
   }
 
   const handleOnClickFilters = () => {
@@ -347,10 +373,7 @@ export default function CarActivity(): JSX.Element {
     if (filterStatus) {
       searchParams.append('status', filterStatus)
     }
-    history.push({
-      search: `?${searchParams.toString()}`,
-    })
-
+    adjustBrowserHistory(`?${searchParams.toString()}`)
     setResetFilters(true)
   }
 
@@ -378,29 +401,37 @@ export default function CarActivity(): JSX.Element {
 
   const handleOnBrandChange = (brand: CarBrand | null) => {
     setFilterBrand(brand?.id || '')
-    setFilterBrandObject(brand || null)
+    setFilterBrandObject(brand || defaultSelectList.brandAll)
     setFilterModel('')
-    setFilterModelObject(null)
+    setFilterModelObject(defaultSelectList.modelAll)
     setFilterColor('')
-    setFilterColorObject(null)
     setCarModels(brand?.carModels || [])
 
     if (!brand) {
+      setFilterModelObject(defaultSelectList.modelEmpty)
+      setFilterColorObject(defaultSelectList.colorEmpty)
+      setCarColors([])
       setResetFilters(true)
+      adjustBrowserHistory()
     }
   }
 
   const handleOnModelChange = (model: CarModel | null) => {
     setFilterModel(model?.id || '')
-    setFilterModelObject(model || null)
+    setFilterModelObject(model || defaultSelectList.modelAll)
     setFilterColor('')
-    setFilterColorObject(null)
+    setFilterColorObject(defaultSelectList.colorAll)
     setCarColors(model?.carSkus || [])
+
+    if (!model) {
+      setFilterColorObject(defaultSelectList.colorEmpty)
+      setCarColors([])
+    }
   }
 
   const handleOnColorChange = (color: CarColor | null) => {
     setFilterColor(color?.id || '')
-    setFilterColorObject(color || null)
+    setFilterColorObject(color || defaultSelectList.colorAll)
   }
 
   const handleOnStatusChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
@@ -503,8 +534,8 @@ export default function CarActivity(): JSX.Element {
                   placeholder={t('all')}
                 />
               )}
-              value={filterBrandObject || null}
-              defaultValue={filterBrandObject || null}
+              value={filterBrandObject || defaultSelectList.brandAll}
+              defaultValue={filterBrandObject || defaultSelectList.brandAll}
               onChange={(_event, value) => handleOnBrandChange(value)}
             />
           </Grid>
@@ -531,8 +562,8 @@ export default function CarActivity(): JSX.Element {
                   placeholder={t('all')}
                 />
               )}
-              value={filterModelObject || null}
-              defaultValue={filterModelObject || null}
+              value={filterModelObject || defaultSelectList.modelEmpty}
+              defaultValue={filterModelObject || defaultSelectList.modelEmpty}
               onChange={(_event, value) => handleOnModelChange(value)}
             />
           </Grid>
@@ -559,8 +590,8 @@ export default function CarActivity(): JSX.Element {
                   placeholder={t('all')}
                 />
               )}
-              value={filterColorObject || null}
-              defaultValue={filterColorObject || null}
+              value={filterColorObject || defaultSelectList.colorEmpty}
+              defaultValue={filterColorObject || defaultSelectList.colorEmpty}
               onChange={(_event, value) => handleOnColorChange(value)}
             />
           </Grid>
