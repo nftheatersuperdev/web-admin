@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/ban-types */
 import dayjs, { Dayjs } from 'dayjs'
 import React, { Fragment, useEffect, useState, useMemo } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
@@ -145,7 +146,7 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
-  const queryString = useQueryString()
+  const browserQueryString = useQueryString()
 
   const defaultSelectList = {
     brandAll: { id: 'all', name: t('all'), carModels: [] },
@@ -192,6 +193,18 @@ export default function CarActivity(): JSX.Element {
     !!filterColor ||
     !!filterStatus ||
     filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
+
+  const plate = browserQueryString.get('plate')
+  const brandId = browserQueryString.get('brand')
+  const modelId = browserQueryString.get('model')
+  const colorId = browserQueryString.get('color')
+
+  const appQueryString = {
+    plate: filterPlate,
+    brand: filterBrand,
+    model: filterModel,
+    color: filterColor,
+  }
 
   const { data: carBrands, isFetched: isFetchedBrands } = useQuery('get-car-brands', () =>
     getCarBrands()
@@ -294,11 +307,6 @@ export default function CarActivity(): JSX.Element {
    */
   useEffect(() => {
     if (isFetchedBrands && carBrands && carBrands?.length > 0) {
-      const plate = queryString.get('plate')
-      const brandId = queryString.get('brand')
-      const modelId = queryString.get('model')
-      const colorId = queryString.get('color')
-
       setFilterPlate(plate || '')
 
       const brand = carBrands.find((carBrand) => carBrand.id === brandId)
@@ -325,6 +333,7 @@ export default function CarActivity(): JSX.Element {
   useEffect(() => {
     if (resetFilters) {
       refetch()
+      adjustBrowserHistory()
       setResetFilters(false)
     }
   }, [resetFilters])
@@ -333,8 +342,17 @@ export default function CarActivity(): JSX.Element {
     setVisibleScheduleDialog(false)
   }
 
-  const adjustBrowserHistory = (search = '') => {
-    history.push({ search })
+  const adjustBrowserHistory = (params = {}) => {
+    const adjustParams = {
+      ...appQueryString,
+      ...params,
+    }
+    const validParams: {} = Object.fromEntries(
+      Object.entries(adjustParams).filter(([_key, value]) => !!value)
+    )
+    const searchParams = new URLSearchParams(validParams)
+
+    return history.push({ search: `?${searchParams.toString()}` })
   }
 
   const clearFilters = () => {
@@ -351,29 +369,10 @@ export default function CarActivity(): JSX.Element {
     setCarModels([])
     setCarColors([])
     setResetFilters(true)
-    adjustBrowserHistory()
   }
 
   const handleOnClickFilters = () => {
     setPage(1) // reset current page to be 1
-
-    const searchParams = new URLSearchParams()
-    if (filterBrand) {
-      searchParams.append('brand', filterBrand)
-    }
-    if (filterModel) {
-      searchParams.append('model', filterModel)
-    }
-    if (filterColor) {
-      searchParams.append('color', filterColor)
-    }
-    if (filterPlate) {
-      searchParams.append('plate', filterPlate)
-    }
-    if (filterStatus) {
-      searchParams.append('status', filterStatus)
-    }
-    adjustBrowserHistory(`?${searchParams.toString()}`)
     setResetFilters(true)
   }
 
@@ -390,6 +389,7 @@ export default function CarActivity(): JSX.Element {
       setFilterPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
     } else {
       setFilterPlate('')
+      setResetFilters(true)
     }
   }
 
@@ -413,7 +413,6 @@ export default function CarActivity(): JSX.Element {
       setFilterModelObject(defaultSelectList.modelEmpty)
       setFilterColorObject(defaultSelectList.colorEmpty)
       setResetFilters(true)
-      adjustBrowserHistory()
     }
   }
 
