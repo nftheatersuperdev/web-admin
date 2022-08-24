@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/ban-types */
 import dayjs, { Dayjs } from 'dayjs'
 import React, { Fragment, useEffect, useState, useMemo } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
@@ -325,6 +326,7 @@ export default function CarActivity(): JSX.Element {
   useEffect(() => {
     if (resetFilters) {
       refetch()
+      adjustBrowserHistory()
       setResetFilters(false)
     }
   }, [resetFilters])
@@ -333,8 +335,20 @@ export default function CarActivity(): JSX.Element {
     setVisibleScheduleDialog(false)
   }
 
-  const adjustBrowserHistory = (search = '') => {
-    history.push({ search })
+  const adjustBrowserHistory = (params = {}) => {
+    const adjustParams = {
+      plate: filterPlate,
+      brand: filterBrand,
+      model: filterModel,
+      color: filterColor,
+      ...params,
+    }
+    const validParams: {} = Object.fromEntries(
+      Object.entries(adjustParams).filter(([_key, value]) => !!value)
+    )
+    const searchParams = new URLSearchParams(validParams)
+
+    return history.push({ search: `?${searchParams.toString()}` })
   }
 
   const clearFilters = () => {
@@ -351,29 +365,10 @@ export default function CarActivity(): JSX.Element {
     setCarModels([])
     setCarColors([])
     setResetFilters(true)
-    adjustBrowserHistory()
   }
 
   const handleOnClickFilters = () => {
     setPage(1) // reset current page to be 1
-
-    const searchParams = new URLSearchParams()
-    if (filterBrand) {
-      searchParams.append('brand', filterBrand)
-    }
-    if (filterModel) {
-      searchParams.append('model', filterModel)
-    }
-    if (filterColor) {
-      searchParams.append('color', filterColor)
-    }
-    if (filterPlate) {
-      searchParams.append('plate', filterPlate)
-    }
-    if (filterStatus) {
-      searchParams.append('status', filterStatus)
-    }
-    adjustBrowserHistory(`?${searchParams.toString()}`)
     setResetFilters(true)
   }
 
@@ -390,6 +385,7 @@ export default function CarActivity(): JSX.Element {
       setFilterPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
     } else {
       setFilterPlate('')
+      setResetFilters(true)
     }
   }
 
@@ -413,7 +409,6 @@ export default function CarActivity(): JSX.Element {
       setFilterModelObject(defaultSelectList.modelEmpty)
       setFilterColorObject(defaultSelectList.colorEmpty)
       setResetFilters(true)
-      adjustBrowserHistory()
     }
   }
 
