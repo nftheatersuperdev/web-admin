@@ -146,7 +146,7 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
-  const browserQueryString = useQueryString()
+  const queryString = useQueryString()
 
   const defaultSelectList = {
     brandAll: { id: 'all', name: t('all'), carModels: [] },
@@ -193,18 +193,6 @@ export default function CarActivity(): JSX.Element {
     !!filterColor ||
     !!filterStatus ||
     filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
-
-  const plate = browserQueryString.get('plate')
-  const brandId = browserQueryString.get('brand')
-  const modelId = browserQueryString.get('model')
-  const colorId = browserQueryString.get('color')
-
-  const appQueryString = {
-    plate: filterPlate,
-    brand: filterBrand,
-    model: filterModel,
-    color: filterColor,
-  }
 
   const { data: carBrands, isFetched: isFetchedBrands } = useQuery('get-car-brands', () =>
     getCarBrands()
@@ -307,6 +295,11 @@ export default function CarActivity(): JSX.Element {
    */
   useEffect(() => {
     if (isFetchedBrands && carBrands && carBrands?.length > 0) {
+      const plate = queryString.get('plate')
+      const brandId = queryString.get('brand')
+      const modelId = queryString.get('model')
+      const colorId = queryString.get('color')
+
       setFilterPlate(plate || '')
 
       const brand = carBrands.find((carBrand) => carBrand.id === brandId)
@@ -344,7 +337,10 @@ export default function CarActivity(): JSX.Element {
 
   const adjustBrowserHistory = (params = {}) => {
     const adjustParams = {
-      ...appQueryString,
+      plate: filterPlate,
+      brand: filterBrand,
+      model: filterModel,
+      color: filterColor,
       ...params,
     }
     const validParams: {} = Object.fromEntries(
