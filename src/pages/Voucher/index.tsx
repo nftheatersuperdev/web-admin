@@ -26,6 +26,7 @@ import {
   geEqualtDateOperators,
   FieldComparisons,
   FieldKeyOparators,
+  stripHtml,
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
@@ -161,7 +162,8 @@ export default function Voucher(): JSX.Element {
       flex: 1,
       sortable: false,
       filterOperators: containOperators,
-      valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
+      valueFormatter: ({ value }: GridValueFormatterParams) =>
+        value ? stripHtml(value as string) : '-',
     },
     {
       field: 'descriptionTh',
@@ -171,7 +173,8 @@ export default function Voucher(): JSX.Element {
       flex: 1,
       sortable: false,
       filterable: false,
-      valueFormatter: (params: GridValueFormatterParams) => params.value ?? '-',
+      valueFormatter: ({ value }: GridValueFormatterParams) =>
+        value ? stripHtml(value as string) : '-',
     },
     {
       field: 'discountPercent',
