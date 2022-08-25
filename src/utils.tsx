@@ -625,3 +625,5 @@ export const geEqualtDateTimeOperators = (t: TFunction<Namespace>): GridFilterOp
 export const convertMoneyFormat = (value: number, minimunDigit = 2): string => {
   return value ? value.toLocaleString('th', { minimumFractionDigits: minimunDigit }) : ''
 }
+
+export const stripHtml = (string: string): string => string.replace(/(<([^>]+)>)/gi, '')
