@@ -229,7 +229,7 @@ export default function VoucherGeneralInformationTab({
             id="startAt"
             name="startAt"
             format={DEFAULT_DATETIME_FORMAT}
-            minDate={isEdit ? formik.values.startAt : defaultDate.startAt}
+            minDate={defaultDate.startAt}
             minDateMessage=""
             defaultValue={formik.values.startAt}
             value={formik.values.startAt}
