@@ -376,7 +376,6 @@ export default function CarActivity(): JSX.Element {
     const { value } = event.target
     const isKeywordAccepted = validateKeywordText(value)
 
-    setFilterPlate(value)
     setFilterPlateError('')
 
     if (isKeywordAccepted && value.length >= 2) {
