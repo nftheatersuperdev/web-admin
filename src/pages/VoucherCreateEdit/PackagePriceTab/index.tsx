@@ -134,6 +134,7 @@ export default function VoucherPackagePriceTab({
     } else if (currentOption !== existsOption) {
       setPackageIsEqualToExists(false)
       setOptionIsEqualToExists(false)
+      setPackageIsEmpty(true)
     } else {
       setOptionIsEqualToExists(true)
     }
