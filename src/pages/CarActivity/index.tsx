@@ -148,6 +148,9 @@ export default function CarActivity(): JSX.Element {
   const history = useHistory()
   const queryString = useQueryString()
 
+  const conditionConfigs = {
+    minimumToFilterPlateNumber: 2,
+  }
   const defaultSelectList = {
     brandAll: { id: 'all', name: t('all'), carModels: [] },
     modelEmpty: {
@@ -187,7 +190,7 @@ export default function CarActivity(): JSX.Element {
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
   const applyFilters =
-    (!!filterPlate && filterPlate.length >= 2) ||
+    (!!filterPlate && filterPlate.length >= conditionConfigs.minimumToFilterPlateNumber) ||
     !!filterBrand ||
     !!filterModel ||
     !!filterColor ||
@@ -379,7 +382,7 @@ export default function CarActivity(): JSX.Element {
     setFilterPlate(value)
     setFilterPlateError('')
 
-    if (isKeywordAccepted && value.length >= 2) {
+    if (isKeywordAccepted && value.length >= conditionConfigs.minimumToFilterPlateNumber) {
       setFilterPlate(value)
     } else if (value !== '') {
       setFilterPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
