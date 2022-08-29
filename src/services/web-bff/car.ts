@@ -44,7 +44,7 @@ export const getListBFF = async ({
   page = 0,
 }: CarListFilterRequestProps): Promise<CarListBffResponse> => {
   const pageIndex = page + 1
-  const response: CarListBffResponse = await BaseApi.get('/v1/cars', {
+  const response: CarListBffResponse = await BaseApi.get('/v2/cars', {
     params: {
       ...filter,
       ...sort,
@@ -76,7 +76,7 @@ export const getAvailableListBFF = async ({
 export const getModelPriceById = async ({
   id,
 }: CarModelPriceByIdProps): Promise<CarModelPriceBff> => {
-  const response: CarModelPriceBff = await BaseApi.get(`/v1/car-models/${id}`).then(
+  const response: CarModelPriceBff = await BaseApi.get(`/v2/car-models/${id}`).then(
     (response) => response.data.data
   )
 
