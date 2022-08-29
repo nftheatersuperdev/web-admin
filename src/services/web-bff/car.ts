@@ -89,7 +89,7 @@ export const updateById = async ({
   plateNumber,
   isActive,
 }: CarUpdateByIdProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/cars/${id}`, {
+  await BaseApi.patch(`/v2/cars/${id}`, {
     vin,
     plateNumber,
     isActive,
@@ -102,7 +102,7 @@ export const updateCarModelById = async ({
   id,
   carModel,
 }: CarModelInputProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/car-models/${id}`, carModel)
+  await BaseApi.patch(`/v2/car-models/${id}`, carModel)
 
   return true
 }
