@@ -44,7 +44,7 @@ export const getListBFF = async ({
   page = 0,
 }: CarListFilterRequestProps): Promise<CarListBffResponse> => {
   const pageIndex = page + 1
-  const response: CarListBffResponse = await BaseApi.get('/v1/cars', {
+  const response: CarListBffResponse = await BaseApi.get('/v2/cars', {
     params: {
       ...filter,
       ...sort,
@@ -76,7 +76,7 @@ export const getAvailableListBFF = async ({
 export const getModelPriceById = async ({
   id,
 }: CarModelPriceByIdProps): Promise<CarModelPriceBff> => {
-  const response: CarModelPriceBff = await BaseApi.get(`/v1/car-models/${id}`).then(
+  const response: CarModelPriceBff = await BaseApi.get(`/v2/car-models/${id}`).then(
     (response) => response.data.data
   )
 
@@ -89,7 +89,7 @@ export const updateById = async ({
   plateNumber,
   isActive,
 }: CarUpdateByIdProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/cars/${id}`, {
+  await BaseApi.patch(`/v2/cars/${id}`, {
     vin,
     plateNumber,
     isActive,
@@ -102,7 +102,7 @@ export const updateCarModelById = async ({
   id,
   carModel,
 }: CarModelInputProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/car-models/${id}`, carModel)
+  await BaseApi.patch(`/v2/car-models/${id}`, carModel)
 
   return true
 }
