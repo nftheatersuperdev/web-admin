@@ -9,7 +9,7 @@ import {
   GridFilterItem,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { columnFormatDate, getOnlyEqualFilterOperators } from 'utils'
+import { columnFormatDate, getOnlyEqualFilterOperator } from 'utils'
 import config from 'config'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useQuery } from 'react-query'
@@ -32,7 +32,7 @@ export default function ModelAndPricing(): JSX.Element {
     isFetching,
   } = useQuery('model-and-pricing-page', () => getListBFF({ filter, page, size: pageSize }))
 
-  const onlyEqualFilterOperator = getOnlyEqualFilterOperators(t)
+  const onlyEqualFilterOperator = getOnlyEqualFilterOperator(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {

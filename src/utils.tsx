@@ -622,7 +622,7 @@ export const geEqualtDateTimeOperators = (t: TFunction<Namespace>): GridFilterOp
   },
 ]
 
-export const getOnlyEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+export const getOnlyEqualFilterOperator = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.equals'),
     value: FieldComparisons.equals,
