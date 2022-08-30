@@ -258,12 +258,14 @@
     },
     "status": "Status",
     "statuses": {
-      "published": "Published",
-      "inUse": "In Use",
+      "accepted": "Accepted",
       "available": "Available",
+      "inUse": "In Use",
       "outOfService": "Out of service",
+      "published": "Published",
       "reserved": "Reserved",
-      "accepted": "Accepted"
+      "upcomingCancelled": "Upcoming Cancelled",
+      "unknown": "Unknown"
     },
     "subscriptionId": "Subscription ID"
   },
@@ -919,7 +921,9 @@
       "endDate": "End Date",
       "service": "Service",
       "close": "Close",
-      "confirm": "Confirm Delete"
+      "confirm": "Confirm Delete",
+      "success": "The schedule has been deleted",
+      "error": "Something went wrong when deleting the schedule"
     }
   }
 }

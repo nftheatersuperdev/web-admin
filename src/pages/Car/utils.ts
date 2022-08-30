@@ -11,12 +11,13 @@ const STORAGE_KEYS = {
 }
 
 export const CarStatus = {
-  PUBLISHED: 'published',
-  IN_USE: 'in_use',
-  AVAILABLE: 'available',
-  OUT_OF_SERVICE: 'out_of_service',
-  RESERVED: 'reserved',
   ACCEPTED: 'accepted',
+  AVAILABLE: 'available',
+  IN_USE: 'in_use',
+  OUT_OF_SERVICE: 'out_of_service',
+  PUBLISHED: 'published',
+  RESERVED: 'reserved',
+  UPCOMING_CANCELLED: 'upcoming_cancelled',
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {

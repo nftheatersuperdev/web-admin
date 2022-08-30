@@ -38,7 +38,7 @@ import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import NoResultCard from 'components/NoResultCard'
-import { getSchedulesByCarId } from 'services/web-bff/car-activity'
+import { getSchedulesByCarId, deleteSchedule } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
 
 interface CarActivityDetailParams {
@@ -159,12 +159,18 @@ export default function CarActivityDetail(): JSX.Element {
 
   const handleOnCloseConfirmDialog = () => {
     setVisibleConfirmDialog(false)
+    if (!serviceSchedule) {
+      return toast.error('Service schedule not found')
+    }
     toast.promise(
-      Promise.resolve(true),
+      deleteSchedule({
+        bookingId: serviceSchedule.bookingId,
+        bookingDetailId: serviceSchedule.bookingDetailId,
+      }),
       {
         loading: t('toast.loading'),
-        success: 'Success message',
-        error: 'Error message',
+        success: t('carActivity.deleteDialog.success'),
+        error: t('carActivity.deleteDialog.error'),
       },
       {
         duration: 5000,
@@ -260,7 +266,22 @@ export default function CarActivityDetail(): JSX.Element {
           return t('car.statuses.inUse')
         }
 
-        return t('car.statuses.outOfService')
+        switch (params.value) {
+          case CarStatus.ACCEPTED:
+            return t('car.statuses.accepted')
+          case CarStatus.AVAILABLE:
+            return t('car.statuses.available')
+          case CarStatus.OUT_OF_SERVICE:
+            return t('car.statuses.outOfService')
+          case CarStatus.PUBLISHED:
+            return t('car.statuses.published')
+          case CarStatus.RESERVED:
+            return t('car.statuses.reserved')
+          case CarStatus.UPCOMING_CANCELLED:
+            return t('car.statuses.upcomingCancelled')
+          default:
+            return t('car.statuses.unknown')
+        }
       },
     },
     {
@@ -333,7 +354,8 @@ export default function CarActivityDetail(): JSX.Element {
       renderCell: (params: GridCellParams) => {
         const isUnableToEditOrDelete = dayjs(params.row.endDate).diff(dayjs()) < 0
         const isInRent = params.row.bookingType.id === CarActivityBookingTypeIds.RENT
-        const hideButton = params.row.status !== CarStatus.OUT_OF_SERVICE ? classes.hide : ''
+        const hideButton =
+          params.row.status === CarStatus.OUT_OF_SERVICE && !isInRent ? 'show-icons' : classes.hide
         const hideSubscriptionLink = isInRent ? '' : classes.hide
 
         return (
@@ -352,7 +374,7 @@ export default function CarActivityDetail(): JSX.Element {
               <DeleteIcon />
             </IconButton>
             <IconButton
-              className={hideButton}
+              // className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
               disabled={isUnableToEditOrDelete}
             >
@@ -538,7 +560,7 @@ export default function CarActivityDetail(): JSX.Element {
           open={visibleConfirmDialog}
           title={t('carActivity.deleteDialog.title')}
           htmlContent={generatelConfirmDeleteHtml(serviceSchedule, t)}
-          confirmText={`t('carActivity.deleteDialog.confirm')`}
+          confirmText={t('carActivity.deleteDialog.confirm')}
           cancelText={t('carActivity.deleteDialog.close')}
           onConfirm={handleOnCloseConfirmDialog}
           onCancel={() => setVisibleConfirmDialog(false)}
