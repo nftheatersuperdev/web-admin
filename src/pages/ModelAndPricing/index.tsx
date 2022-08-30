@@ -1,15 +1,22 @@
 import { useHistory } from 'react-router-dom'
 import { useState, useMemo, useEffect } from 'react'
 import { Card, IconButton } from '@material-ui/core'
-import { GridCellParams, GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
+import {
+  GridCellParams,
+  GridColDef,
+  GridPageChangeParams,
+  GridFilterModel,
+  GridFilterItem,
+} from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
-import { columnFormatDate, getIdFilterOperators } from 'utils'
+import { columnFormatDate, getOnlyEqualFilterOperators } from 'utils'
 import config from 'config'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useQuery } from 'react-query'
 import { getListBFF } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
+import { CarListFilterRequest } from 'services/web-bff/car.type'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 export default function ModelAndPricing(): JSX.Element {
@@ -17,19 +24,33 @@ export default function ModelAndPricing(): JSX.Element {
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
+  const [filter, setFilter] = useState<CarListFilterRequest>({})
 
   const {
     data: cars,
     refetch,
     isFetching,
-  } = useQuery('model-and-pricing-page', () => getListBFF({ page, size: pageSize }))
+  } = useQuery('model-and-pricing-page', () => getListBFF({ filter, page, size: pageSize }))
 
-  const idFilterOperators = getIdFilterOperators(t)
+  const onlyEqualFilterOperator = getOnlyEqualFilterOperators(t)
   const visibilityColumns = getVisibilityColumns()
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPage(0)
     setPageSize(params.pageSize)
+  }
+
+  const handleFilterChange = (params: GridFilterModel) => {
+    setFilter(
+      params.items.reduce((filter, { value }: GridFilterItem) => {
+        if (value) {
+          filter.carId = value
+        }
+
+        return filter
+      }, {} as CarListFilterRequest)
+    )
+    setPage(0)
   }
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -53,7 +74,7 @@ export default function ModelAndPricing(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [page, pageSize, refetch])
+  }, [filter, page, pageSize, refetch])
 
   const rowCount = cars?.data.pagination.totalRecords
   const rows = useMemo(
@@ -76,7 +97,7 @@ export default function ModelAndPricing(): JSX.Element {
       description: t('pricing.id'),
       hide: !visibilityColumns.id,
       flex: 1,
-      filterOperators: idFilterOperators,
+      filterOperators: onlyEqualFilterOperator,
     },
     {
       field: 'modelId',
@@ -84,7 +105,8 @@ export default function ModelAndPricing(): JSX.Element {
       description: t('pricing.modelId'),
       hide: !visibilityColumns.modelId,
       flex: 1,
-      filterOperators: idFilterOperators,
+      filterable: false,
+      // filterOperators: idFilterOperators,
     },
     {
       field: 'brand',
@@ -157,6 +179,7 @@ export default function ModelAndPricing(): JSX.Element {
           rows={rows}
           columns={columns}
           filterMode="server"
+          onFilterModelChange={handleFilterChange}
           loading={isFetching}
         />
       </Card>

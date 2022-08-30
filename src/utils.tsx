@@ -622,6 +622,22 @@ export const geEqualtDateTimeOperators = (t: TFunction<Namespace>): GridFilterOp
   },
 ]
 
+export const getOnlyEqualFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
+  {
+    label: t('filter.equals'),
+    value: FieldComparisons.equals,
+    getApplyFilterFn: (filterItem: GridFilterItem) => {
+      if (!filterItem.value) {
+        return null
+      }
+      return ({ value }: GridCellParams): boolean => {
+        return filterItem.value === value
+      }
+    },
+    InputComponent: GridFilterInputValue,
+  },
+]
+
 export const convertMoneyFormat = (value: number, minimunDigit = 2): string => {
   return value ? value.toLocaleString('th', { minimumFractionDigits: minimunDigit }) : ''
 }
