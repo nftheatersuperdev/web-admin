@@ -323,7 +323,7 @@ export default function CarActivityDetail(): JSX.Element {
       flex: 1,
       filterable: false,
       sortable: false,
-      renderCell: () => '-',
+      renderCell: (params: GridCellParams) => params.value || '-',
     },
     {
       field: 'action',

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/forbid-component-props */
 import { Fragment, useEffect, useState, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
@@ -96,6 +97,12 @@ export default function VoucherPackagePriceTab({
     `
   }
 
+  const isAllPackages = currentOption === selectOptions.ALL
+  const isCurrectPackageNotEqualToSelectedPackages =
+    JSON.stringify(currentPackages) !== JSON.stringify(selectedPackages)
+  const disableTheUpdateButton =
+    isInactive || isLoading || optionIsEqualToExists || packageIsEqualToExists || packageIsEmpty
+
   useEffect(() => {
     const voucherPackagePriceIds =
       voucher?.packagePrices?.map((voucherPackagePrice) => voucherPackagePrice.id) || []
@@ -106,11 +113,10 @@ export default function VoucherPackagePriceTab({
       setCurrentPackages(packages)
       setSelectedPackages(packages)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessToGetMasterPackagePrices])
 
   useEffect(() => {
-    if (JSON.stringify(currentPackages) !== JSON.stringify(selectedPackages)) {
+    if (isCurrectPackageNotEqualToSelectedPackages) {
       setPackageIsEqualToExists(false)
       setOptionIsEqualToExists(false)
     } else {
@@ -127,14 +133,18 @@ export default function VoucherPackagePriceTab({
   }, [selectedPackages])
 
   useEffect(() => {
-    if (currentOption === selectOptions.ALL && existsOption !== selectOptions.ALL) {
+    if (isAllPackages && existsOption !== selectOptions.ALL) {
       setOptionIsEqualToExists(false)
       setPackageIsEqualToExists(false)
       setPackageIsEmpty(false)
-    } else if (currentOption !== existsOption) {
+    } else if (currentOption !== existsOption && !isCurrectPackageNotEqualToSelectedPackages) {
       setPackageIsEqualToExists(false)
       setOptionIsEqualToExists(false)
       setPackageIsEmpty(true)
+    } else if (isCurrectPackageNotEqualToSelectedPackages) {
+      setOptionIsEqualToExists(true)
+      setPackageIsEqualToExists(false)
+      setOptionIsEqualToExists(false)
     } else {
       setOptionIsEqualToExists(true)
     }
@@ -149,8 +159,9 @@ export default function VoucherPackagePriceTab({
   }, [voucher])
 
   const handleOnSubmitted = () => {
-    if (currentOption === selectOptions.ALL) {
+    if (isAllPackages) {
       setSelectedPackages([])
+      setCurrentPackages([])
     }
     setPackageIsEmpty(true)
     setPackageIsEqualToExists(true)
@@ -162,9 +173,10 @@ export default function VoucherPackagePriceTab({
   const handleUpdatePackagePrices = async () => {
     setIsLoading(true)
     if (voucher) {
-      const isAllPackages = currentOption === selectOptions.ALL
       const packagePriceIds: string[] = selectedPackages?.map((row) => row.id)
       const userGroupIds: string[] = voucher.userGroups?.map((row) => row.id) || []
+
+      setCurrentPackages(selectedPackages)
 
       const updateObject: VoucherInputBff = {
         ...voucher,
@@ -191,13 +203,7 @@ export default function VoucherPackagePriceTab({
       <Grid container spacing={3}>
         <Grid item xs={12} style={{ textAlign: 'right' }}>
           <ButtonSpace
-            disabled={
-              isInactive ||
-              isLoading ||
-              optionIsEqualToExists ||
-              packageIsEqualToExists ||
-              packageIsEmpty
-            }
+            disabled={disableTheUpdateButton}
             onClick={() => handleUpdatePackagePrices()}
             color="primary"
             variant="contained"
