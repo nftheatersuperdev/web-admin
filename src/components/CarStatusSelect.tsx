@@ -12,9 +12,9 @@ export default function CarStatusSelect({ status, onChange }: CardStatusProps): 
 
   const statuses = [
     {
-      key: 'available',
-      value: 'available',
-      label: t('car.statuses.available'),
+      key: 'published',
+      value: 'published',
+      label: t('car.statuses.published'),
       isDefault: true,
     },
     {
