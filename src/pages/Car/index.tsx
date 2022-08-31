@@ -144,7 +144,7 @@ export default function Car(): JSX.Element {
         id: selectedCarId,
         vin: data.vin,
         plateNumber: data.plateNumber,
-        isActive: data.status === CarStatus.AVAILABLE,
+        isActive: data.status === CarStatus.PUBLISHED,
       }),
       {
         loading: t('toast.loading'),
@@ -192,7 +192,7 @@ export default function Car(): JSX.Element {
         chargeTime: car?.carSku?.carModel.chargeTime,
         fastChargeTime: car?.carSku?.carModel.fastChargeTime,
         connectorType: connectorType.length > 0 ? connectorType : '-',
-        status: car?.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
+        status: car?.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
         createdDate: car?.createdDate,
         updatedDate: car?.updatedDate,
       }
