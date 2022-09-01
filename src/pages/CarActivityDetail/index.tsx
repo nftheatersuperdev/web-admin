@@ -29,7 +29,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
 import carActivitiesJson from 'data/car-activity.json'
-import { DEFAULT_DATE_FORMAT } from 'utils'
+import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatCarStatus, CarStatus } from 'pages/Car/utils'
@@ -38,7 +38,7 @@ import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import NoResultCard from 'components/NoResultCard'
-import { getSchedulesByCarId } from 'services/web-bff/car-activity'
+import { getSchedulesByCarId, getServices } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
 
 interface CarActivityDetailParams {
@@ -78,6 +78,13 @@ const useStyles = makeStyles({
     boxShadow: 'none',
     padding: '16px 20px',
   },
+  buttonClearAllFilters: {
+    // padding: '16px 9px 16px 9px !important',
+    color: '#3f51b5',
+    '&:hover, &:focus': {
+      background: 'none',
+    },
+  },
   table: {
     '& .MuiDataGrid-columnHeaderTitle': {
       fontWeight: 'bold',
@@ -95,7 +102,7 @@ function CustomToolBar() {
 
 export default function CarActivityDetail(): JSX.Element {
   const classes = useStyles()
-  const { id } = useParams<CarActivityDetailParams>()
+  const { id: carId } = useParams<CarActivityDetailParams>()
   const { t, i18n } = useTranslation()
   const isThaiLanguage = i18n.language === 'th'
 
@@ -105,18 +112,32 @@ export default function CarActivityDetail(): JSX.Element {
   const [totalSchedules] = useState<number>(0)
   const [serviceSchedule, setServiceSchedule] = useState<CarActivitySchedule | null>(null)
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
-  const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(
-    dayjs().startOf('day')
-  )
-  const [filterEndDate, setFilterEndDate] = useState<MaterialUiPickersDate | Dayjs>(
-    dayjs().endOf('day').add(1, 'day')
-  )
-  const [filterCarStatus, setFilterCarStatus] = useState<string>('')
+  const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs | null>(null)
+  const [filterEndDate, setFilterEndDate] = useState<MaterialUiPickersDate | Dayjs | null>(null)
+  const [filterService, setFilterService] = useState<string | undefined>(undefined)
+  const [resetFilters, setResetFilters] = useState<boolean>(false)
 
-  const carActivity = carActivitiesJson.activities.find((activity) => activity.id === id)
-  const { data: carActivityData, refetch } = useQuery('get-car-activities', () =>
-    getSchedulesByCarId(id)
+  const carActivity = carActivitiesJson.activities.find((activity) => activity.id === carId)
+  const { data: carActivityData, refetch } = useQuery(
+    'get-car-activities',
+    () =>
+      getSchedulesByCarId({
+        carId,
+        bookingTypeId: filterService,
+        startDate: filterStartDate?.format(DEFAULT_DATE_FORMAT_BFF),
+        endDate: filterEndDate?.format(DEFAULT_DATE_FORMAT_BFF),
+      }),
+    {
+      retry: 0,
+      onError: (error) => {
+        if (error instanceof Error) {
+          return toast.error(error.message)
+        }
+        return toast.error(t('error.unknown'))
+      },
+    }
   )
+  const { data: activityServiceList } = useQuery('car-activity-service-types', () => getServices())
 
   const serviceSchedules =
     (carActivityData &&
@@ -130,17 +151,27 @@ export default function CarActivityDetail(): JSX.Element {
     []
 
   const isNoData = serviceSchedules.length < 1
+  const isThereFilter = filterStartDate || filterEndDate || filterService
 
   useEffect(() => {
     refetch()
   }, [totalSchedules, page, pageSize])
 
-  const handleOnClickFilters = () => {
-    // console.log('handleOnClickFilters ->', {
-    //   filterStartDate,
-    //   filterEndDate,
-    //   filterService,
-    // })
+  /**
+   * Use for triggering to reset all filters and fetch data again.
+   */
+  useEffect(() => {
+    if (resetFilters) {
+      refetch()
+      setResetFilters(false)
+    }
+  }, [resetFilters])
+
+  const handleOnClickClearAllFilters = () => {
+    setFilterStartDate(null)
+    setFilterEndDate(null)
+    setFilterService('')
+    setResetFilters(true)
   }
 
   const handleOnClickButton = (scheduleId: string, action: ScheduleActions) => {
@@ -454,7 +485,10 @@ export default function CarActivityDetail(): JSX.Element {
                 inputVariant="outlined"
                 label={t('carActivity.startDate.label')}
                 format="DD/MM/YYYY"
-                onChange={(date) => setFilterStartDate(date)}
+                onChange={(date) => {
+                  setFilterStartDate(date)
+                  setFilterEndDate(date)
+                }}
                 value={filterStartDate}
                 defaultValue={filterStartDate}
               />
@@ -475,18 +509,27 @@ export default function CarActivityDetail(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={2}>
             <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
+              <InputLabel id="service-label">{t('carActivity.service.label')}</InputLabel>
               <Select
-                labelId="status-label"
-                id="status"
-                label={t('carActivity.status.label')}
-                onChange={({ target: { value } }) => setFilterCarStatus(value as string)}
-                value={filterCarStatus}
-                defaultValue={filterCarStatus}
+                labelId="service-label"
+                id="service"
+                label={t('carActivity.service.label')}
+                onChange={({ target: { value } }) => setFilterService(value as string)}
+                value={filterService || ''}
+                defaultValue=""
               >
-                <MenuItem value="in_use">{t('car.statuses.inUse')}</MenuItem>
-                <MenuItem value="available">{t('car.statuses.available')}</MenuItem>
-                <MenuItem value="out_of_service">{t('car.statuses.outOfService')}</MenuItem>
+                <MenuItem value="">{t('all')}</MenuItem>
+                {activityServiceList &&
+                  activityServiceList.length > 0 &&
+                  activityServiceList
+                    .filter((service) => service.id !== CarActivityBookingTypeIds.RENT)
+                    .map((service, index) => {
+                      return (
+                        <MenuItem key={`${index}-${service.id}`} value={service.id}>
+                          {isThaiLanguage ? service.nameTh : service.nameEn}
+                        </MenuItem>
+                      )
+                    })}
               </Select>
             </FormControl>
           </Grid>
@@ -495,9 +538,20 @@ export default function CarActivityDetail(): JSX.Element {
               variant="contained"
               color="primary"
               className={classes.buttonWithoutShadow}
-              onClick={() => handleOnClickFilters()}
+              onClick={() => refetch()}
             >
               {t('button.filter')}
+            </Button>
+            <Button
+              color="secondary"
+              className={[
+                classes.buttonWithoutShadow,
+                classes.buttonClearAllFilters,
+                !isThereFilter ? classes.hide : '',
+              ].join(' ')}
+              onClick={() => handleOnClickClearAllFilters()}
+            >
+              {t('button.clearAll')}
             </Button>
           </Grid>
         </Grid>
@@ -527,7 +581,7 @@ export default function CarActivityDetail(): JSX.Element {
         <ActivityScheduleDialog
           visible={visibleScheduleDialog}
           serviceSchedule={serviceSchedule}
-          carId={id}
+          carId={carId}
           onClose={() => {
             refetch()
             setServiceSchedule(null)

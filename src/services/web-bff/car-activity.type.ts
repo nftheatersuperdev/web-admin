@@ -65,6 +65,13 @@ export interface CarActivityListProps {
   plateNumber?: string
 }
 
+export interface CarActivityScheduleListProps {
+  carId: string
+  bookingTypeId?: string
+  startDate?: string
+  endDate?: string
+}
+
 export type CarActivityResponse = {
   data: {
     cars: CarActivity[]

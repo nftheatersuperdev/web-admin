@@ -3,6 +3,7 @@ import {
   CarActivity,
   CarActivityResponse,
   CarActivitySchedule,
+  CarActivityScheduleListProps,
   CarActivityCreateScheduleProps,
   CarActivityService,
   CarActivityListProps,
@@ -39,13 +40,29 @@ export const getActivities = async (
   return response
 }
 
-export const getSchedulesByCarId = async (carId: string): Promise<CarActivitySchedule[]> => {
+export const getSchedulesByCarId = async ({
+  carId,
+  bookingTypeId,
+  startDate,
+  endDate,
+}: CarActivityScheduleListProps): Promise<CarActivitySchedule[]> => {
   /**
    * The API doesn't has pagination right now.
    */
-  const response: CarActivitySchedule[] = await BaseApi.get(`/v1/bookings/carId/${carId}`).then(
-    (response) => response.data.data
-  )
+  const response: CarActivitySchedule[] = await BaseApi.get(`/v1/bookings/carId/${carId}`, {
+    params: {
+      bookingTypeId,
+      startDate,
+      endDate,
+    },
+  })
+    .then(({ data }) => data.data)
+    .catch((error) => {
+      if (error?.response?.data) {
+        throw new Error(`${error.response.data.message} (${error.response.data.status})`)
+      }
+      throw error
+    })
 
   return response
 }
