@@ -61,6 +61,17 @@ export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => 
   },
 ]
 
+export const getCarStatusOnlyUsedInBackendOptions = (t: TFunction<Namespace>): SelectOption[] => [
+  {
+    label: t('car.statuses.published'),
+    value: CarStatus.PUBLISHED,
+  },
+  {
+    label: t('car.statuses.outOfService'),
+    value: CarStatus.OUT_OF_SERVICE,
+  },
+]
+
 export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): string => {
   if (!status) {
     return '-'

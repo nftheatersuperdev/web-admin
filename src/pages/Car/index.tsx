@@ -29,7 +29,7 @@ import { getListBFF, updateById } from 'services/web-bff/car'
 import { CarListFilterRequest, CarUpdateInput } from 'services/web-bff/car.type'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 import {
-  getCarStatusOptions,
+  getCarStatusOnlyUsedInBackendOptions,
   columnFormatCarStatus,
   getVisibilityColumns,
   setVisibilityColumns,
@@ -62,7 +62,7 @@ export default function Car(): JSX.Element {
 
   const equalAndContainOperators = getEqualAndContainFilterOperators(t)
   const selectFilterOperators = getSelectEqualFilterOperators(t)
-  const statusOptions = getCarStatusOptions(t)
+  const statusOptions = getCarStatusOnlyUsedInBackendOptions(t)
   const visibilityColumns = getVisibilityColumns()
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function Car(): JSX.Element {
         if (value) {
           if (isStatus) {
             keyOfValue = 'isActive'
-            value = value === 'available'
+            value = value === CarStatus.PUBLISHED
           } else {
             switch (operatorValue) {
               case FieldComparisons.equals:
@@ -144,7 +144,7 @@ export default function Car(): JSX.Element {
         id: selectedCarId,
         vin: data.vin,
         plateNumber: data.plateNumber,
-        isActive: data.status === CarStatus.AVAILABLE,
+        isActive: data.status === CarStatus.PUBLISHED,
       }),
       {
         loading: t('toast.loading'),
@@ -192,7 +192,7 @@ export default function Car(): JSX.Element {
         chargeTime: car?.carSku?.carModel.chargeTime,
         fastChargeTime: car?.carSku?.carModel.fastChargeTime,
         connectorType: connectorType.length > 0 ? connectorType : '-',
-        status: car?.isActive ? CarStatus.AVAILABLE : CarStatus.OUT_OF_SERVICE,
+        status: car?.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
         createdDate: car?.createdDate,
         updatedDate: car?.updatedDate,
       }
