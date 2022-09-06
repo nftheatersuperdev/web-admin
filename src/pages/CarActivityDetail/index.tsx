@@ -352,11 +352,10 @@ export default function CarActivityDetail(): JSX.Element {
       description: t('carActivity.action.label'),
       flex: 1,
       renderCell: (params: GridCellParams) => {
-        const isUnableToEditOrDelete = dayjs(params.row.endDate).diff(dayjs()) < 0
+        const isUnableToEditOrDelete = dayjs(params.row.startDate).diff(dayjs()) < 0
         const isInRent = params.row.bookingType.id === CarActivityBookingTypeIds.RENT
-        const hideButton =
-          params.row.status === CarStatus.OUT_OF_SERVICE && !isInRent ? 'show-icons' : classes.hide
-        const hideSubscriptionLink = isInRent ? '' : classes.hide
+        const hideButton = isInRent || isUnableToEditOrDelete ? classes.hide : ''
+        const hideSubscriptionLink = !isInRent ? classes.hide : ''
 
         return (
           <Fragment>
@@ -374,7 +373,7 @@ export default function CarActivityDetail(): JSX.Element {
               <DeleteIcon />
             </IconButton>
             <IconButton
-              // className={hideButton}
+              className={hideButton}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
               disabled={isUnableToEditOrDelete}
             >
