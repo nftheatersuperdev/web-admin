@@ -17,6 +17,7 @@ import {
   InputLabel,
   Select,
   Typography,
+  OutlinedInput,
 } from '@material-ui/core'
 import {
   GridColDef,
@@ -105,6 +106,9 @@ export default function CarActivityDetail(): JSX.Element {
   const { id: carId } = useParams<CarActivityDetailParams>()
   const { t, i18n } = useTranslation()
   const isThaiLanguage = i18n.language === 'th'
+  const fixEndDateDays = 31 // the number of date from our PO to fix it
+  const fixFilterStartDate = dayjs()
+  const fixFilterEndDate = fixFilterStartDate.add(fixEndDateDays, 'days')
 
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(10)
@@ -112,9 +116,11 @@ export default function CarActivityDetail(): JSX.Element {
   const [totalSchedules] = useState<number>(0)
   const [serviceSchedule, setServiceSchedule] = useState<CarActivitySchedule | null>(null)
   const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
-  const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs | null>(null)
-  const [filterEndDate, setFilterEndDate] = useState<MaterialUiPickersDate | Dayjs | null>(null)
-  const [filterService, setFilterService] = useState<string | undefined>(undefined)
+  const [filterStartDate, setFilterStartDate] =
+    useState<MaterialUiPickersDate | Dayjs | null>(fixFilterStartDate)
+  const [filterEndDate, setFilterEndDate] =
+    useState<MaterialUiPickersDate | Dayjs | null>(fixFilterEndDate)
+  const [filterService, setFilterService] = useState<string>('')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
 
   const carActivity = carActivitiesJson.activities.find((activity) => activity.id === carId)
@@ -138,6 +144,7 @@ export default function CarActivityDetail(): JSX.Element {
     }
   )
   const { data: activityServiceList } = useQuery('car-activity-service-types', () => getServices())
+  console.log('activityServiceList ->', activityServiceList)
 
   const serviceSchedules =
     (carActivityData &&
@@ -151,7 +158,12 @@ export default function CarActivityDetail(): JSX.Element {
     []
 
   const isNoData = serviceSchedules.length < 1
-  const isThereFilter = filterStartDate || filterEndDate || filterService
+  const isThereFilter =
+    filterStartDate?.format(DEFAULT_DATE_FORMAT_BFF) !==
+      fixFilterStartDate.format(DEFAULT_DATE_FORMAT_BFF) ||
+    filterEndDate?.format(DEFAULT_DATE_FORMAT_BFF) !==
+      fixFilterEndDate.format(DEFAULT_DATE_FORMAT_BFF) ||
+    filterService
 
   useEffect(() => {
     refetch()
@@ -168,8 +180,8 @@ export default function CarActivityDetail(): JSX.Element {
   }, [resetFilters])
 
   const handleOnClickClearAllFilters = () => {
-    setFilterStartDate(null)
-    setFilterEndDate(null)
+    setFilterStartDate(fixFilterStartDate)
+    setFilterEndDate(fixFilterEndDate)
     setFilterService('')
     setResetFilters(true)
   }
@@ -491,8 +503,10 @@ export default function CarActivityDetail(): JSX.Element {
                 label={t('carActivity.startDate.label')}
                 format="DD/MM/YYYY"
                 onChange={(date) => {
-                  setFilterStartDate(date)
-                  setFilterEndDate(date)
+                  if (date) {
+                    setFilterStartDate(date)
+                    setFilterEndDate(date.add(fixEndDateDays, 'days'))
+                  }
                 }}
                 value={filterStartDate}
                 defaultValue={filterStartDate}
@@ -508,20 +522,22 @@ export default function CarActivityDetail(): JSX.Element {
                 onChange={(date) => setFilterEndDate(date)}
                 value={filterEndDate}
                 defaultValue={filterEndDate}
-                minDate={filterStartDate}
+                minDate={filterStartDate?.add(2, 'days')}
               />
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={2}>
             <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel id="service-label">{t('carActivity.service.label')}</InputLabel>
+              <InputLabel shrink id="service-label">
+                {t('carActivity.service.label')}
+              </InputLabel>
               <Select
                 labelId="service-label"
                 id="service"
-                label={t('carActivity.service.label')}
                 onChange={({ target: { value } }) => setFilterService(value as string)}
-                value={filterService || ''}
-                defaultValue=""
+                value={filterService}
+                displayEmpty
+                input={<OutlinedInput notched label={t('carActivity.service.label')} />}
               >
                 <MenuItem value="">{t('all')}</MenuItem>
                 {activityServiceList &&
@@ -550,6 +566,7 @@ export default function CarActivityDetail(): JSX.Element {
             <Button
               color="secondary"
               className={[
+                classes.hide,
                 classes.buttonWithoutShadow,
                 classes.buttonClearAllFilters,
                 !isThereFilter ? classes.hide : '',
