@@ -257,12 +257,14 @@
     },
     "status": "สถานะ",
     "statuses": {
-      "published": "เปิด",
-      "inUse": "กำลังใช้งาน",
+      "accepted": "ยอมรับ",
       "available": "พร้อมใช้งาน",
+      "inUse": "กำลังใช้งาน",
       "outOfService": "ไม่พร้อมใช้งาน",
-      "reserved": "[Reserved]",
-      "accepted": "[Accepted]"
+      "published": "เปิด",
+      "reserved": "จอง",
+      "upcomingCancelled": "กำลังถูกยกเลิก",
+      "unknown": "ไม่ทราบ"
     },
     "subscriptionId": "หมายเลขการจอง"
   },
@@ -879,7 +881,9 @@
       "endDate": "วันที่สิ้นสุด",
       "service": "เหตุผล",
       "close": "ปิด",
-      "confirm": "ยืนยัน"
+      "confirm": "ยืนยัน",
+      "success": "ตารางเวลาถูกลบเรียบร้อยแล้ว",
+      "error": "เกิดข้อผิดพลาดบางอย่างขณะทำการลบตารางเวลา"
     }
   }
 }

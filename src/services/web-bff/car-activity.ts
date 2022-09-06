@@ -1,18 +1,17 @@
 import { BaseApi } from 'api/baseApi'
 import {
-  CarActivity,
   CarActivityResponse,
   CarActivitySchedule,
+  CarActivityScheduleDeleteProps,
+  CarActivityScheduleEditProps,
   CarActivityScheduleListProps,
   CarActivityCreateScheduleProps,
   CarActivityService,
   CarActivityListProps,
 } from 'services/web-bff/car-activity.type'
 
-export const createSchedule = async (
-  body: CarActivityCreateScheduleProps
-): Promise<CarActivity> => {
-  const response: CarActivity = await BaseApi.post('/v1/bookings/reservation', body)
+export const createSchedule = async (body: CarActivityCreateScheduleProps): Promise<boolean> => {
+  await BaseApi.post('/v1/bookings/reservation', body)
     .then(
       ({
         data: {
@@ -27,7 +26,7 @@ export const createSchedule = async (
       throw error
     })
 
-  return response
+  return true
 }
 
 export const getActivities = async (
@@ -75,9 +74,31 @@ export const getServices = async (): Promise<CarActivityService[]> => {
   return response
 }
 
+export const editSchedule = async ({
+  bookingId,
+  bookingDetailId,
+  data,
+}: CarActivityScheduleEditProps): Promise<boolean> => {
+  await BaseApi.patch(`/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`, data)
+
+  return true
+}
+
+export const deleteSchedule = async ({
+  bookingId,
+  bookingDetailId,
+}: CarActivityScheduleDeleteProps): Promise<boolean> => {
+  await BaseApi.delete(`/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`).then(
+    (response) => response.data.data
+  )
+
+  return true
+}
+
 export default {
   createSchedule,
   getActivities,
   getSchedulesByCarId,
   getServices,
+  deleteSchedule,
 }

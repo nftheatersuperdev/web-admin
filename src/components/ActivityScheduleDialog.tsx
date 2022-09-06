@@ -19,12 +19,8 @@ import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { validateRemarkText, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
-import { createSchedule, getServices } from 'services/web-bff/car-activity'
-import {
-  CarActivityCreateScheduleProps,
-  CarActivitySchedule,
-  CarActivityBookingTypeIds,
-} from 'services/web-bff/car-activity.type'
+import { createSchedule, editSchedule, getServices } from 'services/web-bff/car-activity'
+import { CarActivitySchedule, CarActivityBookingTypeIds } from 'services/web-bff/car-activity.type'
 
 interface Props {
   visible: boolean
@@ -85,7 +81,7 @@ export default function ActivityScheduleDialog({
       setState({
         startDate: dayjs(serviceSchedule?.startDate),
         endDate: dayjs(serviceSchedule?.endDate),
-        service: serviceSchedule?.bookingType.nameEn || '',
+        service: String(serviceSchedule?.bookingType.id) || '',
         remark: serviceSchedule?.remark || '',
       })
     }
@@ -106,17 +102,27 @@ export default function ActivityScheduleDialog({
   }
 
   const handleOnSave = async () => {
-    const requestToApi = isEdit ? createSchedule : createSchedule
     if (carId && state.startDate && state.endDate) {
-      const body: CarActivityCreateScheduleProps = {
-        carId,
-        bookingTypeId: state.service,
-        remark: state.remark,
-        startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
-        endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
-      }
+      const requestToApi =
+        isEdit && serviceSchedule
+          ? editSchedule({
+              bookingId: serviceSchedule.bookingId,
+              bookingDetailId: serviceSchedule.bookingDetailId,
+              data: {
+                remark: state.remark,
+                startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
+                endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
+              },
+            })
+          : createSchedule({
+              carId,
+              bookingTypeId: state.service,
+              remark: state.remark,
+              startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
+              endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
+            })
 
-      await toast.promise(requestToApi(body), {
+      await toast.promise(requestToApi, {
         loading: t('toast.loading'),
         success: () => {
           handleOnClose()

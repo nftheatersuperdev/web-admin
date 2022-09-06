@@ -71,6 +71,19 @@ export interface CarActivityScheduleListProps {
   startDate?: string
   endDate?: string
 }
+export interface CarActivityScheduleEditProps {
+  bookingId: string
+  bookingDetailId: string
+  data: {
+    startDate: string
+    endDate: string
+    remark: string | null
+  }
+}
+export interface CarActivityScheduleDeleteProps {
+  bookingId: string
+  bookingDetailId: string
+}
 
 export type CarActivityResponse = {
   data: {
