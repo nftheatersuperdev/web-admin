@@ -32,7 +32,7 @@ import carActivitiesJson from 'data/car-activity.json'
 import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
-import { columnFormatCarStatus, CarStatus } from 'pages/Car/utils'
+import { columnFormatCarStatus } from 'pages/Car/utils'
 import { getServiceLabel } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
@@ -296,23 +296,7 @@ export default function CarActivityDetail(): JSX.Element {
         if (params.row.bookingType.id === CarActivityBookingTypeIds.RENT) {
           return t('car.statuses.inUse')
         }
-
-        switch (params.value) {
-          case CarStatus.ACCEPTED:
-            return t('car.statuses.accepted')
-          case CarStatus.AVAILABLE:
-            return t('car.statuses.available')
-          case CarStatus.OUT_OF_SERVICE:
-            return t('car.statuses.outOfService')
-          case CarStatus.PUBLISHED:
-            return t('car.statuses.published')
-          case CarStatus.RESERVED:
-            return t('car.statuses.reserved')
-          case CarStatus.UPCOMING_CANCELLED:
-            return t('car.statuses.upcomingCancelled')
-          default:
-            return t('car.statuses.unknown')
-        }
+        return t('car.statuses.outOfService')
       },
     },
     {
