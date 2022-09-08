@@ -106,7 +106,7 @@ export const columnFormatCarVisibility = (isActive: boolean, t: TFunction<Namesp
   if (isActive) {
     return t('car.statuses.published')
   }
-  return t('car.statuses.outOfService')
+  return t('car.statuses.unpublished')
 }
 
 export interface VisibilityColumns {

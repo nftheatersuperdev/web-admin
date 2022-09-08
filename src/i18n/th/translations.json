@@ -261,7 +261,8 @@
       "available": "พร้อมใช้งาน",
       "inUse": "กำลังใช้งาน",
       "outOfService": "ไม่พร้อมใช้งาน",
-      "published": "เปิด",
+      "published": "เปิดใช้งาน",
+      "unpublished": "ไม่เปิดใช้งาน",
       "reserved": "จอง",
       "upcomingCancelled": "กำลังถูกยกเลิก",
       "unknown": "ไม่ทราบ"

@@ -419,7 +419,7 @@ export default function CarActivityDetail(): JSX.Element {
       <Breadcrumbs>
         <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
         <Link to="/car-activity">{t('sidebar.carActivity')}</Link>
-        <Typography color="textPrimary">{carDetail?.plateNumber}</Typography>
+        <Typography color="textPrimary">{carDetail?.plateNumber || '-'}</Typography>
       </Breadcrumbs>
 
       <Card className={classes.cardWrapper}>
@@ -471,7 +471,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.visibility.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {columnFormatCarVisibility(carDetail?.isActive as boolean, t)}
+            {carDetail ? columnFormatCarVisibility(carDetail.isActive, t) : '-'}
           </Grid>
         </Grid>
       </Card>
