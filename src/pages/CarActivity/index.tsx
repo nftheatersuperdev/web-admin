@@ -175,7 +175,7 @@ export default function CarActivity(): JSX.Element {
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [carId, setCarId] = useState<string>('')
-  const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
+  const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
   const [filterPlate, setFilterPlate] = useState<string>('')
   const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
@@ -261,7 +261,7 @@ export default function CarActivity(): JSX.Element {
                    * @TODO need to set the carId below
                    */
                   setCarId(carActivity.carId)
-                  setVisibleScheduleDialog(true)
+                  setVisibleAddDialog(true)
                 }}
                 type="button"
               >
@@ -335,7 +335,7 @@ export default function CarActivity(): JSX.Element {
   }, [resetFilters])
 
   const handleOnScheduleDialogClose = () => {
-    setVisibleScheduleDialog(false)
+    setVisibleAddDialog(false)
   }
 
   const adjustBrowserHistory = (params = {}) => {
@@ -774,7 +774,7 @@ export default function CarActivity(): JSX.Element {
         </Fragment>
       )}
       <ActivityScheduleDialog
-        visible={visibleScheduleDialog}
+        visible={visibleAddDialog}
         carId={carId}
         onClose={handleOnScheduleDialogClose}
       />

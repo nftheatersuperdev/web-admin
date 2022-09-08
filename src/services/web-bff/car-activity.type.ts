@@ -29,14 +29,14 @@ export interface CarActivity {
   carId: string
 }
 
-export interface CarActivitySchedule {
+export interface Schedule {
   bookingId: string
   bookingDetailId: string
   carId: Car['id']
   startDate: string
   endDate: string
   status: string
-  bookingType: CarActivityService
+  bookingType: ScheduleService
   remark: string | null
   updatedBy: AdminUser['id']
   updatedDate: string
@@ -50,7 +50,7 @@ export interface CarActivityCreateScheduleProps {
   remark: string | null
 }
 
-export interface CarActivityService {
+export interface ScheduleService {
   id: number
   nameEn: string
   nameTh: string
@@ -93,7 +93,7 @@ export type CarActivityResponse = {
 
 export type CarActivityScheduleResponse = {
   data: {
-    activities: CarActivitySchedule[]
+    activities: Schedule[]
   }
 } & ResponseWithPagination
 
@@ -106,6 +106,6 @@ export type CarActivityCreatedResponse = {
   }
 } & Response
 
-export type CarActivityServiceResponse = {
-  data: CarActivityService[]
+export type ScheduleServiceResponse = {
+  data: ScheduleService[]
 } & Response
