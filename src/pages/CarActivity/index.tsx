@@ -191,7 +191,9 @@ export default function CarActivity(): JSX.Element {
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
   const applyFilters =
-    (!!filterPlate && filterPlate.length >= conditionConfigs.minimumToFilterPlateNumber) ||
+    (!!filterPlate &&
+      filterPlate.length >= conditionConfigs.minimumToFilterPlateNumber &&
+      !filterPlateError) ||
     !!filterBrand ||
     !!filterModel ||
     !!filterColor ||
