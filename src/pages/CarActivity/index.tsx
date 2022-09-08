@@ -34,6 +34,7 @@ import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import NoResultCard from 'components/NoResultCard'
+import Backdrop from 'components/Backdrop'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
@@ -197,13 +198,16 @@ export default function CarActivity(): JSX.Element {
     !!filterStatus ||
     filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
 
-  const { data: carBrands, isFetched: isFetchedBrands } = useQuery('get-car-brands', () =>
-    getCarBrands()
-  )
+  const {
+    data: carBrands,
+    isFetched: isFetchedBrands,
+    isFetching: isFetchingBrands,
+  } = useQuery('get-car-brands', () => getCarBrands())
   const {
     data: carActivitiesData,
     refetch,
     isFetched: isFetchedActivities,
+    isFetching: isFetchingActivities,
   } = useQuery('get-car-activities', () =>
     getActivities({
       page,
@@ -778,6 +782,7 @@ export default function CarActivity(): JSX.Element {
         carId={carId}
         onClose={handleOnScheduleDialogClose}
       />
+      <Backdrop open={isFetchingBrands || isFetchingActivities} />
     </Page>
   )
 }

@@ -38,6 +38,7 @@ import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import NoResultCard from 'components/NoResultCard'
+import Backdrop from 'components/Backdrop'
 import { getCarById } from 'services/web-bff/car'
 import {
   getSchedulesByCarId,
@@ -129,9 +130,18 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterService, setFilterService] = useState<string>('')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
 
-  const { data: scheduleServices } = useQuery('schedule-services', () => getScheduleServices())
-  const { data: carDetail } = useQuery('car-detail', () => getCarById(carId))
-  const { data: carSchedulesData, refetch } = useQuery(
+  const { data: scheduleServices, isFetching: isFetchingScheduleServices } = useQuery(
+    'schedule-services',
+    () => getScheduleServices()
+  )
+  const { data: carDetail, isFetching: isFetchingCarDetail } = useQuery('car-detail', () =>
+    getCarById(carId)
+  )
+  const {
+    data: carSchedulesData,
+    refetch,
+    isFetching: isFetchingCarSchedulesData,
+  } = useQuery(
     'car-schedules',
     () =>
       getSchedulesByCarId({
@@ -632,6 +642,9 @@ export default function CarActivityDetail(): JSX.Element {
           onCancel={() => setVisibleDeleteConfirmationDialog(false)}
         />
       </Card>
+      <Backdrop
+        open={isFetchingScheduleServices || isFetchingCarDetail || isFetchingCarSchedulesData}
+      />
     </Page>
   )
 }
