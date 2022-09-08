@@ -144,7 +144,6 @@ export default function CarActivityDetail(): JSX.Element {
     }
   )
   const { data: activityServiceList } = useQuery('car-activity-service-types', () => getServices())
-  console.log('activityServiceList ->', activityServiceList)
 
   const serviceSchedules =
     (carActivityData &&
