@@ -263,6 +263,7 @@
       "inUse": "In Use",
       "outOfService": "Out of service",
       "published": "Published",
+      "unpublished": "Unpublished",
       "reserved": "Reserved",
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { BaseApi } from 'api/baseApi'
 import {
+  CarBff,
   CarListProps,
   CarListFilterRequestProps,
   CarListResponse,
@@ -12,6 +13,13 @@ import {
   CarModelPriceByIdProps,
   CarModelInputProps,
 } from 'services/web-bff/car.type'
+
+export const getCarById = async (carId: string): Promise<CarBff> => {
+  const carDetail: CarBff = await BaseApi.get(`/v1/cars/${carId}`).then(
+    (response) => response?.data.data.car
+  )
+  return carDetail
+}
 
 export const getList = async ({
   accessToken,
@@ -108,6 +116,7 @@ export const updateCarModelById = async ({
 }
 
 export default {
+  getCarById,
   getList,
   getModelPriceById,
   updateById,

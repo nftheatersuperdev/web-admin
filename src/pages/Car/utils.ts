@@ -102,6 +102,13 @@ export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): 
   }
 }
 
+export const columnFormatCarVisibility = (isActive: boolean, t: TFunction<Namespace>): string => {
+  if (isActive) {
+    return t('car.statuses.published')
+  }
+  return t('car.statuses.unpublished')
+}
+
 export interface VisibilityColumns {
   [key: string]: boolean
 }

@@ -29,16 +29,16 @@ import {
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
-import carActivitiesJson from 'data/car-activity.json'
 import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
-import { columnFormatCarStatus } from 'pages/Car/utils'
+import { columnFormatCarVisibility } from 'pages/Car/utils'
 import { getServiceLabel } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import NoResultCard from 'components/NoResultCard'
+import { getCarById } from 'services/web-bff/car'
 import { getSchedulesByCarId, getServices, deleteSchedule } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
 
@@ -123,7 +123,6 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterService, setFilterService] = useState<string>('')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
 
-  const carActivity = carActivitiesJson.activities.find((activity) => activity.id === carId)
   const { data: carActivityData, refetch } = useQuery(
     'get-car-activities',
     () =>
@@ -144,6 +143,7 @@ export default function CarActivityDetail(): JSX.Element {
     }
   )
   const { data: activityServiceList } = useQuery('car-activity-service-types', () => getServices())
+  const { data: carDetail } = useQuery('car-detail', () => getCarById(carId))
 
   const serviceSchedules =
     (carActivityData &&
@@ -419,7 +419,7 @@ export default function CarActivityDetail(): JSX.Element {
       <Breadcrumbs>
         <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
         <Link to="/car-activity">{t('sidebar.carActivity')}</Link>
-        <Typography color="textPrimary">{carActivity?.plateNumber}</Typography>
+        <Typography color="textPrimary">{carDetail?.plateNumber || '-'}</Typography>
       </Breadcrumbs>
 
       <Card className={classes.cardWrapper}>
@@ -431,7 +431,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.activityId.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carActivity?.id}
+            {carDetail?.id || '-'}
           </Grid>
         </Grid>
         <Grid className="brand" container spacing={4}>
@@ -439,7 +439,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.brand.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carActivity?.carModel.brand_name}
+            {carDetail?.carSku.carModel.brand.name || '-'}
           </Grid>
         </Grid>
         <Grid className="model" container spacing={4}>
@@ -447,7 +447,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.model.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carActivity?.carModel.model_name}
+            {carDetail?.carSku.carModel.name || '-'}
           </Grid>
         </Grid>
         <Grid className="color" container spacing={4}>
@@ -455,7 +455,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.color.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carActivity?.carModel.color_name}
+            {carDetail?.carSku.color || '-'}
           </Grid>
         </Grid>
         <Grid className="plateNumber" container spacing={4}>
@@ -463,7 +463,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.plateNumber.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carActivity?.plateNumber}
+            {carDetail?.plateNumber || '-'}
           </Grid>
         </Grid>
         <Grid className="visibility" container spacing={4}>
@@ -471,7 +471,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.visibility.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {columnFormatCarStatus(carActivity?.status as string, t)}
+            {carDetail ? columnFormatCarVisibility(carDetail.isActive, t) : '-'}
           </Grid>
         </Grid>
       </Card>
