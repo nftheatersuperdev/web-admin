@@ -34,6 +34,7 @@ import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import NoResultCard from 'components/NoResultCard'
+import Backdrop from 'components/Backdrop'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
@@ -175,7 +176,7 @@ export default function CarActivity(): JSX.Element {
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [carId, setCarId] = useState<string>('')
-  const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
+  const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
   const [filterPlate, setFilterPlate] = useState<string>('')
   const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
@@ -190,20 +191,25 @@ export default function CarActivity(): JSX.Element {
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
   const applyFilters =
-    (!!filterPlate && filterPlate.length >= conditionConfigs.minimumToFilterPlateNumber) ||
+    (!!filterPlate &&
+      filterPlate.length >= conditionConfigs.minimumToFilterPlateNumber &&
+      !filterPlateError) ||
     !!filterBrand ||
     !!filterModel ||
     !!filterColor ||
     !!filterStatus ||
     filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
 
-  const { data: carBrands, isFetched: isFetchedBrands } = useQuery('get-car-brands', () =>
-    getCarBrands()
-  )
+  const {
+    data: carBrands,
+    isFetched: isFetchedBrands,
+    isFetching: isFetchingBrands,
+  } = useQuery('get-car-brands', () => getCarBrands())
   const {
     data: carActivitiesData,
     refetch,
     isFetched: isFetchedActivities,
+    isFetching: isFetchingActivities,
   } = useQuery('get-car-activities', () =>
     getActivities({
       page,
@@ -261,7 +267,7 @@ export default function CarActivity(): JSX.Element {
                    * @TODO need to set the carId below
                    */
                   setCarId(carActivity.carId)
-                  setVisibleScheduleDialog(true)
+                  setVisibleAddDialog(true)
                 }}
                 type="button"
               >
@@ -335,7 +341,7 @@ export default function CarActivity(): JSX.Element {
   }, [resetFilters])
 
   const handleOnScheduleDialogClose = () => {
-    setVisibleScheduleDialog(false)
+    setVisibleAddDialog(false)
   }
 
   const adjustBrowserHistory = (params = {}) => {
@@ -774,10 +780,11 @@ export default function CarActivity(): JSX.Element {
         </Fragment>
       )}
       <ActivityScheduleDialog
-        visible={visibleScheduleDialog}
+        visible={visibleAddDialog}
         carId={carId}
         onClose={handleOnScheduleDialogClose}
       />
+      <Backdrop open={isFetchingBrands || isFetchingActivities} />
     </Page>
   )
 }

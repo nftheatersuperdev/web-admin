@@ -19,13 +19,13 @@ import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { validateRemarkText, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
-import { createSchedule, editSchedule, getServices } from 'services/web-bff/car-activity'
-import { CarActivitySchedule, CarActivityBookingTypeIds } from 'services/web-bff/car-activity.type'
+import { createSchedule, editSchedule, getScheduleServices } from 'services/web-bff/car-activity'
+import { Schedule, CarActivityBookingTypeIds } from 'services/web-bff/car-activity.type'
 
 interface Props {
   visible: boolean
   carId?: string
-  serviceSchedule?: CarActivitySchedule | null
+  serviceSchedule?: Schedule | null
   onClose: (refetch?: boolean) => void
 }
 
@@ -54,9 +54,10 @@ export default function ActivityScheduleDialog({
   const isEdit = !!serviceSchedule
   const isThaiLanguage = i18n.language === 'th'
 
+  const todayDate = dayjs()
   const defaultState = {
-    startDate: dayjs().startOf('day'),
-    endDate: dayjs().endOf('day'),
+    startDate: todayDate.startOf('day'),
+    endDate: todayDate.endOf('day'),
     service: '',
     remark: '',
   }
@@ -66,15 +67,18 @@ export default function ActivityScheduleDialog({
   const [remarkError, setRemarkError] = useState<string>('')
 
   const { data: activityServiceList, isFetched: isFetchedServices } = useQuery(
-    'car-activity-service-types',
-    () => getServices()
+    'schedule-services',
+    () => getScheduleServices()
   )
 
   const startMaxDate = defaultState.startDate.add(1, 'year')
-  const endDateMaxDate = state.startDate ? state.startDate.add(5, 'year') : dayjs().add(5, 'years')
-
-  const isEndDateDisabled =
-    isEdit && state.endDate && state?.endDate.diff(dayjs(), 'day') < 0 ? true : false
+  const endDateMaxDate = state.startDate
+    ? state.startDate.add(5, 'year')
+    : todayDate.add(5, 'years')
+  const isDisableStartDate =
+    isEdit && state.startDate && state?.startDate.diff(todayDate, 'day') < 0 ? true : false
+  const isDisableEndDate =
+    isEdit && state.endDate && state?.endDate.diff(todayDate, 'day') < 0 ? true : false
 
   useEffect(() => {
     if (isEdit && serviceSchedule) {
@@ -204,8 +208,9 @@ export default function ActivityScheduleDialog({
                 format="DD/MM/YYYY"
                 value={state.startDate}
                 onChange={handleOnStartDateChange}
-                minDate={isEdit ? state.startDate : dayjs()}
+                minDate={todayDate}
                 maxDate={startMaxDate}
+                disabled={isDisableStartDate}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -220,7 +225,7 @@ export default function ActivityScheduleDialog({
                 onChange={handleOnEndDateChange}
                 minDate={state.startDate}
                 maxDate={endDateMaxDate}
-                disabled={isEndDateDisabled}
+                disabled={isDisableEndDate}
               />
             </Grid>
           </Grid>

@@ -38,9 +38,15 @@ import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
 import NoResultCard from 'components/NoResultCard'
+import Backdrop from 'components/Backdrop'
 import { getCarById } from 'services/web-bff/car'
-import { getSchedulesByCarId, getServices, deleteSchedule } from 'services/web-bff/car-activity'
-import { CarActivityBookingTypeIds, CarActivitySchedule } from 'services/web-bff/car-activity.type'
+import {
+  getSchedulesByCarId,
+  getScheduleServices,
+  deleteSchedule,
+  ScheduleStatus,
+} from 'services/web-bff/car-activity'
+import { CarActivityBookingTypeIds, Schedule } from 'services/web-bff/car-activity.type'
 
 interface CarActivityDetailParams {
   id: string
@@ -112,10 +118,11 @@ export default function CarActivityDetail(): JSX.Element {
 
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [visibleConfirmDialog, setVisibleConfirmDialog] = useState<boolean>(false)
   const [totalSchedules] = useState<number>(0)
-  const [serviceSchedule, setServiceSchedule] = useState<CarActivitySchedule | null>(null)
-  const [visibleScheduleDialog, setVisibleScheduleDialog] = useState<boolean>(false)
+  const [serviceSchedule, setServiceSchedule] = useState<Schedule | null>(null)
+  const [visibleDeleteConfirmationDialog, setVisibleDeleteConfirmationDialog] =
+    useState<boolean>(false)
+  const [visibleUpdateDialog, setVisibleUpdateDialog] = useState<boolean>(false)
   const [filterStartDate, setFilterStartDate] =
     useState<MaterialUiPickersDate | Dayjs | null>(fixFilterStartDate)
   const [filterEndDate, setFilterEndDate] =
@@ -123,8 +130,19 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterService, setFilterService] = useState<string>('')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
 
-  const { data: carActivityData, refetch } = useQuery(
-    'get-car-activities',
+  const { data: scheduleServices, isFetching: isFetchingScheduleServices } = useQuery(
+    'schedule-services',
+    () => getScheduleServices()
+  )
+  const { data: carDetail, isFetching: isFetchingCarDetail } = useQuery('car-detail', () =>
+    getCarById(carId)
+  )
+  const {
+    data: carSchedulesData,
+    refetch,
+    isFetching: isFetchingCarSchedulesData,
+  } = useQuery(
+    'car-schedules',
     () =>
       getSchedulesByCarId({
         carId,
@@ -142,21 +160,25 @@ export default function CarActivityDetail(): JSX.Element {
       },
     }
   )
-  const { data: activityServiceList } = useQuery('car-activity-service-types', () => getServices())
-  const { data: carDetail } = useQuery('car-detail', () => getCarById(carId))
 
-  const serviceSchedules =
-    (carActivityData &&
-      carActivityData.length > 0 &&
-      carActivityData.map((carActivity) => {
-        return {
-          id: carActivity.bookingId,
-          ...carActivity,
-        }
-      })) ||
+  const carSchedules =
+    (carSchedulesData &&
+      carSchedulesData.length > 0 &&
+      carSchedulesData
+        /**
+         * Filtering the deleted status out of the list.
+         * @TODO Remove the filter after the API is done.
+         */
+        .filter((schedule) => schedule.status !== ScheduleStatus.UPCOMING_CANCELLED)
+        .map((schedule) => {
+          return {
+            id: schedule.bookingId,
+            ...schedule,
+          }
+        })) ||
     []
 
-  const isNoData = serviceSchedules.length < 1
+  const isNoData = carSchedules.length < 1
   const isThereFilter =
     filterStartDate?.format(DEFAULT_DATE_FORMAT_BFF) !==
       fixFilterStartDate.format(DEFAULT_DATE_FORMAT_BFF) ||
@@ -186,21 +208,21 @@ export default function CarActivityDetail(): JSX.Element {
   }
 
   const handleOnClickButton = (scheduleId: string, action: ScheduleActions) => {
-    const schedule = serviceSchedules.find((row) => row.id === scheduleId)
+    const schedule = carSchedules.find((row) => row.id === scheduleId)
     if (!schedule) {
       return false
     }
     setServiceSchedule(schedule)
 
     if (action === ScheduleActions.Edit) {
-      setVisibleScheduleDialog(true)
+      setVisibleUpdateDialog(true)
     } else if (action === ScheduleActions.Delete) {
-      setVisibleConfirmDialog(true)
+      setVisibleDeleteConfirmationDialog(true)
     }
   }
 
-  const handleOnCloseConfirmDialog = () => {
-    setVisibleConfirmDialog(false)
+  const handleOnCloseDeleteConfirmationDialog = () => {
+    setVisibleDeleteConfirmationDialog(false)
     if (!serviceSchedule) {
       return toast.error('Service schedule not found')
     }
@@ -211,7 +233,10 @@ export default function CarActivityDetail(): JSX.Element {
       }),
       {
         loading: t('toast.loading'),
-        success: t('carActivity.deleteDialog.success'),
+        success: () => {
+          refetch()
+          return t('carActivity.deleteDialog.success')
+        },
         error: t('carActivity.deleteDialog.error'),
       },
       {
@@ -220,8 +245,8 @@ export default function CarActivityDetail(): JSX.Element {
     )
   }
 
-  const generatelConfirmDeleteHtml = (
-    schedule: CarActivitySchedule | null,
+  const generatelDeleteConfirmationHTML = (
+    schedule: Schedule | null,
     t: TFunction<Namespace>
   ): string => {
     if (!schedule) {
@@ -318,7 +343,7 @@ export default function CarActivityDetail(): JSX.Element {
       filterable: false,
       sortable: false,
       renderCell: (params: GridCellParams) => {
-        const bookingType = params.value as CarActivitySchedule['bookingType']
+        const bookingType = params.value as Schedule['bookingType']
         if (!bookingType) {
           return '-'
         }
@@ -378,30 +403,27 @@ export default function CarActivityDetail(): JSX.Element {
       description: t('carActivity.action.label'),
       flex: 1,
       renderCell: (params: GridCellParams) => {
-        const isUnableToEditOrDelete = dayjs(params.row.startDate).diff(dayjs()) < 0
         const isInRent = params.row.bookingType.id === CarActivityBookingTypeIds.RENT
-        const hideButton = isInRent || isUnableToEditOrDelete ? classes.hide : ''
-        const hideSubscriptionLink = !isInRent ? classes.hide : ''
+        const buttonClass = isInRent ? classes.hide : ''
+        const subscriptionLinkClass = !isInRent ? classes.hide : ''
 
         return (
           <Fragment>
             <Link
-              className={[hideSubscriptionLink, classes.marginTextButton].join(' ')}
+              className={[subscriptionLinkClass, classes.marginTextButton].join(' ')}
               to={generateLinkToSubscription(params.row.bookingDetailId)}
             >
               {t('carActivity.view.label')}
             </Link>
             <IconButton
-              className={hideButton}
+              className={buttonClass}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
-              disabled={isUnableToEditOrDelete}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
-              className={hideButton}
+              className={buttonClass}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
-              disabled={isUnableToEditOrDelete}
             >
               <EditIcon />
             </IconButton>
@@ -438,8 +460,9 @@ export default function CarActivityDetail(): JSX.Element {
           <Grid item xs={4} sm={2} className={classes.textBold}>
             {t('carActivity.brand.label')}:
           </Grid>
+
           <Grid item xs={8} sm={10}>
-            {carDetail?.carSku.carModel.brand.name || '-'}
+            {carDetail?.carSku?.carModel.brand.name || '-'}
           </Grid>
         </Grid>
         <Grid className="model" container spacing={4}>
@@ -447,7 +470,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.model.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carDetail?.carSku.carModel.name || '-'}
+            {carDetail?.carSku?.carModel.name || '-'}
           </Grid>
         </Grid>
         <Grid className="color" container spacing={4}>
@@ -455,7 +478,7 @@ export default function CarActivityDetail(): JSX.Element {
             {t('carActivity.color.label')}:
           </Grid>
           <Grid item xs={8} sm={10}>
-            {carDetail?.carSku.color || '-'}
+            {carDetail?.carSku?.color || '-'}
           </Grid>
         </Grid>
         <Grid className="plateNumber" container spacing={4}>
@@ -488,7 +511,7 @@ export default function CarActivityDetail(): JSX.Element {
               variant="contained"
               color="primary"
               className={classes.buttonWithoutShadow}
-              onClick={() => setVisibleScheduleDialog(true)}
+              onClick={() => setVisibleUpdateDialog(true)}
             >
               {t('button.add')}
             </Button>
@@ -539,9 +562,9 @@ export default function CarActivityDetail(): JSX.Element {
                 input={<OutlinedInput notched label={t('carActivity.service.label')} />}
               >
                 <MenuItem value="">{t('all')}</MenuItem>
-                {activityServiceList &&
-                  activityServiceList.length > 0 &&
-                  activityServiceList
+                {scheduleServices &&
+                  scheduleServices.length > 0 &&
+                  scheduleServices
                     .filter((service) => service.id !== CarActivityBookingTypeIds.RENT)
                     .map((service, index) => {
                       return (
@@ -590,7 +613,7 @@ export default function CarActivityDetail(): JSX.Element {
             paginationMode="server"
             onPageSizeChange={(param: GridPageChangeParams) => setPageSize(param.pageSize)}
             onPageChange={(index: number) => setPage(index)}
-            rows={serviceSchedules}
+            rows={carSchedules}
             columns={columns}
             disableSelectionOnClick
             components={{
@@ -600,25 +623,28 @@ export default function CarActivityDetail(): JSX.Element {
         )}
 
         <ActivityScheduleDialog
-          visible={visibleScheduleDialog}
+          visible={visibleUpdateDialog}
           serviceSchedule={serviceSchedule}
           carId={carId}
           onClose={() => {
             refetch()
             setServiceSchedule(null)
-            setVisibleScheduleDialog(false)
+            setVisibleUpdateDialog(false)
           }}
         />
         <ConfirmDialog
-          open={visibleConfirmDialog}
+          open={visibleDeleteConfirmationDialog}
           title={t('carActivity.deleteDialog.title')}
-          htmlContent={generatelConfirmDeleteHtml(serviceSchedule, t)}
+          htmlContent={generatelDeleteConfirmationHTML(serviceSchedule, t)}
           confirmText={t('carActivity.deleteDialog.confirm')}
           cancelText={t('carActivity.deleteDialog.close')}
-          onConfirm={handleOnCloseConfirmDialog}
-          onCancel={() => setVisibleConfirmDialog(false)}
+          onConfirm={handleOnCloseDeleteConfirmationDialog}
+          onCancel={() => setVisibleDeleteConfirmationDialog(false)}
         />
       </Card>
+      <Backdrop
+        open={isFetchingScheduleServices || isFetchingCarDetail || isFetchingCarSchedulesData}
+      />
     </Page>
   )
 }
