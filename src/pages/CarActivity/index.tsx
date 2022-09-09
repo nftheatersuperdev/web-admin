@@ -1,8 +1,6 @@
-/* eslint-disable complexity */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-types */
-import dayjs, { Dayjs } from 'dayjs'
 import React, { Fragment, useEffect, useState, useMemo } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +11,6 @@ import {
   Card,
   FormControl,
   Grid,
-  InputLabel,
   MenuItem,
   Paper,
   Select,
@@ -28,10 +25,8 @@ import {
 } from '@material-ui/core'
 import Pagination from '@material-ui/lab/Pagination'
 import Autocomplete from '@material-ui/lab/Autocomplete'
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
-import { DEFAULT_DATE_FORMAT, validateKeywordText } from 'utils'
-import DatePicker from 'components/DatePicker'
+import { validateKeywordText } from 'utils'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import NoResultCard from 'components/NoResultCard'
@@ -191,20 +186,21 @@ export default function CarActivity(): JSX.Element {
   const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
   const [filterModel, setFilterModel] = useState<string>(qs.model || '')
   const [filterColor, setFilterColor] = useState<string>(qs.color || '')
-  const [filterStatus, setFilterStatus] = useState<string>('')
-  const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(dayjs())
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
-  const applyFilters =
-    (!!filterPlate &&
-      filterPlate.length >= conditionConfigs.minimumToFilterPlateNumber &&
-      !filterPlateError) ||
-    !!filterBrand ||
-    !!filterModel ||
-    !!filterColor ||
-    !!filterStatus ||
-    filterStartDate?.format(DEFAULT_DATE_FORMAT) !== dayjs().format(DEFAULT_DATE_FORMAT)
+
+  const checkFilterButtonConditions = () => {
+    if (
+      (!!filterBrand && !filterPlate) ||
+      (!!filterBrand && filterPlate && !filterPlateError) ||
+      (!filterBrand && filterPlate && !filterPlateError)
+    ) {
+      return true
+    }
+    return false
+  }
+  const isEnableFilterButton = checkFilterButtonConditions()
 
   const {
     data: carBrands,
@@ -365,8 +361,6 @@ export default function CarActivity(): JSX.Element {
     setFilterModelObject(null)
     setFilterColor('')
     setFilterColorObject(null)
-    setFilterStatus('')
-    setFilterStartDate(dayjs())
     setCarModels([])
     setCarColors([])
     setResetFilters(true)
@@ -433,17 +427,6 @@ export default function CarActivity(): JSX.Element {
   const handleOnColorChange = (color: CarColor | null) => {
     setFilterColor(color?.id || '')
     setFilterColorObject(color || defaultSelectList.colorAll)
-  }
-
-  const handleOnStatusChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const status = event.target.value as string
-    if (status) {
-      setFilterStatus(status)
-    }
-  }
-
-  const handleOnStartDateSelected = (date: MaterialUiPickersDate | Dayjs) => {
-    setFilterStartDate(date)
   }
 
   return (
@@ -598,53 +581,6 @@ export default function CarActivity(): JSX.Element {
           </Grid>
           <Grid
             item
-            className={[classes.hide, 'filter-status'].join(' ')}
-            xs={12}
-            sm={6}
-            md={2}
-            lg={2}
-            xl={1}
-          >
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel id="status-label">{t('carActivity.status.label')}</InputLabel>
-              <Select
-                labelId="status-label"
-                id="status"
-                label={t('carActivity.status.label')}
-                onChange={handleOnStatusChange}
-                value={filterStatus}
-                defaultValue={filterStatus}
-              >
-                <MenuItem value="in_use">{t('car.statuses.inUse')}</MenuItem>
-                <MenuItem value="available">{t('car.statuses.available')}</MenuItem>
-                <MenuItem value="out_of_service">{t('car.statuses.outOfService')}</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid
-            item
-            className={[classes.hide, 'filter-start-date'].join(' ')}
-            xs={12}
-            sm={6}
-            md={4}
-            lg={2}
-            xl={2}
-          >
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <DatePicker
-                inputVariant="outlined"
-                label={t('carActivity.startDate.label')}
-                id="selectedFromDate"
-                name="selectedFromDate"
-                format="DD/MM/YYYY"
-                onChange={handleOnStartDateSelected}
-                value={filterStartDate}
-                defaultValue={filterStartDate}
-              />
-            </FormControl>
-          </Grid>
-          <Grid
-            item
             className={[classes.filter, 'filter-buttons'].join(' ')}
             xs={6}
             sm={6}
@@ -657,7 +593,7 @@ export default function CarActivity(): JSX.Element {
               color="primary"
               className={classes.buttonWithoutShadow}
               onClick={() => handleOnClickFilters()}
-              disabled={!applyFilters}
+              disabled={!isEnableFilterButton}
             >
               {t('button.filter')}
             </Button>
@@ -667,7 +603,7 @@ export default function CarActivity(): JSX.Element {
                 classes.buttonClearAllFilters,
                 classes.buttonWithoutShadow,
                 classes.buttonOverridePadding,
-                !applyFilters ? classes.displayNone : '',
+                !isEnableFilterButton ? classes.displayNone : '',
               ].join(' ')}
               onClick={() => clearFilters()}
             >
