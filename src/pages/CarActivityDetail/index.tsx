@@ -92,6 +92,9 @@ const useStyles = makeStyles({
       background: 'none',
     },
   },
+  primaryTextColor: {
+    color: '#3793FF',
+  },
   table: {
     '& .MuiDataGrid-columnHeaderTitle': {
       fontWeight: 'bold',
@@ -452,7 +455,7 @@ export default function CarActivityDetail(): JSX.Element {
           <Grid item xs={4} sm={2} className={classes.textBold}>
             {t('carActivity.activityId.label')}:
           </Grid>
-          <Grid item xs={8} sm={10}>
+          <Grid className={classes.primaryTextColor} item xs={8} sm={10}>
             {carDetail?.id || '-'}
           </Grid>
         </Grid>
