@@ -76,9 +76,9 @@ export default function ActivityScheduleDialog({
     ? state.startDate.add(5, 'year')
     : todayDate.add(5, 'years')
   const isDisableStartDate =
-    isEdit && state.startDate && state?.startDate.diff(todayDate, 'day') < 0 ? true : false
-  const isDisableEndDate =
-    isEdit && state.endDate && state?.endDate.diff(todayDate, 'day') < 0 ? true : false
+    isEdit && state.startDate && state?.startDate.diff(todayDate, 'day') <= 0 ? true : false
+  // const isDisableEndDate =
+  //   isEdit && state.endDate && state?.endDate.diff(todayDate, 'day') < 0 ? true : false
 
   useEffect(() => {
     if (isEdit && serviceSchedule) {
@@ -225,7 +225,7 @@ export default function ActivityScheduleDialog({
                 onChange={handleOnEndDateChange}
                 minDate={state.startDate}
                 maxDate={endDateMaxDate}
-                disabled={isDisableEndDate}
+                // disabled={isDisableEndDate}
               />
             </Grid>
           </Grid>
