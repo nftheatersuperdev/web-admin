@@ -44,7 +44,7 @@ import {
   getSchedulesByCarId,
   getScheduleServices,
   deleteSchedule,
-  ScheduleStatus,
+  // ScheduleStatus,
 } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, Schedule } from 'services/web-bff/car-activity.type'
 
@@ -172,7 +172,7 @@ export default function CarActivityDetail(): JSX.Element {
          * Filtering the deleted status out of the list.
          * @TODO Remove the filter after the API is done.
          */
-        .filter((schedule) => schedule.status !== ScheduleStatus.UPCOMING_CANCELLED)
+        // .filter((schedule) => schedule.status !== ScheduleStatus.UPCOMING_CANCELLED)
         .map((schedule) => {
           return {
             id: schedule.bookingId,
