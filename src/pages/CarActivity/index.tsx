@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-types */
@@ -147,7 +148,12 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
-  const queryString = useQueryString()
+  const qs = {
+    plate: useQueryString().get('plate'),
+    brand: useQueryString().get('brand'),
+    model: useQueryString().get('model'),
+    color: useQueryString().get('color'),
+  }
 
   const conditionConfigs = {
     minimumToFilterPlateNumber: 2,
@@ -177,14 +183,14 @@ export default function CarActivity(): JSX.Element {
   const [pageSize, setPageSize] = useState<number>(10)
   const [carId, setCarId] = useState<string>('')
   const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
-  const [filterPlate, setFilterPlate] = useState<string>('')
   const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
   const [filterModelObject, setFilterModelObject] = useState<CarModel | null>()
   const [filterColorObject, setFilterColorObject] = useState<CarColor | null>()
-  const [filterBrand, setFilterBrand] = useState<string>('')
-  const [filterModel, setFilterModel] = useState<string>('')
-  const [filterColor, setFilterColor] = useState<string>('')
+  const [filterPlate, setFilterPlate] = useState<string>(qs.plate || '')
+  const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
+  const [filterModel, setFilterModel] = useState<string>(qs.model || '')
+  const [filterColor, setFilterColor] = useState<string>(qs.color || '')
   const [filterStatus, setFilterStatus] = useState<string>('')
   const [filterStartDate, setFilterStartDate] = useState<MaterialUiPickersDate | Dayjs>(dayjs())
   const [resetFilters, setResetFilters] = useState<boolean>(false)
@@ -290,6 +296,26 @@ export default function CarActivity(): JSX.Element {
       setPageSize(carActivitiesData.pagination.size)
       setPages(carActivitiesData.pagination.totalPage)
     }
+
+    if (isFetchedBrands && isFetchedActivities && carBrands && carBrands.length >= 1) {
+      setFilterPlate(qs.plate || '')
+
+      const brand = carBrands.find((carBrand) => carBrand.id === qs.brand)
+      setFilterBrand(brand?.id || '')
+      setFilterBrandObject(brand)
+      setCarModels(brand?.carModels || [])
+
+      const model = brand?.carModels.find((carModel) => carModel.id === qs.model)
+      setFilterModel(model?.id || '')
+      setFilterModelObject(model)
+      setCarColors(model?.carSkus || [])
+
+      const color = model?.carSkus.find((carSku) => carSku.id === qs.color)
+      setFilterColor(color?.id || '')
+      setFilterColorObject(color)
+
+      refetch()
+    }
   }, [])
 
   /**
@@ -298,36 +324,6 @@ export default function CarActivity(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [pages, page, pageSize])
-
-  /**
-   * Use for filtering data by query strings.
-   */
-  useEffect(() => {
-    if (isFetchedBrands && carBrands && carBrands?.length > 0) {
-      const plate = queryString.get('plate')
-      const brandId = queryString.get('brand')
-      const modelId = queryString.get('model')
-      const colorId = queryString.get('color')
-
-      setFilterPlate(plate || '')
-
-      const brand = carBrands.find((carBrand) => carBrand.id === brandId)
-      setFilterBrand(brand?.id || '')
-      setFilterBrandObject(brand)
-      setCarModels(brand?.carModels || [])
-
-      const model = brand?.carModels.find((carModel) => carModel.id === modelId)
-      setFilterModel(model?.id || '')
-      setFilterModelObject(model)
-      setCarColors(model?.carSkus || [])
-
-      const color = model?.carSkus.find((carSku) => carSku.id === colorId)
-      setFilterColor(color?.id || '')
-      setFilterColorObject(color)
-
-      refetch()
-    }
-  }, [isFetchedBrands, isFetchedActivities])
 
   /**
    * Use for triggering to reset all filters and fetch data again.
