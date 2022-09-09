@@ -410,7 +410,7 @@ export default function CarActivityDetail(): JSX.Element {
         const buttonClass = isInRent ? classes.hide : ''
         const subscriptionLinkClass = !isInRent ? classes.hide : ''
         const isServiceStarted = dayjs(params.row.startDate).diff(dayjs(), 'day') <= 0
-        const isServiceFinished = dayjs(params.row.endDate).diff(dayjs(), 'day') <= 0
+        const isServiceFinished = dayjs(params.row.endDate).diff(dayjs(), 'day') < 0
 
         return (
           <Fragment>
