@@ -76,7 +76,7 @@ export default function ActivityScheduleDialog({
     ? state.startDate.add(5, 'year')
     : todayDate.add(5, 'years')
   const isDisableStartDate =
-    isEdit && dayjs(serviceSchedule?.startDate).diff(todayDate, 'day') <= 0 ? true : false
+    isEdit && dayjs(serviceSchedule?.startDate).diff(todayDate, 'day', true) <= 0 ? true : false
   const isDisableMinStartDate = !!isDisableStartDate
 
   useEffect(() => {
