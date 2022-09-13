@@ -292,7 +292,7 @@ export default function CarActivityDetail(): JSX.Element {
   }
 
   const generateLinkToSubscription = (subscriptionId: string) => {
-    return `/subscription?subscriptionId=${subscriptionId}`
+    return `/subscription?bookingDetailId=${subscriptionId}`
   }
 
   const columns: GridColDef[] = [

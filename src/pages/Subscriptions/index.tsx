@@ -60,7 +60,7 @@ export default function Subscription(): JSX.Element {
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
   const statusList: string[] = getListFromQueryParam(queryString, 'status')
-  const subscriptionId: string = getListFromQueryParam(queryString, 'subscriptionId')[0]
+  const bookingDetailId: string = getListFromQueryParam(queryString, 'bookingDetailId')[0]
   const deliveryDate = queryString.get('deliveryDate')
   const returnDate = queryString.get('returnDate')
 
@@ -75,6 +75,7 @@ export default function Subscription(): JSX.Element {
     size: pageSize,
   }
   const defaultFilters: SubscriptionBookingListFilters = {
+    bookingDetailId: bookingDetailId || null,
     deliveryDate: deliveryDate || null,
     returnDate: returnDate || null,
     statusList: statusList || [],
@@ -84,10 +85,8 @@ export default function Subscription(): JSX.Element {
   const equalSelectFilterOperators = getSelectEqualFilterOperators(t)
   const dateEqualOperators = geEqualtDateOperators(t)
 
-  const [query, setQuery] = useState<SubscriptionBookingListQuery>({ ...defaultQuery })
-  const [filters, setFilters] = useState<SubscriptionBookingListFilters>({
-    ...defaultFilters,
-  })
+  const [query, setQuery] = useState<SubscriptionBookingListQuery>(defaultQuery)
+  const [filters, setFilters] = useState<SubscriptionBookingListFilters>(defaultFilters)
 
   const {
     data: response,
@@ -556,7 +555,7 @@ export default function Subscription(): JSX.Element {
   return (
     <Page>
       <PageToolbar>
-        {subscriptionId && (
+        {bookingDetailId && (
           <Link to="/subscription">
             <Button color="primary" variant="contained" onClick={() => handleOnClearFilterId()}>
               {t('subscription.clearFilterId')}
