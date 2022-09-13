@@ -30,11 +30,9 @@ import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import {
-  columnFormatPaymentEventStatus,
   columnFormatSubEventStatus,
   convertToDuration,
   getIsParentOptions,
-  getLastedPayment,
   getListFromQueryParam,
   getSubEventStatusOptions,
   getVisibilityColumns,
@@ -42,8 +40,11 @@ import {
   VisibilityColumns,
 } from 'pages/Subscriptions/utils'
 import UpdateDialog from 'pages/Subscriptions/UpdateDialog'
-import { SubscriptionListQuery } from 'services/web-bff/subscription.type'
-import { Payment } from 'services/web-bff/payment.type'
+import {
+  SubscriptionBookingListQuery,
+  SubscriptionBookingListFilters,
+} from 'services/web-bff/subscription.type'
+// import { Payment } from 'services/web-bff/payment.type'
 
 const customToolbar = () => (
   <GridToolbarContainer>
@@ -60,7 +61,7 @@ export default function Subscription(): JSX.Element {
   const queryString = new URLSearchParams(searchParams)
   const statusList: string[] = getListFromQueryParam(queryString, 'status')
   const subscriptionId: string = getListFromQueryParam(queryString, 'subscriptionId')[0]
-  const deliverDate = queryString.get('deliverDate')
+  const deliveryDate = queryString.get('deliveryDate')
   const returnDate = queryString.get('returnDate')
 
   const visibilityColumns = getVisibilityColumns()
@@ -68,51 +69,54 @@ export default function Subscription(): JSX.Element {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
   const [selectedSubscription, setSelectedSubscription] = useState()
-  const defaultFilter: SubscriptionListQuery = {
-    deliverDate: deliverDate || null,
-    returnDate: returnDate || null,
-    statusList,
-    size: pageSize,
+
+  const defaultQuery: SubscriptionBookingListQuery = {
     page: currentPageIndex + 1,
-  } as SubscriptionListQuery
+    size: pageSize,
+  }
+  const defaultFilters: SubscriptionBookingListFilters = {
+    deliveryDate: deliveryDate || null,
+    returnDate: returnDate || null,
+    statusList: statusList || [],
+  }
 
   const equalOperators = getEqualFilterOperators(t)
   const equalSelectFilterOperators = getSelectEqualFilterOperators(t)
   const dateEqualOperators = geEqualtDateOperators(t)
 
-  const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionListQuery>({
-    ...defaultFilter,
-    id: subscriptionId,
+  const [query, setQuery] = useState<SubscriptionBookingListQuery>({ ...defaultQuery })
+  const [filters, setFilters] = useState<SubscriptionBookingListFilters>({
+    ...defaultFilters,
   })
 
   const {
     data: response,
     isFetching,
     refetch,
-  } = useQuery('subscriptions', () => getList({ query: subscriptionFilter }))
+  } = useQuery('subscriptions', () => getList({ query, filters }))
 
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
-    response?.data.records && response?.data.records.length > 0
-      ? response?.data.records.map((subscription) => {
-          const lastedPayment = getLastedPayment(subscription.payments as unknown as Payment[])
-          const paymentStatus = lastedPayment
-            ? columnFormatPaymentEventStatus(lastedPayment.status, t)
-            : '-'
+    response?.data.bookingDetails && response?.data.bookingDetails.length > 0
+      ? response?.data.bookingDetails.map((subscription) => {
           const subscriptionPrice =
-            subscription?.chargedPrice !== null
-              ? convertMoneyFormat(subscription?.chargedPrice)
+            subscription.rentDetail.chargePrice !== null
+              ? convertMoneyFormat(subscription.rentDetail.chargePrice)
               : '-'
           const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
 
+          const deliveryDetail = subscription.carTasks.find((task) => task.type === 'Delivery')
+          const returnDetail = subscription.carTasks.find((task) => task.type === 'Return')
+
           return (
             {
-              id: subscription.id,
-              userFirstName: subscription.user.firstName,
-              userLastName: subscription.user.lastName,
-              userEmail: subscription.user.email,
-              userPhoneNumber: subscription.user.phoneNumber,
-              carId: subscription.car.id,
+              ...subscription,
+              bookingDetailId: subscription.id,
+              userFirstName: subscription.customer.firstName,
+              userLastName: subscription.customer.lastName,
+              userEmail: subscription.customer.email,
+              userPhoneNumber: subscription.customer.phoneNumber,
+              carId: subscription.carId,
               carModelId: subscription.car.carSku?.carModel.id,
               carName: subscription.car.carSku?.carModel.name,
               carBrand: subscription.car.carSku?.carModel.brand.name,
@@ -123,32 +127,31 @@ export default function Subscription(): JSX.Element {
               carTopSpeed: subscription.car.carSku?.carModel.topSpeed,
               carFastChargeTime: subscription.car.carSku?.carModel.fastChargeTime,
               price: subscriptionPriceFullFormat,
-              duration: convertToDuration(subscription.durationDay, t),
+              duration: convertToDuration(subscription.rentDetail.durationDay, t),
               startDate: subscription.startDate,
               endDate: subscription.endDate,
-              deliveryAddress: subscription.deliveryFullAddress,
-              deliveryLatitude: subscription.deliveryLatitude,
-              deliveryLongitude: subscription.deliveryLongitude,
-              deliveryRemark: subscription.deliveryRemark,
-              returnAddress: subscription.returnFullAddress,
-              returnLatitude: subscription.returnLatitude,
-              returnLongitude: subscription.returnLongitude,
-              returnRemark: subscription.returnRemark,
-              status: subscription.status,
-              voucherId: subscription.voucherId,
-              createdDate: subscription.createdDate,
-              updatedDate: subscription.updatedDate,
-              paymentStatus,
-              paymentCreateDate: lastedPayment?.createdDate || '-',
-              deliverDate: subscription.deliveryDateTime,
-              returnDate: subscription.returnDateTime,
-              failureMessage: lastedPayment?.statusMessage,
-              payments: subscription.payments,
-              parentId: subscription.parentId,
-              voucherCode: subscription.voucher ? subscription.voucher.code : '',
-              isExtendedSubscription: subscription.parentId ? 'True' : 'False',
-              customerId: subscription.userId || '-',
-              cleaningDate: subscription.cleaningDate,
+              deliveryAddress: deliveryDetail?.fullAddress || '-',
+              deliveryLatitude: deliveryDetail?.latitude || 0,
+              deliveryLongitude: deliveryDetail?.longitude || 0,
+              deliveryRemark: deliveryDetail?.remark || '-',
+              returnAddress: returnDetail?.fullAddress || '-',
+              returnLatitude: returnDetail?.latitude || 0,
+              returnLongitude: returnDetail?.longitude || 0,
+              returnRemark: returnDetail?.remark || '-',
+              status: subscription.displayStatus,
+              voucherId: subscription.rentDetail.voucherId || '',
+              voucherCode: '[Voucher code]',
+              createdDate: subscription.rentDetail.createdDate,
+              updatedDate: subscription.rentDetail.updatedDate,
+              paymentStatus: '[Latest payment status]',
+              failureMessage: '[Latest payment message]',
+              paymentCreateDate: '-',
+              deliveryDate: deliveryDetail?.date || '-',
+              returnDate: returnDetail?.date || '-',
+              parentId: subscription.bookingId,
+              isExtend: Boolean(subscription.isExtend),
+              customerId: subscription.customerId || '-',
+              cleaningDate: '[Cleaning Date]',
             } ?? {}
           )
         })
@@ -156,7 +159,7 @@ export default function Subscription(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [subscriptionFilter, refetch])
+  }, [filters, refetch])
 
   useEffect(() => {
     refetch()
@@ -164,10 +167,10 @@ export default function Subscription(): JSX.Element {
 
   const columns: GridColDef[] = [
     {
-      field: 'id',
-      headerName: t('subscription.id'),
-      description: t('subscription.id'),
-      hide: !visibilityColumns.id,
+      field: 'bookingDetailId',
+      headerName: t('subscription.bookingDetailId'),
+      description: t('subscription.bookingDetailId'),
+      hide: !visibilityColumns.bookingDetailId,
       flex: 1,
       filterOperators: equalOperators,
       valueFormatter: columnFormatText,
@@ -385,11 +388,11 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatText,
     },
     {
-      field: 'isExtendedSubscription',
+      field: 'isExtend',
       headerName: t('subscription.isExtendedSubscription'),
       description: t('subscription.isExtendedSubscription'),
       flex: 1,
-      hide: !visibilityColumns.isExtendedSubscription,
+      hide: !visibilityColumns.isExtend,
       filterable: true,
       sortable: false,
       disableColumnMenu: true,
@@ -469,11 +472,11 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'deliverDate',
+      field: 'deliveryDate',
       headerName: t('subscription.deliveryDate'),
       description: t('subscription.deliveryDate'),
       flex: 1,
-      hide: !visibilityColumns.deliverDate,
+      hide: !visibilityColumns.deliveryDate,
       sortable: false,
       filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
@@ -511,29 +514,24 @@ export default function Subscription(): JSX.Element {
   }
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setSubscriptionFilter({ ...subscriptionFilter, size: params.pageSize, page: 1 })
+    setQuery({ size: params.pageSize, page: 1 })
+    setFilters({ ...filters })
     setPageSize(params.pageSize)
     setCurrentPageIndex(0)
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
-    const _defaultFilter: SubscriptionListQuery = {
-      size: pageSize,
-      page: currentPageIndex + 1,
-      statusList: [],
-    } as SubscriptionListQuery
-
-    setSubscriptionFilter({
+    setFilters({
       ...params.items.reduce((filter, { columnField, value }: GridFilterItem) => {
         if (columnField) {
           if (columnField === 'status') {
-            filter = { ..._defaultFilter, statusList: [value] }
+            filter = { statusList: [value] }
           } else {
-            filter = { ..._defaultFilter, [columnField]: value }
+            filter = { [columnField]: value }
           }
         }
         return filter
-      }, {} as SubscriptionListQuery),
+      }, {} as SubscriptionBookingListFilters),
     })
 
     // reset page
@@ -546,12 +544,13 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleFetchPage = (pageNumber: number) => {
-    setSubscriptionFilter({ ...subscriptionFilter, page: pageNumber + 1 })
+    setQuery({ page: pageNumber + 1 })
+    setFilters({ ...filters })
     setCurrentPageIndex(pageNumber)
   }
 
   const handleOnClearFilterId = () => {
-    setSubscriptionFilter(defaultFilter)
+    setFilters(defaultFilters)
   }
 
   return (

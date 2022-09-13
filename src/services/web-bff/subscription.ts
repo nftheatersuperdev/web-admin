@@ -1,7 +1,7 @@
 import { BaseApi } from 'api/baseApi'
 import axios from 'axios'
 import {
-  SubscriptionListProps,
+  SubscriptionBookingListProps,
   SubscriptionListResponse,
   SubscriptionChangeCarProps,
   SubscriptionExtendEndDateProps,
@@ -23,10 +23,17 @@ export const status = {
 
 export const getList = async ({
   query,
-}: SubscriptionListProps): Promise<SubscriptionListResponse> => {
+  filters,
+}: SubscriptionBookingListProps): Promise<SubscriptionListResponse> => {
   const response: SubscriptionListResponse = await BaseApi.post(
-    '/v1/subscriptions/search',
-    query
+    '/v1/bookings/rental/search',
+    {
+      ...filters,
+      isExtend: !!filters?.isExtend || null,
+    },
+    {
+      params: query,
+    }
   ).then((response) => response.data)
 
   return response

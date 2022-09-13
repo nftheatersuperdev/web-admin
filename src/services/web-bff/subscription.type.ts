@@ -61,6 +61,68 @@ export interface Subscription {
   voucher: Voucher
 }
 
+export interface BookingCarTrack {
+  id: string
+  bookingDetailId: string
+  date: string
+  externalTaskId: string | null
+  fullAddress: string
+  latitude: number
+  longitude: number
+  remark: string | null
+  status: string
+  type: string
+  createdDate: string
+  updatedDate: string
+}
+
+export interface BookingCustomer {
+  id: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
+  email: string
+}
+
+export interface BookingRentalDetail {
+  id: string
+  agreementId: string
+  bookingDetailId: string
+  voucherId: string | null
+  packagePriceId: string
+  chargePrice: number
+  tenantPrice: number
+  currency: string | null
+  discountPrice: string | null
+  durationDay: number
+  isAcceptedAgreement: boolean
+  isAcceptedCarCondition: boolean
+  paymentTerm: string | null
+  createdDate: string
+  updatedDate: string
+}
+
+export interface BookingRental {
+  id: string
+  bookingId: string
+  bookingTypeId: string
+  startDate: string
+  endDate: string
+  car: SubscriptionCar
+  carId: string
+  carTasks: BookingCarTrack[]
+  createdBy: string
+  customer: BookingCustomer
+  customerId: string
+  displayStatus: string
+  isExtend: boolean
+  isPaymentRequired: boolean
+  isTimeslotRequired: boolean
+  rentDetail: BookingRentalDetail
+  remark: string | null
+  updatedBy: string
+}
+
 export interface SubscriptionCar {
   id: string
   plateNumber: string
@@ -98,6 +160,20 @@ export interface SubscriptionListQuery {
   isParent?: boolean
 }
 
+export interface SubscriptionListFilter {
+  bookingId?: string
+  bookingDetailId?: string
+  customerId?: string
+  carId?: string
+  voucherId?: string
+  isExtend?: boolean | null
+  deliveryDate?: string
+  returnDate?: string
+  startDate?: string
+  endDate?: string
+  statusList?: string[]
+}
+
 export interface SubscriptionOrder {
   [key: string]: SortDirection
 }
@@ -106,9 +182,33 @@ export interface SubscriptionListProps {
   query?: SubscriptionListQuery
 }
 
+export interface SubscriptionBookingListQuery {
+  page?: number
+  size?: number
+}
+export interface SubscriptionBookingListFilters {
+  bookingId?: string | null
+  bookingDetailId?: string | null
+  customerId?: string | null
+  carId?: string | null
+  voucherId?: string | null
+  isExtend?: boolean | null
+  deliveryDate?: string | null
+  returnDate?: string | null
+  startDate?: string | null
+  endDate?: string | null
+  statusList?: SubscriptionStatus[] | string[]
+}
+
+export interface SubscriptionBookingListProps {
+  query?: SubscriptionBookingListQuery
+  filters?: SubscriptionBookingListFilters
+}
+
 export type SubscriptionListResponse = {
   data: {
     records: Subscription[]
+    bookingDetails: BookingRental[]
   }
 } & ResponseWithPagination
 
