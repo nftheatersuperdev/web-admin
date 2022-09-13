@@ -241,7 +241,7 @@ export default function ActivityScheduleDialog({
                     name: 'service',
                     id: 'service',
                   }}
-                  disabled={!isFetchedServices}
+                  disabled={!isFetchedServices || isEdit}
                 >
                   {activityServiceList &&
                     activityServiceList.length > 0 &&
