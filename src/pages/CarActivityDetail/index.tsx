@@ -409,8 +409,9 @@ export default function CarActivityDetail(): JSX.Element {
         const isInRent = params.row.bookingType.id === CarActivityBookingTypeIds.RENT
         const buttonClass = isInRent ? classes.hide : ''
         const subscriptionLinkClass = !isInRent ? classes.hide : ''
-        const isServiceStarted = dayjs().diff(params.row.startDate, 'day', true) >= 0
-        const isServiceFinished = dayjs().diff(params.row.endDate, 'day', true) >= 0
+        const isBlockToDelete =
+          dayjs().diff(dayjs(params.row.startDate).startOf('day'), 'seconds') > 0
+        const isBlockToEdit = dayjs().diff(dayjs(params.row.endDate).endOf('day'), 'seconds') > 0
 
         return (
           <Fragment>
@@ -422,14 +423,14 @@ export default function CarActivityDetail(): JSX.Element {
             </Link>
             <IconButton
               className={buttonClass}
-              disabled={isServiceStarted}
+              disabled={isBlockToDelete}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
               className={buttonClass}
-              disabled={isServiceFinished}
+              disabled={isBlockToEdit}
               onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
             >
               <EditIcon />
