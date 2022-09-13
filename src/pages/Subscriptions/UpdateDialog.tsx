@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/ban-types */
 import { useState } from 'react'
@@ -240,22 +241,24 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     }
   }*/
 
-  const rowPaymentCount = subscription.payments.length
+  const rowPaymentCount = subscription.payments?.length || 0
 
-  const paymentRow = subscription.payments.map((value) => {
-    const price = convertMoneyFormat(value?.amount)
-    const priceFullFormat = `${price} ${t('pricing.currency.thb')}`
+  const paymentRow =
+    subscription.payments?.map((value) => {
+      const price = convertMoneyFormat(value?.amount)
+      const priceFullFormat = `${price} ${t('pricing.currency.thb')}`
 
-    return {
-      id: value.externalTrxId || '',
-      amount: priceFullFormat || '',
-      updateDate: value.updatedDate || '',
-      paymentType: value.paymentType || '',
-      purpose: value.purpose || '',
-      status: value.status || '',
-      statusMessage: value.statusMessage || '',
-    }
-  })
+      return {
+        id: value.externalTrxId || '',
+        amount: priceFullFormat || '',
+        updateDate: value.updatedDate || '',
+        paymentType: value.paymentType || '',
+        purpose: value.purpose || '',
+        status: value.status || '',
+        statusMessage: value.statusMessage || '',
+      }
+    }) || []
+
   const paymentColumns: GridColDef[] = [
     {
       field: 'id',

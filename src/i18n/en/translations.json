@@ -311,6 +311,7 @@
   },
   "subscription": {
     "id": "Subscription ID",
+    "bookingDetailId": "Booking Detail ID",
     "customerId": "Customer ID",
     "brand": "Car Brand",
     "model": "Car Model",

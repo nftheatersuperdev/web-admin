@@ -310,6 +310,7 @@
   },
   "subscription": {
     "id": "ไอดี",
+    "bookingDetailId": "บุ๊คกิ้งไอดี",
     "customerId": "ไอดีลูกค้า",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
