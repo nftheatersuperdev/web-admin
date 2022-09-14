@@ -48,6 +48,7 @@ export const getSchedulesByCarId = async ({
   bookingTypeId,
   startDate,
   endDate,
+  statusList = 'accepted,reserved,cancelled',
 }: CarActivityScheduleListProps): Promise<Schedule[]> => {
   /**
    * The API doesn't has pagination right now.
@@ -57,6 +58,7 @@ export const getSchedulesByCarId = async ({
       bookingTypeId,
       startDate,
       endDate,
+      statusList,
     },
   })
     .then(({ data }) => data.data)
