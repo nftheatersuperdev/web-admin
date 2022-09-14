@@ -70,6 +70,7 @@ export interface CarActivityScheduleListProps {
   bookingTypeId?: string
   startDate?: string
   endDate?: string
+  statusList?: string
 }
 export interface CarActivityScheduleEditProps {
   bookingId: string
