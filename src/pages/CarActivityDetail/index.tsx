@@ -519,7 +519,10 @@ export default function CarActivityDetail(): JSX.Element {
               variant="contained"
               color="primary"
               className={classes.buttonWithoutShadow}
-              onClick={() => setVisibleUpdateDialog(true)}
+              onClick={() => {
+                setServiceSchedule(null)
+                setVisibleUpdateDialog(true)
+              }}
             >
               {t('button.add')}
             </Button>
