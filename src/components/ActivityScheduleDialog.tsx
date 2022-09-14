@@ -80,7 +80,7 @@ export default function ActivityScheduleDialog({
   const isDisableMinStartDate = !!isDisableStartDate
 
   useEffect(() => {
-    if (isEdit && serviceSchedule) {
+    if (isEdit && visible && serviceSchedule) {
       setState({
         startDate: dayjs(serviceSchedule?.startDate),
         endDate: dayjs(serviceSchedule?.endDate),
@@ -88,7 +88,7 @@ export default function ActivityScheduleDialog({
         remark: serviceSchedule?.remark || '',
       })
     }
-  }, [isEdit, serviceSchedule])
+  }, [isEdit, visible, serviceSchedule])
 
   const isUnableToSave =
     !state.startDate ||
