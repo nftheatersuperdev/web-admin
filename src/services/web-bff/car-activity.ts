@@ -85,7 +85,15 @@ export const editSchedule = async ({
   bookingDetailId,
   data,
 }: CarActivityScheduleEditProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`, data)
+  await BaseApi.patch(
+    `/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`,
+    data
+  ).catch((error) => {
+    if (error.response) {
+      throw error.response
+    }
+    throw error
+  })
 
   return true
 }
