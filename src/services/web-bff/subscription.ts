@@ -4,6 +4,7 @@ import {
   SubscriptionBookingListProps,
   SubscriptionListResponse,
   SubscriptionChangeCarProps,
+  SubscriptionChangeCarInBookingProps,
   SubscriptionExtendEndDateProps,
 } from 'services/web-bff/subscription.type'
 
@@ -53,6 +54,18 @@ export const changeCar = async ({
   return true
 }
 
+export const changeCarInBooking = async ({
+  bookingId,
+  bookingDetailId,
+  carId,
+}: SubscriptionChangeCarInBookingProps): Promise<boolean> => {
+  await BaseApi.patch(`/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/delivery/cars`, {
+    carId,
+  })
+
+  return true
+}
+
 /**
  * This function allows operators to extend the end date of a subscription
  */
@@ -80,4 +93,5 @@ export const extend = async ({
 export default {
   getList,
   changeCar,
+  changeCarInBooking,
 }

@@ -37,8 +37,7 @@ import { getAvailableListBFF } from 'services/web-bff/car'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import DataGridLocale from 'components/DataGridLocale'
 import { Payment } from 'services/web-bff/payment.type'
-import { SubscriptionChangeCarProps } from 'services/web-bff/subscription.type'
-import { changeCar } from 'services/web-bff/subscription'
+import { changeCarInBooking } from 'services/web-bff/subscription'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
@@ -68,6 +67,8 @@ const dataGridDisableToobar = () => (
 
 interface Subscription {
   id: string
+  bookingDetailId: string
+  bookingId: string
   userFirstName: string
   userLastName: string
   userEmail: string
@@ -150,9 +151,10 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
       const carSelected = availableCars.find((data) => data.car.plateNumber === plateNumber)
       const carId = carSelected?.car.id
       const subscriptionId = subscription?.id
+      const { bookingId, bookingDetailId } = subscription
 
-      if (carId && subscriptionId) {
-        await toast.promise(changeCar({ subscriptionId, carId } as SubscriptionChangeCarProps), {
+      if (carId && subscriptionId && bookingId && bookingDetailId) {
+        await toast.promise(changeCarInBooking({ bookingId, bookingDetailId, carId }), {
           loading: t('toast.loading'),
           success: t('subscription.updateDialog.success'),
           error: t('subscription.updateDialog.error'),
