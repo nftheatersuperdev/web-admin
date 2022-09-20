@@ -148,10 +148,25 @@ export interface SubscriptionInCarAvailable {
   endDate: string
 }
 
+export interface SubscriptionBookingDetail {
+  id: string
+  carId: string
+  startDate: string
+  endDate: string
+  status: string
+}
+
+export interface SubscriptionBooking {
+  id: string
+  userId: string
+  bookingDetail: SubscriptionBookingDetail
+}
+
 export interface CarAvaiableBff {
   availabilityStatus: 'In Use' | 'Available'
   car: CarBff
   subscriptions: SubscriptionInCarAvailable[]
+  booking: SubscriptionBooking[]
 }
 
 export interface CarUpdate extends Partial<Car> {}

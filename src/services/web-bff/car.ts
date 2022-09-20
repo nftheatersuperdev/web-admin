@@ -71,7 +71,7 @@ export const getAvailableListBFF = async ({
   page = 0,
 }: CarAvailableListBffFilterRequestProps): Promise<CarAvailableListBffResponse> => {
   const pageIndex = page + 1
-  const response: CarAvailableListBffResponse = await BaseApi.post('/v1/cars/usability/search', {
+  const response: CarAvailableListBffResponse = await BaseApi.post('/v2/cars/usability/search', {
     ...filter,
     ...sort,
     pageIndex,

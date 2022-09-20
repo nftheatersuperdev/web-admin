@@ -150,7 +150,7 @@ export default function Car(): JSX.Element {
 
   const rowCount = carData?.data?.pagination?.totalRecords ?? 0
   const rows =
-    carData?.data.records.map(({ car, availabilityStatus: status, subscriptions }) => {
+    carData?.data.records.map(({ car, availabilityStatus: status, booking }) => {
       return {
         id: car.id,
         vin: car.vin,
@@ -159,8 +159,7 @@ export default function Car(): JSX.Element {
         brand: car.carSku?.carModel.brand.name || '-',
         color: car.carSku?.color || '-',
         status,
-        subscriptionId:
-          subscriptions.length < 1 ? '-' : subscriptions.map((subscription) => subscription.id),
+        subscriptionId: booking?.length > 0 ? booking.map((row) => row.id) : '-',
       }
     }) || []
 

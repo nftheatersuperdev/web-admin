@@ -217,6 +217,12 @@ export interface SubscriptionChangeCarProps {
   carId: string
 }
 
+export interface SubscriptionChangeCarInBookingProps {
+  bookingId: string
+  bookingDetailId: string
+  carId: string
+}
+
 export interface SubscriptionExtendEndDateProps {
   accessToken: string
   subscriptionId: string
