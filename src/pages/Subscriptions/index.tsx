@@ -150,7 +150,7 @@ export default function Subscription(): JSX.Element {
               parentId: subscription.bookingId,
               isExtend: Boolean(subscription.isExtend),
               customerId: subscription.customerId || '-',
-              cleaningDate: '[Cleaning Date]',
+              cleaningDate: subscription.endDate,
             } ?? {}
           )
         })
