@@ -102,6 +102,22 @@ export interface BookingRentalDetail {
   updatedDate: string
 }
 
+export interface BookingPayment {
+  id: string
+  bookingDetailId: string
+  paymentId: string
+  bookingSchedulePaymentId: string | null
+  type: string
+  description: string
+  status: string
+  statusMessage: string | null
+  amount: number | null
+  currency: string | null
+  externalTransactionId: string
+  createdDate: string
+  updatedDate: string
+}
+
 export interface BookingRental {
   id: string
   bookingId: string
@@ -120,6 +136,7 @@ export interface BookingRental {
   isTimeslotRequired: boolean
   rentDetail: BookingRentalDetail
   remark: string | null
+  payments: BookingPayment[]
   updatedBy: string
 }
 
