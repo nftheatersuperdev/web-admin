@@ -648,3 +648,7 @@ export const stripHtml = (string: string): string => {
   div.innerHTML = string
   return div.textContent || div.innerText || ''
 }
+
+export const firstCapitalize = (string: string): string => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

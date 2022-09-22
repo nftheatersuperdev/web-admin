@@ -44,7 +44,6 @@ import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
 } from 'services/web-bff/subscription.type'
-// import { Payment } from 'services/web-bff/payment.type'
 
 const customToolbar = () => (
   <GridToolbarContainer>
@@ -142,15 +141,16 @@ export default function Subscription(): JSX.Element {
               voucherCode: '[Voucher code]',
               createdDate: subscription.rentDetail.createdDate,
               updatedDate: subscription.rentDetail.updatedDate,
-              paymentStatus: '[Latest payment status]',
-              failureMessage: '[Latest payment message]',
-              paymentCreateDate: '-',
+              paymentStatus: subscription?.payments[0]?.status || '-',
+              failureMessage: subscription?.payments[0]?.statusMessage || '-',
+              paymentCreateDate: subscription?.payments[0]?.createdDate || '-',
               deliveryDate: deliveryDetail?.date || '-',
               returnDate: returnDetail?.date || '-',
               parentId: subscription.bookingId,
               isExtend: Boolean(subscription.isExtend),
               customerId: subscription.customerId || '-',
               cleaningDate: subscription.endDate,
+              payments: subscription?.payments || [],
             } ?? {}
           )
         })

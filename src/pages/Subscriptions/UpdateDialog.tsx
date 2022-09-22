@@ -17,7 +17,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import { GoogleMap, useJsApiLoader, InfoWindow } from '@react-google-maps/api'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { formatDate, columnFormatDate, convertMoneyFormat } from 'utils'
+import { firstCapitalize, formatDate, columnFormatDate, convertMoneyFormat } from 'utils'
 import styled from 'styled-components'
 import config from 'config'
 import * as yup from 'yup'
@@ -36,7 +36,7 @@ import { ROLES } from 'auth/roles'
 import { getAvailableListBFF } from 'services/web-bff/car'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import DataGridLocale from 'components/DataGridLocale'
-import { Payment } from 'services/web-bff/payment.type'
+import { BookingPayment } from 'services/web-bff/subscription.type'
 import { changeCarInBooking } from 'services/web-bff/subscription'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
@@ -103,7 +103,7 @@ interface Subscription {
   paymentStatus: string
   deliverDate: string
   returnDate: string
-  payments: Payment[]
+  payments: BookingPayment[]
   voucherId: string
   cleaningDate: string
 }
@@ -246,18 +246,18 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   const rowPaymentCount = subscription.payments?.length || 0
 
   const paymentRow =
-    subscription.payments?.map((value) => {
-      const price = convertMoneyFormat(value?.amount)
-      const priceFullFormat = `${price} ${t('pricing.currency.thb')}`
+    subscription.payments?.map((payment) => {
+      const price = convertMoneyFormat(payment?.amount || 0)
+      const amount = `${price} ${t('pricing.currency.thb')}`
 
       return {
-        id: value.externalTrxId || '',
-        amount: priceFullFormat || '',
-        updateDate: value.updatedDate || '',
-        paymentType: value.paymentType || '',
-        purpose: value.purpose || '',
-        status: value.status || '',
-        statusMessage: value.statusMessage || '',
+        id: payment.externalTransactionId || '',
+        amount,
+        updateDate: payment.updatedDate || '',
+        paymentType: firstCapitalize(payment.type) || '',
+        purpose: payment.description || '',
+        status: firstCapitalize(payment.status) || '',
+        statusMessage: payment.statusMessage || '-',
       }
     }) || []
 
