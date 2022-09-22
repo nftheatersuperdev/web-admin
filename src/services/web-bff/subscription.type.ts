@@ -89,6 +89,7 @@ export interface BookingRentalDetail {
   agreementId: string
   bookingDetailId: string
   voucherId: string | null
+  voucherCode: string | null
   packagePriceId: string
   chargePrice: number
   tenantPrice: number
