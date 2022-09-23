@@ -135,13 +135,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.subscriptions'),
         path: ROUTE_PATHS.SUBSCRIPTION,
         icon: <SubscriptionIcon />,
-        allowedRoles: [
-          ROLES.SUPER_ADMIN,
-          ROLES.ADMIN,
-          ROLES.CUSTOMER_SUPPORT,
-          ROLES.OPERATION,
-          ROLES.MARKETING,
-        ],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
       },
       /*{
         title: t('sidebar.additionalExpense'),
