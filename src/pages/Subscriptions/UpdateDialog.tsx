@@ -101,7 +101,7 @@ interface Subscription {
   createdDate: string
   updatedDate: string
   paymentStatus: string
-  deliverDate: string
+  deliveryDate: string
   returnDate: string
   payments: BookingPayment[]
   voucherId: string
@@ -124,6 +124,8 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
   if (!subscription) {
     return <div>{` `}</div>
   }
+
+  console.log('subscription ->', subscription)
 
   const { t } = useTranslation()
   const { getRole } = useAuth()
@@ -511,7 +513,7 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.deliveryDate')}
-              value={formatDate(subscription?.deliverDate)}
+              value={formatDate(subscription?.deliveryDate)}
               fullWidth
               multiline
               maxRows={3}
