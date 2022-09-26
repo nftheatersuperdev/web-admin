@@ -125,8 +125,6 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
     return <div>{` `}</div>
   }
 
-  console.log('subscription ->', subscription)
-
   const { t } = useTranslation()
   const { getRole } = useAuth()
   const currentUserRole = getRole()
