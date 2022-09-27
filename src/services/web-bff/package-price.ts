@@ -36,7 +36,7 @@ export const createByCarId = async ({
 }
 
 export const getActive = async (): Promise<PackagePriceBff[]> => {
-  const response: PackagePriceBff[] = await BaseApi.get('/v1/package-prices/active').then(
+  const response: PackagePriceBff[] = await BaseApi.get('/v2/package-prices/active').then(
     (response) => response.data.data.packages
   )
 
