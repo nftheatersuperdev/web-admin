@@ -17,6 +17,7 @@ import {
   InputLabel,
   Select,
   Typography,
+  Tooltip,
   OutlinedInput,
 } from '@material-ui/core'
 import {
@@ -369,7 +370,15 @@ export default function CarActivityDetail(): JSX.Element {
           )
         }
 
-        return mapBookingTypeLabel()
+        const bookingTypeLabel = mapBookingTypeLabel()
+
+        return (
+          <Tooltip title={bookingTypeLabel}>
+            <Typography variant="inherit" noWrap>
+              {bookingTypeLabel}
+            </Typography>
+          </Tooltip>
+        )
       },
     },
     {
