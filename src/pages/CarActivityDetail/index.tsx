@@ -34,7 +34,6 @@ import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import { columnFormatCarVisibility } from 'pages/Car/utils'
-import { getServiceLabel } from 'pages/CarActivity/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -45,7 +44,6 @@ import {
   getSchedulesByCarId,
   getScheduleServices,
   deleteSchedule,
-  // ScheduleStatus,
 } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, Schedule } from 'services/web-bff/car-activity.type'
 
@@ -168,18 +166,12 @@ export default function CarActivityDetail(): JSX.Element {
   const carSchedules =
     (carSchedulesData &&
       carSchedulesData.length > 0 &&
-      carSchedulesData
-        /**
-         * Filtering the deleted status out of the list.
-         * @TODO Remove the filter after the API is done.
-         */
-        // .filter((schedule) => schedule.status !== ScheduleStatus.UPCOMING_CANCELLED)
-        .map((schedule) => {
-          return {
-            id: schedule.bookingId,
-            ...schedule,
-          }
-        })) ||
+      carSchedulesData.map((schedule) => {
+        return {
+          id: schedule.bookingId,
+          ...schedule,
+        }
+      })) ||
     []
 
   const isNoData = carSchedules.length < 1
@@ -285,11 +277,14 @@ export default function CarActivityDetail(): JSX.Element {
       </div>
     `
 
+    const { bookingDetailId, bookingType, startDate, endDate } = schedule
+    const { nameEn, nameTh } = bookingType
+
     return template
-      .replace(':scheduleId', schedule.bookingDetailId)
-      .replace(':startDate', dayjs(schedule.startDate).format(DEFAULT_DATE_FORMAT))
-      .replace(':endDate', dayjs(schedule.endDate).format(DEFAULT_DATE_FORMAT))
-      .replace(':service', getServiceLabel(schedule.bookingType.nameEn, t))
+      .replace(':scheduleId', bookingDetailId)
+      .replace(':startDate', dayjs(startDate).format(DEFAULT_DATE_FORMAT))
+      .replace(':endDate', dayjs(endDate).format(DEFAULT_DATE_FORMAT))
+      .replace(':service', isThaiLanguage ? nameTh : nameEn)
   }
 
   const generateLinkToSubscription = (subscriptionId: string) => {
