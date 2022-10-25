@@ -193,7 +193,7 @@ export default function Dashboard(): JSX.Element {
               <DetailLink
                 pathname={ROUTE_PATHS.SUBSCRIPTION}
                 search={qs.stringify({
-                  deliverDate: todayLowerUpper,
+                  deliveryDate: todayLowerUpper,
                   status: 'accepted',
                 })}
               />
