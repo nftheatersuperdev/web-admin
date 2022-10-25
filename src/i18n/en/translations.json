@@ -39,6 +39,7 @@
     "documents": "Documents",
     "consentLog": "Consent Log",
     "userDeleteLog": "Delete Log",
+    "cookieConsentLog": "Cookie Consent Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -785,6 +786,39 @@
     "documentStatus": {
       "decline": "Decline",
       "accept": "Accept"
+    }
+  },
+  "cookieConsentLog": {
+    "header": "Cookie Consent Log",
+    "categoryLabel": "Cookie Category Name",
+    "statusNameLabel": "Status name",
+    "searchLabel": "Search IP Address",
+    "id": "ID",
+    "userId": "User ID",
+    "email": "Email",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "documentNameEn": "Document name (EN)",
+    "documentNameTh": "Document name (TH)",
+    "acceptedDate": "Date",
+    "status": "Status",
+    "documentVersion": "Version",
+    "documentTypes": {
+      "termAndCondition": "Terms and Conditions",
+      "privacyNotice": "Privacy Policy",
+      "marketing": "Marketing Consent",
+      "idAndCriminal": "ID card and Criminal Record Consent",
+      "dataSharing": "Data Sharing Consent"
+    },
+    "documentStatus": {
+      "decline": "Decline",
+      "accept": "Accept"
+    },
+    "documentCategory": {
+      "strictlyNecessary": "Strictly Necessary Cookies",
+      "analytical": "Analytical Cookies",
+      "targeting": "Targeting Cookies"
     }
   },
   "all": "All",

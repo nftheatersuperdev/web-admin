@@ -39,6 +39,7 @@
     "documents": "เอกสาร",
     "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
     "userDeleteLog": "ประวัติการลบบัญชีลูกค้า",
+    "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้",
     "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
     "profile": "โปรไฟล์",
@@ -752,6 +753,31 @@
     "documentStatus": {
       "decline": "ปฏิเสธ",
       "accept": "ยอมรับ"
+    }
+  },
+  "cookieConsentLog": {
+    "header": "บันทึกความยินยอมสำหรับคุกกี้",
+    "categoryLabel": "ชื่อหมวดหมู่ของคุ้กกี้",
+    "searchLabel": "ค้นหา IP Address",
+    "statusNameLabel": "สถานะ",
+    "userId": "เลขไอดี",
+    "email": "อีเมล",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
+    "phoneNumber": "เบอร์โทรศัพท์",
+    "documentNameEn": "ชื่อเอกสาร (EN)",
+    "documentNameTh": "ชื่อเอกสาร (TH)",
+    "acceptedDate": "วันที่กดรับ",
+    "status": "สถานะ",
+    "documentVersion": "เวอร์ชั่น",
+    "documentStatus": {
+      "decline": "ปฏิเสธ",
+      "accept": "ยอมรับ"
+    },
+    "documentCategory": {
+      "strictlyNecessary": "คุกกี้ที่มีความจำเป็นอย่างยิ่ง",
+      "analytical": "คุกกี้เพื่อการวิเคราะห์",
+      "targeting": "คุกกี้เพื่อปรับเนื้อหาเข้ากับกลุ่มเป้าหมาย"
     }
   },
   "all": "ทั้งหมด ",
