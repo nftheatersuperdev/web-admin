@@ -154,7 +154,7 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   createdDate: false,
   updatedDate: false,
   paymentStatus: false,
-  deliverDate: false,
+  deliveryDate: false,
   returnDate: false,
   failureMessage: false,
   paymentCreateDate: false,
