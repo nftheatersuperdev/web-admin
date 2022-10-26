@@ -67,17 +67,15 @@ export const getCategoryList = (t: TFunction<Namespace>): SelectOption[] => {
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
-  userId: true,
-  email: true,
-  firstName: false,
-  lastName: false,
-  phoneNumber: false,
-  documentNameEn: true,
-  documentNameTh: true,
-  acceptedDate: true,
+  id: false,
+  sessionId: true,
+  ipAddress: true,
+  categoryName: true,
+  createdDate: true,
   status: true,
-  documentVersion: true,
+  version: true,
 }
+
 export const getVisibilityColumns = (): VisibilityColumns => {
   return (
     ls.get<VisibilityColumns | undefined>(STORAGE_KEYS.VISIBILITY_COLUMNS) ||

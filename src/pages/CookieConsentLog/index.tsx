@@ -33,11 +33,9 @@ import {
   CookieConsentLogListResponse,
 } from 'services/web-bff/cookie-consent-log.type'
 import { getList, getCategories } from 'services/web-bff/cookie-consent-log'
-import { getList as getDocumentList } from 'services/web-bff/document'
 import {
   getStatusList,
   getVisibilityColumns,
-  SelectOption,
   setVisibilityColumns,
   VisibilityColumns,
 } from './utils'
@@ -60,7 +58,7 @@ const customToolbar = () => (
   </GridToolbarContainer>
 )
 
-export default function CookieConsentLog(): JSX.Element {
+export default function CookieConsentLogPage(): JSX.Element {
   const { t, i18n } = useTranslation()
   const classes = useStyles()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
@@ -70,39 +68,17 @@ export default function CookieConsentLog(): JSX.Element {
   const statusList = getStatusList(t)
   const defaultStatus = statusList.find((status) => status.isDefault)
   const [response, setResponse] = useState<CookieConsentLogListResponse>()
-  const [isFetching, setIsFetching] = useState(false)
+  const [isFetching, setIsFetching] = useState<boolean>(false)
   const isEnglish = i18n.language === 'en'
 
   const search = async (filter: CookieConsentLogListProps) => {
+    setIsFetching(true)
+    setResponse(undefined)
     const res = await getList(filter)
     setResponse(res)
-    setIsFetching(true)
-
-    setTimeout(() => {
-      setIsFetching(false)
-    })
+    setIsFetching(false)
   }
-  const { data: documentTypeListResponse } = useQuery('document-type-list', () =>
-    getDocumentList({ size: config.maxInteger, page: 1 })
-  )
   const { data: documentCategories } = useQuery('document-categories', () => getCategories())
-
-  const allSelect: SelectOption = {
-    key: 'all',
-    label: t('all'),
-    value: 'all',
-    isDefault: true,
-  }
-  const documents: SelectOption[] =
-    documentTypeListResponse?.documents.map((doc) => {
-      return {
-        key: doc.codeName,
-        label: isEnglish ? doc.nameEn : doc.nameTh,
-        value: doc.codeName,
-        isDefault: false,
-      } as SelectOption
-    }) || []
-  documents.unshift(allSelect)
 
   const formik = useFormik({
     initialValues: {
@@ -112,58 +88,51 @@ export default function CookieConsentLog(): JSX.Element {
     },
     enableReinitialize: true,
     onSubmit: (value) => {
-      console.log('value ->', value)
-      let updateObj: CookieConsentLogListProps = {
+      let updateObject: CookieConsentLogListProps = {
         ...filter,
         page: 1,
         size: pageSize,
       }
 
       if (value.ipAddress) {
-        updateObj = { ...updateObj, ipAddress: value.ipAddress }
+        updateObject = { ...updateObject, ipAddress: value.ipAddress }
       } else {
-        delete updateObj.ipAddress
+        delete updateObject.ipAddress
       }
 
       if (value.status !== 'all') {
-        updateObj = { ...updateObj, isAccepted: value.status }
+        updateObject = { ...updateObject, isAccepted: value.status }
       } else {
-        delete updateObj.isAccepted
+        delete updateObject.isAccepted
       }
 
       if (value.category !== 'all') {
-        updateObj = { ...updateObj, category: value.category }
+        updateObject = { ...updateObject, category: value.category }
       } else {
-        delete updateObj.category
+        delete updateObject.category
       }
 
-      setFilter(updateObj)
+      setFilter(updateObject)
       setCurrentPageIndex(0)
-      search(updateObj)
+      search(updateObject)
     },
   })
 
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
-    response?.data.consents && response?.data.consents.length > 0
-      ? response?.data.consents.map((log) => {
+    response?.data.cookieConsents && response?.data.cookieConsents.length > 0
+      ? response?.data.cookieConsents.map((log) => {
           return {
             id: log.id,
-            // category: {
-            //   en: {
-            //     name: log.cookieContent.nameEn,
-            //     description: log.cookieContent.descriptionEn,
-            //   },
-            //   th: {
-            //     name: log.cookieContent.nameTh,
-            //     description: log.cookieContent.descriptionTh,
-            //   },
-            // },
-            version: log.cookieContent?.version | 0.0,
+            categoryName: isEnglish ? log.cookieContent.nameEn : log.cookieContent.nameTh,
+            version: log.cookieContent?.version || 0.0,
             ipAddress: log.ipAddress,
             sessionId: log.sessionId,
             createdDate: log.createdDate,
-            status: log.status,
+            status:
+              log.isAccepted === true
+                ? t('cookieConsentLog.documentStatus.accept')
+                : t('cookieConsentLog.documentStatus.decline'),
           }
         })
       : []
@@ -223,73 +192,37 @@ export default function CookieConsentLog(): JSX.Element {
       valueFormatter: columnFormatText,
     },
     {
-      field: 'userId',
-      headerName: t('cookieConsentLog.userId'),
-      description: t('cookieConsentLog.userId'),
-      hide: !visibilityColumns.userId,
+      field: 'sessionId',
+      headerName: t('cookieConsentLog.sessionId'),
+      description: t('cookieConsentLog.sessionId'),
+      hide: !visibilityColumns.sessionId,
       flex: 1,
       filterable: false,
       valueFormatter: columnFormatText,
     },
     {
-      field: 'email',
-      headerName: t('cookieConsentLog.email'),
-      description: t('cookieConsentLog.email'),
-      hide: !visibilityColumns.email,
+      field: 'ipAddress',
+      headerName: t('cookieConsentLog.ipAddress'),
+      description: t('cookieConsentLog.ipAddress'),
+      hide: !visibilityColumns.ipAddress,
       flex: 1,
       filterable: false,
       valueFormatter: columnFormatText,
     },
     {
-      field: 'firstName',
-      headerName: t('cookieConsentLog.firstName'),
-      description: t('cookieConsentLog.firstName'),
-      hide: !visibilityColumns.firstName,
+      field: 'categoryName',
+      headerName: t('cookieConsentLog.categoryName'),
+      description: t('cookieConsentLog.categoryName'),
+      hide: !visibilityColumns.categoryName,
       flex: 1,
       filterable: false,
       valueFormatter: columnFormatText,
     },
     {
-      field: 'lastName',
-      headerName: t('cookieConsentLog.lastName'),
-      description: t('cookieConsentLog.lastName'),
-      hide: !visibilityColumns.lastName,
-      flex: 1,
-      filterable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
-      field: 'phoneNumber',
-      headerName: t('cookieConsentLog.phoneNumber'),
-      description: t('cookieConsentLog.phoneNumber'),
-      hide: !visibilityColumns.phoneNumber,
-      flex: 1,
-      filterable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
-      field: 'documentNameEn',
-      headerName: t('cookieConsentLog.documentNameEn'),
-      description: t('cookieConsentLog.documentNameEn'),
-      hide: !visibilityColumns.documentNameEn,
-      flex: 1,
-      filterable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
-      field: 'documentNameTh',
-      headerName: t('cookieConsentLog.documentNameTh'),
-      description: t('cookieConsentLog.documentNameTh'),
-      hide: !visibilityColumns.documentNameTh,
-      flex: 1,
-      filterable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
-      field: 'acceptedDate',
-      headerName: t('cookieConsentLog.acceptedDate'),
-      description: t('cookieConsentLog.acceptedDate'),
-      hide: !visibilityColumns.acceptedDate,
+      field: 'createdDate',
+      headerName: t('cookieConsentLog.createdDate'),
+      description: t('cookieConsentLog.createdDate'),
+      hide: !visibilityColumns.createdDate,
       flex: 1,
       filterable: false,
       valueFormatter: columnFormatDate,
@@ -304,10 +237,10 @@ export default function CookieConsentLog(): JSX.Element {
       valueFormatter: columnFormatText,
     },
     {
-      field: 'documentVersion',
-      headerName: t('cookieConsentLog.documentVersion'),
-      description: t('cookieConsentLog.documentVersion'),
-      hide: !visibilityColumns.documentVersion,
+      field: 'version',
+      headerName: t('cookieConsentLog.version'),
+      description: t('cookieConsentLog.version'),
+      hide: !visibilityColumns.version,
       flex: 1,
       filterable: false,
       valueFormatter: columnFormatText,
@@ -347,7 +280,7 @@ export default function CookieConsentLog(): JSX.Element {
           <TextField
             fullWidth
             select
-            label={t('cookieConsentLog.categoryLabel')}
+            label={t('cookieConsentLog.categoryName')}
             id="document"
             value={formik.values.category}
             onChange={(event) => {
@@ -413,7 +346,7 @@ export default function CookieConsentLog(): JSX.Element {
           onColumnVisibilityChange={onColumnVisibilityChange}
           rows={rows}
           columns={columns}
-          checkboxSelection
+          checkboxSelection={false}
           disableSelectionOnClick
           filterMode="server"
           loading={isFetching}

@@ -6,11 +6,19 @@ import {
 } from './cookie-consent-log.type'
 
 export const getList = async ({
+  ipAddress,
+  category,
+  isAccepted,
   size = 10,
   page = 1,
 }: CookieConsentLogListProps): Promise<CookieConsentLogListResponse> => {
-  const response: CookieConsentLogListResponse = await BaseApi.get(
-    '/v1/documents/cookie-contents',
+  const response: CookieConsentLogListResponse = await BaseApi.post(
+    '/v1/customer-cookie-contents/acceptance/search',
+    {
+      ipAddress,
+      category,
+      isAccepted,
+    },
     {
       params: {
         page,

@@ -8,24 +8,13 @@ export interface CookieConsentLogListProps {
   page?: number
 }
 
-export interface CookieContent {
-  id: string
-  category: string
-  nameTh: string
-  nameEn: string
-  descriptionTh: string
-  descriptionEn: string
-  version: number
-  effectiveDate: string
-}
-
 export interface CookieConsentLog {
   id: string
-  ipAddress: string
-  status: string
   sessionId: string
+  ipAddress: string
+  cookieContent: ContentCategory
+  isAccepted: boolean
   createdDate: string
-  cookieContent: CookieContent
 }
 
 export interface ContentCategory {
@@ -33,15 +22,15 @@ export interface ContentCategory {
   category: string
   nameTh: string
   nameEn: string
-  descriptionTh: string
-  descriptionEn: string
+  descriptionTh?: string
+  descriptionEn?: string
   version: number
   effectiveDate: string
 }
 
 export type CookieConsentLogListResponse = {
   data: {
-    consents: CookieConsentLog[]
+    cookieConsents: CookieConsentLog[]
   }
 } & ResponseWithPagination
 
