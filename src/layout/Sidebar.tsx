@@ -189,6 +189,12 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        title: t('sidebar.cookieConsentLog'),
+        path: ROUTE_PATHS.COOKIE_CONSENT_LOG,
+        icon: <LaptopIcon />,
+        allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+      },
+      {
         title: t('sidebar.userDeleteLog'),
         path: ROUTE_PATHS.USER_DELETE_LOG,
         icon: <UserDeleteLogIcon />,

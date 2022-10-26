@@ -39,6 +39,7 @@
     "documents": "Documents",
     "consentLog": "Consent Log",
     "userDeleteLog": "Delete Log",
+    "cookieConsentLog": "Cookie Consent Log",
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
@@ -785,6 +786,27 @@
     "documentStatus": {
       "decline": "Decline",
       "accept": "Accept"
+    }
+  },
+  "cookieConsentLog": {
+    "header": "Cookie Consent Log",
+    "categoryName": "Cookie Category Name",
+    "statusNameLabel": "Status name",
+    "searchLabel": "Search IP Address",
+    "id": "ID",
+    "sessionId": "Session ID",
+    "ipAddress": "IP Address",
+    "createdDate": "Date",
+    "status": "Status",
+    "version": "Version",
+    "documentStatus": {
+      "decline": "Decline",
+      "accept": "Accept"
+    },
+    "documentCategory": {
+      "strictlyNecessary": "Strictly Necessary Cookies",
+      "analytical": "Analytical Cookies",
+      "targeting": "Targeting Cookies"
     }
   },
   "all": "All",
