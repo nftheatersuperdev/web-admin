@@ -38,6 +38,7 @@ import {
   getVisibilityColumns,
   setVisibilityColumns,
   VisibilityColumns,
+  SelectOption,
 } from './utils'
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
@@ -80,10 +81,28 @@ export default function CookieConsentLogPage(): JSX.Element {
   }
   const { data: documentCategories } = useQuery('document-categories', () => getCategories())
 
+  const allSelect: SelectOption = {
+    key: 'all',
+    label: t('all'),
+    value: 'all',
+    isDefault: true,
+  }
+  const categories: SelectOption[] =
+    documentCategories?.map((category) => {
+      return {
+        key: category.id,
+        label: isEnglish ? category.nameEn : category.nameTh,
+        value: category.category,
+        isDefault: false,
+      } as SelectOption
+    }) || []
+  categories.unshift(allSelect)
+  const defaultCategory = categories?.find((x: SelectOption) => x.isDefault)
+
   const formik = useFormik({
     initialValues: {
       ipAddress: '',
-      category: '',
+      category: defaultCategory?.value,
       status: defaultStatus?.value,
     },
     enableReinitialize: true,
@@ -283,6 +302,7 @@ export default function CookieConsentLogPage(): JSX.Element {
             label={t('cookieConsentLog.categoryName')}
             id="document"
             value={formik.values.category}
+            defaultValue={defaultCategory?.value}
             onChange={(event) => {
               formik.setFieldValue('category', event.target.value || '')
             }}
@@ -290,9 +310,9 @@ export default function CookieConsentLogPage(): JSX.Element {
               shrink: true,
             }}
           >
-            {documentCategories?.map((category) => (
-              <MenuItem key={category.id} value={category.category}>
-                {isEnglish ? category.nameEn : category.nameTh}
+            {categories?.map((category) => (
+              <MenuItem key={category.key} value={category.value}>
+                {category.label}
               </MenuItem>
             ))}
           </TextField>
