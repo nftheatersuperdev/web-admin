@@ -57,6 +57,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
   const SIDEBAR_ITEMS = useMemo(
     () => [
       {
+        id: 'left_menu__dashboard',
         title: t('sidebar.dashboard'),
         path: ROUTE_PATHS.DASHBOARD,
         icon: <DashboardIcon />,
@@ -69,6 +70,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__users',
         title: t('sidebar.users'),
         path: ROUTE_PATHS.USER,
         icon: <UserIcon />,
@@ -81,6 +83,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__user_group',
         title: t('sidebar.userGroups'),
         path: ROUTE_PATHS.USER_GROUPS,
         icon: <GroupAddIcon />,
@@ -92,12 +95,14 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
       },
       {
+        id: 'left_menu__cars',
         title: t('sidebar.cars'),
         path: ROUTE_PATHS.CAR,
         icon: <CarIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
+        id: 'left_menu__car_availability',
         title: t('sidebar.carAvailability'),
         path: ROUTE_PATHS.CAR_AVAILABILITY,
         icon: <CarIcon />,
@@ -110,12 +115,14 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__car_activity',
         title: t('sidebar.carActivity'),
         path: ROUTE_PATHS.CAR_ACTIVITY,
         icon: <CarIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
       },
       {
+        id: 'left_menu__model',
         title: t('sidebar.modelAndPricing'),
         path: ROUTE_PATHS.MODEL_AND_PRICING,
         icon: <PackageIcon />,
@@ -132,6 +139,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__subscription',
         title: t('sidebar.subscriptions'),
         path: ROUTE_PATHS.SUBSCRIPTION,
         icon: <SubscriptionIcon />,
@@ -154,6 +162,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__vouchers',
         title: t('sidebar.vouchers'),
         path: ROUTE_PATHS.VOUCHER,
         icon: <LoyaltyOutlinedIcon />,
@@ -171,12 +180,14 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__documents',
         title: t('sidebar.documents'),
         path: ROUTE_PATHS.DOCUMENTS,
         icon: <LibraryBooksIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },
       {
+        id: 'left_menu__consent_log',
         title: t('sidebar.consentLog'),
         path: ROUTE_PATHS.CONSENT_LOG,
         icon: <LaptopIcon />,
@@ -189,18 +200,21 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__cookie_log',
         title: t('sidebar.cookieConsentLog'),
         path: ROUTE_PATHS.COOKIE_CONSENT_LOG,
         icon: <LaptopIcon />,
         allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
       },
       {
+        id: 'left_menu__delete_log',
         title: t('sidebar.userDeleteLog'),
         path: ROUTE_PATHS.USER_DELETE_LOG,
         icon: <UserDeleteLogIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CUSTOMER_SUPPORT],
       },
       {
+        id: 'left_menu__charging_locations',
         title: t('sidebar.chargingLocations'),
         path: ROUTE_PATHS.CHARGING_LOCATIONS,
         icon: <ChargingIcon />,
@@ -213,6 +227,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__admin_users',
         title: t('sidebar.adminUsers'),
         path: ROUTE_PATHS.ADMIN_USERS,
         icon: <AdminUsersIcon />,
@@ -220,6 +235,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
       },
       { subHeader: t('sidebar.account') },
       {
+        id: 'left_menu__profile',
         title: t('sidebar.profile'),
         path: ROUTE_PATHS.ACCOUNT,
         icon: <ProfileIcon />,
@@ -232,6 +248,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         ],
       },
       {
+        id: 'left_menu__settings',
         title: t('sidebar.settings'),
         path: ROUTE_PATHS.ACCOUNT_SETTINGS,
         icon: <SettingsIcon />,
@@ -264,7 +281,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
     return (
       <List role="presentation" onClick={handleSidebarEvent} onKeyDown={handleSidebarEvent}>
         <List>
-          {SIDEBAR_ITEMS.map(({ title, subHeader, path, icon, allowedRoles }) => {
+          {SIDEBAR_ITEMS.map(({ id, title, subHeader, path, icon, allowedRoles }) => {
             if (!hasAllowedRole(currentRole, allowedRoles)) {
               return null
             }
@@ -275,6 +292,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
               </ListSubheader>
             ) : (
               <ListItem
+                id={id}
                 key={title}
                 button
                 // @ts-expect-error we want to use the component prop here
