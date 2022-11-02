@@ -107,6 +107,7 @@ export default function Login(): JSX.Element {
             type="email"
             value={values.email}
             variant="outlined"
+            id="login__email_input"
           />
 
           <TextField
@@ -121,6 +122,7 @@ export default function Login(): JSX.Element {
             type="password"
             value={values.password}
             variant="outlined"
+            id="login__password_input"
           />
 
           <Box py={2}>
@@ -131,6 +133,7 @@ export default function Login(): JSX.Element {
               size="large"
               type="submit"
               variant="contained"
+              id="login__signin_btn"
             >
               {t('button.signIn')}
             </Button>
