@@ -75,15 +75,15 @@ export default function CarUpdateDialog({
     originalStatus === formik.values.status
 
   return (
-    <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{t('car.updateDialog.title')}</DialogTitle>
+    <Dialog open={open} fullWidth aria-labelledby="car_detail__popup_title">
+      <DialogTitle id="car_detail__popup_title">{t('car.updateDialog.title')}</DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <TextField
               fullWidth
               label={t('car.vin')}
-              id="vin"
+              id="car_detail__vin_input"
               name="vin"
               value={formik.values.vin}
               onChange={formik.handleChange}
@@ -98,7 +98,7 @@ export default function CarUpdateDialog({
             <TextField
               fullWidth
               label={t('car.plateNumber')}
-              id="plateNumber"
+              id="car_detail__plate_no_input"
               name="plateNumber"
               value={formik.values.plateNumber}
               onChange={formik.handleChange}
@@ -113,7 +113,7 @@ export default function CarUpdateDialog({
             <TextField
               fullWidth
               label={t('car.color')}
-              id="color"
+              id="car_detail__color_txt"
               name="color"
               value={formik.values.color}
               onChange={formik.handleChange}
@@ -126,15 +126,20 @@ export default function CarUpdateDialog({
             />
           </Grid>
           <Grid item xs={12}>
-            <CarStatusSelect status={formik.values.status} onChange={formik.handleChange} />
+            <CarStatusSelect
+              id="car_detail__status_dropdown"
+              status={formik.values.status}
+              onChange={formik.handleChange}
+            />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onFormCloseHandler} color="primary">
+        <Button id="car_detail__cancle_btn" onClick={onFormCloseHandler} color="primary">
           {t('button.cancel')}
         </Button>
         <Button
+          id="car_detail__update_btn"
           onClick={() => formik.handleSubmit()}
           color="primary"
           variant="contained"

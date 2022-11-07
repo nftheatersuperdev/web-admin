@@ -150,12 +150,17 @@ export default function CarCreateDialog({
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <CarStatusSelect status={formik.values.status} onChange={formik.handleChange} />
+            <CarStatusSelect
+              id="car_detail__status_dropdown"
+              status={formik.values.status}
+              onChange={formik.handleChange}
+            />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button
+          id="car_detail__cancle_btn"
           onClick={() => {
             onClose(null)
             formik.resetForm()
@@ -164,7 +169,12 @@ export default function CarCreateDialog({
         >
           {t('button.cancel')}
         </Button>
-        <Button onClick={() => formik.handleSubmit()} color="primary" variant="contained">
+        <Button
+          id="car_detail__create_btn"
+          onClick={() => formik.handleSubmit()}
+          color="primary"
+          variant="contained"
+        >
           {t('button.create')}
         </Button>
       </DialogActions>
