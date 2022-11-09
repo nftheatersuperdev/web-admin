@@ -243,7 +243,7 @@ export default function Car(): JSX.Element {
         <Fragment>
           <DatePicker
             label={t('carAvailability.selectedFromDate')}
-            id="selectedFromDate"
+            id="car_availability__startdate_input"
             name="selectedFromDate"
             format={DEFAULT_DATE_FORMAT}
             value={selectedFromDate}
@@ -253,7 +253,7 @@ export default function Car(): JSX.Element {
           />
           <DatePicker
             label={t('carAvailability.selectedToDate')}
-            id="selectedToDate"
+            id="car_availability__enddate_input"
             name="selectedToDate"
             format={DEFAULT_DATE_FORMAT}
             value={selectedToDate}
@@ -262,7 +262,12 @@ export default function Car(): JSX.Element {
             }}
           />
           <Box display="flex" alignItems="center">
-            <Button color="primary" variant="contained" onClick={handleClickSearchButton}>
+            <Button
+              id="car_availability__search_btn"
+              color="primary"
+              variant="contained"
+              onClick={handleClickSearchButton}
+            >
               {t('carAvailability.search')}
             </Button>
           </Box>

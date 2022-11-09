@@ -3,11 +3,12 @@ import { MenuItem, FormControl, TextField } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 
 interface CardStatusProps {
+  id: string
   status: string
   onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
 }
 
-export default function CarStatusSelect({ status, onChange }: CardStatusProps): JSX.Element {
+export default function CarStatusSelect({ id, status, onChange }: CardStatusProps): JSX.Element {
   const { t } = useTranslation()
 
   const statuses = [
@@ -31,7 +32,7 @@ export default function CarStatusSelect({ status, onChange }: CardStatusProps): 
         fullWidth
         select
         label={t('car.status')}
-        id="status"
+        id={id}
         name="status"
         defaultValue={defaultStatus?.value}
         value={status}
