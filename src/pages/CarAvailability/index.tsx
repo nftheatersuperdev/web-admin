@@ -244,6 +244,9 @@ export default function Car(): JSX.Element {
           <DatePicker
             label={t('carAvailability.selectedFromDate')}
             id="car_availability__startdate_input"
+            KeyboardButtonProps={{
+              id: 'car_availability__startdate_icon',
+            }}
             name="selectedFromDate"
             format={DEFAULT_DATE_FORMAT}
             value={selectedFromDate}
@@ -254,6 +257,9 @@ export default function Car(): JSX.Element {
           <DatePicker
             label={t('carAvailability.selectedToDate')}
             id="car_availability__enddate_input"
+            KeyboardButtonProps={{
+              id: 'car_availability__enddate_icon',
+            }}
             name="selectedToDate"
             format={DEFAULT_DATE_FORMAT}
             value={selectedToDate}
