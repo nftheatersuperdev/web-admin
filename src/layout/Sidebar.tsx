@@ -67,6 +67,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.OPERATION,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
       {
@@ -80,6 +81,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.OPERATION,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
       {
@@ -87,7 +89,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.userGroups'),
         path: ROUTE_PATHS.USER_GROUPS,
         icon: <GroupAddIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
       },
 
       {
@@ -99,7 +101,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.cars'),
         path: ROUTE_PATHS.CAR,
         icon: <CarIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
       },
       {
         id: 'left_menu__car_availability',
@@ -112,6 +114,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.OPERATION,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
       {
@@ -126,7 +129,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.modelAndPricing'),
         path: ROUTE_PATHS.MODEL_AND_PRICING,
         icon: <PackageIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.MARKETING],
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.OPERATION,
+          ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
+        ],
       },
       {
         subHeader: t('sidebar.subscriptionManagement'),
@@ -136,6 +145,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.OPERATION,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
       {
@@ -143,7 +153,13 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.subscriptions'),
         path: ROUTE_PATHS.SUBSCRIPTION,
         icon: <SubscriptionIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT, ROLES.OPERATION],
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.CUSTOMER_SUPPORT,
+          ROLES.OPERATION,
+          ROLES.PRODUCT_SUPPORT,
+        ],
       },
       /*{
         title: t('sidebar.additionalExpense'),
@@ -159,6 +175,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.OPERATION,
           ROLES.CUSTOMER_SUPPORT,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
       {
@@ -166,7 +183,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.vouchers'),
         path: ROUTE_PATHS.VOUCHER,
         icon: <LoyaltyOutlinedIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
       },
 
       {
@@ -245,6 +262,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.OPERATION,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
       {
@@ -258,6 +276,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.OPERATION,
           ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
         ],
       },
     ],
