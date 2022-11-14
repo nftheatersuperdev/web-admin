@@ -61,10 +61,9 @@ const ProfileTitle = styled(CardHeader)`
 export default function Account(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
-  const { firebaseUser, getRoleDisplayName, getToken } = useAuth()
+  const { firebaseUser, getRoleDisplayName } = useAuth()
   const role = getRoleDisplayName()
-  const accessToken = getToken() ?? ''
-  const { data: profile } = useQuery('cars', () => getAdminUserProfile({ accessToken }))
+  const { data: profile } = useQuery('user-profile', () => getAdminUserProfile())
 
   const lastSignIn = firebaseUser?.metadata?.lastSignInTime
     ? dayjs(firebaseUser?.metadata?.lastSignInTime).format('DD/MM/YYYY HH:mm')

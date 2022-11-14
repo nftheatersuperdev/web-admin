@@ -128,7 +128,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         throw new Error('User not found')
       }
       const token = await user.getIdToken()
-      const userProfile = await getAdminUserProfile({ accessToken: token })
+      const userProfile = await getAdminUserProfile()
 
       setUserId(user.uid)
       setToken(token || '')
