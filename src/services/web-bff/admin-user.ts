@@ -1,21 +1,16 @@
 import config from 'config'
 import { BaseApi } from 'api/baseApi'
 import {
-  GetAdminUserProfileProps,
   CreateNewAdminUserProps,
   AdminUser,
   AdminUsersResponse,
   AdminUserProfileResponse,
 } from 'services/web-bff/admin-user.type'
 
-export const getAdminUserProfile = async ({
-  accessToken,
-}: GetAdminUserProfileProps): Promise<AdminUser> => {
-  const response: AdminUserProfileResponse = await BaseApi.get('/v1/admin-users/profiles', {
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-    },
-  }).then((response) => response.data)
+export const getAdminUserProfile = async (): Promise<AdminUser> => {
+  const response: AdminUserProfileResponse = await BaseApi.get('/v1/admin-users/profiles').then(
+    (response) => response.data
+  )
 
   return response.data
 }
