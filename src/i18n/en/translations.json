@@ -467,7 +467,8 @@
     "admin": "Administrator",
     "customerSupport": "Customer Support",
     "operation": "Operation",
-    "marketing": "Marketing"
+    "marketing": "Marketing",
+    "productSupport": "Product Support"
   },
   "account": {
     "updatePassword": "Update password",

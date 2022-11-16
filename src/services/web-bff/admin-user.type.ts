@@ -6,6 +6,7 @@ export enum AdminUserRole {
   MARKETING = 'MARKETING',
   ADMIN = 'ADMIN',
   SUPER_ADMIN = 'SUPER_ADMIN',
+  PRODUCT_SUPPORT = 'PRODUCT_SUPPORT',
 }
 
 export interface AdminUser {
