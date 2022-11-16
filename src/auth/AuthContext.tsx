@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { getAdminUserProfile } from 'services/web-bff/admin-user'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
-import { ROLES, Role } from './roles'
+import { Role, getAdminUserRoleLabel } from './roles'
 
 export const STORAGE_KEYS = {
   ROLE: 'evme:user_role',
@@ -100,21 +100,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
   }
 
   const getRoleDisplayName = (): string => {
-    const userRole = getRole()
-    switch (userRole) {
-      case ROLES.SUPER_ADMIN:
-        return t('role.superAdmin')
-      case ROLES.ADMIN:
-        return t('role.admin')
-      case ROLES.CUSTOMER_SUPPORT:
-        return t('role.customerSupport')
-      case ROLES.OPERATION:
-        return t('role.operation')
-      case ROLES.MARKETING:
-        return t('role.marketing')
-      default:
-        return '-'
-    }
+    const role = getRole()
+    return getAdminUserRoleLabel(role, t)
   }
 
   const signInWithEmailAndPassword = async (

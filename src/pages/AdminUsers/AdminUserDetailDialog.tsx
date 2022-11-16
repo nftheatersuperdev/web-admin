@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
-import { ROLES } from 'auth/roles'
+import { getAdminUserRoleLabel, ROLES } from 'auth/roles'
 import { User } from 'services/evme.types'
 
 interface AdminUserDetailDialogProps {
@@ -28,25 +28,6 @@ export default function AdminUserDetailDialog({
   user,
 }: AdminUserDetailDialogProps): JSX.Element {
   const { t } = useTranslation()
-
-  const getDisplayRole = (role?: string): string => {
-    switch (role) {
-      case ROLES.SUPER_ADMIN:
-        return t('role.superAdmin')
-      case ROLES.ADMIN:
-        return t('role.admin')
-      case ROLES.CUSTOMER_SUPPORT:
-        return t('role.customerSupport')
-      case ROLES.OPERATION:
-        return t('role.operation')
-      case ROLES.MARKETING:
-        return t('role.marketing')
-      case ROLES.PRODUCT_SUPPORT:
-        return t('role.productSupport')
-      default:
-        return '-'
-    }
-  }
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -108,9 +89,9 @@ export default function AdminUserDetailDialog({
                   readOnly: true,
                 }}
               >
-                {Object.values(ROLES).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {getDisplayRole(value)}
+                {Object.values(ROLES).map((role) => (
+                  <MenuItem key={role} value={role}>
+                    {getAdminUserRoleLabel(role, t)}
                   </MenuItem>
                 ))}
               </TextField>
