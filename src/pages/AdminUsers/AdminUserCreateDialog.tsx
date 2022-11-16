@@ -51,6 +51,8 @@ export default function AdminUserCreateDialog({
         return t('role.operation')
       case ROLES.MARKETING:
         return t('role.marketing')
+      case ROLES.PRODUCT_SUPPORT:
+        return t('role.productSupport')
       default:
         return '-'
     }
@@ -66,6 +68,8 @@ export default function AdminUserCreateDialog({
         return AdminUserRole.CUSTOMER_SUPPORT
       case ROLES.MARKETING:
         return AdminUserRole.MARKETING
+      case ROLES.PRODUCT_SUPPORT:
+        return AdminUserRole.PRODUCT_SUPPORT
       default:
         return AdminUserRole.OPERATION
     }

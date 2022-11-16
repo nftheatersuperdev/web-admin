@@ -158,6 +158,8 @@ export default function AdminUsers(): JSX.Element {
             return t('role.operation')
           case ROLES.MARKETING:
             return t('role.marketing')
+          case ROLES.PRODUCT_SUPPORT:
+            return t('role.productSupport')
           default:
             return '-'
         }

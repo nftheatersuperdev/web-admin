@@ -466,7 +466,8 @@
     "admin": "ผู้ดูแลระบบ",
     "customerSupport": "ฝ่ายบริการลูกค้า",
     "operation": "ฝ่ายปฏิบัติการ",
-    "marketing": "ฝ่ายการตลาด"
+    "marketing": "ฝ่ายการตลาด",
+    "productSupport": "ฝ่ายบริการสินค้า"
   },
   "account": {
     "updatePassword": "แก้ไขรหัสผ่าน",
