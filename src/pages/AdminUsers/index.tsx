@@ -24,7 +24,7 @@ import {
 } from 'utils'
 import config from 'config'
 import { useAuth } from 'auth/AuthContext'
-import { ROLES } from 'auth/roles'
+import { getAdminUserRoleLabel, ROLES } from 'auth/roles'
 import { useQuery } from 'react-query'
 import PageToolbar from 'layout/PageToolbar'
 import { User, UserFilter } from 'services/evme.types'
@@ -147,22 +147,7 @@ export default function AdminUsers(): JSX.Element {
       flex: 1,
       valueFormatter: (params: GridValueFormatterParams): string => {
         const role = String(params.value).toLocaleLowerCase()
-        switch (role) {
-          case ROLES.SUPER_ADMIN:
-            return t('role.superAdmin')
-          case ROLES.ADMIN:
-            return t('role.admin')
-          case ROLES.CUSTOMER_SUPPORT:
-            return t('role.customerSupport')
-          case ROLES.OPERATION:
-            return t('role.operation')
-          case ROLES.MARKETING:
-            return t('role.marketing')
-          case ROLES.PRODUCT_SUPPORT:
-            return t('role.productSupport')
-          default:
-            return '-'
-        }
+        return getAdminUserRoleLabel(role, t)
       },
       filterOperators: selectFilterOperators,
       valueOptions: [

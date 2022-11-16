@@ -1,3 +1,5 @@
+import { TFunction, Namespace } from 'react-i18next'
+
 export const ROLES = Object.freeze({
   ADMIN: 'admin',
   SUPER_ADMIN: 'super_admin',
@@ -20,4 +22,26 @@ export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boo
     return true
   }
   return !!role && allowedRoles.includes(role)
+}
+
+export const getAdminUserRoleLabel = (
+  role: string | null | undefined,
+  t: TFunction<Namespace>
+): string => {
+  switch (role) {
+    case ROLES.SUPER_ADMIN:
+      return t('role.superAdmin')
+    case ROLES.ADMIN:
+      return t('role.admin')
+    case ROLES.CUSTOMER_SUPPORT:
+      return t('role.customerSupport')
+    case ROLES.OPERATION:
+      return t('role.operation')
+    case ROLES.MARKETING:
+      return t('role.marketing')
+    case ROLES.PRODUCT_SUPPORT:
+      return t('role.productSupport')
+    default:
+      return '-'
+  }
 }
