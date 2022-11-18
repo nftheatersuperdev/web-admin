@@ -191,7 +191,10 @@ export default function VoucherPackagePriceTab({
         error: t('voucher.dialog.packagePrice.error'),
       })
       handleOnSubmitted()
+    } else {
+      toast.error(t('error.unknown'))
     }
+    setIsLoading(false)
   }
 
   const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {
