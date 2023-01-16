@@ -1,3 +1,4 @@
+import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import axios from 'axios'
 import {
@@ -26,7 +27,7 @@ export const getList = async ({
   query,
   filters,
 }: SubscriptionBookingListProps): Promise<SubscriptionListResponse> => {
-  const response: SubscriptionListResponse = await BaseApi.post(
+  const response: SubscriptionListResponse = await AdminBffAPI.post(
     '/v1/bookings/rental/search',
     {
       ...filters,
