@@ -86,7 +86,7 @@ export const editSchedule = async ({
   bookingDetailId,
   data,
 }: CarActivityScheduleEditProps): Promise<boolean> => {
-  await BaseApi.patch(
+  await AdminBffAPI.patch(
     `/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`,
     data
   ).catch((error) => {
@@ -103,7 +103,7 @@ export const deleteSchedule = async ({
   bookingId,
   bookingDetailId,
 }: CarActivityScheduleDeleteProps): Promise<boolean> => {
-  await BaseApi.delete(`/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`).then(
+  await AdminBffAPI.delete(`/v1/bookings/reservation/${bookingId}/details/${bookingDetailId}`).then(
     (response) => response.data.data
   )
 
