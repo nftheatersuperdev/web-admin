@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import {
   CarBff,
@@ -110,7 +111,7 @@ export const updateCarModelById = async ({
   id,
   carModel,
 }: CarModelInputProps): Promise<boolean> => {
-  await BaseApi.patch(`/v2/car-models/${id}`, carModel)
+  await AdminBffAPI.patch(`/v2/car-models/${id}`, carModel)
 
   return true
 }
