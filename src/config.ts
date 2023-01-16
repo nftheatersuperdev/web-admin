@@ -9,6 +9,7 @@ interface Config {
   sentry: SentryOptions
   evme: string
   evmeBff: string
+  evmeAdminBff: string
   firebaseRest: string
   firebaseRestKey: string
   googleMapsApiKey: string
@@ -29,6 +30,7 @@ const config: Config = {
   },
   evme: process.env.REACT_APP_EVME_API || '',
   evmeBff: process.env.REACT_APP_EVME_BFF_API || '',
+  evmeAdminBff: process.env.REACT_APP_EVME_ADMIN_BFF_API || '',
   googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
   firebaseRest: process.env.REACT_APP_FIREBASE_REST_API || '',
   firebaseRestKey: process.env.REACT_APP_FIREBASE_REST_KEY || '',

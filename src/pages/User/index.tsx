@@ -25,11 +25,12 @@ import {
 import config from 'config'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
-import { User as UserType, UserInputRequest, UserMeProps } from 'services/web-bff/user.type'
+import { User as UserType, UserInputRequest } from 'services/web-bff/user.type'
+import { CustomerInputRequest, CustomerMeProps } from 'services/web-bff/customer.type'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
-import { searchUser } from 'services/web-bff/user'
+import { searchCustomer } from 'services/web-bff/customer'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import DetailDialog from './DetailDialog'
 
@@ -52,12 +53,12 @@ export default function User(): JSX.Element {
     data: userData,
     refetch,
     isFetching,
-  } = useQuery('user-list', () =>
-    searchUser({
+  } = useQuery('customer-list', () =>
+    searchCustomer({
       data: userFilter,
       page: currentPageIndex + 1,
       size: pageSize,
-    } as UserMeProps)
+    } as CustomerMeProps)
   )
 
   const equalOperators = getEqualFilterOperators(t)
@@ -318,7 +319,7 @@ export default function User(): JSX.Element {
           return filter
         }
         if (columnField === 'userGroups') {
-          filter = { userGroupNameContain: value }
+          filter = { customerGroupName: value }
           return filter
         }
         if (value) {
@@ -333,31 +334,29 @@ export default function User(): JSX.Element {
           filter = { [keyValue]: value }
         }
         return filter
-      }, {} as UserInputRequest),
+      }, {} as CustomerInputRequest),
     })
     // reset page
     setCurrentPageIndex(0)
   }
 
-  // setUserDetail
-
   const users =
-    userData?.data.users.map((user) => {
+    userData?.data.customers.map((customer) => {
       return {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        kycStatus: user.kycStatus,
-        isActive: user.isActive,
-        createdDate: user.createdDate,
-        updatedDate: user.updatedDate,
+        id: customer.id,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+        phoneNumber: customer.phoneNumber,
+        kycStatus: customer.kycStatus,
+        isActive: customer.isActive,
+        createdDate: customer.createdDate,
+        updatedDate: customer.updatedDate,
         // these fields not support from backend
         verifyDate: null,
         note: '',
-        kycReason: user.kycReason,
-        userGroups: user.userGroups,
+        kycReason: customer.kycReason,
+        userGroups: customer.customerGroups,
       }
     }) || []
 

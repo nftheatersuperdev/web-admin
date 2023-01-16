@@ -147,7 +147,10 @@ export default function VoucherUserGroupTab({
         error: t('voucher.dialog.userGroups.error'),
       })
       handleOnSubmitted()
+    } else {
+      toast.error(t('error.unknown'))
     }
+    setIsLoading(false)
   }
 
   const handleOnOptionChange = (_event: ChangeEvent<HTMLInputElement>, value: string) => {

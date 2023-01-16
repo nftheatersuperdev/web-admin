@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import {
   Voucher,
@@ -16,7 +17,7 @@ export const getList = async ({
   size = 10,
   page = 1,
 }: VoucherListProps): Promise<VoucherListResponse> => {
-  const response: VoucherListResponse = await BaseApi.post('/v2/vouchers/search', data, {
+  const response: VoucherListResponse = await AdminBffAPI.post('/v1/vouchers/search', data, {
     params: {
       page,
       size,
@@ -68,7 +69,7 @@ export const deleteById = async ({ accessToken, id }: VoucherDeleteByIdProps): P
 }
 
 export const createBff = async (data: VoucherInputBff): Promise<string> => {
-  const voucherId: string = await BaseApi.post('/v2/vouchers', data).then(
+  const voucherId: string = await AdminBffAPI.post('/v1/vouchers', data).then(
     (response) => response.data.data.id
   )
 
@@ -78,7 +79,7 @@ export const createBff = async (data: VoucherInputBff): Promise<string> => {
 export const updateBff = async (data: VoucherInputBff): Promise<string> => {
   const updateData = { ...data }
   delete updateData.id
-  const voucherId: string = await BaseApi.put(`/v2/vouchers/${data.id}`, updateData).then(
+  const voucherId: string = await AdminBffAPI.put(`/v2/vouchers/${data.id}`, updateData).then(
     (response) => response.data.data.id
   )
 
