@@ -1,4 +1,5 @@
 import { BaseApi } from 'api/baseApi'
+import { AdminBffAPI } from 'api/admin-bff'
 import { UserGroupInput } from 'services/evme.types'
 import {
   UserByUserGroupListResponse,
@@ -92,7 +93,7 @@ export const getAllUserDeleteLog = async ({
   page = 1,
   size = 10,
 }: UserDeleteLogProps): Promise<UserDeleteLogListResponse> => {
-  const response: UserDeleteLogListResponse = await BaseApi.get(
+  const response: UserDeleteLogListResponse = await AdminBffAPI.get(
     `/v1/account-deactivation/logs/search`,
     {
       params: {

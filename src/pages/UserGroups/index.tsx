@@ -27,7 +27,7 @@ import {
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
-import { searchUserGroup } from 'services/web-bff/user'
+import { searchCustomerGroup } from 'services/web-bff/customer'
 import { useDeleteUserGroup } from 'services/evme'
 import { UserGroup as UserGroupType } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
@@ -57,7 +57,7 @@ export default function UserGroup(): JSX.Element {
     refetch,
     isFetching,
   } = useQuery('user-group-list', () =>
-    searchUserGroup({
+    searchCustomerGroup({
       data: userGroupFilter,
       page: currentPageIndex + 1,
       size: pageSize,
@@ -228,7 +228,7 @@ export default function UserGroup(): JSX.Element {
   ]
 
   const userGroups =
-    userGroupData?.data.userGroups.map((userGroup) => {
+    userGroupData?.data.customerGroups.map((userGroup) => {
       return {
         id: userGroup.id,
         name: userGroup.name,

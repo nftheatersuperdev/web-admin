@@ -1,3 +1,4 @@
+import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import {
   CarActivityResponse,
@@ -15,7 +16,7 @@ export const ScheduleStatus = {
 }
 
 export const createSchedule = async (body: CarActivityCreateScheduleProps): Promise<boolean> => {
-  await BaseApi.post('/v1/bookings/reservation', body)
+  await AdminBffAPI.post('/v1/bookings/reservation', body)
     .then(
       ({
         data: {
@@ -36,7 +37,7 @@ export const createSchedule = async (body: CarActivityCreateScheduleProps): Prom
 export const getActivities = async (
   params: CarActivityListProps
 ): Promise<CarActivityResponse['data']> => {
-  const response: CarActivityResponse['data'] = await BaseApi.get('/v1/car-activities/search', {
+  const response: CarActivityResponse['data'] = await AdminBffAPI.get('/v1/car-activities/search', {
     params,
   }).then((response) => response.data.data)
 
@@ -73,7 +74,7 @@ export const getSchedulesByCarId = async ({
 }
 
 export const getScheduleServices = async (): Promise<ScheduleService[]> => {
-  const response: ScheduleService[] = await BaseApi.get('/v1/bookings/types').then(
+  const response: ScheduleService[] = await AdminBffAPI.get('/v1/bookings/types').then(
     (response) => response.data.data
   )
 
