@@ -91,7 +91,7 @@ export const getByCodeBff = async (code: string, isEdit = false): Promise<Vouche
     return undefined
   }
 
-  const response: Voucher = await BaseApi.get(`/v2/vouchers/${code}`).then(
+  const response: Voucher = await AdminBffAPI.get(`/v1/vouchers/${code}`).then(
     (response) => response.data.data.voucher
   )
 
