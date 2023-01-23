@@ -48,7 +48,7 @@ export const searchCustomerGroup = async ({
 export const creatCustomerGroup = async (
   data: CustomerGroupInput
 ): Promise<CustomerGroupResponse> => {
-  const response: CustomerGroupResponse = await BaseApi.post('/v1/customer-groups', data).then(
+  const response: CustomerGroupResponse = await AdminBffAPI.post('/v1/customer-groups', data).then(
     (response) => response.data
   )
   return response
@@ -57,11 +57,14 @@ export const creatCustomerGroup = async (
 export const updateCustomerGroup = async (
   data: CustomerGroupInput
 ): Promise<CustomerGroupResponse> => {
-  const response: CustomerGroupResponse = await BaseApi.put('/v1/customer-groups', data, {
-    params: {
-      id: data.id,
-    },
-  }).then((response) => response.data)
+  const customerGroupId = data.id
+  const updateObject = {
+    name: data.name,
+  }
+  const response: CustomerGroupResponse = await AdminBffAPI.put(
+    `/v1/customer-groups/${customerGroupId}`,
+    updateObject
+  ).then((response) => response.data)
   return response
 }
 
