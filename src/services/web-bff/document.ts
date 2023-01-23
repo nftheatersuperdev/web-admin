@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_DATETIME_FORMAT_ISO } from 'utils'
+import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import {
   GetDocumentProps,
@@ -50,9 +51,9 @@ export const getList = async ({
   page,
   size,
 }: GetDocumentsProps): Promise<DocumentListResponse['data']> => {
-  const response: DocumentListResponse = await BaseApi.get(`/v1/documents`, {
+  const response: DocumentListResponse = await AdminBffAPI.get(`/v1/documents`, {
     params: {
-      pageIndex: page,
+      page,
       size,
     },
   }).then((result) => result.data)
