@@ -16,8 +16,17 @@ export const getAdminUserProfile = async (): Promise<AdminUser> => {
   return response.adminUser
 }
 
-export const getAdminUsers = async (): Promise<AdminUsersResponse> => {
-  const response: AdminUsersResponse = await BaseApi.get('/v1/admin-users').then((response) => {
+export const getAdminUsers = async (page = 1, size = 10): Promise<AdminUsersResponse> => {
+  const response: AdminUsersResponse = await AdminBffAPI.post(
+    '/v1/admin-users/search',
+    {},
+    {
+      params: {
+        page,
+        size,
+      },
+    }
+  ).then((response) => {
     return response.data
   })
 

@@ -1,4 +1,4 @@
-import { Response } from 'services/web-bff/response.type'
+import { Response, Pagination } from 'services/web-bff/response.type'
 
 export enum AdminUserRole {
   CUSTOMER_SUPPORT = 'CUSTOMER_SUPPORT',
@@ -36,6 +36,7 @@ export interface CreateNewAdminUserProps {
 export interface AdminUsersResponse extends Response {
   data: {
     adminUsers: AdminUser[]
+    pagination: Pagination
   }
 }
 

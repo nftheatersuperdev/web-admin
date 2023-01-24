@@ -9,7 +9,11 @@ import {
   GridValueFormatterParams,
   GridFilterItem,
 } from '@material-ui/data-grid'
-import { Check as EnabledIcon, Close as DisabledIcon, Search as ViewIcon } from '@material-ui/icons'
+import {
+  Check as EnabledIcon,
+  Close as DisabledIcon,
+  Visibility as ViewIcon,
+} from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
@@ -44,7 +48,10 @@ export default function AdminUsers(): JSX.Element {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
   const [selectedUser, setSelectedUser] = useState<Partial<User>>({})
 
-  const { data: adminUsersData, refetch } = useQuery('cars', () => getAdminUsers())
+  const page = currentPageIndex + 1
+  const { data: adminUsersData, refetch } = useQuery('admin-users', () =>
+    getAdminUsers(page, pageSize)
+  )
 
   const defaultFilter = {
     role: {
@@ -62,7 +69,9 @@ export default function AdminUsers(): JSX.Element {
   const booleanFilterOperators = getBooleanFilterOperators(t)
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPageSize(params.pageSize)
+    setPageSize(() => {
+      return params.pageSize
+    })
   }
 
   const handleFilterChange = (params: GridFilterModel) => {
@@ -100,7 +109,7 @@ export default function AdminUsers(): JSX.Element {
 
   useEffect(() => {
     refetch()
-  }, [userFilter, refetch])
+  }, [userFilter, pageSize, currentPageIndex, refetch])
 
   const columns: GridColDef[] = [
     {
@@ -227,7 +236,7 @@ export default function AdminUsers(): JSX.Element {
     },
   ]
 
-  const rowCount = adminUsersData?.data.adminUsers?.length ?? 0
+  const rowCount = adminUsersData?.data.pagination.totalRecords || 0
   const rows = adminUsersData?.data.adminUsers ?? []
 
   return (
