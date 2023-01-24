@@ -40,5 +40,5 @@ export interface AdminUsersResponse extends Response {
 }
 
 export interface AdminUserProfileResponse extends Response {
-  data: AdminUser
+  adminUser: AdminUser
 }

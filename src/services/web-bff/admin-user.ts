@@ -1,4 +1,5 @@
 import config from 'config'
+import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import {
   CreateNewAdminUserProps,
@@ -8,11 +9,11 @@ import {
 } from 'services/web-bff/admin-user.type'
 
 export const getAdminUserProfile = async (): Promise<AdminUser> => {
-  const response: AdminUserProfileResponse = await BaseApi.get('/v1/admin-users/profiles').then(
-    (response) => response.data
+  const response: AdminUserProfileResponse = await AdminBffAPI.get('/v1/admin-users/profiles').then(
+    (response) => response.data.data
   )
 
-  return response.data
+  return response.adminUser
 }
 
 export const getAdminUsers = async (): Promise<AdminUsersResponse> => {
@@ -45,7 +46,7 @@ export const createNewAdminUser = async ({
     }
   ).then((response) => response.data)
 
-  return response.data
+  return response.adminUser
 }
 
 export default {
