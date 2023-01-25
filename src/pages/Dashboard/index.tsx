@@ -72,13 +72,13 @@ export default function Dashboard(): JSX.Element {
 
   const totalCars = informations?.car.total ?? 0
   const totalAvailableCars = informations?.car.numberOfCarInService ?? 0
-  const totalSubscriptions = informations?.subscription.total ?? 0
-  const totalUsers = informations?.user.total ?? 0
-  const totalUpcomingCarsDelivery = informations?.subscription.numberOfDeliveryTaskInThisDay ?? 0
-  const totalUpcomingCarsReturn = informations?.subscription.numberOfReturnTaskInThisDay ?? 0
-  const totalKYC = informations?.user.total ?? 0
-  const totalKYCApproved = informations?.user.numberOfKycVerifiedStatus ?? 0
-  const totalKYCRejected = informations?.user.numberOfKycRejectedStatus ?? 0
+  const totalSubscriptions = informations?.booking.total ?? 0
+  const totalUsers = informations?.customer.total ?? 0
+  const totalUpcomingCarsDelivery = informations?.booking.numberOfDeliveryTaskInThisDay ?? 0
+  const totalUpcomingCarsReturn = informations?.booking.numberOfReturnTaskInThisDay ?? 0
+  const totalKYC = informations?.customer.total ?? 0
+  const totalKYCApproved = informations?.customer.numberOfKycVerifiedStatus ?? 0
+  const totalKYCRejected = informations?.customer.numberOfKycRejectedStatus ?? 0
 
   const searchReturn = qs.stringify({
     returnDate: todayLowerUpper,
@@ -94,7 +94,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalCars.title')}
-            value={`${totalAvailableCars}/${totalCars}`}
+            value={`${totalAvailableCars.toLocaleString()}/${totalCars.toLocaleString()}`}
             subTitle={t('dashboard.totalCars.subTitle')}
             icon={<CarIcon />}
             iconColor="red"
@@ -113,7 +113,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalUsers.title')}
-            value={totalUsers}
+            value={totalUsers.toLocaleString()}
             subTitle={t('dashboard.totalUsers.subTitle')}
             icon={<PeopleIcon />}
             iconColor="#5d4037"
@@ -128,7 +128,7 @@ export default function Dashboard(): JSX.Element {
             <Grid item lg={4} sm={6} xl={4} xs={12}>
               <CardStatus
                 title={t('dashboard.totalRequestedCases.title')}
-                value={totalKYC}
+                value={totalKYC.toLocaleString()}
                 subTitle={t('dashboard.totalRequestedCases.subTitle')}
                 icon={<RequestedIcon />}
                 iconColor="#03a9f4"
@@ -139,7 +139,7 @@ export default function Dashboard(): JSX.Element {
             <Grid item lg={4} sm={6} xl={4} xs={12}>
               <CardStatus
                 title={t('dashboard.totalApprovedCases.title')}
-                value={totalKYCApproved}
+                value={totalKYCApproved.toLocaleString()}
                 subTitle={t('dashboard.totalApprovedCases.subTitle')}
                 icon={<ApprovedIcon />}
                 iconColor="#4caf50"
@@ -155,7 +155,7 @@ export default function Dashboard(): JSX.Element {
             <Grid item lg={4} sm={6} xl={4} xs={12}>
               <CardStatus
                 title={t('dashboard.totalRejectedCases.title')}
-                value={totalKYCRejected}
+                value={totalKYCRejected.toLocaleString()}
                 subTitle={t('dashboard.totalRejectedCases.subTitle')}
                 icon={<RejectedIcon />}
                 iconColor="#d32f2f"
@@ -175,7 +175,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalSubscriptions.title')}
-            value={totalSubscriptions}
+            value={totalSubscriptions.toLocaleString()}
             subTitle={t('dashboard.totalSubscriptions.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
@@ -185,7 +185,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalUpcomingCarsDelivery.title')}
-            value={totalUpcomingCarsDelivery}
+            value={totalUpcomingCarsDelivery.toLocaleString()}
             subTitle={t('dashboard.totalUpcomingCarsDelivery.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
@@ -203,7 +203,7 @@ export default function Dashboard(): JSX.Element {
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalUpcomingCarsReturn.title')}
-            value={totalUpcomingCarsReturn}
+            value={totalUpcomingCarsReturn.toLocaleString()}
             subTitle={t('dashboard.totalUpcomingCarsReturn.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"

@@ -5,8 +5,8 @@ export interface DashboardResponse extends Response {
   data: {
     summary: {
       car: CarSummaryResponse
-      subscription: SubscriptionSummaryResponse
-      user: UserSummaryResponse
+      booking: SubscriptionSummaryResponse
+      customer: UserSummaryResponse
     }
   }
 }
