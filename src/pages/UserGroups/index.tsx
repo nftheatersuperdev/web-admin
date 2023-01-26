@@ -21,12 +21,14 @@ import {
   getEqualFilterOperators,
   getContainFilterOperators,
   FieldComparisons,
-  FieldKeyOparators,
+  // FieldKeyOparators,
   columnFormatDate,
   geEqualtDateTimeOperators,
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
+import { ROLES, hasAllowedRole } from 'auth/roles'
+import { useAuth } from 'auth/AuthContext'
 import { searchCustomerGroup } from 'services/web-bff/customer'
 import { useDeleteUserGroup } from 'services/evme'
 import { UserGroup as UserGroupType } from 'services/evme.types'
@@ -82,10 +84,12 @@ export default function UserGroup(): JSX.Element {
         if (value) {
           switch (operatorValue) {
             case FieldComparisons.equals:
-              keyValue = `${columnField}${FieldKeyOparators.equals}`
+              // keyValue = `${columnField}${FieldKeyOparators.equals}`
+              keyValue = `${columnField}`
               break
             case FieldComparisons.contains:
-              keyValue = `${columnField}${FieldKeyOparators.contains}`
+              // keyValue = `${columnField}${FieldKeyOparators.contains}`
+              keyValue = `${columnField}`
               break
           }
           filter = { [keyValue]: value }
@@ -241,12 +245,30 @@ export default function UserGroup(): JSX.Element {
   const handleFetchPage = (pageNumber: number) => {
     setCurrentPageIndex(pageNumber)
   }
+
+  function RenderCreateButton() {
+    const isAllowToCreate = hasAllowedRole(useAuth().getRole(), [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.MARKETING,
+    ])
+
+    return (
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={() => setOpenCreateUpdateDialog(true)}
+        disabled={!isAllowToCreate}
+      >
+        {t('userGroups.button.createNew')}
+      </Button>
+    )
+  }
+
   return (
     <Page>
       <PageToolbar>
-        <Button color="primary" variant="contained" onClick={() => setOpenCreateUpdateDialog(true)}>
-          {t('userGroups.button.createNew')}
-        </Button>
+        <RenderCreateButton />
       </PageToolbar>
 
       <MarginBottom>
