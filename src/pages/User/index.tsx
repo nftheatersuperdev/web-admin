@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Card, Button, IconButton } from '@material-ui/core'
-import PageviewIcon from '@material-ui/icons/Pageview'
+import VisibilityIcon from '@material-ui/icons/Visibility'
 import {
   GridColDef,
   GridFilterItem,
@@ -17,7 +17,7 @@ import {
   geEqualtDateTimeOperators,
   getSelectEqualFilterOperators,
   FieldComparisons,
-  FieldKeyOparators,
+  // FieldKeyOparators,
   /*dateToFilterOnDay,
   dateToFilterNotOnDay,
   stringToFilterContains,*/
@@ -119,7 +119,7 @@ export default function User(): JSX.Element {
       filterOperators: containOperators,
     },
     {
-      field: 'lastName',
+      field: 'lastname',
       headerName: t('user.lastName'),
       description: t('user.lastName'),
       hide: !visibilityColumns.lastName,
@@ -301,7 +301,7 @@ export default function User(): JSX.Element {
             setOpenUserDetailDialog(true)
           }}
         >
-          <PageviewIcon />
+          <VisibilityIcon />
         </IconButton>
       ),
     },
@@ -325,10 +325,12 @@ export default function User(): JSX.Element {
         if (value) {
           switch (operatorValue) {
             case FieldComparisons.equals:
-              keyValue = `${columnField}${FieldKeyOparators.equals}`
+              // keyValue = `${columnField}${FieldKeyOparators.equals}`
+              keyValue = `${columnField}`
               break
             case FieldComparisons.contains:
-              keyValue = `${columnField}${FieldKeyOparators.contains}`
+              // keyValue = `${columnField}${FieldKeyOparators.contains}`
+              keyValue = `${columnField}`
               break
           }
           filter = { [keyValue]: value }
