@@ -1,11 +1,8 @@
-import axios from 'axios'
 import { AdminBffAPI } from 'api/admin-bff'
 import { BaseApi } from 'api/baseApi'
 import {
   CarBff,
-  CarListProps,
   CarListFilterRequestProps,
-  CarListResponse,
   CarListBffResponse,
   CarAvailableListBffResponse,
   CarAvailableListBffFilterRequestProps,
@@ -16,32 +13,27 @@ import {
 } from 'services/web-bff/car.type'
 
 export const getCarById = async (carId: string): Promise<CarBff> => {
-  const carDetail: CarBff = await BaseApi.get(`/v1/cars/${carId}`).then(
+  const carDetail: CarBff = await AdminBffAPI.get(`/v1/cars/${carId}`).then(
     (response) => response?.data.data.car
   )
   return carDetail
 }
 
 export const getList = async ({
-  accessToken,
-  query,
+  filter,
   sort,
-  limit = 10,
-  page = 1,
-}: CarListProps): Promise<CarListResponse> => {
-  const response: CarListResponse = await axios
-    .get(`https://run.mocky.io/v3/962511e2-ef15-48f1-af5d-9fce95655af6`, {
-      params: {
-        ...query,
-        ...sort,
-        limit,
-        page,
-      },
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => response.data)
+  size = 10,
+  page = 0,
+}: CarListFilterRequestProps): Promise<CarListBffResponse> => {
+  const pageIndex = page + 1
+  const response: CarListBffResponse = await AdminBffAPI.get('/v1/cars', {
+    params: {
+      ...filter,
+      ...sort,
+      pageIndex,
+      size,
+    },
+  }).then((response) => response.data)
 
   return response
 }
