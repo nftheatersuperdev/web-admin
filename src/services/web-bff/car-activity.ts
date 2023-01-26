@@ -1,12 +1,12 @@
 import { AdminBffAPI } from 'api/admin-bff'
-import { BaseApi } from 'api/baseApi'
 import {
   CarActivityResponse,
   CarActivityScheduleDeleteProps,
   CarActivityScheduleEditProps,
   CarActivityScheduleListProps,
   CarActivityCreateScheduleProps,
-  CarActivityListProps,
+  CarActivityListParamsProps,
+  CarActivityListBodyProps,
   Schedule,
   ScheduleService,
 } from 'services/web-bff/car-activity.type'
@@ -35,11 +35,16 @@ export const createSchedule = async (body: CarActivityCreateScheduleProps): Prom
 }
 
 export const getActivities = async (
-  params: CarActivityListProps
+  params: CarActivityListParamsProps,
+  body: CarActivityListBodyProps
 ): Promise<CarActivityResponse['data']> => {
-  const response: CarActivityResponse['data'] = await AdminBffAPI.get('/v1/car-activities/search', {
-    params,
-  }).then((response) => response.data.data)
+  const response: CarActivityResponse['data'] = await AdminBffAPI.post(
+    '/v1/car-activities/search',
+    body,
+    {
+      params,
+    }
+  ).then((response) => response.data.data)
 
   return response
 }
@@ -49,18 +54,16 @@ export const getSchedulesByCarId = async ({
   bookingTypeId,
   startDate,
   endDate,
-  statusList = 'accepted,reserved,cancelled',
+  statusList = ['accepted', 'reserved', 'cancelled'],
 }: CarActivityScheduleListProps): Promise<Schedule[]> => {
   /**
    * The API doesn't has pagination right now.
    */
-  const response: Schedule[] = await BaseApi.get(`/v1/bookings/carId/${carId}`, {
-    params: {
-      bookingTypeId,
-      startDate,
-      endDate,
-      statusList,
-    },
+  const response: Schedule[] = await AdminBffAPI.post(`/v1/bookings/cars/${carId}/search`, {
+    bookingTypeId,
+    startDate,
+    endDate,
+    statusList,
   })
     .then(({ data }) => data.data)
     .catch((error) => {

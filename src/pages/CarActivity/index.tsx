@@ -213,14 +213,18 @@ export default function CarActivity(): JSX.Element {
     isFetched: isFetchedActivities,
     isFetching: isFetchingActivities,
   } = useQuery('get-car-activities', () =>
-    getActivities({
-      page,
-      size: pageSize,
-      carBrandId: filterBrand,
-      carModelId: filterModel,
-      carSkuId: filterColor,
-      plateNumber: filterPlate,
-    })
+    getActivities(
+      {
+        page,
+        size: pageSize,
+      },
+      {
+        carBrandId: filterBrand,
+        carModelId: filterModel,
+        carSkuId: filterColor,
+        plateNumber: filterPlate,
+      }
+    )
   )
 
   const checkAndRenderValue = (value: string) => {

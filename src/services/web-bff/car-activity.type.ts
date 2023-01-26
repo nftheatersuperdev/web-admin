@@ -56,13 +56,16 @@ export interface ScheduleService {
   nameTh: string
 }
 
-export interface CarActivityListProps {
-  page: number
-  size: number
+export interface CarActivityListBodyProps {
   carBrandId?: string
   carModelId?: string
   carSkuId?: string // In the UI we called as color
   plateNumber?: string
+}
+
+export interface CarActivityListParamsProps {
+  page: number
+  size: number
 }
 
 export interface CarActivityScheduleListProps {
@@ -70,7 +73,7 @@ export interface CarActivityScheduleListProps {
   bookingTypeId?: string
   startDate?: string
   endDate?: string
-  statusList?: string
+  statusList?: string[]
 }
 export interface CarActivityScheduleEditProps {
   bookingId: string
