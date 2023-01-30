@@ -54,7 +54,7 @@ export default function GroupInviteDialog({
     const response = await getAllUser()
     return response.data.users.filter(
       (x) =>
-        x.userGroups.indexOf(userGroupId) > -1 ||
+        x.customerGroups.indexOf(userGroupId) > -1 ||
         x.firstName?.includes(keyword) ||
         x.lastName?.includes(keyword) ||
         x.phoneNumber?.includes(keyword) ||

@@ -217,7 +217,7 @@ export default function UserDetailDialog({
               label={t('userGroups.title')}
               margin="normal"
               variant="outlined"
-              value={user?.userGroups}
+              value={user?.customerGroups}
               InputProps={{
                 readOnly: true,
               }}

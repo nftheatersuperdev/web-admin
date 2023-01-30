@@ -238,10 +238,10 @@ export default function User(): JSX.Element {
       filterable: false,
     },
     {
-      field: 'userGroups',
+      field: 'customerGroups',
       headerName: t('user.userGroups'),
       description: t('user.userGroups'),
-      hide: !visibilityColumns.userGroups,
+      hide: !visibilityColumns.customerGroups,
       flex: 1,
       sortable: false,
       filterOperators: containOperators,
@@ -294,7 +294,7 @@ export default function User(): JSX.Element {
               createdDate: params.row.createdDate,
               updatedDate: params.row.updatedDate,
               creditCard: params.row.creditCard,
-              userGroups: params.row.userGroups,
+              customerGroups: params.row.customerGroups,
               locale: params.row.locale,
             }
             setUserDetail(userDetail)
@@ -318,7 +318,7 @@ export default function User(): JSX.Element {
           filter = { isActive: value === 'active' }
           return filter
         }
-        if (columnField === 'userGroups') {
+        if (columnField === 'customerGroups') {
           filter = { customerGroupName: value }
           return filter
         }
@@ -358,7 +358,7 @@ export default function User(): JSX.Element {
         verifyDate: null,
         note: '',
         kycReason: customer.kycReason,
-        userGroups: customer.customerGroups,
+        customerGroups: customer.customerGroups,
       }
     }) || []
 
