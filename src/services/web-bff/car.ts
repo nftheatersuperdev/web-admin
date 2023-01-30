@@ -77,7 +77,7 @@ export const getAvailableListBFF = async ({
 export const getModelPriceById = async ({
   id,
 }: CarModelPriceByIdProps): Promise<CarModelPriceBff> => {
-  const response: CarModelPriceBff = await BaseApi.get(`/v2/car-models/${id}`).then(
+  const response: CarModelPriceBff = await AdminBffAPI.get(`/v1/car-models/${id}`).then(
     (response) => response.data.data
   )
 
@@ -103,7 +103,7 @@ export const updateCarModelById = async ({
   id,
   carModel,
 }: CarModelInputProps): Promise<boolean> => {
-  await AdminBffAPI.patch(`/v2/car-models/${id}`, carModel)
+  await AdminBffAPI.patch(`/v1/car-models/${id}`, carModel)
 
   return true
 }

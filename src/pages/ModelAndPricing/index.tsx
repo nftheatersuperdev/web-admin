@@ -13,7 +13,7 @@ import { columnFormatDate, getOnlyEqualFilterOperator } from 'utils'
 import config from 'config'
 import { Edit as EditIcon } from '@material-ui/icons'
 import { useQuery } from 'react-query'
-import { getListBFF } from 'services/web-bff/car'
+import { getList } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { CarListFilterRequest } from 'services/web-bff/car.type'
@@ -30,7 +30,7 @@ export default function ModelAndPricing(): JSX.Element {
     data: cars,
     refetch,
     isFetching,
-  } = useQuery('model-and-pricing-page', () => getListBFF({ filter, page, size: pageSize }))
+  } = useQuery('model-and-pricing-page', () => getList({ filter, page, size: pageSize }))
 
   const onlyEqualFilterOperator = getOnlyEqualFilterOperator(t)
   const visibilityColumns = getVisibilityColumns()
@@ -81,7 +81,7 @@ export default function ModelAndPricing(): JSX.Element {
     () =>
       cars?.data.cars?.map((car) => ({
         id: car?.id || '-',
-        modelId: car?.carSku?.carModel?.id || '-',
+        modelId: car?.carSku?.carModel?.id,
         brand: car?.carSku?.carModel?.brand?.name || '-',
         name: car?.carSku?.carModel?.name || '-',
         createdDate: car?.createdDate || '-',
@@ -152,14 +152,17 @@ export default function ModelAndPricing(): JSX.Element {
       filterable: false,
       align: 'center',
       headerAlign: 'center',
-      renderCell: ({ row }: GridCellParams) => (
-        <IconButton
-          size="small"
-          onClick={() => history.push(`/model-and-pricing/${row.modelId}/edit`)}
-        >
-          <EditIcon />
-        </IconButton>
-      ),
+      renderCell: ({ row }: GridCellParams) =>
+        row.modelId ? (
+          <IconButton
+            size="small"
+            onClick={() => history.push(`/model-and-pricing/${row.modelId}/edit`)}
+          >
+            <EditIcon />
+          </IconButton>
+        ) : (
+          ''
+        ),
     },
   ]
 
