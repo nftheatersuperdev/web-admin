@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import styled from 'styled-components'
 import {
   Breadcrumbs,
@@ -15,7 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 import { Search as SearchIcon } from '@material-ui/icons'
 import { useFormik } from 'formik'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import config from 'config'
 import {
   GridColDef,
@@ -82,6 +83,10 @@ export default function ConsentLog(): JSX.Element {
   const { data: documentTypeListResponse } = useQuery('document-type-list', () =>
     getDocumentList({ size: config.maxInteger, page: 1 })
   )
+
+  useEffect(() => {
+    getList(filter).then((res) => setResponse(res))
+  }, [])
 
   const allSelect: SelectOption = {
     key: 'all',

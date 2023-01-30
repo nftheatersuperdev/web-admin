@@ -8,14 +8,14 @@ export const getList = async ({
   size = 10,
   page = 1,
 }: ConsentLogListProps): Promise<ConsentLogListResponse> => {
-  const response: ConsentLogListResponse = await AdminBffAPI.get('/v1/customer-agreements', {
-    params: {
+  const response: ConsentLogListResponse = await AdminBffAPI.post(
+    '/v1/customer-agreements/search',
+    {
       email,
       isAccepted,
       codeName,
-      page,
-      size,
     },
-  }).then((response) => response.data)
+    { params: { page, size } }
+  ).then((response) => response.data)
   return response
 }
