@@ -1,4 +1,4 @@
-import { BaseApi } from 'api/baseApi'
+import { AdminBffAPI } from 'api/admin-bff'
 import {
   CookieConsentLogListProps,
   CookieConsentLogListResponse,
@@ -12,7 +12,7 @@ export const getList = async ({
   size = 10,
   page = 1,
 }: CookieConsentLogListProps): Promise<CookieConsentLogListResponse> => {
-  const response: CookieConsentLogListResponse = await BaseApi.post(
+  const response: CookieConsentLogListResponse = await AdminBffAPI.post(
     '/v1/customer-cookie-contents/acceptance/search',
     {
       ipAddress,
@@ -30,8 +30,8 @@ export const getList = async ({
 }
 
 export const getCategories = async (): Promise<ContentCategory[]> => {
-  const response: ContentCategory[] = await BaseApi.get('/v1/documents/cookie-contents').then(
-    (response) => response.data.data.contents
-  )
+  const response: ContentCategory[] = await AdminBffAPI.get(
+    '/v1/documents/cookie-contents/categories'
+  ).then((response) => response.data.data.contents)
   return response
 }
