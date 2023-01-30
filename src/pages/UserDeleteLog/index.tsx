@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import styled from 'styled-components'
 import {
   Breadcrumbs,
@@ -22,7 +23,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 import { Search as SearchIcon } from '@material-ui/icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import config from 'config'
 import { columnFormatDate, columnFormatText } from 'utils'
 import { useFormik } from 'formik'
@@ -68,6 +69,10 @@ export default function UserDeleteLog(): JSX.Element {
   const [isFetching, setIsFetching] = useState(false)
   const searchTypeList = getSearchTypeList(t)
   const searchTypeDefault = searchTypeList.find((type) => type.isDefault)
+
+  useEffect(() => {
+    getAllUserDeleteLog(filter).then((res) => setResponse(res))
+  }, [])
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const onColumnVisibilityChange = (params: any) => {

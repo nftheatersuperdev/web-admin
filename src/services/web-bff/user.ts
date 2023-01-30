@@ -97,14 +97,16 @@ export const getAllUserDeleteLog = async ({
   page = 1,
   size = 10,
 }: UserDeleteLogProps): Promise<UserDeleteLogListResponse> => {
-  const response: UserDeleteLogListResponse = await AdminBffAPI.get(
+  const response: UserDeleteLogListResponse = await AdminBffAPI.post(
     `/v1/account-deactivation/logs/search`,
     {
+      userId,
+      firstName,
+      lastName,
+      email,
+    },
+    {
       params: {
-        userId,
-        firstName,
-        lastName,
-        email,
         page,
         size,
       },
