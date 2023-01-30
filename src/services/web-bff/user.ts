@@ -25,17 +25,21 @@ export const searchUser = async ({ data, size, page }: UserMeProps): Promise<Use
   return response
 }
 
-export const searchUserGroup = async ({
+export const searchCustomerGroup = async ({
   data,
   page,
   size,
 }: UserGroupProps): Promise<UserGroupListResponse> => {
-  const response: UserGroupListResponse = await BaseApi.post('/v1/user-groups/search', data, {
-    params: {
-      page,
-      size,
-    },
-  }).then((response) => response.data)
+  const response: UserGroupListResponse = await AdminBffAPI.post(
+    '/v1/customer-groups/search',
+    data,
+    {
+      params: {
+        page,
+        size,
+      },
+    }
+  ).then((response) => response.data)
   return response
 }
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SortDirection } from 'services/web-bff/general.type'
-import { UserGroup } from 'services/web-bff/user.type'
+import { CustomerGroup, UserGroup } from 'services/web-bff/user.type'
 import { PackagePrice } from 'services/web-bff/package-price.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
 
@@ -13,6 +13,7 @@ export interface Voucher {
   limitPerUser: number
   isAllPackages: boolean
   userGroups: UserGroup[]
+  customerGroups: UserGroup[]
   packagePrices: PackagePrice[]
   startAt: any
   endAt: any
@@ -67,6 +68,7 @@ export interface VoucherBff {
   isAllPackages?: boolean
   packagePrices?: PackagePrice[]
   userGroups?: UserGroup[]
+  customerGroups?: UserGroup[]
 }
 
 export interface VoucherInputBff {
@@ -81,7 +83,7 @@ export interface VoucherInputBff {
   endAt: string
   isAllPackages?: boolean
   packagePrices?: string[] | PackagePrice[]
-  userGroups?: string[] | UserGroup[]
+  customerGroups?: string[] | CustomerGroup[]
 }
 
 export interface VoucherUpdateProps {

@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 import { VoucherDataAndRefetchProps } from 'pages/VoucherCreateEdit/types'
 import { updateBff } from 'services/web-bff/voucher'
 import { VoucherInputBff } from 'services/web-bff/voucher.type'
-import { UserGroup } from 'services/web-bff/user.type'
-import { searchUserGroup } from 'services/web-bff'
+import { CustomerGroup } from 'services/web-bff/user.type'
+import { searchCustomerGroup } from 'services/web-bff'
 
 const ButtonSpace = styled(Button)`
   margin: 0;
@@ -43,16 +43,17 @@ export default function VoucherUserGroupTab({
   voucher,
   refetch,
 }: VoucherDataAndRefetchProps): JSX.Element {
+  console.log('voucher ->', voucher)
   const existsOption =
-    voucher?.userGroups && voucher?.userGroups?.length > 0
+    voucher?.customerGroups && voucher?.customerGroups?.length > 0
       ? selectOptions.SELECT
       : selectOptions.ALL
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedUserGroups, setSelectedUserGroups] = useState<UserGroup[]>([])
-  const [currentUserGroups, setCurrentUserGroups] = useState<UserGroup[]>([])
-  const [userGroupEmpty, setUserGroupIsEmpty] = useState<boolean>(true)
-  const [userGroupIsEqualToExists, setUserGroupIsEqualToExists] = useState<boolean>(true)
+  const [selectedCustomerGroups, setSelectedCustomerGroups] = useState<CustomerGroup[]>([])
+  const [currentCustomerGroups, setCurrentCustomerGroups] = useState<CustomerGroup[]>([])
+  const [customerGroupEmpty, setCustomerGroupIsEmpty] = useState<boolean>(true)
+  const [customerGroupIsEqualToExists, setCustomerGroupIsEqualToExists] = useState<boolean>(true)
   const [optionIsEqualToExists, setOptionIsEqualToExists] = useState<boolean>(true)
   const [currentOption, setCurrentOption] = useState<string>(selectOptions.ALL)
 
@@ -60,49 +61,48 @@ export default function VoucherUserGroupTab({
   const endAtDateTime = new Date(voucher?.endAt || new Date())
   const isInactive = currentDateTime > endAtDateTime
 
-  const { data: masterUserGroupsData, isSuccess: isSuccessToGetMasterUserGroups } = useQuery(
-    'master-user-groups',
-    () => searchUserGroup({ data: {}, size: 1000 })
-  )
+  const { data: masterCustomerGroupsData, isSuccess: isSuccessToGetMasterCustomerGroups } =
+    useQuery('master-customer-groups', () => searchCustomerGroup({ data: {}, size: 1000 }))
 
-  const masterUserGroups = masterUserGroupsData?.data.userGroups || []
+  const masterCustomerGroups = masterCustomerGroupsData?.data.customerGroups || []
 
   useEffect(() => {
-    const voucherUserGroupIds = voucher?.userGroups?.map((userGroup) => userGroup.id) || []
-    const userGroups = masterUserGroups?.filter((masterUserGroup) =>
-      voucherUserGroupIds?.includes(masterUserGroup.id)
+    const voucherCustomerGroupIds =
+      voucher?.customerGroups?.map((customerGroup) => customerGroup.id) || []
+    const customerGroups = masterCustomerGroups?.filter((masterCustomerGroup) =>
+      voucherCustomerGroupIds?.includes(masterCustomerGroup.id)
     )
-    if (userGroups && userGroups.length > 0) {
-      setCurrentUserGroups(userGroups)
-      setSelectedUserGroups(userGroups)
+    if (customerGroups && customerGroups.length > 0) {
+      setCurrentCustomerGroups(customerGroups)
+      setSelectedCustomerGroups(customerGroups)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessToGetMasterUserGroups])
+  }, [isSuccessToGetMasterCustomerGroups])
 
   useEffect(() => {
-    if (JSON.stringify(currentUserGroups) !== JSON.stringify(selectedUserGroups)) {
-      setUserGroupIsEqualToExists(false)
+    if (JSON.stringify(currentCustomerGroups) !== JSON.stringify(selectedCustomerGroups)) {
+      setCustomerGroupIsEqualToExists(false)
       setOptionIsEqualToExists(false)
     } else {
-      setUserGroupIsEqualToExists(true)
+      setCustomerGroupIsEqualToExists(true)
     }
-  }, [currentUserGroups, selectedUserGroups])
+  }, [currentCustomerGroups, selectedCustomerGroups])
 
   useEffect(() => {
-    if (selectedUserGroups && selectedUserGroups.length > 0) {
-      setUserGroupIsEmpty(false)
+    if (selectedCustomerGroups && selectedCustomerGroups.length > 0) {
+      setCustomerGroupIsEmpty(false)
     } else {
-      setUserGroupIsEmpty(true)
+      setCustomerGroupIsEmpty(true)
     }
-  }, [selectedUserGroups])
+  }, [selectedCustomerGroups])
 
   useEffect(() => {
     if (currentOption === selectOptions.ALL && existsOption !== selectOptions.ALL) {
       setOptionIsEqualToExists(false)
-      setUserGroupIsEqualToExists(false)
-      setUserGroupIsEmpty(false)
+      setCustomerGroupIsEqualToExists(false)
+      setCustomerGroupIsEmpty(false)
     } else if (currentOption !== existsOption) {
-      setUserGroupIsEqualToExists(false)
+      setCustomerGroupIsEqualToExists(false)
       setOptionIsEqualToExists(false)
     } else {
       setOptionIsEqualToExists(true)
@@ -110,7 +110,10 @@ export default function VoucherUserGroupTab({
   }, [currentOption, existsOption])
 
   useEffect(() => {
-    if (voucher?.userGroups === null || (voucher?.userGroups && voucher?.userGroups.length < 1)) {
+    if (
+      voucher?.customerGroups === null ||
+      (voucher?.customerGroups && voucher?.customerGroups.length < 1)
+    ) {
       setCurrentOption(selectOptions.ALL)
     } else {
       setCurrentOption(selectOptions.SELECT)
@@ -119,26 +122,26 @@ export default function VoucherUserGroupTab({
 
   const handleOnSubmitted = () => {
     if (currentOption === selectOptions.ALL) {
-      setSelectedUserGroups([])
+      setSelectedCustomerGroups([])
     }
-    setUserGroupIsEmpty(true)
-    setUserGroupIsEqualToExists(true)
+    setCustomerGroupIsEmpty(true)
+    setCustomerGroupIsEqualToExists(true)
     setOptionIsEqualToExists(true)
     setIsLoading(false)
     refetch()
   }
 
-  const handleUpdateUserGroups = async () => {
+  const handleUpdateCustomerGroups = async () => {
     setIsLoading(true)
     if (voucher) {
-      const isAllUserGroups = currentOption === selectOptions.ALL
-      const userGroupIds: string[] = selectedUserGroups?.map((row) => row.id)
+      const isAllCustomerGroups = currentOption === selectOptions.ALL
+      const customerGroupIds: string[] = selectedCustomerGroups?.map((row) => row.id)
       const packagePriceIds: string[] = voucher.packagePrices?.map((row) => row.id) || []
 
       const updateObject: VoucherInputBff = {
         ...voucher,
         packagePrices: packagePriceIds,
-        userGroups: isAllUserGroups ? [] : userGroupIds,
+        customerGroups: isAllCustomerGroups ? [] : customerGroupIds,
       }
 
       await toast.promise(updateBff(updateObject), {
@@ -166,10 +169,10 @@ export default function VoucherUserGroupTab({
               isInactive ||
               isLoading ||
               optionIsEqualToExists ||
-              userGroupIsEqualToExists ||
-              userGroupEmpty
+              customerGroupIsEqualToExists ||
+              customerGroupEmpty
             }
-            onClick={() => handleUpdateUserGroups()}
+            onClick={() => handleUpdateCustomerGroups()}
             color="primary"
             variant="contained"
           >
@@ -208,9 +211,9 @@ export default function VoucherUserGroupTab({
           <Autocomplete
             multiple
             id="user-group-select"
-            value={selectedUserGroups}
-            options={masterUserGroups}
-            onChange={(_, newValue) => setSelectedUserGroups([...newValue])}
+            value={selectedCustomerGroups}
+            options={masterCustomerGroups}
+            onChange={(_, newValue) => setSelectedCustomerGroups([...newValue])}
             getOptionLabel={(option) => option.name}
             disableCloseOnSelect
             renderOption={(option, { selected }: AutocompleteRenderOptionState) => (

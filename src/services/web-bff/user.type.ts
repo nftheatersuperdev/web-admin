@@ -20,7 +20,7 @@ export interface User {
   kycReason: string | null
   locale: 'TH' | 'EN'
   creditCard: string | null
-  userGroups: string[]
+  customerGroups: string[]
   createdDate: string
   updatedDate: string
 }
@@ -31,6 +31,13 @@ export interface UserAddress {
   latitude: number
   longitude: number
   remark?: Maybe<string>
+}
+
+export interface CustomerGroup {
+  id: string
+  name: string
+  createdDate?: any
+  updatedDate?: any
 }
 
 export interface UserGroup {
@@ -135,7 +142,7 @@ export type UserListResponse = {
 
 export type UserGroupListResponse = {
   data: {
-    userGroups: UserGroup[]
+    customerGroups: CustomerGroup[]
   }
 } & ResponseWithPagination
 

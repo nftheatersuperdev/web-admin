@@ -125,9 +125,9 @@ export default function VoucherGeneralInformationTab({
         values.packagePrices && values.packagePrices?.length > 0
           ? values.packagePrices.map((packagePrice) => packagePrice.id)
           : []
-      const userGroups =
-        values.userGroups && values.userGroups?.length > 0
-          ? values.userGroups.map((userGroup) => userGroup.id)
+      const customerGroups =
+        values.customerGroups && values.customerGroups?.length > 0
+          ? values.customerGroups.map((customerGroup) => customerGroup.id)
           : []
 
       const requestBody: VoucherInputBff = {
@@ -141,7 +141,7 @@ export default function VoucherGeneralInformationTab({
         endAt: values.endAt,
         isAllPackages: values.isAllPackages,
         packagePrices,
-        userGroups,
+        customerGroups,
       }
       const mutateFunction = isEdit ? voucherService.updateBff : voucherService.createBff
       const data = isEdit ? { id: voucher?.id, ...requestBody } : requestBody

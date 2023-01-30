@@ -174,13 +174,13 @@ export default function VoucherPackagePriceTab({
     setIsLoading(true)
     if (voucher) {
       const packagePriceIds: string[] = selectedPackages?.map((row) => row.id)
-      const userGroupIds: string[] = voucher.userGroups?.map((row) => row.id) || []
+      const customerGroupIds: string[] = voucher.customerGroups?.map((row) => row.id) || []
 
       setCurrentPackages(selectedPackages)
 
       const updateObject: VoucherInputBff = {
         ...voucher,
-        userGroups: userGroupIds,
+        customerGroups: customerGroupIds,
         packagePrices: isAllPackages ? [] : packagePriceIds,
         isAllPackages,
       }
