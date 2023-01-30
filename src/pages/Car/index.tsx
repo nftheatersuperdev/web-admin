@@ -25,7 +25,7 @@ import config from 'config'
 import { SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import { getListBFF, updateById } from 'services/web-bff/car'
+import { getList, updateById } from 'services/web-bff/car'
 import { CarListFilterRequest, CarUpdateInput } from 'services/web-bff/car.type'
 import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
 import {
@@ -52,7 +52,7 @@ export default function Car(): JSX.Element {
     refetch,
     isFetching,
   } = useQuery('cars', () =>
-    getListBFF({
+    getList({
       filter,
       sort,
       page,
@@ -173,7 +173,7 @@ export default function Car(): JSX.Element {
   const rows =
     carData?.data?.cars?.map((car) => {
       const connectorType =
-        car?.carSku?.carModel.chargers.map((charger) => charger.description) || '-'
+        car?.carSku?.carModel?.chargers?.map((charger) => charger.description) || '-'
 
       return {
         id: car?.id,
