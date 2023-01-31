@@ -43,7 +43,6 @@ export default function VoucherUserGroupTab({
   voucher,
   refetch,
 }: VoucherDataAndRefetchProps): JSX.Element {
-  console.log('voucher ->', voucher)
   const existsOption =
     voucher?.customerGroups && voucher?.customerGroups?.length > 0
       ? selectOptions.SELECT
