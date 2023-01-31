@@ -68,6 +68,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.OPERATION,
           ROLES.MARKETING,
           ROLES.PRODUCT_SUPPORT,
+          ROLES.IT_ADMIN,
         ],
       },
       {
@@ -249,7 +250,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.adminUsers'),
         path: ROUTE_PATHS.ADMIN_USERS,
         icon: <AdminUsersIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
       },
       { subHeader: t('sidebar.account') },
       {
@@ -264,6 +265,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.OPERATION,
           ROLES.MARKETING,
           ROLES.PRODUCT_SUPPORT,
+          ROLES.IT_ADMIN,
         ],
       },
       {
@@ -278,6 +280,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.OPERATION,
           ROLES.MARKETING,
           ROLES.PRODUCT_SUPPORT,
+          ROLES.IT_ADMIN,
         ],
       },
     ],

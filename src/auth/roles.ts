@@ -7,6 +7,7 @@ export const ROLES = Object.freeze({
   OPERATION: 'operation',
   MARKETING: 'marketing',
   PRODUCT_SUPPORT: 'product_support',
+  IT_ADMIN: 'it_admin',
 })
 
 export type Role =
@@ -16,6 +17,7 @@ export type Role =
   | typeof ROLES.OPERATION
   | typeof ROLES.MARKETING
   | typeof ROLES.PRODUCT_SUPPORT
+  | typeof ROLES.IT_ADMIN
 
 export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boolean => {
   if (!allowedRoles || !allowedRoles.length) {
@@ -41,6 +43,8 @@ export const getAdminUserRoleLabel = (
       return t('role.marketing')
     case ROLES.PRODUCT_SUPPORT:
       return t('role.productSupport')
+    case ROLES.IT_ADMIN:
+      return t('role.itAdmin')
     default:
       return '-'
   }

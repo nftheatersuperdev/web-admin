@@ -60,6 +60,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.IT_ADMIN,
     ],
   },
   {
@@ -72,6 +73,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.IT_ADMIN,
     ],
   },
   {
@@ -84,6 +86,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.IT_ADMIN,
     ],
   },
   {
@@ -255,7 +258,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.ADMIN_USERS,
     component: lazy(() => import('./pages/AdminUsers' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

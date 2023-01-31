@@ -468,7 +468,8 @@
     "customerSupport": "Customer Support",
     "operation": "Operation",
     "marketing": "Marketing",
-    "productSupport": "Product Support"
+    "productSupport": "Product Support",
+    "itAdmin": "IT Administrator"
   },
   "account": {
     "updatePassword": "Update password",

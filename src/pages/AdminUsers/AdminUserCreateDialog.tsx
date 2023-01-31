@@ -51,6 +51,8 @@ export default function AdminUserCreateDialog({
         return AdminUserRole.MARKETING
       case ROLES.PRODUCT_SUPPORT:
         return AdminUserRole.PRODUCT_SUPPORT
+      case ROLES.IT_ADMIN:
+        return AdminUserRole.IT_ADMIN
       default:
         return AdminUserRole.OPERATION
     }
