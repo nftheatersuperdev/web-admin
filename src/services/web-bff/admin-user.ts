@@ -1,6 +1,4 @@
-import config from 'config'
 import { AdminBffAPI } from 'api/admin-bff'
-import { BaseApi } from 'api/baseApi'
 import {
   CreateNewAdminUserProps,
   AdminUser,
@@ -40,12 +38,12 @@ export const createNewAdminUser = async ({
   lastname,
   role,
 }: CreateNewAdminUserProps): Promise<AdminUser> => {
-  const response: AdminUserProfileResponse = await BaseApi.post(
-    `${config.evmeBff}/v1/admin-users`,
+  const response: AdminUserProfileResponse = await AdminBffAPI.post(
+    '/v1/admin-users',
     {
       firebaseToken,
-      firstname,
-      lastname,
+      firstName: firstname,
+      lastName: lastname,
       role,
     },
     {
