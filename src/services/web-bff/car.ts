@@ -1,5 +1,4 @@
 import { AdminBffAPI } from 'api/admin-bff'
-import { BaseApi } from 'api/baseApi'
 import {
   CarBff,
   CarListFilterRequestProps,
@@ -38,25 +37,6 @@ export const getList = async ({
   return response
 }
 
-export const getListBFF = async ({
-  filter,
-  sort,
-  size = 10,
-  page = 0,
-}: CarListFilterRequestProps): Promise<CarListBffResponse> => {
-  const pageIndex = page + 1
-  const response: CarListBffResponse = await BaseApi.get('/v2/cars', {
-    params: {
-      ...filter,
-      ...sort,
-      pageIndex,
-      size,
-    },
-  }).then((response) => response.data)
-
-  return response
-}
-
 export const getAvailableListBFF = async ({
   filter,
   sort,
@@ -64,12 +44,15 @@ export const getAvailableListBFF = async ({
   page = 0,
 }: CarAvailableListBffFilterRequestProps): Promise<CarAvailableListBffResponse> => {
   const pageIndex = page + 1
-  const response: CarAvailableListBffResponse = await BaseApi.post('/v2/cars/usability/search', {
-    ...filter,
-    ...sort,
-    pageIndex,
-    size,
-  }).then((response) => response.data)
+  const response: CarAvailableListBffResponse = await AdminBffAPI.post(
+    '/v1/cars/usability/search',
+    {
+      ...filter,
+      ...sort,
+      pageIndex,
+      size,
+    }
+  ).then((response) => response.data)
 
   return response
 }
@@ -90,7 +73,7 @@ export const updateById = async ({
   plateNumber,
   isActive,
 }: CarUpdateByIdProps): Promise<boolean> => {
-  await BaseApi.patch(`/v2/cars/${id}`, {
+  await AdminBffAPI.patch(`/v1/cars/${id}`, {
     vin,
     plateNumber,
     isActive,
