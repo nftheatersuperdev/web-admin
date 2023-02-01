@@ -197,15 +197,15 @@ export default function User(): JSX.Element {
       valueOptions: [
         {
           label: t('user.kyc.pending'),
-          value: 'pending',
+          value: 'PENDING',
         },
         {
           label: t('user.kyc.verified'),
-          value: 'verified',
+          value: 'VERIFIED',
         },
         {
           label: t('user.kyc.rejected'),
-          value: 'rejected',
+          value: 'REJECTED',
         },
       ],
     },
