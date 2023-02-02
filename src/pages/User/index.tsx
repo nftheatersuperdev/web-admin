@@ -358,7 +358,7 @@ export default function User(): JSX.Element {
         verifyDate: null,
         note: '',
         kycReason: customer.kycReason,
-        customerGroups: customer.customerGroups,
+        customerGroups: customer.customerGroups?.join(',') || '-',
       }
     }) || []
 
