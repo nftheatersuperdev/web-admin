@@ -16,7 +16,7 @@ import {
 } from './user.type'
 
 export const searchUser = async ({ data, size, page }: UserMeProps): Promise<UserListResponse> => {
-  const response: UserListResponse = await BaseApi.post('/v1/users/search', data, {
+  const response: UserListResponse = await AdminBffAPI.post('/v1/users/search', data, {
     params: {
       page,
       size,
@@ -44,18 +44,17 @@ export const searchCustomerGroup = async ({
 }
 
 export const creatUserGroup = async (data: UserGroupInput): Promise<UserGroupResponse> => {
-  const response: UserGroupResponse = await BaseApi.post('/v1/user-groups', data).then(
+  const response: UserGroupResponse = await AdminBffAPI.post('/v1/customer-groups', data).then(
     (response) => response.data
   )
   return response
 }
 
 export const updateUserGroup = async (data: UserGroupInput): Promise<UserGroupResponse> => {
-  const response: UserGroupResponse = await BaseApi.put('/v1/user-groups', data, {
-    params: {
-      id: data.id,
-    },
-  }).then((response) => response.data)
+  const response: UserGroupResponse = await AdminBffAPI.patch(
+    `/v1/customer-groups/${data.id}`,
+    data
+  ).then((response) => response.data)
   return response
 }
 
