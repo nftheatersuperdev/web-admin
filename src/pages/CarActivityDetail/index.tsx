@@ -147,6 +147,8 @@ export default function CarActivityDetail(): JSX.Element {
     'car-schedules',
     () =>
       getSchedulesByCarId({
+        page: page + 1,
+        size: pageSize,
         carId,
         bookingTypeId: filterService,
         startDate: filterStartDate?.format(DEFAULT_DATE_FORMAT_BFF),
@@ -165,8 +167,8 @@ export default function CarActivityDetail(): JSX.Element {
 
   const carSchedules =
     (carSchedulesData &&
-      carSchedulesData.length > 0 &&
-      carSchedulesData.map((schedule) => {
+      carSchedulesData.schedules.length > 0 &&
+      carSchedulesData.schedules.map((schedule) => {
         return {
           id: schedule.bookingId,
           ...schedule,
@@ -622,9 +624,9 @@ export default function CarActivityDetail(): JSX.Element {
             className={[classes.marginSpace, classes.table].join(' ')}
             autoHeight
             pagination
-            pageSize={pageSize}
+            pageSize={carSchedulesData?.pagination.size}
             page={page}
-            rowCount={totalSchedules}
+            rowCount={carSchedulesData?.pagination.totalRecords}
             paginationMode="server"
             onPageSizeChange={(param: GridPageChangeParams) => setPageSize(param.pageSize)}
             onPageChange={(index: number) => setPage(index)}

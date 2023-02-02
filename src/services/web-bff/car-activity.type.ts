@@ -69,6 +69,8 @@ export interface CarActivityListParamsProps {
 }
 
 export interface CarActivityScheduleListProps {
+  page?: number
+  size?: number
   carId: string
   bookingTypeId?: string
   startDate?: string
@@ -113,3 +115,9 @@ export type CarActivityCreatedResponse = {
 export type ScheduleServiceResponse = {
   data: ScheduleService[]
 } & Response
+
+export type CarActivityScheduleListResponse = {
+  data: {
+    schedules: Schedule[]
+  }
+} & ResponseWithPagination
