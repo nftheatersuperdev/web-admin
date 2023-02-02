@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from 'react'
+import dayjs from 'dayjs'
 import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
@@ -24,6 +25,7 @@ import {
   // FieldKeyOparators,
   columnFormatDate,
   geEqualtDateTimeOperators,
+  DEFAULT_DATETIME_FORMAT_ISO,
 } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
@@ -91,6 +93,9 @@ export default function UserGroup(): JSX.Element {
               // keyValue = `${columnField}${FieldKeyOparators.contains}`
               keyValue = `${columnField}`
               break
+          }
+          if (['createdDate', 'updatedDate'].includes(columnField as string)) {
+            value = dayjs(value).startOf('day').format(DEFAULT_DATETIME_FORMAT_ISO)
           }
           filter = { [keyValue]: value }
         }

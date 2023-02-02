@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import dayjs from 'dayjs'
 import { Card, Button, IconButton } from '@material-ui/core'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import {
@@ -17,6 +18,7 @@ import {
   geEqualtDateTimeOperators,
   getSelectEqualFilterOperators,
   FieldComparisons,
+  DEFAULT_DATETIME_FORMAT_ISO,
   // FieldKeyOparators,
   /*dateToFilterOnDay,
   dateToFilterNotOnDay,
@@ -332,6 +334,9 @@ export default function User(): JSX.Element {
               // keyValue = `${columnField}${FieldKeyOparators.contains}`
               keyValue = `${columnField}`
               break
+          }
+          if (['createdDate', 'updatedDate'].includes(columnField as string)) {
+            value = dayjs(value).startOf('day').format(DEFAULT_DATETIME_FORMAT_ISO)
           }
           filter = { [keyValue]: value }
         }
