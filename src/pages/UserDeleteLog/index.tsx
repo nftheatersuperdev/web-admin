@@ -22,7 +22,7 @@ import {
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
-import { Search as SearchIcon } from '@material-ui/icons'
+import { Visibility as SearchIcon } from '@material-ui/icons'
 import { useEffect, useState } from 'react'
 import config from 'config'
 import { columnFormatDate, columnFormatText } from 'utils'

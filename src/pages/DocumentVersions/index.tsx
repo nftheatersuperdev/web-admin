@@ -14,7 +14,7 @@ import {
   GridPageChangeParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
-import { Edit as EditIcon, Search as SearchIcon } from '@material-ui/icons'
+import { Edit as EditIcon, Visibility as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
