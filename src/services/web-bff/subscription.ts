@@ -60,9 +60,12 @@ export const changeCarInBooking = async ({
   bookingDetailId,
   carId,
 }: SubscriptionChangeCarInBookingProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/delivery/cars`, {
-    carId,
-  })
+  await AdminBffAPI.patch(
+    `/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/delivery/cars`,
+    {
+      carId,
+    }
+  )
 
   return true
 }
