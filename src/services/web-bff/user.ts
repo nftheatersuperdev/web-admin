@@ -99,7 +99,7 @@ export const getAllUserDeleteLog = async ({
   const response: UserDeleteLogListResponse = await AdminBffAPI.post(
     `/v1/account-deactivation/logs/search`,
     {
-      userId,
+      customerId: userId,
       firstName,
       lastName,
       email,
