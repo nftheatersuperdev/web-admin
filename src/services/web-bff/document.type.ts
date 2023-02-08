@@ -18,6 +18,11 @@ export interface Document {
   createdDate: string
   updatedDate: string
 }
+export interface DocumentType {
+  codeName: string
+  nameTh: string
+  nameEn: string
+}
 
 export interface GetDocumentProps {
   code: string
@@ -51,6 +56,12 @@ export interface CreateOrUpdateDocumentInput {
 export type DocumentListResponse = {
   data: {
     documents: Document[]
+  }
+} & ResponseWithPagination
+
+export type DocumentTypeListResponse = {
+  data: {
+    documents: DocumentType[]
   }
 } & ResponseWithPagination
 

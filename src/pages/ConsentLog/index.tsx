@@ -31,7 +31,7 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { ConsentLogListProps, ConsentLogListResponse } from 'services/web-bff/consent-log.type'
 import { getList } from 'services/web-bff/consent-log'
-import { getList as getDocumentList } from 'services/web-bff/document'
+import { getTypeList } from 'services/web-bff/document'
 import {
   getStatusList,
   getVisibilityColumns,
@@ -80,9 +80,7 @@ export default function ConsentLog(): JSX.Element {
       setIsFetching(false)
     })
   }
-  const { data: documentTypeListResponse } = useQuery('document-type-list', () =>
-    getDocumentList({ size: config.maxInteger, page: 1 })
-  )
+  const { data: documentTypeList } = useQuery('document-type-list', () => getTypeList())
 
   useEffect(() => {
     getList(filter).then((res) => setResponse(res))
@@ -95,7 +93,7 @@ export default function ConsentLog(): JSX.Element {
     isDefault: true,
   }
   const documents: SelectOption[] =
-    documentTypeListResponse?.documents.map((doc) => {
+    documentTypeList?.documents.map((doc) => {
       return {
         key: doc.codeName,
         label: isEnglish ? doc.nameEn : doc.nameTh,
