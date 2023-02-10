@@ -18,6 +18,7 @@ import {
   GridCellParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
+import { ROLES } from 'auth/roles'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
@@ -41,11 +42,13 @@ import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from '.
 export default function Voucher(): JSX.Element {
   const defaultFilter: VoucherListQuery = {} as VoucherListQuery
   const accessToken = useAuth().getToken() ?? ''
+  const userRole = useAuth().getRole()
   const history = useHistory()
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [voucherQuery, setVoucherQuery] = useState<VoucherListQuery>({ ...defaultFilter })
+  const isDisableToCreate = ROLES.PRODUCT_SUPPORT === userRole
 
   const {
     data: voucherData,
@@ -269,7 +272,11 @@ export default function Voucher(): JSX.Element {
         const code = params.row.code
         return (
           <Fragment>
-            <IconButton size="small" onClick={() => history.push(`/vouchers/${code}/edit`)}>
+            <IconButton
+              size="small"
+              onClick={() => history.push(`/vouchers/${code}/edit`)}
+              disabled={isDisableToCreate}
+            >
               <EditIcon />
             </IconButton>
             <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
@@ -323,6 +330,7 @@ export default function Voucher(): JSX.Element {
           color="primary"
           variant="contained"
           onClick={() => history.push('/vouchers/create')}
+          disabled={isDisableToCreate}
         >
           {t('voucher.button.createNew')}
         </Button>
