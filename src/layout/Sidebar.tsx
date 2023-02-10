@@ -195,6 +195,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
           ROLES.CUSTOMER_SUPPORT,
           ROLES.MARKETING,
           ROLES.PRODUCT_SUPPORT,
+          ROLES.IT_ADMIN,
         ],
       },
       {
