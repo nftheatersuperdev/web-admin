@@ -4,7 +4,6 @@ import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_DATETIME_FORMAT_ISO } from 'utils'
 import { AdminBffAPI } from 'api/admin-bff'
-import { BaseApi } from 'api/baseApi'
 import {
   GetDocumentProps,
   GetDocumentsProps,
@@ -31,7 +30,7 @@ const convertDateISO = (datetime: dayjs.Dayjs | string): string => {
  * @TODO Need change the API version
  */
 export const getDetail = async ({ code }: GetDocumentProps): Promise<Document> => {
-  const response: Document = await BaseApi.get(`/v1/documents/${code}`).then(
+  const response: Document = await AdminBffAPI.get(`/v1/documents/${code}`).then(
     (result) => result.data.data
   )
 
