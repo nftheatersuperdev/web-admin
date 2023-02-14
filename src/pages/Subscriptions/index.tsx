@@ -94,7 +94,7 @@ export default function Subscription(): JSX.Element {
     refetch,
   } = useQuery('subscriptions', () => getList({ query, filters }))
 
-  const rowCount = response?.data.pagination.totalRecords ?? 0
+  const rowCount = response?.data?.pagination?.totalRecords || 0
   const rows =
     response?.data.bookingDetails && response?.data.bookingDetails.length > 0
       ? response?.data.bookingDetails.map((subscription) => {

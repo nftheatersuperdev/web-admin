@@ -32,7 +32,15 @@ export const getList = async ({
     {
       params: query,
     }
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch(() => {
+      return {
+        data: {
+          bookingDetails: [],
+        },
+      }
+    })
 
   return response
 }
