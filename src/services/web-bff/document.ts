@@ -122,7 +122,7 @@ export const updateByVersion = async (
   delete documentObject.code
   delete documentObject.version
 
-  const documentId: string = await AdminBffAPI.put(
+  const documentId: string = await AdminBffAPI.patch(
     `/v1/document-contents/${code}/versions/${version}`,
     documentObject
   )
