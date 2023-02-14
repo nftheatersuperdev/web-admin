@@ -18,7 +18,7 @@ import { Edit as EditIcon, Visibility as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
-import { getDetail, getVersionList } from 'services/web-bff/document'
+import { getVersionList } from 'services/web-bff/document'
 import DataGridLocale from 'components/DataGridLocale'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
@@ -71,9 +71,6 @@ export default function DocumentVersions(): JSX.Element {
   const [size, setSize] = useState<number>(10)
   const isThaiLanguage = i18n.language === 'th'
 
-  const { data: documentDetail } = useQuery('document-detail', () =>
-    getDetail({ code: documentCode })
-  )
   const {
     data: documents,
     isFetching,
@@ -98,6 +95,8 @@ export default function DocumentVersions(): JSX.Element {
         isDisableToEdit,
       }
     }) || []
+
+  const documentDetail = rows[0]
 
   const columns: GridColDef[] = [
     {

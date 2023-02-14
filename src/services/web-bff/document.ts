@@ -5,7 +5,6 @@ import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_DATETIME_FORMAT_ISO } from 'utils'
 import { AdminBffAPI } from 'api/admin-bff'
 import {
-  GetDocumentProps,
   GetDocumentsProps,
   GetDocumentVersionProps,
   GetDocumentVersionsProps,
@@ -21,20 +20,6 @@ dayjs.extend(dayjsTimezone)
 
 const convertDateISO = (datetime: dayjs.Dayjs | string): string => {
   return dayjs(datetime).tz(config.timezone).format(DEFAULT_DATETIME_FORMAT_ISO)
-}
-
-/**
- * getDetail returns current version of document
- * @param GetDocumentProps
- * @returns Document
- * @TODO Need change the API version
- */
-export const getDetail = async ({ code }: GetDocumentProps): Promise<Document> => {
-  const response: Document = await AdminBffAPI.get(`/v1/documents/${code}`).then(
-    (result) => result.data.data
-  )
-
-  return response
 }
 
 export const getVersionDetail = async ({
@@ -134,7 +119,6 @@ export const updateByVersion = async (
 }
 
 export default {
-  getDetail,
   getList,
   getVersionList,
   getLatestVersion,

@@ -7,7 +7,7 @@ import { Breadcrumbs, Divider, Grid, Link, Typography, TextField } from '@materi
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { Page } from 'layout/LayoutRoute'
-import { getDetail, getVersionDetail } from 'services/web-bff/document'
+import { getVersionDetail } from 'services/web-bff/document'
 
 interface DocumentVersionViewParams {
   documentCode: string
@@ -33,14 +33,11 @@ export default function DocumentVersionView(): JSX.Element {
   const currentVersion = +version
   const currentLanguage = i18n.language
 
-  const { data: documentDetail } = useQuery('document-detail', () =>
-    getDetail({ code: documentCode })
-  )
   const { data: document } = useQuery('document', () =>
     getVersionDetail({ code: documentCode, version: currentVersion })
   )
 
-  const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
+  const documentName = currentLanguage === 'th' ? document?.nameTh : document?.nameEn
   const title = t('documents.views.title', { version })
 
   return (

@@ -17,7 +17,6 @@ import { Page } from 'layout/LayoutRoute'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
 import {
-  getDetail,
   getVersionDetail,
   getLatestVersion,
   createNew,
@@ -52,9 +51,6 @@ export default function DocumentVersionEdit(): JSX.Element {
   const [contentEnTemp, setContentEnTemp] = useState<string | undefined>()
   const [getBackOrOutFinish, setGetBackOrOutFinish] = useState<boolean>(false)
 
-  const { data: documentDetail } = useQuery('document-detail', () =>
-    getDetail({ code: documentCode })
-  )
   const { data: document, isFetched } = useQuery(
     'document-current-version',
     () => (isEdit ? getVersionDetail({ code: documentCode, version: currentVersion }) : undefined),
@@ -87,7 +83,7 @@ export default function DocumentVersionEdit(): JSX.Element {
     }
   )
 
-  const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
+  const documentName = currentLanguage === 'th' ? document?.nameTh : document?.nameEn
   const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
   const title = t(documentTitle, { version })
   const isAllDataFetched =

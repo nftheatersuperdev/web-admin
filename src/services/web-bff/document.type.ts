@@ -24,10 +24,6 @@ export interface DocumentType {
   nameEn: string
 }
 
-export interface GetDocumentProps {
-  code: string
-}
-
 export interface GetDocumentVersionProps {
   code: string
   version?: number
