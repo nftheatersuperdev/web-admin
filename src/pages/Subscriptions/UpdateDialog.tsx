@@ -511,7 +511,9 @@ export default function CarUpdateDialog(props: SubscriptionProps): JSX.Element {
           <Grid item xs={12} md={6}>
             <TextField
               label={t('subscription.deliveryDate')}
-              value={formatDate(subscription?.deliveryDate)}
+              value={
+                subscription?.deliveryDate !== '-' ? formatDate(subscription?.deliveryDate) : '-'
+              }
               fullWidth
               multiline
               maxRows={3}
