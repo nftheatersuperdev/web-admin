@@ -19,6 +19,7 @@ import HTMLEditor from 'components/HTMLEditor'
 import {
   getVersionDetail,
   getLatestVersion,
+  getVersionList,
   createNew,
   updateByVersion,
 } from 'services/web-bff/document'
@@ -43,13 +44,19 @@ export default function DocumentVersionEdit(): JSX.Element {
   const history = useHistory()
   const { documentCode, version } = useParams<DocumentVersionEditParams>()
   const { t, i18n } = useTranslation()
-  const currentVersion = +version
   const currentLanguage = i18n.language
   const isEdit = version !== 'add'
-  const isTherePreviousVersion = currentVersion > 1
   const [contentThTemp, setContentThTemp] = useState<string | undefined>()
   const [contentEnTemp, setContentEnTemp] = useState<string | undefined>()
   const [getBackOrOutFinish, setGetBackOrOutFinish] = useState<boolean>(false)
+
+  const { data: documentDate } = useQuery('document-versions', () =>
+    getVersionList({ code: documentCode, page: 1, size: 1000 })
+  )
+  const documentDetail = documentDate?.versions[0]
+  const currentVersion = +version || documentDetail?.version || 1
+  const isTherePreviousVersion = currentVersion > 1
+  const isThereNextVersion = documentDate?.versions.length !== currentVersion
 
   const { data: document, isFetched } = useQuery(
     'document-current-version',
@@ -70,7 +77,10 @@ export default function DocumentVersionEdit(): JSX.Element {
   )
   const { data: documentNextVersion, isFetched: isFetchedNextVersion } = useQuery(
     'document-next-version',
-    () => getVersionDetail({ code: documentCode, version: currentVersion + 1 }),
+    () =>
+      isEdit && isThereNextVersion
+        ? getVersionDetail({ code: documentCode, version: currentVersion + 1 })
+        : undefined,
     {
       cacheTime: 0,
     }
@@ -83,7 +93,7 @@ export default function DocumentVersionEdit(): JSX.Element {
     }
   )
 
-  const documentName = currentLanguage === 'th' ? document?.nameTh : document?.nameEn
+  const documentName = currentLanguage === 'th' ? documentDetail?.nameTh : documentDetail?.nameEn
   const documentTitle = isEdit ? 'documents.addEdit.titles.edit' : 'documents.addEdit.titles.add'
   const title = t(documentTitle, { version })
   const isAllDataFetched =
