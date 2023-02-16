@@ -87,7 +87,7 @@ export default function DocumentVersions(): JSX.Element {
   const rowCount = documents?.pagination.totalRecords || 0
   const rows =
     documents?.versions?.map((document, key) => {
-      const isDisableToEdit = document.status !== 'Scheduled'
+      const isDisableToEdit = document.status.toLowerCase() !== 'scheduled'
 
       return {
         no: startNo + (key + 1),
