@@ -26,15 +26,15 @@ import {
   GridToolbarDensitySelector,
 } from '@material-ui/data-grid'
 import { columnFormatDate, columnFormatText } from 'utils'
-import { useQuery } from 'react-query'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import {
   CookieConsentLogListProps,
   CookieConsentLogListResponse,
 } from 'services/web-bff/cookie-consent-log.type'
-import { getList, getCategories } from 'services/web-bff/cookie-consent-log'
+import { getList } from 'services/web-bff/cookie-consent-log'
 import {
+  getCategoryList,
   getStatusList,
   getVisibilityColumns,
   setVisibilityColumns,
@@ -80,28 +80,12 @@ export default function CookieConsentLogPage(): JSX.Element {
     setResponse(res)
     setIsFetching(false)
   }
-  const { data: documentCategories } = useQuery('document-categories', () => getCategories())
 
   useEffect(() => {
     getList(filter).then((res) => setResponse(res))
   }, [])
 
-  const allSelect: SelectOption = {
-    key: 'all',
-    label: t('all'),
-    value: 'all',
-    isDefault: true,
-  }
-  const categories: SelectOption[] =
-    documentCategories?.map((category) => {
-      return {
-        key: category.id,
-        label: isEnglish ? category.nameEn : category.nameTh,
-        value: category.category,
-        isDefault: false,
-      } as SelectOption
-    }) || []
-  categories.unshift(allSelect)
+  const categories: SelectOption[] = getCategoryList(t) || []
   const defaultCategory = categories?.find((x: SelectOption) => x.isDefault)
 
   const formik = useFormik({
