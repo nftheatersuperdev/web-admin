@@ -17,9 +17,9 @@ import { Page } from 'layout/LayoutRoute'
 import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
 import {
-  getDetail,
   getVersionDetail,
   getLatestVersion,
+  getVersionList,
   createNew,
   updateByVersion,
 } from 'services/web-bff/document'
@@ -44,17 +44,20 @@ export default function DocumentVersionEdit(): JSX.Element {
   const history = useHistory()
   const { documentCode, version } = useParams<DocumentVersionEditParams>()
   const { t, i18n } = useTranslation()
-  const currentVersion = +version
   const currentLanguage = i18n.language
   const isEdit = version !== 'add'
-  const isTherePreviousVersion = currentVersion > 1
   const [contentThTemp, setContentThTemp] = useState<string | undefined>()
   const [contentEnTemp, setContentEnTemp] = useState<string | undefined>()
   const [getBackOrOutFinish, setGetBackOrOutFinish] = useState<boolean>(false)
 
-  const { data: documentDetail } = useQuery('document-detail', () =>
-    getDetail({ code: documentCode })
+  const { data: documentDate } = useQuery('document-versions', () =>
+    getVersionList({ code: documentCode, page: 1, size: 1000 })
   )
+  const documentDetail = documentDate?.versions[0]
+  const currentVersion = +version || documentDetail?.version || 1
+  const isTherePreviousVersion = currentVersion > 1
+  const isThereNextVersion = documentDate?.versions.length !== currentVersion
+
   const { data: document, isFetched } = useQuery(
     'document-current-version',
     () => (isEdit ? getVersionDetail({ code: documentCode, version: currentVersion }) : undefined),
@@ -74,7 +77,10 @@ export default function DocumentVersionEdit(): JSX.Element {
   )
   const { data: documentNextVersion, isFetched: isFetchedNextVersion } = useQuery(
     'document-next-version',
-    () => getVersionDetail({ code: documentCode, version: currentVersion + 1 }),
+    () =>
+      isEdit && isThereNextVersion
+        ? getVersionDetail({ code: documentCode, version: currentVersion + 1 })
+        : undefined,
     {
       cacheTime: 0,
     }

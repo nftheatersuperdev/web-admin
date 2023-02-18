@@ -1,12 +1,8 @@
 import { AdminBffAPI } from 'api/admin-bff'
-import { BaseApi } from 'api/baseApi'
-import axios from 'axios'
 import {
   SubscriptionBookingListProps,
   SubscriptionListResponse,
-  SubscriptionChangeCarProps,
   SubscriptionChangeCarInBookingProps,
-  SubscriptionExtendEndDateProps,
 } from 'services/web-bff/subscription.type'
 
 export const status = {
@@ -36,7 +32,15 @@ export const getList = async ({
     {
       params: query,
     }
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch(() => {
+      return {
+        data: {
+          bookingDetails: [],
+        },
+      }
+    })
 
   return response
 }
@@ -44,47 +48,15 @@ export const getList = async ({
 /**
  * This function allows operators to update a car with changing plate numbers.
  */
-export const changeCar = async ({
-  subscriptionId,
-  carId,
-}: SubscriptionChangeCarProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/subscriptions/${subscriptionId}/delivery/cars`, {
-    carId,
-  })
-
-  return true
-}
-
 export const changeCarInBooking = async ({
   bookingId,
   bookingDetailId,
   carId,
 }: SubscriptionChangeCarInBookingProps): Promise<boolean> => {
-  await BaseApi.patch(`/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/delivery/cars`, {
-    carId,
-  })
-
-  return true
-}
-
-/**
- * This function allows operators to extend the end date of a subscription
- */
-export const extend = async ({
-  accessToken,
-  subscriptionId,
-  endDate,
-}: SubscriptionExtendEndDateProps): Promise<boolean> => {
-  await axios.patch(
-    `https://run.mocky.io/v3/bf06262b-712b-48de-9808-0b71c8c3958d`,
+  await AdminBffAPI.patch(
+    `/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/delivery/cars`,
     {
-      subscriptionId,
-      endDate,
-    },
-    {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
+      carId,
     }
   )
 
@@ -93,6 +65,5 @@ export const extend = async ({
 
 export default {
   getList,
-  changeCar,
   changeCarInBooking,
 }

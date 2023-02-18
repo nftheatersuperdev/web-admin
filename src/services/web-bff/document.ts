@@ -4,14 +4,13 @@ import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_DATETIME_FORMAT_ISO } from 'utils'
 import { AdminBffAPI } from 'api/admin-bff'
-import { BaseApi } from 'api/baseApi'
 import {
-  GetDocumentProps,
   GetDocumentsProps,
   GetDocumentVersionProps,
   GetDocumentVersionsProps,
   Document,
   DocumentListResponse,
+  DocumentTypeListResponse,
   DocumentVersionListResponse,
   CreateOrUpdateDocumentInput,
 } from 'services/web-bff/document.type'
@@ -23,24 +22,11 @@ const convertDateISO = (datetime: dayjs.Dayjs | string): string => {
   return dayjs(datetime).tz(config.timezone).format(DEFAULT_DATETIME_FORMAT_ISO)
 }
 
-/**
- * getDetail returns current version of document
- * @param GetDocumentProps
- * @returns Document
- */
-export const getDetail = async ({ code }: GetDocumentProps): Promise<Document> => {
-  const response: Document = await BaseApi.get(`/v1/documents/${code}`).then(
-    (result) => result.data.data
-  )
-
-  return response
-}
-
 export const getVersionDetail = async ({
   code,
   version,
 }: GetDocumentVersionProps): Promise<Document> => {
-  const response: Document = await BaseApi.get(
+  const response: Document = await AdminBffAPI.get(
     `/v1/document-contents/${code}/versions/${version}`
   ).then((result) => result.data.data)
 
@@ -61,12 +47,20 @@ export const getList = async ({
   return response.data
 }
 
+export const getTypeList = async (): Promise<DocumentTypeListResponse['data']> => {
+  const response: DocumentTypeListResponse = await AdminBffAPI.get(`/v2/documents`).then(
+    (result) => result.data
+  )
+
+  return response.data
+}
+
 export const getVersionList = async ({
   code,
   page,
   size,
 }: GetDocumentVersionsProps): Promise<DocumentVersionListResponse['data']> => {
-  const response: DocumentVersionListResponse = await BaseApi.get(
+  const response: DocumentVersionListResponse = await AdminBffAPI.get(
     `/v1/document-contents/${code}/versions`,
     {
       params: {
@@ -93,7 +87,7 @@ export const createNew = async (documentInput: CreateOrUpdateDocumentInput): Pro
   }
   delete documentObject.code
 
-  const documentId: string = await BaseApi.post(
+  const documentId: string = await AdminBffAPI.post(
     `/v1/document-contents/${code}/versions`,
     documentObject
   ).then((result) => result.data)
@@ -112,7 +106,7 @@ export const updateByVersion = async (
   delete documentObject.code
   delete documentObject.version
 
-  const documentId: string = await BaseApi.put(
+  const documentId: string = await AdminBffAPI.patch(
     `/v1/document-contents/${code}/versions/${version}`,
     documentObject
   )
@@ -125,7 +119,6 @@ export const updateByVersion = async (
 }
 
 export default {
-  getDetail,
   getList,
   getVersionList,
   getLatestVersion,

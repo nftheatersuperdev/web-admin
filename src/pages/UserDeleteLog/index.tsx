@@ -137,13 +137,17 @@ export default function UserDeleteLog(): JSX.Element {
   }
 
   const search = async (filter: UserDeleteLogProps) => {
-    const res = await getAllUserDeleteLog(filter)
-    setResponse(res)
-    setIsFetching(true)
+    try {
+      const res = await getAllUserDeleteLog(filter)
+      setResponse(res)
+      setIsFetching(true)
 
-    setTimeout(() => {
-      setIsFetching(false)
-    })
+      setTimeout(() => {
+        setIsFetching(false)
+      })
+    } catch (error) {
+      setResponse(undefined)
+    }
   }
   const rowCount = response?.data.pagination.totalRecords ?? 0
   const rows =
