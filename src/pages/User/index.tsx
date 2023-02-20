@@ -121,7 +121,7 @@ export default function User(): JSX.Element {
       filterOperators: containOperators,
     },
     {
-      field: 'lastname',
+      field: 'lastName',
       headerName: t('user.lastName'),
       description: t('user.lastName'),
       hide: !visibilityColumns.lastName,
