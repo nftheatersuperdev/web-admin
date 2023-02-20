@@ -211,7 +211,8 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.userEmail,
       sortable: false,
-      filterable: false,
+      filterable: true,
+      filterOperators: equalOperators,
       valueFormatter: columnFormatText,
     },
     {
@@ -281,7 +282,8 @@ export default function Subscription(): JSX.Element {
       flex: 1,
       hide: !visibilityColumns.carPlateNumber,
       sortable: false,
-      filterable: false,
+      filterable: true,
+      filterOperators: equalOperators,
       valueFormatter: columnFormatText,
     },
     {
@@ -526,6 +528,10 @@ export default function Subscription(): JSX.Element {
         if (columnField) {
           if (columnField === 'status') {
             filter = { statusList: [value] }
+          } else if (columnField === 'userEmail') {
+            filter = { email: value }
+          } else if (columnField === 'carPlateNumber') {
+            filter = { plateNumber: value }
           } else {
             filter = { [columnField]: value }
           }
