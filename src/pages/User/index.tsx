@@ -184,7 +184,7 @@ export default function User(): JSX.Element {
       flex: 1,
       sortable: false,
       valueFormatter: (params: GridValueFormatterParams): string => {
-        switch (params.value) {
+        switch (String(params.value).toLowerCase()) {
           case 'pending':
             return t('user.kyc.pending')
           case 'verified':
