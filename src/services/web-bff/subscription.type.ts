@@ -216,6 +216,8 @@ export interface SubscriptionBookingListFilters {
   startDate?: string | null
   endDate?: string | null
   statusList?: SubscriptionStatus[] | string[]
+  email?: string | null
+  plateNumber?: string | null
 }
 
 export interface SubscriptionBookingListProps {
