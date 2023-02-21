@@ -138,11 +138,11 @@ export default function ModelForm({ car }: CarModelDataAndRefetchProps): JSX.Ele
                   label={t('carModel.bodyType')}
                   id="bodyType"
                   name="bodyType"
-                  value={formik.values.bodyType}
+                  value={formik.values.bodyType.toLocaleUpperCase()}
                   onChange={formik.handleChange}
                 >
                   {carBodyTypes?.map((bodyType) => (
-                    <MenuItem key={bodyType} value={bodyType}>
+                    <MenuItem key={bodyType} value={bodyType.toLocaleUpperCase()}>
                       {bodyType}
                     </MenuItem>
                   ))}

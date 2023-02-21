@@ -86,7 +86,10 @@ export const updateCarModelById = async ({
   id,
   carModel,
 }: CarModelInputProps): Promise<boolean> => {
-  await AdminBffAPI.patch(`/v1/car-models/${id}`, carModel)
+  await AdminBffAPI.patch(`/v1/car-models/${id}`, {
+    ...carModel,
+    bodyType: carModel.bodyType.toLocaleUpperCase(),
+  })
 
   return true
 }
