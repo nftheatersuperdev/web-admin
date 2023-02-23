@@ -57,7 +57,7 @@ export default function Pricing(): JSX.Element {
       direction: SortDirection.Desc,
     },
   ])
-  const { data: carModels } = useCarModels(config.maxInteger)
+  const { data: carModels } = useCarModels(config.tableRowsDefaultPageSize)
   const mutationCreatePrice = useCreatePrices()
 
   const idFilterOperators = getIdFilterOperators(t)

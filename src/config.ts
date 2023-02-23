@@ -14,7 +14,6 @@ interface Config {
   firebaseRestKey: string
   googleMapsApiKey: string
   firebase: Record<string, string>
-  maxInteger: number
   timezone: string
 }
 
@@ -42,7 +41,6 @@ const config: Config = {
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || '',
     appId: process.env.REACT_APP_FIREBASE_APP_ID || '',
   },
-  maxInteger: 2147483647,
   timezone: 'Asia/Bangkok',
 }
 
