@@ -4,14 +4,14 @@ import {
   GridColDef,
   GridToolbarContainer,
   GridToolbarColumnsButton,
-  GridToolbarFilterButton,
+  // GridToolbarFilterButton,
+  // GridToolbarExport,
   GridToolbarDensitySelector,
   GridPageChangeParams,
   GridRowData,
   GridFilterModel,
   GridFilterItem,
   GridValueFormatterParams,
-  GridToolbarExport,
 } from '@material-ui/data-grid'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
@@ -25,7 +25,8 @@ import {
   getEqualFilterOperators,
   getSelectEqualFilterOperators,
 } from 'utils'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getList } from 'services/web-bff/subscription'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
@@ -40,22 +41,23 @@ import {
   setVisibilityColumns,
   VisibilityColumns,
 } from 'pages/Subscriptions/utils'
-import UpdateDialog from 'pages/Subscriptions/UpdateDialog'
 import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
 } from 'services/web-bff/subscription.type'
+import FilterBar from 'pages/Subscriptions/FilterBar'
 
 const customToolbar = () => (
   <GridToolbarContainer>
     <GridToolbarColumnsButton />
-    <GridToolbarFilterButton />
     <GridToolbarDensitySelector />
-    <GridToolbarExport csvOptions={{ allColumns: true }} />
+    {/* <GridToolbarFilterButton /> */}
+    {/* <GridToolbarExport csvOptions={{ allColumns: true }} /> */}
   </GridToolbarContainer>
 )
 
 export default function Subscription(): JSX.Element {
+  const history = useHistory()
   const { t } = useTranslation()
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
@@ -67,8 +69,6 @@ export default function Subscription(): JSX.Element {
   const visibilityColumns = getVisibilityColumns()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [isUpdateDialogOpen, setUpdateDialogOpen] = useState(false)
-  const [selectedSubscription, setSelectedSubscription] = useState()
 
   const defaultQuery: SubscriptionBookingListQuery = {
     page: currentPageIndex + 1,
@@ -545,8 +545,9 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleRowClick = (data: GridRowData) => {
-    setUpdateDialogOpen(true)
-    setSelectedSubscription(data.row)
+    // setUpdateDialogOpen(true)
+    // setSelectedSubscription(data.row)
+    return history.push(`/subscription/${data.row.id}`)
   }
 
   const handleFetchPage = (pageNumber: number) => {
@@ -559,8 +560,20 @@ export default function Subscription(): JSX.Element {
     setFilters(defaultFilters)
   }
 
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: 'Dashboard',
+      link: '/',
+    },
+    {
+      text: 'Subscription',
+      link: '/subscription',
+    },
+  ]
+
   return (
     <Page>
+      <PageTitle title="Subscription" breadcrumbs={breadcrumbs} />
       <PageToolbar>
         {bookingDetailId && (
           <Link to="/subscription">
@@ -570,6 +583,7 @@ export default function Subscription(): JSX.Element {
           </Link>
         )}
       </PageToolbar>
+      <FilterBar />
       <Card>
         <DataGridLocale
           autoHeight
@@ -593,16 +607,6 @@ export default function Subscription(): JSX.Element {
           onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
         />
       </Card>
-      <UpdateDialog
-        open={isUpdateDialogOpen}
-        onClose={(needRefetch) => {
-          if (needRefetch) {
-            refetch()
-          }
-          setUpdateDialogOpen(false)
-        }}
-        subscription={selectedSubscription}
-      />
     </Page>
   )
 }
