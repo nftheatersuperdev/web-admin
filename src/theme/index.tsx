@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable prettier/prettier */
@@ -13,7 +14,6 @@ const createTheme = (name: string) => {
   let themeConfig = variants.find((variant) => variant.name === name)
 
   if (!themeConfig) {
-    console.warn(new Error(`The theme ${name} is not valid`))
     themeConfig = variants[0]
   }
 
@@ -32,6 +32,9 @@ const createTheme = (name: string) => {
       header: themeConfig.header,
       footer: themeConfig.footer,
       sidebar: themeConfig.sidebar,
+      size: {
+        sidebar: '250px',
+      },
     }
   )
 }

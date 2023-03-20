@@ -24,7 +24,6 @@ export default function Map({ id, lat, lng, zoom = 15 }: MapProps): JSX.Element 
     id: `${id}-loader`,
     googleMapsApiKey: config.googleMapsApiKey,
   })
-  console.log('isLoaded ->', isLoaded)
 
   return (
     <MapWrapper>

@@ -2,38 +2,20 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
-import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import theme from 'theme'
-import {
-  createTheme as createThemeV5,
-  ThemeProvider as ThemeProviderV5,
-} from '@mui/material/styles'
-import { createMuiTheme as createThemeV4 } from '@material-ui/core/styles'
+import { ThemeProvider } from 'styled-components'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import { THEMES } from 'theme-constants'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
 
 // Ensure that internationalization is bundled into app
 import './i18n'
-
-const themeV4 = createThemeV4({
-  palette: {
-    primary: {
-      main: '#2196f3',
-    },
-  },
-})
-const themeV5 = createThemeV5({
-  palette: {
-    primary: {
-      main: themeV4.palette.primary.main,
-    },
-  },
-})
 
 const queryClient = new QueryClient()
 
@@ -66,15 +48,15 @@ ReactDOM.render(
   <React.StrictMode>
     <StylesProvider injectFirst>
       <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <ThemeProviderV5 theme={themeV5}>
+      <MuiThemeProvider theme={theme(THEMES.DEFAULT)}>
+        <ThemeProvider theme={theme(THEMES.DEFAULT)}>
           <AuthProvider fbase={new Firebase()}>
             <QueryClientProvider client={queryClient}>
               <App />
             </QueryClientProvider>
           </AuthProvider>
-        </ThemeProviderV5>
-      </ThemeProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
     </StylesProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -34,13 +34,13 @@ import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
 
 const MobileSidebar = styled(SwipeableDrawer)`
-  width: '250px';
+  width: ${({ theme }) => theme.size.sidebar};
 `
 
 const DesktopSidebar = styled(Drawer)`
-  width: '250px';
+  width: ${({ theme }) => theme.size.sidebar};
   > .MuiPaper-root {
-    width: '250px';
+    width: ${({ theme }) => theme.size.sidebar};
   }
 `
 
@@ -99,16 +99,8 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
       },
       {
         id: 'left_menu__cars',
-        title: 'Cars MUI4',
-        // title: t('sidebar.cars'),
+        title: t('sidebar.cars'),
         path: ROUTE_PATHS.CAR,
-        icon: <CarIcon />,
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
-      },
-      {
-        id: 'left_menu__cars-mui5',
-        title: 'Cars MUI5',
-        path: '/car-mui5',
         icon: <CarIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
       },

@@ -18,15 +18,11 @@ const ContainerWrapper = styled.div`
 
 interface FilterBarProps {
   onChange?: () => void
-  onSubmit?: () => void
 }
 
-export default function FilterBar(props: FilterBarProps): JSX.Element {
-  const { onChange, onSubmit } = props
-
+export default function FilterBar({ onChange }: FilterBarProps): JSX.Element {
   const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
   const initSelectedToDate = dayjs().tz(config.timezone).endOf('day').toDate()
-  console.log('onChange, onSubmit ->', onChange, onSubmit)
 
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
   const [selectedToDate, setSelectedToDate] = useState(initSelectedToDate)
@@ -45,6 +41,7 @@ export default function FilterBar(props: FilterBarProps): JSX.Element {
             placeholder="Please enter some keyword"
             variant="outlined"
             fullWidth
+            onChange={onChange}
           />
         </Grid>
         <Grid item xs={3}>

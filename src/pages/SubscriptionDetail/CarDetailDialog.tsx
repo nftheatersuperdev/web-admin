@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-no-useless-fragment */
 import {
   Button,
@@ -25,12 +26,11 @@ export interface CarDetailDialogProps {
   // onSubmitSend: (emails: string[]) => void
 }
 
-export default function CarDetailDialog({ open, car, onClose }: CarDetailDialogProps): JSX.Element {
+export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps): JSX.Element {
   const { t } = useTranslation()
   if (!open) {
     return <Fragment />
   }
-  console.log('car ->', car)
 
   function handleClose() {
     onClose()
