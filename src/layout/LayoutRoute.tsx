@@ -17,7 +17,7 @@ const Main = styled.main<{ $isPublic?: boolean }>`
   flex: 1 1 auto;
   padding: 20px;
   height: ${({ $isPublic }) => ($isPublic ? '100vh' : '100%')};
-  margin-left: ${({ theme, $isPublic }) => ($isPublic ? 0 : theme.size.sidebar)};
+  margin-left: ${({ $isPublic }) => ($isPublic ? 0 : '250px')};
   ${({ theme }) => theme.breakpoints.down('sm')} {
     margin-left: 0;
   }

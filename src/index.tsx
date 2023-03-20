@@ -7,13 +7,33 @@ import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import theme from 'theme'
+import {
+  createTheme as createThemeV5,
+  ThemeProvider as ThemeProviderV5,
+} from '@mui/material/styles'
+import { createMuiTheme as createThemeV4 } from '@material-ui/core/styles'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
-import GlobalStyles, { theme } from './GlobalStyles'
 
 // Ensure that internationalization is bundled into app
 import './i18n'
+
+const themeV4 = createThemeV4({
+  palette: {
+    primary: {
+      main: '#2196f3',
+    },
+  },
+})
+const themeV5 = createThemeV5({
+  palette: {
+    primary: {
+      main: themeV4.palette.primary.main,
+    },
+  },
+})
 
 const queryClient = new QueryClient()
 
@@ -45,14 +65,15 @@ if (process.env.MSW === 'true') {
 ReactDOM.render(
   <React.StrictMode>
     <StylesProvider injectFirst>
-      <GlobalStyles />
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <AuthProvider fbase={new Firebase()}>
-          <QueryClientProvider client={queryClient}>
-            <App />
-          </QueryClientProvider>
-        </AuthProvider>
+        <ThemeProviderV5 theme={themeV5}>
+          <AuthProvider fbase={new Firebase()}>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </AuthProvider>
+        </ThemeProviderV5>
       </ThemeProvider>
     </StylesProvider>
   </React.StrictMode>,

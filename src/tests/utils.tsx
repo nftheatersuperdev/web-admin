@@ -1,5 +1,5 @@
 import { render, RenderOptions, RenderResult } from '@testing-library/react'
-import { theme } from 'GlobalStyles'
+import theme from 'theme'
 import { createMemoryHistory, History } from 'history'
 import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
