@@ -2,15 +2,17 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import { Integrations } from '@sentry/tracing'
-import { ThemeProvider } from 'styled-components'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import theme from 'theme'
+import { ThemeProvider } from 'styled-components'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import { THEMES } from 'theme-constants'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import config from './config'
-import GlobalStyles, { theme } from './GlobalStyles'
 
 // Ensure that internationalization is bundled into app
 import './i18n'
@@ -45,15 +47,16 @@ if (process.env.MSW === 'true') {
 ReactDOM.render(
   <React.StrictMode>
     <StylesProvider injectFirst>
-      <GlobalStyles />
       <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <AuthProvider fbase={new Firebase()}>
-          <QueryClientProvider client={queryClient}>
-            <App />
-          </QueryClientProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <MuiThemeProvider theme={theme(THEMES.DEFAULT)}>
+        <ThemeProvider theme={theme(THEMES.DEFAULT)}>
+          <AuthProvider fbase={new Firebase()}>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
     </StylesProvider>
   </React.StrictMode>,
   document.getElementById('root')
