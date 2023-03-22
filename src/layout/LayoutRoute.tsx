@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { useAuth } from 'auth/AuthContext'
 import { Role, hasAllowedRole } from 'auth/roles'
 import { ROUTE_PATHS } from 'routes'
-import Header from 'layout/Header'
 import Sidebar from './Sidebar'
 
 export const Page = styled.div`
@@ -85,7 +84,6 @@ function PrivateRoute({
 
     return (
       <React.Fragment>
-        <Header onSidebarToggle={handleSidebarOpen} />
         <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
         <Main>
           {/* @ts-expect-error TODO */}
