@@ -2,12 +2,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react'
 import styled from 'styled-components'
+import { Link, useHistory } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useAuth } from 'auth/AuthContext'
+import { ROUTE_PATHS } from 'routes'
 import { Avatar, Badge, Box, Grid, Menu, MenuItem, ListItemIcon, Typography } from '@mui/material'
 import { deepOrange } from '@mui/material/colors'
 import { AccountCircle, Settings, Logout } from '@mui/icons-material'
-import { Link, useHistory } from 'react-router-dom'
-import { useAuth } from 'auth/AuthContext'
-import { ROUTE_PATHS } from 'routes'
 
 const MenuLink = styled(Link)`
   text-decoration: none;
@@ -42,7 +43,13 @@ const FooterBadge = styled(Badge)`
   }
 `
 
+const GearIcon = styled(Settings)`
+  color: #fff !important;
+  cursor: pointer;
+`
+
 function SidebarFooter({ ...rest }): JSX.Element {
+  const { t } = useTranslation()
   const history = useHistory()
   const { firebaseUser, signOut } = useAuth()
 
@@ -67,8 +74,8 @@ function SidebarFooter({ ...rest }): JSX.Element {
           alignItems: 'center',
         }}
       >
-        <Grid container spacing={2} onClick={handleClick}>
-          <Grid item>
+        <Grid container spacing={2}>
+          <Grid item lg={3}>
             <FooterBadge
               overlap="circular"
               anchorOrigin={{
@@ -82,9 +89,20 @@ function SidebarFooter({ ...rest }): JSX.Element {
               </Avatar>
             </FooterBadge>
           </Grid>
-          <Grid item>
+          <Grid item lg={6}>
             <FooterText variant="body2">{firebaseUser?.displayName || 'No Name'}</FooterText>
             <FooterSubText variant="caption">{firebaseUser?.email || 'No Email'}</FooterSubText>
+          </Grid>
+          <Grid item lg={3}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="40px"
+              onClick={handleClick}
+            >
+              <GearIcon fontSize="small" />
+            </Box>
           </Grid>
         </Grid>
       </Box>
@@ -116,7 +134,7 @@ function SidebarFooter({ ...rest }): JSX.Element {
             <ListItemIcon>
               <AccountCircle fontSize="small" />
             </ListItemIcon>
-            Profile
+            {t('sidebar.profile')}
           </MenuItem>
         </MenuLink>
         <MenuLink to="/account/settings">
@@ -124,14 +142,14 @@ function SidebarFooter({ ...rest }): JSX.Element {
             <ListItemIcon>
               <Settings fontSize="small" />
             </ListItemIcon>
-            Settings
+            {t('sidebar.settings')}
           </MenuItem>
         </MenuLink>
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          {t('header.menu.logout')}
         </MenuItem>
       </Menu>
     </Footer>
