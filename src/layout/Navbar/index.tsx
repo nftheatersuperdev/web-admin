@@ -25,6 +25,10 @@ const VersionText = styled.div`
   margin-right: 10px;
 `
 
+const LogoImage = styled.img`
+  margin-top: 6px;
+`
+
 interface NavbarProps {
   onSidebarToggle: (state?: boolean) => void
 }
@@ -48,7 +52,11 @@ function Navbar({ onSidebarToggle }: NavbarProps) {
           </Grid>
           <Grid item xs>
             <NavLink to="/">
-              <img src={process.env.PUBLIC_URL + '/logo-full-dark.png'} alt="logo" height={32} />
+              <LogoImage
+                src={process.env.PUBLIC_URL + '/logo-full-dark.png'}
+                alt="logo"
+                height={32}
+              />
             </NavLink>
           </Grid>
           <Grid item>
