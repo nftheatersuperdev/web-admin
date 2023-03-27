@@ -98,8 +98,6 @@ export default function Subscription(): JSX.Element {
   const rows =
     response?.data.bookingDetails && response?.data.bookingDetails.length > 0
       ? response?.data.bookingDetails.map((subscription) => {
-          console.log('subscription ->', subscription)
-
           const subscriptionPrice =
             subscription.rentDetail.chargePrice !== null
               ? convertMoneyFormat(subscription.rentDetail.chargePrice)
