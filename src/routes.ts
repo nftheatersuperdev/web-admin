@@ -36,6 +36,9 @@ export const ROUTE_PATHS = Object.freeze({
   COOKIE_CONSENT_LOG: '/cookie-consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
+  STAFF_PROFILES: '/staff-profiles',
+  STAFF_PROFILE_DETAIL: '/staff-profile/:id/edit',
+  STAFF_PROFILE_ADD: '/staff-profile/create',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -270,6 +273,21 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.ADMIN_USERS,
     component: lazy(() => import('./pages/AdminUsers' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.STAFF_PROFILES,
+    component: lazy(() => import('./pages/StaffProfiles' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.STAFF_PROFILE_DETAIL,
+    component: lazy(() => import('./pages/StaffProfileDetail' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.STAFF_PROFILE_ADD,
+    component: lazy(() => import('./pages/StaffProfileAdd' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
   },
   {

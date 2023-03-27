@@ -12,7 +12,7 @@ export enum AdminUserRole {
 
 export interface AdminUser {
   id: string
-  firebaseUId: string
+  firebaseId: string
   email: string
   firstName: string
   lastName: string
@@ -22,8 +22,18 @@ export interface AdminUser {
   updatedDate: string
 }
 
+export interface AdminUserById {
+  id: string
+}
+
 export interface GetAdminUsersProps {
   accessToken: string
+}
+
+export interface GetAdminUsersByCriteriaProps {
+  data?: AdminUserById
+  size?: number
+  page?: number
 }
 
 export interface CreateNewAdminUserProps {

@@ -43,7 +43,11 @@
     "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
     "profile": "โปรไฟล์",
-    "settings": "ตั้งค่า"
+    "settings": "ตั้งค่า",
+    "staffProfile": "พนักงาน",
+    "staffProfileDetail": "รายละเอียดพนักงาน",
+    "staffProfileAdd": "เพิ่มพนักงาน",
+    "userManagement": "การจัดการผู้ใช้งานระบบหลังบ้าน"
   },
   "button": {
     "add": "เพิ่ม",
@@ -63,7 +67,9 @@
     "filter": "กรองข้อมูล",
     "export": "ส่งออกข้อมูล",
     "clearAll": "ล้างทั้งหมด",
-    "save": "บันทึก"
+    "save": "บันทึก",
+    "addNew": "เพิ่มใหม่",
+    "deleteProfile": "ลบพนักงาน"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -182,6 +188,13 @@
       "failed": "เกิดข้อผิดพลาดบางอย่าง ({{error}})"
     }
   },
+  "staffProfile": {
+    "staffList": "รายชื่อพนักงาน",
+    "of": "จาก",
+    "createdDate": "วันที่สร้าง",
+    "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
+    "searchCriteria": "ค้นหา"
+  },
   "user": {
     "id": "เลขไอดี",
     "email": "อีเมล",
@@ -196,6 +209,8 @@
     "status": "สถานะบัญชี",
     "statuses": {
       "active": "ใช้งานอยู่",
+      "enable": "ใช้งานอยู่",
+      "disable": "ปิดการใช้งาน",
       "deleted": "ลบข้อมูลแล้ว"
     },
     "kyc": {
@@ -509,6 +524,9 @@
     "is": "มีค่าเป็น",
     "true": "ใช่/เปิด",
     "false": "ไม่ใช่/ปิด"
+  },
+  "table": {
+    "rowPerPage": "จำนวนรายการต่อหน้า"
   },
   "voucher": {
     "title": "วอชเชอร์",

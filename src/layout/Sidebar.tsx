@@ -253,6 +253,14 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         icon: <AdminUsersIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
       },
+      {
+        id: 'left_menu__staff_profile',
+        title: t('sidebar.staffProfile'),
+        path: ROUTE_PATHS.STAFF_PROFILES,
+        icon: <AdminUsersIcon />,
+        // allowedRoles: [ROLES.NOT_PUBLISH],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+      },
       { subHeader: t('sidebar.account') },
       {
         id: 'left_menu__profile',

@@ -43,7 +43,11 @@
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "staffProfile": "Staff Profile",
+    "staffProfileDetail": "Staff Profile Detail",
+    "staffProfileAdd": "Add Staff Profile",
+    "userManagement": "User Management"
   },
   "button": {
     "add": "Add",
@@ -63,7 +67,9 @@
     "filter": "Filter",
     "export": "Export",
     "clearAll": "Clear all",
-    "save": "Save"
+    "save": "Save",
+    "addNew": "Add New",
+    "deleteProfile": "Delete Profile"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -182,6 +188,13 @@
       "failed": "Something went wrong ({{error}})"
     }
   },
+  "staffProfile": {
+    "staffList": "Staff List",
+    "of": "of",
+    "createdDate": "Created Date",
+    "firebaseId": "FirebaseID",
+    "searchCriteria": "Search Criteria"
+  },
   "user": {
     "id": "ID",
     "email": "Email",
@@ -196,6 +209,8 @@
     "status": "Account Status",
     "statuses": {
       "active": "Active",
+      "enable": "Enabled",
+      "disable": "Disabled",
       "deleted": "Deleted"
     },
     "kyc": {
@@ -510,6 +525,9 @@
     "is": "Is",
     "true": "True/Enable",
     "false": "False/Disable"
+  },
+  "table": {
+    "rowPerPage": "Rows per page"
   },
   "carModel": {
     "brand": "Brand",
