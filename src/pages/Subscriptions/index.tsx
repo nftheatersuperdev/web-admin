@@ -4,7 +4,7 @@ import {
   GridColDef,
   GridToolbarContainer,
   GridToolbarColumnsButton,
-  // GridToolbarFilterButton,
+  GridToolbarFilterButton,
   // GridToolbarExport,
   GridToolbarDensitySelector,
   GridPageChangeParams,
@@ -45,13 +45,13 @@ import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
 } from 'services/web-bff/subscription.type'
-import FilterBar from 'pages/Subscriptions/FilterBar'
+// import FilterBar from 'pages/Subscriptions/FilterBar'
 
 const customToolbar = () => (
   <GridToolbarContainer>
     <GridToolbarColumnsButton />
     <GridToolbarDensitySelector />
-    {/* <GridToolbarFilterButton /> */}
+    <GridToolbarFilterButton />
     {/* <GridToolbarExport csvOptions={{ allColumns: true }} /> */}
   </GridToolbarContainer>
 )
@@ -535,6 +535,7 @@ export default function Subscription(): JSX.Element {
           } else {
             filter = { [columnField]: value }
           }
+          console.log('columnField ->', columnField)
         }
         return filter
       }, {} as SubscriptionBookingListFilters),
@@ -562,11 +563,11 @@ export default function Subscription(): JSX.Element {
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
-      text: 'Dashboard',
+      text: t('sidebar.dashboard'),
       link: '/',
     },
     {
-      text: 'Subscription',
+      text: t('sidebar.subscriptions'),
       link: '/subscription',
     },
   ]
@@ -583,7 +584,7 @@ export default function Subscription(): JSX.Element {
           </Link>
         )}
       </PageToolbar>
-      <FilterBar />
+      {/* <FilterBar /> */}
       <Card>
         <DataGridLocale
           autoHeight
