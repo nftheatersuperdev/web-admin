@@ -1,3 +1,9 @@
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
+import { useState } from 'react'
+import { useQuery } from 'react-query'
+import { useParams } from 'react-router-dom'
+import dayjs from 'dayjs'
+import styled from 'styled-components'
 import {
   Box,
   Button,
@@ -13,12 +19,18 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
-import styled from 'styled-components'
-import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { convertToDuration, columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
 import { Page } from 'layout/LayoutRoute'
+import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import { getDetailById } from 'services/web-bff/subscription'
 import CarDetailDialog from './CarDetailDialog'
 import CarReplacementDialog from './CarReplacementDialog'
+
+interface SubscriptionDetailParams {
+  id: string
+}
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -32,35 +44,33 @@ const TableWrapper = styled.div`
 `
 
 export default function SubscriptionDetail(): JSX.Element {
+  const { t } = useTranslation()
+
+  const { id: bookingDetailId } = useParams<SubscriptionDetailParams>()
+
   const breadcrumbs: PageBreadcrumbs[] = [
     {
-      text: 'Dashboard',
+      text: t('sidebar.dashboard'),
       link: '/',
     },
     {
-      text: 'Subscription',
+      text: t('sidebar.subscriptions'),
       link: '/subscription',
     },
     {
-      text: 'Subscription Detail',
-      link: '/subscription/5454',
+      text: t('sidebar.subscriptionDetail'),
+      link: `/subscription/${bookingDetailId}`,
     },
   ]
 
-  const rows = [
+  const { data: bookingDetails, isFetching } = useQuery(
+    'subscription-detail',
+    () => getDetailById(bookingDetailId),
     {
-      id: '63e53ade-e844-4f27-b145-d55f74b81d7a',
-      amount: 12929,
-      updatedDate: '17/02/2566 00:00',
-      paymentType: 'Refund',
-      purpose: '3ds Charge',
-      status: 'Success',
-      statusMessage: 'Paid',
-      a: 1,
-      b: 2,
-      c: 3,
-    },
-  ]
+      refetchOnWindowFocus: false,
+    }
+  )
+  const carActivities = bookingDetails?.carActivities.reverse() || []
 
   const [selectedRow, setSelectedRow] = useState({})
   const [carDetailDialogOpen, setCarDetailDialogOpen] = useState<boolean>(false)
@@ -68,11 +78,11 @@ export default function SubscriptionDetail(): JSX.Element {
 
   return (
     <Page>
-      <PageTitle title="Subscription Detail" breadcrumbs={breadcrumbs} />
+      <PageTitle title={t('sidebar.subscriptionDetail')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
           <Typography variant="h5" component="h2">
-            Booking Details
+            {t('sidebar.bookingDetail')}
           </Typography>
 
           {/* First Name and Last Name */}
@@ -90,7 +100,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="Krissada"
+                value={bookingDetails?.customer.firstName || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -106,7 +116,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="Boontrigratn"
+                value={bookingDetails?.customer.lastName || '-'}
               />
             </Grid>
           </Grid>
@@ -126,7 +136,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="im@tzv.me"
+                value={bookingDetails?.customer.email || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -142,7 +152,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="+66854995454"
+                value={bookingDetails?.customer.phoneNumber || '-'}
               />
             </Grid>
           </Grid>
@@ -162,7 +172,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={Number(5400).toLocaleString()}
+                value={Number(bookingDetails?.rentDetail.chargePrice || 0).toLocaleString()}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -178,7 +188,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="1 Week"
+                value={convertToDuration(bookingDetails?.rentDetail.durationDay || 0, t)}
               />
             </Grid>
           </Grid>
@@ -198,7 +208,11 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="Accepted"
+                value={
+                  bookingDetails?.displayStatus
+                    ? columnFormatSubEventStatus(bookingDetails?.displayStatus, t)
+                    : t('booking.statuses.unknown')
+                }
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -214,7 +228,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="fed1f82b-52e0-4c9a-bfa4-9bc04782c220"
+                value={bookingDetailId}
               />
             </Grid>
           </Grid>
@@ -234,7 +248,9 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="27/07/2022 15:37"
+                value={dayjs(bookingDetails?.rentDetail.createdDate).format(
+                  DEFAULT_DATETIME_FORMAT
+                )}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -250,7 +266,9 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="27/07/2022 15:37"
+                value={dayjs(bookingDetails?.rentDetail.updatedDate).format(
+                  DEFAULT_DATETIME_FORMAT
+                )}
               />
             </Grid>
           </Grid>
@@ -270,7 +288,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="27/07/2022 15:37"
+                value={dayjs(bookingDetails?.startDate).format(DEFAULT_DATETIME_FORMAT)}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -286,7 +304,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="27/07/2022 15:37"
+                value={dayjs(bookingDetails?.endDate).format(DEFAULT_DATETIME_FORMAT)}
               />
             </Grid>
           </Grid>
@@ -306,7 +324,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value="No data"
+                value={bookingDetails?.rentDetail.voucherCode || t('subscription.noData')}
               />
             </Grid>
           </Grid>
@@ -314,45 +332,45 @@ export default function SubscriptionDetail(): JSX.Element {
 
         <ContentSection>
           <Typography variant="h5" component="h2">
-            Payment History
+            {t('subscription.paymentHistory.title')}
           </Typography>
           <TableWrapper>
             <TableContainer component={Paper}>
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Amount (THB)</TableCell>
-                    <TableCell>Updated Date</TableCell>
-                    <TableCell>Payment Type</TableCell>
-                    <TableCell>Purpose</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Status Message</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.id')}</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.amount')}</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.updatedDate')}</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.type')}</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.purpose')}</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.status')}</TableCell>
+                    <TableCell>{t('subscription.paymentHistory.statusMessage')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
+                  {bookingDetails?.payments.map((payment) => (
+                    <TableRow key={payment.id}>
                       <TableCell component="th" scope="row">
-                        {row.id || '-'}
+                        {payment.id || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.amount.toLocaleString() || '-'}
+                        {Number(payment.amount || 0).toLocaleString()}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.updatedDate || '-'}
+                        {payment.updatedDate || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.paymentType || '-'}
+                        {payment.type || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.purpose || '-'}
+                        {payment.description || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.status || '-'}
+                        {payment.status || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.statusMessage || '-'}
+                        {payment.statusMessage || '-'}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -366,7 +384,7 @@ export default function SubscriptionDetail(): JSX.Element {
           <Grid container>
             <Grid item xs={6}>
               <Typography variant="h5" component="h2">
-                Car Details
+                {t('subscription.carDetails')}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -375,8 +393,9 @@ export default function SubscriptionDetail(): JSX.Element {
                   variant="contained"
                   color="primary"
                   onClick={() => setCarReplacementlogOpen(true)}
+                  disabled={!bookingDetails}
                 >
-                  Replacement
+                  {t('booking.carDetail.replacement')}
                 </Button>
               </Box>
             </Grid>
@@ -386,44 +405,43 @@ export default function SubscriptionDetail(): JSX.Element {
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Amount (THB)</TableCell>
-                    <TableCell>Updated Date</TableCell>
-                    <TableCell>Payment Type</TableCell>
-                    <TableCell>Purpose</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Status Message</TableCell>
+                    <TableCell>{t('booking.carDetail.no')}</TableCell>
+                    <TableCell>{t('booking.carDetail.brand')}</TableCell>
+                    <TableCell>{t('booking.carDetail.model')}</TableCell>
+                    <TableCell>{t('booking.carDetail.plateNumber')}</TableCell>
+                    <TableCell>{t('booking.carDetail.vin')}</TableCell>
+                    <TableCell>{t('booking.carDetail.deliveryDate')}</TableCell>
+                    <TableCell>{t('booking.carDetail.returnDate')}</TableCell>
+                    <TableCell>{t('booking.carDetail.remark')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      onClick={() => {
-                        setSelectedRow(row)
-                        setCarDetailDialogOpen(true)
-                      }}
-                    >
+                  {carActivities.map((carActivity, index) => (
+                    <TableRow key={carActivity.carId}>
                       <TableCell component="th" scope="row">
-                        {row.id || '-'}
+                        {index + 1 || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.amount.toLocaleString() || '-'}
+                        {carActivity.carDetail.carSku.carModel.brand.name || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.updatedDate || '-'}
+                        {carActivity.carDetail.carSku.carModel.name || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.paymentType || '-'}
+                        {carActivity.carDetail.plateNumber || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.purpose || '-'}
+                        {carActivity.carDetail.vin || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.status || '-'}
+                        {dayjs(carActivity.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT) ||
+                          '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.statusMessage || '-'}
+                        {dayjs(carActivity.returnTask?.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        -
                       </TableCell>
                     </TableRow>
                   ))}
@@ -446,6 +464,7 @@ export default function SubscriptionDetail(): JSX.Element {
         open={carReplacementDialogOpen}
         onClose={() => setCarReplacementlogOpen(false)}
       />
+      <Backdrop open={isFetching} />
     </Page>
   )
 }

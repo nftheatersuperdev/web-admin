@@ -98,14 +98,13 @@ export default function Subscription(): JSX.Element {
   const rows =
     response?.data.bookingDetails && response?.data.bookingDetails.length > 0
       ? response?.data.bookingDetails.map((subscription) => {
+          console.log('subscription ->', subscription)
+
           const subscriptionPrice =
             subscription.rentDetail.chargePrice !== null
               ? convertMoneyFormat(subscription.rentDetail.chargePrice)
               : '-'
           const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
-
-          const deliveryDetail = subscription.carTasks.find((task) => task.type === 'Delivery')
-          const returnDetail = subscription.carTasks.find((task) => task.type === 'Return')
 
           return (
             {
@@ -129,14 +128,6 @@ export default function Subscription(): JSX.Element {
               duration: convertToDuration(subscription.rentDetail.durationDay, t),
               startDate: subscription.startDate,
               endDate: subscription.endDate,
-              deliveryAddress: deliveryDetail?.fullAddress || '-',
-              deliveryLatitude: deliveryDetail?.latitude || 0,
-              deliveryLongitude: deliveryDetail?.longitude || 0,
-              deliveryRemark: deliveryDetail?.remark || '-',
-              returnAddress: returnDetail?.fullAddress || '-',
-              returnLatitude: returnDetail?.latitude || 0,
-              returnLongitude: returnDetail?.longitude || 0,
-              returnRemark: returnDetail?.remark || '-',
               status: subscription.displayStatus,
               voucherId: subscription.rentDetail.voucherId || '',
               voucherCode: subscription.rentDetail.voucherCode || '',
@@ -145,8 +136,6 @@ export default function Subscription(): JSX.Element {
               paymentStatus: firstCapitalize(subscription?.payments[0]?.status) || '-',
               failureMessage: subscription?.payments[0]?.statusMessage || '-',
               paymentCreateDate: subscription?.payments[0]?.createdDate || '-',
-              deliveryDate: deliveryDetail?.date || '-',
-              returnDate: returnDetail?.date || '-',
               parentId: subscription.bookingId,
               isExtend: Boolean(subscription.isExtend),
               customerId: subscription.customerId || '-',
@@ -347,26 +336,6 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'deliveryAddress',
-      headerName: t('subscription.startAddress'),
-      description: t('subscription.startAddress'),
-      flex: 1,
-      hide: !visibilityColumns.deliveryAddress,
-      filterable: false,
-      sortable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
-      field: 'returnAddress',
-      headerName: t('subscription.endAddress'),
-      description: t('subscription.endAddress'),
-      flex: 1,
-      hide: !visibilityColumns.returnAddress,
-      filterable: false,
-      sortable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
       field: 'status',
       headerName: t('subscription.status.title'),
       description: t('subscription.status.title'),
@@ -471,27 +440,6 @@ export default function Subscription(): JSX.Element {
       hide: !visibilityColumns.paymentCreateDate,
       filterable: false,
       sortable: false,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'deliveryDate',
-      headerName: t('subscription.deliveryDate'),
-      description: t('subscription.deliveryDate'),
-      flex: 1,
-      hide: !visibilityColumns.deliveryDate,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'returnDate',
-      headerName: t('subscription.returnDate'),
-      description: t('subscription.returnDate'),
-      flex: 1,
-      hide: !visibilityColumns.returnDate,
-      filterable: true,
-      sortable: false,
-      filterOperators: dateEqualOperators,
       valueFormatter: columnFormatDate,
     },
   ]

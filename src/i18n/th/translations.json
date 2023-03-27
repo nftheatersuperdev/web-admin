@@ -32,6 +32,8 @@
     "subscriptionManagement": "การจัดการการจอง",
     "voucherManagement": "การจัดการวอชเชอร์",
     "subscriptions": "ข้อมูลการจอง",
+    "subscriptionDetail": "รายละเอียดข้อมูลการจอง",
+    "bookingDetail": "ข้อมูลการจอง",
     "vouchers": "วอชเชอร์",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "others": "อื่นๆ",
@@ -348,6 +350,16 @@
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
     "payments": "ประวัติการชำระเงิน",
+    "paymentHistory": {
+      "title": "ประวัติการชำระเงิน",
+      "id": "ไอดี",
+      "amount": "จำนวนเงิน (บาท)",
+      "updatedDate": "วันที่แก้ไข",
+      "type": "ประเภท",
+      "purpose": "เหตุผล",
+      "status": "สถานะการชำระเงิน",
+      "statusMessage": "ข้อความสถานะการชำระเงิน"
+    },
     "parentId": "Parent Id",
     "isParentValue": "ใช่",
     "isExtendedSubscription": "Is Extended",
@@ -410,6 +422,31 @@
     },
     "clearFilterId": "ลบกรองข้อมูลด้วยไอดี"
   },
+  "booking": {
+    "statuses": {
+      "accepted": "ยอมรับ",
+      "available": "พร้อมใช้งาน",
+      "inUse": "กำลังใช้งาน",
+      "outOfService": "ไม่พร้อมใช้งาน",
+      "published": "เปิดใช้งาน",
+      "unpublished": "ไม่เปิดใช้งาน",
+      "reserved": "จอง",
+      "upcomingCancelled": "กำลังถูกยกเลิก",
+      "unknown": "ไม่ทราบ"
+    },
+    "carDetail": {
+      "replacement": "รถทดแทน",
+      "no": "ลำดับ",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "plateNumber": "เลขทะเบียน",
+      "vin": "หมายเลขตัวถัง",
+      "deliveryDate": "วันที่จัดส่ง",
+      "returnDate": "วันที่รับคืน",
+      "remark": "หมายเหตุ"
+    }
+  },
+
   "additionalExpense": {
     "id": "เลขไอดี",
     "subscriptionId": "หมายเลขการจอง",

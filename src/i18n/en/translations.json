@@ -32,6 +32,8 @@
     "subscriptionManagement": "Subscription Management",
     "voucherManagement": "Voucher Management",
     "subscriptions": "Subscriptions",
+    "subscriptionDetail": "Subscription Detail",
+    "bookingDetail": "Booking Detail",
     "vouchers": "Vouchers",
     "additionalExpense": "Additional Expense",
     "others": "Others",
@@ -349,6 +351,16 @@
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
     "payments": "Payment history",
+    "paymentHistory": {
+      "title": "Payment history",
+      "id": "ID",
+      "amount": "Amount (THB)",
+      "updatedDate": "Updated Date",
+      "type": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message"
+    },
     "parentId": "Parent Id",
     "isParentValue": "True",
     "isExtendedSubscription": "Is Extended",
@@ -410,6 +422,30 @@
       }
     },
     "clearFilterId": "Clear filter by ID"
+  },
+  "booking": {
+    "statuses": {
+      "accepted": "Accepted",
+      "available": "Available",
+      "inUse": "In Use",
+      "outOfService": "Out of service",
+      "published": "Published",
+      "unpublished": "Unpublished",
+      "reserved": "Reserved",
+      "upcomingCancelled": "Upcoming Cancelled",
+      "unknown": "Unknown"
+    },
+    "carDetail": {
+      "replacement": "Replacement",
+      "no": "No.",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "vin": "VIN",
+      "deliveryDate": "Delivery Date",
+      "returnDate": "Return Date",
+      "remark": "Remark"
+    }
   },
   "additionalExpense": {
     "id": "ID",

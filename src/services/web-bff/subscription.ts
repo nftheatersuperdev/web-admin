@@ -1,5 +1,6 @@
 import { AdminBffAPI } from 'api/admin-bff'
 import {
+  BookingRental,
   SubscriptionBookingListProps,
   SubscriptionListResponse,
   SubscriptionChangeCarInBookingProps,
@@ -24,7 +25,7 @@ export const getList = async ({
   filters,
 }: SubscriptionBookingListProps): Promise<SubscriptionListResponse> => {
   const response: SubscriptionListResponse = await AdminBffAPI.post(
-    '/v1/bookings/rental/search',
+    '/v2/bookings/rental/search',
     {
       ...filters,
       isExtend: !!filters?.isExtend || null,
@@ -41,6 +42,14 @@ export const getList = async ({
         },
       }
     })
+
+  return response
+}
+
+export const getDetailById = async (id: string): Promise<BookingRental> => {
+  const response: BookingRental = await AdminBffAPI.post('/v2/bookings/rental/search', {
+    bookingDetailId: id,
+  }).then(({ data }) => data.data.bookingDetails[0])
 
   return response
 }

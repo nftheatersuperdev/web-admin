@@ -76,6 +76,13 @@ export interface BookingCarTrack {
   updatedDate: string
 }
 
+export interface BookingCarActivity {
+  carId: string
+  carDetail: SubscriptionCar
+  deliveryTask: BookingCarTrack
+  returnTask: BookingCarTrack
+}
+
 export interface BookingCustomer {
   id: string
   firstName: string
@@ -128,6 +135,7 @@ export interface BookingRental {
   car: SubscriptionCar
   carId: string
   carTasks: BookingCarTrack[]
+  carActivities: BookingCarActivity[]
   createdBy: string
   customer: BookingCustomer
   customerId: string
