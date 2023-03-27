@@ -33,7 +33,7 @@ const createTheme = (name: string) => {
       footer: themeConfig.footer,
       sidebar: themeConfig.sidebar,
       size: {
-        sidebar: '250px',
+        sidebar: '258px',
       },
     }
   )

@@ -20,7 +20,36 @@
     "inUse": "ใช้งานอยู่"
   },
   "sidebar": {
+    "pages": "หน้าต่างๆ",
     "dashboard": "แดชบอร์ด",
+    "userManagement": {
+      "title": "การจัดการผู้ใช้งาน",
+      "customerProfile": "โปรไฟล์ลูกค้า",
+      "staffProfile": "โปรไฟล์พนักงาน"
+    },
+    "carManagement": {
+      "title": "การจัดการรถยนต์",
+      "car": "รถยนต์",
+      "carAvailability": "สถานะการใช้รถ",
+      "carActivity": "การใช้งานรถ",
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ"
+    },
+    "bookingManagement": {
+      "title": "การจัดการจอง",
+      "booking": "การจอง"
+    },
+    "voucherManagement": {
+      "title": "การจัดการวอชเชอร์",
+      "userGroup": "กลุ่มผู้ใช้งาน",
+      "voucher": "วอชเชอร์"
+    },
+    "documentsManagement": {
+      "title": "การจัดการเอกสาร",
+      "document": "เอกสาร",
+      "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
+      "deleteLog": "ประวัติการลบบัญชีลูกค้า",
+      "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้"
+    },
     "users": "ผู้ใช้",
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
@@ -30,7 +59,6 @@
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
     "subscriptionManagement": "การจัดการการจอง",
-    "voucherManagement": "การจัดการวอชเชอร์",
     "subscriptions": "ข้อมูลการจอง",
     "vouchers": "วอชเชอร์",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
