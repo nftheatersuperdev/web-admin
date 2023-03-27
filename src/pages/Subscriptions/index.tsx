@@ -535,7 +535,6 @@ export default function Subscription(): JSX.Element {
           } else {
             filter = { [columnField]: value }
           }
-          console.log('columnField ->', columnField)
         }
         return filter
       }, {} as SubscriptionBookingListFilters),
