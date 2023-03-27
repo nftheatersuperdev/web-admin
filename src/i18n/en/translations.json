@@ -20,7 +20,36 @@
     "inUse": "In Use"
   },
   "sidebar": {
+    "pages": "Pages",
     "dashboard": "Dashboard",
+    "userManagement": {
+      "title": "User Management",
+      "customerProfile": "Customer Profile",
+      "staffProfile": "Staff Profile"
+    },
+    "carManagement": {
+      "title": "Car Management",
+      "car": "Car",
+      "carAvailability": "Car Availability",
+      "carActivity": "Car Activity",
+      "carModelAndPricing": "Model & Pricing"
+    },
+    "bookingManagement": {
+      "title": "Booking Management",
+      "booking": "Booking"
+    },
+    "voucherManagement": {
+      "title": "Voucher Management",
+      "userGroup": "User Group",
+      "voucher": "Voucher"
+    },
+    "documentsManagement": {
+      "title": "Document Management",
+      "document": "Documents",
+      "consentLog": "Consent Log",
+      "deleteLog": "Delete Log",
+      "cookieConsentLog": "Cookie Consent Log"
+    },
     "users": "Users",
     "userGroups": "User Groups",
     "cars": "Cars",
@@ -30,7 +59,6 @@
     "modelAndPricing": "Model & Pricing",
     "vehicleManagement": "Vehicle Management",
     "subscriptionManagement": "Subscription Management",
-    "voucherManagement": "Voucher Management",
     "subscriptions": "Subscriptions",
     "vouchers": "Vouchers",
     "additionalExpense": "Additional Expense",

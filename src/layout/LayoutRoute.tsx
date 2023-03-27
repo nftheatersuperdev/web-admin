@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { useAuth } from 'auth/AuthContext'
 import { Role, hasAllowedRole } from 'auth/roles'
 import { ROUTE_PATHS } from 'routes'
-import Header from 'layout/Header'
 import Sidebar from './Sidebar'
+import Navbar from './Navbar'
 
 export const Page = styled.div`
   width: 100%;
@@ -18,7 +18,7 @@ const Main = styled.main<{ $isPublic?: boolean }>`
   padding: 20px;
   height: ${({ $isPublic }) => ($isPublic ? '100vh' : '100%')};
   margin-left: ${({ theme, $isPublic }) => ($isPublic ? 0 : theme.size.sidebar)};
-  ${({ theme }) => theme.breakpoints.down('sm')} {
+  ${({ theme }) => theme.breakpoints.down('md')} {
     margin-left: 0;
   }
 `
@@ -85,7 +85,7 @@ function PrivateRoute({
 
     return (
       <React.Fragment>
-        <Header onSidebarToggle={handleSidebarOpen} />
+        <Navbar onSidebarToggle={handleSidebarOpen} />
         <Sidebar isOpen={isSidebarOpen} onSidebarToggle={handleSidebarOpen} />
         <Main>
           {/* @ts-expect-error TODO */}
@@ -100,7 +100,7 @@ function PrivateRoute({
 
 export default function LayoutRoute(props: LayoutRouteProps): JSX.Element {
   const { component: Component, exact = true, path, isPublic, allowedRoles = [] } = props
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   function handleSidebarOpen(state = !isSidebarOpen) {
     setIsSidebarOpen(state)
