@@ -76,7 +76,7 @@ export default function StaffProfileDetail(): JSX.Element {
     <Page>
       <PageTitle title={t('sidebar.staffProfileDetail')} />
       <Breadcrumbs aria-label="breadcrumb">
-        <Typography>{t('sidebar.userManagement')}</Typography>
+        <Typography>{t('sidebar.userManagement.title')}</Typography>
         <Link underline="hover" color="inherit" href="/staff-profiles">
           {t('sidebar.staffProfile')}
         </Link>

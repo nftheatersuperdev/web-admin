@@ -222,7 +222,7 @@ export default function StaffProfiles(): JSX.Element {
     <Page>
       <PageTitle title={t('sidebar.staffProfile')} />
       <Breadcrumbs aria-label="breadcrumb">
-        <Typography>{t('sidebar.userManagement')}</Typography>
+        <Typography>{t('sidebar.userManagement.title')}</Typography>
         <Typography color="primary">{t('sidebar.staffProfile')}</Typography>
       </Breadcrumbs>
       <br />

@@ -168,7 +168,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },*/
       {
-        subHeader: t('sidebar.voucherManagement'),
+        subHeader: t('sidebar.voucherManagement.title'),
         allowedRoles: [
           ROLES.SUPER_ADMIN,
           ROLES.ADMIN,
@@ -319,9 +319,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
             }
 
             return subHeader ? (
-              <ListSubheader key={subHeader} component="div">
-                {subHeader}
-              </ListSubheader>
+              <ListSubheader component="div">{subHeader}</ListSubheader>
             ) : (
               <ListItem
                 id={id}
