@@ -25,6 +25,7 @@ import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getDetailById } from 'services/web-bff/subscription'
+import { BookingCarActivity } from 'services/web-bff/subscription.type'
 import CarDetailDialog from './CarDetailDialog'
 import CarReplacementDialog from './CarReplacementDialog'
 
@@ -72,9 +73,14 @@ export default function SubscriptionDetail(): JSX.Element {
   )
   const carActivities = bookingDetails?.carActivities.reverse() || []
 
-  const [selectedRow, setSelectedRow] = useState({})
+  const [carDetail, setCarDetail] = useState<BookingCarActivity | undefined>(undefined)
   const [carDetailDialogOpen, setCarDetailDialogOpen] = useState<boolean>(false)
   const [carReplacementDialogOpen, setCarReplacementlogOpen] = useState<boolean>(false)
+
+  const handleClickToOpenDetailDialog = (carActivity: BookingCarActivity) => {
+    setCarDetail(carActivity)
+    setCarDetailDialogOpen(true)
+  }
 
   return (
     <Page>
@@ -417,7 +423,10 @@ export default function SubscriptionDetail(): JSX.Element {
                 </TableHead>
                 <TableBody>
                   {carActivities.map((carActivity, index) => (
-                    <TableRow key={carActivity.carId}>
+                    <TableRow
+                      key={carActivity.carId}
+                      onClick={() => handleClickToOpenDetailDialog(carActivity)}
+                    >
                       <TableCell component="th" scope="row">
                         {index + 1 || '-'}
                       </TableCell>
@@ -454,9 +463,9 @@ export default function SubscriptionDetail(): JSX.Element {
 
       <CarDetailDialog
         open={carDetailDialogOpen}
-        car={selectedRow}
+        car={carDetail}
         onClose={() => {
-          setSelectedRow({})
+          setCarDetail(undefined)
           setCarDetailDialogOpen(false)
         }}
       />

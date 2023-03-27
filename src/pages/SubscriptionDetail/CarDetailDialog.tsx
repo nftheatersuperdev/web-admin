@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-no-useless-fragment */
 import {
   Button,
@@ -13,22 +12,58 @@ import {
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import Map from 'components/Map'
+import config from 'config'
+import GoogleMapReact from 'google-map-react'
+import dayjs from 'dayjs'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
+import { BookingCarActivity } from 'services/web-bff/subscription.type'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
 `
+const GoogleMapContainer = styled.div`
+  height: 400px;
+  width: 100%;
+`
+const MapMarkerWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  border-radius: 50%;
+  border: 10px solid #f00;
+  width: 10px;
+  height: 10px;
+
+  &::after {
+    position: absolute;
+    content: '';
+    width: 0px;
+    height: 0px;
+    border: 10px solid transparent;
+    border-top: 17px solid #f00;
+    margin-left: -10px;
+    margin-top: 2px;
+  }
+`
+
+interface MapMarkerProps {
+  lat: number
+  lng: number
+}
+function MapMarker(_props: MapMarkerProps) {
+  return <MapMarkerWrapper />
+}
 
 export interface CarDetailDialogProps {
   open: boolean
-  car: any
+  car: BookingCarActivity | undefined
   onClose: () => void
-  // onSubmitSend: (emails: string[]) => void
 }
 
-export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps): JSX.Element {
+export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogProps): JSX.Element {
   const { t } = useTranslation()
-  if (!open) {
+  if (!open && !car) {
     return <Fragment />
   }
 
@@ -36,8 +71,20 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
     onClose()
   }
 
-  const lat = 13.736717
-  const lng = 100.523186
+  // Bangkok Center
+  const defaultValues = {
+    lat: 13.736717,
+    lng: 100.523186,
+  }
+
+  const deliveryMapAddress = {
+    lat: car?.deliveryTask?.latitude || defaultValues.lat,
+    lng: car?.deliveryTask?.longitude || defaultValues.lng,
+  }
+  const returnMapAddress = {
+    lat: car?.returnTask?.latitude || defaultValues.lat,
+    lng: car?.returnTask?.longitude || defaultValues.lng,
+  }
 
   return (
     <Dialog
@@ -47,28 +94,28 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
       fullWidth={true}
       maxWidth="md"
     >
-      <DialogTitle id="form-dialog-title">Car Detail</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('subscription.carDetails')}</DialogTitle>
       <DialogContent>
         {/* Delivery Date, and Return Date */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__deliveryDate"
-              label="Delivery Date"
+              label={t('subscription.deliveryDate')}
               fullWidth
               margin="normal"
               variant="outlined"
-              value="27/07/2022 15:37"
+              value={dayjs(car?.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__returnDate"
-              label="Return Date"
+              label={t('subscription.returnDate')}
               fullWidth
               margin="normal"
               variant="outlined"
-              value="27/07/2022 15:37"
+              value={dayjs(car?.returnTask?.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
             />
           </Grid>
         </Grid>
@@ -78,7 +125,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__plateNumber"
-              label="Plate Number"
+              label={t('subscription.plateNumber')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -88,13 +135,13 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="3กข 8102"
+              value={car?.carDetail.plateNumber}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__vin"
-              label="VIN"
+              label={t('subscription.vin')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -104,7 +151,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="LRW1921913P2929"
+              value={car?.carDetail.vin}
             />
           </Grid>
         </Grid>
@@ -114,7 +161,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__brand"
-              label="Brand"
+              label={t('subscription.brand')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -124,13 +171,13 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="Tesla"
+              value={car?.carDetail.carSku.carModel.brand.name}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__model"
-              label="Model"
+              label={t('subscription.model')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -140,7 +187,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="Model 3 - Long Range"
+              value={car?.carDetail.carSku.carModel.name}
             />
           </Grid>
         </Grid>
@@ -150,7 +197,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__seat"
-              label="Seat"
+              label={t('subscription.seats')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -160,7 +207,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="5"
+              value={car?.carDetail.carSku.carModel.seats}
             />
           </Grid>
         </Grid>
@@ -170,7 +217,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__deliveryAddress"
-              label="Delivery Address"
+              label={t('subscription.startAddress')}
               fullWidth
               margin="normal"
               multiline
@@ -182,13 +229,13 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="Thanon Ratchawithi Thanon Phaya Thai Ratchathewi Bangkok Thailand 10400"
+              value={car?.deliveryTask?.fullAddress?.trim() || t('subscription.noData')}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__returnAddress"
-              label="Return Address"
+              label={t('subscription.endAddress')}
               fullWidth
               margin="normal"
               multiline
@@ -200,7 +247,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="Thanon Ratchawithi Thanon Phaya Thai Ratchathewi Bangkok Thailand 10400"
+              value={car?.returnTask?.fullAddress?.trim() || t('subscription.noData')}
             />
           </Grid>
         </Grid>
@@ -210,7 +257,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__deliveryAddressRemark"
-              label="Delivery Address Remark"
+              label={t('subscription.startAddressRemark')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -220,13 +267,13 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="No data"
+              value={car?.deliveryTask?.remark?.trim() || t('subscription.noData')}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_detail__returnAddressRemark"
-              label="Return Address Remark"
+              label={t('subscription.endAddressRemark')}
               fullWidth
               margin="normal"
               InputProps={{
@@ -236,7 +283,7 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
                 shrink: true,
               }}
               variant="outlined"
-              value="No data"
+              value={car?.returnTask?.remark?.trim() || t('subscription.noData')}
             />
           </Grid>
         </Grid>
@@ -245,9 +292,20 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Typography variant="h6" component="h3">
-              Delivery Address
+              {t('subscription.startAddress')}
             </Typography>
-            <Map id="delivery-address" lat={lat} lng={lng} />
+            <GoogleMapContainer>
+              <GoogleMapReact
+                bootstrapURLKeys={{ key: config.googleMapsApiKey }}
+                defaultCenter={{ lat: deliveryMapAddress.lat, lng: deliveryMapAddress.lng }}
+                defaultZoom={14}
+                options={{
+                  gestureHandling: 'none',
+                }}
+              >
+                <MapMarker lat={deliveryMapAddress.lat} lng={deliveryMapAddress.lng} />
+              </GoogleMapReact>
+            </GoogleMapContainer>
           </Grid>
         </Grid>
 
@@ -255,9 +313,20 @@ export default function CarDetailDialog({ open, onClose }: CarDetailDialogProps)
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Typography variant="h6" component="h3">
-              Return Address
+              {t('subscription.endAddress')}
             </Typography>
-            <Map id="return-address" lat={lat} lng={lng} />
+            <GoogleMapContainer>
+              <GoogleMapReact
+                bootstrapURLKeys={{ key: config.googleMapsApiKey }}
+                defaultCenter={{ lat: returnMapAddress.lat, lng: returnMapAddress.lng }}
+                defaultZoom={14}
+                options={{
+                  gestureHandling: 'none',
+                }}
+              >
+                <MapMarker lat={returnMapAddress.lat} lng={returnMapAddress.lng} />
+              </GoogleMapReact>
+            </GoogleMapContainer>
           </Grid>
         </Grid>
       </DialogContent>
