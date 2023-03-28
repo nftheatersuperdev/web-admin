@@ -1,39 +1,246 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/jsx-no-useless-fragment */
+import { useState, Fragment } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
+import styled from 'styled-components'
+import dayjs, { Dayjs } from 'dayjs'
+import config from 'config'
 import {
   Button,
   Dialog,
   DialogActions,
   DialogTitle,
   DialogContent,
-  DialogContentText,
+  FormControl,
   Grid,
+  MenuItem,
+  Select,
+  InputLabel,
   TextField,
 } from '@material-ui/core'
-import { Fragment } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
+import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
+import toast from 'react-hot-toast'
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
+import Geocode from 'react-geocode'
+import { Typography } from '@mui/material'
+import DatePicker from 'components/DatePicker'
+import ConfirmDialog from 'components/ConfirmDialog'
+import { getAvailableListBFF } from 'services/web-bff/car'
+import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
+import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/subscription.type'
+import { SubEventStatus } from 'pages/Subscriptions/utils'
+import { updateCarReplacement } from 'services/web-bff/subscription'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
+  > button {
+    margin-left: 15px;
+  }
 `
+const MapDetailWrapper = styled.div`
+  margin-top: 12px;
+`
+const containerStyle = {
+  width: '100%',
+  height: '290px',
+}
 
 export interface CarReplacementDialogProps {
+  editorEmail: string | null
   open: boolean
+  bookingDetails: BookingRental | undefined
   onClose: () => void
   // onSubmitSend: (emails: string[]) => void
 }
+interface DataState {
+  carId: string
+  deliveryDate: MaterialUiPickersDate | Dayjs
+  deliveryTime: string
+  deliveryAddress: CarReplacementDeliveryAddress
+}
 
 export default function CarReplacementDialog({
+  editorEmail,
   open,
+  bookingDetails,
   onClose,
 }: CarReplacementDialogProps): JSX.Element {
-  const { t } = useTranslation()
-  if (!open) {
+  if (!open || !bookingDetails) {
     return <Fragment />
   }
 
-  function handleClose() {
+  Geocode.setApiKey(config.googleMapsApiKey)
+
+  const {
+    bookingId,
+    rentDetail: { bookingDetailId },
+    displayStatus,
+    startDate,
+    endDate,
+  } = bookingDetails
+
+  const todayDate = dayjs()
+  const defaultState = {
+    carId: '',
+    deliveryDate: todayDate.add(1, 'day').startOf('day'),
+    deliveryTime: '',
+    deliveryAddress: {
+      full: '',
+      latitude: 13.736717,
+      longitude: 100.523186,
+    },
+  }
+
+  function generateMinAndMaxDates(status: string) {
+    switch (status.toLocaleLowerCase()) {
+      case SubEventStatus.DELIVERED: {
+        return {
+          minDate: todayDate,
+          maxDate: endDate,
+        }
+      }
+      default: {
+        return {
+          minDate: startDate,
+          maxDate: todayDate.add(1, 'year'),
+        }
+      }
+    }
+  }
+
+  const deliveryDateConditions = generateMinAndMaxDates(displayStatus)
+
+  const { t } = useTranslation()
+  const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
+  const [carReplacementState, setCarReplacementState] = useState<DataState>(defaultState)
+  const { data: availableCarsResponse } = useQuery('available-cars', () =>
+    getAvailableListBFF({
+      filter: {
+        startDate: bookingDetails.startDate,
+        endDate: bookingDetails.endDate,
+        isSkuNotNull: true,
+      },
+      size: config.tableRowsDefaultPageSize,
+    } as CarAvailableListBffFilterRequestProps)
+  )
+
+  const availableCars = availableCarsResponse?.data.records || []
+  const selectedCar = availableCars.find(
+    (availableCar) => availableCar.car.id === carReplacementState.carId
+  )
+  const isDisableToSave =
+    !carReplacementState.carId ||
+    !carReplacementState.deliveryDate ||
+    !carReplacementState.deliveryTime ||
+    !carReplacementState.deliveryAddress.full ||
+    !carReplacementState.deliveryAddress.latitude ||
+    !carReplacementState.deliveryAddress.longitude
+
+  const handleFormSubmit = async () => {
+    const { carId, deliveryDate, deliveryTime, deliveryAddress } = carReplacementState
+    if (deliveryDate) {
+      await toast.promise(
+        updateCarReplacement({
+          bookingId,
+          bookingDetailId,
+          carId,
+          deliveryDate: deliveryDate.format(DEFAULT_DATE_FORMAT_BFF),
+          deliveryTime,
+          deliveryAddress,
+        }),
+        {
+          loading: t('toast.loading'),
+          success: () => {
+            return t('booking.carReplacement.saveSuccess')
+          },
+          error: (error) => {
+            if (error.data.message) {
+              return error.data.message
+            } else if (error.message) {
+              return error.message
+            }
+            return t('error.unknown')
+          },
+        }
+      )
+    }
+  }
+
+  const handleClose = () => {
+    setCarReplacementState(() => defaultState)
     onClose()
+  }
+
+  const handleDeliveryDateChange = (date: MaterialUiPickersDate | Dayjs) => {
+    if (date) {
+      setCarReplacementState((prevState) => ({
+        ...prevState,
+        startDate: date,
+        endDate: date,
+      }))
+    }
+  }
+
+  const handleDeliveryTimeChange = (
+    event: React.ChangeEvent<{ name?: string; value: unknown }>
+  ) => {
+    setCarReplacementState((prevState) => ({
+      ...prevState,
+      deliveryTime: event.target.value as string,
+    }))
+  }
+
+  const handleCarChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    setCarReplacementState((prevState) => ({
+      ...prevState,
+      carId: event.target.value as string,
+    }))
+  }
+
+  const handleMarkerChanged = async (e: google.maps.MapMouseEvent) => {
+    const { lat, lng } = e.latLng.toJSON()
+    const location = await Geocode.fromLatLng(String(lat), String(lng))
+    const fullAddress = location?.results[0]?.formatted_address || '-'
+    setCarReplacementState((prevState) => ({
+      ...prevState,
+      deliveryAddress: {
+        ...prevState.deliveryAddress,
+        full: fullAddress,
+        latitude: lat,
+        longitude: lng,
+      },
+    }))
+  }
+
+  const handleDeliveryAddressFullChanged = (
+    e: React.ChangeEvent<{ name?: string; value: string }>
+  ) => {
+    setCarReplacementState((prevState) => ({
+      ...prevState,
+      deliveryAddress: {
+        ...prevState.deliveryAddress,
+        full: e.target.value,
+      },
+    }))
+  }
+
+  const handleDeliveryAddressRemarkChanged = (
+    e: React.ChangeEvent<{ name?: string; value: string | undefined }>
+  ) => {
+    setCarReplacementState((prevState) => ({
+      ...prevState,
+      deliveryAddress: {
+        ...prevState.deliveryAddress,
+        remark: e.target.value,
+      },
+    }))
+  }
+
+  const deliveryMarkerAddress = {
+    lat: carReplacementState.deliveryAddress.latitude,
+    lng: carReplacementState.deliveryAddress.longitude,
   }
 
   return (
@@ -44,40 +251,52 @@ export default function CarReplacementDialog({
       fullWidth={true}
       maxWidth="lg"
     >
-      <DialogTitle id="form-dialog-title">Car Replacement</DialogTitle>
+      <DialogTitle id="form-dialog-title">{t('booking.carReplacement.title')}</DialogTitle>
       <DialogContent>
-        <DialogContentText>Here is the content text</DialogContentText>
-
-        {/* Start Date, End Date, and Return Date */}
+        {/* Delivery Date, Delivery Time, and Return Date */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={3}>
-            <TextField
-              id="car_replacement__startDate"
-              label="Start Date"
+            <DatePicker
               fullWidth
+              inputVariant="outlined"
+              label={t('booking.carReplacement.deliveryDate')}
+              id="car_replacement__deliveryDate"
+              name="selectedFromDate"
+              format="DD/MM/YYYY"
+              onChange={handleDeliveryDateChange}
+              value={carReplacementState.deliveryDate}
               margin="normal"
-              variant="outlined"
-              value="27/07/2022 15:37"
+              minDate={deliveryDateConditions.minDate}
+              maxDate={deliveryDateConditions.maxDate}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
-            <TextField
-              id="car_replacement__endDate"
-              label="End Date"
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              value="27/07/2022 15:37"
-            />
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <InputLabel id="car_replacement__deliveryTime_label">
+                {t('booking.carReplacement.deliveryTime')}
+              </InputLabel>
+              <Select
+                label={t('booking.carReplacement.deliveryTime')}
+                labelId="car_replacement__deliveryTime_label"
+                id="car_replacement__deliveryTime"
+                value={carReplacementState.deliveryTime}
+                onChange={handleDeliveryTimeChange}
+              >
+                <MenuItem value="09:00">09.00 - 10.00</MenuItem>
+                <MenuItem value="11:00">11.00 - 13.00</MenuItem>
+                <MenuItem value="13:00">13.00 - 15.00</MenuItem>
+                <MenuItem value="15:00">15.00 - 17.00</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_replacement__returnDate"
-              label="Return Date"
+              label={t('booking.carReplacement.returnDate')}
               fullWidth
               margin="normal"
               variant="outlined"
-              value="27/07/2022 15:37"
+              value={dayjs(bookingDetails.endDate).format(DEFAULT_DATETIME_FORMAT) || '-'}
             />
           </Grid>
         </Grid>
@@ -85,34 +304,164 @@ export default function CarReplacementDialog({
         {/* Plate Number and VIN */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <TextField
-              id="car_replacement__startDate"
-              label="Start Date"
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              value="27/07/2022 15:37"
-            />
+            <FormControl fullWidth variant="outlined" margin="normal">
+              <InputLabel id="car_replacement__plateNumber_label">
+                {t('booking.carReplacement.plateNumber')}
+              </InputLabel>
+              <Select
+                label={t('booking.carReplacement.plateNumber')}
+                labelId="car_replacement__plateNumber_label"
+                id="car_replacement__plateNumber"
+                value={carReplacementState.carId}
+                defaultValue={defaultState.carId}
+                onChange={handleCarChange}
+              >
+                {availableCars.map((availableCar) => {
+                  return (
+                    <MenuItem key={availableCar.car.id} value={availableCar.car.id}>
+                      {availableCar.car.plateNumber}
+                    </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="car_replacement__VIN"
-              label="VIN"
+              label={t('booking.carReplacement.vin')}
               fullWidth
               margin="normal"
               variant="outlined"
-              value="27/07/2022 15:37"
+              value={selectedCar?.car.vin || '-'}
+              InputProps={{
+                readOnly: true,
+              }}
             />
+          </Grid>
+        </Grid>
+
+        {/* Car Brand and Model */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="car_replacement__carBrand"
+              label={t('booking.carReplacement.brand')}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={selectedCar?.car?.carSku?.carModel.brand.name || '-'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="car_replacement__carModel"
+              label={t('booking.carReplacement.model')}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={selectedCar?.car?.carSku?.carModel.name || '-'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        {/* Seat */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="car_replacement__seat"
+              label={t('booking.carReplacement.seat')}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={selectedCar?.car?.carSku?.carModel.seats || '-'}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        {/* Delivery Address Map */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <Typography gutterBottom variant="h4">
+              {t('booking.carReplacement.deliveryAddress')}
+            </Typography>
+            <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
+              <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={deliveryMarkerAddress}
+                zoom={10}
+                onClick={handleMarkerChanged}
+              >
+                <Marker
+                  position={deliveryMarkerAddress}
+                  draggable={true}
+                  onDragEnd={handleMarkerChanged}
+                />
+              </GoogleMap>
+            </LoadScript>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <MapDetailWrapper>
+              <TextField
+                id="car_replacement__deliveryAddress"
+                label={t('booking.carReplacement.deliveryAddress')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                value={carReplacementState.deliveryAddress.full}
+                multiline
+                minRows={3}
+                onChange={handleDeliveryAddressFullChanged}
+              />
+              <TextField
+                id="car_replacement__deliveryAddressRemark"
+                label={t('booking.carReplacement.deliveryAddressRemark')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                value={carReplacementState.deliveryAddress.remark}
+                multiline
+                minRows={3}
+                onChange={handleDeliveryAddressRemarkChanged}
+              />
+            </MapDetailWrapper>
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <MarginActionButtons>
-          <Button onClick={handleClose} color="primary">
-            {t('subscription.sendAllData.dialog.actionButton.cancel')}
+          <Button onClick={handleClose} color="secondary" variant="contained">
+            {t('booking.carReplacement.button.cancel')}
+          </Button>
+          <Button
+            onClick={() => setConfirmReplaceDialogOpen(() => true)}
+            color="primary"
+            variant="contained"
+            disabled={isDisableToSave}
+          >
+            {t('booking.carReplacement.button.save')}
           </Button>
         </MarginActionButtons>
       </DialogActions>
+      <ConfirmDialog
+        open={confirmReplaceDialogOpen}
+        title={t('booking.carReplacement.saveConfirmation.title')}
+        htmlContent={t('booking.carReplacement.saveConfirmation.description', {
+          bookingDetailId,
+          editorEmail,
+        })}
+        onConfirm={() => handleFormSubmit()}
+        onCancel={() => setConfirmReplaceDialogOpen(() => false)}
+      />
     </Dialog>
   )
 }

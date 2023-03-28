@@ -4,6 +4,7 @@ import {
   SubscriptionBookingListProps,
   SubscriptionListResponse,
   SubscriptionChangeCarInBookingProps,
+  UpdateCarReplacementRequestBody,
 } from 'services/web-bff/subscription.type'
 
 export const status = {
@@ -72,7 +73,37 @@ export const changeCarInBooking = async ({
   return true
 }
 
+export const updateCarReplacement = async ({
+  bookingId,
+  bookingDetailId,
+  carId,
+  deliveryDate,
+  deliveryTime,
+  deliveryAddress,
+}: UpdateCarReplacementRequestBody): Promise<string> => {
+  const result = await AdminBffAPI.patch(
+    `/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/rental/car-replacement`,
+    {
+      carId,
+      deliveryDate,
+      deliveryTime,
+      deliveryAddress,
+    }
+  )
+    .then(({ data }) => data.data.bookingDetailId)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+
+  return result
+}
+
 export default {
   getList,
+  getDetailById,
   changeCarInBooking,
+  updateCarReplacement,
 }

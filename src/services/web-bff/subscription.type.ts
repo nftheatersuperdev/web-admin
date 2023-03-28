@@ -233,6 +233,21 @@ export interface SubscriptionBookingListProps {
   filters?: SubscriptionBookingListFilters
 }
 
+export interface CarReplacementDeliveryAddress {
+  full: string
+  latitude: number
+  longitude: number
+  remark?: string | null
+}
+export interface UpdateCarReplacementRequestBody {
+  bookingId: string
+  bookingDetailId: string
+  carId: string
+  deliveryDate: string
+  deliveryTime: string
+  deliveryAddress: CarReplacementDeliveryAddress
+}
+
 export type SubscriptionListResponse = {
   data: {
     records: Subscription[]

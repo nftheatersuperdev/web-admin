@@ -13,7 +13,7 @@ import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import config from 'config'
-import GoogleMapReact from 'google-map-react'
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import dayjs from 'dayjs'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { BookingCarActivity } from 'services/web-bff/subscription.type'
@@ -21,40 +21,6 @@ import { BookingCarActivity } from 'services/web-bff/subscription.type'
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
 `
-const GoogleMapContainer = styled.div`
-  height: 400px;
-  width: 100%;
-`
-const MapMarkerWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-
-  border-radius: 50%;
-  border: 10px solid #f00;
-  width: 10px;
-  height: 10px;
-
-  &::after {
-    position: absolute;
-    content: '';
-    width: 0px;
-    height: 0px;
-    border: 10px solid transparent;
-    border-top: 17px solid #f00;
-    margin-left: -10px;
-    margin-top: 2px;
-  }
-`
-
-interface MapMarkerProps {
-  lat: number
-  lng: number
-}
-function MapMarker(_props: MapMarkerProps) {
-  return <MapMarkerWrapper />
-}
-
 export interface CarDetailDialogProps {
   open: boolean
   car: BookingCarActivity | undefined
@@ -72,18 +38,23 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
   }
 
   // Bangkok Center
-  const defaultValues = {
+  const defaultMapCenter = {
     lat: 13.736717,
     lng: 100.523186,
   }
 
+  const containerStyle = {
+    width: '100%',
+    height: '240px',
+  }
+
   const deliveryMapAddress = {
-    lat: car?.deliveryTask?.latitude || defaultValues.lat,
-    lng: car?.deliveryTask?.longitude || defaultValues.lng,
+    lat: car?.deliveryTask?.latitude || defaultMapCenter.lat,
+    lng: car?.deliveryTask?.longitude || defaultMapCenter.lng,
   }
   const returnMapAddress = {
-    lat: car?.returnTask?.latitude || defaultValues.lat,
-    lng: car?.returnTask?.longitude || defaultValues.lng,
+    lat: car?.returnTask?.latitude || defaultMapCenter.lat,
+    lng: car?.returnTask?.longitude || defaultMapCenter.lng,
   }
 
   return (
@@ -294,18 +265,11 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
             <Typography variant="h6" component="h3">
               {t('subscription.startAddress')}
             </Typography>
-            <GoogleMapContainer>
-              <GoogleMapReact
-                bootstrapURLKeys={{ key: config.googleMapsApiKey }}
-                defaultCenter={{ lat: deliveryMapAddress.lat, lng: deliveryMapAddress.lng }}
-                defaultZoom={14}
-                options={{
-                  gestureHandling: 'none',
-                }}
-              >
-                <MapMarker lat={deliveryMapAddress.lat} lng={deliveryMapAddress.lng} />
-              </GoogleMapReact>
-            </GoogleMapContainer>
+            <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
+              <GoogleMap mapContainerStyle={containerStyle} center={deliveryMapAddress} zoom={16}>
+                <Marker position={deliveryMapAddress} />
+              </GoogleMap>
+            </LoadScript>
           </Grid>
         </Grid>
 
@@ -315,18 +279,11 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
             <Typography variant="h6" component="h3">
               {t('subscription.endAddress')}
             </Typography>
-            <GoogleMapContainer>
-              <GoogleMapReact
-                bootstrapURLKeys={{ key: config.googleMapsApiKey }}
-                defaultCenter={{ lat: returnMapAddress.lat, lng: returnMapAddress.lng }}
-                defaultZoom={14}
-                options={{
-                  gestureHandling: 'none',
-                }}
-              >
-                <MapMarker lat={returnMapAddress.lat} lng={returnMapAddress.lng} />
-              </GoogleMapReact>
-            </GoogleMapContainer>
+            <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
+              <GoogleMap mapContainerStyle={containerStyle} center={returnMapAddress} zoom={16}>
+                <Marker position={returnMapAddress} />
+              </GoogleMap>
+            </LoadScript>
           </Grid>
         </Grid>
       </DialogContent>

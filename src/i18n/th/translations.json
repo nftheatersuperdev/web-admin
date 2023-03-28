@@ -442,8 +442,31 @@
       "plateNumber": "เลขทะเบียน",
       "vin": "หมายเลขตัวถัง",
       "deliveryDate": "วันที่จัดส่ง",
+      "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
       "remark": "หมายเหตุ"
+    },
+    "carReplacement": {
+      "title": "การจัดการรถทดแทน",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "plateNumber": "เลขทะเบียน",
+      "vin": "หมายเลขตัวถัง",
+      "seat": "จำนวนที่นั่ง",
+      "deliveryDate": "วันที่จัดส่ง",
+      "deliveryTime": "เวลาจัดส่ง",
+      "deliveryAddress": "สถานที่จัดส่ง",
+      "deliveryAddressRemark": "หมายเหตุ สถานที่จัดส่ง",
+      "returnDate": "วันที่รับคืน",
+      "button": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      },
+      "saveSuccess": "ทำการเปลี่ยนรถทดแทนแล้ว",
+      "saveConfirmation": {
+        "title": "ยืนยันรถทดแทน",
+        "description": "คุณต้องการจะอัพเดทรถในหมายเลขการจองนี้ {{bookingDetailId}}?<br/><br/><strong>แก้ไขโดย:</strong> {{editorEmail}}"
+      }
     }
   },
 

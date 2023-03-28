@@ -20,7 +20,13 @@ import {
   TableRow,
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
-import { convertToDuration, columnFormatSubEventStatus } from 'pages/Subscriptions/utils'
+import { useAuth } from 'auth/AuthContext'
+import { ROLES, hasAllowedRole } from 'auth/roles'
+import {
+  convertToDuration,
+  columnFormatSubEventStatus,
+  SubEventStatus,
+} from 'pages/Subscriptions/utils'
 import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
@@ -44,7 +50,16 @@ const TableWrapper = styled.div`
   margin: 10px 0;
 `
 
+export function canDoCarReplacement(status: string | undefined): boolean {
+  if (!status) {
+    return false
+  }
+  return [SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(status.toLowerCase())
+}
+
 export default function SubscriptionDetail(): JSX.Element {
+  const { getRole, firebaseUser } = useAuth()
+  const currentRole = getRole()
   const { t } = useTranslation()
 
   const { id: bookingDetailId } = useParams<SubscriptionDetailParams>()
@@ -82,6 +97,12 @@ export default function SubscriptionDetail(): JSX.Element {
     setCarDetailDialogOpen(true)
   }
 
+  const isAllowToDoCarReplacement = canDoCarReplacement(bookingDetails?.displayStatus)
+  const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [
+    ROLES.ADMIN,
+    ROLES.OPERATION,
+  ])
+
   return (
     <Page>
       <PageTitle title={t('sidebar.subscriptionDetail')} breadcrumbs={breadcrumbs} />
@@ -96,7 +117,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__firstName"
-                label="First Name"
+                label={t('subscription.firstName')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -112,7 +133,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__lastName"
-                label="Last Name"
+                label={t('subscription.lastName')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -132,7 +153,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__email"
-                label="Email"
+                label={t('subscription.email')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -148,7 +169,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__phoneNumber"
-                label="Phone Number"
+                label={t('subscription.phone')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -168,7 +189,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__price"
-                label="Price (THB)"
+                label={t('subscription.price')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -184,7 +205,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__duration"
-                label="Duration"
+                label={t('subscription.duration')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -204,7 +225,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__status"
-                label="Status"
+                label={t('subscription.status.title')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -224,7 +245,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__id"
-                label="Subscription ID"
+                label={t('subscription.id')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -244,7 +265,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__createdDate"
-                label="Created Date"
+                label={t('subscription.createdDate')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -262,7 +283,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__updatedDate"
-                label="Updated Date"
+                label={t('subscription.updatedDate')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -284,7 +305,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__startDate"
-                label="Start Date"
+                label={t('subscription.startDate')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -300,7 +321,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__endDate"
-                label="End Date"
+                label={t('subscription.endDate')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -320,7 +341,7 @@ export default function SubscriptionDetail(): JSX.Element {
             <Grid item xs={12} sm={4}>
               <TextField
                 id="subscription_detail__voucher"
-                label="Voucher"
+                label={t('subscription.voucherCode')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -399,7 +420,11 @@ export default function SubscriptionDetail(): JSX.Element {
                   variant="contained"
                   color="primary"
                   onClick={() => setCarReplacementlogOpen(true)}
-                  disabled={!bookingDetails}
+                  disabled={
+                    !bookingDetails ||
+                    !isAllowToDoCarReplacement ||
+                    !isTherePermissionToDoCarReplacement
+                  }
                 >
                   {t('booking.carDetail.replacement')}
                 </Button>
@@ -470,7 +495,9 @@ export default function SubscriptionDetail(): JSX.Element {
         }}
       />
       <CarReplacementDialog
+        editorEmail={firebaseUser?.email || '-'}
         open={carReplacementDialogOpen}
+        bookingDetails={bookingDetails}
         onClose={() => setCarReplacementlogOpen(false)}
       />
       <Backdrop open={isFetching} />

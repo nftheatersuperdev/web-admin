@@ -443,8 +443,31 @@
       "plateNumber": "Plate Number",
       "vin": "VIN",
       "deliveryDate": "Delivery Date",
+      "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
       "remark": "Remark"
+    },
+    "carReplacement": {
+      "title": "Car Replacement",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "vin": "VIN",
+      "seat": "Seat",
+      "deliveryDate": "Delivery Date",
+      "deliveryTime": "Delivery Time",
+      "deliveryAddress": "Delivery Address",
+      "deliveryAddressRemark": "Delivery Address Remark",
+      "returnDate": "Return Date",
+      "button": {
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "saveSuccess": "The car has been replaced",
+      "saveConfirmation": {
+        "title": "Car Replacement Confirmation",
+        "description": "Are you sure to Update Car replacement / Subscription ID {{bookingDetailId}}?<br/><br/><strong>Modify by:</strong> {{editorEmail}}"
+      }
     }
   },
   "additionalExpense": {
