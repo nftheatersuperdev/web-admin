@@ -19,6 +19,7 @@ import {
   Tooltip,
   OutlinedInput,
   Box,
+  Chip,
 } from '@material-ui/core'
 import {
   GridColDef,
@@ -116,6 +117,10 @@ const useStyles = makeStyles({
   },
   secondaryButton: {
     background: '#424E63',
+    color: 'white',
+  },
+  greenBackground: {
+    background: '#00a152',
     color: 'white',
   },
 })
@@ -350,9 +355,15 @@ export default function CarActivityDetail(): JSX.Element {
       sortable: false,
       renderCell: (params: GridCellParams) => {
         if (params.row.bookingType.id === CarActivityBookingTypeIds.RENT) {
-          return t('car.statuses.inUse')
+          return (
+            <Chip
+              size="small"
+              label={t('car.statuses.inUse')}
+              className={classes.greenBackground}
+            />
+          )
         }
-        return t('car.statuses.outOfService')
+        return <Chip size="small" label={t('car.statuses.outOfService')} />
       },
     },
     {
