@@ -6,34 +6,40 @@ import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
-  Breadcrumbs,
   Button,
   Card,
   FormControl,
   Grid,
   MenuItem,
-  Paper,
   Select,
   TextField,
-  Typography,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
+  InputAdornment,
 } from '@material-ui/core'
+import {
+  GridColDef,
+  GridPageChangeParams,
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+} from '@material-ui/data-grid'
 import Pagination from '@material-ui/lab/Pagination'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { makeStyles } from '@material-ui/core/styles'
+import { Search as SearchIcon } from '@material-ui/icons'
 import { validateKeywordText } from 'utils'
+import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import NoResultCard from 'components/NoResultCard'
 import Backdrop from 'components/Backdrop'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
+import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 const useStyles = makeStyles({
   hide: {
@@ -131,6 +137,9 @@ const useStyles = makeStyles({
   filter: {
     height: '90px',
   },
+  buttonExport: {
+    backgroundColor: '#424E63',
+  },
 })
 
 const useQueryString = () => {
@@ -157,7 +166,7 @@ export default function CarActivity(): JSX.Element {
     brandAll: { id: 'all', name: t('all'), carModels: [] },
     modelEmpty: {
       id: 'empty',
-      name: `-${t('carActivity.model.emptyValue')}-`,
+      name: `${t('carActivity.model.emptyValue')}`,
       subModelName: '',
       year: 0,
       carSkus: [],
@@ -169,13 +178,13 @@ export default function CarActivity(): JSX.Element {
       year: 0,
       carSkus: [],
     },
-    colorEmpty: { id: 'empty', color: `-${t('carActivity.color.emptyValue')}-`, cars: [] },
+    colorEmpty: { id: 'empty', color: `${t('carActivity.color.emptyValue')}`, cars: [] },
     colorAll: { id: 'all', color: t('all'), cars: [] },
   }
 
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [carId, setCarId] = useState<string>('')
   const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
   const [filterPlateError, setFilterPlateError] = useState<string>('')
@@ -189,6 +198,8 @@ export default function CarActivity(): JSX.Element {
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
+
+  const visibilityColumns = getVisibilityColumns()
 
   const checkFilterButtonConditions = () => {
     if (
@@ -234,6 +245,53 @@ export default function CarActivity(): JSX.Element {
     return value
   }
 
+  const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
+  const rows =
+    carActivitiesData?.cars.map((carActivity) => {
+      return {
+        id: carActivity.carId,
+        brandName: carActivity.brandName,
+        modelName: carActivity.modelName,
+        color: carActivity.color,
+        plateNumber: carActivity.plateNumber,
+      }
+    }) || []
+
+  const columns: GridColDef[] = [
+    {
+      field: 'brandName',
+      headerName: t('carActivity.brand.label'),
+      description: t('carActivity.brand.label'),
+      hide: !visibilityColumns.brandName,
+      flex: 1,
+      sortable: false,
+    },
+    {
+      field: 'modelName',
+      headerName: t('carActivity.model.label'),
+      description: t('carActivity.model.label'),
+      hide: !visibilityColumns.modelName,
+      flex: 1,
+      sortable: false,
+    },
+    {
+      field: 'color',
+      headerName: t('carActivity.color.label'),
+      description: t('carActivity.color.label'),
+      hide: !visibilityColumns.color,
+      flex: 1,
+      sortable: false,
+    },
+    {
+      field: 'plateNumber',
+      headerName: t('carActivity.plateNumber.label'),
+      description: t('carActivity.plateNumber.label'),
+      hide: !visibilityColumns.plateNumber,
+      flex: 1,
+      sortable: false,
+    },
+  ]
+
   const carActivities =
     (carActivitiesData &&
       carActivitiesData.cars?.length > 0 &&
@@ -255,17 +313,6 @@ export default function CarActivity(): JSX.Element {
             <TableCell className={classes.tableColumnDate} colSpan={10}>
               &nbsp;
             </TableCell>
-            {/* <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate} colSpan={2}>
-            Reparing #1
-          </TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell> */}
             <TableCell className={classes.tableColumnActions}>
               <Button
                 onClick={() => {
@@ -340,6 +387,31 @@ export default function CarActivity(): JSX.Element {
     setVisibleAddDialog(false)
   }
 
+  const onColumnVisibilityChange = (params: any) => {
+    if (params.field === '__check__') {
+      return
+    }
+
+    const visibilityColumns = params.api.current
+      .getAllColumns()
+      .filter(({ field }: { field: string }) => field !== '__check__')
+      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
+        columns[column.field] = !column.hide
+        return columns
+      }, {})
+
+    visibilityColumns[params.field] = params.isVisible
+
+    setVisibilityColumns(visibilityColumns)
+  }
+
+  const customToolbar = () => (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarDensitySelector />
+    </GridToolbarContainer>
+  )
+
   const adjustBrowserHistory = (params = {}) => {
     const adjustParams = {
       plate: filterPlate,
@@ -375,6 +447,10 @@ export default function CarActivity(): JSX.Element {
     setResetFilters(true)
   }
 
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
   const handleOnPlateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const isKeywordAccepted = validateKeywordText(value)
@@ -389,12 +465,6 @@ export default function CarActivity(): JSX.Element {
     } else {
       setFilterPlate('')
       setResetFilters(true)
-    }
-  }
-
-  const handleOnEnterPlateChange = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleOnClickFilters()
     }
   }
 
@@ -433,47 +503,21 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(color || defaultSelectList.colorAll)
   }
 
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.carManagement.title'),
+      link: '/',
+    },
+    {
+      text: t('sidebar.carActivity'),
+      link: '/car-activity',
+    },
+  ]
+
   return (
     <Page>
-      <Typography variant="h5" component="h1" gutterBottom>
-        {t('sidebar.carActivity')}
-      </Typography>
-      <Breadcrumbs>
-        <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
-        <Typography color="textPrimary">{t('sidebar.carActivity')}</Typography>
-      </Breadcrumbs>
+      <PageTitle title="Car Activity" breadcrumbs={breadcrumbs} />
       <div className={classes.searchWrapper}>
-        {/* <Grid container spacing={2} className={classes.gridContainer}>
-          <Grid item xs={9} sm={9} lg={5}>
-            <Grid container spacing={1}>
-              <Grid item xs={8} sm={9}>
-                <FormControl variant="outlined" className={classes.fullWidth}>
-                  <TextField
-                    error={!!filterPlateError}
-                    helperText={filterPlateError}
-                    fullWidth
-                    variant="outlined"
-                    label={t('carActivity.plateNumber.label')}
-                    placeholder={t('carActivity.plateNumber.placeholder')}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onChange={handleOnPlateChange}
-                    onKeyDown={handleOnEnterPlateChange}
-                    value={filterPlate}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={3} sm={3} lg={7}>
-            <div className={classes.textRight}>
-              <Button variant="contained" color="primary" className={classes.buttonWithoutShadow}>
-                {t('button.export')}
-              </Button>
-            </div>
-          </Grid>
-        </Grid> */}
         <Grid
           container
           spacing={1}
@@ -487,16 +531,17 @@ export default function CarActivity(): JSX.Element {
               <TextField
                 error={!!filterPlateError}
                 helperText={filterPlateError}
-                fullWidth
                 variant="outlined"
-                label={t('carActivity.plateNumber.label')}
                 placeholder={t('carActivity.plateNumber.placeholder')}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handleOnPlateChange}
-                onKeyDown={handleOnEnterPlateChange}
                 value={filterPlate}
+                onChange={handleOnPlateChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
           </Grid>
@@ -599,7 +644,7 @@ export default function CarActivity(): JSX.Element {
               onClick={() => handleOnClickFilters()}
               disabled={!isEnableFilterButton}
             >
-              {t('button.filter')}
+              {t('button.search')}
             </Button>
             <Button
               color="secondary"
@@ -623,7 +668,11 @@ export default function CarActivity(): JSX.Element {
             lg={1}
             xl={1}
           >
-            <Button variant="contained" color="primary" className={classes.buttonWithoutShadow}>
+            <Button
+              color="primary"
+              variant="contained"
+              className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
+            >
               {t('button.export')}
             </Button>
           </Grid>
@@ -634,56 +683,25 @@ export default function CarActivity(): JSX.Element {
         <NoResultCard />
       ) : (
         <Fragment>
-          <TableContainer component={Paper} className={classes.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.tableColumnCarInfo}>
-                    <div className={classes.textBold}>{t('carActivity.car.label')}</div>
-                    <div className={classes.subText}>
-                      {t('carActivity.totalCars.label', {
-                        total: carActivitiesData?.pagination?.totalRecords || 0,
-                      })}
-                    </div>
-                  </TableCell>
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
-                    {t('carActivity.action.label')}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{carActivities}</TableBody>
-            </Table>
-          </TableContainer>
+          <DataGridLocale
+            autoHeight
+            pagination
+            pageSize={pageSize}
+            page={page - 1}
+            rowCount={rowCount}
+            paginationMode="server"
+            onPageSizeChange={handlePageSizeChange}
+            onPageChange={setPage}
+            rows={rows}
+            columns={columns}
+            onColumnVisibilityChange={onColumnVisibilityChange}
+            sortingMode="server"
+            customToolbar={customToolbar}
+            hideFooter
+            onRowClick={(param) => {
+              history.push(`/car-activity/${param.id}`)
+            }}
+          />
           <Card>
             <div className={classes.paginationContrainer}>
               Rows per page:&nbsp;
@@ -692,7 +710,7 @@ export default function CarActivity(): JSX.Element {
                   value={carActivitiesData?.pagination?.size || pageSize}
                   defaultValue={carActivitiesData?.pagination?.size || pageSize}
                   onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-                    setPage(1)
+                    setPage(0)
                     setPageSize(event.target.value as number)
                   }}
                 >
@@ -706,7 +724,7 @@ export default function CarActivity(): JSX.Element {
                 page={carActivitiesData?.pagination?.page || page}
                 defaultPage={carActivitiesData?.pagination?.page || page}
                 variant="text"
-                shape="rounded"
+                color="primary"
                 onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
                   setPage(value)
                 }}
