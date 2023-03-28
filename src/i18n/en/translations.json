@@ -892,10 +892,12 @@
       "label": "Visibility"
     },
     "brand": {
-      "label": "Brand"
+      "label": "Brand",
+      "detailLabel": "Car Brand"
     },
     "model": {
       "label": "Model",
+      "detailLabel": "Car Model",
       "emptyValue": "Select Brand"
     },
     "color": {
@@ -925,7 +927,7 @@
       "label": "Schedule ID"
     },
     "modifyDate": {
-      "label": "Last modify"
+      "label": "Modified Date"
     },
     "modifyBy": {
       "label": "Modify by"
@@ -978,6 +980,9 @@
       "confirm": "Confirm Delete",
       "success": "The schedule has been deleted",
       "error": "Something went wrong when deleting the schedule"
+    },
+    "history": {
+      "label": "Car Activity History"
     }
   }
 }

@@ -7,7 +7,6 @@ import { Link, useParams } from 'react-router-dom'
 import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
-  Breadcrumbs,
   Button,
   Card,
   FormControl,
@@ -19,6 +18,7 @@ import {
   Typography,
   Tooltip,
   OutlinedInput,
+  Box,
 } from '@material-ui/core'
 import {
   GridColDef,
@@ -30,6 +30,7 @@ import {
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
@@ -46,6 +47,7 @@ import {
   deleteSchedule,
 } from 'services/web-bff/car-activity'
 import { CarActivityBookingTypeIds, Schedule } from 'services/web-bff/car-activity.type'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 
 interface CarActivityDetailParams {
   id: string
@@ -98,6 +100,23 @@ const useStyles = makeStyles({
     '& .MuiDataGrid-columnHeaderTitle': {
       fontWeight: 'bold',
     },
+  },
+  textPrimary: {
+    fontSize: '20px',
+  },
+  textSecondary: {
+    fontSize: '14px',
+    color: 'rgba(0, 0, 0, 0.6)',
+  },
+  detailPadding: {
+    padding: '2px 16px',
+  },
+  backgroundSecondaty: {
+    background: '#FAFAFA',
+  },
+  secondaryButton: {
+    background: '#424E63',
+    color: 'white',
   },
 })
 
@@ -295,6 +314,14 @@ export default function CarActivityDetail(): JSX.Element {
 
   const columns: GridColDef[] = [
     {
+      field: 'bookingId',
+      headerName: t('carActivity.scheduleId.label'),
+      description: t('carActivity.scheduleId.label'),
+      flex: 1,
+      filterable: false,
+      sortable: false,
+    },
+    {
       field: 'startDate',
       headerName: t('carActivity.startDate.label'),
       description: t('carActivity.startDate.label'),
@@ -313,14 +340,6 @@ export default function CarActivityDetail(): JSX.Element {
       sortable: false,
       renderCell: (params: GridCellParams) =>
         dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
-    },
-    {
-      field: 'bookingId',
-      headerName: t('carActivity.scheduleId.label'),
-      description: t('carActivity.scheduleId.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
     },
     {
       field: 'status',
@@ -447,173 +466,224 @@ export default function CarActivityDetail(): JSX.Element {
     },
   ]
 
+  const carDetailLabel = (primaryText: string, secondaryText: string) => {
+    return (
+      <Fragment>
+        <Typography className={classes.textPrimary} gutterBottom>
+          {primaryText}
+        </Typography>
+        <Typography className={classes.textSecondary} gutterBottom>
+          {secondaryText}
+        </Typography>
+      </Fragment>
+    )
+  }
+
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.carManagement.title'),
+      link: '/',
+    },
+    {
+      text: t('sidebar.carActivity'),
+      link: '/car-activity',
+    },
+    {
+      text: 'Car Activity Detail',
+      link: `/car-activity/${carId}`,
+    },
+  ]
+
   return (
     <Page>
-      <Typography variant="h5" component="h1" gutterBottom>
+      <PageTitle title="Car Activity Detail" breadcrumbs={breadcrumbs} />
+      {/* <Typography variant="h5" component="h1" gutterBottom>
         {t('sidebar.carActivity')}
       </Typography>
       <Breadcrumbs>
         <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
         <Link to="/car-activity">{t('sidebar.carActivity')}</Link>
         <Typography color="textPrimary">{carDetail?.plateNumber || '-'}</Typography>
-      </Breadcrumbs>
+      </Breadcrumbs> */}
 
       <Card className={classes.cardWrapper}>
         <Typography variant="h5" component="h2" gutterBottom>
-          {t('carActivity.overview.header')}:
+          {t('carActivity.overview.header')}
         </Typography>
-        <Grid className="id" container spacing={4}>
-          <Grid item xs={4} sm={2} className={classes.textBold}>
-            {t('carActivity.activityId.label')}:
+        <Box>
+          <Grid className={classes.detailPadding} container spacing={4}>
+            <Grid item xs={12} className={classes.textBold}>
+              {carDetailLabel(carDetail?.id || '-', t('carActivity.activityId.label'))}
+            </Grid>
           </Grid>
-          <Grid className={classes.primaryTextColor} item xs={8} sm={10}>
-            {carDetail?.id || '-'}
+          <Grid
+            className={[classes.detailPadding, classes.backgroundSecondaty].join(' ')}
+            container
+            spacing={4}
+          >
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              {carDetailLabel(
+                carDetail?.carSku?.carModel.brand.name || '-',
+                t('carActivity.brand.detailLabel')
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              {carDetailLabel(
+                carDetail?.carSku?.carModel.name || '-',
+                t('carActivity.model.detailLabel')
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid className="brand" container spacing={4}>
-          <Grid item xs={4} sm={2} className={classes.textBold}>
-            {t('carActivity.brand.label')}:
+          <Grid className={classes.detailPadding} container spacing={4}>
+            <Grid item xs={12} className={classes.textBold}>
+              {carDetailLabel(carDetail?.carSku?.color || '-', t('carActivity.color.label'))}
+            </Grid>
           </Grid>
-
-          <Grid item xs={8} sm={10}>
-            {carDetail?.carSku?.carModel.brand.name || '-'}
+          <Grid
+            className={[classes.detailPadding, classes.backgroundSecondaty].join(' ')}
+            container
+            spacing={4}
+          >
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              {carDetailLabel(carDetail?.plateNumber || '-', t('carActivity.plateNumber.label'))}
+            </Grid>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              {carDetailLabel(
+                carDetail ? columnFormatCarVisibility(carDetail.isActive, t) : '-' || '-',
+                t('carActivity.visibility.label')
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid className="model" container spacing={4}>
-          <Grid item xs={4} sm={2} className={classes.textBold}>
-            {t('carActivity.model.label')}:
-          </Grid>
-          <Grid item xs={8} sm={10}>
-            {carDetail?.carSku?.carModel.name || '-'}
-          </Grid>
-        </Grid>
-        <Grid className="color" container spacing={4}>
-          <Grid item xs={4} sm={2} className={classes.textBold}>
-            {t('carActivity.color.label')}:
-          </Grid>
-          <Grid item xs={8} sm={10}>
-            {carDetail?.carSku?.color || '-'}
-          </Grid>
-        </Grid>
-        <Grid className="plateNumber" container spacing={4}>
-          <Grid item xs={4} sm={2} className={classes.textBold}>
-            {t('carActivity.plateNumber.label')}:
-          </Grid>
-          <Grid item xs={8} sm={10}>
-            {carDetail?.plateNumber || '-'}
-          </Grid>
-        </Grid>
-        <Grid className="visibility" container spacing={4}>
-          <Grid item xs={4} sm={2} className={classes.textBold}>
-            {t('carActivity.visibility.label')}:
-          </Grid>
-          <Grid item xs={8} sm={10}>
-            {carDetail ? columnFormatCarVisibility(carDetail.isActive, t) : '-'}
-          </Grid>
-        </Grid>
+        </Box>
       </Card>
 
       <Card className={classes.cardWrapper}>
         <Grid className="id" container spacing={4}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Typography variant="h5" component="h2" gutterBottom>
-              {t('sidebar.carActivity')}
+              {t('carActivity.history.label')}
             </Typography>
-          </Grid>
-          <Grid item xs={6} className={classes.textAlignRight}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.buttonWithoutShadow}
-              onClick={() => {
-                setServiceSchedule(null)
-                setVisibleUpdateDialog(true)
-              }}
-            >
-              {t('button.add')}
-            </Button>
           </Grid>
         </Grid>
         <Grid container spacing={2} className={classes.marginSpace}>
-          <Grid item xs={12} sm={6} md={3} lg={2}>
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <DatePicker
-                inputVariant="outlined"
-                label={t('carActivity.startDate.label')}
-                format="DD/MM/YYYY"
-                onChange={(date) => {
-                  if (date) {
-                    setFilterStartDate(date)
-                    setFilterEndDate(date.add(fixEndDateDays, 'days'))
-                  }
-                }}
-                value={filterStartDate}
-                defaultValue={filterStartDate}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={2}>
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <DatePicker
-                inputVariant="outlined"
-                label={t('carActivity.endDate.label')}
-                format="DD/MM/YYYY"
-                onChange={(date) => setFilterEndDate(date)}
-                value={filterEndDate}
-                defaultValue={filterEndDate}
-                minDate={filterStartDate?.add(2, 'days')}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={2}>
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <InputLabel shrink id="service-label">
-                {t('carActivity.service.label')}
-              </InputLabel>
-              <Select
-                labelId="service-label"
-                id="service"
-                onChange={({ target: { value } }) => setFilterService(value as string)}
-                value={filterService}
-                displayEmpty
-                input={<OutlinedInput notched label={t('carActivity.service.label')} />}
+          <Grid container xs={12} sm={12} lg={8} spacing={2}>
+            <Grid item xs={12} sm={3}>
+              <FormControl variant="outlined" className={classes.fullWidth}>
+                <DatePicker
+                  inputVariant="outlined"
+                  label={t('carActivity.startDate.label')}
+                  format="DD/MM/YYYY"
+                  onChange={(date) => {
+                    if (date) {
+                      setFilterStartDate(date)
+                      setFilterEndDate(date.add(fixEndDateDays, 'days'))
+                    }
+                  }}
+                  value={filterStartDate}
+                  defaultValue={filterStartDate}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <FormControl variant="outlined" className={classes.fullWidth}>
+                <DatePicker
+                  inputVariant="outlined"
+                  label={t('carActivity.endDate.label')}
+                  format="DD/MM/YYYY"
+                  onChange={(date) => setFilterEndDate(date)}
+                  value={filterEndDate}
+                  defaultValue={filterEndDate}
+                  minDate={filterStartDate?.add(2, 'days')}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <FormControl variant="outlined" className={classes.fullWidth}>
+                <InputLabel shrink id="service-label">
+                  {t('carActivity.service.label')}
+                </InputLabel>
+                <Select
+                  labelId="service-label"
+                  id="service"
+                  onChange={({ target: { value } }) => setFilterService(value as string)}
+                  value={filterService}
+                  displayEmpty
+                  input={<OutlinedInput notched label={t('carActivity.service.label')} />}
+                >
+                  <MenuItem value="">{t('all')}</MenuItem>
+                  {scheduleServices &&
+                    scheduleServices.length > 0 &&
+                    scheduleServices
+                      .filter((service) => service.id !== CarActivityBookingTypeIds.RENT)
+                      .map((service, index) => {
+                        return (
+                          <MenuItem key={`${index}-${service.id}`} value={service.id}>
+                            {isThaiLanguage ? service.nameTh : service.nameEn}
+                          </MenuItem>
+                        )
+                      })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.buttonWithoutShadow}
+                onClick={() => refetch()}
               >
-                <MenuItem value="">{t('all')}</MenuItem>
-                {scheduleServices &&
-                  scheduleServices.length > 0 &&
-                  scheduleServices
-                    .filter((service) => service.id !== CarActivityBookingTypeIds.RENT)
-                    .map((service, index) => {
-                      return (
-                        <MenuItem key={`${index}-${service.id}`} value={service.id}>
-                          {isThaiLanguage ? service.nameTh : service.nameEn}
-                        </MenuItem>
-                      )
-                    })}
-              </Select>
-            </FormControl>
+                {t('button.search')}
+              </Button>
+              <Button
+                color="secondary"
+                className={[
+                  classes.hide,
+                  classes.buttonWithoutShadow,
+                  classes.buttonClearAllFilters,
+                  !isThereFilter ? classes.hide : '',
+                ].join(' ')}
+                onClick={() => handleOnClickClearAllFilters()}
+              >
+                {t('button.clearAll')}
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.buttonWithoutShadow}
-              onClick={() => refetch()}
-            >
-              {t('button.filter')}
-            </Button>
-            <Button
-              color="secondary"
-              className={[
-                classes.hide,
-                classes.buttonWithoutShadow,
-                classes.buttonClearAllFilters,
-                !isThereFilter ? classes.hide : '',
-              ].join(' ')}
-              onClick={() => handleOnClickClearAllFilters()}
-            >
-              {t('button.clearAll')}
-            </Button>
+          <Grid container className={classes.textAlignRight} xs={12} sm={12} lg={4}>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                className={[classes.buttonWithoutShadow, classes.secondaryButton].join(' ')}
+              >
+                {t('button.export')}
+              </Button>
+              <Button
+                variant="contained"
+                className={[
+                  classes.buttonWithoutShadow,
+                  classes.secondaryButton,
+                  classes.marginTextButton,
+                ].join(' ')}
+                onClick={() => {
+                  setServiceSchedule(null)
+                  setVisibleUpdateDialog(true)
+                }}
+                endIcon={<AddCircleOutlineIcon />}
+              >
+                {t('carActivity.addSchedule.header')}
+              </Button>
+            </Grid>
+            {/* <Grid item xs={12} md={7}>
+              <Button
+                variant="contained"
+                className={[classes.buttonWithoutShadow, classes.secondaryButton].join(' ')}
+                onClick={() => {
+                  setServiceSchedule(null)
+                  setVisibleUpdateDialog(true)
+                }}
+              >
+                {t('carActivity.addSchedule.header')}
+              </Button>
+            </Grid> */}
           </Grid>
         </Grid>
 

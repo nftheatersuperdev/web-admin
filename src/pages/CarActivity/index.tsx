@@ -387,6 +387,7 @@ export default function CarActivity(): JSX.Element {
     setVisibleAddDialog(false)
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const onColumnVisibilityChange = (params: any) => {
     if (params.field === '__check__') {
       return
@@ -714,9 +715,13 @@ export default function CarActivity(): JSX.Element {
                     setPageSize(event.target.value as number)
                   }}
                 >
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
+                  {config.tableRowsPerPageOptions.map((rowOption) => {
+                    return (
+                      <MenuItem key={rowOption} value={rowOption}>
+                        {rowOption}
+                      </MenuItem>
+                    )
+                  })}
                 </Select>
               </FormControl>
               <Pagination
