@@ -349,6 +349,7 @@
     "paymentVersion": "เวอร์ชันการชำระเงิน",
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
+    "replacement": "รถทดแทน",
     "payments": "ประวัติการชำระเงิน",
     "paymentHistory": {
       "title": "ประวัติการชำระเงิน",
@@ -420,7 +421,8 @@
         }
       }
     },
-    "clearFilterId": "ลบกรองข้อมูลด้วยไอดี"
+    "clearFilterId": "ลบกรองข้อมูลด้วยไอดี",
+    "downloadCSV": "ดาวน์โหลด CSV"
   },
   "booking": {
     "statuses": {

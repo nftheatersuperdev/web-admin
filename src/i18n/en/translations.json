@@ -350,6 +350,7 @@
     "paymentVersion": "Payment Version",
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
+    "replacement": "Replacement",
     "payments": "Payment history",
     "paymentHistory": {
       "title": "Payment history",
@@ -421,7 +422,8 @@
         }
       }
     },
-    "clearFilterId": "Clear filter by ID"
+    "clearFilterId": "Clear filter by ID",
+    "downloadCSV": "Download CSV"
   },
   "booking": {
     "statuses": {
