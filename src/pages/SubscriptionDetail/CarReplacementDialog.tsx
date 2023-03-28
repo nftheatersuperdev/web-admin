@@ -177,8 +177,7 @@ export default function CarReplacementDialog({
     if (date) {
       setCarReplacementState((prevState) => ({
         ...prevState,
-        startDate: date,
-        endDate: date,
+        deliveryDate: date,
       }))
     }
   }
