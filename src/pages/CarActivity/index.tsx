@@ -706,7 +706,7 @@ export default function CarActivity(): JSX.Element {
           <Card>
             <div className={classes.paginationContrainer}>
               Rows per page:&nbsp;
-              <FormControl className={classes.inlineElement}>
+              <FormControl className={classes.inlineElement} variant="standard">
                 <Select
                   value={carActivitiesData?.pagination?.size || pageSize}
                   defaultValue={carActivitiesData?.pagination?.size || pageSize}

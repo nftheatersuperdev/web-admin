@@ -672,18 +672,6 @@ export default function CarActivityDetail(): JSX.Element {
                 {t('carActivity.addSchedule.header')}
               </Button>
             </Grid>
-            {/* <Grid item xs={12} md={7}>
-              <Button
-                variant="contained"
-                className={[classes.buttonWithoutShadow, classes.secondaryButton].join(' ')}
-                onClick={() => {
-                  setServiceSchedule(null)
-                  setVisibleUpdateDialog(true)
-                }}
-              >
-                {t('carActivity.addSchedule.header')}
-              </Button>
-            </Grid> */}
           </Grid>
         </Grid>
 
