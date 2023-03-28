@@ -853,16 +853,17 @@
     },
     "brand": {
       "label": "ยี่ห้อ",
-      "detailLabel": "ยี่ห้อ"
+      "detailLabel": "ยี่ห้อ",
+      "emptyValue": "เลือก ยี่ห้อ"
     },
     "model": {
       "label": "รุ่น",
       "detailLabel": "รุ่น",
-      "emptyValue": "เลือก ยี่ห้อ"
+      "emptyValue": "เลือก รุ่น"
     },
     "color": {
       "label": "สี",
-      "emptyValue": "เลือก รุ่น"
+      "emptyValue": "เลือก สี"
     },
     "status": {
       "label": "สถานะ"

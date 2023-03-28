@@ -41,6 +41,13 @@ import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
+// interface CarActivityParams {
+//   plate: string
+//   brand: string
+//   model: string
+//   color: string
+// }
+
 const useStyles = makeStyles({
   hide: {
     display: 'none',
@@ -149,6 +156,7 @@ const useQueryString = () => {
 }
 
 export default function CarActivity(): JSX.Element {
+  // const { id: carId } = useParams<CarActivityParams>()
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
@@ -163,7 +171,7 @@ export default function CarActivity(): JSX.Element {
     minimumToFilterPlateNumber: 2,
   }
   const defaultSelectList = {
-    brandAll: { id: 'all', name: t('all'), carModels: [] },
+    brandAll: { id: 'all', name: t('carActivity.brand.emptyValue'), carModels: [] },
     modelEmpty: {
       id: 'empty',
       name: `${t('carActivity.model.emptyValue')}`,

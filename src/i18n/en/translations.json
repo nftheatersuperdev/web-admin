@@ -893,16 +893,17 @@
     },
     "brand": {
       "label": "Brand",
-      "detailLabel": "Car Brand"
+      "detailLabel": "Car Brand",
+      "emptyValue": "Select Brand"
     },
     "model": {
       "label": "Model",
       "detailLabel": "Car Model",
-      "emptyValue": "Select Brand"
+      "emptyValue": "Select Model"
     },
     "color": {
       "label": "Color",
-      "emptyValue": "Select Model"
+      "emptyValue": "Select Color"
     },
     "status": {
       "label": "Car Status"
