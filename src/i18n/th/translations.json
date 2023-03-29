@@ -893,15 +893,18 @@
       "label": "การมองเห็น"
     },
     "brand": {
-      "label": "ยี่ห้อ"
+      "label": "ยี่ห้อ",
+      "detailLabel": "ยี่ห้อ",
+      "emptyValue": "เลือก ยี่ห้อ"
     },
     "model": {
       "label": "รุ่น",
-      "emptyValue": "เลือก ยี่ห้อ"
+      "detailLabel": "รุ่น",
+      "emptyValue": "เลือก รุ่น"
     },
     "color": {
       "label": "สี",
-      "emptyValue": "เลือก รุ่น"
+      "emptyValue": "เลือก สี"
     },
     "status": {
       "label": "สถานะ"
@@ -926,7 +929,7 @@
       "label": "กำหนดการเลขที่"
     },
     "modifyDate": {
-      "label": "แก้ไขล่าสุด"
+      "label": "วันที่แก้ไข"
     },
     "modifyBy": {
       "label": "แก้ไขโดย"
@@ -979,6 +982,9 @@
       "confirm": "ยืนยัน",
       "success": "ตารางเวลาถูกลบเรียบร้อยแล้ว",
       "error": "เกิดข้อผิดพลาดบางอย่างขณะทำการลบตารางเวลา"
+    },
+    "history": {
+      "label": "Car Activity History"
     }
   }
 }
