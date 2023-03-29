@@ -460,6 +460,8 @@
       "deliveryTime": "Delivery Time",
       "deliveryAddress": "Delivery Address",
       "deliveryAddressRemark": "Delivery Address Remark",
+      "returnAddress": "Return Address",
+      "returnAddressRemark": "Return Address Remark",
       "returnDate": "Return Date",
       "button": {
         "cancel": "Cancel",

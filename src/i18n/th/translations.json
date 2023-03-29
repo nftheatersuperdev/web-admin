@@ -459,6 +459,8 @@
       "deliveryTime": "เวลาจัดส่ง",
       "deliveryAddress": "สถานที่จัดส่ง",
       "deliveryAddressRemark": "หมายเหตุ สถานที่จัดส่ง",
+      "returnAddress": "สถานที่รับคืน",
+      "returnAddressRemark": "หมายเหตุ สถานที่รับคืน",
       "returnDate": "วันที่รับคืน",
       "button": {
         "cancel": "ยกเลิก",

@@ -28,10 +28,10 @@ import { Typography } from '@mui/material'
 import DatePicker from 'components/DatePicker'
 import ConfirmDialog from 'components/ConfirmDialog'
 import { getAvailableListBFF } from 'services/web-bff/car'
+import { updateCarReplacement } from 'services/web-bff/subscription'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/subscription.type'
 import { SubEventStatus } from 'pages/Subscriptions/utils'
-import { updateCarReplacement } from 'services/web-bff/subscription'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
@@ -41,6 +41,9 @@ const MarginActionButtons = styled.div`
 `
 const MapDetailWrapper = styled.div`
   margin-top: 12px;
+`
+const ReturnDetailWrapper = styled.div`
+  margin-top: 28px;
 `
 const containerStyle = {
   width: '100%',
@@ -79,7 +82,13 @@ export default function CarReplacementDialog({
     displayStatus,
     startDate,
     endDate,
+    carActivities,
   } = bookingDetails
+
+  const reversedCarActivities = carActivities.reverse()
+  const carActivity = reversedCarActivities[0]
+
+  console.log('carActivity ->', carActivity)
 
   const todayDate = dayjs()
   const defaultState = {
@@ -295,7 +304,7 @@ export default function CarReplacementDialog({
               fullWidth
               margin="normal"
               variant="outlined"
-              value={dayjs(bookingDetails.endDate).format(DEFAULT_DATETIME_FORMAT) || '-'}
+              value={dayjs(carActivity.returnTask.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
             />
           </Grid>
         </Grid>
@@ -433,6 +442,45 @@ export default function CarReplacementDialog({
                 onChange={handleDeliveryAddressRemarkChanged}
               />
             </MapDetailWrapper>
+          </Grid>
+        </Grid>
+
+        {/* Delivery Address Map */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <Typography gutterBottom variant="h4">
+              {t('booking.carReplacement.returnAddress')}
+            </Typography>
+            <TextField
+              id="car_replacement__returnAddress"
+              label={t('booking.carReplacement.returnAddress')}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={carActivity.returnTask.fullAddress || '-'}
+              multiline
+              minRows={3}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <ReturnDetailWrapper>
+              <TextField
+                id="car_replacement__returnAddressRemark"
+                label={t('booking.carReplacement.returnAddressRemark')}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                value={carActivity.returnTask.remark || '-'}
+                multiline
+                minRows={3}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </ReturnDetailWrapper>
           </Grid>
         </Grid>
       </DialogContent>
