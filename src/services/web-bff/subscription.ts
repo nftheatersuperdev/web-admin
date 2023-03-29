@@ -82,7 +82,7 @@ export const updateCarReplacement = async ({
   deliveryAddress,
 }: UpdateCarReplacementRequestBody): Promise<string> => {
   const result = await AdminBffAPI.patch(
-    `/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/rental/car-replacement`,
+    `/v1/bookings/rental/${bookingId}/details/${bookingDetailId}/cars/replacement`,
     {
       carId,
       deliveryDate,
