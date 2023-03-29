@@ -79,13 +79,13 @@ export default function SubscriptionDetail(): JSX.Element {
     },
   ]
 
-  const { data: bookingDetails, isFetching } = useQuery(
-    'subscription-detail',
-    () => getDetailById(bookingDetailId),
-    {
-      refetchOnWindowFocus: false,
-    }
-  )
+  const {
+    data: bookingDetails,
+    isFetching,
+    refetch: refetchBooking,
+  } = useQuery('subscription-detail', () => getDetailById(bookingDetailId), {
+    refetchOnWindowFocus: false,
+  })
   const carActivities = bookingDetails?.carActivities.reverse() || []
 
   const [carDetail, setCarDetail] = useState<BookingCarActivity | undefined>(undefined)
@@ -498,7 +498,12 @@ export default function SubscriptionDetail(): JSX.Element {
         editorEmail={firebaseUser?.email || '-'}
         open={carReplacementDialogOpen}
         bookingDetails={bookingDetails}
-        onClose={() => setCarReplacementlogOpen(false)}
+        onClose={(needRefetch) => {
+          if (needRefetch) {
+            refetchBooking()
+          }
+          setCarReplacementlogOpen(false)
+        }}
       />
       <Backdrop open={isFetching} />
     </Page>

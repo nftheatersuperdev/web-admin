@@ -54,7 +54,7 @@ export interface CarReplacementDialogProps {
   editorEmail: string | null
   open: boolean
   bookingDetails: BookingRental | undefined
-  onClose: () => void
+  onClose: (refetch?: boolean) => void
 }
 interface DataState {
   carId: string
@@ -159,8 +159,7 @@ export default function CarReplacementDialog({
         {
           loading: t('toast.loading'),
           success: () => {
-            setCarReplacementState(() => defaultState)
-            onClose()
+            handleClose(true)
             return t('booking.carReplacement.saveSuccess')
           },
           error: (error) => {
@@ -176,9 +175,9 @@ export default function CarReplacementDialog({
     }
   }
 
-  const handleClose = () => {
+  const handleClose = (needRefetch?: boolean) => {
     setCarReplacementState(() => defaultState)
-    onClose()
+    onClose(needRefetch)
   }
 
   const handleDeliveryDateChange = (date: MaterialUiPickersDate | Dayjs) => {
@@ -253,7 +252,7 @@ export default function CarReplacementDialog({
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={() => handleClose(false)}
       aria-labelledby="form-dialog-title"
       fullWidth={true}
       maxWidth="lg"
@@ -485,7 +484,7 @@ export default function CarReplacementDialog({
       </DialogContent>
       <DialogActions>
         <MarginActionButtons>
-          <Button onClick={handleClose} color="secondary" variant="contained">
+          <Button onClick={() => handleClose(false)} color="secondary" variant="contained">
             {t('booking.carReplacement.button.cancel')}
           </Button>
           <Button
