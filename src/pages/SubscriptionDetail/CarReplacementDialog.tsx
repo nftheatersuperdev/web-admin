@@ -55,7 +55,6 @@ export interface CarReplacementDialogProps {
   open: boolean
   bookingDetails: BookingRental | undefined
   onClose: () => void
-  // onSubmitSend: (emails: string[]) => void
 }
 interface DataState {
   carId: string
@@ -158,6 +157,8 @@ export default function CarReplacementDialog({
         {
           loading: t('toast.loading'),
           success: () => {
+            setCarReplacementState(() => defaultState)
+            onClose()
             return t('booking.carReplacement.saveSuccess')
           },
           error: (error) => {
