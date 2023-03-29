@@ -900,7 +900,7 @@
     },
     "plateNumber": {
       "label": "Plate",
-      "placeholder": "Please type at lease 2 charators",
+      "placeholder": "Enter Plate",
       "errors": {
         "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
       }
@@ -909,15 +909,18 @@
       "label": "Visibility"
     },
     "brand": {
-      "label": "Brand"
+      "label": "Brand",
+      "detailLabel": "Car Brand",
+      "emptyValue": "Select Brand"
     },
     "model": {
       "label": "Model",
-      "emptyValue": "Select Brand"
+      "detailLabel": "Car Model",
+      "emptyValue": "Select Model"
     },
     "color": {
       "label": "Color",
-      "emptyValue": "Select Model"
+      "emptyValue": "Select Color"
     },
     "status": {
       "label": "Car Status"
@@ -942,7 +945,7 @@
       "label": "Schedule ID"
     },
     "modifyDate": {
-      "label": "Last modify"
+      "label": "Modified Date"
     },
     "modifyBy": {
       "label": "Modify by"
@@ -995,6 +998,9 @@
       "confirm": "Confirm Delete",
       "success": "The schedule has been deleted",
       "error": "Something went wrong when deleting the schedule"
+    },
+    "history": {
+      "label": "Car Activity History"
     }
   }
 }
