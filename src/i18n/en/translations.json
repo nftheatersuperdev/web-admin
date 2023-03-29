@@ -15,9 +15,30 @@
   "carAvailability": {
     "selectedFromDate": "Start Date",
     "selectedToDate": "End Date",
-    "search": "Search",
+    "search": "Select Search",
+    "searchField": {
+      "label": "Enter Search",
+      "placeholder": "Please type at lease 2 charators",
+      "errors": {
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
+      }
+    },
+    "none": "None",
     "available": "Available",
     "inUse": "In Use"
+  },
+  "carAvailabilityDetail": {
+    "carId": "Car ID",
+    "carStatus": "Car Status",
+    "carTrackId": "Cartrack ID",
+    "plateNumber": "Plate Number",
+    "vin": "VIN",
+    "carBrand": "Car Brand",
+    "carModel": "Car Model",
+    "color": "Color",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "bookingId": "Booking ID"
   },
   "sidebar": {
     "pages": "Pages",
@@ -31,6 +52,7 @@
       "title": "Car Management",
       "car": "Car",
       "carAvailability": "Car Availability",
+      "carAvailabilityDetail": "Car Availability Detail",
       "carActivity": "Car Activity",
       "carModelAndPricing": "Model & Pricing"
     },
@@ -54,6 +76,8 @@
     "userGroups": "User Groups",
     "cars": "Cars",
     "carAvailability": "Car Availability",
+    "carAvailabilityList": "Car Availability List",
+    "carAvailabilityDetail": "Car Availability Detail",
     "carActivity": "Car Activity",
     "pricing": "Pricing",
     "modelAndPricing": "Model & Pricing",
@@ -311,7 +335,7 @@
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"
     },
-    "subscriptionId": "Subscription ID"
+    "subscriptionId": "Booking ID"
   },
   "pricing": {
     "id": "ID",
@@ -353,7 +377,7 @@
     }
   },
   "subscription": {
-    "id": "Subscription ID",
+    "id": "Booking ID",
     "bookingDetailId": "Booking Detail ID",
     "customerId": "Customer ID",
     "brand": "Car Brand",
