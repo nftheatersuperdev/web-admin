@@ -297,7 +297,7 @@
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"
     },
-    "subscriptionId": "Subscription ID"
+    "subscriptionId": "Booking ID"
   },
   "pricing": {
     "id": "ID",
@@ -339,7 +339,7 @@
     }
   },
   "subscription": {
-    "id": "Subscription ID",
+    "id": "Booking ID",
     "bookingDetailId": "Booking Detail ID",
     "customerId": "Customer ID",
     "brand": "Car Brand",
