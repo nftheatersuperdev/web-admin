@@ -88,8 +88,6 @@ export default function CarReplacementDialog({
   const reversedCarActivities = carActivities.reverse()
   const carActivity = reversedCarActivities[0]
 
-  console.log('carActivity ->', carActivity)
-
   const todayDate = dayjs()
   const defaultState = {
     carId: '',
