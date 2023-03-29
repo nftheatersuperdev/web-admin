@@ -80,8 +80,6 @@ export default function CarReplacementDialog({
     bookingId,
     rentDetail: { bookingDetailId },
     displayStatus,
-    startDate,
-    endDate,
     carActivities,
   } = bookingDetails
 
@@ -89,28 +87,18 @@ export default function CarReplacementDialog({
   const carActivity = reversedCarActivities[0]
 
   const todayDate = dayjs()
-  const defaultState = {
-    carId: '',
-    deliveryDate: todayDate.add(1, 'day').startOf('day'),
-    deliveryTime: '',
-    deliveryAddress: {
-      full: '',
-      latitude: 13.736717,
-      longitude: 100.523186,
-    },
-  }
 
   function generateMinAndMaxDates(status: string) {
     switch (status.toLocaleLowerCase()) {
       case SubEventStatus.DELIVERED: {
         return {
-          minDate: todayDate,
-          maxDate: endDate,
+          minDate: todayDate.add(1, 'day').startOf('day'),
+          maxDate: dayjs(carActivity.returnTask.date),
         }
       }
       default: {
         return {
-          minDate: startDate,
+          minDate: dayjs(carActivity.deliveryTask.date),
           maxDate: todayDate.add(1, 'year'),
         }
       }
@@ -118,6 +106,16 @@ export default function CarReplacementDialog({
   }
 
   const deliveryDateConditions = generateMinAndMaxDates(displayStatus)
+  const defaultState = {
+    carId: '',
+    deliveryDate: deliveryDateConditions.minDate,
+    deliveryTime: '',
+    deliveryAddress: {
+      full: '',
+      latitude: 13.736717,
+      longitude: 100.523186,
+    },
+  }
 
   const { t } = useTranslation()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
