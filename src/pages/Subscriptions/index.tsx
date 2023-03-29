@@ -208,11 +208,11 @@ export default function Subscription(): JSX.Element {
         phoneNumber: customer.phoneNumber,
         carId: carActivity ? carActivity?.carDetail?.id : car.id,
         carBrand: carActivity
-          ? carActivity?.carDetail?.carSku.carModel.brand.name
-          : car.carSku.carModel.brand.name,
+          ? carActivity?.carDetail?.carSku?.carModel?.brand.name
+          : car.carSku?.carModel?.brand.name || '-',
         carModel: carActivity
-          ? carActivity?.carDetail?.carSku.carModel.name
-          : car.carSku.carModel.name,
+          ? carActivity?.carDetail?.carSku?.carModel?.name
+          : car.carSku?.carModel?.name || '-',
         plateNumber: carActivity ? carActivity?.carDetail?.plateNumber : car.plateNumber,
         vin: carActivity ? carActivity?.carDetail?.vin : car.vin,
         price: rentDetail.chargePrice,
