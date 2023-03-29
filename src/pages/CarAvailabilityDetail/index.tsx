@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import { Card, Grid, TextField, Typography } from '@material-ui/core'
 import { useLocation } from 'react-router-dom'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import DateTimePicker from 'components/DateTimePicker'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 
@@ -29,7 +32,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
   const location = useLocation()
   const CarAvailabilityDetail = location.state as CarAvailabilityDetailParams
   const { t } = useTranslation()
-
+  const [, setText] = useState<string | undefined>()
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -208,35 +211,33 @@ export default function CarAvailabilityDetail(): JSX.Element {
           {/* Created Date and Update Date */}
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <TextField
-                id="car_availability_detail__createdDate"
-                label="Created Date"
+              <DateTimePicker
                 fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly: true,
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
+                disabled
+                label="Created Date"
+                id="car_availability_detail__createdDate"
+                name="createdDate"
+                format={DEFAULT_DATETIME_FORMAT}
                 value={CarAvailabilityDetail.createdDate}
+                onChange={() => {
+                  setText('')
+                }}
+                inputVariant="outlined"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                id="car_availability_detail__updateDate"
-                label="Update Date"
+              <DateTimePicker
+                disabled
                 fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly: true,
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
+                label="Update Date"
+                id="car_availability_detail__updateDate"
+                name="updateDate"
+                format={DEFAULT_DATETIME_FORMAT}
                 value={CarAvailabilityDetail.updatedDate}
+                onChange={() => {
+                  setText('')
+                }}
+                inputVariant="outlined"
               />
             </Grid>
           </Grid>
