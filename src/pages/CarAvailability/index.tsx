@@ -129,8 +129,8 @@ export default function Car(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
   const searchTypeList = getSearchTypeList(t)
-  const [filterPlate, setFilterPlate] = useState<string>('')
-  const [filterPlateError, setFilterPlateError] = useState<string>('')
+  const [filterSearchField, setFilterSearchField] = useState<string>('')
+  const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
 
   const generateFilterDates = () => {
     return {
@@ -269,7 +269,11 @@ export default function Car(): JSX.Element {
         <div>
           <Chip
             label={params.value}
-            className={params.value === 'Available' ? classes.chipBgGreen : classes.chipBgPrimary}
+            className={
+              String(params.value).toLowerCase() === 'available'
+                ? classes.chipBgGreen
+                : classes.chipBgPrimary
+            }
           />
         </div>
       ),
@@ -311,7 +315,7 @@ export default function Car(): JSX.Element {
           keyOfValue = `${value.searchType}${FieldKeyOparators.contains}`
         }
         updateObj = {
-          [keyOfValue]: filterPlate,
+          [keyOfValue]: filterSearchField,
           ...generateFilterDates(),
         } as CarAvailableListFilterRequest
       }
@@ -322,17 +326,17 @@ export default function Car(): JSX.Element {
   const conditionConfigs = {
     minimumToFilterPlateNumber: 2,
   }
-  const handleOnPlateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const isKeywordAccepted = validateKeywordText(value)
-    setFilterPlate(value)
-    setFilterPlateError('')
+    setFilterSearchField(value)
+    setFilterSearchFieldError('')
     if (isKeywordAccepted && value.length >= conditionConfigs.minimumToFilterPlateNumber) {
-      setFilterPlate(value)
+      setFilterSearchField(value)
     } else if (value !== '') {
-      setFilterPlateError(t('carActivity.plateNumber.errors.invalidFormat'))
+      setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
     } else {
-      setFilterPlate('')
+      setFilterSearchField('')
     }
   }
   const customToolbar = () => (
@@ -348,7 +352,7 @@ export default function Car(): JSX.Element {
       link: '/',
     },
     {
-      text: t('sidebar.carAvailability'),
+      text: t('sidebar.carManagement.carAvailability'),
       link: '/car-availability',
     },
   ]
@@ -360,29 +364,29 @@ export default function Car(): JSX.Element {
   }
   return (
     <Page>
-      <PageTitle title={t('sidebar.carManagement.carAvailability')} breadcrumbs={breadcrumbs} />
+      <PageTitle title={t('sidebar.carAvailability')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
           <Typography variant="h5" component="h2">
-            Car Availability List
+            {t('sidebar.carAvailabilityList')}
           </Typography>
           <Grid className={classes.searchBar} container spacing={3}>
             <Grid item className={[classes.filter].join(' ')} xs={2}>
               <TextField
                 fullWidth
                 select
-                label="Select Search"
+                label={t('carAvailability.search')}
                 variant="outlined"
-                id="document"
+                id="car_availability__searchtype_input"
                 value={formik.values.searchType}
                 onChange={(event) => {
                   formik.setFieldValue('searchType', event.target.value)
-                  setFilterPlate('')
-                  setFilterPlateError('')
+                  setFilterSearchField('')
+                  setFilterSearchFieldError('')
                 }}
               >
                 <MenuItem value="">
-                  <em>None</em>
+                  <em>{t('carAvailability.none')}</em>
                 </MenuItem>
                 {searchTypeList?.map((option) => (
                   <MenuItem key={option.key} value={option.value}>
@@ -395,12 +399,13 @@ export default function Car(): JSX.Element {
               <TextField
                 disabled={formik.values.searchType === ''}
                 className={classes.fullWidth}
-                error={!!filterPlateError}
-                helperText={filterPlateError}
+                error={!!filterSearchFieldError}
+                helperText={filterSearchFieldError}
                 variant="outlined"
-                placeholder={t('carActivity.plateNumber.placeholder')}
-                value={filterPlate}
-                onChange={handleOnPlateChange}
+                id="car_availability__searchField_input"
+                placeholder={t('carAvailability.searchField.placeholder')}
+                value={filterSearchField}
+                onChange={handleOnSearchFieldChange}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

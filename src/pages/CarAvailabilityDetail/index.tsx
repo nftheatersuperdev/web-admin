@@ -39,22 +39,22 @@ export default function CarAvailabilityDetail(): JSX.Element {
       link: '/',
     },
     {
-      text: t('sidebar.carAvailability'),
+      text: t('sidebar.carManagement.carAvailability'),
       link: '/car-availability',
     },
     {
-      text: t('sidebar.carAvailability') + ' Detail',
+      text: t('sidebar.carManagement.carAvailabilityDetail'),
       link: '/car-availability/5454',
     },
   ]
 
   return (
     <Page>
-      <PageTitle title="Car Availability Detail" breadcrumbs={breadcrumbs} />
+      <PageTitle title={t('sidebar.carAvailabilityDetail')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
           <Typography variant="h5" component="h2">
-            Car Availability Detail
+            {t('sidebar.carAvailabilityDetail')}
           </Typography>
 
           {/* Car Id and Car Status */}
@@ -62,7 +62,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__carId"
-                label="Car Id"
+                label={t('carAvailabilityDetail.carId')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -78,7 +78,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__carStatus"
-                label="Car Status"
+                label={t('carAvailabilityDetail.carStatus')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -97,8 +97,8 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                id="car_availability_detail__cartrackId"
-                label="Cartrack Id"
+                id="car_availability_detail__carTrackId"
+                label={t('carAvailabilityDetail.carTrackId')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -118,7 +118,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__plateNumber"
-                label="Plate Number"
+                label={t('carAvailabilityDetail.plateNumber')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -134,7 +134,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__vin"
-                label="Vin"
+                label={t('carAvailabilityDetail.vin')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -151,10 +151,10 @@ export default function CarAvailabilityDetail(): JSX.Element {
 
           {/* Car Brand and Car Model */}
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__carBrand"
-                label="Car Brand"
+                label={t('carAvailabilityDetail.carBrand')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -167,13 +167,10 @@ export default function CarAvailabilityDetail(): JSX.Element {
                 value={CarAvailabilityDetail.brand}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
-              {' '}
-            </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__carModel"
-                label="Car Model"
+                label={t('carAvailabilityDetail.carModel')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -192,8 +189,8 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                id="car_availability_detail__colour"
-                label="Color"
+                id="car_availability_detail__color"
+                label={t('carAvailabilityDetail.color')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -214,7 +211,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
               <DateTimePicker
                 fullWidth
                 disabled
-                label="Created Date"
+                label={t('carAvailabilityDetail.createdDate')}
                 id="car_availability_detail__createdDate"
                 name="createdDate"
                 format={DEFAULT_DATETIME_FORMAT}
@@ -229,7 +226,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
               <DateTimePicker
                 disabled
                 fullWidth
-                label="Update Date"
+                label={t('carAvailabilityDetail.updatedDate')}
                 id="car_availability_detail__updateDate"
                 name="updateDate"
                 format={DEFAULT_DATETIME_FORMAT}
@@ -247,7 +244,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             <Grid item xs={12} sm={6}>
               <TextField
                 id="car_availability_detail__bookingId"
-                label="Booking ID"
+                label={t('carAvailabilityDetail.bookingId')}
                 fullWidth
                 margin="normal"
                 InputProps={{
