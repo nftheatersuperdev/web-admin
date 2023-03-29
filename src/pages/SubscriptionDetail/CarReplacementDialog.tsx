@@ -82,8 +82,7 @@ export default function CarReplacementDialog({
     carActivities,
   } = bookingDetails
 
-  const reversedCarActivities = carActivities.reverse()
-  const carActivity = reversedCarActivities[0]
+  const carActivity = carActivities[carActivities.length - 1]
 
   const todayDate = dayjs()
 
@@ -92,7 +91,7 @@ export default function CarReplacementDialog({
       case SubEventStatus.DELIVERED: {
         return {
           minDate: todayDate.add(1, 'day').startOf('day'),
-          maxDate: dayjs(carActivity.returnTask.date),
+          maxDate: dayjs(carActivity.returnTask.date).add(-1, 'day').startOf('day'),
         }
       }
       default: {
@@ -130,7 +129,10 @@ export default function CarReplacementDialog({
     } as CarAvailableListBffFilterRequestProps)
   )
 
-  const availableCars = availableCarsResponse?.data.records || []
+  const availableCars =
+    availableCarsResponse?.data.records.filter(
+      (car) => car.availabilityStatus.toLocaleLowerCase() === 'available'
+    ) || []
   const selectedCar = availableCars.find(
     (availableCar) => availableCar.car.id === carReplacementState.carId
   )
