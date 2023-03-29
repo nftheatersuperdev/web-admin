@@ -385,7 +385,7 @@ export default function SubscriptionDetail(): JSX.Element {
                         {Number(payment.amount || 0).toLocaleString()}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {payment.updatedDate || '-'}
+                        {dayjs(payment?.updatedDate).format(DEFAULT_DATETIME_FORMAT) || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
                         {payment.type || '-'}
