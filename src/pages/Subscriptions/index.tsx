@@ -199,39 +199,35 @@ export default function Subscription(): JSX.Element {
       endDate,
       carActivities,
     }) => {
-      const makeData = (carActivity?: BookingCarActivity) => {
-        return {
-          bookingDetailId: id,
-          customerId,
-          firstName: customer.firstName,
-          lastName: customer.lastName,
-          email: customer.email,
-          phoneNumber: customer.phoneNumber,
-          carId: carActivity ? carActivity.carId : car.id,
-          carBrand: carActivity
-            ? carActivity.carDetail.carSku.carModel.brand.name
-            : car.carSku.carModel.brand.name,
-          carModel: carActivity
-            ? carActivity.carDetail.carSku.carModel.name
-            : car.carSku.carModel.name,
-          plateNumber: carActivity ? carActivity.carDetail.plateNumber : car.plateNumber,
-          vin: carActivity ? carActivity.carDetail.vin : car.vin,
-          price: rentDetail.chargePrice,
-          duration: convertToDuration(rentDetail.durationDay, t),
-          startDate,
-          endDate,
-          status: displayStatus || '-',
-          replacement: carActivity ? 'Y' : 'N',
-          voucherId: rentDetail.voucherId || '-',
-          voucherCode: rentDetail.voucherCode || '-',
-          createdDate: dayjs(rentDetail.createdDate).format(DEFAULT_DATETIME_FORMAT),
-          updatedDate: dayjs(rentDetail.updatedDate).format(DEFAULT_DATETIME_FORMAT),
-        }
-      }
+      const makeData = (carActivity?: BookingCarActivity) => ({
+        bookingDetailId: id,
+        customerId,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+        phoneNumber: customer.phoneNumber,
+        carId: carActivity ? carActivity.carDetail.id : car.id,
+        carBrand: carActivity
+          ? carActivity.carDetail.carSku.carModel.brand.name
+          : car.carSku.carModel.brand.name,
+        carModel: carActivity
+          ? carActivity.carDetail.carSku.carModel.name
+          : car.carSku.carModel.name,
+        plateNumber: carActivity ? carActivity.carDetail.plateNumber : car.plateNumber,
+        vin: carActivity ? carActivity.carDetail.vin : car.vin,
+        price: rentDetail.chargePrice,
+        duration: convertToDuration(rentDetail.durationDay, t),
+        startDate,
+        endDate,
+        status: displayStatus || '-',
+        replacement: carActivity ? 'Y' : 'N',
+        voucherId: rentDetail.voucherId || '-',
+        voucherCode: rentDetail.voucherCode || '-',
+        createdDate: dayjs(rentDetail.createdDate).format(DEFAULT_DATETIME_FORMAT),
+        updatedDate: dayjs(rentDetail.updatedDate).format(DEFAULT_DATETIME_FORMAT),
+      })
       if (carActivities.length >= 1) {
-        carActivities.forEach((carActivity) => {
-          csvData.push(makeData(carActivity))
-        })
+        carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
       }
       csvData.push(makeData())
     }
