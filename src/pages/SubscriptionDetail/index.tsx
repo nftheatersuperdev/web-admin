@@ -379,7 +379,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   {bookingDetails?.payments.map((payment) => (
                     <TableRow key={payment.id}>
                       <TableCell component="th" scope="row">
-                        {payment.id || '-'}
+                        {payment.externalTransactionId || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
                         {Number(payment.amount || 0).toLocaleString()}
