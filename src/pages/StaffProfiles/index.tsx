@@ -31,6 +31,7 @@ import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import NoResultCard from 'components/NoResultCard'
 import PageTitle from 'components/PageTitle'
+import './pagination.css'
 
 const useStyles = makeStyles({
   hide: {
@@ -71,9 +72,12 @@ const useStyles = makeStyles({
     justifyContent: 'right !important',
   },
   chipGreen: {
-    backgroundColor: '#1FEE16',
+    backgroundColor: '#4CAF50',
     color: 'white',
-    fontWeight: 'bold',
+  },
+  chipRed: {
+    backgroundColor: '#F44336',
+    color: 'white',
   },
   buttonClearAllFilters: {
     padding: '16px 9px 16px 9px !important',
@@ -129,10 +133,12 @@ const useStyles = makeStyles({
   },
   paginationContrainer: {
     display: 'flex',
+    listStyleType: 'none',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '20px',
+    round: 'true',
   },
   filter: {
     height: '90px',
@@ -148,6 +154,10 @@ const useStyles = makeStyles({
     '&:hover, &:focus': {
       backgroundColor: 'aqua',
     },
+  },
+  addButton: {
+    color: '#fff',
+    backgroundColor: '#424E63',
   },
 })
 
@@ -185,7 +195,7 @@ export default function StaffProfiles(): JSX.Element {
             <TableCell>{adminUserData.role}</TableCell>
             <TableCell>
               {!adminUserData.isActive ? (
-                <Chip size="small" label={t('user.disabled')} color="secondary" />
+                <Chip size="small" label={t('user.disabled')} className={classes.chipRed} />
               ) : (
                 <Chip size="small" label={t('user.enabled')} className={classes.chipGreen} />
               )}
@@ -274,7 +284,7 @@ export default function StaffProfiles(): JSX.Element {
               &nbsp;&nbsp;
               <Button
                 endIcon={<AddIcon />}
-                color="primary"
+                className={classes.addButton}
                 variant="contained"
                 onClick={() => history.push(`/staff-profile/create`)}
               >
