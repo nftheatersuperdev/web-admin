@@ -7,7 +7,6 @@ import {
   GridToolbarDensitySelector,
   GridCellParams,
   GridRowData,
-  GridToolbarExport,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
@@ -348,7 +347,6 @@ export default function Car(): JSX.Element {
     <GridToolbarContainer>
       <GridToolbarColumnsButton />
       <GridToolbarDensitySelector />
-      <GridToolbarExport csvOptions={{ allColumns: true }} />
     </GridToolbarContainer>
   )
   const breadcrumbs: PageBreadcrumbs[] = [
