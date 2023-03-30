@@ -124,7 +124,7 @@ export default function CarReplacementDialog({
         endDate: bookingDetails.endDate,
         isSkuNotNull: true,
       },
-      size: config.tableRowsDefaultPageSize,
+      size: 10000,
     } as CarAvailableListBffFilterRequestProps)
   )
 
