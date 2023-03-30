@@ -1,4 +1,3 @@
-import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
@@ -22,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
+import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT } from 'utils'
 import {
   convertToDuration,
   columnFormatSubEventStatus,
@@ -315,7 +315,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(bookingDetails?.startDate).format(DEFAULT_DATETIME_FORMAT)}
+                value={dayjs(bookingDetails?.startDate).format(DEFAULT_DATE_FORMAT)}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -331,7 +331,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(bookingDetails?.endDate).format(DEFAULT_DATETIME_FORMAT)}
+                value={dayjs(bookingDetails?.endDate).format(DEFAULT_DATE_FORMAT)}
               />
             </Grid>
           </Grid>
