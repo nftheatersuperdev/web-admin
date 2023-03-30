@@ -61,6 +61,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__carId"
                 label={t('carAvailabilityDetail.carId')}
                 fullWidth
@@ -77,8 +78,9 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__carStatus"
-                label={t('carAvailabilityDetail.carStatus')}
+                label={t('carAvailability.searchField.label')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -97,6 +99,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__carTrackId"
                 label={t('carAvailabilityDetail.carTrackId')}
                 fullWidth
@@ -117,6 +120,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__plateNumber"
                 label={t('carAvailabilityDetail.plateNumber')}
                 fullWidth
@@ -133,6 +137,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__vin"
                 label={t('carAvailabilityDetail.vin')}
                 fullWidth
@@ -153,6 +158,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__carBrand"
                 label={t('carAvailabilityDetail.carBrand')}
                 fullWidth
@@ -169,6 +175,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__carModel"
                 label={t('carAvailabilityDetail.carModel')}
                 fullWidth
@@ -189,6 +196,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__color"
                 label={t('carAvailabilityDetail.color')}
                 fullWidth
@@ -243,6 +251,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
+                disabled
                 id="car_availability_detail__bookingId"
                 label={t('carAvailabilityDetail.bookingId')}
                 fullWidth

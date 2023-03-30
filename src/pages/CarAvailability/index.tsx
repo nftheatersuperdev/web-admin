@@ -10,6 +10,7 @@ import {
   GridToolbarExport,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
+import { CSVLink } from 'react-csv'
 import {
   DEFAULT_DATE_FORMAT,
   DEFAULT_DATE_FORMAT_BFF,
@@ -83,13 +84,17 @@ const useStyles = makeStyles(() => ({
   buttonWithoutShadow: {
     display: 'inline-flexbox',
     boxShadow: 'none',
-    marginLeft: '16px',
     padding: '16px 20px',
   },
   buttonWithoutExport: {
+    backgroundColor: '#424E63',
+    color: 'white',
     display: 'inline-flexbox',
     boxShadow: 'none',
     padding: '16px 20px',
+  },
+  buttoExport: {
+    color: 'white',
   },
   exportContrainer: {
     display: 'flex',
@@ -362,6 +367,36 @@ export default function Car(): JSX.Element {
       state: data.row,
     })
   }
+  const csvHeaders = [
+    { label: t('carAvailabilityDetail.carId'), key: 'id' },
+    { label: t('carAvailabilityDetail.carStatus'), key: 'status' },
+    { label: t('carAvailabilityDetail.carTrackId'), key: 'carTrackId' },
+    { label: t('carAvailabilityDetail.plateNumber'), key: 'plateNumber' },
+    { label: t('carAvailabilityDetail.carBrand'), key: 'brand' },
+    { label: t('carAvailabilityDetail.carModel'), key: 'model' },
+    { label: t('carAvailabilityDetail.color'), key: 'color' },
+    { label: t('carAvailabilityDetail.vin'), key: 'vin' },
+    { label: t('carAvailabilityDetail.bookingId'), key: 'subscriptionId' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = []
+  carData?.data.records.forEach(({ car, availabilityStatus: status, booking }) => {
+    const makeData = () => ({
+      id: car.id,
+      vin: car.vin,
+      carTrackId: car.carTrackId || '-',
+      createdDate: car.createdDate,
+      updatedDate: car.updatedDate || '-',
+      plateNumber: car.plateNumber,
+      model: car.carSku?.carModel.name || '-',
+      brand: car.carSku?.carModel.brand.name || '-',
+      color: car.carSku?.color || '-',
+      status,
+      subscriptionId: booking?.length > 0 ? booking.map((row) => row.id) : '-',
+    })
+    csvData.push(makeData())
+  })
+
   return (
     <Page>
       <PageTitle title={t('sidebar.carAvailability')} breadcrumbs={breadcrumbs} />
@@ -370,7 +405,7 @@ export default function Car(): JSX.Element {
           <Typography variant="h5" component="h2">
             {t('sidebar.carAvailabilityList')}
           </Typography>
-          <Grid className={classes.searchBar} container spacing={3}>
+          <Grid className={classes.searchBar} container spacing={1}>
             <Grid item className={[classes.filter].join(' ')} xs={2}>
               <TextField
                 fullWidth
@@ -417,7 +452,7 @@ export default function Car(): JSX.Element {
             </Grid>
             <Grid item className={[classes.filter].join(' ')} xs={7}>
               <Grid container spacing={1}>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                   <DatePicker
                     label={t('carAvailability.selectedFromDate')}
                     id="car_availability__startdate_input"
@@ -433,14 +468,13 @@ export default function Car(): JSX.Element {
                     inputVariant="outlined"
                   />
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                   <DatePicker
                     label={t('carAvailability.selectedToDate')}
                     id="car_availability__enddate_input"
                     KeyboardButtonProps={{
                       id: 'car_availability__enddate_icon',
                     }}
-                    className={classes.paddindElement}
                     name="selectedToDate"
                     format={DEFAULT_DATE_FORMAT}
                     value={selectedToDate}
@@ -450,7 +484,7 @@ export default function Car(): JSX.Element {
                     inputVariant="outlined"
                   />
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                   <Button
                     id="car_availability__search_btn"
                     className={classes.buttonWithoutShadow}
@@ -458,17 +492,24 @@ export default function Car(): JSX.Element {
                     variant="contained"
                     onClick={() => formik.handleSubmit()}
                   >
-                    {t('carAvailability.search')}
+                    {t('carAvailability.searchBtn')}
                   </Button>
                 </Grid>
-                <Grid item xs={12} sm={3} className={classes.exportContrainer}>
+                <Grid item xs={12} sm={2} className={classes.exportContrainer}>
                   <Button
                     id="car_availability__export_btn"
                     className={classes.buttonWithoutExport}
-                    color="default"
                     variant="contained"
+                    disabled={isFetching}
                   >
-                    {t('button.export')}
+                    <CSVLink
+                      data={csvData}
+                      headers={csvHeaders}
+                      filename={t('sidebar.carAvailability') + '.csv'}
+                      className={classes.buttoExport}
+                    >
+                      {t('button.export')}
+                    </CSVLink>
                   </Button>
                 </Grid>
               </Grid>
