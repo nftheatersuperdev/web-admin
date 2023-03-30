@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
 import dayjs, { Dayjs } from 'dayjs'
+import toast from 'react-hot-toast'
 import config from 'config'
 import {
   Button,
@@ -19,12 +20,11 @@ import {
   InputLabel,
   TextField,
 } from '@material-ui/core'
+import { Typography } from '@mui/material'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
-import toast from 'react-hot-toast'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import Geocode from 'react-geocode'
-import { Typography } from '@mui/material'
 import DatePicker from 'components/DatePicker'
 import ConfirmDialog from 'components/ConfirmDialog'
 import { getAvailableListBFF } from 'services/web-bff/car'
@@ -83,7 +83,6 @@ export default function CarReplacementDialog({
   } = bookingDetails
 
   const carActivity = carActivities[carActivities.length - 1]
-
   const todayDate = dayjs()
 
   function generateMinAndMaxDates(status: string) {
