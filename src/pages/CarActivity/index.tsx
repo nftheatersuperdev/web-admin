@@ -16,6 +16,7 @@ import {
   TableCell,
   TableRow,
   InputAdornment,
+  Typography,
 } from '@material-ui/core'
 import {
   GridColDef,
@@ -526,6 +527,9 @@ export default function CarActivity(): JSX.Element {
   return (
     <Page>
       <PageTitle title="Car Activity" breadcrumbs={breadcrumbs} />
+      <Typography variant="h5" component="h2">
+        {t('sidebar.carActivityList')}
+      </Typography>
       <div className={classes.searchWrapper}>
         <Grid
           container
