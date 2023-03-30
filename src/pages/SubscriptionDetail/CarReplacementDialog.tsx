@@ -89,7 +89,7 @@ export default function CarReplacementDialog({
     switch (status.toLocaleLowerCase()) {
       case SubEventStatus.DELIVERED: {
         return {
-          minDate: todayDate.add(1, 'day').startOf('day'),
+          minDate: todayDate.startOf('day'),
           maxDate: dayjs(carActivity.returnTask.date).add(-1, 'day').startOf('day'),
         }
       }
