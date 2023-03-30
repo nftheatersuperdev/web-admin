@@ -79,6 +79,7 @@
     "carAvailabilityList": "รายการสถานะการใช้รถ",
     "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
     "carActivity": "การใช้งานรถ",
+    "carActivityList": "รายการการใช้งานรถ",
     "pricing": "ราคาแพ็คเกจ",
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
