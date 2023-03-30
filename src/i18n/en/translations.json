@@ -126,7 +126,8 @@
       "requiresRecentLogin": "Please re-login again",
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
-      "unknownError": "An unknown authentication error occurred, Please contact operation support"
+      "unknownError": "An unknown authentication error occurred, Please contact operation support",
+      "passwordCondition": "Required at least 1 uppercase, 1 lowercase, and 1 number"
     }
   },
   "login": {
@@ -735,7 +736,10 @@
     "maximumIsOneHundred": "Maximum is 100",
     "invalidVoucherCode": "Invalid voucher code",
     "invalidName": "Invalid name",
-    "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
+    "allowOnlyLettersAndNumbers": "Allow only letters and numbers",
+    "firstNameRequired": "First Name is required",
+    "lastNameRequired": "Last Name is required",
+    "roleRequired": "Role is required"
   },
   "cardStatus": {
     "detail": "Detail >"

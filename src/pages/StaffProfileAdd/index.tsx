@@ -76,7 +76,7 @@ export default function StaffProfileAdd(): JSX.Element {
       lastName: '',
       email: '',
       password: '',
-      role: ROLES.OPERATION,
+      role: '',
     },
     validationSchema: Yup.object().shape({
       email: Yup.string()
@@ -88,10 +88,11 @@ export default function StaffProfileAdd(): JSX.Element {
         .required(t('authentication.error.passwordRequired'))
         .matches(
           /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
-          t('authentication.error.weakPassword')
+          t('authentication.error.passwordCondition')
         ),
-      firstName: Yup.string().max(255).required(t('validation.required')),
-      lastName: Yup.string().max(255).required(t('validation.required')),
+      firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
+      lastName: Yup.string().max(255).required(t('validation.lastNameRequired')),
+      role: Yup.string().max(255).required(t('validation.roleRequired')),
     }),
     enableReinitialize: true,
     onSubmit: (values, actions) => {
@@ -199,6 +200,8 @@ export default function StaffProfileAdd(): JSX.Element {
                 variant="outlined"
                 onChange={handleChange}
                 value={values.role}
+                error={Boolean(touched.role && errors.role)}
+                helperText={touched.role && errors.role}
               >
                 {Object.values(ROLES).map((role) => (
                   <MenuItem key={role} value={role}>

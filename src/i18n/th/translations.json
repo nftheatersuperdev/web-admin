@@ -126,7 +126,8 @@
       "requiresRecentLogin": "กรุณาลงชื่อเข้าใช้ระบบอีกครั้ง",
       "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
       "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
-      "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ"
+      "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ",
+      "passwordCondition": "ต้องประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร"
     }
   },
   "login": {
@@ -710,7 +711,10 @@
     "maximumIsOneHundred": "ระบุสูงสุด 100",
     "invalidVoucherCode": "รูปแบบของวอชเชอร์ไม่ถูกต้อง",
     "invalidName": "รูปแบบของชื่อไม่ถูกต้อง",
-    "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น"
+    "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น",
+    "firstNameRequired": "ต้องระบุชื่อ",
+    "lastNameRequired": "ต้องระบุนามสกุล",
+    "roleRequired": "ต้องระบุระดับผู้ใช้งาน"
   },
   "cardStatus": {
     "detail": "Detail >"
