@@ -16,6 +16,7 @@
     "selectedFromDate": "Start Date",
     "selectedToDate": "End Date",
     "search": "Select Search",
+    "searchBtn": "Search",
     "searchField": {
       "label": "Enter Search",
       "placeholder": "Please type at lease 2 charators",

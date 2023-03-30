@@ -16,6 +16,7 @@
     "selectedFromDate": "วันที่เริ่มต้น",
     "selectedToDate": "วันที่สิ้นสุด",
     "search": "เลือกเพื่อค้นหา",
+    "searchBtn": "ค้นหา",
     "searchField": {
       "label": "ค้นหา",
       "placeholder": "กรุณากรอกอย่างน้อย 2 ตัวอักษร",
