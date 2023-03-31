@@ -50,6 +50,10 @@ const containerStyle = {
   height: '290px',
 }
 
+/**
+ * @TODO needs to handle and discuss about booking status is "upcoming_cancelled"
+ */
+
 export interface CarReplacementDialogProps {
   editorEmail: string | null
   open: boolean
@@ -85,18 +89,41 @@ export default function CarReplacementDialog({
   const carActivity = carActivities[carActivities.length - 1]
   const todayDate = dayjs()
 
+  const isStatus = (status: string, statusCondition: string) =>
+    status.toLowerCase() === statusCondition.toLowerCase()
+
+  function isArrivingSoon() {
+    if (bookingDetails) {
+      const { rentDetail, displayStatus, startDate, isExtend } = bookingDetails
+      if (
+        !isExtend &&
+        isStatus(displayStatus, 'accepted') &&
+        isStatus(rentDetail.status, 'reserved') &&
+        dayjs(startDate) > todayDate
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const isArrivingSoonStatus = isArrivingSoon()
+
   function generateMinAndMaxDates(status: string) {
+    const todayAddOneYear = todayDate.add(1, 'year')
+    const returnDateMinusOneDay = () =>
+      dayjs(carActivity?.returnTask?.date).add(-1, 'day').startOf('day') || todayAddOneYear
     switch (status.toLocaleLowerCase()) {
       case SubEventStatus.DELIVERED: {
         return {
           minDate: todayDate.startOf('day'),
-          maxDate: dayjs(carActivity.returnTask.date).add(-1, 'day').startOf('day'),
+          maxDate: returnDateMinusOneDay(),
         }
       }
       default: {
         return {
           minDate: dayjs(carActivity.deliveryTask.date),
-          maxDate: todayDate.add(1, 'year'),
+          maxDate: isArrivingSoonStatus ? returnDateMinusOneDay() : todayAddOneYear,
         }
       }
     }
@@ -301,7 +328,11 @@ export default function CarReplacementDialog({
               fullWidth
               margin="normal"
               variant="outlined"
-              value={dayjs(carActivity.returnTask.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
+              value={
+                carActivity?.returnTask?.date
+                  ? dayjs(carActivity.returnTask.date).format(DEFAULT_DATETIME_FORMAT)
+                  : '-'
+              }
             />
           </Grid>
         </Grid>
@@ -454,7 +485,11 @@ export default function CarReplacementDialog({
               fullWidth
               margin="normal"
               variant="outlined"
-              value={carActivity.returnTask.fullAddress || '-'}
+              value={
+                carActivity?.returnTask?.fullAddress
+                  ? carActivity.returnTask.fullAddress.trim()
+                  : '-'
+              }
               multiline
               minRows={3}
               InputProps={{
@@ -470,7 +505,7 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={carActivity.returnTask.remark || '-'}
+                value={carActivity?.returnTask?.remark ? carActivity.returnTask.remark.trim() : '-'}
                 multiline
                 minRows={3}
                 InputProps={{

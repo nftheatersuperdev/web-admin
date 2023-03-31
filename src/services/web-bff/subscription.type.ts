@@ -106,6 +106,7 @@ export interface BookingRentalDetail {
   isAcceptedAgreement: boolean
   isAcceptedCarCondition: boolean
   paymentTerm: string | null
+  status: string
   createdDate: string
   updatedDate: string
 }
