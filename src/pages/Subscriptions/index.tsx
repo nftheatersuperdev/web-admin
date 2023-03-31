@@ -158,6 +158,7 @@ export default function Subscription(): JSX.Element {
               customerId: subscription.customerId || '-',
               cleaningDate: subscription.endDate,
               payments: subscription?.payments || [],
+              isSelfPickup: subscription.isSelfPickUp,
             } ?? {}
           )
         })
@@ -185,6 +186,7 @@ export default function Subscription(): JSX.Element {
     { label: t('subscription.voucherCode'), key: 'voucherCode' },
     { label: t('subscription.createdDate'), key: 'createdDate' },
     { label: t('subscription.updatedDate'), key: 'updatedDate' },
+    { label: t('subscription.isSelfPickup'), key: 'isSelfPickUp' },
   ]
   const csvData: any = []
   response?.data?.bookingDetails?.forEach(
@@ -198,6 +200,7 @@ export default function Subscription(): JSX.Element {
       startDate,
       endDate,
       carActivities,
+      isSelfPickUp,
     }) => {
       const makeData = (carActivity?: BookingCarActivity) => ({
         bookingDetailId: id,
@@ -225,6 +228,7 @@ export default function Subscription(): JSX.Element {
         voucherCode: rentDetail.voucherCode || '-',
         createdDate: dayjs(rentDetail.createdDate).format(DEFAULT_DATETIME_FORMAT),
         updatedDate: dayjs(rentDetail.updatedDate).format(DEFAULT_DATETIME_FORMAT),
+        isSelfPickUp: isSelfPickUp ? 'Y' : 'N',
       })
       if (carActivities.length >= 1) {
         carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
