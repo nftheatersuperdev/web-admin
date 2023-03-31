@@ -20,7 +20,7 @@ import {
   InputLabel,
   TextField,
 } from '@material-ui/core'
-import { Typography } from '@mui/material'
+import { Alert, Typography } from '@mui/material'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
@@ -28,7 +28,7 @@ import Geocode from 'react-geocode'
 import DatePicker from 'components/DatePicker'
 import ConfirmDialog from 'components/ConfirmDialog'
 import { getAvailableListBFF } from 'services/web-bff/car'
-import { updateCarReplacement } from 'services/web-bff/subscription'
+import { status as BookingStatus, updateCarReplacement } from 'services/web-bff/subscription'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/subscription.type'
 import { SubEventStatus } from 'pages/Subscriptions/utils'
@@ -92,14 +92,21 @@ export default function CarReplacementDialog({
   const isStatus = (status: string, statusCondition: string) =>
     status.toLowerCase() === statusCondition.toLowerCase()
 
+  const isUpCommingCancelled = !carActivity?.returnTask
+
   function isArrivingSoon() {
     if (bookingDetails) {
       const { rentDetail, displayStatus, startDate, isExtend } = bookingDetails
       if (
-        !isExtend &&
-        isStatus(displayStatus, 'accepted') &&
-        isStatus(rentDetail.status, 'reserved') &&
-        dayjs(startDate) > todayDate
+        // Normal Case
+        (!isExtend &&
+          isStatus(displayStatus, BookingStatus.ACCEPTED) &&
+          isStatus(rentDetail.status, BookingStatus.RESERVED)) ||
+        // Extend Case
+        (isExtend &&
+          dayjs(startDate) > todayDate &&
+          isStatus(displayStatus, BookingStatus.ACCEPTED) &&
+          isStatus(rentDetail.status, BookingStatus.DELIVERED))
       ) {
         return true
       }
@@ -285,6 +292,13 @@ export default function CarReplacementDialog({
     >
       <DialogTitle id="form-dialog-title">{t('booking.carReplacement.title')}</DialogTitle>
       <DialogContent>
+        {isUpCommingCancelled ? (
+          <Alert severity="warning">
+            This booking is upcoming_cancelled and does not have any agreement right now.
+          </Alert>
+        ) : (
+          ''
+        )}
         {/* Delivery Date, Delivery Time, and Return Date */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={3}>
