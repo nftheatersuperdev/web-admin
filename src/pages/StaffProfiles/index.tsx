@@ -43,23 +43,18 @@ const useStyles = makeStyles({
   textBold: {
     fontWeight: 'bold',
   },
-  subText: {
-    color: '#AAA',
+  textBoldBorder: {
+    borderLeft: '2px solid #E0E0E0',
+    fontWeight: 'bold',
   },
   inlineElement: {
     display: 'inline-flex',
   },
-  displayNone: {
-    display: 'none',
-  },
-  displayBlock: {
-    display: 'block',
-  },
   textRight: {
     textAlign: 'right',
   },
-  fullWidth: {
-    width: '100%',
+  setWidth: {
+    width: '120px',
   },
   searchWrapper: {
     margin: '20px 20px',
@@ -91,11 +86,6 @@ const useStyles = makeStyles({
   },
   headerTopic: {
     padding: '8px 16px',
-  },
-  buttonWithoutShadow: {
-    display: 'inline-flexbox',
-    boxShadow: 'none',
-    padding: '16px 20px',
   },
   buttonOverridePadding: {
     padding: '16px',
@@ -193,7 +183,7 @@ export default function StaffProfiles(): JSX.Element {
             <TableCell>{adminUserData.lastName}</TableCell>
             <TableCell>{adminUserData.email}</TableCell>
             <TableCell>{adminUserData.role}</TableCell>
-            <TableCell>
+            <TableCell align="center">
               {!adminUserData.isActive ? (
                 <Chip size="small" label={t('user.disabled')} className={classes.chipRed} />
               ) : (
@@ -301,29 +291,31 @@ export default function StaffProfiles(): JSX.Element {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell align="left">
+                    <TableCell align="center">
                       <Checkbox className={classes.hideObject} size="small" />
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('user.firstName')}</div>
+                    <TableCell align="center">
+                      <div className={classes.textBoldBorder}> {t('user.firstName')}</div>
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('user.lastName')}</div>
+                    <TableCell align="center">
+                      <div className={classes.textBoldBorder}> {t('user.lastName')}</div>
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('user.email')}</div>
+                    <TableCell align="center">
+                      <div className={classes.textBoldBorder}> {t('user.email')}</div>
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('user.role')}</div>
+                    <TableCell align="center">
+                      <div className={classes.textBoldBorder}> {t('user.role')}</div>
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('user.status')}</div>
+                    <TableCell align="center">
+                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                        {t('user.status')}
+                      </div>
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('staffProfile.createdDate')}</div>
+                    <TableCell align="center">
+                      <div className={classes.textBoldBorder}> {t('staffProfile.createdDate')}</div>
                     </TableCell>
-                    <TableCell align="left">
-                      <div className={classes.textBold}> {t('user.updatedDate')}</div>
+                    <TableCell align="center">
+                      <div className={classes.textBoldBorder}> {t('user.updatedDate')}</div>
                     </TableCell>
                   </TableRow>
                 </TableHead>
