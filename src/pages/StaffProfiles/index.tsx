@@ -8,7 +8,6 @@ import {
   Paper,
   Table,
   TableHead,
-  makeStyles,
   TableCell,
   TableRow,
   Card,
@@ -21,7 +20,8 @@ import {
   TableBody,
   Chip,
   InputLabel,
-} from '@material-ui/core'
+} from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { formatDate } from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
@@ -242,7 +242,7 @@ export default function StaffProfiles(): JSX.Element {
                   labelId="demo-simple-select-autowidth-label"
                   id="demo-simple-select-autowidth"
                   value={searchCriteria}
-                  onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+                  onChange={(event) => {
                     setCriteria(event.target.value as string)
                     onCriteriaChange(event.target.value as string)
                   }}
@@ -329,7 +329,7 @@ export default function StaffProfiles(): JSX.Element {
                   <Select
                     value={adminUsersData?.data.pagination?.size || pageSize}
                     defaultValue={adminUsersData?.data.pagination?.size || pageSize}
-                    onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+                    onChange={(event) => {
                       setPage(1)
                       setPageSize(event.target.value as number)
                     }}
