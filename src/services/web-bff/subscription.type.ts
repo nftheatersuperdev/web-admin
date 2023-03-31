@@ -148,6 +148,7 @@ export interface BookingRental {
   remark: string | null
   payments: BookingPayment[]
   updatedBy: string
+  isSelfPickUp: boolean
 }
 
 export interface SubscriptionCar {

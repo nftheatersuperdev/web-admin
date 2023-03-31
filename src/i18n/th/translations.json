@@ -422,7 +422,8 @@
       }
     },
     "clearFilterId": "ลบกรองข้อมูลด้วยไอดี",
-    "downloadCSV": "ดาวน์โหลด CSV"
+    "downloadCSV": "ดาวน์โหลด CSV",
+    "isSelfPickup": "รับรถด้วยตนเอง"
   },
   "booking": {
     "statuses": {
