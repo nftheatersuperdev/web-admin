@@ -172,26 +172,39 @@ export default function Subscription(): JSX.Element {
     { label: t('subscription.email'), key: 'email' },
     { label: t('subscription.phone'), key: 'phoneNumber' },
     { label: t('subscription.carId'), key: 'carId' },
-    { label: t('subscription.brand'), key: 'carBrand' },
     { label: t('subscription.model'), key: 'carModel' },
+    { label: t('subscription.brand'), key: 'carBrand' },
+    { label: t('subscription.seats'), key: 'carSeats' },
+    { label: t('subscription.topSpeed'), key: 'carTopSpeed' },
     { label: t('subscription.plateNumber'), key: 'plateNumber' },
     { label: t('subscription.vin'), key: 'vin' },
+    { label: t('subscription.fastChargeTime'), key: 'carFastChargeTime' },
     { label: t('subscription.price'), key: 'price' },
     { label: t('subscription.duration'), key: 'duration' },
     { label: t('subscription.startDate'), key: 'startDate' },
     { label: t('subscription.endDate'), key: 'endDate' },
+    { label: t('booking.carReplacement.deliveryAddress'), key: 'deliveryAddress' },
+    { label: t('subscription.deliveryDate'), key: 'deliveryDate' },
+    { label: t('booking.carReplacement.returnAddress'), key: 'returnAddress' },
+    { label: t('subscription.returnDate'), key: 'returnDate' },
     { label: t('subscription.status.title'), key: 'status' },
-    { label: t('subscription.replacement'), key: 'replacement' },
+    { label: t('subscription.parentId'), key: 'parentId' },
+    { label: t('subscription.isExtendedSubscription'), key: 'isExtend' },
     { label: t('subscription.voucherId'), key: 'voucherId' },
     { label: t('subscription.voucherCode'), key: 'voucherCode' },
     { label: t('subscription.createdDate'), key: 'createdDate' },
     { label: t('subscription.updatedDate'), key: 'updatedDate' },
+    { label: t('subscription.payment.status'), key: 'paymentStatus' },
+    { label: t('subscription.payment.failureMessage'), key: 'paymentFailureMessage' },
+    { label: t('subscription.payment.updatedDate'), key: 'paymentUpdatedDate' },
+    { label: t('subscription.replacement'), key: 'replacement' },
     { label: t('subscription.isSelfPickup'), key: 'isSelfPickUp' },
   ]
   const csvData: any = []
-  response?.data?.bookingDetails?.forEach(
-    ({
+  response?.data?.bookingDetails?.forEach((booking) => {
+    const {
       id,
+      bookingId,
       customerId,
       customer,
       car,
@@ -200,42 +213,67 @@ export default function Subscription(): JSX.Element {
       startDate,
       endDate,
       carActivities,
+      payments,
+      isExtend,
       isSelfPickUp,
-    }) => {
-      const makeData = (carActivity?: BookingCarActivity) => ({
-        bookingDetailId: id,
-        customerId,
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        email: customer.email,
-        phoneNumber: customer.phoneNumber,
-        carId: carActivity ? carActivity?.carDetail?.id : car.id,
-        carBrand: carActivity
-          ? carActivity?.carDetail?.carSku?.carModel?.brand.name
-          : car.carSku?.carModel?.brand.name || '-',
-        carModel: carActivity
-          ? carActivity?.carDetail?.carSku?.carModel?.name
-          : car.carSku?.carModel?.name || '-',
-        plateNumber: carActivity ? carActivity?.carDetail?.plateNumber : car.plateNumber,
-        vin: carActivity ? carActivity?.carDetail?.vin : car.vin,
-        price: rentDetail.chargePrice,
-        duration: convertToDuration(rentDetail.durationDay, t),
-        startDate,
-        endDate,
-        status: displayStatus || '-',
-        replacement: carActivity ? 'Y' : 'N',
-        voucherId: rentDetail.voucherId || '-',
-        voucherCode: rentDetail.voucherCode || '-',
-        createdDate: dayjs(rentDetail.createdDate).format(DEFAULT_DATETIME_FORMAT),
-        updatedDate: dayjs(rentDetail.updatedDate).format(DEFAULT_DATETIME_FORMAT),
-        isSelfPickUp: isSelfPickUp ? 'Y' : 'N',
-      })
-      if (carActivities.length >= 1) {
-        carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
+    } = booking
+    const dateFormat = (date?: string) => {
+      if (!date) {
+        return '-'
       }
-      csvData.push(makeData())
+      return dayjs(date).format(DEFAULT_DATETIME_FORMAT)
     }
-  )
+    const makeData = (carActivity?: BookingCarActivity) => ({
+      bookingDetailId: id,
+      customerId,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      phoneNumber: customer.phoneNumber,
+      carId: carActivity ? carActivity?.carDetail?.id : car.id,
+      carBrand: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.brand.name
+        : car.carSku?.carModel?.brand.name || '-',
+      carModel: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.name
+        : car.carSku?.carModel?.name || '-',
+      carSeats: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.seats
+        : car.carSku?.carModel?.seats || '-',
+      carTopSpeed: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.topSpeed
+        : car.carSku?.carModel?.topSpeed || '-',
+      carFastChargeTime: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.fastChargeTime
+        : car.carSku?.carModel?.fastChargeTime || '-',
+      plateNumber: carActivity ? carActivity?.carDetail?.plateNumber : car.plateNumber,
+      vin: carActivity ? carActivity?.carDetail?.vin : car.vin,
+      price: rentDetail.chargePrice,
+      duration: convertToDuration(rentDetail.durationDay, t),
+      startDate,
+      endDate,
+      deliveryAddress: carActivity?.deliveryTask?.fullAddress || '-',
+      deliveryDate: dateFormat(carActivity?.deliveryTask?.date),
+      returnAddress: carActivity?.returnTask?.fullAddress || '-',
+      returnDate: dateFormat(carActivity?.returnTask?.date),
+      status: displayStatus || '-',
+      replacement: carActivity ? 'Y' : 'N',
+      parentId: bookingId,
+      isExtend: Boolean(isExtend),
+      paymentStatus: firstCapitalize(payments[0]?.status) || '-',
+      paymentFailureMessage: payments[0]?.statusMessage || '-',
+      paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || '-',
+      voucherId: rentDetail.voucherId || '-',
+      voucherCode: rentDetail.voucherCode || '-',
+      createdDate: dateFormat(rentDetail.createdDate),
+      updatedDate: dateFormat(rentDetail.updatedDate),
+      isSelfPickUp: isSelfPickUp ? 'Y' : 'N',
+    })
+    if (carActivities.length >= 1) {
+      carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
+    }
+    csvData.push(makeData())
+  })
 
   useEffect(() => {
     refetch()
