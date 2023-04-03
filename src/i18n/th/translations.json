@@ -16,6 +16,10 @@
     "selectedFromDate": "วันที่เริ่มต้น",
     "selectedToDate": "วันที่สิ้นสุด",
     "search": "เลือกเพื่อค้นหา",
+    "searchLocation": "สถานที่บริการ",
+    "locationList": {
+      "all": "ทุกสถานที่"
+    },
     "searchBtn": "ค้นหา",
     "searchField": {
       "label": "ค้นหา",
@@ -29,6 +33,7 @@
     "inUse": "ใช้งานอยู่"
   },
   "carAvailabilityDetail": {
+    "location": "สถานที่บริการ",
     "carId": "เลขไอดีรถ",
     "carStatus": "สถานะการใช้รถ",
     "carTrackId": "Cartrack ไอดี",
@@ -39,7 +44,9 @@
     "color": "สี",
     "createdDate": "วันที่สร้าง",
     "updatedDate": "วันที่แก้ไข",
-    "bookingId": "บุ๊คกิ้งไอดี"
+    "bookingId": "บุ๊คกิ้งไอดี",
+    "owner": "ผู้ถือกรรมสิทธิ์",
+    "reSeller": "ตัวแทนจำหน่าย"
   },
   "sidebar": {
     "pages": "หน้าต่างๆ",

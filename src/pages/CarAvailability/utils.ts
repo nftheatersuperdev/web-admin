@@ -12,10 +12,7 @@ export const CarStatus = {
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
-  firstName: true,
-  lastName: true,
-  email: true,
-  phoneNumber: true,
+  location: true,
   brand: true,
   model: true,
   price: true,
@@ -79,12 +76,21 @@ export const getSearchTypeList = (t: TFunction<Namespace>): SelectOption[] => {
     {
       key: 'id',
       value: 'id',
-      label: t('car.id'),
+      label: t('carAvailabilityDetail.carId'),
     },
     {
       key: 'plateNumber',
       value: 'plateNumber',
-      label: t('car.plateNumber'),
+      label: t('carAvailabilityDetail.plateNumber'),
+    },
+  ]
+}
+export const getSearcLocationList = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    {
+      key: 'all location',
+      value: 'all location',
+      label: t('carAvailability.locationList.all'),
     },
   ]
 }
