@@ -273,7 +273,8 @@
       "status": "สถานะ KYC",
       "pending": "รอการตรวจสอบ",
       "verified": "ผ่านการตรวจสอบ",
-      "rejected": "ถูกปฏิเสธ"
+      "rejected": "ถูกปฏิเสธ",
+      "rejectReason": "เหตุผลของการปฏิเสธ"
     },
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",

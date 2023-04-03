@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import { makeStyles } from '@mui/styles'
 import { formatDate } from 'utils'
 import Pagination from '@material-ui/lab/Pagination'
-// import { CSVLink } from 'react-csv'
+import { CSVLink } from 'react-csv'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
 import NoResultCard from 'components/NoResultCard'
@@ -54,6 +54,7 @@ const useStyles = makeStyles({
     backgroundColor: '#424E63',
   },
   noUnderLine: {
+    color: 'white',
     textDecoration: 'none',
   },
   table: {
@@ -117,10 +118,43 @@ export default function CustomerProfile(): JSX.Element {
   const { data: userResponse, refetch } = useQuery('customer-list', () =>
     searchCustomer({ data: userFilter, page, size: pageSize } as CustomerMeProps)
   )
+  const csvHeaders = [
+    { label: t('user.id'), key: 'id' },
+    { label: t('user.firstName'), key: 'firstName' },
+    { label: t('user.lastName'), key: 'lastName' },
+    { label: t('user.email'), key: 'email' },
+    { label: t('user.phone'), key: 'phone' },
+    { label: t('user.status'), key: 'status' },
+    { label: t('user.kyc.status'), key: 'kycStatus' },
+    { label: t('user.kyc.rejectReason'), key: 'kycReason' },
+    { label: t('user.userGroups'), key: 'userGroup' },
+    { label: t('user.createdDate'), key: 'createdDate' },
+    { label: t('user.updatedDate'), key: 'updatedDate' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = []
   const userData =
     (userResponse &&
       userResponse.data?.customers.length > 0 &&
       userResponse.data.customers.map((user) => {
+        // Build CSV Data
+        const acctStatus = user.isActive ? 'Enable' : 'Disable'
+        const makeCsvData = () => ({
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phoneNumber,
+          status: acctStatus,
+          kycStatus: user.kycStatus,
+          //   verifyDate: formatDate(), // TO DO check api response
+          kycReason: user.kycReason,
+          userGroup: user.customerGroups,
+          createdDate: formatDate(user.createdDate),
+          updatedDate: formatDate(user.updatedDate),
+        })
+        csvData.push(makeCsvData())
+        // Build Table Body
         return (
           <TableRow
             hover
@@ -202,14 +236,14 @@ export default function CustomerProfile(): JSX.Element {
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={4} />
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={2}>
             <Button className={classes.addButton} color="primary" variant="contained">
-              {/* <CSVLink
+              <CSVLink
                 data={csvData}
                 headers={csvHeaders}
                 filename="EVme Admin Dashboard.csv"
                 className={classes.noUnderLine}
-              > */}
-              {t('button.export')}
-              {/* </CSVLink> */}
+              >
+                {t('button.export')}
+              </CSVLink>
             </Button>
           </Grid>
         </Grid>
