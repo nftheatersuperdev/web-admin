@@ -253,18 +253,6 @@ export default function CarReplacementDialog({
     }))
   }
 
-  const handleDeliveryAddressFullChanged = (
-    e: React.ChangeEvent<{ name?: string; value: string }>
-  ) => {
-    setCarReplacementState((prevState) => ({
-      ...prevState,
-      deliveryAddress: {
-        ...prevState.deliveryAddress,
-        full: e.target.value,
-      },
-    }))
-  }
-
   const handleDeliveryAddressRemarkChanged = (
     e: React.ChangeEvent<{ name?: string; value: string | undefined }>
   ) => {
@@ -470,7 +458,9 @@ export default function CarReplacementDialog({
                 value={carReplacementState.deliveryAddress.full}
                 multiline
                 minRows={3}
-                onChange={handleDeliveryAddressFullChanged}
+                InputProps={{
+                  readOnly: true,
+                }}
               />
               <TextField
                 id="car_replacement__deliveryAddressRemark"
