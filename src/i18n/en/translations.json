@@ -1032,5 +1032,14 @@
     "history": {
       "label": "Car Activity History"
     }
+  },
+  "subscriptionPackageManagement": {
+    "header": "Package Management",
+    "table": {
+      "header": "Package",
+      "selectSearch": "Select Search",
+      "enterSearch": "Enter Search",
+      "createButton": "Create"
+    }
   }
 }

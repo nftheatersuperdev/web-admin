@@ -41,6 +41,7 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILES: '/staff-profiles',
   STAFF_PROFILE_DETAIL: '/staff-profile/:id/edit',
   STAFF_PROFILE_ADD: '/staff-profile/create',
+  SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -304,6 +305,13 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.STAFF_PROFILE_ADD,
     component: lazy(() => import('./pages/StaffProfileAdd' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_MANAGEMENT,
+    component: lazy(
+      () => import('./pages/SubscriptionPackageManagement' /* webpackChunkName: "app" */)
+    ),
+    allowedRoles: [ROLES.SUPER_ADMIN],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,
