@@ -1,18 +1,14 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Card, IconButton } from '@material-ui/core'
+import { Card } from '@material-ui/core'
 import {
   GridColDef,
-  GridRowData,
-  GridCellParams,
   GridPageChangeParams,
   GridFilterModel,
   GridFilterItem,
   GridSortModel,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
-import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
-import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import {
   columnFormatDate,
@@ -25,9 +21,8 @@ import config from 'config'
 import { SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
-import { getList, updateById } from 'services/web-bff/car'
-import { CarListFilterRequest, CarUpdateInput } from 'services/web-bff/car.type'
-import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
+import { getList } from 'services/web-bff/car'
+import { CarListFilterRequest } from 'services/web-bff/car.type'
 import {
   getCarStatusOnlyUsedInBackendOptions,
   columnFormatCarStatus,
@@ -41,9 +36,6 @@ export default function Car(): JSX.Element {
   const { t } = useTranslation()
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
-  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
-  const [selectedCarId, setSelectedCarId] = useState<string>('')
-  const [carInfo, setCarInfo] = useState({} as CarInfo)
   const [sort, setSort] = useState<SubOrder>({})
   const [filter, setFilter] = useState<CarListFilterRequest>()
 
@@ -131,42 +123,6 @@ export default function Car(): JSX.Element {
 
       setSort(order)
     }
-  }
-
-  const onCloseEditDialog = async (data: CarUpdateInput | null) => {
-    setIsUpdateDialogOpen(false)
-    if (!data) {
-      return
-    }
-
-    await toast.promise(
-      updateById({
-        id: selectedCarId,
-        vin: data.vin,
-        plateNumber: data.plateNumber,
-        isActive: data.status === CarStatus.PUBLISHED,
-      }),
-      {
-        loading: t('toast.loading'),
-        success: t('car.updateDialog.success'),
-        error: t('car.updateDialog.error'),
-      }
-    )
-
-    refetch()
-  }
-
-  const openEditCarDialog = (param: GridRowData) => {
-    setSelectedCarId(param.id)
-    const { vin, plateNumber, color, status } = param.row
-
-    setCarInfo({
-      vin,
-      plateNumber,
-      color,
-      status,
-    })
-    setIsUpdateDialogOpen(true)
   }
 
   const rowCount = carData?.data?.pagination?.totalRecords ?? 0
@@ -361,29 +317,6 @@ export default function Car(): JSX.Element {
       filterable: true,
       sortable: false,
     },
-    {
-      field: 'actions',
-      headerName: t('car.actions'),
-      description: t('car.actions'),
-      sortable: false,
-      filterable: false,
-      width: 140,
-      renderCell: (params: GridCellParams) => (
-        <Fragment>
-          <IconButton
-            aria-label="edit"
-            onClick={() => {
-              openEditCarDialog(params)
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton aria-label="delete" disabled>
-            <DeleteIcon />
-          </IconButton>
-        </Fragment>
-      ),
-    },
   ]
 
   return (
@@ -409,12 +342,6 @@ export default function Car(): JSX.Element {
           loading={isFetching}
         />
       </Card>
-
-      <CarUpdateDialog
-        open={isUpdateDialogOpen}
-        onClose={(data) => onCloseEditDialog(data)}
-        carInfo={carInfo}
-      />
     </Page>
   )
 }
