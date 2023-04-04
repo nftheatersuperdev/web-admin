@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
 import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT } from 'utils'
+import { ROUTE_PATHS } from 'routes'
 import {
   convertToDuration,
   columnFormatSubEventStatus,
@@ -67,15 +68,15 @@ export default function SubscriptionDetail(): JSX.Element {
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.dashboard'),
-      link: '/',
+      link: ROUTE_PATHS.ROOT,
     },
     {
       text: t('sidebar.subscriptions'),
-      link: '/subscription',
+      link: ROUTE_PATHS.SUBSCRIPTION,
     },
     {
       text: t('sidebar.subscriptionDetail'),
-      link: `/subscription/${bookingDetailId}`,
+      link: ROUTE_PATHS.SUBSCRIPTION_DETAIL.replace(':id', bookingDetailId),
     },
   ]
 

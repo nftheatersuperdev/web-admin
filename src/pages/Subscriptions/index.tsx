@@ -30,6 +30,7 @@ import {
 import { Link, useLocation, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
+import { ROUTE_PATHS } from 'routes'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getList } from 'services/web-bff/subscription'
 import PageToolbar from 'layout/PageToolbar'
@@ -647,11 +648,11 @@ export default function Subscription(): JSX.Element {
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.dashboard'),
-      link: '/',
+      link: ROUTE_PATHS.ROOT,
     },
     {
       text: t('sidebar.subscriptions'),
-      link: '/subscription',
+      link: ROUTE_PATHS.SUBSCRIPTION,
     },
   ]
 
