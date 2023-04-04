@@ -23,6 +23,7 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import { getList } from 'services/web-bff/car'
 import { CarListFilterRequest } from 'services/web-bff/car.type'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import {
   getCarStatusOnlyUsedInBackendOptions,
   columnFormatCarStatus,
@@ -34,6 +35,16 @@ import {
 
 export default function Car(): JSX.Element {
   const { t } = useTranslation()
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.carManagement.title'),
+      link: '',
+    },
+    {
+      text: t('sidebar.carManagement.car'),
+      link: '/car',
+    },
+  ]
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
   const [sort, setSort] = useState<SubOrder>({})
@@ -321,6 +332,7 @@ export default function Car(): JSX.Element {
 
   return (
     <Page>
+      <PageTitle title="Car Management" breadcrumbs={breadcrumbs} />
       <Card>
         <DataGridLocale
           autoHeight
