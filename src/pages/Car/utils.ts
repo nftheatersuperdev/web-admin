@@ -1,7 +1,7 @@
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
 
-interface SelectOption {
+export interface SelectOption {
   label: string
   value: string
 }

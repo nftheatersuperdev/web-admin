@@ -1,6 +1,8 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Card } from '@material-ui/core'
+import { Card, Grid, Typography, TextField, Autocomplete, Button } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import {
   GridColDef,
   GridPageChangeParams,
@@ -10,6 +12,7 @@ import {
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
 import { useTranslation } from 'react-i18next'
+import { CSVLink } from 'react-csv'
 import {
   columnFormatDate,
   getSelectEqualFilterOperators,
@@ -31,9 +34,67 @@ import {
   setVisibilityColumns,
   VisibilityColumns,
   CarStatus,
+  SelectOption,
 } from './utils'
 
+const useStyles = makeStyles(() => ({
+  typo: {
+    marginBottom: '0px',
+  },
+  gridTitle: {
+    padding: '20px',
+    paddingBottom: 0,
+  },
+  gridSearch: {
+    padding: '20px',
+  },
+  gridExport: {
+    textAlign: 'right',
+  },
+  exportButton: {
+    background: '#333c4d',
+    color: '#fff',
+    height: '56px',
+  },
+  table: {
+    border: 0,
+  },
+  pagination: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '20px',
+  },
+  paginationForm: {
+    display: 'inline-flex',
+  },
+  chipBgGreen: {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    height: '24px',
+  },
+  chipBgPrimary: {
+    backgroundColor: '#4584FF',
+    color: 'white',
+    height: '24px',
+  },
+  wrapText: {
+    lineHeight: '1.5em',
+    height: '3em',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    width: '100%',
+  },
+  csvlink: {
+    color: '#fff',
+    textDecoration: 'none',
+  },
+}))
+
 export default function Car(): JSX.Element {
+  const classes = useStyles()
   const { t } = useTranslation()
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -45,10 +106,6 @@ export default function Car(): JSX.Element {
       link: '/car',
     },
   ]
-  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [page, setPage] = useState(0)
-  const [sort, setSort] = useState<SubOrder>({})
-  const [filter, setFilter] = useState<CarListFilterRequest>()
 
   const {
     data: carData,
@@ -62,6 +119,73 @@ export default function Car(): JSX.Element {
       size: pageSize,
     })
   )
+
+  // search
+  const searchOptions: SelectOption[] = [
+    {
+      label: t('car.color'),
+      value: 'colorContain',
+    },
+    {
+      label: t('car.vin'),
+      value: 'vinContain',
+    },
+    {
+      label: t('car.plateNumber'),
+      value: 'plateNumberContain',
+    },
+    {
+      label: t('car.status'),
+      value: 'statusEqual',
+    },
+  ]
+  const [searchValue, setSearchValue] = useState<string>()
+  const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
+  const [selectedStatus, setSelectedStatus] = useState<SelectOption | null>()
+  const defaultSelect = {
+    label: t('all'),
+    value: 'all',
+  }
+  // eslint-disable-next-line
+  const onSearchChange = (event: any, value?: string) => {
+    const { value: eventVal } = event.target
+    const searchText = value ? value : eventVal
+    setSearchValue(searchText)
+  }
+
+  // export
+  const csvHeaders = [
+    { label: t('car.carTrackId'), key: 'carTrackId' },
+    { label: t('car.brand'), key: 'brand' },
+    { label: t('car.model'), key: 'model' },
+    { label: t('car.color'), key: 'color' },
+    { label: t('car.plateNumber'), key: 'plateNumber' },
+    { label: t('car.vin'), key: 'vin' },
+    { label: t('car.status'), key: 'status' },
+    { label: t('car.createdDate'), key: 'createdDate' },
+    { label: t('car.updatedDate'), key: 'updatedDate' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = []
+  carData?.data.cars.forEach((car) => {
+    const data = {
+      carTrackId: car.carTrackId,
+      brand: car.carSku.carModel.brand.name,
+      model: car.carSku.carModel.name,
+      color: car.carSku.color,
+      plateNumber: car.plateNumber,
+      vin: car.vin,
+      status: car.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
+      createdDate: car.createdDate,
+      updatedDate: car.updatedDate,
+    }
+    csvData.push(data)
+  })
+
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [page, setPage] = useState(0)
+  const [sort, setSort] = useState<SubOrder>({})
+  const [filter, setFilter] = useState<CarListFilterRequest>()
 
   const equalAndContainOperators = getEqualAndContainFilterOperators(t)
   const selectFilterOperators = getSelectEqualFilterOperators(t)
@@ -334,6 +458,87 @@ export default function Car(): JSX.Element {
     <Page>
       <PageTitle title="Car Management" breadcrumbs={breadcrumbs} />
       <Card>
+        <Grid className={classes.gridTitle}>
+          <Typography variant="h6" className={classes.typo}>
+            <strong>Car List</strong>
+          </Typography>
+        </Grid>
+        <Grid className={classes.gridSearch} container spacing={3}>
+          <Grid item xs={9} sm={3}>
+            <Autocomplete
+              autoHighlight
+              id="search-select-list"
+              options={searchOptions}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => {
+                return (
+                  <TextField
+                    {...params}
+                    label="Select Search"
+                    variant="outlined"
+                    placeholder={t('all')}
+                  />
+                )
+              }}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value || value.value === 'all'
+              }
+              value={selectedSearch || defaultSelect}
+              defaultValue={selectedSearch || defaultSelect}
+              onChange={(_e, value) => {
+                setSelectedSearch(value)
+                setSearchValue('')
+              }}
+            />
+          </Grid>
+          <Grid item xs={9} sm={3}>
+            {selectedSearch?.value === 'statusEqual' ? (
+              <Autocomplete
+                autoHighlight
+                id="status-select-list"
+                options={statusOptions}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => {
+                  return <TextField {...params} label="Select Status" variant="outlined" />
+                }}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value || value.value === ''
+                }
+                value={selectedStatus || null}
+                onChange={(event, item) => {
+                  setSelectedStatus(item)
+                  onSearchChange(event, item?.value)
+                }}
+              />
+            ) : (
+              <TextField
+                type="text"
+                label="Search"
+                variant="outlined"
+                fullWidth
+                value={searchValue || ''}
+                onChange={onSearchChange}
+                disabled={
+                  !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
+                }
+              />
+            )}
+          </Grid>
+          <Grid item xs={9} sm={3} />
+          <Grid item xs={9} sm={3} className={classes.gridExport}>
+            <Button variant="contained" className={classes.exportButton} size="large">
+              <CSVLink
+                data={csvData}
+                headers={csvHeaders}
+                filename={t('sidebar.carManagement.car') + '.csv'}
+                className={classes.csvlink}
+              >
+                {t('button.export')}
+              </CSVLink>
+            </Button>
+          </Grid>
+        </Grid>
+
         <DataGridLocale
           autoHeight
           pagination
