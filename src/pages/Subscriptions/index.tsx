@@ -218,12 +218,14 @@ export default function Subscription(): JSX.Element {
       isExtend,
       isSelfPickUp,
     } = booking
-    const trueValue = 'Y'
-    const falseValue = 'N'
-    const noDataValue = '-'
+    const defaultValue = {
+      true: 'Y',
+      false: 'N',
+      noData: '-',
+    }
     const dateFormat = (date?: string) => {
       if (!date) {
-        return noDataValue
+        return defaultValue.noData
       }
       return dayjs(date).format(DEFAULT_DATETIME_FORMAT)
     }
@@ -237,41 +239,41 @@ export default function Subscription(): JSX.Element {
       carId: carActivity ? carActivity?.carDetail?.id : car.id,
       carBrand: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.brand.name
-        : car.carSku?.carModel?.brand.name || noDataValue,
+        : car.carSku?.carModel?.brand.name || defaultValue.noData,
       carModel: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.name
-        : car.carSku?.carModel?.name || noDataValue,
+        : car.carSku?.carModel?.name || defaultValue.noData,
       carSeats: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.seats
-        : car.carSku?.carModel?.seats || noDataValue,
+        : car.carSku?.carModel?.seats || defaultValue.noData,
       carTopSpeed: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.topSpeed
-        : car.carSku?.carModel?.topSpeed || noDataValue,
+        : car.carSku?.carModel?.topSpeed || defaultValue.noData,
       carFastChargeTime: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.fastChargeTime
-        : car.carSku?.carModel?.fastChargeTime || noDataValue,
+        : car.carSku?.carModel?.fastChargeTime || defaultValue.noData,
       plateNumber: carActivity ? carActivity?.carDetail?.plateNumber : car.plateNumber,
       vin: carActivity ? carActivity?.carDetail?.vin : car.vin,
       price: rentDetail.chargePrice,
       duration: convertToDuration(rentDetail.durationDay, t),
       startDate,
       endDate,
-      deliveryAddress: carActivity?.deliveryTask?.fullAddress || noDataValue,
+      deliveryAddress: carActivity?.deliveryTask?.fullAddress || defaultValue.noData,
       deliveryDate: dateFormat(carActivity?.deliveryTask?.date),
-      returnAddress: carActivity?.returnTask?.fullAddress || noDataValue,
+      returnAddress: carActivity?.returnTask?.fullAddress || defaultValue.noData,
       returnDate: dateFormat(carActivity?.returnTask?.date),
-      status: displayStatus || noDataValue,
-      replacement: carActivity ? trueValue : falseValue,
+      status: displayStatus || defaultValue.noData,
+      replacement: carActivity ? defaultValue.true : defaultValue.false,
       parentId: bookingId,
       isExtend: Boolean(isExtend),
-      paymentStatus: firstCapitalize(payments[0]?.status) || noDataValue,
-      paymentFailureMessage: payments[0]?.statusMessage || noDataValue,
-      paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || noDataValue,
-      voucherId: rentDetail.voucherId || noDataValue,
-      voucherCode: rentDetail.voucherCode || noDataValue,
+      paymentStatus: firstCapitalize(payments[0]?.status) || defaultValue.noData,
+      paymentFailureMessage: payments[0]?.statusMessage || defaultValue.noData,
+      paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || defaultValue.noData,
+      voucherId: rentDetail.voucherId || defaultValue.noData,
+      voucherCode: rentDetail.voucherCode || defaultValue.noData,
       createdDate: dateFormat(rentDetail.createdDate),
       updatedDate: dateFormat(rentDetail.updatedDate),
-      isSelfPickUp: isSelfPickUp ? trueValue : falseValue,
+      isSelfPickUp: isSelfPickUp ? defaultValue.true : defaultValue.false,
     })
     if (carActivities.length >= 1) {
       carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
