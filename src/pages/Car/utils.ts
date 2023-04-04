@@ -123,3 +123,17 @@ export const getVisibilityColumns = (): VisibilityColumns => {
 export const setVisibilityColumns = (columns: VisibilityColumns): void => {
   ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
 }
+
+export interface CarList {
+  id: string
+  carTrackId: string
+  brand: string
+  model: string
+  color: string
+  plateNumber: string
+  vin: string
+  status: string
+  createdDate: string
+  updatedDate: string
+  [key: string]: string
+}

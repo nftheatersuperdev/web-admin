@@ -343,7 +343,13 @@
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"
     },
-    "subscriptionId": "Booking ID"
+    "subscriptionId": "Booking ID",
+    "carList": "Car List",
+    "selectSearch": "Select Search",
+    "search": "Search",
+    "selectStatus": "Select Status",
+    "noData": "No Data Found",
+    "of": "of"
   },
   "pricing": {
     "id": "ID",

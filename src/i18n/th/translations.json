@@ -342,7 +342,13 @@
       "upcomingCancelled": "กำลังถูกยกเลิก",
       "unknown": "ไม่ทราบ"
     },
-    "subscriptionId": "หมายเลขการจอง"
+    "subscriptionId": "หมายเลขการจอง",
+    "carList": "รายการรถยนต์",
+    "selectSearch": "เลือกเพื่อค้นหา",
+    "search": "ค้นหา",
+    "selectStatus": "เลือกสถานะ",
+    "noData": "ไม่มีข้อมูล",
+    "of": "จาก"
   },
   "pricing": {
     "id": "เลขไอดี",
