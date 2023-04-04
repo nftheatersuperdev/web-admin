@@ -218,9 +218,12 @@ export default function Subscription(): JSX.Element {
       isExtend,
       isSelfPickUp,
     } = booking
+    const trueValue = 'Y'
+    const falseValue = 'N'
+    const noDataValue = '-'
     const dateFormat = (date?: string) => {
       if (!date) {
-        return '-'
+        return noDataValue
       }
       return dayjs(date).format(DEFAULT_DATETIME_FORMAT)
     }
@@ -234,41 +237,41 @@ export default function Subscription(): JSX.Element {
       carId: carActivity ? carActivity?.carDetail?.id : car.id,
       carBrand: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.brand.name
-        : car.carSku?.carModel?.brand.name || '-',
+        : car.carSku?.carModel?.brand.name || noDataValue,
       carModel: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.name
-        : car.carSku?.carModel?.name || '-',
+        : car.carSku?.carModel?.name || noDataValue,
       carSeats: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.seats
-        : car.carSku?.carModel?.seats || '-',
+        : car.carSku?.carModel?.seats || noDataValue,
       carTopSpeed: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.topSpeed
-        : car.carSku?.carModel?.topSpeed || '-',
+        : car.carSku?.carModel?.topSpeed || noDataValue,
       carFastChargeTime: carActivity
         ? carActivity?.carDetail?.carSku?.carModel?.fastChargeTime
-        : car.carSku?.carModel?.fastChargeTime || '-',
+        : car.carSku?.carModel?.fastChargeTime || noDataValue,
       plateNumber: carActivity ? carActivity?.carDetail?.plateNumber : car.plateNumber,
       vin: carActivity ? carActivity?.carDetail?.vin : car.vin,
       price: rentDetail.chargePrice,
       duration: convertToDuration(rentDetail.durationDay, t),
       startDate,
       endDate,
-      deliveryAddress: carActivity?.deliveryTask?.fullAddress || '-',
+      deliveryAddress: carActivity?.deliveryTask?.fullAddress || noDataValue,
       deliveryDate: dateFormat(carActivity?.deliveryTask?.date),
-      returnAddress: carActivity?.returnTask?.fullAddress || '-',
+      returnAddress: carActivity?.returnTask?.fullAddress || noDataValue,
       returnDate: dateFormat(carActivity?.returnTask?.date),
-      status: displayStatus || '-',
-      replacement: carActivity ? 'Y' : 'N',
+      status: displayStatus || noDataValue,
+      replacement: carActivity ? trueValue : falseValue,
       parentId: bookingId,
       isExtend: Boolean(isExtend),
-      paymentStatus: firstCapitalize(payments[0]?.status) || '-',
-      paymentFailureMessage: payments[0]?.statusMessage || '-',
-      paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || '-',
-      voucherId: rentDetail.voucherId || '-',
-      voucherCode: rentDetail.voucherCode || '-',
+      paymentStatus: firstCapitalize(payments[0]?.status) || noDataValue,
+      paymentFailureMessage: payments[0]?.statusMessage || noDataValue,
+      paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || noDataValue,
+      voucherId: rentDetail.voucherId || noDataValue,
+      voucherCode: rentDetail.voucherCode || noDataValue,
       createdDate: dateFormat(rentDetail.createdDate),
       updatedDate: dateFormat(rentDetail.updatedDate),
-      isSelfPickUp: isSelfPickUp ? 'Y' : 'N',
+      isSelfPickUp: isSelfPickUp ? trueValue : falseValue,
     })
     if (carActivities.length >= 1) {
       carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
