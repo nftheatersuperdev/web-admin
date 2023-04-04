@@ -185,9 +185,7 @@ export default function Subscription(): JSX.Element {
     { label: t('subscription.startDate'), key: 'startDate' },
     { label: t('subscription.endDate'), key: 'endDate' },
     { label: t('booking.carReplacement.deliveryAddress'), key: 'deliveryAddress' },
-    { label: t('subscription.deliveryDate'), key: 'deliveryDate' },
     { label: t('booking.carReplacement.returnAddress'), key: 'returnAddress' },
-    { label: t('subscription.returnDate'), key: 'returnDate' },
     { label: t('subscription.status.title'), key: 'status' },
     { label: t('subscription.parentId'), key: 'parentId' },
     { label: t('subscription.isExtendedSubscription'), key: 'isExtend' },
@@ -198,6 +196,8 @@ export default function Subscription(): JSX.Element {
     { label: t('subscription.payment.status'), key: 'paymentStatus' },
     { label: t('subscription.payment.failureMessage'), key: 'paymentFailureMessage' },
     { label: t('subscription.payment.updatedDate'), key: 'paymentUpdatedDate' },
+    { label: t('subscription.deliveryDate'), key: 'deliveryDate' },
+    { label: t('subscription.returnDate'), key: 'returnDate' },
     { label: t('subscription.isReplacement'), key: 'replacement' },
     { label: t('subscription.isSelfPickup'), key: 'isSelfPickUp' },
   ]
