@@ -52,6 +52,7 @@
     "carManagement": {
       "title": "การจัดการรถยนต์",
       "car": "รถยนต์",
+      "carDetail": "รายละเอียดรถยนต์",
       "carAvailability": "สถานะการใช้รถ",
       "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
       "carActivity": "การใช้งานรถ",
@@ -305,6 +306,10 @@
     "chargeTime": "ระยะเวลาชาร์จปกติ",
     "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
     "vin": "หมายเลขตัวถัง",
+    "seats": "จำนวนที่นั่ง",
+    "condition": "เงื่อนไข",
+    "horsePower": "แรงม้า",
+    "year": "ปี",
     "actions": "ดำเนินการ",
     "createdDate": "วันที่สร้าง",
     "updatedDate": "วันที่แก้ไข",
