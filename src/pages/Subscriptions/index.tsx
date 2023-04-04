@@ -198,7 +198,7 @@ export default function Subscription(): JSX.Element {
     { label: t('subscription.payment.status'), key: 'paymentStatus' },
     { label: t('subscription.payment.failureMessage'), key: 'paymentFailureMessage' },
     { label: t('subscription.payment.updatedDate'), key: 'paymentUpdatedDate' },
-    { label: t('subscription.replacement'), key: 'replacement' },
+    { label: t('subscription.isReplacement'), key: 'replacement' },
     { label: t('subscription.isSelfPickup'), key: 'isSelfPickUp' },
   ]
   const csvData: any = []
@@ -485,8 +485,8 @@ export default function Subscription(): JSX.Element {
     },
     {
       field: 'replacement',
-      headerName: 'Replacement',
-      description: 'Replacement',
+      headerName: t('subscription.replacement'),
+      description: t('subscription.replacement'),
       flex: 1,
       hide: !visibilityColumns.replacement,
       sortable: false,

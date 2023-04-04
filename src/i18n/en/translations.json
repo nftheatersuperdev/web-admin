@@ -424,6 +424,7 @@
     },
     "clearFilterId": "Clear filter by ID",
     "downloadCSV": "Download CSV",
+    "isReplacement": "isReplacement",
     "isSelfPickup": "IsSelfPickup"
   },
   "booking": {

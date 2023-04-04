@@ -423,6 +423,7 @@
     },
     "clearFilterId": "ลบกรองข้อมูลด้วยไอดี",
     "downloadCSV": "ดาวน์โหลด CSV",
+    "isReplacement": "รถทดแทน",
     "isSelfPickup": "รับรถด้วยตนเอง"
   },
   "booking": {
@@ -474,7 +475,6 @@
       }
     }
   },
-
   "additionalExpense": {
     "id": "เลขไอดี",
     "subscriptionId": "หมายเลขการจอง",
