@@ -111,6 +111,12 @@ export default function Subscription(): JSX.Element {
     refetchOnWindowFocus: false,
   })
 
+  const defaultValue = {
+    true: 'Y',
+    false: 'N',
+    noData: '-',
+  }
+
   const rowCount = response?.data?.pagination?.totalRecords || 0
   const rows =
     response?.data.bookingDetails && response?.data.bookingDetails.length > 0
@@ -121,7 +127,7 @@ export default function Subscription(): JSX.Element {
               : '-'
           const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
 
-          const replacement = subscription.carActivities.length >= 1 ? 'Y' : 'N'
+          const replacement = subscription.isReplacement ? defaultValue.true : defaultValue.false
 
           return (
             {
@@ -198,7 +204,7 @@ export default function Subscription(): JSX.Element {
     { label: t('subscription.payment.updatedDate'), key: 'paymentUpdatedDate' },
     { label: t('subscription.deliveryDate'), key: 'deliveryDate' },
     { label: t('subscription.returnDate'), key: 'returnDate' },
-    { label: t('subscription.isReplacement'), key: 'replacement' },
+    { label: t('subscription.isReplacement'), key: 'isReplacement' },
     { label: t('subscription.isSelfPickup'), key: 'isSelfPickUp' },
   ]
   const csvData: any = []
@@ -216,13 +222,9 @@ export default function Subscription(): JSX.Element {
       carActivities,
       payments,
       isExtend,
+      isReplacement,
       isSelfPickUp,
     } = booking
-    const defaultValue = {
-      true: 'Y',
-      false: 'N',
-      noData: '-',
-    }
     const dateFormat = (date?: string) => {
       if (!date) {
         return defaultValue.noData
@@ -263,7 +265,7 @@ export default function Subscription(): JSX.Element {
       returnAddress: carActivity?.returnTask?.fullAddress || defaultValue.noData,
       returnDate: dateFormat(carActivity?.returnTask?.date),
       status: displayStatus || defaultValue.noData,
-      replacement: carActivity ? defaultValue.true : defaultValue.false,
+      isReplacement: isReplacement ? defaultValue.true : defaultValue.false,
       parentId: bookingId,
       isExtend: Boolean(isExtend),
       paymentStatus: firstCapitalize(payments[0]?.status) || defaultValue.noData,
