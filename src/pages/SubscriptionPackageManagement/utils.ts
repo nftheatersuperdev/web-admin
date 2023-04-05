@@ -1,9 +1,4 @@
 import { TFunction, Namespace } from 'react-i18next'
-import ls from 'localstorage-slim'
-
-const STORAGE_KEYS = {
-  VISIBILITY_COLUMNS: 'evme:car:visibility_columns',
-}
 
 export enum ActivityServices {
   Subscription = 'subscription',
@@ -113,12 +108,5 @@ export interface VisibilityColumns {
 }
 
 export const getVisibilityColumns = (): VisibilityColumns => {
-  return (
-    ls.get<VisibilityColumns | undefined>(STORAGE_KEYS.VISIBILITY_COLUMNS) ||
-    defaultVisibilityColumns
-  )
-}
-
-export const setVisibilityColumns = (columns: VisibilityColumns): void => {
-  ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
+  return defaultVisibilityColumns
 }

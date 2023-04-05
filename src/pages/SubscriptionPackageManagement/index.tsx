@@ -28,7 +28,7 @@ import Backdrop from 'components/Backdrop'
 import { Page } from 'layout/LayoutRoute'
 import { getActivities } from 'services/web-bff/car-activity'
 import DataGridLocale from './SubscriptionPackageGrid'
-import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import { getVisibilityColumns } from './utils'
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
   margin: 10px 0 20px 0;
@@ -116,7 +116,6 @@ const useQueryString = () => {
 export default function SubscriptionPackageManagement(): JSX.Element {
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
-  const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const classes = useStyles()
   const qs = {
@@ -170,7 +169,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
       field: 'brandName',
       headerName: t('carActivity.brand.label'),
       description: t('carActivity.brand.label'),
-      hide: !visibilityColumns.brandName,
+      hide: false,
       flex: 1,
       sortable: false,
     },
@@ -200,25 +199,6 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     },
   ]
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const onColumnVisibilityChange = (params: any) => {
-    if (params.field === '__check__') {
-      return
-    }
-
-    const visibilityColumns = params.api.current
-      .getAllColumns()
-      .filter(({ field }: { field: string }) => field !== '__check__')
-      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
-        columns[column.field] = !column.hide
-        return columns
-      }, {})
-
-    visibilityColumns[params.field] = params.isVisible
-
-    setVisibilityColumns(visibilityColumns)
-  }
-
   const DividerCustom = styled(Divider)`
     margin-bottom: 25px;
   `
@@ -235,20 +215,19 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     if (carActivitiesData?.pagination) {
       setPage(carActivitiesData.pagination.page)
       setPageSize(carActivitiesData.pagination.size)
-      setPages(carActivitiesData.pagination.totalPage)
     }
 
     if (isFetchedActivities) {
-      console.error(`Unable to mutation useCreateUserGroup, ${isFetchedActivities}`)
+      console.error(`Unable to mutation useCreateUserGroup, ${pageSize}`)
     }
-  }, [carActivitiesData?.pagination, isFetchedActivities])
+  }, [carActivitiesData?.pagination, isFetchedActivities, pageSize])
 
   /**
    * Managing the pagination variables that will send to the API.
    */
   useEffect(() => {
     refetch()
-  }, [pages, page, pageSize, refetch])
+  }, [page, pageSize, refetch])
 
   const handlePageSizeChange = (params: GridPageChangeParams) => {
     setPageSize(params.pageSize)
@@ -314,7 +293,6 @@ export default function SubscriptionPackageManagement(): JSX.Element {
         <TableWrapper>
           <DataGridLocale
             autoHeight
-            pagination
             pageSize={pageSize}
             page={page - 1}
             rowCount={rowCount}
@@ -323,9 +301,9 @@ export default function SubscriptionPackageManagement(): JSX.Element {
             onPageChange={setPage}
             rows={rows}
             columns={columns}
-            onColumnVisibilityChange={onColumnVisibilityChange}
             sortingMode="server"
             hideFooter
+            disableColumnMenu
           />
           <div className={classes.paginationContrainer}>
             Rows per page:&nbsp;
@@ -334,7 +312,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
                 value={pageSize}
                 defaultValue={page}
                 onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-                  setPage(0)
+                  setPage(1)
                   setPageSize(event.target.value as number)
                 }}
               >
@@ -348,7 +326,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
               </Select>
             </FormControl>
             <Pagination
-              count={carActivitiesData?.pagination?.totalPage || pages}
+              count={carActivitiesData?.pagination?.totalPage}
               page={carActivitiesData?.pagination?.page || page}
               defaultPage={carActivitiesData?.pagination?.page || page}
               variant="text"
