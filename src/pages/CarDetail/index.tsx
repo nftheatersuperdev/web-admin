@@ -6,39 +6,19 @@ import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import { Card, Grid, Typography, TextField, Button, Autocomplete } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import { Card, Grid, Typography, TextField, Button, Autocomplete, Chip } from '@mui/material'
 import { getCarById, updateById } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import Backdrop from 'components/Backdrop'
+import { CarConnectorType } from 'services/web-bff/car.type'
 import {
   CarDetailParams,
   getCarStatusOnlyUsedInBackendOptions,
   CarStatus,
   SelectOption,
 } from './constant'
-
-const useStyles = makeStyles(() => ({
-  gridTitle: {
-    marginBottom: '30px',
-  },
-  marginSection: {
-    marginTop: '50px',
-  },
-  container: {
-    marginTop: '5px!important',
-    marginBottom: '5px',
-  },
-  card: {
-    padding: '20px',
-  },
-  textField: {
-    '& .MuiInputBase-input': {
-      height: '1.4rem',
-    },
-  },
-}))
+import { useStyles } from './styles'
 
 const validationSchema = yup.object({
   vin: yup.string().required('Field is required'),
@@ -145,7 +125,7 @@ export default function CarDetail(): JSX.Element {
                 option.value === value.value || value.value === ''
               }
               renderInput={(params) => {
-                return <TextField {...params} label="Select Status" variant="outlined" />
+                return <TextField {...params} label={t('car.carStatus')} variant="outlined" />
               }}
               value={selectedStatus}
               onChange={(_event, item) => onChangeStatus(item)}
@@ -422,7 +402,26 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.chargers || '-'}
+              InputProps={{
+                startAdornment: (
+                  <div className={classes.chargeTypeStyle}>
+                    {carDetail?.carSku.carModel.connectorTypes &&
+                    carDetail?.carSku.carModel.connectorTypes !== undefined &&
+                    carDetail?.carSku.carModel.connectorTypes.length > 0
+                      ? carDetail?.carSku.carModel.connectorTypes.map(
+                          (charger: CarConnectorType, index: number) => (
+                            <Chip
+                              color="primary"
+                              key={index}
+                              label={charger.description}
+                              sx={{ m: 2, ml: 0, mt: 3, borderRadius: '64px', height: '24px' }}
+                            />
+                          )
+                        )
+                      : '-'}
+                  </div>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>

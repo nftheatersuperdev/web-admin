@@ -341,6 +341,7 @@
       "error": "ลบข้อมูลรถยนต์ไม่สำเร็จ"
     },
     "status": "สถานะ",
+    "carStatus": "สถานะ",
     "statuses": {
       "accepted": "ยอมรับ",
       "available": "พร้อมใช้งาน",
