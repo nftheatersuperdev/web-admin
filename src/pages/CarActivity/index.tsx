@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { Fragment, useEffect, useState, useMemo } from 'react'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import React, { useEffect, useState, useMemo, Fragment } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
@@ -10,37 +10,44 @@ import {
   Card,
   FormControl,
   Grid,
-  MenuItem,
-  Select,
   TextField,
-  TableCell,
-  TableRow,
   InputAdornment,
   Typography,
-} from '@material-ui/core'
-import {
-  GridColDef,
-  GridPageChangeParams,
-  GridToolbarColumnsButton,
-  GridToolbarContainer,
-  GridToolbarDensitySelector,
-} from '@material-ui/data-grid'
-import Pagination from '@material-ui/lab/Pagination'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import { makeStyles } from '@material-ui/core/styles'
-import { Search as SearchIcon } from '@material-ui/icons'
+  Autocomplete,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Select,
+  MenuItem,
+  Pagination,
+  CircularProgress,
+  Paper,
+} from '@mui/material'
+// import {
+//   GridColDef,
+//   GridPageChangeParams,
+//   GridToolbarColumnsButton,
+//   GridToolbarContainer,
+//   GridToolbarDensitySelector,
+// } from '@material-ui/data-grid'
+// import Pagination from '@mui/lab/Pagination'
+import { makeStyles } from '@mui/styles'
+import { Search as SearchIcon } from '@mui/icons-material'
+import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
-import NoResultCard from 'components/NoResultCard'
-import Backdrop from 'components/Backdrop'
+// import NoResultCard from 'components/NoResultCard'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import DataGridLocale from 'components/DataGridLocale'
+// import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
-import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+// import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 // interface CarActivityParams {
 //   plate: string
@@ -49,7 +56,16 @@ import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from '.
 //   color: string
 // }
 
-const useStyles = makeStyles({
+const Wrapper = styled(Card)`
+  padding: 15px;
+  margin-top: 20px;
+`
+
+const ContentSection = styled.div`
+  margin-bottom: 20px;
+`
+
+const useStyles = makeStyles(() => ({
   hide: {
     display: 'none',
   },
@@ -148,7 +164,28 @@ const useStyles = makeStyles({
   buttonExport: {
     backgroundColor: '#424E63',
   },
-})
+  textBoldBorder: {
+    borderLeft: '2px solid #E0E0E0',
+    fontWeight: 'bold',
+    padding: '0px 8px',
+  },
+  rowOverflow: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical',
+  },
+  paddindElement: {
+    marginLeft: '8px',
+  },
+  noResultMessage: {
+    textAlign: 'center',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    padding: '48px 0',
+  },
+}))
 
 const useQueryString = () => {
   const { search } = useLocation()
@@ -194,7 +231,7 @@ export default function CarActivity(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [carId, setCarId] = useState<string>('')
+  const [carId] = useState<string>('')
   const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
   const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
@@ -207,8 +244,6 @@ export default function CarActivity(): JSX.Element {
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
-
-  const visibilityColumns = getVisibilityColumns()
 
   const checkFilterButtonConditions = () => {
     if (
@@ -254,94 +289,60 @@ export default function CarActivity(): JSX.Element {
     return value
   }
 
-  const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
-  const rows =
-    carActivitiesData?.cars.map((carActivity) => {
-      return {
-        id: carActivity.carId,
-        brandName: carActivity.brandName,
-        modelName: carActivity.modelName,
-        color: carActivity.color,
-        plateNumber: carActivity.plateNumber,
-      }
-    }) || []
+  // const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
+  // const rows =
+  //   carActivitiesData?.cars.map((carActivity) => {
+  //     return {
+  //       id: carActivity.carId,
+  //       brandName: carActivity.brandName,
+  //       modelName: carActivity.modelName,
+  //       color: carActivity.color,
+  //       plateNumber: carActivity.plateNumber,
+  //     }
+  //   }) || []
 
-  const columns: GridColDef[] = [
-    {
-      field: 'brandName',
-      headerName: t('carActivity.brand.label'),
-      description: t('carActivity.brand.label'),
-      hide: !visibilityColumns.brandName,
-      flex: 1,
-      sortable: false,
-    },
-    {
-      field: 'modelName',
-      headerName: t('carActivity.model.label'),
-      description: t('carActivity.model.label'),
-      hide: !visibilityColumns.modelName,
-      flex: 1,
-      sortable: false,
-    },
-    {
-      field: 'color',
-      headerName: t('carActivity.color.label'),
-      description: t('carActivity.color.label'),
-      hide: !visibilityColumns.color,
-      flex: 1,
-      sortable: false,
-    },
-    {
-      field: 'plateNumber',
-      headerName: t('carActivity.plateNumber.label'),
-      description: t('carActivity.plateNumber.label'),
-      hide: !visibilityColumns.plateNumber,
-      flex: 1,
-      sortable: false,
-    },
-  ]
-
-  const carActivities =
+  const carActivitiesRowData =
     (carActivitiesData &&
       carActivitiesData.cars?.length > 0 &&
       carActivitiesData.cars.map((carActivity) => {
         return (
-          <TableRow key={`car-activity-${carActivity.carId}`}>
-            <TableCell className={classes.tableColumnCarInfo}>
-              <Link to={`/car-activity/${carActivity.carId}`} className={classes.link}>
-                <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
-                <div className={classes.textBold}>
-                  {checkAndRenderValue(carActivity.plateNumber)}
-                </div>
-                <div className={classes.subText}>
-                  <div>{checkAndRenderValue(carActivity.modelName)}</div>
-                  <div>{checkAndRenderValue(carActivity.color)}</div>
-                </div>
-              </Link>
+          <TableRow
+            hover
+            key={`car-activity-${carActivity.carId}`}
+            onClick={() =>
+              history.push({
+                pathname: `/car-activity/${carActivity.carId}`,
+                state: carActivity,
+              })
+            }
+          >
+            <TableCell>
+              <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
             </TableCell>
-            <TableCell className={classes.tableColumnDate} colSpan={10}>
-              &nbsp;
+            <TableCell>
+              <div className={classes.textBold}>{checkAndRenderValue(carActivity.plateNumber)}</div>
             </TableCell>
-            <TableCell className={classes.tableColumnActions}>
-              <Button
-                onClick={() => {
-                  /**
-                   * @TODO need to set the carId below
-                   */
-                  setCarId(carActivity.carId)
-                  setVisibleAddDialog(true)
-                }}
-                type="button"
-              >
-                <span className={classes.textBold}>+</span>
-              </Button>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.modelName)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
             </TableCell>
           </TableRow>
         )
       })) ||
     []
 
-  const isNoData = carActivities.length < 1
+  // const isNoData = carActivities.length < 1
 
   /**
    * Init pagination depends on data from the API.
@@ -396,32 +397,6 @@ export default function CarActivity(): JSX.Element {
     setVisibleAddDialog(false)
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const onColumnVisibilityChange = (params: any) => {
-    if (params.field === '__check__') {
-      return
-    }
-
-    const visibilityColumns = params.api.current
-      .getAllColumns()
-      .filter(({ field }: { field: string }) => field !== '__check__')
-      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
-        columns[column.field] = !column.hide
-        return columns
-      }, {})
-
-    visibilityColumns[params.field] = params.isVisible
-
-    setVisibilityColumns(visibilityColumns)
-  }
-
-  const customToolbar = () => (
-    <GridToolbarContainer>
-      <GridToolbarColumnsButton />
-      <GridToolbarDensitySelector />
-    </GridToolbarContainer>
-  )
-
   const adjustBrowserHistory = (params = {}) => {
     const adjustParams = {
       plate: filterPlate,
@@ -455,10 +430,6 @@ export default function CarActivity(): JSX.Element {
   const handleOnClickFilters = () => {
     setPage(1) // reset current page to be 1
     setResetFilters(true)
-  }
-
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPageSize(params.pageSize)
   }
 
   const handleOnPlateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -513,6 +484,22 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(color || defaultSelectList.colorAll)
   }
 
+  const generateDataToTable = () => {
+    if (carActivitiesRowData.length > 0) {
+      return <TableBody>{carActivitiesRowData}</TableBody>
+    }
+
+    return (
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={7}>
+            <div className={classes.noResultMessage}>{t('warning.noResult')}</div>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    )
+  }
+
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -527,235 +514,271 @@ export default function CarActivity(): JSX.Element {
   return (
     <Page>
       <PageTitle title="Car Activity" breadcrumbs={breadcrumbs} />
-      <Typography variant="h5" component="h2">
-        {t('sidebar.carActivityList')}
-      </Typography>
-      <div className={classes.searchWrapper}>
-        <Grid
-          container
-          spacing={1}
-          direction="row"
-          justifyContent="flex-start"
-          alignItems="center"
-          className={classes.gridContainer}
-        >
-          <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <TextField
-                error={!!filterPlateError}
-                helperText={filterPlateError}
-                variant="outlined"
-                placeholder={t('carActivity.plateNumber.placeholder')}
-                value={filterPlate}
-                onChange={handleOnPlateChange}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-brand'].join(' ')}
-            xs={12}
-            sm={6}
-            md={6}
-            lg={2}
-            xl={2}
-          >
-            <Autocomplete
-              autoHighlight
-              id="brand-select-list"
-              options={carBrands || []}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('carActivity.brand.label')}
-                  variant="outlined"
-                  placeholder={t('all')}
-                />
-              )}
-              value={filterBrandObject || defaultSelectList.brandAll}
-              defaultValue={filterBrandObject || defaultSelectList.brandAll}
-              onChange={(_event, value) => handleOnBrandChange(value)}
-            />
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-model'].join(' ')}
-            xs={12}
-            sm={6}
-            md={3}
-            lg={2}
-            xl={2}
-          >
-            <Autocomplete
-              autoHighlight
-              id="model-select-list"
-              disabled={carModels.length < 1}
-              options={carModels}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('carActivity.model.label')}
-                  variant="outlined"
-                  placeholder={t('all')}
-                />
-              )}
-              value={filterModelObject || defaultSelectList.modelEmpty}
-              defaultValue={filterModelObject || defaultSelectList.modelEmpty}
-              onChange={(_event, value) => handleOnModelChange(value)}
-            />
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-color'].join(' ')}
-            xs={12}
-            sm={6}
-            md={3}
-            lg={2}
-            xl={2}
-          >
-            <Autocomplete
-              autoHighlight
-              id="color-select-list"
-              disabled={carColors.length < 1}
-              options={carColors}
-              getOptionLabel={(option) => option.color}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('carActivity.color.label')}
-                  variant="outlined"
-                  placeholder={t('all')}
-                />
-              )}
-              value={filterColorObject || defaultSelectList.colorEmpty}
-              defaultValue={filterColorObject || defaultSelectList.colorEmpty}
-              onChange={(_event, value) => handleOnColorChange(value)}
-            />
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-buttons'].join(' ')}
-            xs={6}
-            sm={6}
-            md={4}
-            lg={2}
-            xl={2}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.buttonWithoutShadow}
-              onClick={() => handleOnClickFilters()}
-              disabled={!isEnableFilterButton}
+      <Wrapper>
+        <ContentSection>
+          <Typography variant="h6" component="h2">
+            {t('sidebar.carActivityList')}
+          </Typography>
+          <div className={classes.searchWrapper}>
+            <Grid
+              container
+              spacing={1}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              className={classes.gridContainer}
             >
-              {t('button.search')}
-            </Button>
-            <Button
-              color="secondary"
-              className={[
-                classes.buttonClearAllFilters,
-                classes.buttonWithoutShadow,
-                classes.buttonOverridePadding,
-                !isEnableFilterButton ? classes.displayNone : '',
-              ].join(' ')}
-              onClick={() => clearFilters()}
-            >
-              X {t('button.clearAll')}
-            </Button>
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, classes.textRight].join(' ')}
-            xs={6}
-            sm={6}
-            md={2}
-            lg={1}
-            xl={1}
-          >
-            <Button
-              color="primary"
-              variant="contained"
-              className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
-            >
-              {t('button.export')}
-            </Button>
-          </Grid>
-        </Grid>
-      </div>
-
-      {isNoData ? (
-        <NoResultCard />
-      ) : (
-        <Fragment>
-          <DataGridLocale
-            autoHeight
-            pagination
-            pageSize={pageSize}
-            page={page - 1}
-            rowCount={rowCount}
-            paginationMode="server"
-            onPageSizeChange={handlePageSizeChange}
-            onPageChange={setPage}
-            rows={rows}
-            columns={columns}
-            onColumnVisibilityChange={onColumnVisibilityChange}
-            sortingMode="server"
-            customToolbar={customToolbar}
-            hideFooter
-            onRowClick={(param) => {
-              history.push(`/car-activity/${param.id}`)
-            }}
-          />
-          <Card>
-            <div className={classes.paginationContrainer}>
-              Rows per page:&nbsp;
-              <FormControl className={classes.inlineElement} variant="standard">
-                <Select
-                  value={carActivitiesData?.pagination?.size || pageSize}
-                  defaultValue={carActivitiesData?.pagination?.size || pageSize}
-                  onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-                    setPage(0)
-                    setPageSize(event.target.value as number)
-                  }}
+              <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
+                <FormControl variant="outlined" className={classes.fullWidth}>
+                  <TextField
+                    error={!!filterPlateError}
+                    helperText={filterPlateError}
+                    variant="outlined"
+                    placeholder={t('carActivity.plateNumber.placeholder')}
+                    value={filterPlate}
+                    onChange={handleOnPlateChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-brand'].join(' ')}
+                xs={12}
+                sm={6}
+                md={6}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="brand-select-list"
+                  options={carBrands || []}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.brand.label')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={filterBrandObject || defaultSelectList.brandAll}
+                  defaultValue={filterBrandObject || defaultSelectList.brandAll}
+                  onChange={(_event, value) => handleOnBrandChange(value)}
+                />
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-model'].join(' ')}
+                xs={12}
+                sm={6}
+                md={3}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="model-select-list"
+                  disabled={carModels.length < 1}
+                  options={carModels}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.model.label')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={filterModelObject || defaultSelectList.modelEmpty}
+                  defaultValue={filterModelObject || defaultSelectList.modelEmpty}
+                  onChange={(_event, value) => handleOnModelChange(value)}
+                />
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-color'].join(' ')}
+                xs={12}
+                sm={6}
+                md={3}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="color-select-list"
+                  disabled={carColors.length < 1}
+                  options={carColors}
+                  getOptionLabel={(option) => option.color}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.color.label')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={filterColorObject || defaultSelectList.colorEmpty}
+                  defaultValue={filterColorObject || defaultSelectList.colorEmpty}
+                  onChange={(_event, value) => handleOnColorChange(value)}
+                />
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-buttons'].join(' ')}
+                xs={6}
+                sm={6}
+                md={4}
+                lg={2}
+                xl={2}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.buttonWithoutShadow}
+                  onClick={() => handleOnClickFilters()}
+                  disabled={!isEnableFilterButton || isFetchingBrands || isFetchingActivities}
                 >
-                  {config.tableRowsPerPageOptions.map((rowOption) => {
-                    return (
-                      <MenuItem key={rowOption} value={rowOption}>
-                        {rowOption}
-                      </MenuItem>
-                    )
-                  })}
-                </Select>
-              </FormControl>
-              <Pagination
-                count={carActivitiesData?.pagination?.totalPage || pages}
-                page={carActivitiesData?.pagination?.page || page}
-                defaultPage={carActivitiesData?.pagination?.page || page}
-                variant="text"
-                color="primary"
-                onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                  setPage(value)
-                }}
-              />
-            </div>
-          </Card>
-        </Fragment>
-      )}
-      <ActivityScheduleDialog
-        visible={visibleAddDialog}
-        carId={carId}
-        onClose={handleOnScheduleDialogClose}
-      />
-      <Backdrop open={isFetchingBrands || isFetchingActivities} />
+                  {t('button.search')}
+                </Button>
+                <Button
+                  color="secondary"
+                  className={[
+                    classes.buttonClearAllFilters,
+                    classes.buttonWithoutShadow,
+                    classes.buttonOverridePadding,
+                    !isEnableFilterButton ? classes.displayNone : '',
+                  ].join(' ')}
+                  onClick={() => clearFilters()}
+                >
+                  X {t('button.clearAll')}
+                </Button>
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, classes.textRight].join(' ')}
+                xs={6}
+                sm={6}
+                md={2}
+                lg={1}
+                xl={1}
+              >
+                <Button
+                  color="primary"
+                  variant="contained"
+                  disabled={isFetchingBrands || isFetchingActivities}
+                  className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
+                >
+                  {t('button.export')}
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+
+          <Fragment>
+            <TableContainer component={Paper} className={classes.table}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.locationService')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.brand')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.model')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.color')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.plateNumber')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.owner')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.reseller')}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+
+                {isFetchingActivities ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={9} align="center">
+                        <CircularProgress />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  generateDataToTable()
+                )}
+              </Table>
+            </TableContainer>
+            <Card>
+              <div className={classes.paginationContrainer}>
+                Rows per page:&nbsp;
+                <FormControl className={classes.inlineElement} variant="standard">
+                  <Select
+                    value={carActivitiesData?.pagination?.size || pageSize}
+                    defaultValue={carActivitiesData?.pagination?.size || pageSize}
+                    onChange={(event) => {
+                      setPage(0)
+                      setPageSize(event.target.value as number)
+                    }}
+                  >
+                    {config.tableRowsPerPageOptions.map((rowOption) => {
+                      return (
+                        <MenuItem key={rowOption} value={rowOption}>
+                          {rowOption}
+                        </MenuItem>
+                      )
+                    })}
+                  </Select>
+                </FormControl>
+                <Pagination
+                  count={carActivitiesData?.pagination?.totalPage}
+                  page={carActivitiesData?.pagination?.page || page}
+                  defaultPage={carActivitiesData?.pagination?.page || page}
+                  variant="text"
+                  color="primary"
+                  onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                    setPage(value)
+                  }}
+                />
+              </div>
+            </Card>
+          </Fragment>
+          <ActivityScheduleDialog
+            visible={visibleAddDialog}
+            carId={carId}
+            onClose={handleOnScheduleDialogClose}
+          />
+        </ContentSection>
+      </Wrapper>
     </Page>
   )
 }
