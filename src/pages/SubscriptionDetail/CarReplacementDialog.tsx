@@ -433,7 +433,7 @@ export default function CarReplacementDialog({
               <GoogleMap
                 mapContainerStyle={containerStyle}
                 center={deliveryMarkerAddress}
-                zoom={10}
+                zoom={15}
                 onClick={handleMarkerChanged}
               >
                 <Marker
