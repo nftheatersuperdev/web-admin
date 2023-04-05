@@ -919,6 +919,17 @@
     "overview": {
       "header": "Overview"
     },
+    "table": {
+      "header": {
+        "locationService": "Location Service",
+        "brand": "Brand",
+        "model": "Model",
+        "color": "Colour",
+        "plateNumber": "Plate Number",
+        "owner": "Owner",
+        "reseller": "Reseller"
+      }
+    },
     "addSchedule": {
       "header": "Add new schedule"
     },
