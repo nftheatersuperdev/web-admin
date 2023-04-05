@@ -15,7 +15,9 @@ import GridFilterDatePickerV2 from 'components/GridFilterDatePickerV2'
 import GridFilterInputDateTimePicker from 'components/GridFilterDateTimePicker'
 
 export const DEFAULT_DATETIME_FORMAT = 'DD/MM/YYYY HH:mm'
+export const DEFAULT_DATETIME_FORMAT_MONTH_TEXT = 'DD MMM YYYY HH:mm'
 export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY'
+export const DEFAULT_DATE_FORMAT_MONTH_TEXT = 'DD MMM YYYY'
 export const DEFAULT_DATE_FORMAT_BFF = 'YYYY-MM-DD'
 
 export const DEFAULT_DATETIME_FORMAT_ISO = 'YYYY-MM-DDTHH:mm:ssZ'
