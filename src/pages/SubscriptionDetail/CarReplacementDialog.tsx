@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core'
 import { Alert, Typography } from '@mui/material'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
-import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
+import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import Geocode from 'react-geocode'
 import DatePicker from 'components/DatePicker'
@@ -84,6 +84,7 @@ export default function CarReplacementDialog({
     rentDetail: { bookingDetailId },
     displayStatus,
     carActivities,
+    endDate,
   } = bookingDetails
 
   const carActivity = carActivities[carActivities.length - 1]
@@ -330,11 +331,7 @@ export default function CarReplacementDialog({
               fullWidth
               margin="normal"
               variant="outlined"
-              value={
-                carActivity?.returnTask?.date
-                  ? dayjs(carActivity.returnTask.date).format(DEFAULT_DATETIME_FORMAT)
-                  : '-'
-              }
+              value={dayjs(endDate).format(DEFAULT_DATE_FORMAT)}
             />
           </Grid>
         </Grid>

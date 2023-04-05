@@ -51,7 +51,7 @@ const TableWrapper = styled.div`
   margin: 10px 0;
 `
 
-export function canDoCarReplacement(status: string | undefined): boolean {
+export function hasStatusAllowedToDoCarReplacement(status: string | undefined): boolean {
   if (!status) {
     return false
   }
@@ -98,11 +98,14 @@ export default function SubscriptionDetail(): JSX.Element {
     setCarDetailDialogOpen(true)
   }
 
-  const isAllowToDoCarReplacement = canDoCarReplacement(bookingDetails?.displayStatus)
+  const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(
+    bookingDetails?.displayStatus
+  )
   const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [
     ROLES.ADMIN,
     ROLES.OPERATION,
   ])
+  const isEndDateOverToday = bookingDetails ? new Date(bookingDetails?.endDate) < new Date() : false
 
   return (
     <Page>
@@ -424,7 +427,8 @@ export default function SubscriptionDetail(): JSX.Element {
                   disabled={
                     !bookingDetails ||
                     !isAllowToDoCarReplacement ||
-                    !isTherePermissionToDoCarReplacement
+                    !isTherePermissionToDoCarReplacement ||
+                    isEndDateOverToday
                   }
                 >
                   {t('booking.carDetail.replacement')}
