@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import {
@@ -22,7 +22,7 @@ import {
   MenuItem,
   Pagination,
 } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import { formatDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
@@ -37,89 +37,10 @@ import {
   CarStatus,
   SelectOption,
   CarList,
+  Keypress,
+  CarCsv,
 } from './utils'
-
-const useStyles = makeStyles(() => ({
-  typo: {
-    marginBottom: '0px',
-  },
-  gridTitle: {
-    padding: '20px',
-    paddingBottom: 0,
-  },
-  gridSearch: {
-    padding: '20px',
-  },
-  gridExport: {
-    textAlign: 'right',
-  },
-  exportButton: {
-    background: '#333c4d',
-    color: '#fff',
-    height: '56px',
-  },
-  table: {
-    border: 0,
-  },
-  pagination: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '20px',
-  },
-  paginationForm: {
-    display: 'inline-flex',
-  },
-  chipBgGreen: {
-    backgroundColor: '#4CAF50',
-    color: '#fff',
-    height: '24px',
-    borderRadius: '64px',
-  },
-  chipBgGray: {
-    backgroundColor: '#E0E0E0',
-    height: '24px',
-    borderRadius: '64px',
-  },
-  wrapText: {
-    lineHeight: '1.5em',
-    height: '3em',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    width: '100%',
-  },
-  csvlink: {
-    color: '#fff',
-    textDecoration: 'none',
-  },
-  columnHeader: {
-    borderLeft: '2px solid #E0E0E0',
-    fontWeight: '500',
-    paddingLeft: '16px',
-  },
-  wrapWidth: {
-    width: '110px',
-  },
-  rowOverflow: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    '-webkit-line-clamp': 2,
-    '-webkit-box-orient': 'vertical',
-  },
-  paginationContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '20px',
-  },
-  inlineElement: {
-    display: 'inline-flex',
-  },
-}))
+import { useStyles } from './styles'
 
 export default function Car(): JSX.Element {
   const classes = useStyles()
@@ -142,6 +63,7 @@ export default function Car(): JSX.Element {
     isFetching,
   } = useQuery('cars', () =>
     getList({
+      filter,
       page,
       size: pageSize,
     })
@@ -152,9 +74,9 @@ export default function Car(): JSX.Element {
       return {
         id: car.id,
         carTrackId: car.carTrackId || '-',
-        brand: car.carSku.carModel.brand.name || '-',
-        model: car.carSku.carModel.name || '-',
-        color: car.carSku.color || '-',
+        brand: car.carSku?.carModel.brand.name || '-',
+        model: car.carSku?.carModel.name || '-',
+        color: car.carSku?.color || '-',
         plateNumber: car.plateNumber || '-',
         vin: car.vin || '-',
         status: car.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
@@ -182,19 +104,56 @@ export default function Car(): JSX.Element {
       value: 'statusEqual',
     },
   ]
-  const [searchValue, setSearchValue] = useState<string>()
+  const [searchValue, setSearchValue] = useState<string>('')
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
   const [selectedStatus, setSelectedStatus] = useState<SelectOption | null>()
   const defaultSelect = {
     label: t('all'),
     value: 'all',
   }
-  // eslint-disable-next-line
-  const onSearchChange = (event: any, value?: string) => {
+  const onSetSelectedSearch = (value: SelectOption | null) => {
+    if (value) {
+      setSelectedSearch(value)
+    } else {
+      setFilter({})
+    }
+    setSearchValue('')
+  }
+  const onSearchChange = (event: ChangeEvent<HTMLInputElement>, value?: string) => {
     const { value: eventVal } = event.target
     const searchText = value ? value : eventVal
     setSearchValue(searchText)
   }
+  const onEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === Keypress.ENTER && searchValue?.length >= 2) {
+      formik.setFieldValue('searchType', selectedSearch?.value)
+      formik.setFieldValue('searchInput', searchValue)
+      formik.handleSubmit()
+    }
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      searchType: '',
+      searchInput: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (value) => {
+      setPage(0)
+      let keySearch = ''
+      let valueSearch
+      let filterSearch = {}
+      if (value.searchType === 'statusEqual') {
+        keySearch = 'isActive'
+        valueSearch = value.searchInput === CarStatus.PUBLISHED ? true : false
+      } else {
+        keySearch = value.searchType
+        valueSearch = value.searchInput
+      }
+      filterSearch = { [keySearch]: valueSearch }
+      setFilter(filterSearch)
+    },
+  })
 
   // == export ==
   const csvHeaders = [
@@ -208,8 +167,7 @@ export default function Car(): JSX.Element {
     { label: t('car.createdDate'), key: 'createdDate' },
     { label: t('car.updatedDate'), key: 'updatedDate' },
   ]
-  // eslint-disable-next-line
-  const csvData: any = []
+  const csvData: CarCsv[] = []
   cars.forEach((car) => {
     const data = {
       carTrackId: car.carTrackId,
@@ -338,7 +296,9 @@ export default function Car(): JSX.Element {
         >
           {columnRow.map((col) => (
             <TableCell key={col.field} hidden={col.hidden}>
-              {col.render ? col.render(car[col.field]) : <div>{car[col.field]}</div>}
+              <div className={classes.paddingLeftCell}>
+                {col.render ? col.render(car[col.field]) : <div>{car[col.field]}</div>}
+              </div>
             </TableCell>
           ))}
         </TableRow>
@@ -353,7 +313,7 @@ export default function Car(): JSX.Element {
 
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
-  const [filter /* intentionally not using setFilter */] = useState<CarListFilterRequest>()
+  const [filter, setFilter] = useState<CarListFilterRequest>()
 
   const statusOptions = getCarStatusOnlyUsedInBackendOptions(t)
 
@@ -371,7 +331,7 @@ export default function Car(): JSX.Element {
           </Typography>
         </Grid>
         <Grid className={classes.gridSearch} container spacing={3}>
-          <Grid item xs={9} sm={3}>
+          <Grid item xs={9} sm={2}>
             <Autocomplete
               autoHighlight
               id="search-select-list"
@@ -393,12 +353,11 @@ export default function Car(): JSX.Element {
               value={selectedSearch || defaultSelect}
               defaultValue={selectedSearch || defaultSelect}
               onChange={(_e, value) => {
-                setSelectedSearch(value)
-                setSearchValue('')
+                onSetSelectedSearch(value)
               }}
             />
           </Grid>
-          <Grid item xs={9} sm={3}>
+          <Grid item xs={9} sm={2}>
             {selectedSearch?.value === 'statusEqual' ? (
               <Autocomplete
                 autoHighlight
@@ -414,8 +373,9 @@ export default function Car(): JSX.Element {
                 value={selectedStatus || null}
                 onChange={(event, item) => {
                   setSelectedStatus(item)
-                  onSearchChange(event, item?.value)
+                  onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value)
                 }}
+                onKeyDown={onEnterSearch}
               />
             ) : (
               <TextField
@@ -425,13 +385,14 @@ export default function Car(): JSX.Element {
                 fullWidth
                 value={searchValue || ''}
                 onChange={onSearchChange}
+                onKeyDown={onEnterSearch}
                 disabled={
                   !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
                 }
               />
             )}
           </Grid>
-          <Grid item xs={9} sm={3} />
+          <Grid item xs={9} sm={5} />
           <Grid item xs={9} sm={3} className={classes.gridExport}>
             <Button variant="contained" className={classes.exportButton} size="large">
               <CSVLink

@@ -137,3 +137,19 @@ export interface CarList {
   updatedDate: string
   [key: string]: string
 }
+
+export interface CarCsv {
+  carTrackId: string
+  brand: string
+  model: string
+  color: string
+  plateNumber: string
+  vin: string
+  status: string
+  createdDate: string
+  updatedDate: string
+}
+
+export enum Keypress {
+  ENTER = 'Enter',
+}
