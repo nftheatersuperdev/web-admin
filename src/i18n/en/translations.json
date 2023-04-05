@@ -86,6 +86,8 @@
     "vehicleManagement": "Vehicle Management",
     "subscriptionManagement": "Subscription Management",
     "subscriptions": "Subscriptions",
+    "newSubscriptionManagement": "New Subscription Management",
+    "newSubscriptions": "New Subscriptions",
     "vouchers": "Vouchers",
     "additionalExpense": "Additional Expense",
     "others": "Others",

@@ -43,6 +43,7 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILE_ADD: '/staff-profile/create',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
+  NEW_SUBSCRIPTION: '/new-subscription',
 })
 
 export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
@@ -144,6 +145,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.PRODUCT_SUPPORT,
     ],
+  },
+  {
+    path: ROUTE_PATHS.NEW_SUBSCRIPTION,
+    component: lazy(() => import('./pages/SubscriptionCreateEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
   },
   {
     path: ROUTE_PATHS.PRICING,

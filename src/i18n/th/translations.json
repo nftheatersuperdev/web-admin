@@ -86,6 +86,8 @@
     "vehicleManagement": "การจัดการยานพาหนะ",
     "subscriptionManagement": "การจัดการการจอง",
     "subscriptions": "ข้อมูลการจอง",
+    "newSubscriptionManagement": "การจัดการการจองใหม่",
+    "newSubscriptions": "ข้อมูลการจองใหม่",
     "vouchers": "วอชเชอร์",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "others": "อื่นๆ",
