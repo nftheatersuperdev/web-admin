@@ -42,6 +42,9 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILE_DETAIL: '/staff-profile/:id/edit',
   STAFF_PROFILE_ADD: '/staff-profile/create',
   SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
+  CUSTOMER_PROFILE: '/customer-profile',
+  CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
+  CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -312,6 +315,18 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       () => import('./pages/SubscriptionPackageManagement' /* webpackChunkName: "app" */)
     ),
     allowedRoles: [ROLES.SUPER_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.CUSTOMER_PROFILE,
+    component: lazy(() => import('./pages/CustomerProfile' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+      ROLES.PRODUCT_SUPPORT,
+    ],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

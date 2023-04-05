@@ -22,10 +22,11 @@ import {
   InputLabel,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
+import config from 'config'
 import { formatDate } from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
-import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import { useTranslation } from 'react-i18next'
+import { CSVLink } from 'react-csv'
 import Pagination from '@material-ui/lab/Pagination'
 import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
@@ -34,15 +35,6 @@ import PageTitle from 'components/PageTitle'
 import './pagination.css'
 
 const useStyles = makeStyles({
-  hide: {
-    display: 'none',
-  },
-  link: {
-    color: '#333',
-  },
-  textBold: {
-    fontWeight: 'bold',
-  },
   textBoldBorder: {
     borderLeft: '2px solid #E0E0E0',
     fontWeight: 'bold',
@@ -74,12 +66,9 @@ const useStyles = makeStyles({
     backgroundColor: '#F44336',
     color: 'white',
   },
-  buttonClearAllFilters: {
-    padding: '16px 9px 16px 9px !important',
-    color: '#3f51b5',
-    '&:hover, &:focus': {
-      background: 'none',
-    },
+  buttonExport: {
+    color: 'white',
+    textDecoration: 'none',
   },
   hideObject: {
     display: 'none',
@@ -87,39 +76,11 @@ const useStyles = makeStyles({
   headerTopic: {
     padding: '8px 16px',
   },
-  buttonOverridePadding: {
-    padding: '16px',
-  },
   gridContainer: {
     marginBottom: '10px',
   },
   table: {
     width: '100%',
-  },
-  tableColumnCarInfo: {
-    position: 'sticky',
-    left: 0,
-    background: '#fff',
-    whiteSpace: 'nowrap',
-  },
-  tableColumnDateHeader: {
-    minWidth: '200px',
-    whiteSpace: 'nowrap',
-    color: '#FFF',
-    borderLeft: 'none',
-    borderRight: 'none',
-  },
-  tableColumnDate: {
-    minWidth: '200px',
-    color: '#FFF',
-    borderLeft: 'none',
-    borderRight: 'none',
-  },
-  tableColumnActions: {
-    position: 'sticky',
-    right: 0,
-    background: '#fff',
-    textAlign: 'center',
   },
   paginationContrainer: {
     display: 'flex',
@@ -132,13 +93,6 @@ const useStyles = makeStyles({
   },
   filter: {
     height: '90px',
-  },
-  clickableRow: {
-    cursor: 'pointer',
-    height: '40px',
-    '&:hover, &:focus': {
-      backgroundColor: 'aquamarine',
-    },
   },
   selectedRow: {
     '&:hover, &:focus': {
@@ -158,7 +112,7 @@ export default function StaffProfiles(): JSX.Element {
   const [searchCriteria, setCriteria] = React.useState('')
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const { data: adminUsersData, refetch } = useQuery(
     'admin-users',
     () => getAdminUsers(page, pageSize),
@@ -166,10 +120,34 @@ export default function StaffProfiles(): JSX.Element {
       cacheTime: 0,
     }
   )
+  const csvHeaders = [
+    { label: t('user.firstName'), key: 'firstName' },
+    { label: t('user.lastName'), key: 'lastName' },
+    { label: t('user.email'), key: 'email' },
+    { label: t('user.role'), key: 'role' },
+    { label: t('user.status'), key: 'status' },
+    { label: t('staffProfile.createdDate'), key: 'createdDate' },
+    { label: t('user.updatedDate'), key: 'updatedDate' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = []
   const usersData =
     (adminUsersData &&
       adminUsersData.data?.adminUsers.length > 0 &&
       adminUsersData.data.adminUsers.map((adminUserData) => {
+        // Build CSV Data
+        const acctStatus = adminUserData.isActive ? 'Enable' : 'Disable'
+        const makeCsvData = () => ({
+          firstName: adminUserData.firstName,
+          lastName: adminUserData.lastName,
+          email: adminUserData.email,
+          role: adminUserData.role,
+          status: acctStatus,
+          createdDate: formatDate(adminUserData.createdDate),
+          updatedDate: formatDate(adminUserData.updatedDate),
+        })
+        csvData.push(makeCsvData())
+        // Build Table Body
         return (
           <TableRow
             hover
@@ -197,7 +175,6 @@ export default function StaffProfiles(): JSX.Element {
       })) ||
     []
   const isNoData = usersData.length < 1
-
   /**
    * Init pagination depends on data from the API.
    */
@@ -264,15 +241,23 @@ export default function StaffProfiles(): JSX.Element {
             </Grid>
             <Grid item className={[classes.filter, classes.textRight].join(' ')} xs={6}>
               <Button
-                className={classes.hideObject}
-                endIcon={<FileDownloadIcon />}
+                id="staff_profile__export_btn"
+                className={classes.addButton}
                 color="primary"
                 variant="contained"
               >
-                {t('button.export')}
+                <CSVLink
+                  data={csvData}
+                  headers={csvHeaders}
+                  filename="EVme Admin Dashboard.csv"
+                  className={classes.buttonExport}
+                >
+                  {t('button.export')}
+                </CSVLink>
               </Button>
               &nbsp;&nbsp;
               <Button
+                id="staff_profile__add_btn"
                 endIcon={<AddIcon />}
                 className={classes.addButton}
                 variant="contained"
@@ -334,9 +319,11 @@ export default function StaffProfiles(): JSX.Element {
                       setPageSize(event.target.value as number)
                     }}
                   >
-                    <MenuItem value={10}>10</MenuItem>
-                    <MenuItem value={20}>20</MenuItem>
-                    <MenuItem value={50}>50</MenuItem>
+                    {config.tableRowsPerPageOptions?.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
                 &nbsp;&nbsp;{adminUsersData?.data.pagination?.page || pages} {t('staffProfile.of')}
