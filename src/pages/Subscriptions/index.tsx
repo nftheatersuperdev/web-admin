@@ -267,7 +267,7 @@ export default function Subscription(): JSX.Element {
       status: displayStatus || defaultValue.noData,
       isReplacement: isReplacement ? defaultValue.true : defaultValue.false,
       parentId: bookingId,
-      isExtend: isExtend ? defaultValue.true : defaultValue.false,
+      isExtend: Boolean(isExtend),
       paymentStatus: firstCapitalize(payments[0]?.status) || defaultValue.noData,
       paymentFailureMessage: payments[0]?.statusMessage || defaultValue.noData,
       paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || defaultValue.noData,
