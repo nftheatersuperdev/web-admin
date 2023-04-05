@@ -230,7 +230,7 @@ module.exports = {
         allow: ['error'],
       },
     ],
-    'no-nested-ternary': 'error',
+    'no-nested-ternary': 'off',
     'no-var': 'error',
     'no-return-await': 'error',
     'require-await': 'error',
