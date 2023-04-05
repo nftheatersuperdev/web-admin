@@ -250,6 +250,7 @@
     "searchCriteria": "Search Criteria"
   },
   "user": {
+    "custometList": "Customer List",
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
@@ -265,7 +266,8 @@
       "active": "Active",
       "enable": "Enabled",
       "disable": "Disabled",
-      "deleted": "Deleted"
+      "deleted": "Deleted",
+      "inactive": "Inactive"
     },
     "kyc": {
       "status": "KYC Status",
