@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import config from 'config'
 import {
   Breadcrumbs,
@@ -12,30 +12,27 @@ import {
   TextField,
   MenuItem,
   InputAdornment,
-  makeStyles,
   Button,
   Box,
   FormControl,
   Select,
 } from '@material-ui/core'
+import { makeStyles } from '@mui/styles'
 import { Card } from '@mui/material'
 import { Pagination } from '@material-ui/lab'
-import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
+import {
+  GridCellParams,
+  GridColDef,
+  GridColumnHeaderParams,
+  GridPageChangeParams,
+} from '@material-ui/data-grid'
 import { Search as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import Backdrop from 'components/Backdrop'
 import { Page } from 'layout/LayoutRoute'
-import { getActivities } from 'services/web-bff/car-activity'
+import { getSubscriptionPackages } from 'services/web-bff/subscription-package'
 import DataGridLocale from './SubscriptionPackageGrid'
-import { getVisibilityColumns } from './utils'
-
-const BreadcrumbsWrapper = styled(Breadcrumbs)`
-  margin: 10px 0 20px 0;
-`
-const TableWrapper = styled.div`
-  background-color: #fff;
-`
 
 const useStyles = makeStyles(() => ({
   searchBar: {
@@ -51,27 +48,6 @@ const useStyles = makeStyles(() => ({
   filter: {
     height: '54px',
   },
-  buttonWithoutShadow: {
-    display: 'inline-flexbox',
-    boxShadow: 'none',
-    padding: '16px 20px',
-  },
-  buttonWithoutExport: {
-    backgroundColor: '#424E63',
-    color: 'white',
-    display: 'inline-flexbox',
-    boxShadow: 'none',
-    padding: '16px 20px',
-  },
-  buttoExport: {
-    color: 'white',
-  },
-  exportContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
   paginationContrainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -85,14 +61,6 @@ const useStyles = makeStyles(() => ({
   paddindElement: {
     marginLeft: '16px',
   },
-  chipBgGreen: {
-    backgroundColor: '#4CAF50',
-    color: 'white',
-  },
-  chipBgPrimary: {
-    backgroundColor: '#4584FF',
-    color: 'white',
-  },
   addButton: {
     color: '#fff',
     backgroundColor: '#424E63',
@@ -102,102 +70,99 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     marginRight: '24px',
   },
+  columnHeader: {
+    fontSize: '14px',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
+  },
   selectSearch: {
     height: '90px',
   },
 }))
-
-const useQueryString = () => {
-  const { search } = useLocation()
-
-  return useMemo(() => new URLSearchParams(search), [search])
-}
 
 export default function SubscriptionPackageManagement(): JSX.Element {
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const classes = useStyles()
-  const qs = {
-    plate: useQueryString().get('plate'),
-    brand: useQueryString().get('brand'),
-    model: useQueryString().get('model'),
-    color: useQueryString().get('color'),
-  }
-
-  const [filterPlate] = useState<string>(qs.plate || '')
-  const [filterBrand] = useState<string>(qs.brand || '')
-  const [filterModel] = useState<string>(qs.model || '')
-  const [filterColor] = useState<string>(qs.color || '')
 
   const {
-    data: carActivitiesData,
+    data: subscriptionsData,
     refetch,
     isFetched: isFetchedActivities,
     isFetching: isFetchingActivities,
-  } = useQuery('get-car-activities', () =>
-    getActivities(
-      {
-        page,
-        size: pageSize,
-      },
-      {
-        carBrandId: filterBrand,
-        carModelId: filterModel,
-        carSkuId: filterColor,
-        plateNumber: filterPlate,
-      }
-    )
+  } = useQuery('get-subscription-packages', () =>
+    getSubscriptionPackages({
+      page,
+      size: pageSize,
+    })
   )
 
-  const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
+  const rowCount = subscriptionsData?.pagination?.totalRecords ?? 0
   const rows =
-    carActivitiesData?.cars.map((carActivity) => {
+    subscriptionsData?.packages.map((packageData) => {
       return {
-        id: carActivity.carId,
-        brandName: carActivity.brandName,
-        modelName: carActivity.modelName,
-        color: carActivity.color,
-        plateNumber: carActivity.plateNumber,
+        id: packageData.id,
+        packageName: packageData.nameEn,
+        packagePeriod: packageData.periodMonth,
+        price: packageData.price,
+        publishedDate: packageData.publishDate,
+        status: packageData.status,
       }
     }) || []
 
-  const visibilityColumns = getVisibilityColumns()
-
   const columns: GridColDef[] = [
     {
-      field: 'brandName',
-      headerName: t('carActivity.brand.label'),
-      description: t('carActivity.brand.label'),
+      field: 'id',
       hide: false,
       flex: 1,
       sortable: false,
+      renderHeader: (_: GridColumnHeaderParams) =>
+        getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.packageId')),
+      renderCell: (params: GridCellParams) => getTextCell(params.row.id),
     },
     {
-      field: 'modelName',
-      headerName: t('carActivity.model.label'),
-      description: t('carActivity.model.label'),
-      hide: !visibilityColumns.modelName,
+      field: 'packageName',
+      headerName: t('subscriptionPackageManagement.table.columnHeader.packageName'),
+      hide: false,
       flex: 1,
       sortable: false,
+      headerClassName: classes.columnHeader,
     },
     {
-      field: 'color',
-      headerName: t('carActivity.color.label'),
-      description: t('carActivity.color.label'),
-      hide: !visibilityColumns.color,
+      field: 'packagePeriod',
+      hide: false,
       flex: 1,
       sortable: false,
+      renderHeader: (_: GridColumnHeaderParams) =>
+        getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.packagePeriod')),
+      renderCell: (params: GridCellParams) => getTextCell(params.row.packagePeriod),
     },
     {
-      field: 'plateNumber',
-      headerName: t('carActivity.plateNumber.label'),
-      description: t('carActivity.plateNumber.label'),
-      hide: !visibilityColumns.plateNumber,
+      field: 'price',
+      headerName: t('subscriptionPackageManagement.table.columnHeader.price'),
+      hide: false,
       flex: 1,
       sortable: false,
+      headerClassName: classes.columnHeader,
+    },
+    {
+      field: 'publishedDate',
+      hide: false,
+      flex: 1,
+      sortable: false,
+      renderHeader: (_: GridColumnHeaderParams) =>
+        getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.publishedDate')),
+      renderCell: (params: GridCellParams) => getTextCell(params.row.status),
     },
   ]
+
+  const BreadcrumbsWrapper = styled(Breadcrumbs)`
+    margin: 10px 0 20px 0;
+  `
+  const TableWrapper = styled.div`
+    background-color: #fff;
+  `
 
   const DividerCustom = styled(Divider)`
     margin-bottom: 25px;
@@ -211,16 +176,20 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     margin: 0px 16px;
   `
 
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
+
   useEffect(() => {
-    if (carActivitiesData?.pagination) {
-      setPage(carActivitiesData.pagination.page)
-      setPageSize(carActivitiesData.pagination.size)
+    if (subscriptionsData?.pagination) {
+      setPage(subscriptionsData.pagination.page)
+      setPageSize(subscriptionsData.pagination.size)
     }
 
     if (isFetchedActivities) {
       console.error(`Unable to mutation useCreateUserGroup, ${pageSize}`)
     }
-  }, [carActivitiesData?.pagination, isFetchedActivities, pageSize])
+  }, [subscriptionsData?.pagination, isFetchedActivities, pageSize])
 
   /**
    * Managing the pagination variables that will send to the API.
@@ -229,9 +198,18 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     refetch()
   }, [page, pageSize, refetch])
 
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPageSize(params.pageSize)
+  function getTextHeaderCell(text: string) {
+    return <div className={classes.columnHeader}>{text}</div>
   }
+
+  function getTextCell(text: string) {
+    return (
+      <Typography variant="h6" component="h2">
+        {text}
+      </Typography>
+    )
+  }
+
   return (
     <Page>
       <Typography variant="h5" color="inherit" component="h1">
@@ -326,9 +304,9 @@ export default function SubscriptionPackageManagement(): JSX.Element {
               </Select>
             </FormControl>
             <Pagination
-              count={carActivitiesData?.pagination?.totalPage}
-              page={carActivitiesData?.pagination?.page || page}
-              defaultPage={carActivitiesData?.pagination?.page || page}
+              count={subscriptionsData?.pagination?.totalPage}
+              page={subscriptionsData?.pagination?.page || page}
+              defaultPage={subscriptionsData?.pagination?.page || page}
               variant="text"
               color="primary"
               onChange={(_event: React.ChangeEvent<unknown>, value: number) => {

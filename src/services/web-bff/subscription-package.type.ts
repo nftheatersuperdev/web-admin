@@ -1,15 +1,20 @@
 import { ResponseWithPagination } from 'services/web-bff/response.type'
 
+export interface SubscriptionPackageListParamsProps {
+  page: number
+  size: number
+}
+
 export interface SubscriptionPackage {
   id: string
   badge: string
-  publish_date: string
+  publishDate: string
   is_display: boolean
   full_price: number
   price: number
-  period: number
+  periodMonth: number
   list_banner: string
-  name_en: string
+  nameEn: string
   feature_en: string
   name_th: string
   feature_th: string
