@@ -236,7 +236,12 @@ export default function CustomerProfile(): JSX.Element {
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={3} />
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={4} />
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={2}>
-            <Button className={classes.addButton} color="primary" variant="contained">
+            <Button
+              id="customer_profile__export_btn"
+              className={classes.addButton}
+              color="primary"
+              variant="contained"
+            >
               <CSVLink
                 data={csvData}
                 headers={csvHeaders}

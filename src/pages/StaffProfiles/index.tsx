@@ -240,7 +240,12 @@ export default function StaffProfiles(): JSX.Element {
               </FormControl>
             </Grid>
             <Grid item className={[classes.filter, classes.textRight].join(' ')} xs={6}>
-              <Button className={classes.addButton} color="primary" variant="contained">
+              <Button
+                id="staff_profile__export_btn"
+                className={classes.addButton}
+                color="primary"
+                variant="contained"
+              >
                 <CSVLink
                   data={csvData}
                   headers={csvHeaders}
@@ -252,6 +257,7 @@ export default function StaffProfiles(): JSX.Element {
               </Button>
               &nbsp;&nbsp;
               <Button
+                id="staff_profile__add_btn"
                 endIcon={<AddIcon />}
                 className={classes.addButton}
                 variant="contained"
