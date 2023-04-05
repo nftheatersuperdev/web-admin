@@ -267,7 +267,7 @@ export default function Subscription(): JSX.Element {
       status: displayStatus || defaultValue.noData,
       isReplacement: isReplacement ? defaultValue.true : defaultValue.false,
       parentId: bookingId,
-      isExtend: Boolean(isExtend),
+      isExtend: isExtend ? defaultValue.true : defaultValue.false,
       paymentStatus: firstCapitalize(payments[0]?.status) || defaultValue.noData,
       paymentFailureMessage: payments[0]?.statusMessage || defaultValue.noData,
       paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || defaultValue.noData,
@@ -280,7 +280,6 @@ export default function Subscription(): JSX.Element {
     if (carActivities.length >= 1) {
       carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
     }
-    csvData.push(makeData())
   })
 
   useEffect(() => {
