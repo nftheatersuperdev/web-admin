@@ -16,6 +16,10 @@
     "selectedFromDate": "Start Date",
     "selectedToDate": "End Date",
     "search": "Select Search",
+    "searchLocation": "Location Services",
+    "locationList": {
+      "all": "All Location"
+    },
     "searchBtn": "Search",
     "searchField": {
       "label": "Enter Search",
@@ -29,6 +33,7 @@
     "inUse": "In Use"
   },
   "carAvailabilityDetail": {
+    "location": "Location Service",
     "carId": "Car ID",
     "carStatus": "Car Status",
     "carTrackId": "Cartrack ID",
@@ -36,10 +41,12 @@
     "vin": "VIN",
     "carBrand": "Car Brand",
     "carModel": "Car Model",
-    "color": "Color",
+    "color": "Colour",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
-    "bookingId": "Booking ID"
+    "bookingId": "Booking ID",
+    "owner": "Owner",
+    "reSeller": "Reseller"
   },
   "sidebar": {
     "pages": "Pages",

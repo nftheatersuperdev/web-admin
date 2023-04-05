@@ -18,7 +18,14 @@ const BreadcrumbsCustom = styled(Breadcrumbs)`
 const DividerCustom = styled(Divider)`
   margin: 10px 0;
 `
-
+const StyledLink = styled(Link)`
+  color: #999999;
+  &:visited,
+  &:link,
+  &:active {
+    text-decoration: none;
+  }
+`
 export default function PageTitle({ title, breadcrumbs }: PageTitleProps): JSX.Element {
   const breadcrumbLength = breadcrumbs?.length || null
 
@@ -34,9 +41,9 @@ export default function PageTitle({ title, breadcrumbs }: PageTitleProps): JSX.E
               return <Typography color="textPrimary">{text}</Typography>
             }
             return (
-              <Link key={`breadcrumb-key-${link}`} to={link}>
+              <StyledLink key={`breadcrumb-key-${link}`} to={link}>
                 {text}
-              </Link>
+              </StyledLink>
             )
           })}
         </BreadcrumbsCustom>
