@@ -21,7 +21,6 @@ export const DEFAULT_DATE_FORMAT_MONTH_TEXT = 'DD MMM YYYY'
 export const DEFAULT_DATE_FORMAT_BFF = 'YYYY-MM-DD'
 
 export const DEFAULT_DATETIME_FORMAT_ISO = 'YYYY-MM-DDTHH:mm:ssZ'
-export const DEFAULT_DATETIME_FORMAT_MONTH_TEXT = 'DD MMM YYYY HH:mm'
 
 export function formatDate(dateStr?: string, pattern: string = DEFAULT_DATETIME_FORMAT): string {
   return dateStr ? dayjs(dateStr).format(pattern) : '-'

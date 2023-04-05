@@ -21,7 +21,10 @@ import {
   Select,
   MenuItem,
   Pagination,
+  InputAdornment,
+  IconButton,
 } from '@mui/material'
+import { Search as SearchIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
@@ -116,6 +119,7 @@ export default function Car(): JSX.Element {
       setSelectedSearch(value)
     } else {
       setFilter({})
+      setSelectedSearch(defaultSelect)
     }
     setSearchValue('')
   }
@@ -326,7 +330,7 @@ export default function Car(): JSX.Element {
       <PageTitle title={t('sidebar.carManagement.title')} breadcrumbs={breadcrumbs} />
       <Card>
         <Grid className={classes.gridTitle}>
-          <Typography variant="h6" className={classes.typo}>
+          <Typography id="car_title_table" variant="h6" className={classes.typo}>
             <strong>{t('car.carList')}</strong>
           </Typography>
         </Grid>
@@ -334,7 +338,7 @@ export default function Car(): JSX.Element {
           <Grid item xs={9} sm={2}>
             <Autocomplete
               autoHighlight
-              id="search-select-list"
+              id="search_select_list"
               options={searchOptions}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => {
@@ -361,7 +365,7 @@ export default function Car(): JSX.Element {
             {selectedSearch?.value === 'statusEqual' ? (
               <Autocomplete
                 autoHighlight
-                id="status-select-list"
+                id="status_select_list"
                 options={statusOptions}
                 getOptionLabel={(option) => option.label}
                 renderInput={(params) => {
@@ -379,8 +383,8 @@ export default function Car(): JSX.Element {
               />
             ) : (
               <TextField
+                id="car_search_input"
                 type="text"
-                label={t('car.search')}
                 variant="outlined"
                 fullWidth
                 value={searchValue || ''}
@@ -389,12 +393,35 @@ export default function Car(): JSX.Element {
                 disabled={
                   !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
                 }
+                placeholder={t('car.search')}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <SearchIcon
+                          color={
+                            !selectedSearch ||
+                            selectedSearch?.value === 'all' ||
+                            selectedSearch?.value === ''
+                              ? 'disabled'
+                              : 'action'
+                          }
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             )}
           </Grid>
           <Grid item xs={9} sm={5} />
           <Grid item xs={9} sm={3} className={classes.gridExport}>
-            <Button variant="contained" className={classes.exportButton} size="large">
+            <Button
+              id="car_csv_button"
+              variant="contained"
+              className={classes.exportButton}
+              size="large"
+            >
               <CSVLink
                 data={csvData}
                 headers={csvHeaders}
