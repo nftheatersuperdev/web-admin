@@ -92,6 +92,20 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         icon: <GroupAddIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
       },
+      {
+        id: 'left_menu__customer_profile',
+        title: t('sidebar.userManagement.customerProfile'),
+        path: ROUTE_PATHS.CUSTOMER_PROFILE,
+        icon: <UserIcon />,
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.CUSTOMER_SUPPORT,
+          ROLES.OPERATION,
+          ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
+        ],
+      },
 
       {
         subHeader: t('sidebar.vehicleManagement'),
