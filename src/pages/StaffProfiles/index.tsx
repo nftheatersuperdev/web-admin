@@ -22,6 +22,7 @@ import {
   InputLabel,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
+import config from 'config'
 import { formatDate } from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
@@ -111,7 +112,7 @@ export default function StaffProfiles(): JSX.Element {
   const [searchCriteria, setCriteria] = React.useState('')
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const { data: adminUsersData, refetch } = useQuery(
     'admin-users',
     () => getAdminUsers(page, pageSize),
@@ -312,9 +313,11 @@ export default function StaffProfiles(): JSX.Element {
                       setPageSize(event.target.value as number)
                     }}
                   >
-                    <MenuItem value={10}>10</MenuItem>
-                    <MenuItem value={20}>20</MenuItem>
-                    <MenuItem value={50}>50</MenuItem>
+                    {config.tableRowsPerPageOptions?.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
                 &nbsp;&nbsp;{adminUsersData?.data.pagination?.page || pages} {t('staffProfile.of')}

@@ -23,6 +23,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { makeStyles } from '@mui/styles'
 import { formatDate } from 'utils'
+import config from 'config'
 import Pagination from '@material-ui/lab/Pagination'
 import { CSVLink } from 'react-csv'
 import { Page } from 'layout/LayoutRoute'
@@ -106,7 +107,7 @@ export default function CustomerProfile(): JSX.Element {
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
   const kycStatus = queryString.get('kycStatus')
@@ -316,10 +317,11 @@ export default function CustomerProfile(): JSX.Element {
                       setPageSize(event.target.value as number)
                     }}
                   >
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={10}>10</MenuItem>
-                    <MenuItem value={20}>20</MenuItem>
-                    <MenuItem value={50}>50</MenuItem>
+                    {config.tableRowsPerPageOptions?.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
                 &nbsp;&nbsp;{userResponse?.data.pagination?.page || pages} {t('staffProfile.of')}
