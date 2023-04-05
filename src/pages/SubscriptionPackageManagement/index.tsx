@@ -1,15 +1,13 @@
-import dayjs from 'dayjs'
 import styled from 'styled-components'
-import { Fragment, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'react-query'
-import { useHistory, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
+import config from 'config'
 import {
   Breadcrumbs,
-  IconButton,
   Link,
   Typography,
   Divider,
-  Card,
   Grid,
   TextField,
   MenuItem,
@@ -17,15 +15,19 @@ import {
   makeStyles,
   Button,
   Box,
+  FormControl,
+  Select,
 } from '@material-ui/core'
-import { GridColDef, GridCellParams, GridValueFormatterParams } from '@material-ui/data-grid'
+import { Card } from '@mui/material'
+import { Pagination } from '@material-ui/lab'
+import { GridColDef, GridPageChangeParams } from '@material-ui/data-grid'
 import { Search as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
+import Backdrop from 'components/Backdrop'
 import { Page } from 'layout/LayoutRoute'
-import { getList } from 'services/web-bff/document'
-import DataGridLocale from 'components/DataGridLocale'
+import { getActivities } from 'services/web-bff/car-activity'
+import DataGridLocale from './SubscriptionPackageGrid'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
 const BreadcrumbsWrapper = styled(Breadcrumbs)`
@@ -34,8 +36,6 @@ const BreadcrumbsWrapper = styled(Breadcrumbs)`
 const TableWrapper = styled.div`
   background-color: #fff;
 `
-
-const formatDate = (date: string): string => dayjs(date).format(DEFAULT_DATETIME_FORMAT)
 
 const useStyles = makeStyles(() => ({
   searchBar: {
@@ -107,86 +107,96 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-export default function SubscriptionPackageManagement(): JSX.Element {
-  const history = useHistory()
-  const { t } = useTranslation()
-  const [page] = useState<number>(1)
-  const [size] = useState<number>(10)
-  const classes = useStyles()
+const useQueryString = () => {
+  const { search } = useLocation()
 
-  const { data: response, isFetching } = useQuery('documents', () => getList({ page, size }))
+  return useMemo(() => new URLSearchParams(search), [search])
+}
+
+export default function SubscriptionPackageManagement(): JSX.Element {
+  const { t } = useTranslation()
+  const [page, setPage] = useState<number>(1)
+  const [pages, setPages] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const classes = useStyles()
+  const qs = {
+    plate: useQueryString().get('plate'),
+    brand: useQueryString().get('brand'),
+    model: useQueryString().get('model'),
+    color: useQueryString().get('color'),
+  }
+
+  const [filterPlate] = useState<string>(qs.plate || '')
+  const [filterBrand] = useState<string>(qs.brand || '')
+  const [filterModel] = useState<string>(qs.model || '')
+  const [filterColor] = useState<string>(qs.color || '')
+
+  const {
+    data: carActivitiesData,
+    refetch,
+    isFetched: isFetchedActivities,
+    isFetching: isFetchingActivities,
+  } = useQuery('get-car-activities', () =>
+    getActivities(
+      {
+        page,
+        size: pageSize,
+      },
+      {
+        carBrandId: filterBrand,
+        carModelId: filterModel,
+        carSkuId: filterColor,
+        plateNumber: filterPlate,
+      }
+    )
+  )
+
+  const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
+  const rows =
+    carActivitiesData?.cars.map((carActivity) => {
+      return {
+        id: carActivity.carId,
+        brandName: carActivity.brandName,
+        modelName: carActivity.modelName,
+        color: carActivity.color,
+        plateNumber: carActivity.plateNumber,
+      }
+    }) || []
 
   const visibilityColumns = getVisibilityColumns()
-  const rowCount = response?.pagination.totalRecords || 0
-  const rows = response?.documents?.map((document) => document) || []
 
   const columns: GridColDef[] = [
     {
-      field: 'nameTh',
-      headerName: t('documents.overview.nameTH'),
-      description: t('documents.overview.nameTH'),
-      hide: !visibilityColumns.nameTh,
-      flex: 1,
-      sortable: true,
-      filterable: false,
-    },
-    {
-      field: 'nameEn',
-      headerName: t('documents.overview.nameEN'),
-      description: t('documents.overview.nameEN'),
-      hide: !visibilityColumns.nameEn,
-      flex: 1,
-      sortable: true,
-      filterable: false,
-    },
-    {
-      field: 'codeName',
-      headerName: t('documents.overview.codeName'),
-      description: t('documents.overview.codeName'),
-      hide: !visibilityColumns.codeName,
-      flex: 1,
-      sortable: true,
-      filterable: false,
-    },
-    {
-      field: 'version',
-      headerName: t('documents.overview.activeVersion'),
-      description: t('documents.overview.activeVersion'),
-      hide: !visibilityColumns.version,
-      flex: 1,
-      sortable: true,
-      filterable: false,
-    },
-    {
-      field: 'lastUpdated',
-      headerName: t('documents.overview.lastUpdated'),
-      description: t('documents.overview.lastUpdated'),
-      hide: !visibilityColumns.lastUpdated,
-      flex: 1,
-      sortable: true,
-      filterable: false,
-      valueFormatter: ({ row }: GridValueFormatterParams): string => formatDate(row.effectiveDate),
-    },
-    {
-      field: 'action',
-      headerName: t('documents.overview.action'),
-      description: t('documents.overview.action'),
-      hide: !visibilityColumns.action,
+      field: 'brandName',
+      headerName: t('carActivity.brand.label'),
+      description: t('carActivity.brand.label'),
+      hide: !visibilityColumns.brandName,
       flex: 1,
       sortable: false,
-      filterable: false,
-      renderCell: ({ row }: GridCellParams) => (
-        <Fragment>
-          <IconButton
-            onClick={() => history.push(`/documents/${row.codeName}/versions/${row.version}`)}
-          >
-            <SearchIcon />
-          </IconButton>
-          <IconButton onClick={() => history.push(`/documents/${row.codeName}/versions`)}>
-            <SearchIcon />
-          </IconButton>
-        </Fragment>
-      ),
+    },
+    {
+      field: 'modelName',
+      headerName: t('carActivity.model.label'),
+      description: t('carActivity.model.label'),
+      hide: !visibilityColumns.modelName,
+      flex: 1,
+      sortable: false,
+    },
+    {
+      field: 'color',
+      headerName: t('carActivity.color.label'),
+      description: t('carActivity.color.label'),
+      hide: !visibilityColumns.color,
+      flex: 1,
+      sortable: false,
+    },
+    {
+      field: 'plateNumber',
+      headerName: t('carActivity.plateNumber.label'),
+      description: t('carActivity.plateNumber.label'),
+      hide: !visibilityColumns.plateNumber,
+      flex: 1,
+      sortable: false,
     },
   ]
 
@@ -213,7 +223,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     margin-bottom: 25px;
   `
 
-  const Wrapper = styled(Card)`
+  const CardWrapper = styled(Card)`
     padding: 21px 0px;
   `
 
@@ -221,6 +231,28 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     margin: 0px 16px;
   `
 
+  useEffect(() => {
+    if (carActivitiesData?.pagination) {
+      setPage(carActivitiesData.pagination.page)
+      setPageSize(carActivitiesData.pagination.size)
+      setPages(carActivitiesData.pagination.totalPage)
+    }
+
+    if (isFetchedActivities) {
+      console.error(`Unable to mutation useCreateUserGroup, ${isFetchedActivities}`)
+    }
+  }, [carActivitiesData?.pagination, isFetchedActivities])
+
+  /**
+   * Managing the pagination variables that will send to the API.
+   */
+  useEffect(() => {
+    refetch()
+  }, [pages, page, pageSize, refetch])
+
+  const handlePageSizeChange = (params: GridPageChangeParams) => {
+    setPageSize(params.pageSize)
+  }
   return (
     <Page>
       <Typography variant="h5" color="inherit" component="h1">
@@ -233,7 +265,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
         <Typography color="textPrimary">{t('subscriptionPackageManagement.header')}</Typography>
       </BreadcrumbsWrapper>
       <DividerCustom />
-      <Wrapper>
+      <CardWrapper>
         <CardHeader>
           <Typography variant="h6" component="h2">
             {t('subscriptionPackageManagement.table.header')}
@@ -283,18 +315,52 @@ export default function SubscriptionPackageManagement(): JSX.Element {
           <DataGridLocale
             autoHeight
             pagination
-            pageSize={size}
-            page={page}
+            pageSize={pageSize}
+            page={page - 1}
             rowCount={rowCount}
+            paginationMode="server"
+            onPageSizeChange={handlePageSizeChange}
+            onPageChange={setPage}
             rows={rows}
             columns={columns}
-            disableSelectionOnClick
-            filterMode="server"
             onColumnVisibilityChange={onColumnVisibilityChange}
-            loading={isFetching}
+            sortingMode="server"
+            hideFooter
           />
+          <div className={classes.paginationContrainer}>
+            Rows per page:&nbsp;
+            <FormControl className={classes.inlineElement} variant="standard">
+              <Select
+                value={pageSize}
+                defaultValue={page}
+                onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+                  setPage(0)
+                  setPageSize(event.target.value as number)
+                }}
+              >
+                {config.tableRowsPerPageOptions.map((rowOption) => {
+                  return (
+                    <MenuItem key={rowOption} value={rowOption}>
+                      {rowOption}
+                    </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+            <Pagination
+              count={carActivitiesData?.pagination?.totalPage || pages}
+              page={carActivitiesData?.pagination?.page || page}
+              defaultPage={carActivitiesData?.pagination?.page || page}
+              variant="text"
+              color="primary"
+              onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                setPage(value)
+              }}
+            />
+          </div>
         </TableWrapper>
-      </Wrapper>
+      </CardWrapper>
+      <Backdrop open={isFetchingActivities} />
     </Page>
   )
 }

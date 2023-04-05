@@ -5,19 +5,17 @@ import {
   DataGridProps,
   GridCellParams,
   GridPageChangeParams,
-  GridToolbar,
 } from '@material-ui/data-grid'
 import { getMuiLocales } from 'i18n'
 import config from 'config'
 import { useState } from 'react'
-import { Snackbar } from '@material-ui/core'
+import { Snackbar, makeStyles } from '@material-ui/core'
 import { Page } from 'layout/LayoutRoute'
 
 type DataGridLocaleProps = Omit<DataGridProps, 'onPageChange'> & {
   onFetchNextPage?: () => void
   onFetchPreviousPage?: () => void
   onPageChange?: (index: number) => void
-  customToolbar?: React.FC
 }
 
 export default function SubscriptionPackageGrid(props: DataGridLocaleProps): JSX.Element {
@@ -29,7 +27,6 @@ export default function SubscriptionPackageGrid(props: DataGridLocaleProps): JSX
     onPageChange,
     onFetchNextPage,
     onFetchPreviousPage,
-    customToolbar,
     ...rest
   } = props
   const [isCopy, setIsCopy] = useState(false)
@@ -53,6 +50,15 @@ export default function SubscriptionPackageGrid(props: DataGridLocaleProps): JSX
     }, 1000)
   }
 
+  const useStyles = makeStyles(() => ({
+    muiTableCell: {
+      border: 0,
+      borderWidth: 0,
+    },
+  }))
+
+  const classes = useStyles()
+
   return (
     <Page>
       <Snackbar
@@ -69,8 +75,8 @@ export default function SubscriptionPackageGrid(props: DataGridLocaleProps): JSX
       />
 
       <DataGrid
+        className={classes.muiTableCell}
         components={{
-          Toolbar: customToolbar ?? GridToolbar,
           ...components,
         }}
         onPageChange={handlePageChange}
