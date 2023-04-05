@@ -30,6 +30,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  Box,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
@@ -151,6 +152,7 @@ export default function CarAvailability(): JSX.Element {
   const [selectedToDate, setSelectedToDate] = useState(initSelectedToDate)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
+  const [showPage, setShowPage] = useState(true)
   const searchTypeList = getSearchTypeList(t)
   const searchLocationList = getSearcLocationList(t)
   const [filterSearchField, setFilterSearchField] = useState<string>('')
@@ -178,6 +180,7 @@ export default function CarAvailability(): JSX.Element {
 
   useEffect(() => {
     refetch()
+    setShowPage(false)
   }, [filter, page, pageSize, refetch])
 
   const rows =
@@ -392,246 +395,258 @@ export default function CarAvailability(): JSX.Element {
       <PageTitle title={t('sidebar.carAvailability')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
-          <Typography variant="h6" component="h2">
-            {t('sidebar.carAvailabilityList')}
-          </Typography>
-          <Grid className={classes.searchBar} container spacing={1}>
-            <Grid item className={[classes.filter].join(' ')} xs={1.5}>
-              <TextField
-                fullWidth
-                select
-                label={t('carAvailability.search')}
-                variant="outlined"
-                id="car_availability__searchtype_input"
-                value={formik.values.searchType}
-                onChange={(event) => {
-                  formik.setFieldValue('searchType', event.target.value)
-                  setFilterSearchField('')
-                  setFilterSearchFieldError('')
-                }}
-              >
-                <MenuItem value="">
-                  <em>{t('carAvailability.none')}</em>
-                </MenuItem>
-                {searchTypeList?.map((option) => (
-                  <MenuItem key={option.key} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item className={[classes.filter].join(' ')} xs={2.5}>
-              <TextField
-                disabled={formik.values.searchType === ''}
-                fullWidth
-                error={!!filterSearchFieldError}
-                helperText={filterSearchFieldError}
-                variant="outlined"
-                id="car_availability__searchField_input"
-                placeholder={t('carAvailability.searchField.label')}
-                value={filterSearchField}
-                onChange={handleOnSearchFieldChange}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    formik.handleSubmit()
-                  }
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color={formik.values.searchType === '' ? 'disabled' : 'action'} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item className={[classes.filter].join(' ')} xs={2}>
-              <DatePicker
-                fullWidth
-                label={t('carAvailability.selectedFromDate')}
-                id="car_availability__startdate_input"
-                KeyboardButtonProps={{
-                  id: 'car_availability__startdate_icon',
-                }}
-                name="selectedFromDate"
-                format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
-                value={selectedFromDate}
-                onChange={(date) => {
-                  date && setSelectedFromDate(date.toDate())
-                }}
-                inputVariant="outlined"
-              />
-            </Grid>
-            <Grid item className={[classes.filter].join(' ')} xs={2}>
-              <DatePicker
-                fullWidth
-                label={t('carAvailability.selectedToDate')}
-                id="car_availability__enddate_input"
-                KeyboardButtonProps={{
-                  id: 'car_availability__enddate_icon',
-                }}
-                name="selectedToDate"
-                format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
-                value={selectedToDate}
-                onChange={(date) => {
-                  date && setSelectedToDate(date.toDate())
-                }}
-                inputVariant="outlined"
-              />
-            </Grid>
-            <Grid item className={[classes.filter].join(' ')} xs={1}>
-              <Button
-                fullWidth
-                id="car_availability__search_btn"
-                className={classes.buttonWithoutShadow}
-                color="primary"
-                variant="contained"
-                onClick={() => formik.handleSubmit()}
-                disabled={isFetching}
-              >
-                {t('carAvailability.searchBtn')}
-              </Button>
-            </Grid>
-            <Grid item className={[classes.filter].join(' ')} xs={2}>
-              <TextField
-                fullWidth
-                select
-                className={classes.hideObject}
-                label={t('carAvailability.searchLocation')}
-                variant="outlined"
-                id="car_availability__searchlocatio_input"
-                value={formik.values.searchLocation}
-                onChange={(event) => {
-                  formik.setFieldValue('searchLocation', event.target.value)
-                }}
-              >
-                {searchLocationList?.map((option) => (
-                  <MenuItem key={option.key} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item className={[classes.filter].join(' ')} xs={1}>
-              <Button
-                fullWidth
-                id="car_availability__export_btn"
-                className={classes.buttonWithoutExport}
-                variant="contained"
-                disabled={isFetching}
-              >
-                <CSVLink
-                  data={csvData}
-                  headers={csvHeaders}
-                  filename={t('sidebar.carAvailability') + '.csv'}
-                  className={classes.buttonExport}
-                >
-                  {t('button.export')}
-                </CSVLink>
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Fragment>
-            <TableContainer component={Paper} className={classes.table}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.location')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.carBrand')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.carModel')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                        {t('carAvailabilityDetail.color')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.plateNumber')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                        {t('carAvailabilityDetail.carStatus')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.bookingId')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.owner')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.reSeller')}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                {isFetching ? (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell colSpan={9} align="center">
-                        <CircularProgress />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                ) : (
-                  <TableBody>{carAvailabilityRowData}</TableBody>
-                )}
-              </Table>
-            </TableContainer>
-            <Card>
-              <div className={classes.paginationContrainer}>
-                Rows per page:&nbsp;
-                <FormControl variant="standard" className={classes.inlineElement}>
-                  <Select
-                    value={carData?.data?.pagination?.size || pageSize}
-                    defaultValue={carData?.data?.pagination?.size || pageSize}
+          {showPage ? (
+            <Box>
+              <Typography variant="h6" component="h2">
+                {t('sidebar.carAvailabilityList')}
+              </Typography>
+            </Box>
+          ) : (
+            <Box>
+              <Typography variant="h6" component="h2">
+                {t('sidebar.carAvailabilityList')}
+              </Typography>
+              <Grid className={classes.searchBar} container spacing={1}>
+                <Grid item className={[classes.filter].join(' ')} xs={1.5}>
+                  <TextField
+                    fullWidth
+                    select
+                    label={t('carAvailability.search')}
+                    variant="outlined"
+                    id="car_availability__searchtype_input"
+                    value={formik.values.searchType}
                     onChange={(event) => {
-                      setPage(0)
-                      setPageSize(event.target.value as number)
+                      formik.setFieldValue('searchType', event.target.value)
+                      setFilterSearchField('')
+                      setFilterSearchFieldError('')
                     }}
                   >
-                    {config.tableRowsPerPageOptions?.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
+                    <MenuItem value="">
+                      <em>{t('carAvailability.none')}</em>
+                    </MenuItem>
+                    {searchTypeList?.map((option) => (
+                      <MenuItem key={option.key} value={option.value}>
+                        {option.label}
                       </MenuItem>
                     ))}
-                  </Select>
-                </FormControl>
-                &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
-                &nbsp;
-                {carData?.data.pagination?.totalPage}
-                <Pagination
-                  count={carData?.data?.pagination?.totalPage}
-                  page={carData?.data?.pagination?.page || page}
-                  defaultPage={carData?.data?.pagination?.page || page}
-                  variant="text"
-                  color="primary"
-                  onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                    setPage(value - 1)
-                  }}
-                />
-              </div>
-            </Card>
-          </Fragment>
+                  </TextField>
+                </Grid>
+                <Grid item className={[classes.filter].join(' ')} xs={2.5}>
+                  <TextField
+                    disabled={formik.values.searchType === ''}
+                    fullWidth
+                    error={!!filterSearchFieldError}
+                    helperText={filterSearchFieldError}
+                    variant="outlined"
+                    id="car_availability__searchField_input"
+                    placeholder={t('carAvailability.searchField.label')}
+                    value={filterSearchField}
+                    onChange={handleOnSearchFieldChange}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        formik.handleSubmit()
+                      }
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon
+                            color={formik.values.searchType === '' ? 'disabled' : 'action'}
+                          />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item className={[classes.filter].join(' ')} xs={2}>
+                  <DatePicker
+                    fullWidth
+                    label={t('carAvailability.selectedFromDate')}
+                    id="car_availability__startdate_input"
+                    KeyboardButtonProps={{
+                      id: 'car_availability__startdate_icon',
+                    }}
+                    name="selectedFromDate"
+                    format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
+                    value={selectedFromDate}
+                    onChange={(date) => {
+                      date && setSelectedFromDate(date.toDate())
+                    }}
+                    inputVariant="outlined"
+                  />
+                </Grid>
+                <Grid item className={[classes.filter].join(' ')} xs={2}>
+                  <DatePicker
+                    fullWidth
+                    label={t('carAvailability.selectedToDate')}
+                    id="car_availability__enddate_input"
+                    KeyboardButtonProps={{
+                      id: 'car_availability__enddate_icon',
+                    }}
+                    name="selectedToDate"
+                    format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
+                    value={selectedToDate}
+                    onChange={(date) => {
+                      date && setSelectedToDate(date.toDate())
+                    }}
+                    inputVariant="outlined"
+                  />
+                </Grid>
+                <Grid item className={[classes.filter].join(' ')} xs={1}>
+                  <Button
+                    fullWidth
+                    id="car_availability__search_btn"
+                    className={classes.buttonWithoutShadow}
+                    color="primary"
+                    variant="contained"
+                    onClick={() => formik.handleSubmit()}
+                    disabled={isFetching}
+                  >
+                    {t('carAvailability.searchBtn')}
+                  </Button>
+                </Grid>
+                <Grid item className={[classes.filter].join(' ')} xs={2}>
+                  <TextField
+                    fullWidth
+                    select
+                    className={classes.hideObject}
+                    label={t('carAvailability.searchLocation')}
+                    variant="outlined"
+                    id="car_availability__searchlocatio_input"
+                    value={formik.values.searchLocation}
+                    onChange={(event) => {
+                      formik.setFieldValue('searchLocation', event.target.value)
+                    }}
+                  >
+                    {searchLocationList?.map((option) => (
+                      <MenuItem key={option.key} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item className={[classes.filter].join(' ')} xs={1}>
+                  <Button
+                    fullWidth
+                    id="car_availability__export_btn"
+                    className={classes.buttonWithoutExport}
+                    variant="contained"
+                    disabled={isFetching}
+                  >
+                    <CSVLink
+                      data={csvData}
+                      headers={csvHeaders}
+                      filename={t('sidebar.carAvailability') + '.csv'}
+                      className={classes.buttonExport}
+                    >
+                      {t('button.export')}
+                    </CSVLink>
+                  </Button>
+                </Grid>
+              </Grid>
+
+              <Fragment>
+                <TableContainer component={Paper} className={classes.table}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.location')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.carBrand')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.carModel')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                            {t('carAvailabilityDetail.color')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.plateNumber')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                            {t('carAvailabilityDetail.carStatus')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.bookingId')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.owner')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.textBoldBorder}>
+                            {t('carAvailabilityDetail.reSeller')}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    {isFetching ? (
+                      <TableBody>
+                        <TableRow>
+                          <TableCell colSpan={9} align="center">
+                            <CircularProgress />
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    ) : (
+                      <TableBody>{carAvailabilityRowData}</TableBody>
+                    )}
+                  </Table>
+                </TableContainer>
+                <Card>
+                  <div className={classes.paginationContrainer}>
+                    Rows per page:&nbsp;
+                    <FormControl variant="standard" className={classes.inlineElement}>
+                      <Select
+                        value={carData?.data?.pagination?.size || pageSize}
+                        defaultValue={carData?.data?.pagination?.size || pageSize}
+                        onChange={(event) => {
+                          setPage(0)
+                          setPageSize(event.target.value as number)
+                        }}
+                      >
+                        {config.tableRowsPerPageOptions?.map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
+                    &nbsp;
+                    {carData?.data.pagination?.totalPage}
+                    <Pagination
+                      count={carData?.data?.pagination?.totalPage}
+                      page={carData?.data?.pagination?.page || page}
+                      defaultPage={carData?.data?.pagination?.page || page}
+                      variant="text"
+                      color="primary"
+                      onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                        setPage(value - 1)
+                      }}
+                    />
+                  </div>
+                </Card>
+              </Fragment>
+            </Box>
+          )}
         </ContentSection>
       </Wrapper>
     </Page>
