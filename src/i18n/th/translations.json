@@ -1025,5 +1025,34 @@
     "history": {
       "label": "Car Activity History"
     }
+  },
+  "subscriptionPackageManagement": {
+    "header": "Package Management",
+    "table": {
+      "header": "Package",
+      "selectSearch": "Select Search",
+      "enterSearch": "Enter Search",
+      "createButton": "Create",
+      "columnHeader": {
+        "packageId": "Package ID",
+        "packageName": "Package Name",
+        "packagePeriod": "Package Period",
+        "price": "Price",
+        "publishedDate": "Published Date",
+        "published": "Published",
+        "status": "Status",
+        "createdBy": "Created By",
+        "createdDate": "Created Date"
+      },
+      "cell": {
+        "months": "Months",
+        "thb": "THB",
+        "on": "On",
+        "off": "Off",
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending"
+      }
+    }
   }
 }
