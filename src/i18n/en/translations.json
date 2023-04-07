@@ -1082,6 +1082,15 @@
         "status": "Status",
         "createdBy": "Created By",
         "createdDate": "Created Date"
+      },
+      "cell": {
+        "months": "Months",
+        "thb": "THB",
+        "on": "On",
+        "off": "Off",
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending"
       }
     }
   }

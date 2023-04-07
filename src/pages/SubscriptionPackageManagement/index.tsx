@@ -18,21 +18,29 @@ import {
   Select,
 } from '@material-ui/core'
 import { makeStyles } from '@mui/styles'
-import { Card } from '@mui/material'
-import { Pagination } from '@material-ui/lab'
 import {
-  GridCellParams,
-  GridColDef,
-  GridColumnHeaderParams,
-  GridPageChangeParams,
-} from '@material-ui/data-grid'
+  Card,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material'
+import { Pagination } from '@material-ui/lab'
 import { Search as SearchIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
 import AddIcon from '@mui/icons-material/ControlPoint'
-import Backdrop from 'components/Backdrop'
 import { Page } from 'layout/LayoutRoute'
 import { getSubscriptionPackages } from 'services/web-bff/subscription-package'
-import DataGridLocale from './SubscriptionPackageGrid'
+import {
+  formatDateMonth,
+  publishedStatus,
+  packageStatusString,
+  PackageStatus,
+  formatDateMonthYearTime,
+} from './utils'
 
 const useStyles = makeStyles(() => ({
   searchBar: {
@@ -74,9 +82,65 @@ const useStyles = makeStyles(() => ({
     fontSize: '14px',
     fontFamily: 'Roboto',
     fontWeight: 'bold',
+    paddingLeft: '16px',
   },
   selectSearch: {
     height: '90px',
+  },
+  cellText: {
+    fontSize: '16px',
+    fontFamily: 'Roboto',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    paddingLeft: '8px',
+  },
+  twoLine: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical',
+  },
+  published: {
+    borderRadius: '64px',
+    fontSize: '12px',
+    fontFamily: 'Roboto',
+    fontWeight: 500,
+    height: '24px',
+    lineHeight: '24px',
+    width: '29px',
+    textAlign: 'center',
+    marginLeft: '8px',
+  },
+  bgGreen: {
+    backgroundColor: '#4CAF50',
+    color: 'white',
+  },
+  bgGrey: {
+    backgroundColor: '#E0E0E0',
+    color: 'rgba(0, 0, 0, 0.87)',
+  },
+  bgSecondary: {
+    backgroundColor: '##424E63',
+    color: 'white',
+  },
+  table: {
+    width: '100%',
+  },
+  headerBorder: {
+    borderLeft: '2px solid #E0E0E0',
+  },
+  packageStatus: {
+    borderRadius: '64px',
+    fontSize: '12px',
+    fontFamily: 'Roboto',
+    fontWeight: 500,
+    height: '24px',
+    lineHeight: '24px',
+    textAlign: 'center',
+    marginLeft: '8px',
+    paddingLeft: '6px',
+    paddingRight: '6px',
   },
 }))
 
@@ -89,8 +153,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
   const {
     data: subscriptionsData,
     refetch,
-    isFetched: isFetchedActivities,
-    isFetching: isFetchingActivities,
+    isFetching: isFetchingSubscription,
   } = useQuery('get-subscription-packages', () =>
     getSubscriptionPackages({
       page,
@@ -98,7 +161,6 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     })
   )
 
-  const rowCount = subscriptionsData?.pagination?.totalRecords ?? 0
   const rows =
     subscriptionsData?.packages.map((packageData) => {
       return {
@@ -108,54 +170,31 @@ export default function SubscriptionPackageManagement(): JSX.Element {
         price: packageData.price,
         publishedDate: packageData.publishDate,
         status: packageData.status,
+        createdBy: packageData.createdBy,
+        createdDate: packageData.createdDate,
+        isPublish: packageData.isPublish,
       }
     }) || []
 
-  const columns: GridColDef[] = [
-    {
-      field: 'id',
-      hide: false,
-      flex: 1,
-      sortable: false,
-      renderHeader: (_: GridColumnHeaderParams) =>
-        getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.packageId')),
-      renderCell: (params: GridCellParams) => getTextCell(params.row.id),
-    },
-    {
-      field: 'packageName',
-      headerName: t('subscriptionPackageManagement.table.columnHeader.packageName'),
-      hide: false,
-      flex: 1,
-      sortable: false,
-      headerClassName: classes.columnHeader,
-    },
-    {
-      field: 'packagePeriod',
-      hide: false,
-      flex: 1,
-      sortable: false,
-      renderHeader: (_: GridColumnHeaderParams) =>
-        getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.packagePeriod')),
-      renderCell: (params: GridCellParams) => getTextCell(params.row.packagePeriod),
-    },
-    {
-      field: 'price',
-      headerName: t('subscriptionPackageManagement.table.columnHeader.price'),
-      hide: false,
-      flex: 1,
-      sortable: false,
-      headerClassName: classes.columnHeader,
-    },
-    {
-      field: 'publishedDate',
-      hide: false,
-      flex: 1,
-      sortable: false,
-      renderHeader: (_: GridColumnHeaderParams) =>
-        getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.publishedDate')),
-      renderCell: (params: GridCellParams) => getTextCell(params.row.status),
-    },
-  ]
+  const subscriptionsRowData =
+    (rows &&
+      rows.length > 0 &&
+      rows.map((row) => {
+        return (
+          <TableRow hover key={`subscription-${row.id}`}>
+            <TableCell>{getTextCell(row.id)}</TableCell>
+            <TableCell>{getTextCell(row.packageName)}</TableCell>
+            <TableCell>{getPeriodTextCell(row.packagePeriod)}</TableCell>
+            <TableCell>{getPriceTextCell(row.price)}</TableCell>
+            <TableCell>{getTextCell(formatDateMonth(row.publishedDate))}</TableCell>
+            <TableCell>{getPublishedChipCell(row.isPublish)}</TableCell>
+            <TableCell>{getPackageStatusCell(row.status)}</TableCell>
+            <TableCell>{getTwoLineTextCell(row.createdBy)}</TableCell>
+            <TableCell>{getTwoLineTextCell(formatDateMonthYearTime(row.createdDate))}</TableCell>
+          </TableRow>
+        )
+      })) ||
+    []
 
   const BreadcrumbsWrapper = styled(Breadcrumbs)`
     margin: 10px 0 20px 0;
@@ -175,22 +214,6 @@ export default function SubscriptionPackageManagement(): JSX.Element {
   const CardHeader = styled.div`
     margin: 0px 16px;
   `
-
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPageSize(params.pageSize)
-  }
-
-  useEffect(() => {
-    if (subscriptionsData?.pagination) {
-      setPage(subscriptionsData.pagination.page)
-      setPageSize(subscriptionsData.pagination.size)
-    }
-
-    if (isFetchedActivities) {
-      console.error(`Unable to mutation useCreateUserGroup, ${pageSize}`)
-    }
-  }, [subscriptionsData?.pagination, isFetchedActivities, pageSize])
-
   /**
    * Managing the pagination variables that will send to the API.
    */
@@ -198,15 +221,70 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     refetch()
   }, [page, pageSize, refetch])
 
-  function getTextHeaderCell(text: string) {
-    return <div className={classes.columnHeader}>{text}</div>
+  function getTextHeaderCell(text: string, isShowborder = true) {
+    let classGroup = classes.columnHeader
+    if (isShowborder) {
+      classGroup = [classes.columnHeader, classes.headerBorder].join(' ')
+    }
+    return <div className={classGroup}>{text}</div>
   }
 
   function getTextCell(text: string) {
+    return <div className={classes.cellText}>{text}</div>
+  }
+
+  function getTwoLineTextCell(text: string) {
+    return <div className={[classes.cellText, classes.twoLine].join(' ')}>{text}</div>
+  }
+
+  function getPeriodTextCell(text: number) {
     return (
-      <Typography variant="h6" component="h2">
-        {text}
-      </Typography>
+      <div className={classes.cellText}>
+        {text} {t('subscriptionPackageManagement.table.cell.months')}
+      </div>
+    )
+  }
+
+  function getPublishedChipCell(isPublished: boolean) {
+    return (
+      <div>
+        <div
+          className={[classes.published, isPublished ? classes.bgGreen : classes.bgGrey].join(' ')}
+        >
+          {publishedStatus(isPublished, t)}
+        </div>
+      </div>
+    )
+  }
+
+  function getPriceTextCell(text: number) {
+    return (
+      <div className={classes.cellText}>
+        {text} {t('subscriptionPackageManagement.table.cell.thb')}
+      </div>
+    )
+  }
+
+  function getPackageStatusCell(status: string) {
+    let classGroup = classes.packageStatus
+    switch (status) {
+      case PackageStatus.Active:
+        classGroup = [classes.packageStatus, classes.bgGreen].join(' ')
+        break
+      case PackageStatus.Inactive:
+        classGroup = [classes.packageStatus, classes.bgGrey].join(' ')
+        break
+      case PackageStatus.Pending:
+        classGroup = [classes.packageStatus, classes.bgSecondary].join(' ')
+        break
+      default:
+        classGroup = classes.packageStatus
+        break
+    }
+    return (
+      <div>
+        <div className={classGroup}>{packageStatusString(status, t)}</div>
+      </div>
     )
   }
 
@@ -269,20 +347,70 @@ export default function SubscriptionPackageManagement(): JSX.Element {
           </Grid>
         </CardHeader>
         <TableWrapper>
-          <DataGridLocale
-            autoHeight
-            pageSize={pageSize}
-            page={page - 1}
-            rowCount={rowCount}
-            paginationMode="server"
-            onPageSizeChange={handlePageSizeChange}
-            onPageChange={setPage}
-            rows={rows}
-            columns={columns}
-            sortingMode="server"
-            hideFooter
-            disableColumnMenu
-          />
+          <TableContainer className={classes.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.packageId'),
+                      false
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.packageName')
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.packagePeriod')
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.price'))}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.publishedDate')
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.published')
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.status')
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.createdBy')
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {getTextHeaderCell(
+                      t('subscriptionPackageManagement.table.columnHeader.createdDate')
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              {isFetchingSubscription ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={9} align="center">
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : (
+                <TableBody>{subscriptionsRowData}</TableBody>
+              )}
+            </Table>
+          </TableContainer>
+
           <div className={classes.paginationContrainer}>
             Rows per page:&nbsp;
             <FormControl className={classes.inlineElement} variant="standard">
@@ -316,7 +444,6 @@ export default function SubscriptionPackageManagement(): JSX.Element {
           </div>
         </TableWrapper>
       </CardWrapper>
-      <Backdrop open={isFetchingActivities} />
     </Page>
   )
 }

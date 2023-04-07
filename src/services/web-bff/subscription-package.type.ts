@@ -9,7 +9,7 @@ export interface SubscriptionPackage {
   id: string
   badge: string
   publishDate: string
-  is_display: boolean
+  isPublish: boolean
   full_price: number
   price: number
   periodMonth: number
@@ -21,8 +21,8 @@ export interface SubscriptionPackage {
   detail_banner: string
   description_en: string
   description_th: string
-  created_by: string
-  created_date: string
+  createdBy: string
+  createdDate: string
   updated_date: string
   status: string
 }
