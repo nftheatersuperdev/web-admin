@@ -141,67 +141,6 @@ export default function PackageDetail(): JSX.Element {
       <TitleTypography variant="h5">Package Management</TitleTypography>
       <InputField maxWidth={false}>
         <Grid container spacing={5}>
-          <Grid item xs={12} sm={12}>
-            <TextField
-              fullWidth
-              label="Package Name (EN)"
-              id="packageName"
-              name="packageNameField"
-              variant="outlined"
-              error={!!filterSearchFieldError}
-              InputLabelProps={{ shrink: true }}
-              onChange={validatePackageName}
-              onCut={handleDisableEvent}
-              onCopy={handleDisableEvent}
-              onPaste={handleDisableEvent}
-            />
-          </Grid>
-          <Grid container spacing={5}>
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              style={{
-                marginLeft: 24,
-                marginRight: 24,
-              }}
-            >
-              <HTMLEditor
-                id="contentEn"
-                label={t('documents.addEdit.contentEn')}
-                initialValue="english"
-                handleOnEditChange={(value: string) => validatePackageListMessage(value)}
-              />
-
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                style={{
-                  marginTop: 24,
-                  marginBottom: 24,
-                }}
-              >
-                <TextField
-                  fullWidth
-                  label="Package Name (TH)"
-                  id="packageNameTh"
-                  name="packageNameFieldTH"
-                  variant="outlined"
-                  InputLabelProps={{ shrink: true }}
-                  onCut={handleDisableEvent}
-                  onCopy={handleDisableEvent}
-                  onPaste={handleDisableEvent}
-                />
-              </Grid>
-              <HTMLEditor
-                id="contentTh"
-                label={t('documents.addEdit.contentTh')}
-                initialValue="ไทย"
-                handleOnEditChange={(value: string) => validatePackageListMessage(value)}
-              />
-            </Grid>
-          </Grid>
           <Grid item xs={12} sm={4}>
             <DatePicker
               fullWidth
@@ -315,6 +254,67 @@ export default function PackageDetail(): JSX.Element {
           </Grid>
         </Grid>
       </InputField>
+      <TitleTypography variant="h5">Package List Message</TitleTypography>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        style={{
+          marginTop: 24,
+        }}
+      >
+        <TextField
+          fullWidth
+          label="Package Name (EN)"
+          id="packageName"
+          name="packageNameField"
+          variant="outlined"
+          error={!!filterSearchFieldError}
+          InputLabelProps={{ shrink: true }}
+          onChange={validatePackageName}
+          onCut={handleDisableEvent}
+          onCopy={handleDisableEvent}
+          onPaste={handleDisableEvent}
+        />
+      </Grid>
+      <Grid container spacing={5}>
+        <Grid item xs={12} sm={12}>
+          <HTMLEditor
+            id="contentEn"
+            label={t('documents.addEdit.contentEn')}
+            initialValue="english"
+            handleOnEditChange={(value: string) => validatePackageListMessage(value)}
+          />
+
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            style={{
+              marginTop: 24,
+              marginBottom: 24,
+            }}
+          >
+            <TextField
+              fullWidth
+              label="Package Name (TH)"
+              id="packageNameTh"
+              name="packageNameFieldTH"
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              onCut={handleDisableEvent}
+              onCopy={handleDisableEvent}
+              onPaste={handleDisableEvent}
+            />
+          </Grid>
+          <HTMLEditor
+            id="contentTh"
+            label={t('documents.addEdit.contentTh')}
+            initialValue="ไทย"
+            handleOnEditChange={(value: string) => validatePackageListMessage(value)}
+          />
+        </Grid>
+      </Grid>
     </PackageDetailSpacing>
   )
 }
