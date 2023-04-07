@@ -2,21 +2,14 @@
 import * as yup from 'yup'
 import dayjs from 'dayjs'
 import styled from 'styled-components'
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Grid, TextField, Card, Typography } from '@material-ui/core'
 import { alpha } from '@material-ui/core/styles'
-import {
-  Container,
-  FormControl,
-  FormControlLabel,
-  IconButton,
-  MenuItem,
-  Switch,
-} from '@mui/material'
-import ClearIcon from '@mui/icons-material/Clear'
+import { Container, FormControl, FormControlLabel, Switch } from '@mui/material'
 import { useFormik } from 'formik'
 import DatePicker from 'components/DatePicker'
+import HTMLEditor from 'components/HTMLEditor'
 
 const PackageDetailSpacing = styled(Card)`
   padding: 20px 16px 0px 16px;
@@ -96,9 +89,9 @@ export default function PackageDetail(): JSX.Element {
     event.preventDefault()
   }
 
-  const handleClearClick = () => {
-    formik.setFieldValue('badge', '')
-  }
+  // const handleClearClick = () => {
+  //   formik.setFieldValue('badge', '')
+  // }
 
   const formik = useFormik({
     validationSchema,
@@ -124,38 +117,90 @@ export default function PackageDetail(): JSX.Element {
     },
   })
 
+  const packageNameLimit = 50
+  const packageFeatureLimt = 300
+
+  const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
+
+  const validatePackageName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    if (value.length > packageNameLimit) {
+      setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
+    }
+  }
+
+  const validatePackageListMessage = (text: string) => {
+    if (text.length > packageFeatureLimt) {
+      console.log('Error limit 300 characters')
+    }
+    //count bullet
+  }
+
   return (
     <PackageDetailSpacing>
       <TitleTypography variant="h5">Package Management</TitleTypography>
       <InputField maxWidth={false}>
         <Grid container spacing={5}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={12}>
             <TextField
               fullWidth
-              select
-              type="search"
-              label="Badge"
-              id="badge"
-              name="badge"
+              label="Package Name (EN)"
+              id="packageName"
+              name="packageNameField"
               variant="outlined"
-              value={formik.values.badge}
-              onChange={formik.handleChange}
-              error={formik.touched.badge && Boolean(formik.errors.badge)}
-              SelectProps={{
-                IconComponent: () => (
-                  <IconButton
-                    onClick={handleClearClick}
-                    sx={{ visibility: formik.values.badge ? 'visible' : 'hidden' }}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                ),
+              error={!!filterSearchFieldError}
+              InputLabelProps={{ shrink: true }}
+              onChange={validatePackageName}
+              onCut={handleDisableEvent}
+              onCopy={handleDisableEvent}
+              onPaste={handleDisableEvent}
+            />
+          </Grid>
+          <Grid container spacing={5}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              style={{
+                marginLeft: 24,
+                marginRight: 24,
               }}
             >
-              <MenuItem value="Hot">Hot</MenuItem>
-              <MenuItem value="Recommended">Recommended</MenuItem>
-              <MenuItem value="Coming Soon">Coming Soon</MenuItem>
-            </TextField>
+              <HTMLEditor
+                id="contentEn"
+                label={t('documents.addEdit.contentEn')}
+                initialValue="english"
+                handleOnEditChange={(value: string) => validatePackageListMessage(value)}
+              />
+
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                style={{
+                  marginTop: 24,
+                  marginBottom: 24,
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Package Name (TH)"
+                  id="packageNameTh"
+                  name="packageNameFieldTH"
+                  variant="outlined"
+                  InputLabelProps={{ shrink: true }}
+                  onCut={handleDisableEvent}
+                  onCopy={handleDisableEvent}
+                  onPaste={handleDisableEvent}
+                />
+              </Grid>
+              <HTMLEditor
+                id="contentTh"
+                label={t('documents.addEdit.contentTh')}
+                initialValue="ไทย"
+                handleOnEditChange={(value: string) => validatePackageListMessage(value)}
+              />
+            </Grid>
           </Grid>
           <Grid item xs={12} sm={4}>
             <DatePicker
