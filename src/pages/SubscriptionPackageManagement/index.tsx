@@ -79,8 +79,8 @@ const useStyles = makeStyles(() => ({
     marginRight: '24px',
   },
   columnHeader: {
-    fontSize: '14px',
-    fontFamily: 'Roboto',
+    fontSize: '12px',
+    //fontFamily: 'Roboto',
     fontWeight: 'bold',
     paddingLeft: '16px',
   },
@@ -88,8 +88,8 @@ const useStyles = makeStyles(() => ({
     height: '90px',
   },
   cellText: {
-    fontSize: '16px',
-    fontFamily: 'Roboto',
+    fontSize: '14px',
+    //fontFamily: 'Roboto',
     fontWeight: 400,
     fontStyle: 'normal',
     paddingLeft: '8px',
@@ -104,7 +104,7 @@ const useStyles = makeStyles(() => ({
   published: {
     borderRadius: '64px',
     fontSize: '12px',
-    fontFamily: 'Roboto',
+    //fontFamily: 'Roboto',
     fontWeight: 500,
     height: '24px',
     lineHeight: '24px',
@@ -133,7 +133,7 @@ const useStyles = makeStyles(() => ({
   packageStatus: {
     borderRadius: '64px',
     fontSize: '12px',
-    fontFamily: 'Roboto',
+    //fontFamily: 'Roboto',
     fontWeight: 500,
     height: '24px',
     lineHeight: '24px',
@@ -185,7 +185,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
             <TableCell>{getTextCell(row.id)}</TableCell>
             <TableCell>{getTextCell(row.packageName)}</TableCell>
             <TableCell>{getPeriodTextCell(row.packagePeriod)}</TableCell>
-            <TableCell>{getPriceTextCell(row.price)}</TableCell>
+            <TableCell colSpan={2}>{getPriceTextCell(row.price)}</TableCell>
             <TableCell>{getTextCell(formatDateMonth(row.publishedDate))}</TableCell>
             <TableCell>{getPublishedChipCell(row.isPublish)}</TableCell>
             <TableCell>{getPackageStatusCell(row.status)}</TableCell>
@@ -370,6 +370,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
                   <TableCell>
                     {getTextHeaderCell(t('subscriptionPackageManagement.table.columnHeader.price'))}
                   </TableCell>
+                  <TableCell> </TableCell>
                   <TableCell>
                     {getTextHeaderCell(
                       t('subscriptionPackageManagement.table.columnHeader.publishedDate')
@@ -400,7 +401,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
               {isFetchingSubscription ? (
                 <TableBody>
                   <TableRow>
-                    <TableCell colSpan={9} align="center">
+                    <TableCell colSpan={10} align="center">
                       <CircularProgress />
                     </TableCell>
                   </TableRow>
