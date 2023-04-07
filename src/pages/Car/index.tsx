@@ -1,51 +1,64 @@
-import { Fragment, useEffect, useState } from 'react'
+/* eslint-disable react/jsx-props-no-spreading */
+import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
-import { Card, IconButton } from '@material-ui/core'
+import { useHistory } from 'react-router-dom'
 import {
-  GridColDef,
-  GridRowData,
-  GridCellParams,
-  GridPageChangeParams,
-  GridFilterModel,
-  GridFilterItem,
-  GridSortModel,
-  GridValueFormatterParams,
-} from '@material-ui/data-grid'
-import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
-import toast from 'react-hot-toast'
+  Card,
+  Grid,
+  Typography,
+  TextField,
+  Autocomplete,
+  Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  CircularProgress,
+  Chip,
+  FormControl,
+  Select,
+  MenuItem,
+  Pagination,
+  InputAdornment,
+  IconButton,
+} from '@mui/material'
+import { Search as SearchIcon } from '@mui/icons-material'
+import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import {
-  columnFormatDate,
-  getSelectEqualFilterOperators,
-  getEqualAndContainFilterOperators,
-  FieldComparisons,
-  FieldKeyOparators,
-} from 'utils'
+import { CSVLink } from 'react-csv'
+import { formatDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import config from 'config'
-import { SortDirection, SubOrder } from 'services/evme.types'
 import { Page } from 'layout/LayoutRoute'
-import DataGridLocale from 'components/DataGridLocale'
-import { getList, updateById } from 'services/web-bff/car'
-import { CarListFilterRequest, CarUpdateInput } from 'services/web-bff/car.type'
-import CarUpdateDialog, { CarInfo } from './CarUpdateDialog'
+import { getList } from 'services/web-bff/car'
+import { CarListFilterRequest } from 'services/web-bff/car.type'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import {
   getCarStatusOnlyUsedInBackendOptions,
   columnFormatCarStatus,
-  getVisibilityColumns,
-  setVisibilityColumns,
-  VisibilityColumns,
   CarStatus,
+  SelectOption,
+  CarList,
+  Keypress,
+  CarCsv,
 } from './utils'
+import { useStyles } from './styles'
 
 export default function Car(): JSX.Element {
+  const classes = useStyles()
+  const history = useHistory()
   const { t } = useTranslation()
-  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [page, setPage] = useState(0)
-  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
-  const [selectedCarId, setSelectedCarId] = useState<string>('')
-  const [carInfo, setCarInfo] = useState({} as CarInfo)
-  const [sort, setSort] = useState<SubOrder>({})
-  const [filter, setFilter] = useState<CarListFilterRequest>()
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.carManagement.title'),
+      link: '',
+    },
+    {
+      text: t('sidebar.carManagement.car'),
+      link: '/car',
+    },
+  ]
 
   const {
     data: carData,
@@ -54,367 +67,432 @@ export default function Car(): JSX.Element {
   } = useQuery('cars', () =>
     getList({
       filter,
-      sort,
       page,
       size: pageSize,
     })
   )
 
-  const equalAndContainOperators = getEqualAndContainFilterOperators(t)
-  const selectFilterOperators = getSelectEqualFilterOperators(t)
+  const cars =
+    carData?.data.cars.map((car) => {
+      return {
+        id: car.id,
+        carTrackId: car.carTrackId || '-',
+        brand: car.carSku?.carModel.brand.name || '-',
+        model: car.carSku?.carModel.name || '-',
+        color: car.carSku?.color || '-',
+        plateNumber: car.plateNumber || '-',
+        vin: car.vin || '-',
+        status: car.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
+        createdDate: car.createdDate || '-',
+        updatedDate: car.updatedDate || '-',
+      }
+    }) || []
+
+  // == search ==
+  const searchOptions: SelectOption[] = [
+    {
+      label: t('car.color'),
+      value: 'colorContain',
+    },
+    {
+      label: t('car.vin'),
+      value: 'vinContain',
+    },
+    {
+      label: t('car.plateNumber'),
+      value: 'plateNumberContain',
+    },
+    {
+      label: t('car.status'),
+      value: 'statusEqual',
+    },
+  ]
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
+  const [selectedStatus, setSelectedStatus] = useState<SelectOption | null>()
+  const defaultSelect = {
+    label: t('all'),
+    value: 'all',
+  }
+  const onSetSelectedSearch = (value: SelectOption | null) => {
+    if (value) {
+      setSelectedSearch(value)
+    } else {
+      setFilter({})
+      setSelectedSearch(defaultSelect)
+    }
+    setSearchValue('')
+  }
+  const onSearchChange = (event: ChangeEvent<HTMLInputElement>, value?: string) => {
+    const { value: eventVal } = event.target
+    const searchText = value ? value : eventVal
+    setSearchValue(searchText)
+  }
+  const onEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === Keypress.ENTER && searchValue?.length >= 2) {
+      formik.setFieldValue('searchType', selectedSearch?.value)
+      formik.setFieldValue('searchInput', searchValue)
+      formik.handleSubmit()
+    }
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      searchType: '',
+      searchInput: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (value) => {
+      setPage(0)
+      let keySearch = ''
+      let valueSearch
+      let filterSearch = {}
+      if (value.searchType === 'statusEqual') {
+        keySearch = 'isActive'
+        valueSearch = value.searchInput === CarStatus.PUBLISHED ? true : false
+      } else {
+        keySearch = value.searchType
+        valueSearch = value.searchInput
+      }
+      filterSearch = { [keySearch]: valueSearch }
+      setFilter(filterSearch)
+    },
+  })
+
+  // == export ==
+  const csvHeaders = [
+    { label: t('car.carTrackId'), key: 'carTrackId' },
+    { label: t('car.brand'), key: 'brand' },
+    { label: t('car.model'), key: 'model' },
+    { label: t('car.color'), key: 'color' },
+    { label: t('car.plateNumber'), key: 'plateNumber' },
+    { label: t('car.vin'), key: 'vin' },
+    { label: t('car.status'), key: 'status' },
+    { label: t('car.createdDate'), key: 'createdDate' },
+    { label: t('car.updatedDate'), key: 'updatedDate' },
+  ]
+  const csvData: CarCsv[] = []
+  cars.forEach((car) => {
+    const data = {
+      carTrackId: car.carTrackId,
+      brand: car.brand,
+      model: car.model,
+      color: car.color,
+      plateNumber: car.plateNumber,
+      vin: car.vin,
+      status: car.status,
+      createdDate: car.createdDate,
+      updatedDate: car.updatedDate,
+    }
+    csvData.push(data)
+  })
+
+  // == table ==
+  const columnHead = [
+    {
+      colName: t('car.carTrackId'),
+      hidden: false,
+    },
+    {
+      colName: t('car.brand'),
+      hidden: false,
+    },
+    {
+      colName: t('car.model'),
+      hidden: false,
+    },
+    {
+      colName: t('car.color'),
+      hidden: false,
+    },
+    {
+      colName: t('car.plateNumber'),
+      hidden: false,
+    },
+    {
+      colName: t('car.status'),
+      hidden: false,
+    },
+    {
+      colName: t('car.createdDate'),
+      hidden: false,
+    },
+    {
+      colName: t('car.updatedDate'),
+      hidden: false,
+    },
+  ]
+  const columnRow = [
+    {
+      field: 'carTrackId',
+      hidden: false,
+    },
+    {
+      field: 'brand',
+      hidden: false,
+    },
+    {
+      field: 'model',
+      hidden: false,
+      render: (model: string) => {
+        return (
+          <div className={classes.wrapWidth}>
+            <div className={classes.rowOverflow}>{model}</div>
+          </div>
+        )
+      },
+    },
+    {
+      field: 'color',
+      hidden: false,
+    },
+    {
+      field: 'plateNumber',
+      hidden: false,
+    },
+    {
+      field: 'status',
+      hidden: false,
+      render: (status: string) => {
+        return (
+          <Chip
+            label={columnFormatCarStatus(status, t)}
+            className={status === 'published' ? classes.chipBgGreen : classes.chipBgGray}
+          />
+        )
+      },
+    },
+    {
+      field: 'createdDate',
+      hidden: false,
+      render: (date: string) => {
+        return (
+          <div className={classes.wrapWidth}>
+            <div className={classes.rowOverflow}>
+              {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      field: 'updatedDate',
+      hidden: false,
+      render: (date: string) => {
+        return (
+          <div className={classes.wrapWidth}>
+            <div className={classes.rowOverflow}>
+              {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+            </div>
+          </div>
+        )
+      },
+    },
+  ]
+  const rowData = (cars &&
+    cars.length > 0 &&
+    cars.map((car: CarList) => {
+      return (
+        <TableRow
+          hover
+          onClick={() => history.push({ pathname: `/car/${car.id}` })}
+          key={`car-${car.id}`}
+        >
+          {columnRow.map((col) => (
+            <TableCell key={col.field} hidden={col.hidden}>
+              <div className={classes.paddingLeftCell}>
+                {col.render ? col.render(car[col.field]) : <div>{car[col.field]}</div>}
+              </div>
+            </TableCell>
+          ))}
+        </TableRow>
+      )
+    })) || (
+    <TableRow>
+      <TableCell colSpan={9} align="center">
+        {t('car.noData')}
+      </TableCell>
+    </TableRow>
+  )
+
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [page, setPage] = useState(0)
+  const [filter, setFilter] = useState<CarListFilterRequest>()
+
   const statusOptions = getCarStatusOnlyUsedInBackendOptions(t)
-  const visibilityColumns = getVisibilityColumns()
 
   useEffect(() => {
     refetch()
   }, [page, pageSize, filter, refetch])
 
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPage(0)
-    setPageSize(params.pageSize)
-  }
-
-  const handleFilterChange = (params: GridFilterModel) => {
-    setFilter(
-      params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        const isStatus = columnField === 'status'
-
-        let keyOfValue = ''
-        if (value) {
-          if (isStatus) {
-            keyOfValue = 'isActive'
-            value = value === CarStatus.PUBLISHED
-          } else {
-            switch (operatorValue) {
-              case FieldComparisons.equals:
-                keyOfValue = `${columnField}${FieldKeyOparators.equals}`
-                break
-              case FieldComparisons.contains:
-                keyOfValue = `${columnField}${FieldKeyOparators.contains}`
-                break
-            }
-          }
-          filter = { [keyOfValue]: value }
-        }
-        return filter
-      }, {} as CarListFilterRequest)
-    )
-    setPage(0)
-  }
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const onColumnVisibilityChange = (params: any) => {
-    if (params.field === '__check__') {
-      return
-    }
-
-    const visibilityColumns = params.api.current
-      .getAllColumns()
-      .filter(({ field }: { field: string }) => field !== '__check__')
-      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
-        columns[column.field] = !column.hide
-        return columns
-      }, {})
-
-    visibilityColumns[params.field] = params.isVisible
-
-    setVisibilityColumns(visibilityColumns)
-  }
-
-  const handleSortChange = (params: GridSortModel) => {
-    if (params?.length > 0 && !isFetching) {
-      const { field: refField, sort } = params[0]
-
-      const order: SubOrder = {
-        [refField]: sort?.toLocaleLowerCase() === 'asc' ? SortDirection.Asc : SortDirection.Desc,
-      }
-
-      setSort(order)
-    }
-  }
-
-  const onCloseEditDialog = async (data: CarUpdateInput | null) => {
-    setIsUpdateDialogOpen(false)
-    if (!data) {
-      return
-    }
-
-    await toast.promise(
-      updateById({
-        id: selectedCarId,
-        vin: data.vin,
-        plateNumber: data.plateNumber,
-        isActive: data.status === CarStatus.PUBLISHED,
-      }),
-      {
-        loading: t('toast.loading'),
-        success: t('car.updateDialog.success'),
-        error: t('car.updateDialog.error'),
-      }
-    )
-
-    refetch()
-  }
-
-  const openEditCarDialog = (param: GridRowData) => {
-    setSelectedCarId(param.id)
-    const { vin, plateNumber, color, status } = param.row
-
-    setCarInfo({
-      vin,
-      plateNumber,
-      color,
-      status,
-    })
-    setIsUpdateDialogOpen(true)
-  }
-
-  const rowCount = carData?.data?.pagination?.totalRecords ?? 0
-  const rows =
-    carData?.data?.cars?.map((car) => {
-      const connectorType =
-        car?.carSku?.carModel?.chargers?.map((charger) => charger.description) || '-'
-
-      return {
-        id: car?.id,
-        carTrackId: car?.carTrackId,
-        vin: car?.vin,
-        plateNumber: car?.plateNumber,
-        model: car?.carSku?.carModel.name,
-        brand: car?.carSku?.carModel.brand.name,
-        color: car?.carSku?.color,
-        bodyType: car?.carSku?.carModel.bodyType,
-        totalPower: car?.carSku?.carModel.totalPower,
-        batteryCapacity: car?.carSku?.carModel.batteryCapacity,
-        topSpeed: car?.carSku?.carModel.topSpeed,
-        range: car?.carSku?.carModel.range,
-        acceleration: car?.carSku?.carModel.acceleration,
-        chargeTime: car?.carSku?.carModel.chargeTime,
-        fastChargeTime: car?.carSku?.carModel.fastChargeTime,
-        connectorType: connectorType.length > 0 ? connectorType : '-',
-        status: car?.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
-        createdDate: car?.createdDate,
-        updatedDate: car?.updatedDate,
-      }
-    }) ?? []
-
-  const columns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: t('car.id'),
-      description: t('car.id'),
-      hide: !visibilityColumns.id,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'carTrackId',
-      headerName: t('car.carTrackId'),
-      description: t('car.carTrackId'),
-      hide: !visibilityColumns.carTrackId,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'brand',
-      headerName: t('car.brand'),
-      description: t('car.brand'),
-      hide: !visibilityColumns.brand,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'model',
-      headerName: t('car.model'),
-      description: t('car.model'),
-      hide: !visibilityColumns.model,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'color',
-      headerName: t('car.color'),
-      description: t('car.color'),
-      filterOperators: equalAndContainOperators,
-      hide: !visibilityColumns.color,
-      flex: 1,
-    },
-    {
-      field: 'vin',
-      headerName: t('car.vin'),
-      description: t('car.vin'),
-      filterOperators: equalAndContainOperators,
-      flex: 1,
-      hide: !visibilityColumns.vin,
-      sortable: false,
-    },
-    {
-      field: 'plateNumber',
-      headerName: t('car.plateNumber'),
-      description: t('car.plateNumber'),
-      hide: !visibilityColumns.plateNumber,
-      flex: 1,
-      filterOperators: equalAndContainOperators,
-      sortable: false,
-    },
-    {
-      field: 'bodyType',
-      headerName: t('car.bodyType'),
-      description: t('car.bodyType'),
-      hide: !visibilityColumns.bodyType,
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: 'totalPower',
-      headerName: t('car.totalPower'),
-      description: t('car.totalPower'),
-      hide: !visibilityColumns.totalPower,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'batteryCapacity',
-      headerName: t('car.batteryCapacity'),
-      description: t('car.batteryCapacity'),
-      hide: !visibilityColumns.batteryCapacity,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'createdDate',
-      headerName: t('car.createdDate'),
-      description: t('car.createdDate'),
-      hide: !visibilityColumns.createdDate,
-      valueFormatter: columnFormatDate,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'updatedDate',
-      headerName: t('car.updatedDate'),
-      description: t('car.updatedDate'),
-      hide: !visibilityColumns.updatedDate,
-      valueFormatter: columnFormatDate,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'topSpeed',
-      headerName: t('car.topSpeed'),
-      description: t('car.topSpeed'),
-      hide: !visibilityColumns.topSpeed,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'acceleration',
-      headerName: t('car.acceleration'),
-      description: t('car.acceleration'),
-      hide: !visibilityColumns.acceleration,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'range',
-      headerName: t('car.range'),
-      description: t('car.range'),
-      hide: !visibilityColumns.range,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'connectorType',
-      headerName: t('car.connectorType'),
-      description: t('car.connectorType'),
-      hide: !visibilityColumns.connectorType,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'chargeTime',
-      headerName: t('car.chargeTime'),
-      description: t('car.chargeTime'),
-      hide: !visibilityColumns.chargeTime,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'fastChargeTime',
-      headerName: t('car.fastChargeTime'),
-      description: t('car.fastChargeTime'),
-      hide: !visibilityColumns.fastChargeTime,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'status',
-      flex: 1,
-      headerName: t('car.status'),
-      description: t('car.status'),
-      hide: !visibilityColumns.status,
-      filterOperators: selectFilterOperators,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        columnFormatCarStatus(params.value as string, t),
-      valueOptions: statusOptions,
-      filterable: true,
-      sortable: false,
-    },
-    {
-      field: 'actions',
-      headerName: t('car.actions'),
-      description: t('car.actions'),
-      sortable: false,
-      filterable: false,
-      width: 140,
-      renderCell: (params: GridCellParams) => (
-        <Fragment>
-          <IconButton
-            aria-label="edit"
-            onClick={() => {
-              openEditCarDialog(params)
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton aria-label="delete" disabled>
-            <DeleteIcon />
-          </IconButton>
-        </Fragment>
-      ),
-    },
-  ]
-
   return (
     <Page>
+      <PageTitle title={t('sidebar.carManagement.title')} breadcrumbs={breadcrumbs} />
       <Card>
-        <DataGridLocale
-          autoHeight
-          pagination
-          pageSize={pageSize}
-          page={page}
-          rowCount={rowCount}
-          paginationMode="server"
-          onPageSizeChange={handlePageSizeChange}
-          onPageChange={setPage}
-          rows={rows}
-          columns={columns}
-          disableSelectionOnClick
-          filterMode="server"
-          onFilterModelChange={handleFilterChange}
-          onColumnVisibilityChange={onColumnVisibilityChange}
-          sortingMode="server"
-          onSortModelChange={handleSortChange}
-          loading={isFetching}
-        />
-      </Card>
+        <Grid className={classes.gridTitle}>
+          <Typography id="car_title_table" variant="h6" className={classes.typo}>
+            <strong>{t('car.carList')}</strong>
+          </Typography>
+        </Grid>
+        <Grid className={classes.gridSearch} container spacing={3}>
+          <Grid item xs={9} sm={2}>
+            <Autocomplete
+              autoHighlight
+              id="search_select_list"
+              options={searchOptions}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => {
+                return (
+                  <TextField
+                    {...params}
+                    label={t('car.selectSearch')}
+                    variant="outlined"
+                    placeholder={t('all')}
+                  />
+                )
+              }}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value || value.value === 'all'
+              }
+              value={selectedSearch || defaultSelect}
+              defaultValue={selectedSearch || defaultSelect}
+              onChange={(_e, value) => {
+                onSetSelectedSearch(value)
+              }}
+            />
+          </Grid>
+          <Grid item xs={9} sm={2}>
+            {selectedSearch?.value === 'statusEqual' ? (
+              <Autocomplete
+                autoHighlight
+                id="status_select_list"
+                options={statusOptions}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => {
+                  return <TextField {...params} label={t('car.selectStatus')} variant="outlined" />
+                }}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value || value.value === ''
+                }
+                value={selectedStatus || null}
+                onChange={(event, item) => {
+                  setSelectedStatus(item)
+                  onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value)
+                }}
+                onKeyDown={onEnterSearch}
+              />
+            ) : (
+              <TextField
+                id="car_search_input"
+                type="text"
+                variant="outlined"
+                fullWidth
+                value={searchValue || ''}
+                onChange={onSearchChange}
+                onKeyDown={onEnterSearch}
+                disabled={
+                  !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
+                }
+                placeholder={t('car.search')}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton>
+                        <SearchIcon
+                          color={
+                            !selectedSearch ||
+                            selectedSearch?.value === 'all' ||
+                            selectedSearch?.value === ''
+                              ? 'disabled'
+                              : 'action'
+                          }
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+          </Grid>
+          <Grid item xs={9} sm={5} />
+          <Grid item xs={9} sm={3} className={classes.gridExport}>
+            <Button
+              id="car_csv_button"
+              variant="contained"
+              className={classes.exportButton}
+              size="large"
+            >
+              <CSVLink
+                data={csvData}
+                headers={csvHeaders}
+                filename={t('sidebar.carManagement.car') + '.csv'}
+                className={classes.csvlink}
+              >
+                {t('button.export')}
+              </CSVLink>
+            </Button>
+          </Grid>
+        </Grid>
 
-      <CarUpdateDialog
-        open={isUpdateDialogOpen}
-        onClose={(data) => onCloseEditDialog(data)}
-        carInfo={carInfo}
-      />
+        <TableContainer className={classes.table}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {columnHead.map((col) => (
+                  <TableCell key={col.colName} hidden={col.hidden}>
+                    <div className={classes.columnHeader}>{col.colName}</div>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            {isFetching ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>{rowData}</TableBody>
+            )}
+          </Table>
+        </TableContainer>
+        <Card>
+          <div className={classes.paginationContainer}>
+            Rows per page:&nbsp;
+            <FormControl variant="standard" className={classes.inlineElement}>
+              <Select
+                value={carData?.data?.pagination?.size || pageSize}
+                defaultValue={carData?.data?.pagination?.size || pageSize}
+                onChange={(event) => {
+                  setPage(0)
+                  setPageSize(event.target.value as number)
+                }}
+              >
+                {config.tableRowsPerPageOptions?.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            &nbsp;&nbsp;{carData?.data.pagination?.page} {t('car.of')}
+            &nbsp;
+            {carData?.data.pagination?.totalPage}
+            <Pagination
+              count={carData?.data?.pagination?.totalPage}
+              page={carData?.data?.pagination?.page || page}
+              defaultPage={carData?.data?.pagination?.page || page}
+              variant="text"
+              color="primary"
+              onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                setPage(value - 1)
+              }}
+            />
+          </div>
+        </Card>
+      </Card>
     </Page>
   )
 }

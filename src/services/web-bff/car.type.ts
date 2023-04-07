@@ -56,6 +56,7 @@ export interface CarBrand {
 }
 export interface CarModel {
   id: string
+  connectorTypes: CarConnectorType[] | []
   name: string
   bodyType: string // 'SUV'
   brand: CarBrand

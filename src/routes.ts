@@ -18,6 +18,7 @@ export const ROUTE_PATHS = Object.freeze({
   PRICING: '/pricing',
   MODEL_AND_PRICING: '/model-and-pricing',
   MODEL_AND_PRICING_EDIT: '/model-and-pricing/:id/edit',
+  CAR_DETAIL: '/car/:id',
   CAR: '/car',
   CAR_AVAILABILITY_DETAIL: '/car-availability/:id',
   CAR_AVAILABILITY: '/car-availability',
@@ -177,6 +178,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.CUSTOMER_SUPPORT,
       ROLES.PRODUCT_SUPPORT,
     ],
+  },
+  {
+    path: ROUTE_PATHS.CAR_DETAIL,
+    component: lazy(() => import('./pages/CarDetail' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
   },
   {
     path: ROUTE_PATHS.CAR,
