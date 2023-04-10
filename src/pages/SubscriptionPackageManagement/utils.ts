@@ -14,6 +14,14 @@ export const formatDateMonth = (date: string): string =>
 export const formatDateMonthYearTime = (date: string): string =>
   dayjs(date).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)
 
+export function formatMoney(amount: number, fractionDigits = 2): string {
+  const formatter = new Intl.NumberFormat('th-TH', {
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: 0,
+  })
+  return formatter.format(amount)
+}
+
 export const publishedStatus = (isPublished: boolean, t: TFunction<Namespace>): string => {
   const stringText = isPublished
     ? t('subscriptionPackageManagement.table.cell.on')
