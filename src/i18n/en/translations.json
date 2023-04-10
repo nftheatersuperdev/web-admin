@@ -518,7 +518,9 @@
       "errors": {
         "invalidFormat": "Limited 50 character.",
         "editorFormat": "Limited 300 character.",
-        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets"
+        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets",
+        "textInvalid": "Text is invalid",
+        "required": "Required Field"
       }
     }
   },

@@ -72,6 +72,7 @@ const PublishedSwitch = styled(Switch)(({ theme }) => ({
 }))
 
 export default function PackageDetail(): JSX.Element {
+  const { t } = useTranslation()
   const accessToken = useAuth().getToken() ?? ''
   const currentDate = dayjs()
   const history = useHistory()
@@ -80,24 +81,40 @@ export default function PackageDetail(): JSX.Element {
     minDate: currentDate,
     maxDate: currentDate.add(90, 'day'),
   }
-  const { t } = useTranslation()
+  const packageNameLimit = 50
 
   const validationSchema = yup.object({
     badge: yup.string(),
-    publishDate: yup.date().typeError(t('validation.required')).required(t('validation.required')),
-    fullPrice: yup.number().min(1, 'Text is invalid').max(999999, 'Text is invalid'),
+    publishDate: yup
+      .date()
+      .typeError(t('newSubcription.validation.errors.required'))
+      .required(t('newSubcription.validation.errors.required')),
+    fullPrice: yup
+      .number()
+      .min(1, t('newSubcription.validation.errors.textInvalid'))
+      .max(999999, t('newSubcription.validation.errors.textInvalid')),
     price: yup
       .number()
-      .max(999999, 'Text is invalid')
+      .max(999999, t('newSubcription.validation.errors.textInvalid'))
       .when('fullPrice', (fullPrice: number, schema: yup.NumberSchema) =>
-        fullPrice >= 0 ? schema.lessThan(fullPrice, 'Text is invalid') : schema
+        fullPrice >= 0
+          ? schema.lessThan(fullPrice, t('newSubcription.validation.errors.textInvalid'))
+          : schema
       )
-      .required(t('validation.required')),
+      .required(t('newSubcription.validation.errors.required')),
     packagePeriodMonth: yup
       .number()
-      .min(1, 'Text is invalid')
-      .max(99, 'Text is invalid')
-      .required(t('validation.required')),
+      .min(1, t('newSubcription.validation.errors.textInvalid'))
+      .max(99, t('newSubcription.validation.errors.textInvalid'))
+      .required(t('newSubcription.validation.errors.required')),
+    packageNameEn: yup
+      .string()
+      .max(packageNameLimit, t('newSubcription.validation.errors.invalidFormat'))
+      .required(t('newSubcription.validation.errors.required')),
+    packageNameTh: yup
+      .string()
+      .max(packageNameLimit, t('newSubcription.validation.errors.invalidFormat'))
+      .required(t('newSubcription.validation.errors.required')),
   })
 
   const handleValidateNumericKeyPress = (event: React.KeyboardEvent) => {
@@ -174,35 +191,11 @@ export default function PackageDetail(): JSX.Element {
     },
   })
 
-  const packageNameLimit = 50
   const packageFeatureLimt = 300
-  const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
-  const [filterSearchFieldErrorTh, setFilterSearchFieldErrorTh] = useState<string>('')
   const [editorFieldErrorEn, setEditorFieldErrorEn] = useState<string>('')
   const [editorFieldErrorTh, setEditorFieldErrorTh] = useState<string>('')
   const [editorDetailFieldErrorEn, setEditorDetailFieldErrorEn] = useState<string>('')
   const [editorDetailFieldErrorTh, setEditorDetailFieldErrorTh] = useState<string>('')
-  // const [setTest, setTest] = useState<string>('')
-
-  const validatePackageName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    formik.setFieldValue('packageNameEn', event.target.value)
-    if (value.length > packageNameLimit) {
-      setFilterSearchFieldError(t('newSubcription.validation.errors.invalidFormat'))
-    } else {
-      setFilterSearchFieldError('')
-    }
-  }
-
-  const validatePackageNameTh = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    formik.setFieldValue('packageNameTh', event.target.value)
-    if (value.length > packageNameLimit) {
-      setFilterSearchFieldErrorTh(t('newSubcription.validation.errors.invalidFormat'))
-    } else {
-      setFilterSearchFieldErrorTh('')
-    }
-  }
 
   const validateBulletPackageListEn = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
@@ -257,7 +250,6 @@ export default function PackageDetail(): JSX.Element {
                 <TextField
                   fullWidth
                   select
-                  type="search"
                   label="Badge"
                   id="badge"
                   name="badge"
@@ -453,14 +445,12 @@ export default function PackageDetail(): JSX.Element {
               fullWidth
               label="Package Name (EN)"
               id="packageName"
-              name="packageNameField"
-              placeholder="Package Name (English)"
+              name="packageNameEn"
               variant="outlined"
               value={formik.values.packageNameEn}
-              error={!!filterSearchFieldError}
-              helperText={filterSearchFieldError}
-              InputLabelProps={{ shrink: true }}
-              onChange={validatePackageName}
+              error={formik.touched.packageNameEn && Boolean(formik.errors.packageNameEn)}
+              helperText={formik.touched.packageNameEn && formik.errors.packageNameEn}
+              onChange={formik.handleChange}
               onCut={handleDisableEvent}
               onCopy={handleDisableEvent}
               onPaste={handleDisableEvent}
@@ -490,14 +480,12 @@ export default function PackageDetail(): JSX.Element {
                   fullWidth
                   label="Package Name (TH)"
                   id="packageNameTh"
-                  name="packageNameFieldTH"
-                  placeholder="Package Name (Thai)"
+                  name="packageNameTh"
                   variant="outlined"
                   value={formik.values.packageNameTh}
-                  error={!!filterSearchFieldErrorTh}
-                  helperText={filterSearchFieldErrorTh}
-                  InputLabelProps={{ shrink: true }}
-                  onChange={validatePackageNameTh}
+                  error={formik.touched.packageNameTh && Boolean(formik.errors.packageNameTh)}
+                  helperText={formik.touched.packageNameTh && formik.errors.packageNameTh}
+                  onChange={formik.handleChange}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
                   onPaste={handleDisableEvent}

@@ -492,25 +492,34 @@
     "packageDetail": {
       "title": "Package Detail",
       "banner": "Package List Banner",
-      "message": "Package List Message"
+      "message": "Package List Message",
+      "contentEn": "Description (English)",
+      "contentTh": "Description (Thai)"
     },
     "packageList": {
       "title": "Package List",
       "banner": "Package List Banner",
-      "message": "Package List Message"
+      "message": "Package List Message",
+      "contentEn": "Product Features (English)",
+      "contentTh": "Product Features (Thai)"
     },
     "dialog": {
       "imageUpload": {
         "title": "อัพโหลดรูปภาพ",
         "reccommend": "*The file type must be .png / dimension 750pixels x 750pixels (1:1) / Maximum upload size 1MB"
+      },
+      "createDialog": {
+        "success": "Create Package Success",
+        "failed": "Error Create Package "
       }
     },
-    "searchField": {
-      "label": "Enter Search",
-      "placeholder": "Please type at lease 2 charators",
+    "validation": {
       "errors": {
-        "invalidFormat": "จำกัดจำนวนตัวอักษร 50 ตัว",
-        "editorFormat": "จำกัดจำนวนตัวอักษร 300 ตัว"
+        "invalidFormat": "Limited 50 character.",
+        "editorFormat": "Limited 300 character.",
+        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets",
+        "textInvalid": "Text is invalid",
+        "required": "Required Field"
       }
     }
   },
