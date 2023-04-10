@@ -124,7 +124,8 @@
     "clearAll": "ล้างทั้งหมด",
     "save": "บันทึก",
     "addNew": "เพิ่มใหม่",
-    "deleteProfile": "ลบพนักงาน"
+    "deleteProfile": "ลบพนักงาน",
+    "upload": "อัพโหลดรูปภาพ"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -480,6 +481,32 @@
       }
     },
     "clearFilterId": "ลบกรองข้อมูลด้วยไอดี"
+  },
+  "newSubcription": {
+    "packageDetail": {
+      "title": "Package Detail",
+      "banner": "Package List Banner",
+      "message": "Package List Message"
+    },
+    "packageList": {
+      "title": "Package List",
+      "banner": "Package List Banner",
+      "message": "Package List Message"
+    },
+    "dialog": {
+      "imageUpload": {
+        "title": "อัพโหลดรูปภาพ",
+        "reccommend": "*The file type must be .png / dimension 750pixels x 750pixels (1:1) / Maximum upload size 1MB"
+      }
+    },
+    "searchField": {
+      "label": "Enter Search",
+      "placeholder": "Please type at lease 2 charators",
+      "errors": {
+        "invalidFormat": "จำกัดจำนวนตัวอักษร 50 ตัว",
+        "editorFormat": "จำกัดจำนวนตัวอักษร 300 ตัว"
+      }
+    }
   },
   "additionalExpense": {
     "id": "เลขไอดี",

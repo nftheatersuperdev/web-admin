@@ -124,7 +124,8 @@
     "clearAll": "Clear all",
     "save": "Save",
     "addNew": "Add New",
-    "deleteProfile": "Delete Profile"
+    "deleteProfile": "Delete Profile",
+    "upload": "Upload"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -481,6 +482,39 @@
       }
     },
     "clearFilterId": "Clear filter by ID"
+  },
+  "newSubcription": {
+    "packageDetail": {
+      "title": "Package Detail",
+      "banner": "Package List Banner",
+      "message": "Package List Message",
+      "contentEn": "Description (English)",
+      "contentTh": "Description (Thai)"
+    },
+    "packageList": {
+      "title": "Package List",
+      "banner": "Package List Banner",
+      "message": "Package List Message",
+      "contentEn": "Product Features (English)",
+      "contentTh": "Product Features (Thai)"
+    },
+    "dialog": {
+      "imageUpload": {
+        "title": "Upload Banner",
+        "reccommend": "*The file type must be .png / dimension 750pixels x 750pixels (1:1) / Maximum upload size 1MB"
+      },
+      "createDialog": {
+        "success": "Create Package Success",
+        "failed": "Error Create Package "
+      }
+    },
+    "validation": {
+      "errors": {
+        "invalidFormat": "Limited 50 character.",
+        "editorFormat": "Limited 300 character.",
+        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets"
+      }
+    }
   },
   "additionalExpense": {
     "id": "ID",

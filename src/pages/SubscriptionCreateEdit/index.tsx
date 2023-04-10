@@ -41,7 +41,6 @@ export default function VoucherCreateEdit(): JSX.Element {
       <DividerSpace />
       <Stack spacing={6}>
         <PackageDetail />
-        <PackageDetail />
         {/* <Card>
             <Button type="submit" color="primary" variant="outlined" onClick={() => formik.handleSubmit()}>
               {t('button.save')}
