@@ -183,11 +183,11 @@ export default function SubscriptionPackageManagement(): JSX.Element {
       rows.map((row) => {
         return (
           <TableRow hover key={`subscription-${row.id}`}>
-            <TableCell>{getTextCell(row.id)}</TableCell>
-            <TableCell>{getTextCell(row.packageName)}</TableCell>
+            <TableCell>{getTwoLineTextCell(row.id)}</TableCell>
+            <TableCell>{getTwoLineTextCell(row.packageName)}</TableCell>
             <TableCell>{getPeriodTextCell(row.packagePeriod)}</TableCell>
             <TableCell colSpan={2}>{getPriceTextCell(row.price)}</TableCell>
-            <TableCell>{getTextCell(formatDateMonth(row.publishedDate))}</TableCell>
+            <TableCell>{getTwoLineTextCell(formatDateMonth(row.publishedDate))}</TableCell>
             <TableCell>{getPublishedChipCell(row.isPublish)}</TableCell>
             <TableCell>{getPackageStatusCell(row.status)}</TableCell>
             <TableCell>{getTwoLineTextCell(row.createdBy)}</TableCell>
@@ -230,17 +230,13 @@ export default function SubscriptionPackageManagement(): JSX.Element {
     return <div className={classGroup}>{text}</div>
   }
 
-  function getTextCell(text: string) {
-    return <div className={classes.cellText}>{text}</div>
-  }
-
   function getTwoLineTextCell(text: string) {
     return <div className={[classes.cellText, classes.twoLine].join(' ')}>{text}</div>
   }
 
   function getPeriodTextCell(text: number) {
     return (
-      <div className={classes.cellText}>
+      <div className={[classes.cellText, classes.twoLine].join(' ')}>
         {text} {t('subscriptionPackageManagement.table.cell.months')}
       </div>
     )
@@ -260,7 +256,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
 
   function getPriceTextCell(text: number) {
     return (
-      <div className={classes.cellText}>
+      <div className={[classes.cellText, classes.twoLine].join(' ')}>
         {formatMoney(text)} {t('subscriptionPackageManagement.table.cell.thb')}
       </div>
     )
