@@ -429,6 +429,9 @@ export default function SubscriptionPackageManagement(): JSX.Element {
                 })}
               </Select>
             </FormControl>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{subscriptionsData?.pagination?.page}{' '}
+            {t('subscriptionPackageManagement.table.pagination.of')}
+            &nbsp;{subscriptionsData?.pagination?.totalPage}&nbsp;&nbsp;&nbsp;&nbsp;
             <Pagination
               count={subscriptionsData?.pagination?.totalPage}
               page={subscriptionsData?.pagination?.page || page}

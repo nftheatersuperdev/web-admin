@@ -94,6 +94,8 @@
     "vehicleManagement": "การจัดการยานพาหนะ",
     "subscriptionManagement": "การจัดการการจอง",
     "subscriptions": "ข้อมูลการจอง",
+    "newSubscriptionManagement": "การจัดการการจองใหม่",
+    "newSubscriptions": "ข้อมูลการจองใหม่",
     "vouchers": "วอชเชอร์",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "others": "อื่นๆ",
@@ -131,7 +133,8 @@
     "clearAll": "ล้างทั้งหมด",
     "save": "บันทึก",
     "addNew": "เพิ่มใหม่",
-    "deleteProfile": "ลบพนักงาน"
+    "deleteProfile": "ลบพนักงาน",
+    "upload": "อัพโหลดรูปภาพ"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -501,6 +504,47 @@
       }
     },
     "clearFilterId": "ลบกรองข้อมูลด้วยไอดี"
+  },
+  "newSubcription": {
+    "createEdit": {
+      "title": "Package Management",
+      "subscriptionManagement": "Subscription Management",
+      "packageManagement": "Package Management",
+      "packageDetail": "Package Detail"
+    },
+    "packageDetail": {
+      "title": "Package Detail",
+      "banner": "Package List Banner",
+      "message": "Package List Message",
+      "contentEn": "Description (English)",
+      "contentTh": "Description (Thai)"
+    },
+    "packageList": {
+      "title": "Package List",
+      "banner": "Package List Banner",
+      "message": "Package List Message",
+      "contentEn": "Product Features (English)",
+      "contentTh": "Product Features (Thai)"
+    },
+    "dialog": {
+      "imageUpload": {
+        "title": "อัพโหลดรูปภาพ",
+        "reccommend": "*The file type must be .png / dimension 750pixels x 750pixels (1:1) / Maximum upload size 1MB"
+      },
+      "createDialog": {
+        "success": "Create Package Success",
+        "failed": "Error Create Package "
+      }
+    },
+    "validation": {
+      "errors": {
+        "invalidFormat": "Limited 50 character.",
+        "editorFormat": "Limited 300 character.",
+        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets",
+        "textInvalid": "Text is invalid",
+        "required": "Required Field"
+      }
+    }
   },
   "additionalExpense": {
     "id": "เลขไอดี",
@@ -1053,6 +1097,9 @@
         "active": "Active",
         "inactive": "Inactive",
         "pending": "Pending"
+      },
+      "pagination": {
+        "of": "of"
       }
     }
   }
