@@ -88,12 +88,13 @@ export default function CarReplacementDialog({
   } = bookingDetails
 
   const carActivity = carActivities[carActivities.length - 1]
+  const rentalDetail = bookingDetails.rentDetail
   const todayDate = dayjs()
 
   const isStatus = (status: string, statusCondition: string) =>
     status.toLowerCase() === statusCondition.toLowerCase()
 
-  const isUpCommingCancelled = !carActivity?.returnTask
+  const isUpCommingCancelled = bookingDetails.status === 'upcoming_cancelled'
 
   function isArrivingSoon() {
     if (bookingDetails) {
@@ -120,15 +121,21 @@ export default function CarReplacementDialog({
   function generateMinAndMaxDates(status: string) {
     const todayAddOneYear = todayDate.add(1, 'year')
     const returnDateMinusOneDay = () =>
-      dayjs(carActivity?.returnTask?.date).add(-1, 'day').startOf('day') || todayAddOneYear
+      carActivity?.returnTask?.date
+        ? dayjs(carActivity?.returnTask?.date).add(-1, 'day').startOf('day')
+        : dayjs(carActivity?.deliveryTask?.date)
+            .add(rentalDetail.durationDay - 1, 'day')
+            .startOf('day')
     switch (status.toLocaleLowerCase()) {
       case SubEventStatus.DELIVERED: {
+        console.log('case DELIVERED')
         return {
           minDate: todayDate.startOf('day'),
           maxDate: returnDateMinusOneDay(),
         }
       }
       default: {
+        console.log('case default')
         return {
           minDate: dayjs(carActivity.deliveryTask.date),
           maxDate: isArrivingSoonStatus ? returnDateMinusOneDay() : todayAddOneYear,
@@ -138,6 +145,7 @@ export default function CarReplacementDialog({
   }
 
   const deliveryDateConditions = generateMinAndMaxDates(displayStatus)
+
   const defaultState = {
     carId: '',
     deliveryDate: deliveryDateConditions.minDate,
@@ -304,6 +312,7 @@ export default function CarReplacementDialog({
               minDate={deliveryDateConditions.minDate}
               maxDate={deliveryDateConditions.maxDate}
             />
+            <TextField value={dayjs(deliveryDateConditions.maxDate).format(DEFAULT_DATE_FORMAT)} />
           </Grid>
           <Grid item xs={12} sm={3}>
             <FormControl fullWidth variant="outlined" margin="normal">

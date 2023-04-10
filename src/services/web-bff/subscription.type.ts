@@ -141,6 +141,7 @@ export interface BookingRental {
   customer: BookingCustomer
   customerId: string
   displayStatus: string
+  status: string
   isExtend: boolean
   isReplacement: boolean
   isPaymentRequired: boolean
