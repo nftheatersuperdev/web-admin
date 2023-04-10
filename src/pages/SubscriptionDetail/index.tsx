@@ -101,10 +101,7 @@ export default function SubscriptionDetail(): JSX.Element {
   const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(
     bookingDetails?.displayStatus
   )
-  const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [
-    ROLES.ADMIN,
-    ROLES.OPERATION,
-  ])
+  const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [ROLES.OPERATION])
   const isEndDateOverToday = bookingDetails ? new Date(bookingDetails?.endDate) < new Date() : false
 
   return (
@@ -473,11 +470,14 @@ export default function SubscriptionDetail(): JSX.Element {
                         {carActivity.carDetail.vin || '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {dayjs(carActivity.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT) ||
-                          '-'}
+                        {carActivity.deliveryTask?.date
+                          ? dayjs(carActivity.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT)
+                          : '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {dayjs(carActivity.returnTask?.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
+                        {carActivity.returnTask?.date
+                          ? dayjs(carActivity.returnTask?.date).format(DEFAULT_DATETIME_FORMAT)
+                          : '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
                         -

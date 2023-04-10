@@ -76,7 +76,11 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
               fullWidth
               margin="normal"
               variant="outlined"
-              value={dayjs(car?.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
+              value={
+                car?.deliveryTask?.date
+                  ? dayjs(car?.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT)
+                  : '-'
+              }
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -86,7 +90,11 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
               fullWidth
               margin="normal"
               variant="outlined"
-              value={dayjs(car?.returnTask?.date).format(DEFAULT_DATETIME_FORMAT) || '-'}
+              value={
+                car?.returnTask?.date
+                  ? dayjs(car?.returnTask?.date).format(DEFAULT_DATETIME_FORMAT)
+                  : '-'
+              }
             />
           </Grid>
         </Grid>
