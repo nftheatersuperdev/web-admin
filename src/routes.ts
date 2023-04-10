@@ -43,12 +43,12 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILE_DETAIL: '/staff-profile/:id/edit',
   STAFF_PROFILE_ADD: '/staff-profile/create',
   SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
+  SUBSCRIPTION_PACKAGE_ADD: '/subscription-management/package-management/create',
   CUSTOMER_PROFILE: '/customer-profile',
   CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
   CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
-  NEW_SUBSCRIPTION: '/new-subscription',
 })
 
 export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
@@ -152,7 +152,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
-    path: ROUTE_PATHS.NEW_SUBSCRIPTION,
+    path: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_ADD,
     component: lazy(() => import('./pages/SubscriptionCreateEdit' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
   },
