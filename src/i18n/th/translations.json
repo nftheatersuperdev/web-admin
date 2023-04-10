@@ -1096,6 +1096,9 @@
         "active": "Active",
         "inactive": "Inactive",
         "pending": "Pending"
+      },
+      "pagination": {
+        "of": "of"
       }
     }
   }
