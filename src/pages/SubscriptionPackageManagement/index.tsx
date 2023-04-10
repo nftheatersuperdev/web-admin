@@ -40,6 +40,7 @@ import {
   packageStatusString,
   PackageStatus,
   formatDateMonthYearTime,
+  formatMoney,
 } from './utils'
 
 const useStyles = makeStyles(() => ({
@@ -260,7 +261,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
   function getPriceTextCell(text: number) {
     return (
       <div className={classes.cellText}>
-        {text} {t('subscriptionPackageManagement.table.cell.thb')}
+        {formatMoney(text)} {t('subscriptionPackageManagement.table.cell.thb')}
       </div>
     )
   }
