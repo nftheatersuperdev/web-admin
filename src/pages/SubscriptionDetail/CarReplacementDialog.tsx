@@ -310,7 +310,6 @@ export default function CarReplacementDialog({
               minDate={deliveryDateConditions.minDate}
               maxDate={deliveryDateConditions.maxDate}
             />
-            <TextField value={dayjs(deliveryDateConditions.maxDate).format(DEFAULT_DATE_FORMAT)} />
           </Grid>
           <Grid item xs={12} sm={3}>
             <FormControl fullWidth variant="outlined" margin="normal">
