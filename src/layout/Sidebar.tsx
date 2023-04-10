@@ -199,7 +199,19 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         icon: <LoyaltyOutlinedIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
       },
-
+      {
+        subHeader: t('sidebar.subscriptionManagement'),
+        allowedRoles: [ROLES.SUPER_ADMIN],
+        toggleKey: 'IS_ENABLED_SUBSCRIPTION_MANAGEMENT_FEATURE',
+      },
+      {
+        id: 'left_menu__subscription_management_package_management',
+        title: t('sidebar.packageManagement'),
+        path: '/subscription-management/package-management',
+        icon: null,
+        allowedRoles: [ROLES.SUPER_ADMIN],
+        toggleKey: 'IS_ENABLED_SUBSCRIPTION_MANAGEMENT_FEATURE',
+      },
       {
         subHeader: t('sidebar.others'),
         allowedRoles: [
@@ -321,15 +333,22 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
   }
 
   function SidebarList(): JSX.Element {
-    const { getRole } = useAuth()
+    const { getRole, getRemoteConfig } = useAuth()
     const currentRole = getRole()
 
     return (
       <List role="presentation" onClick={handleSidebarEvent} onKeyDown={handleSidebarEvent}>
         <List>
-          {SIDEBAR_ITEMS.map(({ id, title, subHeader, path, icon, allowedRoles }) => {
+          {SIDEBAR_ITEMS.map(({ id, title, subHeader, path, icon, allowedRoles, toggleKey }) => {
             if (!hasAllowedRole(currentRole, allowedRoles)) {
               return null
+            }
+
+            if (toggleKey) {
+              const isToggle = getRemoteConfig(toggleKey)?.asBoolean()
+              if (!isToggle) {
+                return null
+              }
             }
 
             return subHeader ? (

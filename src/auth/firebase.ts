@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import 'firebase/remote-config'
 import config from 'config'
 
 export class Firebase {
   auth!: firebase.auth.Auth
-
+  remoteConfig!: firebase.remoteConfig.RemoteConfig
   constructor() {
     if (!firebase.apps.length) {
       firebase.initializeApp({
@@ -15,6 +16,8 @@ export class Firebase {
 
     if (firebase.apps.length) {
       this.auth = firebase.auth()
+      this.remoteConfig = firebase.remoteConfig()
+      //this.remoteConfig.settings.minimumFetchIntervalMillis = 1
     }
   }
 
@@ -54,5 +57,13 @@ export class Firebase {
     )
     await user?.reauthenticateWithCredential(credential)
     return user?.updatePassword(newPassword)
+  }
+
+  fetchRemoteConfig(): Promise<boolean> {
+    return this.remoteConfig.fetchAndActivate()
+  }
+
+  getRemoteConfig(key: string): firebase.remoteConfig.Value {
+    return this.remoteConfig.getValue(key)
   }
 }
