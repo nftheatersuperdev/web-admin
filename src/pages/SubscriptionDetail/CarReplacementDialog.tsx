@@ -128,14 +128,12 @@ export default function CarReplacementDialog({
             .startOf('day')
     switch (status.toLocaleLowerCase()) {
       case SubEventStatus.DELIVERED: {
-        console.log('case DELIVERED')
         return {
           minDate: todayDate.startOf('day'),
           maxDate: returnDateMinusOneDay(),
         }
       }
       default: {
-        console.log('case default')
         return {
           minDate: dayjs(carActivity.deliveryTask.date),
           maxDate: isArrivingSoonStatus ? returnDateMinusOneDay() : todayAddOneYear,
