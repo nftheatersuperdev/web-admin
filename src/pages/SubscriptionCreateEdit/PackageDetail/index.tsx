@@ -18,6 +18,7 @@ import {
   FormControlLabel,
   FormHelperText,
   IconButton,
+  InputAdornment,
   MenuItem,
   Switch,
   Typography,
@@ -35,6 +36,13 @@ import { Page } from 'layout/LayoutRoute'
 const useStyles = makeStyles({
   space: {
     marginBottom: '24px;',
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 24,
+  },
+  input: {
+    paddingRight: 0,
   },
 })
 const TitleTypography = styled(Typography)`
@@ -76,20 +84,19 @@ export default function PackageDetail(): JSX.Element {
 
   const validationSchema = yup.object({
     badge: yup.string(),
-    publishDate: yup
-      .date()
-      .min(defaultDate.minDate, 'Min wrong')
-      .max(defaultDate.maxDate, 'Max wrong')
-      .required(t('validation.required')),
-    fullPrice: yup
+    publishDate: yup.date().typeError(t('validation.required')).required(t('validation.required')),
+    fullPrice: yup.number().min(1, 'Text is invalid').max(999999, 'Text is invalid'),
+    price: yup
       .number()
-      .min(1, t('validation.minimumIsOne'))
-      .max(100, t('validation.maximumIsOneHundred'))
+      .max(999999, 'Text is invalid')
+      .when('fullPrice', (fullPrice: number, schema: yup.NumberSchema) =>
+        fullPrice >= 0 ? schema.lessThan(fullPrice, 'Text is invalid') : schema
+      )
       .required(t('validation.required')),
-    price: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
     packagePeriodMonth: yup
       .number()
-      .min(1, t('validation.minimumIsOne'))
+      .min(1, 'Text is invalid')
+      .max(99, 'Text is invalid')
       .required(t('validation.required')),
   })
 
@@ -100,30 +107,22 @@ export default function PackageDetail(): JSX.Element {
     }
   }
 
-  const handleValidatePercentageValue = (event: FormEvent, maximum = 100) => {
-    const target = event.target as HTMLInputElement
-    target.value = target.value.toUpperCase().replace(/\s/g, '')
-    if (Number(target.value) > maximum) {
-      target.value = String(maximum)
-    }
-  }
-
   const handleDisableEvent = (event: FormEvent) => {
     event.preventDefault()
   }
 
-  // const handleClearClick = () => {
-  //   formik.setFieldValue('badge', '')
-  // }
+  const handleClearClick = () => {
+    formik.setFieldValue('badge', '')
+  }
 
   const formik = useFormik({
     validationSchema,
     initialValues: {
       badge: '',
-      publishDate: currentDate,
+      publishDate: null,
       published: false,
-      fullPrice: 0.0,
-      price: 0.0,
+      fullPrice: 0,
+      price: 0,
       packagePeriodMonth: 0,
       packageNameEn: '',
       packageNameTh: '',
@@ -144,7 +143,7 @@ export default function PackageDetail(): JSX.Element {
           createPackage({
             accessToken,
             badge: values.badge,
-            publishDate: values.publishDate,
+            publishDate: values.publishDate ?? dayjs(),
             fullPrice: values.fullPrice,
             price: values.price,
             periodMonth: values.packagePeriodMonth,
@@ -245,10 +244,6 @@ export default function PackageDetail(): JSX.Element {
     }
   }
 
-  const handleClearClick = () => {
-    formik.setFieldValue('badge', '')
-  }
-
   const [visibleUpdateDialog, setVisibleUpdateDialog] = useState<boolean>(false)
 
   return (
@@ -270,15 +265,19 @@ export default function PackageDetail(): JSX.Element {
                   value={formik.values.badge}
                   onChange={formik.handleChange}
                   error={formik.touched.badge && Boolean(formik.errors.badge)}
-                  SelectProps={{
-                    IconComponent: () => (
-                      <IconButton
-                        onClick={handleClearClick}
-                        sx={{ visibility: formik.values.badge ? 'visible' : 'hidden' }}
-                      >
-                        <ClearIcon />
-                      </IconButton>
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" className={classes.clearButton}>
+                        {formik.values.badge && (
+                          <IconButton onClick={handleClearClick}>
+                            <ClearIcon />
+                          </IconButton>
+                        )}
+                      </InputAdornment>
                     ),
+                    classes: {
+                      adornedEnd: classes.input,
+                    },
                   }}
                 >
                   <MenuItem value="Hot">Hot</MenuItem>
@@ -296,13 +295,14 @@ export default function PackageDetail(): JSX.Element {
                   name="publishDate"
                   format="D MMM YYYY"
                   minDate={defaultDate.minDate}
-                  //maxDate={defaultDate.maxDate}
+                  maxDate={defaultDate.maxDate}
                   defaultValue={formik.values.publishDate}
                   value={formik.values.publishDate}
                   onChange={(date) => {
                     formik.setFieldValue('publishDate', date)
                   }}
                   error={formik.touched.publishDate && Boolean(formik.errors.publishDate)}
+                  helperText={formik.touched.publishDate && formik.errors.publishDate}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
                   }}
@@ -317,7 +317,7 @@ export default function PackageDetail(): JSX.Element {
                     control={
                       <PublishedSwitch
                         id="published"
-                        checked={formik.values.published}
+                        value={formik.values.published}
                         onChange={formik.handleChange}
                       />
                     }
@@ -341,11 +341,10 @@ export default function PackageDetail(): JSX.Element {
                   id="subscription-add__fullPrice_input"
                   name="fullPrice"
                   variant="outlined"
-                  value={formik.values.fullPrice}
+                  value={formik.values.fullPrice ?? ''}
                   onChange={formik.handleChange}
-                  InputLabelProps={{ shrink: true }}
-                  inputProps={{ min: 1, max: 100, step: 1 }}
-                  onInput={handleValidatePercentageValue}
+                  error={formik.touched.fullPrice && Boolean(formik.errors.fullPrice)}
+                  helperText={formik.touched.fullPrice && formik.errors.fullPrice}
                   onKeyPress={handleValidateNumericKeyPress}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
@@ -362,10 +361,8 @@ export default function PackageDetail(): JSX.Element {
                   variant="outlined"
                   value={formik.values.price}
                   onChange={formik.handleChange}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{ min: 1 }}
+                  error={formik.touched.price && Boolean(formik.errors.price)}
+                  helperText={formik.touched.price && formik.errors.price}
                   onKeyPress={handleValidateNumericKeyPress}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
@@ -382,10 +379,10 @@ export default function PackageDetail(): JSX.Element {
                   variant="outlined"
                   value={formik.values.packagePeriodMonth}
                   onChange={formik.handleChange}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{ min: 1 }}
+                  error={
+                    formik.touched.packagePeriodMonth && Boolean(formik.errors.packagePeriodMonth)
+                  }
+                  helperText={formik.touched.packagePeriodMonth && formik.errors.packagePeriodMonth}
                   onKeyPress={handleValidateNumericKeyPress}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}

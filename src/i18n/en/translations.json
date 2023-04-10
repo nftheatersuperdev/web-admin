@@ -484,6 +484,12 @@
     "clearFilterId": "Clear filter by ID"
   },
   "newSubcription": {
+    "createEdit": {
+      "title": "Package Management",
+      "subscriptionManagement": "Subscription Management",
+      "packageManagement": "Package Management",
+      "packageDetail": "Package Detail"
+    },
     "packageDetail": {
       "title": "Package Detail",
       "banner": "Package List Banner",
