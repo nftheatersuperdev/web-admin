@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Card, Grid, TextField, Typography } from '@material-ui/core'
 import { useLocation } from 'react-router-dom'
-import { DEFAULT_DATETIME_FORMAT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import DateTimePicker from 'components/DateTimePicker'
@@ -27,6 +27,9 @@ interface CarAvailabilityDetailParams {
   updatedDate: string
   createdDate: string
   subscriptionId: string
+  location: string
+  owner: string
+  reSeller: string
 }
 export default function CarAvailabilityDetail(): JSX.Element {
   const location = useLocation()
@@ -53,7 +56,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
       <PageTitle title={t('sidebar.carAvailabilityDetail')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
-          <Typography variant="h5" component="h2">
+          <Typography variant="body1" component="h2">
             {t('sidebar.carAvailabilityDetail')}
           </Typography>
 
@@ -95,7 +98,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
           </Grid>
 
-          {/* Cartrack Id */}
+          {/* Cartrack Id And Location Service*/}
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -112,6 +115,23 @@ export default function CarAvailabilityDetail(): JSX.Element {
                 }}
                 variant="outlined"
                 value={CarAvailabilityDetail.carTrackId}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                disabled
+                id="car_availability_detail__location"
+                label={t('carAvailabilityDetail.location')}
+                fullWidth
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                value={CarAvailabilityDetail.location}
               />
             </Grid>
           </Grid>
@@ -222,7 +242,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
                 label={t('carAvailabilityDetail.createdDate')}
                 id="car_availability_detail__createdDate"
                 name="createdDate"
-                format={DEFAULT_DATETIME_FORMAT}
+                format={DEFAULT_DATETIME_FORMAT_MONTH_TEXT}
                 value={CarAvailabilityDetail.createdDate}
                 onChange={() => {
                   setText('')
@@ -237,7 +257,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
                 label={t('carAvailabilityDetail.updatedDate')}
                 id="car_availability_detail__updateDate"
                 name="updateDate"
-                format={DEFAULT_DATETIME_FORMAT}
+                format={DEFAULT_DATETIME_FORMAT_MONTH_TEXT}
                 value={CarAvailabilityDetail.updatedDate}
                 onChange={() => {
                   setText('')
@@ -264,6 +284,43 @@ export default function CarAvailabilityDetail(): JSX.Element {
                 }}
                 variant="outlined"
                 value={CarAvailabilityDetail.subscriptionId}
+              />
+            </Grid>
+          </Grid>
+          {/* Owner And ReSeller */}
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                disabled
+                id="car_availability_detail__owner"
+                label={t('carAvailabilityDetail.owner')}
+                fullWidth
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                value={CarAvailabilityDetail.owner}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                disabled
+                id="car_availability_detail__reseller"
+                label={t('carAvailabilityDetail.reSeller')}
+                fullWidth
+                margin="normal"
+                InputProps={{
+                  readOnly: true,
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                value={CarAvailabilityDetail.reSeller}
               />
             </Grid>
           </Grid>

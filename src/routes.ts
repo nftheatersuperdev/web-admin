@@ -18,6 +18,7 @@ export const ROUTE_PATHS = Object.freeze({
   PRICING: '/pricing',
   MODEL_AND_PRICING: '/model-and-pricing',
   MODEL_AND_PRICING_EDIT: '/model-and-pricing/:id/edit',
+  CAR_DETAIL: '/car/:id',
   CAR: '/car',
   CAR_AVAILABILITY_DETAIL: '/car-availability/:id',
   CAR_AVAILABILITY: '/car-availability',
@@ -41,6 +42,10 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILES: '/staff-profiles',
   STAFF_PROFILE_DETAIL: '/staff-profile/:id/edit',
   STAFF_PROFILE_ADD: '/staff-profile/create',
+  SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
+  CUSTOMER_PROFILE: '/customer-profile',
+  CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
+  CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
   NEW_SUBSCRIPTION: '/new-subscription',
@@ -181,6 +186,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
+    path: ROUTE_PATHS.CAR_DETAIL,
+    component: lazy(() => import('./pages/CarDetail' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
+  },
+  {
     path: ROUTE_PATHS.CAR,
     component: lazy(() => import('./pages/Car' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
@@ -310,6 +320,25 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.STAFF_PROFILE_ADD,
     component: lazy(() => import('./pages/StaffProfileAdd' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_MANAGEMENT,
+    component: lazy(
+      () => import('./pages/SubscriptionPackageManagement' /* webpackChunkName: "app" */)
+    ),
+    allowedRoles: [ROLES.SUPER_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.CUSTOMER_PROFILE,
+    component: lazy(() => import('./pages/CustomerProfile' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+      ROLES.PRODUCT_SUPPORT,
+    ],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,
