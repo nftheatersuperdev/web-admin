@@ -142,7 +142,7 @@ export default function PackageDetail(): JSX.Element {
       setPackagePeriodMonthError(t('newSubcription.validation.errors.required'))
     } else {
       formik.setFieldValue('packagePeriodMonth', value)
-      if (value < 1 || value > 999999) {
+      if (value < 1 || value > 99) {
         setPackagePeriodMonthError(t('newSubcription.validation.errors.textInvalid'))
       } else {
         setPackagePeriodMonthError('')
