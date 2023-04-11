@@ -13,13 +13,13 @@ import {
   Card,
   CardContent,
   Container,
-  Divider,
   FormControl,
   FormControlLabel,
   FormHelperText,
   IconButton,
   InputAdornment,
   MenuItem,
+  Stack,
   Switch,
   Typography,
 } from '@mui/material'
@@ -31,7 +31,6 @@ import { createPackage } from 'services/web-bff/new-subscription'
 import DatePicker from 'components/DatePicker'
 import HTMLEditor from 'components/HTMLEditor'
 import UploadImageDialog from 'components/UploadImageDialog'
-import { Page } from 'layout/LayoutRoute'
 
 const useStyles = makeStyles({
   space: {
@@ -45,21 +44,33 @@ const useStyles = makeStyles({
     paddingRight: 0,
   },
 })
-const TitleTypography = styled(Typography)`
-  margin-bottom: 44px !important;
+
+const ButtonSpace = styled(Button)`
+  margin-right: 10px !important;
 `
-const Wrapper = styled(Card)`
-  padding: 15px;
-  margin-top: 20px;
+
+const PackageDetailSpacing = styled(Card)`
+  padding: 20px 16px 0px 16px;
 `
-const DividerSpace = styled(Divider)`
-  margin-bottom: 24px;
+
+const HtmlContentEnSpace = styled(Container)`
+  padding: 0px 8px 30px 8px !important;
 `
+
+const HtmlContentThSpace = styled(Container)`
+  padding: 0px 8px 14px 8px !important;
+`
+
 const InputField = styled(Container)`
   padding: 0px 8px 24px 8px !important;
 `
-const ButtonSpace = styled(Button)`
-  margin-right: 10px !important;
+
+const PackageNameField = styled(Container)`
+  padding: 0px 8px 40px 8px !important;
+`
+
+const BannerSpace = styled(Stack)`
+  padding: 0px 8px 44px 8px !important;
 `
 
 const PublishedSwitch = styled(Switch)(({ theme }) => ({
@@ -70,6 +81,22 @@ const PublishedSwitch = styled(Switch)(({ theme }) => ({
     },
   },
 }))
+
+const HtmlTypography = styled(Typography)`
+  margin-bottom: 16px !important;
+`
+
+const MainTitleTypography = styled(Typography)`
+  margin-bottom: 64px !important;
+`
+
+const PackageDetailTitleTypography = styled(Typography)`
+  margin-bottom: 60px !important;
+`
+
+const TitleTypography = styled(Typography)`
+  margin-bottom: 44px !important;
+`
 
 export default function PackageDetail(): JSX.Element {
   const { t } = useTranslation()
@@ -311,172 +338,172 @@ export default function PackageDetail(): JSX.Element {
   })
 
   return (
-    <Page>
-      <form onSubmit={formik.handleSubmit}>
-        <Wrapper>
-          <TitleTypography variant="h5"> {t('newSubcription.packageDetail.title')}</TitleTypography>
-          <InputField maxWidth={false}>
-            <Grid container spacing={5}>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Badge"
-                  id="badge"
-                  name="badge"
-                  variant="outlined"
-                  value={formik.values.badge}
-                  onChange={formik.handleChange}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" className={classes.clearButton}>
-                        {formik.values.badge && (
-                          <IconButton onClick={handleClearClick}>
-                            <ClearIcon />
-                          </IconButton>
-                        )}
-                      </InputAdornment>
-                    ),
-                    classes: {
-                      adornedEnd: classes.input,
+    <Stack spacing={6}>
+      <PackageDetailSpacing>
+        <TitleTypography variant="h5">{t('newSubcription.packageDetail.title')}</TitleTypography>
+        <InputField maxWidth={false}>
+          <Grid container spacing={5}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                select
+                label={t('newSubcription.packageDetail.badge')}
+                id="badge"
+                name="badge"
+                variant="outlined"
+                value={formik.values.badge}
+                onChange={formik.handleChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" className={classes.clearButton}>
+                      {formik.values.badge && (
+                        <IconButton onClick={handleClearClick}>
+                          <ClearIcon />
+                        </IconButton>
+                      )}
+                    </InputAdornment>
+                  ),
+                  classes: {
+                    adornedEnd: classes.input,
+                  },
+                }}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
                     },
-                  }}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      },
-                      getContentAnchorEl: null,
-                    },
-                  }}
-                >
-                  <MenuItem value="Hot">Hot</MenuItem>
-                  <MenuItem value="Recommended">Recommended</MenuItem>
-                  <MenuItem value="Coming Soon">Coming Soon</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <DatePicker
-                  fullWidth
-                  disablePast
-                  inputVariant="outlined"
-                  label="Publish Date"
-                  id="publishDate"
-                  name="publishDate"
-                  format="D MMM YYYY"
-                  minDate={defaultDate.minDate}
-                  maxDate={defaultDate.maxDate}
-                  defaultValue={formik.values.publishDate}
-                  value={formik.values.publishDate}
-                  onChange={(date) => {
-                    formik.setFieldValue('publishDate', date)
-                  }}
-                  error={formik.touched.publishDate && Boolean(formik.errors.publishDate)}
-                  helperText={formik.touched.publishDate && formik.errors.publishDate}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControl component="fieldset">
-                  <FormControlLabel
-                    control={
-                      <PublishedSwitch
-                        id="published"
-                        name="published"
-                        checked={formik.values.published}
-                        value={formik.values.published}
-                        onChange={formik.handleChange}
-                      />
-                    }
-                    label={
-                      <Typography variant="body1" color="textPrimary">
-                        Published
-                      </Typography>
-                    }
-                  />
-                </FormControl>
-              </Grid>
+                    getContentAnchorEl: null,
+                  },
+                }}
+              >
+                <MenuItem value="Hot">Hot</MenuItem>
+                <MenuItem value="Recommended">Recommended</MenuItem>
+                <MenuItem value="Coming Soon">Coming Soon</MenuItem>
+              </TextField>
             </Grid>
-          </InputField>
-          <InputField maxWidth={false}>
-            <Grid container spacing={5}>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Full Price"
-                  id="subscription-add__fullPrice_input"
-                  name="fullPrice"
-                  variant="outlined"
-                  value={formik.values.fullPrice}
-                  error={
-                    !!fullPriceError ||
-                    (formik.touched.fullPrice && Boolean(formik.errors.fullPrice))
-                  }
-                  helperText={
-                    fullPriceError || (formik.touched.fullPrice && formik.errors.fullPrice)
-                  }
-                  onChange={validateFullPrice}
-                  onKeyPress={handleValidateNumericKeyPress}
-                  onCut={handleDisableEvent}
-                  onCopy={handleDisableEvent}
-                  onPaste={handleDisableEvent}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Price"
-                  id="price"
-                  name="price"
-                  variant="outlined"
-                  value={formik.values.price}
-                  error={!!priceError || (formik.touched.price && Boolean(formik.errors.price))}
-                  helperText={priceError || (formik.touched.price && formik.errors.price)}
-                  onChange={validatePrice}
-                  onKeyPress={handleValidateNumericKeyPress}
-                  onCut={handleDisableEvent}
-                  onCopy={handleDisableEvent}
-                  onPaste={handleDisableEvent}
-                />
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Package Period (Month)"
-                  id="packagePeriodMonth"
-                  name="packagePeriodMonth"
-                  variant="outlined"
-                  value={formik.values.packagePeriodMonth}
-                  error={
-                    !!packagePeriodMonthError ||
-                    (formik.touched.packagePeriodMonth && Boolean(formik.errors.packagePeriodMonth))
-                  }
-                  helperText={
-                    packagePeriodMonthError ||
-                    (formik.touched.packagePeriodMonth && formik.errors.packagePeriodMonth)
-                  }
-                  onChange={validatePackagePeriodMonth}
-                  onKeyPress={handleValidateNumericKeyPress}
-                  onCut={handleDisableEvent}
-                  onCopy={handleDisableEvent}
-                  onPaste={handleDisableEvent}
-                />
-              </Grid>
+            <Grid item xs={12} sm={4}>
+              <DatePicker
+                fullWidth
+                disablePast
+                inputVariant="outlined"
+                label={t('newSubcription.packageDetail.publishDate')}
+                id="publishDate"
+                name="publishDate"
+                format="D MMM YYYY"
+                minDate={defaultDate.minDate}
+                maxDate={defaultDate.maxDate}
+                defaultValue={formik.values.publishDate}
+                value={formik.values.publishDate}
+                onChange={(date) => {
+                  formik.setFieldValue('publishDate', date)
+                }}
+                error={formik.touched.publishDate && Boolean(formik.errors.publishDate)}
+                helperText={formik.touched.publishDate && formik.errors.publishDate}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
             </Grid>
-          </InputField>
-        </Wrapper>
-        <Wrapper>
-          <TitleTypography variant="h5">{t('newSubcription.packageList.title')}</TitleTypography>
-          <TitleTypography variant="h5">{t('newSubcription.packageList.banner')}</TitleTypography>
+            <Grid item xs={12} md={4}>
+              <FormControl component="fieldset">
+                <FormControlLabel
+                  control={
+                    <PublishedSwitch
+                      id="published"
+                      name="published"
+                      checked={formik.values.published}
+                      value={formik.values.published}
+                      onChange={formik.handleChange}
+                    />
+                  }
+                  label={
+                    <Typography variant="body1" color="textPrimary">
+                      {t('newSubcription.packageDetail.published')}
+                    </Typography>
+                  }
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
+        </InputField>
+        <InputField maxWidth={false}>
+          <Grid container spacing={5}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                type="number"
+                label={t('newSubcription.packageDetail.fullPrice')}
+                id="subscription-add__fullPrice_input"
+                name="fullPrice"
+                variant="outlined"
+                value={formik.values.fullPrice}
+                error={
+                  !!fullPriceError || (formik.touched.fullPrice && Boolean(formik.errors.fullPrice))
+                }
+                helperText={fullPriceError || (formik.touched.fullPrice && formik.errors.fullPrice)}
+                onChange={validateFullPrice}
+                onKeyPress={handleValidateNumericKeyPress}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                type="number"
+                label={t('newSubcription.packageDetail.price')}
+                id="price"
+                name="price"
+                variant="outlined"
+                value={formik.values.price}
+                error={!!priceError || (formik.touched.price && Boolean(formik.errors.price))}
+                helperText={priceError || (formik.touched.price && formik.errors.price)}
+                onChange={validatePrice}
+                onKeyPress={handleValidateNumericKeyPress}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                type="number"
+                label={t('newSubcription.packageDetail.packagePeriodMonth')}
+                id="packagePeriodMonth"
+                name="packagePeriodMonth"
+                variant="outlined"
+                value={formik.values.packagePeriodMonth}
+                error={
+                  !!packagePeriodMonthError ||
+                  (formik.touched.packagePeriodMonth && Boolean(formik.errors.packagePeriodMonth))
+                }
+                helperText={
+                  packagePeriodMonthError ||
+                  (formik.touched.packagePeriodMonth && formik.errors.packagePeriodMonth)
+                }
+                onChange={validatePackagePeriodMonth}
+                onKeyPress={handleValidateNumericKeyPress}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+              />
+            </Grid>
+          </Grid>
+        </InputField>
+      </PackageDetailSpacing>
+
+      <PackageDetailSpacing>
+        <MainTitleTypography variant="h5">
+          {t('newSubcription.packageList.title')}
+        </MainTitleTypography>
+        <TitleTypography variant="h5">{t('newSubcription.packageList.banner')}</TitleTypography>
+        <BannerSpace spacing={4}>
           <Card variant="outlined">
             <CardContent>
               <Grid container spacing={2}>
@@ -509,115 +536,98 @@ export default function PackageDetail(): JSX.Element {
               </Grid>
             </CardContent>
           </Card>
-
-          <UploadImageDialog
-            visible={visibleUpdateDialog}
-            onClose={() => {
-              setVisibleUpdateDialog(false)
-            }}
+          <Typography variant="caption" color="#BDBDBD">
+            {t('newSubcription.dialog.imageUpload.reccommend')}
+          </Typography>
+        </BannerSpace>
+        <UploadImageDialog
+          visible={visibleUpdateDialog}
+          onClose={() => {
+            setVisibleUpdateDialog(false)
+          }}
+        />
+        <TitleTypography variant="h5">{t('newSubcription.packageList.message')}</TitleTypography>
+        <PackageNameField maxWidth={false}>
+          <TextField
+            fullWidth
+            label={t('newSubcription.packageList.packageNameEn')}
+            id="packageName"
+            name="packageNameEn"
+            variant="outlined"
+            value={formik.values.packageNameEn}
+            error={
+              !!packageNameEnError ||
+              (formik.touched.packageNameEn && Boolean(formik.errors.packageNameEn))
+            }
+            helperText={
+              packageNameEnError || (formik.touched.packageNameEn && formik.errors.packageNameEn)
+            }
+            onChange={validatePackageName}
+            onCut={handleDisableEvent}
+            onCopy={handleDisableEvent}
+            onPaste={handleDisableEvent}
           />
-          <div className={classes.space}>
-            <TitleTypography variant="caption" color="#BDBDBD">
-              {t('newSubcription.dialog.imageUpload.reccommend')}
-            </TitleTypography>
-          </div>
-          <TitleTypography variant="h5">{t('newSubcription.packageList.message')}</TitleTypography>
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            style={{
-              marginTop: 24,
-              marginBottom: 24,
-            }}
-          >
-            <TextField
-              fullWidth
-              label={t('newSubcription.packageList.packageNameEn')}
-              id="packageName"
-              name="packageNameEn"
-              variant="outlined"
-              value={formik.values.packageNameEn}
-              error={
-                !!packageNameEnError ||
-                (formik.touched.packageNameEn && Boolean(formik.errors.packageNameEn))
-              }
-              helperText={
-                packageNameEnError || (formik.touched.packageNameEn && formik.errors.packageNameEn)
-              }
-              onChange={validatePackageName}
-              onCut={handleDisableEvent}
-              onCopy={handleDisableEvent}
-              onPaste={handleDisableEvent}
-            />
-          </Grid>
-          <Grid container spacing={5}>
-            <Grid item xs={12} sm={12}>
-              <HTMLEditor
-                id="contentEn"
-                label={t('newSubcription.packageList.contentEn')}
-                initialValue={formik.values.editorPackageListEn}
-                handleOnEditChange={(value: string) => validateEditorPackageListEn(value)}
-              />
-              {editorPackageListEnError !== '' && (
-                <FormHelperText error={true}>{editorPackageListEnError}</FormHelperText>
-              )}
-              <div className={classes.space}>
-                <TitleTypography variant="caption" color="#BDBDBD">
-                  {t('newSubcription.packageList.reccommendEditor')}
-                </TitleTypography>
-              </div>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                style={{
-                  marginTop: 24,
-                  marginBottom: 24,
-                }}
-              >
-                <TextField
-                  fullWidth
-                  id="packageNameTh"
-                  label={t('newSubcription.packageList.packageNameTh')}
-                  name="packageNameTh"
-                  variant="outlined"
-                  value={formik.values.packageNameTh}
-                  error={
-                    !!packageNameThError ||
-                    (formik.touched.packageNameTh && Boolean(formik.errors.packageNameTh))
-                  }
-                  helperText={
-                    packageNameThError ||
-                    (formik.touched.packageNameTh && formik.errors.packageNameTh)
-                  }
-                  onChange={validatePackageNameTh}
-                  onCut={handleDisableEvent}
-                  onCopy={handleDisableEvent}
-                  onPaste={handleDisableEvent}
-                />
-              </Grid>
-              <HTMLEditor
-                id="contentTh"
-                label={t('newSubcription.packageList.contentTh')}
-                initialValue={formik.values.editorPackageListTh}
-                handleOnEditChange={(value: string) => validateEditorPackageListTh(value)}
-              />
-              {editorPackageListThError !== '' && (
-                <FormHelperText error={true}>{editorPackageListThError}</FormHelperText>
-              )}
-              <div className={classes.space}>
-                <TitleTypography variant="caption" color="#BDBDBD">
-                  {t('newSubcription.packageList.reccommendEditor')}
-                </TitleTypography>
-              </div>
-            </Grid>
-          </Grid>
-        </Wrapper>
-        <Wrapper>
-          <TitleTypography variant="h5">{t('newSubcription.packageDetail.title')}</TitleTypography>
-          <TitleTypography variant="h5">{t('newSubcription.packageDetail.banner')}</TitleTypography>
-          <Card variant="outlined" sx={{ marginBottom: '20px' }}>
+        </PackageNameField>
+        <HtmlTypography variant="body2">{t('newSubcription.packageList.contentEn')}</HtmlTypography>
+        <InputField maxWidth={false}>
+          <HTMLEditor
+            id="contentEn"
+            label=""
+            initialValue={formik.values.editorPackageListEn}
+            handleOnEditChange={(value: string) => validateEditorPackageListEn(value)}
+          />
+          {editorPackageListEnError !== '' && (
+            <FormHelperText error={true}>{editorPackageListEnError}</FormHelperText>
+          )}
+          <Typography variant="caption" color="#BDBDBD">
+            {t('newSubcription.packageList.reccommendEditor')}
+          </Typography>
+        </InputField>
+        <PackageNameField maxWidth={false}>
+          <TextField
+            fullWidth
+            id="packageNameTh"
+            label={t('newSubcription.packageList.packageNameTh')}
+            name="packageNameTh"
+            variant="outlined"
+            value={formik.values.packageNameTh}
+            error={
+              !!packageNameThError ||
+              (formik.touched.packageNameTh && Boolean(formik.errors.packageNameTh))
+            }
+            helperText={
+              packageNameThError || (formik.touched.packageNameTh && formik.errors.packageNameTh)
+            }
+            onChange={validatePackageNameTh}
+            onCut={handleDisableEvent}
+            onCopy={handleDisableEvent}
+            onPaste={handleDisableEvent}
+          />
+        </PackageNameField>
+        <HtmlTypography variant="body2">{t('newSubcription.packageList.contentTh')}</HtmlTypography>
+        <InputField maxWidth={false}>
+          <HTMLEditor
+            id="contentTh"
+            label=""
+            initialValue={formik.values.editorPackageListTh}
+            handleOnEditChange={(value: string) => validateEditorPackageListTh(value)}
+          />
+          {editorPackageListThError !== '' && (
+            <FormHelperText error={true}>{editorPackageListThError}</FormHelperText>
+          )}
+          <TitleTypography variant="caption" color="#BDBDBD">
+            {t('newSubcription.packageList.reccommendEditor')}
+          </TitleTypography>
+        </InputField>
+      </PackageDetailSpacing>
+
+      <PackageDetailSpacing>
+        <MainTitleTypography variant="h5">
+          {t('newSubcription.packageDetail.title')}
+        </MainTitleTypography>
+        <TitleTypography variant="h5">{t('newSubcription.packageDetail.banner')}</TitleTypography>
+        <BannerSpace spacing={4}>
+          <Card variant="outlined">
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={12}>
@@ -649,48 +659,58 @@ export default function PackageDetail(): JSX.Element {
               </Grid>
             </CardContent>
           </Card>
-          <div className={classes.space}>
-            <TitleTypography variant="caption" color="#BDBDBD">
-              {t('newSubcription.dialog.imageUpload.reccommendDetail')}
-            </TitleTypography>
-          </div>
-          <TitleTypography variant="h5">
-            {t('newSubcription.packageDetail.message')}
-          </TitleTypography>
-          <Grid container spacing={5}>
-            <Grid item xs={12} sm={12}>
-              <HTMLEditor
-                id="contentDetailEn"
-                label={t('newSubcription.packageDetail.contentEn')}
-                initialValue={formik.values.editorPackageDetailEn}
-                handleOnEditChange={(value: string) => validateEditorPackageDetailEn(value)}
-              />
-              {editorPackageDetailEnError !== '' && (
-                <FormHelperText error={true}>{editorPackageDetailEnError}</FormHelperText>
-              )}
+          <Typography variant="caption" color="#BDBDBD">
+            {t('newSubcription.dialog.imageUpload.reccommendDetail')}
+          </Typography>
+        </BannerSpace>
+        <PackageDetailTitleTypography variant="h5">
+          {t('newSubcription.packageDetail.message')}
+        </PackageDetailTitleTypography>
+        <HtmlTypography variant="body2">
+          {t('newSubcription.packageDetail.contentEn')}
+        </HtmlTypography>
+        <HtmlContentEnSpace maxWidth={false}>
+          <HTMLEditor
+            id="contentDetailEn"
+            label=""
+            initialValue={formik.values.editorPackageDetailEn}
+            handleOnEditChange={(value: string) => validateEditorPackageDetailEn(value)}
+          />
+          {editorPackageDetailEnError !== '' && (
+            <FormHelperText error={true}>{editorPackageDetailEnError}</FormHelperText>
+          )}
+        </HtmlContentEnSpace>
+        <HtmlTypography variant="body2">
+          {t('newSubcription.packageDetail.contentTh')}
+        </HtmlTypography>
+        <HtmlContentThSpace maxWidth={false}>
+          <HTMLEditor
+            id="contentDetailTh"
+            label=""
+            initialValue={formik.values.editorPackageDetailTh}
+            handleOnEditChange={(value: string) => validatePackageDetailTh(value)}
+          />
+          {editorPackageDetailThError !== '' && (
+            <FormHelperText error={true}>{editorPackageDetailThError}</FormHelperText>
+          )}
+        </HtmlContentThSpace>
+      </PackageDetailSpacing>
 
-              <HTMLEditor
-                id="contentDetailTh"
-                label={t('newSubcription.packageDetail.contentTh')}
-                initialValue={formik.values.editorPackageDetailTh}
-                handleOnEditChange={(value: string) => validatePackageDetailTh(value)}
-              />
-              {editorPackageDetailThError !== '' && (
-                <FormHelperText error={true}>{editorPackageDetailThError}</FormHelperText>
-              )}
-            </Grid>
-            <DividerSpace />
-            <Grid item xs={12} style={{ textAlign: 'left' }}>
-              <ButtonSpace color="primary" variant="contained" type="submit">
-                {t('button.save')}
-              </ButtonSpace>
-              <Button variant="outlined" onClick={() => history.goBack()}>
-                {t('button.cancel')}
-              </Button>
-            </Grid>
-          </Grid>
-        </Wrapper>
-      </form>
-    </Page>
+      <PackageDetailSpacing>
+        <InputField maxWidth={false}>
+          <ButtonSpace
+            color="primary"
+            variant="contained"
+            type="submit"
+            onClick={() => formik.handleSubmit()}
+          >
+            {t('button.save')}
+          </ButtonSpace>
+          <Button variant="outlined" onClick={() => history.goBack()}>
+            {t('button.cancel')}
+          </Button>
+        </InputField>
+      </PackageDetailSpacing>
+    </Stack>
   )
 }

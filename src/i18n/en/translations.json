@@ -516,7 +516,13 @@
       "banner": "Package Detail Banner",
       "message": "Package Detail Message",
       "contentEn": "Description (English)",
-      "contentTh": "Description (Thai)"
+      "contentTh": "Description (Thai)",
+      "badge": "Badge",
+      "publishDate": "Publish Date",
+      "published": "Published",
+      "fullPrice": "Full Price",
+      "price": "Price",
+      "packagePeriodMonth": "Package Period (Month)"
     },
     "packageList": {
       "title": "Package List",

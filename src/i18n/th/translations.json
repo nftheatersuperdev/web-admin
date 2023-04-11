@@ -516,7 +516,13 @@
       "banner": "Package Detail Banner",
       "message": "Package Detail Message",
       "contentEn": "Description (English)",
-      "contentTh": "Description (Thai)"
+      "contentTh": "Description (Thai)",
+      "badge": "Badge",
+      "publishDate": "Publish Date",
+      "published": "Published",
+      "fullPrice": "Full Price",
+      "price": "Price",
+      "packagePeriodMonth": "Package Period (Month)"
     },
     "packageList": {
       "title": "Package List",
@@ -531,7 +537,8 @@
     "dialog": {
       "imageUpload": {
         "title": "อัพโหลดรูปภาพ",
-        "reccommend": "*The file type must be .png / dimension 496pixels x 280pixels (16:9) / Maximum upload size 1MB"
+        "reccommend": "*The file type must be .png / dimension 496pixels x 280pixels (16:9) / Maximum upload size 1MB",
+        "reccommendDetail": "*The file type must be .png / dimension 750pixels x 562pixels (4:3) / Maximum upload size 1MB"
       },
       "createDialog": {
         "success": "Create Package Success",
