@@ -25,10 +25,12 @@ import {
 } from '@mui/material'
 import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined'
 import ClearIcon from '@mui/icons-material/Clear'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { DatePicker } from '@mui/x-date-pickers'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
 import { createPackage } from 'services/web-bff/new-subscription'
-import DatePicker from 'components/DatePicker'
 import HTMLEditor from 'components/HTMLEditor'
 import UploadImageDialog from 'components/UploadImageDialog'
 
@@ -383,30 +385,30 @@ export default function PackageDetail(): JSX.Element {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <DatePicker
-                fullWidth
-                disablePast
-                inputVariant="outlined"
-                label={t('newSubcription.packageDetail.publishDate')}
-                id="publishDate"
-                name="publishDate"
-                format="D MMM YYYY"
-                minDate={defaultDate.minDate}
-                maxDate={defaultDate.maxDate}
-                defaultValue={formik.values.publishDate}
-                value={formik.values.publishDate}
-                onChange={(date) => {
-                  formik.setFieldValue('publishDate', date)
-                }}
-                error={formik.touched.publishDate && Boolean(formik.errors.publishDate)}
-                helperText={formik.touched.publishDate && formik.errors.publishDate}
-                KeyboardButtonProps={{
-                  'aria-label': 'change date',
-                }}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  disablePast
+                  format="D MMM YYYY"
+                  label={t('newSubcription.packageDetail.publishDate')}
+                  minDate={defaultDate.minDate}
+                  maxDate={defaultDate.maxDate}
+                  value={formik.values.publishDate}
+                  onChange={(date) => formik.setFieldValue('publishDate', date)}
+                  slotProps={{
+                    textField: {
+                      variant: 'outlined',
+                      fullWidth: true,
+                      id: 'publishDate',
+                      name: 'publishDate',
+                      error: formik.touched.publishDate && Boolean(formik.errors.publishDate),
+                      helperText: formik.touched.publishDate && formik.errors.publishDate,
+                    },
+                    popper: {
+                      placement: 'bottom-end',
+                    },
+                  }}
+                />
+              </LocalizationProvider>
             </Grid>
             <Grid item xs={12} md={4}>
               <FormControl component="fieldset">
