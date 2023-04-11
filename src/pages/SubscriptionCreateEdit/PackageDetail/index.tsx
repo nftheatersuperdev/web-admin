@@ -93,6 +93,10 @@ export default function PackageDetail(): JSX.Element {
   const [editorPackageDetailEnError, setEditorPackageDetailEnError] = useState<string>('')
   const [editorPackageDetailThError, setEditorPackageDetailThError] = useState<string>('')
   const [visibleUpdateDialog, setVisibleUpdateDialog] = useState<boolean>(false)
+  const [contentListThTemp, setContentListThTemp] = useState<string>('')
+  const [contentListEnTemp, setContentListEnTemp] = useState<string>('')
+  const [contentDetailThTemp, setContentDetailThTemp] = useState<string>('')
+  const [contentDetailEnTemp, setContentDetailEnTemp] = useState<string>('')
 
   const validateFullPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(event.target.value)
@@ -164,7 +168,7 @@ export default function PackageDetail(): JSX.Element {
 
   const validateEditorPackageListEn = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
-    formik.setFieldValue('editorPackageListEn', text)
+    setContentListEnTemp(text)
     if (text.length === 0) {
       setEditorPackageListEnError(t('newSubcription.validation.errors.required'))
     } else if (validateBullet > 5 || validateBullet < 3) {
@@ -188,7 +192,7 @@ export default function PackageDetail(): JSX.Element {
 
   const validateEditorPackageListTh = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
-    formik.setFieldValue('editorPackageListTh', text)
+    setContentListThTemp(text)
     if (text.length === 0) {
       setEditorPackageListThError(t('newSubcription.validation.errors.required'))
     } else if (validateBullet > 5 || validateBullet < 3) {
@@ -199,28 +203,22 @@ export default function PackageDetail(): JSX.Element {
   }
 
   const validateEditorPackageDetailEn = (text: string) => {
-    const validateBullet = (text.match(/<li>/g) || []).length
-    formik.setFieldValue('editorPackageDetailEn', text)
+    setContentDetailEnTemp(text)
     if (text.length === 0) {
       setEditorPackageDetailEnError(t('newSubcription.validation.errors.required'))
     } else if (text.length > packageFeatureLimt) {
       setEditorPackageDetailEnError(t('newSubcription.validation.errors.editorFormat'))
-    } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorPackageDetailEnError(t('newSubcription.validation.errors.limitBullet'))
     } else {
       setEditorPackageDetailEnError('')
     }
   }
 
   const validatePackageDetailTh = (text: string) => {
-    const validateBullet = (text.match(/<li>/g) || []).length
-    formik.setFieldValue('editorPackageDetailTh', text)
+    setContentDetailThTemp(text)
     if (text.length === 0) {
       setEditorPackageDetailThError(t('newSubcription.validation.errors.required'))
     } else if (text.length > packageFeatureLimt) {
       setEditorPackageDetailThError(t('newSubcription.validation.errors.editorFormat'))
-    } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorPackageDetailThError(t('newSubcription.validation.errors.limitBullet'))
     } else {
       setEditorPackageDetailThError('')
     }
@@ -270,8 +268,8 @@ export default function PackageDetail(): JSX.Element {
         'https://w7.pngwing.com/pngs/347/928/png-transparent-tesla-model-x-tesla-model-s-tesla-motors-tesla-model-3-tesla-compact-car-sedan-headlamp.png',
       editorPackageListEn: '<ul><li></li><li></li><li></li></ul>',
       editorPackageListTh: '<ul><li></li><li></li><li></li></ul>',
-      editorPackageDetailEn: '<ul><li></li><li></li><li></li></ul>',
-      editorPackageDetailTh: '<ul><li></li><li></li><li></li></ul>',
+      editorPackageDetailEn: '<ul><li></li></ul>',
+      editorPackageDetailTh: '<ul><li></li></ul>',
     },
     enableReinitialize: false,
     onSubmit: (values, actions) => {
@@ -287,10 +285,10 @@ export default function PackageDetail(): JSX.Element {
             periodMonth: values.packagePeriodMonth,
             nameEn: values.packageNameEn,
             nameTh: values.packageNameTh,
-            featureEn: values.editorPackageListEn,
-            featureTh: values.editorPackageListTh,
-            descriptionEn: values.editorPackageDetailEn,
-            descriptionTh: values.editorPackageDetailTh,
+            featureEn: contentListEnTemp,
+            featureTh: contentListThTemp,
+            descriptionEn: contentDetailEnTemp,
+            descriptionTh: contentDetailThTemp,
             isPublish: values.published,
             listBanner: values.listBanner,
             detailBanner: values.detailBanner,
@@ -535,7 +533,7 @@ export default function PackageDetail(): JSX.Element {
           >
             <TextField
               fullWidth
-              label="Package Name (EN)"
+              label={t('newSubcription.packageList.packageNameEn')}
               id="packageName"
               name="packageNameEn"
               variant="outlined"
@@ -564,6 +562,11 @@ export default function PackageDetail(): JSX.Element {
               {editorPackageListEnError !== '' && (
                 <FormHelperText error={true}>{editorPackageListEnError}</FormHelperText>
               )}
+              <div className={classes.space}>
+                <TitleTypography variant="caption" color="#BDBDBD">
+                  {t('newSubcription.packageList.reccommendEditor')}
+                </TitleTypography>
+              </div>
               <Grid
                 item
                 xs={12}
@@ -575,8 +578,8 @@ export default function PackageDetail(): JSX.Element {
               >
                 <TextField
                   fullWidth
-                  label="Package Name (TH)"
                   id="packageNameTh"
+                  label={t('newSubcription.packageList.packageNameTh')}
                   name="packageNameTh"
                   variant="outlined"
                   value={formik.values.packageNameTh}
@@ -603,6 +606,11 @@ export default function PackageDetail(): JSX.Element {
               {editorPackageListThError !== '' && (
                 <FormHelperText error={true}>{editorPackageListThError}</FormHelperText>
               )}
+              <div className={classes.space}>
+                <TitleTypography variant="caption" color="#BDBDBD">
+                  {t('newSubcription.packageList.reccommendEditor')}
+                </TitleTypography>
+              </div>
             </Grid>
           </Grid>
         </Wrapper>
@@ -641,6 +649,11 @@ export default function PackageDetail(): JSX.Element {
               </Grid>
             </CardContent>
           </Card>
+          <div className={classes.space}>
+            <TitleTypography variant="caption" color="#BDBDBD">
+              {t('newSubcription.dialog.imageUpload.reccommendDetail')}
+            </TitleTypography>
+          </div>
           <TitleTypography variant="h5">
             {t('newSubcription.packageDetail.message')}
           </TitleTypography>
