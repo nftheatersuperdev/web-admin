@@ -32,6 +32,8 @@
     "subscriptionManagement": "Subscription Management",
     "voucherManagement": "Voucher Management",
     "subscriptions": "Subscriptions",
+    "subscriptionDetail": "Subscription Detail",
+    "bookingDetail": "Booking Detail",
     "vouchers": "Vouchers",
     "additionalExpense": "Additional Expense",
     "others": "Others",
@@ -348,7 +350,18 @@
     "paymentVersion": "Payment Version",
     "deliveryDate": "Delivery Date",
     "returnDate": "Return Date",
+    "replacement": "Replacement",
     "payments": "Payment history",
+    "paymentHistory": {
+      "title": "Payment history",
+      "id": "ID",
+      "amount": "Amount (THB)",
+      "updatedDate": "Updated Date",
+      "type": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message"
+    },
     "parentId": "Parent Id",
     "isParentValue": "True",
     "isExtendedSubscription": "Is Extended",
@@ -409,7 +422,59 @@
         }
       }
     },
-    "clearFilterId": "Clear filter by ID"
+    "clearFilterId": "Clear filter by ID",
+    "downloadCSV": "Download CSV",
+    "isReplacement": "isReplacement",
+    "isSelfPickup": "IsSelfPickup"
+  },
+  "booking": {
+    "statuses": {
+      "accepted": "Accepted",
+      "available": "Available",
+      "inUse": "In Use",
+      "outOfService": "Out of service",
+      "published": "Published",
+      "unpublished": "Unpublished",
+      "reserved": "Reserved",
+      "upcomingCancelled": "Upcoming Cancelled",
+      "unknown": "Unknown"
+    },
+    "carDetail": {
+      "replacement": "Replacement",
+      "no": "No.",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "vin": "VIN",
+      "deliveryDate": "Delivery Date",
+      "deliveryTime": "Delivery Time",
+      "returnDate": "Return Date",
+      "remark": "Remark"
+    },
+    "carReplacement": {
+      "title": "Car Replacement",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "vin": "VIN",
+      "seat": "Seat",
+      "deliveryDate": "Delivery Date",
+      "deliveryTime": "Delivery Time",
+      "deliveryAddress": "Delivery Address",
+      "deliveryAddressRemark": "Delivery Address Remark",
+      "returnAddress": "Return Address",
+      "returnAddressRemark": "Return Address Remark",
+      "returnDate": "Return Date",
+      "button": {
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "saveSuccess": "The car has been replaced",
+      "saveConfirmation": {
+        "title": "Car Replacement Confirmation",
+        "description": "Are you sure to Update Car replacement / Subscription ID {{bookingDetailId}}?<br/><br/><strong>Modify by:</strong> {{editorEmail}}"
+      }
+    }
   },
   "additionalExpense": {
     "id": "ID",

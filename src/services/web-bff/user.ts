@@ -115,7 +115,7 @@ export const getAllUserDeleteLog = async ({
 }
 
 export const reActivateCustomer = async (customerId: string): Promise<boolean> => {
-  const response: CustomerReActivateResponse = await BaseApi.post(
+  const response: CustomerReActivateResponse = await AdminBffAPI.post(
     `/v1/customers/${customerId}/activation`
   ).then((response) => response.data)
   return response.status === 'success'
