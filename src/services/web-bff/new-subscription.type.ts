@@ -6,7 +6,7 @@ export interface NewSubscriptionBodyProps {
   badge: string
   publishDate: string | dayjs.Dayjs
   isPublish: boolean
-  fullPrice: number
+  fullPrice: number | null
   price: number
   listBanner: string
   detailBanner: string

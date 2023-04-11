@@ -82,40 +82,145 @@ export default function PackageDetail(): JSX.Element {
     maxDate: currentDate.add(90, 'day'),
   }
   const packageNameLimit = 50
+  const packageFeatureLimt = 300
+  const [fullPriceError, setFullPriceError] = useState<string>('')
+  const [priceError, setPriceError] = useState<string>('')
+  const [packagePeriodMonthError, setPackagePeriodMonthError] = useState<string>('')
+  const [packageNameEnError, setPackageNameEnError] = useState<string>('')
+  const [packageNameThError, setPackageNameThError] = useState<string>('')
+  const [editorFieldErrorEn, setEditorFieldErrorEn] = useState<string>('')
+  const [editorFieldErrorTh, setEditorFieldErrorTh] = useState<string>('')
+  const [editorDetailFieldErrorEn, setEditorDetailFieldErrorEn] = useState<string>('')
+  const [editorDetailFieldErrorTh, setEditorDetailFieldErrorTh] = useState<string>('')
+  const [visibleUpdateDialog, setVisibleUpdateDialog] = useState<boolean>(false)
 
-  const validationSchema = yup.object({
-    badge: yup.string(),
-    publishDate: yup
-      .date()
-      .typeError(t('newSubcription.validation.errors.required'))
-      .required(t('newSubcription.validation.errors.required')),
-    fullPrice: yup
-      .number()
-      .min(1, t('newSubcription.validation.errors.textInvalid'))
-      .max(999999, t('newSubcription.validation.errors.textInvalid')),
-    price: yup
-      .number()
-      .max(999999, t('newSubcription.validation.errors.textInvalid'))
-      .when('fullPrice', (fullPrice: number, schema: yup.NumberSchema) =>
-        fullPrice >= 0
-          ? schema.lessThan(fullPrice, t('newSubcription.validation.errors.textInvalid'))
-          : schema
-      )
-      .required(t('newSubcription.validation.errors.required')),
-    packagePeriodMonth: yup
-      .number()
-      .min(1, t('newSubcription.validation.errors.textInvalid'))
-      .max(99, t('newSubcription.validation.errors.textInvalid'))
-      .required(t('newSubcription.validation.errors.required')),
-    packageNameEn: yup
-      .string()
-      .max(packageNameLimit, t('newSubcription.validation.errors.invalidFormat'))
-      .required(t('newSubcription.validation.errors.required')),
-    packageNameTh: yup
-      .string()
-      .max(packageNameLimit, t('newSubcription.validation.errors.invalidFormat'))
-      .required(t('newSubcription.validation.errors.required')),
-  })
+  const validateFullPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(event.target.value)
+    if (isNaN(value)) {
+      formik.setFieldValue('fullPrice', null)
+      setFullPriceError('')
+      if (formik.values.price !== null) {
+        setPriceError('')
+      }
+    } else {
+      formik.setFieldValue('fullPrice', value)
+      if (value < 1 || value > 999999) {
+        setFullPriceError(t('newSubcription.validation.errors.textInvalid'))
+      } else {
+        setFullPriceError('')
+      }
+      if (value <= formik.values.price) {
+        setPriceError(t('newSubcription.validation.errors.textInvalid'))
+      } else {
+        setPriceError('')
+      }
+    }
+  }
+
+  const validatePrice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(event.target.value)
+    if (isNaN(value)) {
+      formik.setFieldValue('price', null)
+      setPriceError(t('newSubcription.validation.errors.required'))
+    } else {
+      formik.setFieldValue('price', value)
+      if (
+        value > 999999 ||
+        (formik.values.fullPrice <= value && formik.values.fullPrice !== null)
+      ) {
+        setPriceError(t('newSubcription.validation.errors.textInvalid'))
+      } else {
+        setPriceError('')
+      }
+    }
+  }
+
+  const validatePackagePeriodMonth = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(event.target.value)
+    if (isNaN(value)) {
+      formik.setFieldValue('packagePeriodMonth', null)
+      setPackagePeriodMonthError(t('newSubcription.validation.errors.required'))
+    } else {
+      formik.setFieldValue('packagePeriodMonth', value)
+      if (value < 1 || value > 999999) {
+        setPackagePeriodMonthError(t('newSubcription.validation.errors.textInvalid'))
+      } else {
+        setPackagePeriodMonthError('')
+      }
+    }
+  }
+
+  const validatePackageName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('packageNameEn', event.target.value)
+    if (value.length === 0) {
+      setPackageNameEnError(t('newSubcription.validation.errors.required'))
+    } else if (value.length > packageNameLimit) {
+      setPackageNameEnError(t('newSubcription.validation.errors.invalidFormat'))
+    } else {
+      setPackageNameEnError('')
+    }
+  }
+
+  const validateBulletPackageListEn = (text: string) => {
+    const validateBullet = (text.match(/<li>/g) || []).length
+    if (text.length === 0) {
+      setEditorFieldErrorEn(t('newSubcription.validation.errors.required'))
+    } else if (validateBullet > 5 || validateBullet < 3) {
+      setEditorFieldErrorEn(t('newSubcription.validation.errors.limitBullet'))
+    } else {
+      setEditorFieldErrorEn('')
+    }
+  }
+
+  const validatePackageNameTh = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('packageNameTh', event.target.value)
+    if (value.length === 0) {
+      setPackageNameThError(t('newSubcription.validation.errors.required'))
+    } else if (value.length > packageNameLimit) {
+      setPackageNameThError(t('newSubcription.validation.errors.invalidFormat'))
+    } else {
+      setPackageNameThError('')
+    }
+  }
+
+  const validateBulletPackageListTh = (text: string) => {
+    const validateBullet = (text.match(/<li>/g) || []).length
+    if (text.length === 0) {
+      setEditorFieldErrorTh(t('newSubcription.validation.errors.required'))
+    } else if (validateBullet > 5 || validateBullet < 3) {
+      setEditorFieldErrorTh(t('newSubcription.validation.errors.limitBullet'))
+    } else {
+      setEditorFieldErrorTh('')
+    }
+  }
+
+  const validatePackageListMessageEn = (text: string) => {
+    const validateBullet = (text.match(/<li>/g) || []).length
+    if (text.length === 0) {
+      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.required'))
+    } else if (text.length > packageFeatureLimt) {
+      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.editorFormat'))
+    } else if (validateBullet > 5 || validateBullet < 3) {
+      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.limitBullet'))
+    } else {
+      setEditorDetailFieldErrorEn('')
+    }
+  }
+
+  const validatePackageListMessageTh = (text: string) => {
+    const validateBullet = (text.match(/<li>/g) || []).length
+    if (text.length === 0) {
+      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.required'))
+    } else if (text.length > packageFeatureLimt) {
+      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.editorFormat'))
+    } else if (validateBullet > 5 || validateBullet < 3) {
+      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.limitBullet'))
+    } else {
+      setEditorDetailFieldErrorTh('')
+    }
+  }
 
   const handleValidateNumericKeyPress = (event: React.KeyboardEvent) => {
     const allowCharacters = /[0-9]/
@@ -131,6 +236,18 @@ export default function PackageDetail(): JSX.Element {
   const handleClearClick = () => {
     formik.setFieldValue('badge', '')
   }
+
+  const validationSchema = yup.object({
+    badge: yup.string(),
+    publishDate: yup
+      .date()
+      .typeError(t('newSubcription.validation.errors.required'))
+      .required(t('newSubcription.validation.errors.required')),
+    price: yup.number().required(t('newSubcription.validation.errors.required')),
+    packagePeriodMonth: yup.number().required(t('newSubcription.validation.errors.required')),
+    packageNameEn: yup.string().required(t('newSubcription.validation.errors.required')),
+    packageNameTh: yup.string().required(t('newSubcription.validation.errors.required')),
+  })
 
   const formik = useFormik({
     validationSchema,
@@ -191,54 +308,6 @@ export default function PackageDetail(): JSX.Element {
     },
   })
 
-  const packageFeatureLimt = 300
-  const [editorFieldErrorEn, setEditorFieldErrorEn] = useState<string>('')
-  const [editorFieldErrorTh, setEditorFieldErrorTh] = useState<string>('')
-  const [editorDetailFieldErrorEn, setEditorDetailFieldErrorEn] = useState<string>('')
-  const [editorDetailFieldErrorTh, setEditorDetailFieldErrorTh] = useState<string>('')
-
-  const validateBulletPackageListEn = (text: string) => {
-    const validateBullet = (text.match(/<li>/g) || []).length
-    if (validateBullet > 5 || validateBullet < 3) {
-      setEditorFieldErrorEn(t('newSubcription.validation.errors.limitBullet'))
-    } else {
-      setEditorFieldErrorEn('')
-    }
-  }
-
-  const validateBulletPackageListTh = (text: string) => {
-    const validateBullet = (text.match(/<li>/g) || []).length
-    if (validateBullet > 5 || validateBullet < 3) {
-      setEditorFieldErrorTh(t('newSubcription.validation.errors.limitBullet'))
-    } else {
-      setEditorFieldErrorTh('')
-    }
-  }
-
-  const validatePackageListMessageTh = (text: string) => {
-    const validateBullet = (text.match(/<li>/g) || []).length
-    if (text.length > packageFeatureLimt) {
-      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.editorFormat'))
-    } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.limitBullet'))
-    } else {
-      setEditorDetailFieldErrorTh('')
-    }
-  }
-
-  const validatePackageListMessageEn = (text: string) => {
-    const validateBullet = (text.match(/<li>/g) || []).length
-    if (text.length > packageFeatureLimt) {
-      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.editorFormat'))
-    } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.limitBullet'))
-    } else {
-      setEditorDetailFieldErrorEn('')
-    }
-  }
-
-  const [visibleUpdateDialog, setVisibleUpdateDialog] = useState<boolean>(false)
-
   return (
     <Page>
       <form onSubmit={formik.handleSubmit}>
@@ -256,7 +325,6 @@ export default function PackageDetail(): JSX.Element {
                   variant="outlined"
                   value={formik.values.badge}
                   onChange={formik.handleChange}
-                  error={formik.touched.badge && Boolean(formik.errors.badge)}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end" className={classes.clearButton}>
@@ -269,6 +337,15 @@ export default function PackageDetail(): JSX.Element {
                     ),
                     classes: {
                       adornedEnd: classes.input,
+                    },
+                  }}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
+                      getContentAnchorEl: null,
                     },
                   }}
                 >
@@ -309,6 +386,8 @@ export default function PackageDetail(): JSX.Element {
                     control={
                       <PublishedSwitch
                         id="published"
+                        name="published"
+                        checked={formik.values.published}
                         value={formik.values.published}
                         onChange={formik.handleChange}
                       />
@@ -333,10 +412,15 @@ export default function PackageDetail(): JSX.Element {
                   id="subscription-add__fullPrice_input"
                   name="fullPrice"
                   variant="outlined"
-                  value={formik.values.fullPrice ?? ''}
-                  onChange={formik.handleChange}
-                  error={formik.touched.fullPrice && Boolean(formik.errors.fullPrice)}
-                  helperText={formik.touched.fullPrice && formik.errors.fullPrice}
+                  value={formik.values.fullPrice}
+                  error={
+                    !!fullPriceError ||
+                    (formik.touched.fullPrice && Boolean(formik.errors.fullPrice))
+                  }
+                  helperText={
+                    fullPriceError || (formik.touched.fullPrice && formik.errors.fullPrice)
+                  }
+                  onChange={validateFullPrice}
                   onKeyPress={handleValidateNumericKeyPress}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
@@ -352,9 +436,9 @@ export default function PackageDetail(): JSX.Element {
                   name="price"
                   variant="outlined"
                   value={formik.values.price}
-                  onChange={formik.handleChange}
-                  error={formik.touched.price && Boolean(formik.errors.price)}
-                  helperText={formik.touched.price && formik.errors.price}
+                  error={!!priceError || (formik.touched.price && Boolean(formik.errors.price))}
+                  helperText={priceError || (formik.touched.price && formik.errors.price)}
+                  onChange={validatePrice}
                   onKeyPress={handleValidateNumericKeyPress}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
@@ -370,11 +454,15 @@ export default function PackageDetail(): JSX.Element {
                   name="packagePeriodMonth"
                   variant="outlined"
                   value={formik.values.packagePeriodMonth}
-                  onChange={formik.handleChange}
                   error={
-                    formik.touched.packagePeriodMonth && Boolean(formik.errors.packagePeriodMonth)
+                    !!packagePeriodMonthError ||
+                    (formik.touched.packagePeriodMonth && Boolean(formik.errors.packagePeriodMonth))
                   }
-                  helperText={formik.touched.packagePeriodMonth && formik.errors.packagePeriodMonth}
+                  helperText={
+                    packagePeriodMonthError ||
+                    (formik.touched.packagePeriodMonth && formik.errors.packagePeriodMonth)
+                  }
+                  onChange={validatePackagePeriodMonth}
                   onKeyPress={handleValidateNumericKeyPress}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
@@ -448,9 +536,14 @@ export default function PackageDetail(): JSX.Element {
               name="packageNameEn"
               variant="outlined"
               value={formik.values.packageNameEn}
-              error={formik.touched.packageNameEn && Boolean(formik.errors.packageNameEn)}
-              helperText={formik.touched.packageNameEn && formik.errors.packageNameEn}
-              onChange={formik.handleChange}
+              error={
+                !!packageNameEnError ||
+                (formik.touched.packageNameEn && Boolean(formik.errors.packageNameEn))
+              }
+              helperText={
+                packageNameEnError || (formik.touched.packageNameEn && formik.errors.packageNameEn)
+              }
+              onChange={validatePackageName}
               onCut={handleDisableEvent}
               onCopy={handleDisableEvent}
               onPaste={handleDisableEvent}
@@ -483,9 +576,15 @@ export default function PackageDetail(): JSX.Element {
                   name="packageNameTh"
                   variant="outlined"
                   value={formik.values.packageNameTh}
-                  error={formik.touched.packageNameTh && Boolean(formik.errors.packageNameTh)}
-                  helperText={formik.touched.packageNameTh && formik.errors.packageNameTh}
-                  onChange={formik.handleChange}
+                  error={
+                    !!packageNameThError ||
+                    (formik.touched.packageNameTh && Boolean(formik.errors.packageNameTh))
+                  }
+                  helperText={
+                    packageNameThError ||
+                    (formik.touched.packageNameTh && formik.errors.packageNameTh)
+                  }
+                  onChange={validatePackageNameTh}
                   onCut={handleDisableEvent}
                   onCopy={handleDisableEvent}
                   onPaste={handleDisableEvent}
