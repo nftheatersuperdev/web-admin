@@ -88,10 +88,10 @@ export default function PackageDetail(): JSX.Element {
   const [packagePeriodMonthError, setPackagePeriodMonthError] = useState<string>('')
   const [packageNameEnError, setPackageNameEnError] = useState<string>('')
   const [packageNameThError, setPackageNameThError] = useState<string>('')
-  const [editorFieldErrorEn, setEditorFieldErrorEn] = useState<string>('')
-  const [editorFieldErrorTh, setEditorFieldErrorTh] = useState<string>('')
-  const [editorDetailFieldErrorEn, setEditorDetailFieldErrorEn] = useState<string>('')
-  const [editorDetailFieldErrorTh, setEditorDetailFieldErrorTh] = useState<string>('')
+  const [editorPackageListEnError, setEditorPackageListEnError] = useState<string>('')
+  const [editorPackageListThError, setEditorPackageListThError] = useState<string>('')
+  const [editorPackageDetailEnError, setEditorPackageDetailEnError] = useState<string>('')
+  const [editorPackageDetailThError, setEditorPackageDetailThError] = useState<string>('')
   const [visibleUpdateDialog, setVisibleUpdateDialog] = useState<boolean>(false)
 
   const validateFullPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,14 +162,15 @@ export default function PackageDetail(): JSX.Element {
     }
   }
 
-  const validateBulletPackageListEn = (text: string) => {
+  const validateEditorPackageListEn = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
+    formik.setFieldValue('editorPackageListEn', text)
     if (text.length === 0) {
-      setEditorFieldErrorEn(t('newSubcription.validation.errors.required'))
+      setEditorPackageListEnError(t('newSubcription.validation.errors.required'))
     } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorFieldErrorEn(t('newSubcription.validation.errors.limitBullet'))
+      setEditorPackageListEnError(t('newSubcription.validation.errors.limitBullet'))
     } else {
-      setEditorFieldErrorEn('')
+      setEditorPackageListEnError('')
     }
   }
 
@@ -185,40 +186,43 @@ export default function PackageDetail(): JSX.Element {
     }
   }
 
-  const validateBulletPackageListTh = (text: string) => {
+  const validateEditorPackageListTh = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
+    formik.setFieldValue('editorPackageListTh', text)
     if (text.length === 0) {
-      setEditorFieldErrorTh(t('newSubcription.validation.errors.required'))
+      setEditorPackageListThError(t('newSubcription.validation.errors.required'))
     } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorFieldErrorTh(t('newSubcription.validation.errors.limitBullet'))
+      setEditorPackageListThError(t('newSubcription.validation.errors.limitBullet'))
     } else {
-      setEditorFieldErrorTh('')
+      setEditorPackageListThError('')
     }
   }
 
-  const validatePackageListMessageEn = (text: string) => {
+  const validateEditorPackageDetailEn = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
+    formik.setFieldValue('editorPackageDetailEn', text)
     if (text.length === 0) {
-      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.required'))
+      setEditorPackageDetailEnError(t('newSubcription.validation.errors.required'))
     } else if (text.length > packageFeatureLimt) {
-      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.editorFormat'))
+      setEditorPackageDetailEnError(t('newSubcription.validation.errors.editorFormat'))
     } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorDetailFieldErrorEn(t('newSubcription.validation.errors.limitBullet'))
+      setEditorPackageDetailEnError(t('newSubcription.validation.errors.limitBullet'))
     } else {
-      setEditorDetailFieldErrorEn('')
+      setEditorPackageDetailEnError('')
     }
   }
 
-  const validatePackageListMessageTh = (text: string) => {
+  const validatePackageDetailTh = (text: string) => {
     const validateBullet = (text.match(/<li>/g) || []).length
+    formik.setFieldValue('editorPackageDetailTh', text)
     if (text.length === 0) {
-      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.required'))
+      setEditorPackageDetailThError(t('newSubcription.validation.errors.required'))
     } else if (text.length > packageFeatureLimt) {
-      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.editorFormat'))
+      setEditorPackageDetailThError(t('newSubcription.validation.errors.editorFormat'))
     } else if (validateBullet > 5 || validateBullet < 3) {
-      setEditorDetailFieldErrorTh(t('newSubcription.validation.errors.limitBullet'))
+      setEditorPackageDetailThError(t('newSubcription.validation.errors.limitBullet'))
     } else {
-      setEditorDetailFieldErrorTh('')
+      setEditorPackageDetailThError('')
     }
   }
 
@@ -264,10 +268,10 @@ export default function PackageDetail(): JSX.Element {
         'https://w7.pngwing.com/pngs/347/928/png-transparent-tesla-model-x-tesla-model-s-tesla-motors-tesla-model-3-tesla-compact-car-sedan-headlamp.png',
       detailBanner:
         'https://w7.pngwing.com/pngs/347/928/png-transparent-tesla-model-x-tesla-model-s-tesla-motors-tesla-model-3-tesla-compact-car-sedan-headlamp.png',
-      editorPackageDetailEn: '<ul><li></li><li></li><li></li></ul>',
-      editorPackageDetailTh: '<ul><li></li><li></li><li></li></ul>',
       editorPackageListEn: '<ul><li></li><li></li><li></li></ul>',
       editorPackageListTh: '<ul><li></li><li></li><li></li></ul>',
+      editorPackageDetailEn: '<ul><li></li><li></li><li></li></ul>',
+      editorPackageDetailTh: '<ul><li></li><li></li><li></li></ul>',
     },
     enableReinitialize: false,
     onSubmit: (values, actions) => {
@@ -283,10 +287,10 @@ export default function PackageDetail(): JSX.Element {
             periodMonth: values.packagePeriodMonth,
             nameEn: values.packageNameEn,
             nameTh: values.packageNameTh,
-            featureEn: values.editorPackageDetailEn,
-            featureTh: values.editorPackageDetailTh,
-            descriptionEn: values.editorPackageListEn,
-            descriptionTh: values.editorPackageListTh,
+            featureEn: values.editorPackageListEn,
+            featureTh: values.editorPackageListTh,
+            descriptionEn: values.editorPackageDetailEn,
+            descriptionTh: values.editorPackageDetailTh,
             isPublish: values.published,
             listBanner: values.listBanner,
             detailBanner: values.detailBanner,
@@ -554,11 +558,11 @@ export default function PackageDetail(): JSX.Element {
               <HTMLEditor
                 id="contentEn"
                 label={t('newSubcription.packageList.contentEn')}
-                initialValue={formik.values.editorPackageDetailEn}
-                handleOnEditChange={(value: string) => validateBulletPackageListEn(value)}
+                initialValue={formik.values.editorPackageListEn}
+                handleOnEditChange={(value: string) => validateEditorPackageListEn(value)}
               />
-              {editorFieldErrorEn !== '' && (
-                <FormHelperText error={true}>{editorFieldErrorEn}</FormHelperText>
+              {editorPackageListEnError !== '' && (
+                <FormHelperText error={true}>{editorPackageListEnError}</FormHelperText>
               )}
               <Grid
                 item
@@ -593,11 +597,11 @@ export default function PackageDetail(): JSX.Element {
               <HTMLEditor
                 id="contentTh"
                 label={t('newSubcription.packageList.contentTh')}
-                initialValue={formik.values.editorPackageDetailTh}
-                handleOnEditChange={(value: string) => validateBulletPackageListTh(value)}
+                initialValue={formik.values.editorPackageListTh}
+                handleOnEditChange={(value: string) => validateEditorPackageListTh(value)}
               />
-              {editorFieldErrorTh !== '' && (
-                <FormHelperText error={true}>{editorFieldErrorTh}</FormHelperText>
+              {editorPackageListThError !== '' && (
+                <FormHelperText error={true}>{editorPackageListThError}</FormHelperText>
               )}
             </Grid>
           </Grid>
@@ -645,21 +649,21 @@ export default function PackageDetail(): JSX.Element {
               <HTMLEditor
                 id="contentDetailEn"
                 label={t('newSubcription.packageDetail.contentEn')}
-                initialValue={formik.values.editorPackageListEn}
-                handleOnEditChange={(value: string) => validatePackageListMessageEn(value)}
+                initialValue={formik.values.editorPackageDetailEn}
+                handleOnEditChange={(value: string) => validateEditorPackageDetailEn(value)}
               />
-              {editorDetailFieldErrorEn !== '' && (
-                <FormHelperText error={true}>{editorDetailFieldErrorEn}</FormHelperText>
+              {editorPackageDetailEnError !== '' && (
+                <FormHelperText error={true}>{editorPackageDetailEnError}</FormHelperText>
               )}
 
               <HTMLEditor
                 id="contentDetailTh"
                 label={t('newSubcription.packageDetail.contentTh')}
-                initialValue={formik.values.editorPackageListTh}
-                handleOnEditChange={(value: string) => validatePackageListMessageTh(value)}
+                initialValue={formik.values.editorPackageDetailTh}
+                handleOnEditChange={(value: string) => validatePackageDetailTh(value)}
               />
-              {editorDetailFieldErrorTh !== '' && (
-                <FormHelperText error={true}>{editorDetailFieldErrorTh}</FormHelperText>
+              {editorPackageDetailThError !== '' && (
+                <FormHelperText error={true}>{editorPackageDetailThError}</FormHelperText>
               )}
             </Grid>
             <DividerSpace />
