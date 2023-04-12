@@ -158,15 +158,18 @@ export default function CarReplacementDialog({
   const { t } = useTranslation()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
   const [carReplacementState, setCarReplacementState] = useState<DataState>(defaultState)
-  const { data: availableCarsResponse } = useQuery('available-cars', () =>
-    getAvailableListBFF({
-      filter: {
-        startDate: bookingDetails.startDate,
-        endDate: bookingDetails.endDate,
-        isSkuNotNull: true,
-      },
-      size: 10000,
-    } as CarAvailableListBffFilterRequestProps)
+  const { data: availableCarsResponse } = useQuery(
+    ['available-cars', carReplacementState],
+    () =>
+      getAvailableListBFF({
+        filter: {
+          startDate: carReplacementState.deliveryDate?.format(DEFAULT_DATE_FORMAT_BFF),
+          endDate: carReplacementState.deliveryDate?.add(1, 'day').format(DEFAULT_DATE_FORMAT_BFF),
+          isSkuNotNull: true,
+        },
+        size: 10000,
+      } as CarAvailableListBffFilterRequestProps),
+    { refetchOnWindowFocus: false }
   )
 
   const availableCars =
