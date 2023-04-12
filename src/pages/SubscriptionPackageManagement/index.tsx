@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useHistory } from 'react-router-dom'
 import config from 'config'
 import {
   Breadcrumbs,
@@ -150,6 +150,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const classes = useStyles()
+  const history = useHistory()
 
   const {
     data: subscriptionsData,
@@ -336,7 +337,16 @@ export default function SubscriptionPackageManagement(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={3} lg={6} xl={6}>
               <Box className={classes.addButtonGrid} justifyContent="flex-end">
-                <Button endIcon={<AddIcon />} className={classes.addButton} variant="contained">
+                <Button
+                  endIcon={<AddIcon />}
+                  className={classes.addButton}
+                  variant="contained"
+                  onClick={() =>
+                    history.push({
+                      pathname: `/subscription-management/package-management/create`,
+                    })
+                  }
+                >
                   {t('subscriptionPackageManagement.table.createButton')}
                 </Button>
               </Box>
