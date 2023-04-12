@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import styled from 'styled-components'
 import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined'
 import { Box, Card, CardContent, CircularProgress, Typography } from '@mui/material'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
 const useStyles = makeStyles({
   button: {
@@ -57,8 +57,8 @@ const SpaceButtons = styled.div`
 `
 
 export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX.Element {
-  const [image, setImage] = useState(null)
-  const [error, setError] = useState('')
+  const [, setImage] = useState<File | null>(null)
+  const [, setError] = useState('')
   const classes = useStyles()
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -70,36 +70,36 @@ export default function ActivityScheduleDialog({ visible, onClose }: Props): JSX
   const handleOnClose = () => {
     onClose()
   }
-  const handleImageChange = (event: any) => {
-    const selectedImage = event.target.files[0]
-    const fileTypes = 'image/png'
-    const maxSize = 1 * 1024 * 1024 // 1MB
-    if (selectedImage && fileTypes.includes(selectedImage.type)) {
-      if (selectedImage.size > maxSize) {
-        setError('File size cannot exceed 1MB.')
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files !== null) {
+      const selectedImage = event.target.files[0]
+      const fileTypes = 'image/png'
+      const maxSize = 1 * 1024 * 1024 // 1MB
+      if (selectedImage && fileTypes.includes(selectedImage.type)) {
+        if (selectedImage.size > maxSize) {
+          setError('File size cannot exceed 1MB.')
+        } else {
+          let progress = 0
+          const interval = setInterval(() => {
+            progress += Math.random() * 10
+            setUploadProgress(progress)
+            if (progress >= 100) {
+              clearInterval(interval)
+              setIsLoading(false)
+              setUploadProgress(0)
+            }
+          }, 100)
+          setImage(selectedImage)
+          setIsLoading(true)
+          setError('')
+        }
       } else {
-        let progress = 0
-        const interval = setInterval(() => {
-          progress += Math.random() * 10
-          setUploadProgress(progress)
-          if (progress >= 100) {
-            clearInterval(interval)
-            setIsLoading(false)
-            setUploadProgress(0)
-          }
-        }, 100)
-        setImage(selectedImage)
-        setIsLoading(true)
-        setError('')
+        setError('valid PNG image.')
       }
-    } else {
-      setError('valid PNG image.')
     }
   }
   const handleImageUpload = () => {
     // handleImageChange(event)
-    console.log(image)
-    console.log(error)
   }
   return (
     <div>

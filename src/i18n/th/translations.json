@@ -514,22 +514,32 @@
     },
     "packageDetail": {
       "title": "Package Detail",
-      "banner": "Package List Banner",
-      "message": "Package List Message",
+      "banner": "Package Detail Banner",
+      "message": "Package Detail Message",
       "contentEn": "Description (English)",
-      "contentTh": "Description (Thai)"
+      "contentTh": "Description (Thai)",
+      "badge": "Badge",
+      "publishDate": "Publish Date",
+      "published": "Published",
+      "fullPrice": "Full Price",
+      "price": "Price",
+      "packagePeriodMonth": "Package Period (Month)"
     },
     "packageList": {
       "title": "Package List",
       "banner": "Package List Banner",
       "message": "Package List Message",
       "contentEn": "Product Features (English)",
-      "contentTh": "Product Features (Thai)"
+      "contentTh": "Product Features (Thai)",
+      "packageNameEn": "Package Name (English)",
+      "packageNameTh": "Package Name (Thai)",
+      "reccommendEditor": "*Minimum 3 Bullets, Maximum 5 Bullets"
     },
     "dialog": {
       "imageUpload": {
         "title": "อัพโหลดรูปภาพ",
-        "reccommend": "*The file type must be .png / dimension 750pixels x 750pixels (1:1) / Maximum upload size 1MB"
+        "reccommend": "*The file type must be .png / dimension 496pixels x 280pixels (16:9) / Maximum upload size 1MB",
+        "reccommendDetail": "*The file type must be .png / dimension 750pixels x 562pixels (4:3) / Maximum upload size 1MB"
       },
       "createDialog": {
         "success": "Create Package Success",
@@ -538,8 +548,8 @@
     },
     "validation": {
       "errors": {
-        "invalidFormat": "Limited 50 character.",
-        "editorFormat": "Limited 300 character.",
+        "invalidFormat": "Error limit 50 characters",
+        "editorFormat": "Error limit 300 characters.",
         "limitBullet": "Minimum 3 bullet , Maximum 5 bullets",
         "textInvalid": "Text is invalid",
         "required": "Required Field"
