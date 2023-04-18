@@ -200,6 +200,8 @@ export default function PackageDetail(): JSX.Element {
     setContentListEnTemp(text)
     if (text.length === 0) {
       setEditorPackageListEnError(t('newSubcription.validation.errors.required'))
+    } else if (text.length > packageFeatureLimt) {
+      setEditorPackageListEnError(t('newSubcription.validation.errors.editorFormat'))
     } else if (validateBullet > 5 || validateBullet < 3) {
       setEditorPackageListEnError(t('newSubcription.validation.errors.limitBullet'))
     } else {
@@ -224,6 +226,8 @@ export default function PackageDetail(): JSX.Element {
     setContentListThTemp(text)
     if (text.length === 0) {
       setEditorPackageListThError(t('newSubcription.validation.errors.required'))
+    } else if (text.length > packageFeatureLimt) {
+      setEditorPackageListThError(t('newSubcription.validation.errors.editorFormat'))
     } else if (validateBullet > 5 || validateBullet < 3) {
       setEditorPackageListThError(t('newSubcription.validation.errors.limitBullet'))
     } else {
