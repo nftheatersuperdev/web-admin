@@ -20,7 +20,7 @@ import {
   InputLabel,
   TextField,
 } from '@material-ui/core'
-import { Alert, Typography } from '@mui/material'
+import { Alert, Typography, CircularProgress } from '@mui/material'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
@@ -157,14 +157,23 @@ export default function CarReplacementDialog({
 
   const { t } = useTranslation()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
-  const [carReplacementState, setCarReplacementState] = useState<DataState>(defaultState)
-  const { data: availableCarsResponse } = useQuery(
-    ['available-cars', carReplacementState],
+  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>(
+    defaultState.deliveryDate
+  )
+  const [deliveryTime, setDeliveryTime] = useState<DataState['deliveryTime']>(
+    defaultState.deliveryTime
+  )
+  const [carId, setCarId] = useState<DataState['carId']>(defaultState.carId)
+  const [deliveryAddress, setDeliveryAddress] = useState<DataState['deliveryAddress']>(
+    defaultState.deliveryAddress
+  )
+  const { data: availableCarsResponse, isFetching } = useQuery(
+    ['available-cars', deliveryDate],
     () =>
       getAvailableListBFF({
         filter: {
-          startDate: carReplacementState.deliveryDate?.format(DEFAULT_DATE_FORMAT_BFF),
-          endDate: carReplacementState.deliveryDate?.add(1, 'day').format(DEFAULT_DATE_FORMAT_BFF),
+          startDate: deliveryDate?.format(DEFAULT_DATE_FORMAT_BFF),
+          endDate: deliveryDate?.add(1, 'day').format(DEFAULT_DATE_FORMAT_BFF),
           isSkuNotNull: true,
         },
         size: 10000,
@@ -176,19 +185,16 @@ export default function CarReplacementDialog({
     availableCarsResponse?.data.records.filter(
       (car) => car.availabilityStatus.toLocaleLowerCase() === 'available'
     ) || []
-  const selectedCar = availableCars.find(
-    (availableCar) => availableCar.car.id === carReplacementState.carId
-  )
+  const selectedCar = availableCars.find(({ car: { id } }) => id === carId)
   const isDisableToSave =
-    !carReplacementState.carId ||
-    !carReplacementState.deliveryDate ||
-    !carReplacementState.deliveryTime ||
-    !carReplacementState.deliveryAddress.full ||
-    !carReplacementState.deliveryAddress.latitude ||
-    !carReplacementState.deliveryAddress.longitude
+    !carId ||
+    !deliveryDate ||
+    !deliveryTime ||
+    !deliveryAddress.full ||
+    !deliveryAddress.latitude ||
+    !deliveryAddress.longitude
 
   const handleFormSubmit = async () => {
-    const { carId, deliveryDate, deliveryTime, deliveryAddress } = carReplacementState
     if (deliveryDate) {
       await toast.promise(
         updateCarReplacement({
@@ -219,65 +225,50 @@ export default function CarReplacementDialog({
   }
 
   const handleClose = (needRefetch?: boolean) => {
-    setCarReplacementState(() => defaultState)
     onClose(needRefetch)
   }
 
   const handleDeliveryDateChange = (date: MaterialUiPickersDate | Dayjs) => {
     if (date) {
-      setCarReplacementState((prevState) => ({
-        ...prevState,
-        deliveryDate: date,
-      }))
+      setCarId(() => defaultState.carId)
+      setDeliveryDate(() => date)
     }
   }
 
   const handleDeliveryTimeChange = (
     event: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
-    setCarReplacementState((prevState) => ({
-      ...prevState,
-      deliveryTime: event.target.value as string,
-    }))
+    setDeliveryTime(() => event.target.value as string)
   }
 
   const handleCarChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    setCarReplacementState((prevState) => ({
-      ...prevState,
-      carId: event.target.value as string,
-    }))
+    setCarId(() => event.target.value as string)
   }
 
   const handleMarkerChanged = async (e: google.maps.MapMouseEvent) => {
     const { lat, lng } = e.latLng.toJSON()
     const location = await Geocode.fromLatLng(String(lat), String(lng))
     const fullAddress = location?.results[0]?.formatted_address || '-'
-    setCarReplacementState((prevState) => ({
+    setDeliveryAddress((prevState) => ({
       ...prevState,
-      deliveryAddress: {
-        ...prevState.deliveryAddress,
-        full: fullAddress,
-        latitude: lat,
-        longitude: lng,
-      },
+      full: fullAddress,
+      latitude: lat,
+      longitude: lng,
     }))
   }
 
   const handleDeliveryAddressRemarkChanged = (
     e: React.ChangeEvent<{ name?: string; value: string | undefined }>
   ) => {
-    setCarReplacementState((prevState) => ({
+    setDeliveryAddress((prevState) => ({
       ...prevState,
-      deliveryAddress: {
-        ...prevState.deliveryAddress,
-        remark: e.target.value,
-      },
+      remark: e.target.value,
     }))
   }
 
   const deliveryMarkerAddress = {
-    lat: carReplacementState.deliveryAddress.latitude,
-    lng: carReplacementState.deliveryAddress.longitude,
+    lat: deliveryAddress.latitude,
+    lng: deliveryAddress.longitude,
   }
 
   return (
@@ -308,7 +299,7 @@ export default function CarReplacementDialog({
               name="selectedFromDate"
               format="DD/MM/YYYY"
               onChange={handleDeliveryDateChange}
-              value={carReplacementState.deliveryDate}
+              value={deliveryDate}
               margin="normal"
               minDate={deliveryDateConditions.minDate}
               maxDate={deliveryDateConditions.maxDate}
@@ -323,7 +314,7 @@ export default function CarReplacementDialog({
                 label={t('booking.carReplacement.deliveryTime')}
                 labelId="car_replacement__deliveryTime_label"
                 id="car_replacement__deliveryTime"
-                value={carReplacementState.deliveryTime}
+                value={deliveryTime}
                 onChange={handleDeliveryTimeChange}
               >
                 <MenuItem value="09:00">09.00 - 10.00</MenuItem>
@@ -349,6 +340,20 @@ export default function CarReplacementDialog({
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined" margin="normal">
+              {isFetching ? (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+                />
+              ) : (
+                ''
+              )}
               <InputLabel id="car_replacement__plateNumber_label">
                 {t('booking.carReplacement.plateNumber')}
               </InputLabel>
@@ -356,9 +361,10 @@ export default function CarReplacementDialog({
                 label={t('booking.carReplacement.plateNumber')}
                 labelId="car_replacement__plateNumber_label"
                 id="car_replacement__plateNumber"
-                value={carReplacementState.carId}
+                value={carId}
                 defaultValue={defaultState.carId}
                 onChange={handleCarChange}
+                disabled={isFetching}
               >
                 {availableCars.map((availableCar) => {
                   return (
@@ -461,7 +467,7 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={carReplacementState.deliveryAddress.full}
+                value={deliveryAddress.full}
                 multiline
                 minRows={3}
                 InputProps={{
@@ -474,7 +480,7 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={carReplacementState.deliveryAddress.remark}
+                value={deliveryAddress.remark}
                 multiline
                 minRows={3}
                 onChange={handleDeliveryAddressRemarkChanged}
