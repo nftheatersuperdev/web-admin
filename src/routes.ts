@@ -14,7 +14,7 @@ export const ROUTE_PATHS = Object.freeze({
   USER_GROUPS: '/user-groups',
   USER_GROUP_USERS: '/user-groups/:ugid/users',
   SUBSCRIPTION: '/subscription',
-  SUBSCRIPTION_DETAIL: '/subscription/:id',
+  SUBSCRIPTION_DETAIL: '/subscription/:bookingId/:bookingDetailId',
   PRICING: '/pricing',
   MODEL_AND_PRICING: '/model-and-pricing',
   MODEL_AND_PRICING_EDIT: '/model-and-pricing/:id/edit',

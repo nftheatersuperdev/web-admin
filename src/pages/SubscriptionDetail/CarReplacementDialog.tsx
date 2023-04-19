@@ -57,7 +57,8 @@ const containerStyle = {
 export interface CarReplacementDialogProps {
   editorEmail: string | null
   open: boolean
-  bookingDetails: BookingRental | undefined
+  bookingDetail: BookingRental | undefined
+  maxEndDate: Date
   onClose: (refetch?: boolean) => void
 }
 interface DataState {
@@ -70,10 +71,11 @@ interface DataState {
 export default function CarReplacementDialog({
   editorEmail,
   open,
-  bookingDetails,
+  bookingDetail,
+  maxEndDate,
   onClose,
 }: CarReplacementDialogProps): JSX.Element {
-  if (!open || !bookingDetails) {
+  if (!open || !bookingDetail) {
     return <Fragment />
   }
 
@@ -85,20 +87,20 @@ export default function CarReplacementDialog({
     displayStatus,
     carActivities,
     endDate,
-  } = bookingDetails
+  } = bookingDetail
 
   const carActivity = carActivities[carActivities.length - 1]
-  const rentalDetail = bookingDetails.rentDetail
+  const rentalDetail = bookingDetail.rentDetail
   const todayDate = dayjs()
 
   const isStatus = (status: string, statusCondition: string) =>
     status.toLowerCase() === statusCondition.toLowerCase()
 
-  const isUpCommingCancelled = bookingDetails.status === 'upcoming_cancelled'
+  const isUpCommingCancelled = bookingDetail.status === 'upcoming_cancelled'
 
   function isArrivingSoon() {
-    if (bookingDetails) {
-      const { rentDetail, displayStatus, startDate, isExtend } = bookingDetails
+    if (bookingDetail) {
+      const { rentDetail, displayStatus, startDate, isExtend } = bookingDetail
       if (
         // Normal Case
         (!isExtend &&
@@ -173,7 +175,7 @@ export default function CarReplacementDialog({
       getAvailableListBFF({
         filter: {
           startDate: deliveryDate?.format(DEFAULT_DATE_FORMAT_BFF),
-          endDate,
+          endDate: dayjs(maxEndDate).format(DEFAULT_DATE_FORMAT_BFF),
           isSkuNotNull: true,
         },
         size: 10000,

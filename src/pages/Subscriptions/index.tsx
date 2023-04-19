@@ -27,7 +27,7 @@ import {
   getEqualFilterOperators,
   getSelectEqualFilterOperators,
 } from 'utils'
-import { Link, useLocation, useHistory } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import { ROUTE_PATHS } from 'routes'
@@ -72,7 +72,6 @@ const ExportButton = styled.div`
 `
 
 export default function Subscription(): JSX.Element {
-  const history = useHistory()
   const { t } = useTranslation()
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
@@ -638,7 +637,7 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleRowClick = (data: GridRowData) => {
-    return history.push(`/subscription/${data.row.id}`)
+    return window.open(`/subscription/${data.row.bookingId}/${data.row.bookingDetailId}`, '_blank')
   }
 
   const handleFetchPage = (pageNumber: number) => {
