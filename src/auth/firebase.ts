@@ -6,7 +6,7 @@ import config from 'config'
 
 export class Firebase {
   auth!: firebase.auth.Auth
-  remoteConfig!: firebase.remoteConfig.RemoteConfig
+  remoteConfig?: firebase.remoteConfig.RemoteConfig
   constructor() {
     if (!firebase.apps.length) {
       firebase.initializeApp({
@@ -16,8 +16,12 @@ export class Firebase {
 
     if (firebase.apps.length) {
       this.auth = firebase.auth()
-      this.remoteConfig = firebase.remoteConfig()
-      this.remoteConfig.settings.minimumFetchIntervalMillis = 1
+      try {
+        this.remoteConfig = firebase.remoteConfig()
+        this.remoteConfig.settings.minimumFetchIntervalMillis = 1
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 
@@ -59,11 +63,11 @@ export class Firebase {
     return user?.updatePassword(newPassword)
   }
 
-  fetchRemoteConfig(): Promise<boolean> {
-    return this.remoteConfig.fetchAndActivate()
+  fetchRemoteConfig(): Promise<boolean> | undefined {
+    return this.remoteConfig?.fetchAndActivate()
   }
 
-  getRemoteConfig(key: string): firebase.remoteConfig.Value {
-    return this.remoteConfig.getValue(key)
+  getRemoteConfig(key: string): firebase.remoteConfig.Value | undefined {
+    return this.remoteConfig?.getValue(key)
   }
 }
