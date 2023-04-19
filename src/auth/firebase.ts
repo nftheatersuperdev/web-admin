@@ -17,6 +17,7 @@ export class Firebase {
     if (firebase.apps.length) {
       this.auth = firebase.auth()
       this.remoteConfig = firebase.remoteConfig()
+      this.remoteConfig.settings.minimumFetchIntervalMillis = 1
     }
   }
 
