@@ -173,7 +173,7 @@ export default function CarReplacementDialog({
       getAvailableListBFF({
         filter: {
           startDate: deliveryDate?.format(DEFAULT_DATE_FORMAT_BFF),
-          endDate: deliveryDate?.add(1, 'day').format(DEFAULT_DATE_FORMAT_BFF),
+          endDate,
           isSkuNotNull: true,
         },
         size: 10000,
