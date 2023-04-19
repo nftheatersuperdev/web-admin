@@ -10,7 +10,7 @@ export const createPackage = async (
   const accessToken = body.accessToken
 
   const response: NewSubscriptionResponses['data'] = await AdminBffAPI.post(
-    '/v1/subscription/package',
+    '/v1/subscription/packages',
     body,
     {
       headers: {
