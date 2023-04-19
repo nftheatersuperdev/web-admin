@@ -96,6 +96,9 @@ export interface CarBff {
   carTrackId: string
   plateNumber: string
   vin: string
+  location: string
+  owner: string
+  reSeller: string
   isActive: boolean
   createdDate: string
   updatedDate: string

@@ -35,7 +35,7 @@ import {
 import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
 import { useQuery } from 'react-query'
-import { Search as SearchIcon } from '@mui/icons-material'
+import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import Pagination from '@mui/lab/Pagination'
 import { useHistory } from 'react-router-dom'
@@ -59,17 +59,19 @@ const Wrapper = styled(Card)`
 const ContentSection = styled.div`
   margin-bottom: 20px;
 `
+const GridSearchSection = styled(Grid)`
+  padding-top: 20px;
+  display: flex;
+  align-items: left;
+`
+const GridSearchSectionItem = styled(Grid)`
+  height: 90px;
+`
+
 const useStyles = makeStyles(() => ({
   searchBar: {
-    marginTop: '10px',
-    marginBottom: '10px',
-    display: 'flex',
-    alignItems: 'left',
     '& .MuiOutlinedInput-input': { padding: '16px 12px' },
-    '& .MuiIconButton-root': { padding: '4px 4px' },
-  },
-  filter: {
-    height: '90px',
+    '& .MuiIconButton-root': { padding: '2px 2px' },
   },
   buttonWithoutShadow: {
     fontWeight: 'bold',
@@ -79,7 +81,6 @@ const useStyles = makeStyles(() => ({
   },
   buttonWithoutExport: {
     backgroundColor: '#424E63',
-    color: 'white',
     display: 'inline-flexbox',
     boxShadow: 'none',
     padding: '14px 12px',
@@ -137,10 +138,15 @@ const useStyles = makeStyles(() => ({
     width: '80px',
   },
   setWidthBookingId: {
-    width: '110px',
+    width: '130px',
   },
   hideObject: {
     display: 'none',
+  },
+  paddingRigthBtnClear: {
+    marginLeft: '-40px',
+    cursor: 'pointer',
+    padding: '4px 4px',
   },
 }))
 
@@ -182,7 +188,11 @@ export default function CarAvailability(): JSX.Element {
     refetch()
     setShowPage(false)
   }, [filter, page, pageSize, refetch])
-
+  useEffect(() => {
+    if (selectedFromDate > selectedToDate) {
+      setSelectedToDate(selectedFromDate)
+    }
+  }, [selectedFromDate, selectedToDate])
   const rows =
     carData?.data.records.map(({ car, availabilityStatus: status, booking }) => {
       return {
@@ -197,9 +207,9 @@ export default function CarAvailability(): JSX.Element {
         color: car.carSku?.color || '-',
         status,
         subscriptionId: booking?.length > 0 ? booking.map((row) => row.id) : '-',
-        location: 'Bangkok',
-        owner: 'EVME',
-        reSeller: 'EVME',
+        location: car.location || '-',
+        owner: car.owner || '-',
+        reSeller: car.reSeller || '-',
       }
     }) || []
 
@@ -271,6 +281,7 @@ export default function CarAvailability(): JSX.Element {
   ]
 
   const csvHeaders = [
+    { label: t('carAvailabilityDetail.location'), key: 'location' },
     { label: t('carAvailabilityDetail.carId'), key: 'id' },
     { label: t('carAvailabilityDetail.carStatus'), key: 'status' },
     { label: t('carAvailabilityDetail.carTrackId'), key: 'carTrackId' },
@@ -280,6 +291,8 @@ export default function CarAvailability(): JSX.Element {
     { label: t('carAvailabilityDetail.color'), key: 'color' },
     { label: t('carAvailabilityDetail.vin'), key: 'vin' },
     { label: t('carAvailabilityDetail.bookingId'), key: 'subscriptionId' },
+    { label: t('carAvailabilityDetail.owner'), key: 'owner' },
+    { label: t('carAvailabilityDetail.reSeller'), key: 'reSeller' },
   ]
   // eslint-disable-next-line
   const csvData: any = []
@@ -370,7 +383,7 @@ export default function CarAvailability(): JSX.Element {
                 />
               </div>
             </TableCell>
-            <TableCell className={classes.setWidthBookingId}>
+            <TableCell>
               <div className={[classes.rowOverflow, classes.setWidthBookingId].join(' ')}>
                 {row.subscriptionId}
               </div>
@@ -389,7 +402,12 @@ export default function CarAvailability(): JSX.Element {
         )
       })) ||
     []
-
+  const handleClear = () => {
+    formik.setFieldValue('searchType', '')
+    setFilterSearchField('')
+    setFilterSearchFieldError('')
+    formik.handleSubmit()
+  }
   return (
     <Page>
       <PageTitle title={t('sidebar.carAvailability')} breadcrumbs={breadcrumbs} />
@@ -406,8 +424,8 @@ export default function CarAvailability(): JSX.Element {
               <Typography variant="h6" component="h2">
                 {t('sidebar.carAvailabilityList')}
               </Typography>
-              <Grid className={classes.searchBar} container spacing={1}>
-                <Grid item className={[classes.filter].join(' ')} xs={1.5}>
+              <GridSearchSection className={classes.searchBar} container spacing={1}>
+                <GridSearchSectionItem item xs={1.8}>
                   <TextField
                     fullWidth
                     select
@@ -415,23 +433,32 @@ export default function CarAvailability(): JSX.Element {
                     variant="outlined"
                     id="car_availability__searchtype_input"
                     value={formik.values.searchType}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {formik.values.searchType && (
+                            <CloseOutlined
+                              className={classes.paddingRigthBtnClear}
+                              onClick={handleClear}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }}
                     onChange={(event) => {
                       formik.setFieldValue('searchType', event.target.value)
                       setFilterSearchField('')
                       setFilterSearchFieldError('')
                     }}
                   >
-                    <MenuItem value="">
-                      <em>{t('carAvailability.none')}</em>
-                    </MenuItem>
                     {searchTypeList?.map((option) => (
                       <MenuItem key={option.key} value={option.value}>
-                        {option.label}
+                        {option.name}
                       </MenuItem>
                     ))}
                   </TextField>
-                </Grid>
-                <Grid item className={[classes.filter].join(' ')} xs={2.5}>
+                </GridSearchSectionItem>
+                <GridSearchSectionItem item xs={2.2}>
                   <TextField
                     disabled={formik.values.searchType === ''}
                     fullWidth
@@ -457,8 +484,8 @@ export default function CarAvailability(): JSX.Element {
                       ),
                     }}
                   />
-                </Grid>
-                <Grid item className={[classes.filter].join(' ')} xs={2}>
+                </GridSearchSectionItem>
+                <GridSearchSectionItem item xs={2.5}>
                   <DatePicker
                     fullWidth
                     label={t('carAvailability.selectedFromDate')}
@@ -474,12 +501,13 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     inputVariant="outlined"
                   />
-                </Grid>
-                <Grid item className={[classes.filter].join(' ')} xs={2}>
+                </GridSearchSectionItem>
+                <GridSearchSectionItem item xs={2.5}>
                   <DatePicker
                     fullWidth
                     label={t('carAvailability.selectedToDate')}
                     id="car_availability__enddate_input"
+                    minDate={selectedFromDate}
                     KeyboardButtonProps={{
                       id: 'car_availability__enddate_icon',
                     }}
@@ -491,8 +519,8 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     inputVariant="outlined"
                   />
-                </Grid>
-                <Grid item className={[classes.filter].join(' ')} xs={1}>
+                </GridSearchSectionItem>
+                {/* <GridSearchSectionItem item xs={1}>
                   <Button
                     fullWidth
                     id="car_availability__search_btn"
@@ -504,28 +532,39 @@ export default function CarAvailability(): JSX.Element {
                   >
                     {t('carAvailability.searchBtn')}
                   </Button>
-                </Grid>
-                <Grid item className={[classes.filter].join(' ')} xs={2}>
+                </GridSearchSectionItem> */}
+                <GridSearchSectionItem item xs={2}>
                   <TextField
                     fullWidth
                     select
-                    className={classes.hideObject}
                     label={t('carAvailability.searchLocation')}
                     variant="outlined"
                     id="car_availability__searchlocatio_input"
                     value={formik.values.searchLocation}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {formik.values.searchType && (
+                            <CloseOutlined
+                              className={classes.paddingRigthBtnClear}
+                              onClick={handleClear}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }}
                     onChange={(event) => {
                       formik.setFieldValue('searchLocation', event.target.value)
                     }}
                   >
                     {searchLocationList?.map((option) => (
                       <MenuItem key={option.key} value={option.value}>
-                        {option.label}
+                        {option.name}
                       </MenuItem>
                     ))}
                   </TextField>
-                </Grid>
-                <Grid item className={[classes.filter].join(' ')} xs={1}>
+                </GridSearchSectionItem>
+                <GridSearchSectionItem item xs={1}>
                   <Button
                     fullWidth
                     id="car_availability__export_btn"
@@ -542,8 +581,8 @@ export default function CarAvailability(): JSX.Element {
                       {t('button.export')}
                     </CSVLink>
                   </Button>
-                </Grid>
-              </Grid>
+                </GridSearchSectionItem>
+              </GridSearchSection>
 
               <Fragment>
                 <TableContainer component={Paper} className={classes.table}>
