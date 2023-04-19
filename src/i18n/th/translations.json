@@ -110,7 +110,8 @@
     "settings": "ตั้งค่า",
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
-    "staffProfileAdd": "เพิ่มพนักงาน"
+    "staffProfileAdd": "เพิ่มพนักงาน",
+    "packageManagement": "Package Management"
   },
   "button": {
     "add": "เพิ่ม",
