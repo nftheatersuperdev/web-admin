@@ -150,7 +150,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     }
   }
 
-  const getRemoteConfig = (key: string): firebase.remoteConfig.Value => {
+  const getRemoteConfig = (key: string): firebase.remoteConfig.Value | undefined => {
     return fbase.getRemoteConfig(key)
   }
 
