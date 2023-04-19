@@ -198,8 +198,6 @@ export default function CustomerProfile(): JSX.Element {
     enableReinitialize: true,
     onSubmit: (value) => {
       let updateObj
-      console.log('Search Type : ' + value.searchType)
-      console.log('Search Value : ' + filterSearchField)
       if (value.searchType === 'createdDate' || value.searchType === 'updatedDate') {
         updateObj = {
           [value.searchType]: dayjs(selectedFromDate)
