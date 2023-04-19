@@ -27,6 +27,7 @@ import {
   LibraryBooks as LibraryBooksIcon,
   Laptop as LaptopIcon,
   PersonAddDisabled as UserDeleteLogIcon,
+  Subscriptions as PackageManagementIcons,
 } from '@material-ui/icons'
 import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
@@ -208,7 +209,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         id: 'left_menu__subscription_management_package_management',
         title: t('sidebar.packageManagement'),
         path: '/subscription-management/package-management',
-        icon: null,
+        icon: <PackageManagementIcons />,
         allowedRoles: [ROLES.SUPER_ADMIN],
         toggleKey: 'IS_ENABLED_SUBSCRIPTION_MANAGEMENT_FEATURE',
       },
