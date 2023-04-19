@@ -110,7 +110,8 @@
     "settings": "Settings",
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
-    "staffProfileAdd": "Add Staff Profile"
+    "staffProfileAdd": "Add Staff Profile",
+    "packageManagement": "Package Management"
   },
   "button": {
     "add": "Add",
