@@ -92,6 +92,20 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         icon: <GroupAddIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
       },
+      {
+        id: 'left_menu__customer_profile',
+        title: t('sidebar.userManagement.customerProfile'),
+        path: ROUTE_PATHS.CUSTOMER_PROFILE,
+        icon: <UserIcon />,
+        allowedRoles: [
+          ROLES.SUPER_ADMIN,
+          ROLES.ADMIN,
+          ROLES.CUSTOMER_SUPPORT,
+          ROLES.OPERATION,
+          ROLES.MARKETING,
+          ROLES.PRODUCT_SUPPORT,
+        ],
+      },
 
       {
         subHeader: t('sidebar.vehicleManagement'),
@@ -168,7 +182,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
       },*/
       {
-        subHeader: t('sidebar.voucherManagement'),
+        subHeader: t('sidebar.voucherManagement.title'),
         allowedRoles: [
           ROLES.SUPER_ADMIN,
           ROLES.ADMIN,
@@ -253,6 +267,14 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         icon: <AdminUsersIcon />,
         allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
       },
+      {
+        id: 'left_menu__staff_profile',
+        title: t('sidebar.staffProfile'),
+        path: ROUTE_PATHS.STAFF_PROFILES,
+        icon: <AdminUsersIcon />,
+        // allowedRoles: [ROLES.NOT_PUBLISH],
+        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+      },
       { subHeader: t('sidebar.account') },
       {
         id: 'left_menu__profile',
@@ -311,9 +333,7 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
             }
 
             return subHeader ? (
-              <ListSubheader key={subHeader} component="div">
-                {subHeader}
-              </ListSubheader>
+              <ListSubheader component="div">{subHeader}</ListSubheader>
             ) : (
               <ListItem
                 id={id}

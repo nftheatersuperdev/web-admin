@@ -15,25 +15,89 @@
   "carAvailability": {
     "selectedFromDate": "Start Date",
     "selectedToDate": "End Date",
-    "search": "Search",
+    "search": "Select Search",
+    "searchLocation": "Location Services",
+    "locationList": {
+      "all": "All Location"
+    },
+    "searchBtn": "Search",
+    "searchField": {
+      "label": "Enter Search",
+      "placeholder": "Please type at lease 2 charators",
+      "errors": {
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
+      }
+    },
+    "none": "None",
     "available": "Available",
     "inUse": "In Use"
   },
+  "carAvailabilityDetail": {
+    "location": "Location Service",
+    "carId": "Car ID",
+    "carStatus": "Car Status",
+    "carTrackId": "Cartrack ID",
+    "plateNumber": "Plate Number",
+    "vin": "VIN",
+    "carBrand": "Car Brand",
+    "carModel": "Car Model",
+    "color": "Colour",
+    "createdDate": "Created Date",
+    "updatedDate": "Updated Date",
+    "bookingId": "Booking ID",
+    "owner": "Owner",
+    "reSeller": "Reseller"
+  },
   "sidebar": {
+    "pages": "Pages",
     "dashboard": "Dashboard",
+    "userManagement": {
+      "title": "User Management",
+      "customerProfile": "Customer Profile",
+      "staffProfile": "Staff Profile"
+    },
+    "carManagement": {
+      "title": "Car Management",
+      "car": "Car",
+      "carDetail": "Car Detail",
+      "carAvailability": "Car Availability",
+      "carAvailabilityDetail": "Car Availability Detail",
+      "carActivity": "Car Activity",
+      "carModelAndPricing": "Model & Pricing"
+    },
+    "bookingManagement": {
+      "title": "Booking Management",
+      "booking": "Booking"
+    },
+    "voucherManagement": {
+      "title": "Voucher Management",
+      "userGroup": "User Group",
+      "voucher": "Voucher"
+    },
+    "documentsManagement": {
+      "title": "Document Management",
+      "document": "Documents",
+      "consentLog": "Consent Log",
+      "deleteLog": "Delete Log",
+      "cookieConsentLog": "Cookie Consent Log"
+    },
     "users": "Users",
     "userGroups": "User Groups",
     "cars": "Cars",
     "carAvailability": "Car Availability",
+    "carAvailabilityList": "Car Availability List",
+    "carAvailabilityDetail": "Car Availability Detail",
     "carActivity": "Car Activity",
+    "carActivityList": "Car Activity List",
     "pricing": "Pricing",
     "modelAndPricing": "Model & Pricing",
     "vehicleManagement": "Vehicle Management",
     "subscriptionManagement": "Subscription Management",
-    "voucherManagement": "Voucher Management",
     "subscriptions": "Subscriptions",
     "subscriptionDetail": "Subscription Detail",
     "bookingDetail": "Booking Detail",
+    "newSubscriptionManagement": "New Subscription Management",
+    "newSubscriptions": "New Subscriptions",
     "vouchers": "Vouchers",
     "additionalExpense": "Additional Expense",
     "others": "Others",
@@ -45,7 +109,10 @@
     "adminUsers": "Admin Users",
     "account": "Account",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "staffProfile": "Staff Profile",
+    "staffProfileDetail": "Staff Profile Detail",
+    "staffProfileAdd": "Add Staff Profile"
   },
   "button": {
     "add": "Add",
@@ -65,7 +132,10 @@
     "filter": "Filter",
     "export": "Export",
     "clearAll": "Clear all",
-    "save": "Save"
+    "save": "Save",
+    "addNew": "Add New",
+    "deleteProfile": "Delete Profile",
+    "upload": "Upload"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -95,7 +165,8 @@
       "requiresRecentLogin": "Please re-login again",
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
-      "unknownError": "An unknown authentication error occurred, Please contact operation support"
+      "unknownError": "An unknown authentication error occurred, Please contact operation support",
+      "passwordCondition": "Required at least 1 uppercase, 1 lowercase, and 1 number"
     }
   },
   "login": {
@@ -184,7 +255,15 @@
       "failed": "Something went wrong ({{error}})"
     }
   },
+  "staffProfile": {
+    "staffList": "Staff List",
+    "of": "of",
+    "createdDate": "Created Date",
+    "firebaseId": "FirebaseID",
+    "searchCriteria": "Search Criteria"
+  },
   "user": {
+    "custometList": "Customer List",
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
@@ -198,7 +277,10 @@
     "status": "Account Status",
     "statuses": {
       "active": "Active",
-      "deleted": "Deleted"
+      "enable": "Enabled",
+      "disable": "Disabled",
+      "deleted": "Deleted",
+      "inactive": "Inactive"
     },
     "kyc": {
       "status": "KYC Status",
@@ -222,23 +304,27 @@
     }
   },
   "car": {
-    "id": "ID",
+    "id": "Car ID",
     "carTrackId": "Cartrack ID",
-    "brand": "Brand",
-    "model": "Model",
-    "color": "Color",
+    "brand": "Car Brand",
+    "model": "Car Model",
+    "color": "Colour",
     "colorHex": "Color (Hex)",
     "plateNumber": "Plate Number",
     "bodyType": "Body Type",
-    "topSpeed": "Top Speed",
-    "acceleration": "Acceleration",
-    "range": "Range",
+    "topSpeed": "Top Speed (km/h)",
+    "acceleration": "Acceleration (Second)",
+    "range": "Range (km)(Advertise)",
     "totalPower": "Total Power",
-    "batteryCapacity": "Battery Capacity",
-    "connectorType": "Connector Type",
-    "chargeTime": "Charge Time",
-    "fastChargeTime": "Fast Charge Time",
+    "batteryCapacity": "Battery Capacity (kWh)",
+    "connectorType": "Charge Type",
+    "chargeTime": "Charge Time (min)",
+    "fastChargeTime": "Fast Charge Time (min)",
     "vin": "VIN",
+    "seats": "Seats",
+    "condition": "Condition",
+    "horsePower": "Horse Power (hp)",
+    "year": "Year",
     "actions": "Actions",
     "createdDate": "Created Date",
     "updatedDate": "Updated Date",
@@ -260,6 +346,7 @@
       "error": "Failed to delete car"
     },
     "status": "Status",
+    "carStatus": "Car Status",
     "statuses": {
       "accepted": "Accepted",
       "available": "Available",
@@ -271,7 +358,13 @@
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"
     },
-    "subscriptionId": "Subscription ID"
+    "subscriptionId": "Booking ID",
+    "carList": "Car List",
+    "selectSearch": "Select Search",
+    "search": "Enter Search",
+    "selectStatus": "Select Status",
+    "noData": "No Data Found",
+    "of": "of"
   },
   "pricing": {
     "id": "ID",
@@ -313,7 +406,7 @@
     }
   },
   "subscription": {
-    "id": "Subscription ID",
+    "id": "Booking ID",
     "bookingDetailId": "Booking Detail ID",
     "customerId": "Customer ID",
     "brand": "Car Brand",
@@ -476,6 +569,57 @@
       }
     }
   },
+  "newSubcription": {
+    "createEdit": {
+      "title": "Package Management",
+      "subscriptionManagement": "Subscription Management",
+      "packageManagement": "Package Management",
+      "packageDetail": "Package Detail"
+    },
+    "packageDetail": {
+      "title": "Package Detail",
+      "banner": "Package Detail Banner",
+      "message": "Package Detail Message",
+      "contentEn": "Description (English)",
+      "contentTh": "Description (Thai)",
+      "badge": "Badge",
+      "publishDate": "Publish Date",
+      "published": "Published",
+      "fullPrice": "Full Price",
+      "price": "Price",
+      "packagePeriodMonth": "Package Period (Month)"
+    },
+    "packageList": {
+      "title": "Package List",
+      "banner": "Package List Banner",
+      "message": "Package List Message",
+      "contentEn": "Product Features (English)",
+      "contentTh": "Product Features (Thai)",
+      "packageNameEn": "Package Name (English)",
+      "packageNameTh": "Package Name (Thai)",
+      "reccommendEditor": "*Minimum 3 Bullets, Maximum 5 Bullets"
+    },
+    "dialog": {
+      "imageUpload": {
+        "title": "Upload Banner",
+        "reccommend": "*The file type must be .png / dimension 496pixels x 280pixels (16:9) / Maximum upload size 1MB",
+        "reccommendDetail": "*The file type must be .png / dimension 750pixels x 562pixels (4:3) / Maximum upload size 1MB"
+      },
+      "createDialog": {
+        "success": "Create Package Success",
+        "failed": "Error Create Package "
+      }
+    },
+    "validation": {
+      "errors": {
+        "invalidFormat": "Error limit 50 characters",
+        "editorFormat": "Error limit 300 characters.",
+        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets",
+        "textInvalid": "Text is invalid",
+        "required": "Required Field"
+      }
+    }
+  },
   "additionalExpense": {
     "id": "ID",
     "subscriptionId": "Subscription ID",
@@ -575,6 +719,9 @@
     "is": "Is",
     "true": "True/Enable",
     "false": "False/Disable"
+  },
+  "table": {
+    "rowPerPage": "Rows per page"
   },
   "carModel": {
     "brand": "Brand",
@@ -755,7 +902,10 @@
     "maximumIsOneHundred": "Maximum is 100",
     "invalidVoucherCode": "Invalid voucher code",
     "invalidName": "Invalid name",
-    "allowOnlyLettersAndNumbers": "Allow only letters and numbers"
+    "allowOnlyLettersAndNumbers": "Allow only letters and numbers",
+    "firstNameRequired": "First Name is required",
+    "lastNameRequired": "Last Name is required",
+    "roleRequired": "Role is required"
   },
   "cardStatus": {
     "detail": "Detail >"
@@ -909,6 +1059,17 @@
     "overview": {
       "header": "Overview"
     },
+    "table": {
+      "header": {
+        "locationService": "Location Service",
+        "brand": "Brand",
+        "model": "Model",
+        "color": "Colour",
+        "plateNumber": "Plate Number",
+        "owner": "Owner",
+        "reseller": "Reseller"
+      }
+    },
     "addSchedule": {
       "header": "Add new schedule"
     },
@@ -920,7 +1081,7 @@
     },
     "plateNumber": {
       "label": "Plate",
-      "placeholder": "Please type at lease 2 charators",
+      "placeholder": "Enter Plate",
       "errors": {
         "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
       }
@@ -929,15 +1090,18 @@
       "label": "Visibility"
     },
     "brand": {
-      "label": "Brand"
+      "label": "Brand",
+      "detailLabel": "Car Brand",
+      "emptyValue": "Select Brand"
     },
     "model": {
       "label": "Model",
-      "emptyValue": "Select Brand"
+      "detailLabel": "Car Model",
+      "emptyValue": "Select Model"
     },
     "color": {
       "label": "Color",
-      "emptyValue": "Select Model"
+      "emptyValue": "Select Color"
     },
     "status": {
       "label": "Car Status"
@@ -962,7 +1126,7 @@
       "label": "Schedule ID"
     },
     "modifyDate": {
-      "label": "Last modify"
+      "label": "Modified Date"
     },
     "modifyBy": {
       "label": "Modify by"
@@ -1015,6 +1179,41 @@
       "confirm": "Confirm Delete",
       "success": "The schedule has been deleted",
       "error": "Something went wrong when deleting the schedule"
+    },
+    "history": {
+      "label": "Car Activity History"
+    }
+  },
+  "subscriptionPackageManagement": {
+    "header": "Package Management",
+    "table": {
+      "header": "Package",
+      "selectSearch": "Select Search",
+      "enterSearch": "Enter Search",
+      "createButton": "Create",
+      "columnHeader": {
+        "packageId": "Package ID",
+        "packageName": "Package Name",
+        "packagePeriod": "Package Period",
+        "price": "Price",
+        "publishedDate": "Published Date",
+        "published": "Published",
+        "status": "Status",
+        "createdBy": "Created By",
+        "createdDate": "Created Date"
+      },
+      "cell": {
+        "months": "Months",
+        "thb": "THB",
+        "on": "On",
+        "off": "Off",
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending"
+      },
+      "pagination": {
+        "of": "of"
+      }
     }
   }
 }

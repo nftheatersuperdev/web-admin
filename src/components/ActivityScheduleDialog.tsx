@@ -15,12 +15,19 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import TextField from '@material-ui/core/TextField'
 import Alert from '@material-ui/lab/Alert'
+import { makeStyles } from '@material-ui/core/styles'
 import toast from 'react-hot-toast'
 import styled from 'styled-components'
 import { validateRemarkText, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { createSchedule, editSchedule, getScheduleServices } from 'services/web-bff/car-activity'
 import { Schedule, CarActivityBookingTypeIds } from 'services/web-bff/car-activity.type'
+
+const useStyles = makeStyles({
+  alignLeft: {
+    justifyContent: 'space-between',
+  },
+})
 
 interface Props {
   visible: boolean
@@ -40,7 +47,7 @@ const SpaceButtons = styled.div`
   padding: 15px;
 
   & button {
-    margin-left: 15px;
+    margin-right: 15px;
   }
 `
 
@@ -50,6 +57,7 @@ export default function ActivityScheduleDialog({
   serviceSchedule,
   onClose,
 }: Props): JSX.Element {
+  const classes = useStyles()
   const { t, i18n } = useTranslation()
   const isEdit = !!serviceSchedule
   const isThaiLanguage = i18n.language === 'th'
@@ -276,11 +284,8 @@ export default function ActivityScheduleDialog({
             </div>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions className={classes.alignLeft}>
           <SpaceButtons>
-            <Button onClick={handleOnClose} variant="contained" color="secondary">
-              {t('button.cancel')}
-            </Button>
             <Button
               onClick={handleOnSave}
               variant="contained"
@@ -288,6 +293,9 @@ export default function ActivityScheduleDialog({
               disabled={isUnableToSave}
             >
               {t('button.save')}
+            </Button>
+            <Button onClick={handleOnClose} variant="outlined" color="primary">
+              {t('button.cancel')}
             </Button>
           </SpaceButtons>
         </DialogActions>

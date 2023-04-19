@@ -1,11 +1,6 @@
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
 
-interface SelectOption {
-  label: string
-  value: string
-}
-
 const STORAGE_KEYS = {
   VISIBILITY_COLUMNS: 'evme:car:visibility_columns',
 }
@@ -17,10 +12,7 @@ export const CarStatus = {
 }
 
 export const defaultVisibilityColumns: VisibilityColumns = {
-  firstName: true,
-  lastName: true,
-  email: true,
-  phoneNumber: true,
+  location: true,
   brand: true,
   model: true,
   price: true,
@@ -39,17 +31,6 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   endAddress: false,
   createdAt: false,
 }
-
-export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
-  {
-    label: t('car.statuses.published'),
-    value: CarStatus.AVAILABLE,
-  },
-  {
-    label: t('car.statuses.outOfService'),
-    value: CarStatus.OUT_OF_SERVICE,
-  },
-]
 
 export const columnFormatCarStatus = (status: string, t: TFunction<Namespace>): string => {
   const enforceStatus = status.toLocaleLowerCase().replaceAll(' ', '_')
@@ -82,4 +63,34 @@ export const getVisibilityColumns = (): VisibilityColumns => {
 
 export const setVisibilityColumns = (columns: VisibilityColumns): void => {
   ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
+}
+export interface SelectOption {
+  key: string
+  label: string
+  value: string
+  isDefault?: boolean
+}
+
+export const getSearchTypeList = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    {
+      key: 'id',
+      value: 'id',
+      label: t('carAvailabilityDetail.carId'),
+    },
+    {
+      key: 'plateNumber',
+      value: 'plateNumber',
+      label: t('carAvailabilityDetail.plateNumber'),
+    },
+  ]
+}
+export const getSearcLocationList = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    {
+      key: 'all location',
+      value: 'all location',
+      label: t('carAvailability.locationList.all'),
+    },
+  ]
 }

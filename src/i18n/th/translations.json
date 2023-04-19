@@ -15,25 +15,89 @@
   "carAvailability": {
     "selectedFromDate": "วันที่เริ่มต้น",
     "selectedToDate": "วันที่สิ้นสุด",
-    "search": "ค้นหา",
+    "search": "เลือกเพื่อค้นหา",
+    "searchLocation": "สถานที่บริการ",
+    "locationList": {
+      "all": "ทุกสถานที่"
+    },
+    "searchBtn": "ค้นหา",
+    "searchField": {
+      "label": "ค้นหา",
+      "placeholder": "กรุณากรอกอย่างน้อย 2 ตัวอักษร",
+      "errors": {
+        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร"
+      }
+    },
+    "none": "ไม่ระบุ",
     "available": "รถว่าง",
     "inUse": "ใช้งานอยู่"
   },
+  "carAvailabilityDetail": {
+    "location": "สถานที่บริการ",
+    "carId": "เลขไอดีรถ",
+    "carStatus": "สถานะการใช้รถ",
+    "carTrackId": "Cartrack ไอดี",
+    "plateNumber": "ป้ายทะเบียน",
+    "vin": "หมายเลขตัวถัง",
+    "carBrand": "ยี่ห้อ",
+    "carModel": "รุ่น",
+    "color": "สี",
+    "createdDate": "วันที่สร้าง",
+    "updatedDate": "วันที่แก้ไข",
+    "bookingId": "บุ๊คกิ้งไอดี",
+    "owner": "ผู้ถือกรรมสิทธิ์",
+    "reSeller": "ตัวแทนจำหน่าย"
+  },
   "sidebar": {
+    "pages": "หน้าต่างๆ",
     "dashboard": "แดชบอร์ด",
+    "userManagement": {
+      "title": "การจัดการผู้ใช้งาน",
+      "customerProfile": "โปรไฟล์ลูกค้า",
+      "staffProfile": "โปรไฟล์พนักงาน"
+    },
+    "carManagement": {
+      "title": "การจัดการรถยนต์",
+      "car": "รถยนต์",
+      "carDetail": "รายละเอียดรถยนต์",
+      "carAvailability": "สถานะการใช้รถ",
+      "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
+      "carActivity": "การใช้งานรถ",
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ"
+    },
+    "bookingManagement": {
+      "title": "การจัดการจอง",
+      "booking": "การจอง"
+    },
+    "voucherManagement": {
+      "title": "การจัดการวอชเชอร์",
+      "userGroup": "กลุ่มผู้ใช้งาน",
+      "voucher": "วอชเชอร์"
+    },
+    "documentsManagement": {
+      "title": "การจัดการเอกสาร",
+      "document": "เอกสาร",
+      "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
+      "deleteLog": "ประวัติการลบบัญชีลูกค้า",
+      "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้"
+    },
     "users": "ผู้ใช้",
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
     "carAvailability": "สถานะการใช้รถ",
+    "carAvailabilityList": "รายการสถานะการใช้รถ",
+    "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
     "carActivity": "การใช้งานรถ",
+    "carActivityList": "รายการการใช้งานรถ",
     "pricing": "ราคาแพ็คเกจ",
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
     "subscriptionManagement": "การจัดการการจอง",
-    "voucherManagement": "การจัดการวอชเชอร์",
     "subscriptions": "ข้อมูลการจอง",
     "subscriptionDetail": "รายละเอียดข้อมูลการจอง",
     "bookingDetail": "ข้อมูลการจอง",
+    "newSubscriptionManagement": "การจัดการการจองใหม่",
+    "newSubscriptions": "ข้อมูลการจองใหม่",
     "vouchers": "วอชเชอร์",
     "additionalExpense": "ค่าใช้จ่ายเพิ่มเติม",
     "others": "อื่นๆ",
@@ -45,7 +109,10 @@
     "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
     "profile": "โปรไฟล์",
-    "settings": "ตั้งค่า"
+    "settings": "ตั้งค่า",
+    "staffProfile": "พนักงาน",
+    "staffProfileDetail": "รายละเอียดพนักงาน",
+    "staffProfileAdd": "เพิ่มพนักงาน"
   },
   "button": {
     "add": "เพิ่ม",
@@ -65,7 +132,10 @@
     "filter": "กรองข้อมูล",
     "export": "ส่งออกข้อมูล",
     "clearAll": "ล้างทั้งหมด",
-    "save": "บันทึก"
+    "save": "บันทึก",
+    "addNew": "เพิ่มใหม่",
+    "deleteProfile": "ลบพนักงาน",
+    "upload": "อัพโหลดรูปภาพ"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -95,7 +165,8 @@
       "requiresRecentLogin": "กรุณาลงชื่อเข้าใช้ระบบอีกครั้ง",
       "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
       "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
-      "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ"
+      "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ",
+      "passwordCondition": "ต้องประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร"
     }
   },
   "login": {
@@ -184,7 +255,15 @@
       "failed": "เกิดข้อผิดพลาดบางอย่าง ({{error}})"
     }
   },
+  "staffProfile": {
+    "staffList": "รายชื่อพนักงาน",
+    "of": "จาก",
+    "createdDate": "วันที่สร้าง",
+    "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
+    "searchCriteria": "ค้นหา"
+  },
   "user": {
+    "custometList": "รายชื่อลูกค้า",
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
@@ -198,13 +277,17 @@
     "status": "สถานะบัญชี",
     "statuses": {
       "active": "ใช้งานอยู่",
-      "deleted": "ลบข้อมูลแล้ว"
+      "enable": "ใช้งานอยู่",
+      "disable": "ปิดการใช้งาน",
+      "deleted": "ลบข้อมูลแล้ว",
+      "inactive": "ไม่ได้ใช้งาน"
     },
     "kyc": {
       "status": "สถานะ KYC",
       "pending": "รอการตรวจสอบ",
       "verified": "ผ่านการตรวจสอบ",
-      "rejected": "ถูกปฏิเสธ"
+      "rejected": "ถูกปฏิเสธ",
+      "rejectReason": "เหตุผลของการปฏิเสธ"
     },
     "verifyDate": "วันที่ตรวจสอบ",
     "note": "โน๊ต",
@@ -238,6 +321,10 @@
     "chargeTime": "ระยะเวลาชาร์จปกติ",
     "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
     "vin": "หมายเลขตัวถัง",
+    "seats": "จำนวนที่นั่ง",
+    "condition": "เงื่อนไข",
+    "horsePower": "แรงม้า",
+    "year": "ปี",
     "actions": "ดำเนินการ",
     "createdDate": "วันที่สร้าง",
     "updatedDate": "วันที่แก้ไข",
@@ -259,6 +346,7 @@
       "error": "ลบข้อมูลรถยนต์ไม่สำเร็จ"
     },
     "status": "สถานะ",
+    "carStatus": "สถานะ",
     "statuses": {
       "accepted": "ยอมรับ",
       "available": "พร้อมใช้งาน",
@@ -270,7 +358,13 @@
       "upcomingCancelled": "กำลังถูกยกเลิก",
       "unknown": "ไม่ทราบ"
     },
-    "subscriptionId": "หมายเลขการจอง"
+    "subscriptionId": "หมายเลขการจอง",
+    "carList": "รายการรถยนต์",
+    "selectSearch": "เลือกเพื่อค้นหา",
+    "search": "ค้นหา",
+    "selectStatus": "เลือกสถานะ",
+    "noData": "ไม่มีข้อมูล",
+    "of": "จาก"
   },
   "pricing": {
     "id": "เลขไอดี",
@@ -475,6 +569,57 @@
       }
     }
   },
+  "newSubcription": {
+    "createEdit": {
+      "title": "Package Management",
+      "subscriptionManagement": "Subscription Management",
+      "packageManagement": "Package Management",
+      "packageDetail": "Package Detail"
+    },
+    "packageDetail": {
+      "title": "Package Detail",
+      "banner": "Package Detail Banner",
+      "message": "Package Detail Message",
+      "contentEn": "Description (English)",
+      "contentTh": "Description (Thai)",
+      "badge": "Badge",
+      "publishDate": "Publish Date",
+      "published": "Published",
+      "fullPrice": "Full Price",
+      "price": "Price",
+      "packagePeriodMonth": "Package Period (Month)"
+    },
+    "packageList": {
+      "title": "Package List",
+      "banner": "Package List Banner",
+      "message": "Package List Message",
+      "contentEn": "Product Features (English)",
+      "contentTh": "Product Features (Thai)",
+      "packageNameEn": "Package Name (English)",
+      "packageNameTh": "Package Name (Thai)",
+      "reccommendEditor": "*Minimum 3 Bullets, Maximum 5 Bullets"
+    },
+    "dialog": {
+      "imageUpload": {
+        "title": "อัพโหลดรูปภาพ",
+        "reccommend": "*The file type must be .png / dimension 496pixels x 280pixels (16:9) / Maximum upload size 1MB",
+        "reccommendDetail": "*The file type must be .png / dimension 750pixels x 562pixels (4:3) / Maximum upload size 1MB"
+      },
+      "createDialog": {
+        "success": "Create Package Success",
+        "failed": "Error Create Package "
+      }
+    },
+    "validation": {
+      "errors": {
+        "invalidFormat": "Error limit 50 characters",
+        "editorFormat": "Error limit 300 characters.",
+        "limitBullet": "Minimum 3 bullet , Maximum 5 bullets",
+        "textInvalid": "Text is invalid",
+        "required": "Required Field"
+      }
+    }
+  },
   "additionalExpense": {
     "id": "เลขไอดี",
     "subscriptionId": "หมายเลขการจอง",
@@ -574,6 +719,9 @@
     "is": "มีค่าเป็น",
     "true": "ใช่/เปิด",
     "false": "ไม่ใช่/ปิด"
+  },
+  "table": {
+    "rowPerPage": "จำนวนรายการต่อหน้า"
   },
   "voucher": {
     "title": "วอชเชอร์",
@@ -730,7 +878,10 @@
     "maximumIsOneHundred": "ระบุสูงสุด 100",
     "invalidVoucherCode": "รูปแบบของวอชเชอร์ไม่ถูกต้อง",
     "invalidName": "รูปแบบของชื่อไม่ถูกต้อง",
-    "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น"
+    "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น",
+    "firstNameRequired": "ต้องระบุชื่อ",
+    "lastNameRequired": "ต้องระบุนามสกุล",
+    "roleRequired": "ต้องระบุระดับผู้ใช้งาน"
   },
   "cardStatus": {
     "detail": "Detail >"
@@ -869,6 +1020,17 @@
     "overview": {
       "header": "ภาพรวม"
     },
+    "table": {
+      "header": {
+        "locationService": "Location Service",
+        "brand": "Brand",
+        "model": "Model",
+        "color": "Colour",
+        "plateNumber": "Plate Number",
+        "owner": "Owner",
+        "reseller": "Reseller"
+      }
+    },
     "addSchedule": {
       "header": "เพิ่มกำหนดการ"
     },
@@ -889,15 +1051,18 @@
       "label": "การมองเห็น"
     },
     "brand": {
-      "label": "ยี่ห้อ"
+      "label": "ยี่ห้อ",
+      "detailLabel": "ยี่ห้อ",
+      "emptyValue": "เลือก ยี่ห้อ"
     },
     "model": {
       "label": "รุ่น",
-      "emptyValue": "เลือก ยี่ห้อ"
+      "detailLabel": "รุ่น",
+      "emptyValue": "เลือก รุ่น"
     },
     "color": {
       "label": "สี",
-      "emptyValue": "เลือก รุ่น"
+      "emptyValue": "เลือก สี"
     },
     "status": {
       "label": "สถานะ"
@@ -922,7 +1087,7 @@
       "label": "กำหนดการเลขที่"
     },
     "modifyDate": {
-      "label": "แก้ไขล่าสุด"
+      "label": "วันที่แก้ไข"
     },
     "modifyBy": {
       "label": "แก้ไขโดย"
@@ -975,6 +1140,41 @@
       "confirm": "ยืนยัน",
       "success": "ตารางเวลาถูกลบเรียบร้อยแล้ว",
       "error": "เกิดข้อผิดพลาดบางอย่างขณะทำการลบตารางเวลา"
+    },
+    "history": {
+      "label": "Car Activity History"
+    }
+  },
+  "subscriptionPackageManagement": {
+    "header": "Package Management",
+    "table": {
+      "header": "Package",
+      "selectSearch": "Select Search",
+      "enterSearch": "Enter Search",
+      "createButton": "Create",
+      "columnHeader": {
+        "packageId": "Package ID",
+        "packageName": "Package Name",
+        "packagePeriod": "Package Period",
+        "price": "Price",
+        "publishedDate": "Published Date",
+        "published": "Published",
+        "status": "Status",
+        "createdBy": "Created By",
+        "createdDate": "Created Date"
+      },
+      "cell": {
+        "months": "Months",
+        "thb": "THB",
+        "on": "On",
+        "off": "Off",
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending"
+      },
+      "pagination": {
+        "of": "of"
+      }
     }
   }
 }

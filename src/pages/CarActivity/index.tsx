@@ -1,41 +1,71 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { Fragment, useEffect, useState, useMemo } from 'react'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import React, { useEffect, useState, useMemo, Fragment } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
-  Breadcrumbs,
   Button,
   Card,
   FormControl,
   Grid,
-  MenuItem,
-  Paper,
-  Select,
   TextField,
+  InputAdornment,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
+  Autocomplete,
   TableContainer,
+  Table,
   TableHead,
   TableRow,
-} from '@material-ui/core'
-import Pagination from '@material-ui/lab/Pagination'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import { makeStyles } from '@material-ui/core/styles'
+  TableCell,
+  TableBody,
+  Select,
+  MenuItem,
+  Pagination,
+  CircularProgress,
+  Paper,
+} from '@mui/material'
+// import {
+//   GridColDef,
+//   GridPageChangeParams,
+//   GridToolbarColumnsButton,
+//   GridToolbarContainer,
+//   GridToolbarDensitySelector,
+// } from '@material-ui/data-grid'
+// import Pagination from '@mui/lab/Pagination'
+import { makeStyles } from '@mui/styles'
+import { Search as SearchIcon } from '@mui/icons-material'
+import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
+import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
-import NoResultCard from 'components/NoResultCard'
-import Backdrop from 'components/Backdrop'
+// import NoResultCard from 'components/NoResultCard'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+// import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
+// import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 
-const useStyles = makeStyles({
+// interface CarActivityParams {
+//   plate: string
+//   brand: string
+//   model: string
+//   color: string
+// }
+
+const Wrapper = styled(Card)`
+  padding: 15px;
+  margin-top: 20px;
+`
+
+const ContentSection = styled.div`
+  margin-bottom: 20px;
+`
+
+const useStyles = makeStyles(() => ({
   hide: {
     display: 'none',
   },
@@ -131,7 +161,31 @@ const useStyles = makeStyles({
   filter: {
     height: '90px',
   },
-})
+  buttonExport: {
+    backgroundColor: '#424E63',
+  },
+  textBoldBorder: {
+    borderLeft: '2px solid #E0E0E0',
+    fontWeight: 'bold',
+    padding: '0px 8px',
+  },
+  rowOverflow: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical',
+  },
+  paddindElement: {
+    marginLeft: '8px',
+  },
+  noResultMessage: {
+    textAlign: 'center',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    padding: '48px 0',
+  },
+}))
 
 const useQueryString = () => {
   const { search } = useLocation()
@@ -140,6 +194,7 @@ const useQueryString = () => {
 }
 
 export default function CarActivity(): JSX.Element {
+  // const { id: carId } = useParams<CarActivityParams>()
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
@@ -154,10 +209,10 @@ export default function CarActivity(): JSX.Element {
     minimumToFilterPlateNumber: 2,
   }
   const defaultSelectList = {
-    brandAll: { id: 'all', name: t('all'), carModels: [] },
+    brandAll: { id: 'all', name: t('carActivity.brand.emptyValue'), carModels: [] },
     modelEmpty: {
       id: 'empty',
-      name: `-${t('carActivity.model.emptyValue')}-`,
+      name: `${t('carActivity.model.emptyValue')}`,
       subModelName: '',
       year: 0,
       carSkus: [],
@@ -169,14 +224,14 @@ export default function CarActivity(): JSX.Element {
       year: 0,
       carSkus: [],
     },
-    colorEmpty: { id: 'empty', color: `-${t('carActivity.color.emptyValue')}-`, cars: [] },
+    colorEmpty: { id: 'empty', color: `${t('carActivity.color.emptyValue')}`, cars: [] },
     colorAll: { id: 'all', color: t('all'), cars: [] },
   }
 
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [carId, setCarId] = useState<string>('')
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [carId] = useState<string>('')
   const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
   const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
@@ -234,58 +289,60 @@ export default function CarActivity(): JSX.Element {
     return value
   }
 
-  const carActivities =
+  // const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
+  // const rows =
+  //   carActivitiesData?.cars.map((carActivity) => {
+  //     return {
+  //       id: carActivity.carId,
+  //       brandName: carActivity.brandName,
+  //       modelName: carActivity.modelName,
+  //       color: carActivity.color,
+  //       plateNumber: carActivity.plateNumber,
+  //     }
+  //   }) || []
+
+  const carActivitiesRowData =
     (carActivitiesData &&
       carActivitiesData.cars?.length > 0 &&
       carActivitiesData.cars.map((carActivity) => {
         return (
-          <TableRow key={`car-activity-${carActivity.carId}`}>
-            <TableCell className={classes.tableColumnCarInfo}>
-              <Link to={`/car-activity/${carActivity.carId}`} className={classes.link}>
-                <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
-                <div className={classes.textBold}>
-                  {checkAndRenderValue(carActivity.plateNumber)}
-                </div>
-                <div className={classes.subText}>
-                  <div>{checkAndRenderValue(carActivity.modelName)}</div>
-                  <div>{checkAndRenderValue(carActivity.color)}</div>
-                </div>
-              </Link>
+          <TableRow
+            hover
+            key={`car-activity-${carActivity.carId}`}
+            onClick={() =>
+              history.push({
+                pathname: `/car-activity/${carActivity.carId}`,
+                state: carActivity,
+              })
+            }
+          >
+            <TableCell>
+              <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
             </TableCell>
-            <TableCell className={classes.tableColumnDate} colSpan={10}>
-              &nbsp;
+            <TableCell>
+              <div className={classes.textBold}>{checkAndRenderValue(carActivity.plateNumber)}</div>
             </TableCell>
-            {/* <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate} colSpan={2}>
-            Reparing #1
-          </TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell>
-          <TableCell className={classes.tableColumnDate}>&nbsp;</TableCell> */}
-            <TableCell className={classes.tableColumnActions}>
-              <Button
-                onClick={() => {
-                  /**
-                   * @TODO need to set the carId below
-                   */
-                  setCarId(carActivity.carId)
-                  setVisibleAddDialog(true)
-                }}
-                type="button"
-              >
-                <span className={classes.textBold}>+</span>
-              </Button>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.modelName)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
             </TableCell>
           </TableRow>
         )
       })) ||
     []
 
-  const isNoData = carActivities.length < 1
+  // const isNoData = carActivities.length < 1
 
   /**
    * Init pagination depends on data from the API.
@@ -392,12 +449,6 @@ export default function CarActivity(): JSX.Element {
     }
   }
 
-  const handleOnEnterPlateChange = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleOnClickFilters()
-    }
-  }
-
   const handleOnBrandChange = (brand: CarBrand | null) => {
     setFilterBrand(brand?.id || '')
     setFilterBrandObject(brand || defaultSelectList.brandAll)
@@ -433,294 +484,301 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(color || defaultSelectList.colorAll)
   }
 
+  const generateDataToTable = () => {
+    if (carActivitiesRowData.length > 0) {
+      return <TableBody>{carActivitiesRowData}</TableBody>
+    }
+
+    return (
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={7}>
+            <div className={classes.noResultMessage}>{t('warning.noResult')}</div>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    )
+  }
+
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.carManagement.title'),
+      link: '/',
+    },
+    {
+      text: t('sidebar.carActivity'),
+      link: '/car-activity',
+    },
+  ]
+
   return (
     <Page>
-      <Typography variant="h5" component="h1" gutterBottom>
-        {t('sidebar.carActivity')}
-      </Typography>
-      <Breadcrumbs>
-        <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
-        <Typography color="textPrimary">{t('sidebar.carActivity')}</Typography>
-      </Breadcrumbs>
-      <div className={classes.searchWrapper}>
-        {/* <Grid container spacing={2} className={classes.gridContainer}>
-          <Grid item xs={9} sm={9} lg={5}>
-            <Grid container spacing={1}>
-              <Grid item xs={8} sm={9}>
+      <PageTitle title="Car Activity" breadcrumbs={breadcrumbs} />
+      <Wrapper>
+        <ContentSection>
+          <Typography variant="h6" component="h2">
+            {t('sidebar.carActivityList')}
+          </Typography>
+          <div className={classes.searchWrapper}>
+            <Grid
+              container
+              spacing={1}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              className={classes.gridContainer}
+            >
+              <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
                 <FormControl variant="outlined" className={classes.fullWidth}>
                   <TextField
                     error={!!filterPlateError}
                     helperText={filterPlateError}
-                    fullWidth
                     variant="outlined"
-                    label={t('carActivity.plateNumber.label')}
                     placeholder={t('carActivity.plateNumber.placeholder')}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onChange={handleOnPlateChange}
-                    onKeyDown={handleOnEnterPlateChange}
                     value={filterPlate}
+                    onChange={handleOnPlateChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </FormControl>
               </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={3} sm={3} lg={7}>
-            <div className={classes.textRight}>
-              <Button variant="contained" color="primary" className={classes.buttonWithoutShadow}>
-                {t('button.export')}
-              </Button>
-            </div>
-          </Grid>
-        </Grid> */}
-        <Grid
-          container
-          spacing={1}
-          direction="row"
-          justifyContent="flex-start"
-          alignItems="center"
-          className={classes.gridContainer}
-        >
-          <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
-            <FormControl variant="outlined" className={classes.fullWidth}>
-              <TextField
-                error={!!filterPlateError}
-                helperText={filterPlateError}
-                fullWidth
-                variant="outlined"
-                label={t('carActivity.plateNumber.label')}
-                placeholder={t('carActivity.plateNumber.placeholder')}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handleOnPlateChange}
-                onKeyDown={handleOnEnterPlateChange}
-                value={filterPlate}
-              />
-            </FormControl>
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-brand'].join(' ')}
-            xs={12}
-            sm={6}
-            md={6}
-            lg={2}
-            xl={2}
-          >
-            <Autocomplete
-              autoHighlight
-              id="brand-select-list"
-              options={carBrands || []}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('carActivity.brand.label')}
-                  variant="outlined"
-                  placeholder={t('all')}
+              <Grid
+                item
+                className={[classes.filter, 'filter-brand'].join(' ')}
+                xs={12}
+                sm={6}
+                md={6}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="brand-select-list"
+                  options={carBrands || []}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.brand.label')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={filterBrandObject || defaultSelectList.brandAll}
+                  defaultValue={filterBrandObject || defaultSelectList.brandAll}
+                  onChange={(_event, value) => handleOnBrandChange(value)}
                 />
-              )}
-              value={filterBrandObject || defaultSelectList.brandAll}
-              defaultValue={filterBrandObject || defaultSelectList.brandAll}
-              onChange={(_event, value) => handleOnBrandChange(value)}
-            />
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-model'].join(' ')}
-            xs={12}
-            sm={6}
-            md={3}
-            lg={2}
-            xl={2}
-          >
-            <Autocomplete
-              autoHighlight
-              id="model-select-list"
-              disabled={carModels.length < 1}
-              options={carModels}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('carActivity.model.label')}
-                  variant="outlined"
-                  placeholder={t('all')}
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-model'].join(' ')}
+                xs={12}
+                sm={6}
+                md={3}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="model-select-list"
+                  disabled={carModels.length < 1}
+                  options={carModels}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.model.label')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={filterModelObject || defaultSelectList.modelEmpty}
+                  defaultValue={filterModelObject || defaultSelectList.modelEmpty}
+                  onChange={(_event, value) => handleOnModelChange(value)}
                 />
-              )}
-              value={filterModelObject || defaultSelectList.modelEmpty}
-              defaultValue={filterModelObject || defaultSelectList.modelEmpty}
-              onChange={(_event, value) => handleOnModelChange(value)}
-            />
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-color'].join(' ')}
-            xs={12}
-            sm={6}
-            md={3}
-            lg={2}
-            xl={2}
-          >
-            <Autocomplete
-              autoHighlight
-              id="color-select-list"
-              disabled={carColors.length < 1}
-              options={carColors}
-              getOptionLabel={(option) => option.color}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('carActivity.color.label')}
-                  variant="outlined"
-                  placeholder={t('all')}
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-color'].join(' ')}
+                xs={12}
+                sm={6}
+                md={3}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="color-select-list"
+                  disabled={carColors.length < 1}
+                  options={carColors}
+                  getOptionLabel={(option) => option.color}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.color.label')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={filterColorObject || defaultSelectList.colorEmpty}
+                  defaultValue={filterColorObject || defaultSelectList.colorEmpty}
+                  onChange={(_event, value) => handleOnColorChange(value)}
                 />
-              )}
-              value={filterColorObject || defaultSelectList.colorEmpty}
-              defaultValue={filterColorObject || defaultSelectList.colorEmpty}
-              onChange={(_event, value) => handleOnColorChange(value)}
-            />
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, 'filter-buttons'].join(' ')}
-            xs={6}
-            sm={6}
-            md={4}
-            lg={2}
-            xl={2}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.buttonWithoutShadow}
-              onClick={() => handleOnClickFilters()}
-              disabled={!isEnableFilterButton}
-            >
-              {t('button.filter')}
-            </Button>
-            <Button
-              color="secondary"
-              className={[
-                classes.buttonClearAllFilters,
-                classes.buttonWithoutShadow,
-                classes.buttonOverridePadding,
-                !isEnableFilterButton ? classes.displayNone : '',
-              ].join(' ')}
-              onClick={() => clearFilters()}
-            >
-              X {t('button.clearAll')}
-            </Button>
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, classes.textRight].join(' ')}
-            xs={6}
-            sm={6}
-            md={2}
-            lg={1}
-            xl={1}
-          >
-            <Button variant="contained" color="primary" className={classes.buttonWithoutShadow}>
-              {t('button.export')}
-            </Button>
-          </Grid>
-        </Grid>
-      </div>
-
-      {isNoData ? (
-        <NoResultCard />
-      ) : (
-        <Fragment>
-          <TableContainer component={Paper} className={classes.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.tableColumnCarInfo}>
-                    <div className={classes.textBold}>{t('carActivity.car.label')}</div>
-                    <div className={classes.subText}>
-                      {t('carActivity.totalCars.label', {
-                        total: carActivitiesData?.pagination?.totalRecords || 0,
-                      })}
-                    </div>
-                  </TableCell>
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell
-                    className={[classes.tableColumnDateHeader, classes.textBold].join(' ')}
-                  />
-                  <TableCell className={[classes.tableColumnActions, classes.textBold].join(' ')}>
-                    {t('carActivity.action.label')}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{carActivities}</TableBody>
-            </Table>
-          </TableContainer>
-          <Card>
-            <div className={classes.paginationContrainer}>
-              Rows per page:&nbsp;
-              <FormControl className={classes.inlineElement}>
-                <Select
-                  value={carActivitiesData?.pagination?.size || pageSize}
-                  defaultValue={carActivitiesData?.pagination?.size || pageSize}
-                  onChange={(event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-                    setPage(1)
-                    setPageSize(event.target.value as number)
-                  }}
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, 'filter-buttons'].join(' ')}
+                xs={6}
+                sm={6}
+                md={4}
+                lg={2}
+                xl={2}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.buttonWithoutShadow}
+                  onClick={() => handleOnClickFilters()}
+                  disabled={!isEnableFilterButton || isFetchingBrands || isFetchingActivities}
                 >
-                  <MenuItem value={10}>10</MenuItem>
-                  <MenuItem value={20}>20</MenuItem>
-                  <MenuItem value={50}>50</MenuItem>
-                </Select>
-              </FormControl>
-              <Pagination
-                count={carActivitiesData?.pagination?.totalPage || pages}
-                page={carActivitiesData?.pagination?.page || page}
-                defaultPage={carActivitiesData?.pagination?.page || page}
-                variant="text"
-                shape="rounded"
-                onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                  setPage(value)
-                }}
-              />
-            </div>
-          </Card>
-        </Fragment>
-      )}
-      <ActivityScheduleDialog
-        visible={visibleAddDialog}
-        carId={carId}
-        onClose={handleOnScheduleDialogClose}
-      />
-      <Backdrop open={isFetchingBrands || isFetchingActivities} />
+                  {t('button.search')}
+                </Button>
+                <Button
+                  color="secondary"
+                  className={[
+                    classes.buttonClearAllFilters,
+                    classes.buttonWithoutShadow,
+                    classes.buttonOverridePadding,
+                    !isEnableFilterButton ? classes.displayNone : '',
+                  ].join(' ')}
+                  onClick={() => clearFilters()}
+                >
+                  X {t('button.clearAll')}
+                </Button>
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, classes.textRight].join(' ')}
+                xs={6}
+                sm={6}
+                md={2}
+                lg={1}
+                xl={1}
+              >
+                <Button
+                  color="primary"
+                  variant="contained"
+                  disabled={isFetchingBrands || isFetchingActivities}
+                  className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
+                >
+                  {t('button.export')}
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+
+          <Fragment>
+            <TableContainer component={Paper} className={classes.table}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.locationService')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.brand')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.model')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.color')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.plateNumber')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.owner')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carActivity.table.header.reseller')}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+
+                {isFetchingActivities ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={9} align="center">
+                        <CircularProgress />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  generateDataToTable()
+                )}
+              </Table>
+            </TableContainer>
+            <Card>
+              <div className={classes.paginationContrainer}>
+                Rows per page:&nbsp;
+                <FormControl className={classes.inlineElement} variant="standard">
+                  <Select
+                    value={carActivitiesData?.pagination?.size || pageSize}
+                    defaultValue={carActivitiesData?.pagination?.size || pageSize}
+                    onChange={(event) => {
+                      setPage(0)
+                      setPageSize(event.target.value as number)
+                    }}
+                  >
+                    {config.tableRowsPerPageOptions.map((rowOption) => {
+                      return (
+                        <MenuItem key={rowOption} value={rowOption}>
+                          {rowOption}
+                        </MenuItem>
+                      )
+                    })}
+                  </Select>
+                </FormControl>
+                <Pagination
+                  count={carActivitiesData?.pagination?.totalPage}
+                  page={carActivitiesData?.pagination?.page || page}
+                  defaultPage={carActivitiesData?.pagination?.page || page}
+                  variant="text"
+                  color="primary"
+                  onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                    setPage(value)
+                  }}
+                />
+              </div>
+            </Card>
+          </Fragment>
+          <ActivityScheduleDialog
+            visible={visibleAddDialog}
+            carId={carId}
+            onClose={handleOnScheduleDialogClose}
+          />
+        </ContentSection>
+      </Wrapper>
     </Page>
   )
 }

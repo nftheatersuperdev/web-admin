@@ -4,6 +4,7 @@ import {
   AdminUser,
   AdminUsersResponse,
   AdminUserProfileResponse,
+  GetAdminUsersByCriteriaProps,
 } from 'services/web-bff/admin-user.type'
 
 export const getAdminUserProfile = async (): Promise<AdminUser> => {
@@ -25,6 +26,23 @@ export const getAdminUsers = async (page = 1, size = 10): Promise<AdminUsersResp
       },
     }
   ).then((response) => {
+    return response.data
+  })
+
+  return response
+}
+
+export const getAdminUserByCriteria = async ({
+  data,
+  page = 1,
+  size = 10,
+}: GetAdminUsersByCriteriaProps): Promise<AdminUsersResponse> => {
+  const response: AdminUsersResponse = await AdminBffAPI.post('/v1/admin-users/search', data, {
+    params: {
+      page,
+      size,
+    },
+  }).then((response) => {
     return response.data
   })
 
