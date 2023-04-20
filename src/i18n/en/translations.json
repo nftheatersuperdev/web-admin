@@ -111,7 +111,8 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "packageManagement": "Package Management"
+    "packageManagement": "Package Management",
+    "customerDetails": "Customer Details"
   },
   "button": {
     "add": "Add",

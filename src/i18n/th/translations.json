@@ -111,7 +111,8 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "packageManagement": "Package Management"
+    "packageManagement": "Package Management",
+    "customerDetails": "รายละเอียดลูกค้า"
   },
   "button": {
     "add": "เพิ่ม",

@@ -160,7 +160,7 @@ export default function CustomerProfile(): JSX.Element {
           <TableRow
             hover
             onClick={() => history.push(`/customer-profile/${user.id}/edit`)}
-            key={`admin-user-${user.id}`}
+            key={`customer-${user.id}`}
           >
             <TableCell>
               <Checkbox className={classes.hideObject} size="small" />
