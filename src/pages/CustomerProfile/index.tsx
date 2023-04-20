@@ -247,6 +247,16 @@ export default function CustomerProfile(): JSX.Element {
       userResponse.data.customers.map((user) => {
         // Build CSV Data
         const acctStatus = user.isActive ? 'Active' : 'Deleted'
+        let kycStatusValue: string
+        if (user.kycStatus === null) {
+          kycStatusValue = ''
+        } else if (user.kycStatus.toLowerCase() === 'rejected') {
+          kycStatusValue = t('user.kyc.rejected')
+        } else if (user.kycStatus.toLowerCase() === 'verified') {
+          kycStatusValue = t('user.kyc.verified')
+        } else {
+          kycStatusValue = t('user.kyc.pending')
+        }
         const makeCsvData = () => ({
           id: user.id,
           firstName: user.firstName,
@@ -254,7 +264,7 @@ export default function CustomerProfile(): JSX.Element {
           email: user.email,
           phone: convertPhoneNumber(user.phoneNumber),
           status: acctStatus,
-          kycStatus: user.kycStatus,
+          kycStatus: kycStatusValue,
           //   verifyDate: formatDate(), // TO DO check api response
           kycReason: user.kycReason,
           userGroup: user.customerGroups,
