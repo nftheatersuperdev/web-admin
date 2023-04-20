@@ -36,6 +36,7 @@ interface AuthProps {
   getRoleDisplayName: () => string
   setUserId: (id: string) => void
   getUserId: () => string | null | undefined
+  getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
 }
 
 const Auth = createContext<AuthProps>({
@@ -52,6 +53,7 @@ const Auth = createContext<AuthProps>({
   getRoleDisplayName: () => '',
   setUserId: (_id: string) => undefined,
   getUserId: () => undefined,
+  getRemoteConfig: (_key: string) => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
@@ -114,6 +116,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       if (!user) {
         throw new Error('User not found')
       }
+      await fbase.fetchRemoteConfig()
       const token = await user.getIdToken()
       setToken(token || '')
 
@@ -147,6 +150,10 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     }
   }
 
+  const getRemoteConfig = (key: string): firebase.remoteConfig.Value | undefined => {
+    return fbase.getRemoteConfig(key)
+  }
+
   if (isLoading) {
     return <Fragment>Loading...</Fragment>
   }
@@ -166,6 +173,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getRoleDisplayName,
         setUserId,
         getUserId,
+        getRemoteConfig,
       }}
     >
       {children}
