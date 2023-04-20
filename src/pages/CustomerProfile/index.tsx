@@ -133,6 +133,10 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
     padding: '48px 0',
   },
+  rightPanel: {
+    textAlign: 'right',
+    paddingRight: '16px',
+  },
 })
 
 export default function CustomerProfile(): JSX.Element {
@@ -481,7 +485,10 @@ export default function CustomerProfile(): JSX.Element {
               {t('carAvailability.searchBtn')}
             </Button>
           </Grid>
-          <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
+          <Grid
+            className={[classes.filter, classes.paddingLeft, classes.rightPanel].join(' ')}
+            xs={3}
+          >
             <Button
               id="customer_profile__export_btn"
               className={classes.exportButton}
