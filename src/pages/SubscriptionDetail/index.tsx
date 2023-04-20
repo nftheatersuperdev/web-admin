@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
@@ -31,13 +34,14 @@ import {
 import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import { getDetailById } from 'services/web-bff/subscription'
+import { getDetailsById } from 'services/web-bff/subscription'
 import { BookingCarActivity } from 'services/web-bff/subscription.type'
 import CarDetailDialog from './CarDetailDialog'
 import CarReplacementDialog from './CarReplacementDialog'
 
 interface SubscriptionDetailParams {
-  id: string
+  bookingId: string
+  bookingDetailId: string
 }
 
 const Wrapper = styled(Card)`
@@ -63,7 +67,7 @@ export default function SubscriptionDetail(): JSX.Element {
   const currentRole = getRole()
   const { t } = useTranslation()
 
-  const { id: bookingDetailId } = useParams<SubscriptionDetailParams>()
+  const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -84,10 +88,52 @@ export default function SubscriptionDetail(): JSX.Element {
     data: bookingDetails,
     isFetching,
     refetch: refetchBooking,
-  } = useQuery('subscription-detail', () => getDetailById(bookingDetailId), {
+  } = useQuery('booking', () => getDetailsById(bookingId), {
     refetchOnWindowFocus: false,
   })
-  const carActivities = bookingDetails?.carActivities.reverse() || []
+
+  const bookingDetail =
+    bookingDetails && bookingDetails?.length > 0
+      ? bookingDetails.find((booking) => booking.id === bookingDetailId)
+      : {
+          carActivities: [],
+          displayStatus: '',
+          startDate: '',
+          endDate: '',
+          customer: {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+          },
+          rentDetail: {
+            chargePrice: 0,
+            durationDay: 0,
+            createdDate: '',
+            updatedDate: '',
+            voucherCode: '',
+          },
+          payments: [
+            {
+              id: '',
+              externalTransactionId: '',
+              amount: 0,
+              updatedDate: '',
+              type: '',
+              description: '',
+              status: '',
+              statusMessage: '',
+            },
+          ],
+        }
+
+  let maxEndDate = new Date()
+  if (bookingDetails && bookingDetails.length > 0) {
+    maxEndDate = new Date(
+      Math.max(...bookingDetails.map((bookingDetail) => new Date(bookingDetail.endDate)))
+    )
+  }
+  const carActivities = bookingDetail?.carActivities.reverse() || []
 
   const [carDetail, setCarDetail] = useState<BookingCarActivity | undefined>(undefined)
   const [carDetailDialogOpen, setCarDetailDialogOpen] = useState<boolean>(false)
@@ -98,11 +144,9 @@ export default function SubscriptionDetail(): JSX.Element {
     setCarDetailDialogOpen(true)
   }
 
-  const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(
-    bookingDetails?.displayStatus
-  )
+  const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
   const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [ROLES.OPERATION])
-  const isEndDateOverToday = bookingDetails ? new Date(bookingDetails?.endDate) < new Date() : false
+  const isEndDateOverToday = bookingDetail ? new Date(bookingDetail?.endDate) < new Date() : false
 
   return (
     <Page>
@@ -128,7 +172,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={bookingDetails?.customer.firstName || '-'}
+                value={bookingDetail?.customer.firstName || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -144,7 +188,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={bookingDetails?.customer.lastName || '-'}
+                value={bookingDetail?.customer.lastName || '-'}
               />
             </Grid>
           </Grid>
@@ -164,7 +208,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={bookingDetails?.customer.email || '-'}
+                value={bookingDetail?.customer.email || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -180,7 +224,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={bookingDetails?.customer.phoneNumber || '-'}
+                value={bookingDetail?.customer.phoneNumber || '-'}
               />
             </Grid>
           </Grid>
@@ -200,7 +244,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={Number(bookingDetails?.rentDetail.chargePrice || 0).toLocaleString()}
+                value={Number(bookingDetail?.rentDetail.chargePrice || 0).toLocaleString()}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -216,7 +260,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={convertToDuration(bookingDetails?.rentDetail.durationDay || 0, t)}
+                value={convertToDuration(bookingDetail?.rentDetail.durationDay || 0, t)}
               />
             </Grid>
           </Grid>
@@ -237,8 +281,8 @@ export default function SubscriptionDetail(): JSX.Element {
                 }}
                 variant="outlined"
                 value={
-                  bookingDetails?.displayStatus
-                    ? columnFormatSubEventStatus(bookingDetails?.displayStatus, t)
+                  bookingDetail?.displayStatus
+                    ? columnFormatSubEventStatus(bookingDetail?.displayStatus, t)
                     : t('booking.statuses.unknown')
                 }
               />
@@ -276,9 +320,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(bookingDetails?.rentDetail.createdDate).format(
-                  DEFAULT_DATETIME_FORMAT
-                )}
+                value={dayjs(bookingDetail?.rentDetail.createdDate).format(DEFAULT_DATETIME_FORMAT)}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -294,9 +336,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(bookingDetails?.rentDetail.updatedDate).format(
-                  DEFAULT_DATETIME_FORMAT
-                )}
+                value={dayjs(bookingDetail?.rentDetail.updatedDate).format(DEFAULT_DATETIME_FORMAT)}
               />
             </Grid>
           </Grid>
@@ -316,7 +356,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(bookingDetails?.startDate).format(DEFAULT_DATE_FORMAT)}
+                value={dayjs(bookingDetail?.startDate).format(DEFAULT_DATE_FORMAT)}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -332,7 +372,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(bookingDetails?.endDate).format(DEFAULT_DATE_FORMAT)}
+                value={dayjs(bookingDetail?.endDate).format(DEFAULT_DATE_FORMAT)}
               />
             </Grid>
           </Grid>
@@ -352,7 +392,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={bookingDetails?.rentDetail.voucherCode || t('subscription.noData')}
+                value={bookingDetail?.rentDetail.voucherCode || t('subscription.noData')}
               />
             </Grid>
           </Grid>
@@ -377,7 +417,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {bookingDetails?.payments.map((payment) => (
+                  {bookingDetail?.payments.map((payment: any) => (
                     <TableRow key={payment.id}>
                       <TableCell component="th" scope="row">
                         {payment.externalTransactionId || '-'}
@@ -422,7 +462,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   color="primary"
                   onClick={() => setCarReplacementlogOpen(true)}
                   disabled={
-                    !bookingDetails ||
+                    !bookingDetail ||
                     !isAllowToDoCarReplacement ||
                     !isTherePermissionToDoCarReplacement ||
                     isEndDateOverToday
@@ -502,7 +542,8 @@ export default function SubscriptionDetail(): JSX.Element {
       <CarReplacementDialog
         editorEmail={firebaseUser?.email || '-'}
         open={carReplacementDialogOpen}
-        bookingDetails={bookingDetails}
+        bookingDetail={bookingDetail}
+        maxEndDate={maxEndDate}
         onClose={(needRefetch) => {
           if (needRefetch) {
             refetchBooking()
