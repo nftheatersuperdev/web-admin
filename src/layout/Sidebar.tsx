@@ -33,6 +33,7 @@ import { ROUTE_PATHS } from 'routes'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
+import { hasAllowedPrivilege, PRIVILEGES } from 'auth/privileges'
 
 const MobileSidebar = styled(SwipeableDrawer)`
   width: ${({ theme }) => theme.size.sidebar};
@@ -98,14 +99,15 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.userManagement.customerProfile'),
         path: ROUTE_PATHS.CUSTOMER_PROFILE,
         icon: <UserIcon />,
-        allowedRoles: [
-          ROLES.SUPER_ADMIN,
-          ROLES.ADMIN,
-          ROLES.CUSTOMER_SUPPORT,
-          ROLES.OPERATION,
-          ROLES.MARKETING,
-          ROLES.PRODUCT_SUPPORT,
-        ],
+        // allowedRoles: [
+        //   ROLES.SUPER_ADMIN,
+        //   ROLES.ADMIN,
+        //   ROLES.CUSTOMER_SUPPORT,
+        //   ROLES.OPERATION,
+        //   ROLES.MARKETING,
+        //   ROLES.PRODUCT_SUPPORT,
+        // ],
+        allowedPrivileges: [PRIVILEGES.PERM_CUSTOMER_VIEW],
       },
 
       {
@@ -285,8 +287,8 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.staffProfile'),
         path: ROUTE_PATHS.STAFF_PROFILES,
         icon: <AdminUsersIcon />,
-        // allowedRoles: [ROLES.NOT_PUBLISH],
-        allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+        allowedPrivileges: [PRIVILEGES.PERM_ADMIN_USER_VIEW, PRIVILEGES.PERM_ADMIN_USER_CREATE],
       },
       { subHeader: t('sidebar.account') },
       {
@@ -334,47 +336,58 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
   }
 
   function SidebarList(): JSX.Element {
-    const { getRole, getRemoteConfig } = useAuth()
+    const { getRole, getRemoteConfig, getPrivileges } = useAuth()
     const currentRole = getRole()
+    const privileges = getPrivileges()
 
     return (
       <List role="presentation" onClick={handleSidebarEvent} onKeyDown={handleSidebarEvent}>
         <List>
-          {SIDEBAR_ITEMS.map(({ id, title, subHeader, path, icon, allowedRoles, toggleKey }) => {
-            if (!hasAllowedRole(currentRole, allowedRoles)) {
-              return null
-            }
-
-            if (toggleKey) {
-              const isToggle = getRemoteConfig(toggleKey)?.asBoolean()
-              if (!isToggle) {
+          {SIDEBAR_ITEMS.map(
+            ({ id, title, subHeader, path, icon, allowedRoles, toggleKey, allowedPrivileges }) => {
+              if (!hasAllowedRole(currentRole, allowedRoles)) {
                 return null
               }
-            }
-
-            return subHeader ? (
-              <ListSubheader component="div">{subHeader}</ListSubheader>
-            ) : (
-              <ListItem
-                id={id}
-                key={title}
-                button
-                // @ts-expect-error we want to use the component prop here
-                component={Link}
-                to={path}
-                selected={
-                  !!matchPath(location.pathname, {
-                    path,
-                    exact: true,
-                    strict: false,
-                  })
+              // Add condition to check allowedPrivileges for some menu
+              // Remove this condition when every menu use privileges
+              // Add by Veerapat.pre @20/04/2023
+              if (allowedPrivileges) {
+                if (!hasAllowedPrivilege(privileges, allowedPrivileges)) {
+                  return null
                 }
-              >
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={title} />
-              </ListItem>
-            )
-          })}
+              }
+
+              if (toggleKey) {
+                const isToggle = getRemoteConfig(toggleKey)?.asBoolean()
+                if (!isToggle) {
+                  return null
+                }
+              }
+
+              return subHeader ? (
+                <ListSubheader component="div">{subHeader}</ListSubheader>
+              ) : (
+                <ListItem
+                  id={id}
+                  key={title}
+                  button
+                  // @ts-expect-error we want to use the component prop here
+                  component={Link}
+                  to={path}
+                  selected={
+                    !!matchPath(location.pathname, {
+                      path,
+                      exact: true,
+                      strict: false,
+                    })
+                  }
+                >
+                  <ListItemIcon>{icon}</ListItemIcon>
+                  <ListItemText primary={title} />
+                </ListItem>
+              )
+            }
+          )}
         </List>
       </List>
     )
