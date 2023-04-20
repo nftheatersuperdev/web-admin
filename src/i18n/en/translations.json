@@ -264,6 +264,7 @@
   },
   "user": {
     "custometList": "Customer List",
+    "customerId": "Customer ID",
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
@@ -290,6 +291,7 @@
       "rejectReason": "Reject Reason"
     },
     "verifyDate": "Verify Date",
+    "verificationDetail": "Verification Detail",
     "note": "Note",
     "rejectedReason": "Reason of rejection",
     "userGroups": "User groups",

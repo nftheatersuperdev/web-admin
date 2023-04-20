@@ -264,6 +264,7 @@
   },
   "user": {
     "custometList": "รายชื่อลูกค้า",
+    "customerId": "เลขไอดีลูกค้า",
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
@@ -290,6 +291,7 @@
       "rejectReason": "เหตุผลของการปฏิเสธ"
     },
     "verifyDate": "วันที่ตรวจสอบ",
+    "verificationDetail": "รายละเอียดการตรวจสอบ",
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ",
     "userGroups": "กลุ่มผู้ใช้งาน",

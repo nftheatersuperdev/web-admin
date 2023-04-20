@@ -44,7 +44,7 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILE_ADD: '/staff-profile/create',
   SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
   SUBSCRIPTION_PACKAGE_ADD: '/subscription-management/package-management/create',
-  CUSTOMER_PROFILE: '/customer-profile',
+  CUSTOMER_PROFILE: '/customer-profiles',
   CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
   CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   FORBIDDEN: '/403',
