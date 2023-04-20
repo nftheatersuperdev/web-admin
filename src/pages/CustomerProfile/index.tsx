@@ -32,6 +32,7 @@ import {
   DEFAULT_DATETIME_FORMAT_ISO,
   formatDate,
   validateKeywordText,
+  convertPhoneNumber,
 } from 'utils'
 import config from 'config'
 import Pagination from '@material-ui/lab/Pagination'
@@ -164,7 +165,7 @@ export default function CustomerProfile(): JSX.Element {
       setShowKycStatusDropdown(false)
       setShowDatePicker(false)
       setShowSearchButton(false)
-    } else if (params === 'accountStatus') {
+    } else if (params === 'isActive') {
       setShowTextField(false)
       setShowStatusDropdown(true)
       setShowKycStatusDropdown(false)
@@ -204,6 +205,11 @@ export default function CustomerProfile(): JSX.Element {
             .startOf('day')
             .format(DEFAULT_DATETIME_FORMAT_ISO),
         } as CustomerFilterRequest
+      } else if (value.searchType === 'accountStatus') {
+        const isActive: boolean = filterSearchField === 'true'
+        updateObj = {
+          [value.searchType]: isActive,
+        } as CustomerFilterRequest
       } else {
         updateObj = {
           [value.searchType]: filterSearchField,
@@ -221,17 +227,17 @@ export default function CustomerProfile(): JSX.Element {
     searchCustomer({ data: customerFilter, page, size: pageSize } as CustomerMeProps)
   )
   const csvHeaders = [
-    { label: t('user.id'), key: 'id' },
-    { label: t('user.firstName'), key: 'firstName' },
-    { label: t('user.lastName'), key: 'lastName' },
-    { label: t('user.email'), key: 'email' },
-    { label: t('user.phone'), key: 'phone' },
-    { label: t('user.status'), key: 'status' },
-    { label: t('user.kyc.status'), key: 'kycStatus' },
-    { label: t('user.kyc.rejectReason'), key: 'kycReason' },
-    { label: t('user.userGroups'), key: 'userGroup' },
-    { label: t('user.createdDate'), key: 'createdDate' },
-    { label: t('user.updatedDate'), key: 'updatedDate' },
+    { label: 'ID', key: 'id' },
+    { label: 'First name', key: 'firstName' },
+    { label: 'Last name', key: 'lastName' },
+    { label: 'Email', key: 'email' },
+    { label: 'Phone number', key: 'phone' },
+    { label: 'Account Status', key: 'status' },
+    { label: 'KYC Status', key: 'kycStatus' },
+    { label: 'Reason of rejection', key: 'kycReason' },
+    { label: 'User group', key: 'userGroup' },
+    { label: 'Created Date', key: 'createdDate' },
+    { label: 'Updated Date', key: 'updatedDate' },
   ]
   // eslint-disable-next-line
   const csvData: any = []
@@ -240,13 +246,13 @@ export default function CustomerProfile(): JSX.Element {
       userResponse.data?.customers.length > 0 &&
       userResponse.data.customers.map((user) => {
         // Build CSV Data
-        const acctStatus = user.isActive ? 'Enable' : 'Disable'
+        const acctStatus = user.isActive ? 'Active' : 'Deleted'
         const makeCsvData = () => ({
           id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          phone: user.phoneNumber,
+          phone: convertPhoneNumber(user.phoneNumber),
           status: acctStatus,
           kycStatus: user.kycStatus,
           //   verifyDate: formatDate(), // TO DO check api response
@@ -269,12 +275,12 @@ export default function CustomerProfile(): JSX.Element {
             <TableCell>{user.firstName}</TableCell>
             <TableCell>{user.lastName}</TableCell>
             <TableCell>{user.email}</TableCell>
-            <TableCell>{user.phoneNumber}</TableCell>
+            <TableCell>{convertPhoneNumber(user.phoneNumber)}</TableCell>
             <TableCell align="center">
               {!user.isActive ? (
                 <Chip
                   size="small"
-                  label={t('user.statuses.inactive')}
+                  label={t('user.statuses.deleted')}
                   className={classes.chipLightGrey}
                 />
               ) : (
@@ -388,7 +394,7 @@ export default function CustomerProfile(): JSX.Element {
               <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
               <MenuItem value="email">{t('user.email')}</MenuItem>
               <MenuItem value="phoneNumber">{t('user.phone')}</MenuItem>
-              <MenuItem value="accountStatus">{t('user.status')}</MenuItem>
+              <MenuItem value="isActive">{t('user.status')}</MenuItem>
               <MenuItem value="kycStatus">{t('user.kyc.status')}</MenuItem>
               <MenuItem value="customerGroupName">{t('user.userGroups')}</MenuItem>
               <MenuItem value="createdDate">{t('staffProfile.createdDate')}</MenuItem>
@@ -422,9 +428,8 @@ export default function CustomerProfile(): JSX.Element {
               name="status"
               variant="outlined"
             >
-              <MenuItem value="active">{t('user.statuses.active')}</MenuItem>
-              <MenuItem value="inactive">{t('user.statuses.inactive')}</MenuItem>
-              <MenuItem value="deleted">{t('user.statuses.deleted')}</MenuItem>
+              <MenuItem value="true">{t('user.statuses.active')}</MenuItem>
+              <MenuItem value="false">{t('user.statuses.deleted')}</MenuItem>
             </TextField>
             <TextField
               className={showKycStatusDropdown ? '' : classes.hideObject}
