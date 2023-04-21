@@ -99,14 +99,6 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.userManagement.customerProfile'),
         path: ROUTE_PATHS.CUSTOMER_PROFILE,
         icon: <UserIcon />,
-        // allowedRoles: [
-        //   ROLES.SUPER_ADMIN,
-        //   ROLES.ADMIN,
-        //   ROLES.CUSTOMER_SUPPORT,
-        //   ROLES.OPERATION,
-        //   ROLES.MARKETING,
-        //   ROLES.PRODUCT_SUPPORT,
-        // ],
         allowedPrivileges: [PRIVILEGES.PERM_CUSTOMER_VIEW],
       },
 
@@ -287,7 +279,6 @@ function Sidebar({ isOpen, onSidebarToggle }: SidebarProps): JSX.Element {
         title: t('sidebar.staffProfile'),
         path: ROUTE_PATHS.STAFF_PROFILES,
         icon: <AdminUsersIcon />,
-        // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
         allowedPrivileges: [PRIVILEGES.PERM_ADMIN_USER_VIEW, PRIVILEGES.PERM_ADMIN_USER_CREATE],
       },
       { subHeader: t('sidebar.account') },
