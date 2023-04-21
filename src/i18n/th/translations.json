@@ -259,6 +259,8 @@
   "staffProfile": {
     "staffList": "รายชื่อพนักงาน",
     "of": "จาก",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
     "createdDate": "วันที่สร้าง",
     "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
     "searchCriteria": "ค้นหา",

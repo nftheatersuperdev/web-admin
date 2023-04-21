@@ -664,3 +664,7 @@ export const convertPhoneNumber = (value: string | null | undefined): string => 
   }
   return ''
 }
+
+export function formaDateStringWithPattern(dateStr?: string, pattern?: string): string {
+  return dateStr ? dayjs(dateStr).format(pattern || DEFAULT_DATE_FORMAT) : '-'
+}
