@@ -23,7 +23,11 @@ import {
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import config from 'config'
-import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
+import {
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  formaDateStringWithPattern,
+  formatStringForInputText,
+} from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
@@ -163,9 +167,9 @@ export default function StaffProfiles(): JSX.Element {
             <TableCell>
               <Checkbox className={classes.hideObject} size="small" />
             </TableCell>
-            <TableCell>{adminUserData.firstName}</TableCell>
-            <TableCell>{adminUserData.lastName}</TableCell>
-            <TableCell>{adminUserData.email}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.firstName)}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.lastName)}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.email)}</TableCell>
             <TableCell>{adminUserData.role}</TableCell>
             <TableCell align="center">
               {!adminUserData.isActive ? (

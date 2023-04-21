@@ -1,4 +1,17 @@
-import { Typography, Breadcrumbs, Card, Link, Button, Grid, TextField } from '@mui/material'
+import {
+  Typography,
+  Breadcrumbs,
+  Card,
+  Link,
+  Button,
+  Grid,
+  TextField,
+  Table,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableBody,
+} from '@mui/material'
 import { makeStyles } from '@mui/styles'
 // import { formatDate } from 'utils'
 import { useTranslation } from 'react-i18next'
@@ -37,6 +50,11 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+  textField: {
+    '& .MuiInputBase-input': {
+      height: '1.4rem',
+    },
+  },
 })
 
 interface CustomerProfileDetailEditParam {
@@ -65,6 +83,21 @@ export default function CustomerProfileDetail(): JSX.Element {
   } else {
     kycStatusValue = t('user.kyc.pending')
   }
+  const userGroup =
+    userResponse?.data.customers[0].customerGroups.map((group, i) => {
+      return (
+        <TableRow key={i}>
+          <TableCell>{group}</TableCell>
+        </TableRow>
+      )
+    }) || []
+  const isNoUserGroup = userGroup.length > 0
+  const generateUserGroupTable = () => {
+    if (!isNoUserGroup) {
+      return <TableRow />
+    }
+    return <TableBody>{userGroup}</TableBody>
+  }
   const handleOnCancel = () => {
     return history.goBack()
   }
@@ -74,7 +107,7 @@ export default function CustomerProfileDetail(): JSX.Element {
       <PageTitle title={t('sidebar.userManagement.customerProfile')} />
       <Breadcrumbs aria-label="breadcrumb">
         <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Link underline="hover" color="inherit" href="/customer-profile">
+        <Link underline="hover" color="inherit" href="/customer-profiles">
           {t('sidebar.userManagement.customerProfile')}
         </Link>
         <Typography color="primary">{t('sidebar.customerDetails')}</Typography>
@@ -87,112 +120,87 @@ export default function CustomerProfileDetail(): JSX.Element {
         <Grid container spacing={2} className={classes.detailContainer}>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-customerid"
-              name={t('user.customerId')}
+              type="text"
+              id="customer_profile__customerId"
+              className={classes.textField}
               label={t('user.customerId')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={customerData?.id}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={customerData?.id || ''}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-accountstatus"
-              name={t('user.status')}
+              type="text"
+              id="customer_profile__accountStatus"
+              className={classes.textField}
               label={t('user.status')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={acctStatus}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={acctStatus || '-'}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-fistname"
-              name={t('user.firstName')}
+              type="text"
+              id="customer_profile__firstName"
+              className={classes.textField}
               label={t('user.firstName')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={customerData?.firstName}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={customerData?.firstName || '-'}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-lastname"
-              name={t('user.lastName')}
+              type="text"
+              id="customer_profile__lastName"
+              className={classes.textField}
               label={t('user.lastName')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={customerData?.lastName}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={customerData?.lastName || '-'}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-email"
-              name={t('user.email')}
+              type="text"
+              id="customer_profile__email"
+              className={classes.textField}
               label={t('user.email')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={customerData?.email}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={customerData?.email || '-'}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-phonenumber"
-              name={t('user.phone')}
+              type="text"
+              id="customer_profile__phoneNumber"
+              className={classes.textField}
               label={t('user.phone')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={convertPhoneNumber(customerData?.phoneNumber)}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={convertPhoneNumber(customerData?.phoneNumber) || '-'}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-createddate"
-              name={t('user.createdDate')}
+              id="customer_profile__createdDate"
               label={t('user.createdDate')}
+              fullWidth
+              disabled
               variant="outlined"
               value={formaDateStringWithPattern(
                 customerData?.createdDate,
                 DEFAULT_DATETIME_FORMAT_MONTH_TEXT
               )}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="input-updateddate"
-              name={t('user.updatedDate')}
-              label={t('user.updatedDate')}
-              variant="outlined"
-              value={formaDateStringWithPattern(
-                customerData?.updatedDate,
-                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-              )}
-              InputProps={{
-                readOnly: true,
-              }}
             />
           </Grid>
         </Grid>
@@ -205,28 +213,26 @@ export default function CustomerProfileDetail(): JSX.Element {
         <Grid container spacing={2} className={classes.detailContainer}>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-kycstatus"
-              name={t('user.kyc.status')}
+              type="text"
+              id="customer_profile__kycStatus"
+              className={classes.textField}
               label={t('user.kyc.status')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={kycStatusValue}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={kycStatusValue || '-'}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
-              fullWidth
-              id="input-rejectreason"
-              name={t('user.rejectedReason')}
+              type="text"
+              id="customer_profile__rejectReason"
+              className={classes.textField}
               label={t('user.rejectedReason')}
+              fullWidth
+              disabled
               variant="outlined"
-              value={customerData?.kycReason}
-              InputProps={{
-                readOnly: true,
-              }}
+              value={customerData?.kycReason || '-'}
             />
           </Grid>
         </Grid>
@@ -234,21 +240,18 @@ export default function CustomerProfileDetail(): JSX.Element {
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('user.userGroups')}</Typography>
+          <Typography>{t('user.userGroup')}</Typography>
         </div>
         <Grid container spacing={2} className={classes.detailContainer}>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              id="input-userGroup-id"
-              name={t('user.userGroups')}
-              label={t('user.userGroups')}
-              variant="outlined"
-              value={customerData?.customerGroups}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
+          <Grid item xs={12}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">{t('user.name')}</TableCell>
+                </TableRow>
+              </TableHead>
+              {generateUserGroupTable()}
+            </Table>
           </Grid>
         </Grid>
       </Card>

@@ -280,6 +280,7 @@
     "firstName": "ชื่อ",
     "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
+    "name": "ชื่อ",
     "status": "สถานะบัญชี",
     "statuses": {
       "active": "ใช้งานอยู่",
@@ -300,6 +301,7 @@
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ",
     "userGroups": "กลุ่มผู้ใช้งาน",
+    "userGroup": "กลุ่มผู้ใช้งาน",
     "enabled": "เปิด",
     "disabled": "ปิด",
     "actions": "ดำเนินการ",
