@@ -113,7 +113,8 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "packageManagement": "Package Management"
+    "packageManagement": "Package Management",
+    "customerDetails": "รายละเอียดลูกค้า"
   },
   "button": {
     "add": "เพิ่ม",
@@ -268,6 +269,7 @@
   },
   "user": {
     "custometList": "รายชื่อลูกค้า",
+    "customerId": "เลขไอดีลูกค้า",
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
@@ -278,6 +280,7 @@
     "firstName": "ชื่อ",
     "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
+    "name": "ชื่อ",
     "status": "สถานะบัญชี",
     "statuses": {
       "active": "ใช้งานอยู่",
@@ -294,9 +297,11 @@
       "rejectReason": "เหตุผลของการปฏิเสธ"
     },
     "verifyDate": "วันที่ตรวจสอบ",
+    "verificationDetail": "รายละเอียดการตรวจสอบ",
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ",
     "userGroups": "กลุ่มผู้ใช้งาน",
+    "userGroup": "กลุ่มผู้ใช้งาน",
     "enabled": "เปิด",
     "disabled": "ปิด",
     "actions": "ดำเนินการ",

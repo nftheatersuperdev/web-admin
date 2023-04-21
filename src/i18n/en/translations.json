@@ -113,7 +113,8 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "packageManagement": "Package Management"
+    "packageManagement": "Package Management",
+    "customerDetails": "Customer Details"
   },
   "button": {
     "add": "Add",
@@ -268,6 +269,7 @@
   },
   "user": {
     "custometList": "Customer List",
+    "customerId": "Customer ID",
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
@@ -278,6 +280,7 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "fullName": "Full Name",
+    "name": "Name",
     "status": "Account Status",
     "statuses": {
       "active": "Active",
@@ -294,9 +297,11 @@
       "rejectReason": "Reject Reason"
     },
     "verifyDate": "Verify Date",
+    "verificationDetail": "Verification Detail",
     "note": "Note",
     "rejectedReason": "Reason of rejection",
     "userGroups": "User groups",
+    "userGroup": "User group",
     "enabled": "Enabled",
     "disabled": "Disabled",
     "actions": "Actions",

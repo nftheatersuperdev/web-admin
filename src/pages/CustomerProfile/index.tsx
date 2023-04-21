@@ -32,6 +32,7 @@ import {
   DEFAULT_DATETIME_FORMAT_ISO,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
+  formatStringForInputText,
   validateKeywordText,
   convertPhoneNumber,
 } from 'utils'
@@ -288,14 +289,14 @@ export default function CustomerProfile(): JSX.Element {
           <TableRow
             hover
             onClick={() => history.push(`/customer-profile/${user.id}/edit`)}
-            key={`admin-user-${user.id}`}
+            key={`customer-${user.id}`}
           >
             <TableCell>
               <Checkbox className={classes.hideObject} size="small" />
             </TableCell>
-            <TableCell>{user.firstName}</TableCell>
-            <TableCell>{user.lastName}</TableCell>
-            <TableCell>{user.email}</TableCell>
+            <TableCell>{formatStringForInputText(user.firstName)}</TableCell>
+            <TableCell>{formatStringForInputText(user.lastName)}</TableCell>
+            <TableCell>{formatStringForInputText(user.email)}</TableCell>
             <TableCell>{convertPhoneNumber(user.phoneNumber)}</TableCell>
             <TableCell align="center">
               {!user.isActive ? (
@@ -369,15 +370,20 @@ export default function CustomerProfile(): JSX.Element {
     const isKeywordAccepted = validateKeywordText(value)
     setFilterSearchField(value)
     setFilterSearchFieldError('')
-    if (isKeywordAccepted && value.length >= 2) {
+    if (formik.values.searchType !== 'id') {
+      if (isKeywordAccepted && value.length >= 2) {
+        setFilterSearchField(value)
+        setIsEnableFilterButton(true)
+      } else if (value !== '') {
+        setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
+        setIsEnableFilterButton(false)
+      } else {
+        setFilterSearchField('')
+        setIsEnableFilterButton(false)
+      }
+    } else {
       setFilterSearchField(value)
       setIsEnableFilterButton(true)
-    } else if (value !== '') {
-      setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
-      setIsEnableFilterButton(false)
-    } else {
-      setFilterSearchField('')
-      setIsEnableFilterButton(false)
     }
   }
   return (
@@ -414,7 +420,7 @@ export default function CustomerProfile(): JSX.Element {
               <MenuItem value=" ">
                 <em />
               </MenuItem>
-              <MenuItem value="userId">{t('user.id')}</MenuItem>
+              <MenuItem value="id">{t('user.id')}</MenuItem>
               <MenuItem value="firstName">{t('user.firstName')}</MenuItem>
               <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
               <MenuItem value="email">{t('user.email')}</MenuItem>
