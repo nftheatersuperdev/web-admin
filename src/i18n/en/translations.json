@@ -257,6 +257,8 @@
   "staffProfile": {
     "staffList": "Staff List",
     "of": "of",
+    "firstName": "First name",
+    "lastName": "Last name",
     "createdDate": "Created Date",
     "firebaseId": "FirebaseID",
     "searchCriteria": "Search Criteria",

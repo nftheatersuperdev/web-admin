@@ -23,7 +23,7 @@ import {
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import config from 'config'
-import { formatDate } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
@@ -143,8 +143,14 @@ export default function StaffProfiles(): JSX.Element {
           email: adminUserData.email,
           role: adminUserData.role,
           status: acctStatus,
-          createdDate: formatDate(adminUserData.createdDate),
-          updatedDate: formatDate(adminUserData.updatedDate),
+          createdDate: formaDateStringWithPattern(
+            adminUserData.createdDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
+          updatedDate: formaDateStringWithPattern(
+            adminUserData.updatedDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
         })
         csvData.push(makeCsvData())
         // Build Table Body
@@ -168,8 +174,18 @@ export default function StaffProfiles(): JSX.Element {
                 <Chip size="small" label={t('user.enabled')} className={classes.chipGreen} />
               )}
             </TableCell>
-            <TableCell>{formatDate(adminUserData.createdDate)}</TableCell>
-            <TableCell>{formatDate(adminUserData.updatedDate)}</TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(
+                adminUserData.createdDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            </TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(
+                adminUserData.updatedDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            </TableCell>
           </TableRow>
         )
       })) ||
@@ -280,10 +296,10 @@ export default function StaffProfiles(): JSX.Element {
                       <Checkbox className={classes.hideObject} size="small" />
                     </TableCell>
                     <TableCell align="center">
-                      <div className={classes.textBoldBorder}> {t('user.firstName')}</div>
+                      <div className={classes.textBoldBorder}> {t('staffProfile.firstName')}</div>
                     </TableCell>
                     <TableCell align="center">
-                      <div className={classes.textBoldBorder}> {t('user.lastName')}</div>
+                      <div className={classes.textBoldBorder}> {t('staffProfile.lastName')}</div>
                     </TableCell>
                     <TableCell align="center">
                       <div className={classes.textBoldBorder}> {t('user.email')}</div>

@@ -30,7 +30,8 @@ import { makeStyles } from '@mui/styles'
 import {
   DEFAULT_DATE_FORMAT,
   DEFAULT_DATETIME_FORMAT_ISO,
-  formatDate,
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  formaDateStringWithPattern,
   validateKeywordText,
   convertPhoneNumber,
 } from 'utils'
@@ -272,8 +273,14 @@ export default function CustomerProfile(): JSX.Element {
           //   verifyDate: formatDate(), // TO DO check api response
           kycReason: user.kycReason,
           userGroup: user.customerGroups,
-          createdDate: formatDate(user.createdDate),
-          updatedDate: formatDate(user.updatedDate),
+          createdDate: formaDateStringWithPattern(
+            user.createdDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
+          updatedDate: formaDateStringWithPattern(
+            user.updatedDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
         })
         csvData.push(makeCsvData())
         // Build Table Body
@@ -316,8 +323,12 @@ export default function CustomerProfile(): JSX.Element {
                 <Chip size="small" label={t('user.kyc.pending')} className={classes.chipGrey} />
               )}
             </TableCell>
-            <TableCell>{formatDate(user.createdDate)}</TableCell>
-            <TableCell>{formatDate(user.updatedDate)}</TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(user.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+            </TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(user.updatedDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+            </TableCell>
           </TableRow>
         )
       })) ||
@@ -501,7 +512,7 @@ export default function CustomerProfile(): JSX.Element {
                 filename="EVme Admin Dashboard.csv"
                 className={classes.noUnderLine}
               >
-                {t('button.export')}
+                {t('button.export').toUpperCase()}
               </CSVLink>
             </Button>
           </Grid>
