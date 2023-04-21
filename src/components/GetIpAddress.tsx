@@ -54,7 +54,7 @@ export const fetchIpAddress = async (): Promise<string> => {
 
     return IPv4
   } catch (error) {
-    console.error('baseApi error: ', error)
+    console.error('fetchIpAddress error: ', error)
     return ''
   }
 }
