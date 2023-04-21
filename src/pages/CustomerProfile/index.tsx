@@ -96,6 +96,7 @@ const useStyles = makeStyles({
     round: 'true',
   },
   width120: {
+    paddingLeft: '5px',
     width: '120px',
   },
   inlineElement: {
@@ -314,7 +315,7 @@ export default function CustomerProfile(): JSX.Element {
             <TableCell>{formatStringForInputText(user.lastName)}</TableCell>
             <TableCell>{formatStringForInputText(user.email)}</TableCell>
             <TableCell>{convertPhoneNumber(user.phoneNumber)}</TableCell>
-            <TableCell align="center">
+            <TableCell>
               {!user.isActive ? (
                 <Chip
                   size="small"
@@ -329,7 +330,7 @@ export default function CustomerProfile(): JSX.Element {
                 />
               )}
             </TableCell>
-            <TableCell align="center">
+            <TableCell>
               {user.kycStatus === null ? (
                 user.kycStatus
               ) : user.kycStatus.toLowerCase() === 'rejected' ? (
@@ -548,45 +549,45 @@ export default function CustomerProfile(): JSX.Element {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <Checkbox className={classes.hideObject} size="small" />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.firstName')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.lastName')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.email')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.phone')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.status')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.kyc.status')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('staffProfile.createdDate')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.updatedDate')}
                     </div>
