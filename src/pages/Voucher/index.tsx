@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast'
 import { useHistory } from 'react-router-dom'
 import { useState, useEffect, Fragment } from 'react'
 import { Card, Button, IconButton, Tooltip } from '@material-ui/core'
@@ -14,7 +13,6 @@ import {
   GridFilterItem,
   GridFilterModel,
   GridPageChangeParams,
-  GridRowData,
   GridCellParams,
   GridValueFormatterParams,
 } from '@material-ui/data-grid'
@@ -32,7 +30,7 @@ import {
 import config from 'config'
 import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
-import { getList, deleteById } from 'services/web-bff/voucher'
+import { getList } from 'services/web-bff/voucher'
 import { VoucherListQuery } from 'services/web-bff/voucher.type'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
@@ -41,7 +39,6 @@ import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from '.
 
 export default function Voucher(): JSX.Element {
   const defaultFilter: VoucherListQuery = {} as VoucherListQuery
-  const accessToken = useAuth().getToken() ?? ''
   const userRole = useAuth().getRole()
   const history = useHistory()
   const { t } = useTranslation()
@@ -111,23 +108,6 @@ export default function Voucher(): JSX.Element {
     visibilityColumns[params.field] = params.isVisible
 
     setVisibilityColumns(visibilityColumns)
-  }
-
-  const handleDeleteRow = (data: GridRowData) => {
-    // eslint-disable-next-line no-alert
-    const confirmed = window.confirm(t('voucher.dialog.delete.confirmationMessage'))
-    if (confirmed) {
-      const { id } = data
-      toast.promise(deleteById({ accessToken, id }), {
-        loading: t('toast.loading'),
-        success: () => {
-          return t('voucher.dialog.delete.success')
-        },
-        error: () => {
-          return t('voucher.dialog.delete.error')
-        },
-      })
-    }
   }
 
   useEffect(() => {
@@ -288,12 +268,7 @@ export default function Voucher(): JSX.Element {
                 <NoteIcon />
               </IconButton>
             </Tooltip>
-            <IconButton
-              disabled
-              size="small"
-              aria-label="delete"
-              onClick={() => handleDeleteRow(params.row)}
-            >
+            <IconButton disabled size="small" aria-label="delete">
               <DeleteIcon />
             </IconButton>
           </Fragment>

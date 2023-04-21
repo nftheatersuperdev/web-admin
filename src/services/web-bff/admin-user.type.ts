@@ -17,6 +17,7 @@ export interface AdminUser {
   firstName: string
   lastName: string
   role: AdminUserRole
+  privileges: string[]
   isActive: false
   createdDate: string
   updatedDate: string

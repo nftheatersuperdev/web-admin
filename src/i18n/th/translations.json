@@ -94,6 +94,8 @@
     "vehicleManagement": "การจัดการยานพาหนะ",
     "subscriptionManagement": "การจัดการการจอง",
     "subscriptions": "ข้อมูลการจอง",
+    "subscriptionDetail": "รายละเอียดข้อมูลการจอง",
+    "bookingDetail": "ข้อมูลการจอง",
     "newSubscriptionManagement": "การจัดการการจองใหม่",
     "newSubscriptions": "ข้อมูลการจองใหม่",
     "vouchers": "วอชเชอร์",
@@ -258,9 +260,12 @@
   "staffProfile": {
     "staffList": "รายชื่อพนักงาน",
     "of": "จาก",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
     "createdDate": "วันที่สร้าง",
     "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
-    "searchCriteria": "ค้นหา"
+    "searchCriteria": "ค้นหา",
+    "searchDate": "วันที่ค้นหา"
   },
   "user": {
     "custometList": "รายชื่อลูกค้า",
@@ -445,7 +450,18 @@
     "paymentVersion": "เวอร์ชันการชำระเงิน",
     "deliveryDate": "วันที่จัดส่ง",
     "returnDate": "วันที่รับคืน",
+    "replacement": "รถทดแทน",
     "payments": "ประวัติการชำระเงิน",
+    "paymentHistory": {
+      "title": "ประวัติการชำระเงิน",
+      "id": "ไอดี",
+      "amount": "จำนวนเงิน (บาท)",
+      "updatedDate": "วันที่แก้ไข",
+      "type": "ประเภท",
+      "purpose": "เหตุผล",
+      "status": "สถานะการชำระเงิน",
+      "statusMessage": "ข้อความสถานะการชำระเงิน"
+    },
     "parentId": "Parent Id",
     "isParentValue": "ใช่",
     "isExtendedSubscription": "Is Extended",
@@ -506,7 +522,59 @@
         }
       }
     },
-    "clearFilterId": "ลบกรองข้อมูลด้วยไอดี"
+    "clearFilterId": "ลบกรองข้อมูลด้วยไอดี",
+    "downloadCSV": "ดาวน์โหลด CSV",
+    "isReplacement": "รถทดแทน",
+    "isSelfPickup": "รับรถด้วยตนเอง"
+  },
+  "booking": {
+    "statuses": {
+      "accepted": "ยอมรับ",
+      "available": "พร้อมใช้งาน",
+      "inUse": "กำลังใช้งาน",
+      "outOfService": "ไม่พร้อมใช้งาน",
+      "published": "เปิดใช้งาน",
+      "unpublished": "ไม่เปิดใช้งาน",
+      "reserved": "จอง",
+      "upcomingCancelled": "กำลังถูกยกเลิก",
+      "unknown": "ไม่ทราบ"
+    },
+    "carDetail": {
+      "replacement": "รถทดแทน",
+      "no": "ลำดับ",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "plateNumber": "เลขทะเบียน",
+      "vin": "หมายเลขตัวถัง",
+      "deliveryDate": "วันที่จัดส่ง",
+      "deliveryTime": "เวลาจัดส่ง",
+      "returnDate": "วันที่รับคืน",
+      "remark": "หมายเหตุ"
+    },
+    "carReplacement": {
+      "title": "การจัดการรถทดแทน",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "plateNumber": "เลขทะเบียน",
+      "vin": "หมายเลขตัวถัง",
+      "seat": "จำนวนที่นั่ง",
+      "deliveryDate": "วันที่จัดส่ง",
+      "deliveryTime": "เวลาจัดส่ง",
+      "deliveryAddress": "สถานที่จัดส่ง",
+      "deliveryAddressRemark": "หมายเหตุ สถานที่จัดส่ง",
+      "returnAddress": "สถานที่รับคืน",
+      "returnAddressRemark": "หมายเหตุ สถานที่รับคืน",
+      "returnDate": "วันที่รับคืน",
+      "button": {
+        "cancel": "ยกเลิก",
+        "save": "บันทึก"
+      },
+      "saveSuccess": "ทำการเปลี่ยนรถทดแทนแล้ว",
+      "saveConfirmation": {
+        "title": "ยืนยันรถทดแทน",
+        "description": "คุณต้องการจะอัพเดทรถในหมายเลขการจองนี้ {{bookingDetailId}}?<br/><br/><strong>แก้ไขโดย:</strong> {{editorEmail}}"
+      }
+    }
   },
   "newSubcription": {
     "createEdit": {
@@ -952,7 +1020,8 @@
     "unknown": "เกิดข้อผิดพลาดบางอย่าง"
   },
   "warning": {
-    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่"
+    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่",
+    "noResultList": "ขออภัย เราไม่พบผลลัพธ์ใดๆ"
   },
   "version": "เวอร์ชั่น: {{version}}",
   "carActivity": {

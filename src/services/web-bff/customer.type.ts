@@ -164,3 +164,16 @@ export type CustomerDeleteLogListResponse = {
 export interface CustomerReActivateResponse {
   status: string
 }
+
+export interface CustomerFilterRequest {
+  idEqual?: string
+  firstNameContain?: string
+  lastNameContain?: string
+  emailContain?: string
+  phoneNumberContain?: string
+  kycStatusEqual?: string
+  userGroupNameContain?: string
+  isActive?: boolean
+  createdDateEqual?: string
+  updatedDateEqual?: string
+}

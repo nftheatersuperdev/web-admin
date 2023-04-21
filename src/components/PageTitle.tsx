@@ -38,7 +38,11 @@ export default function PageTitle({ title, breadcrumbs }: PageTitleProps): JSX.E
         <BreadcrumbsCustom aria-label="breadcrumb">
           {breadcrumbs.map(({ text, link }, index) => {
             if (breadcrumbLength && breadcrumbLength - 1 === index) {
-              return <Typography color="textPrimary">{text}</Typography>
+              return (
+                <Typography key={`breadcrumb-key-${link}`} color="textPrimary">
+                  {text}
+                </Typography>
+              )
             }
             return (
               <StyledLink key={`breadcrumb-key-${link}`} to={link}>

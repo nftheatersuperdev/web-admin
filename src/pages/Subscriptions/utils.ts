@@ -158,6 +158,7 @@ export const defaultVisibilityColumns: VisibilityColumns = {
   returnDate: false,
   failureMessage: false,
   paymentCreateDate: false,
+  replacement: false,
   parentId: false,
   isParent: false,
   isExtendedSubscription: false,
