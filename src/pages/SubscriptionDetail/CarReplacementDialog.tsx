@@ -87,6 +87,7 @@ export default function CarReplacementDialog({
     displayStatus,
     carActivities,
     endDate,
+    isSelfPickUp,
   } = bookingDetail
 
   const carActivity = carActivities[carActivities.length - 1]
@@ -323,6 +324,7 @@ export default function CarReplacementDialog({
                 <MenuItem value="11:00">11.00 - 13.00</MenuItem>
                 <MenuItem value="13:00">13.00 - 15.00</MenuItem>
                 <MenuItem value="15:00">15.00 - 17.00</MenuItem>
+                {isSelfPickUp ? <MenuItem value="17:00">17:00 - 18:00</MenuItem> : ''}
               </Select>
             </FormControl>
           </Grid>
