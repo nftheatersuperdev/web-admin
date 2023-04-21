@@ -121,13 +121,13 @@ export default function StaffProfiles(): JSX.Element {
     }
   )
   const csvHeaders = [
-    { label: t('user.firstName'), key: 'firstName' },
-    { label: t('user.lastName'), key: 'lastName' },
-    { label: t('user.email'), key: 'email' },
-    { label: t('user.role'), key: 'role' },
-    { label: t('user.status'), key: 'status' },
-    { label: t('staffProfile.createdDate'), key: 'createdDate' },
-    { label: t('user.updatedDate'), key: 'updatedDate' },
+    { label: 'First name', key: 'firstName' },
+    { label: 'Last name', key: 'lastName' },
+    { label: 'Email', key: 'email' },
+    { label: 'Role', key: 'role' },
+    { label: 'Account Status', key: 'status' },
+    { label: 'Created Date', key: 'createdDate' },
+    { label: 'Updated Date', key: 'updatedDate' },
   ]
   // eslint-disable-next-line
   const csvData: any = []
@@ -252,7 +252,7 @@ export default function StaffProfiles(): JSX.Element {
                   filename="EVme Admin Dashboard.csv"
                   className={classes.buttonExport}
                 >
-                  {t('button.export')}
+                  {t('button.export').toUpperCase()}
                 </CSVLink>
               </Button>
               &nbsp;&nbsp;
@@ -263,7 +263,7 @@ export default function StaffProfiles(): JSX.Element {
                 variant="contained"
                 onClick={() => history.push(`/staff-profile/create`)}
               >
-                {t('button.addNew')}
+                {t('button.create').toUpperCase()}
               </Button>
             </Grid>
           </Grid>
