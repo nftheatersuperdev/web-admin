@@ -657,3 +657,10 @@ export const firstCapitalize = (string: string): string => {
   }
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
+
+export const convertPhoneNumber = (value: string | null | undefined): string => {
+  if (value) {
+    return value.includes('+66') ? value.replaceAll('+66', '0') : value
+  }
+  return ''
+}

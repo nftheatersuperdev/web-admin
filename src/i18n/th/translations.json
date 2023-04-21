@@ -261,7 +261,8 @@
     "of": "จาก",
     "createdDate": "วันที่สร้าง",
     "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
-    "searchCriteria": "ค้นหา"
+    "searchCriteria": "ค้นหา",
+    "searchDate": "วันที่ค้นหา"
   },
   "user": {
     "custometList": "รายชื่อลูกค้า",
@@ -1014,7 +1015,8 @@
     "unknown": "เกิดข้อผิดพลาดบางอย่าง"
   },
   "warning": {
-    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่"
+    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่",
+    "noResultList": "ขออภัย เราไม่พบผลลัพธ์ใดๆ"
   },
   "version": "เวอร์ชั่น: {{version}}",
   "carActivity": {

@@ -261,7 +261,8 @@
     "of": "of",
     "createdDate": "Created Date",
     "firebaseId": "FirebaseID",
-    "searchCriteria": "Search Criteria"
+    "searchCriteria": "Search Criteria",
+    "searchDate": "Search Date"
   },
   "user": {
     "custometList": "Customer List",
@@ -1053,7 +1054,8 @@
     "unknown": "something went wrong"
   },
   "warning": {
-    "noResult": "No Result. Please try again"
+    "noResult": "No Result. Please try again",
+    "noResultList": "Sorry, we couldn’t find any results"
   },
   "version": "Version: {{version}}",
   "carActivity": {
