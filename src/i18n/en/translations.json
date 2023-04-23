@@ -17,8 +17,12 @@
     "selectedToDate": "End Date",
     "search": "Select Search",
     "searchLocation": "Location Services",
-    "locationList": {
-      "all": "All Location"
+    "searchOwner": "Owner",
+    "searchReSeller": "Reseller",
+    "defultSelect": {
+      "allLocation": "All Location",
+      "allOwner": "All Owner",
+      "allReSeller": "All Reseller"
     },
     "searchBtn": "Search",
     "searchField": {

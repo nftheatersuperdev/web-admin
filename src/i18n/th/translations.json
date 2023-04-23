@@ -17,8 +17,12 @@
     "selectedToDate": "วันที่สิ้นสุด",
     "search": "เลือกเพื่อค้นหา",
     "searchLocation": "สถานที่บริการ",
-    "locationList": {
-      "all": "ทุกสถานที่"
+    "searchOwner": "ผู้ถือกรรมสิทธิ์",
+    "searchReSeller": "ตัวแทนจำหน่าย",
+    "defultSelect": {
+      "allLocation": "ทุกสถานที่",
+      "allOwner": "ทุกผู้ถือกรรมสิทธิ์",
+      "allReSeller": "ทุกตัวแทนจำหน่าย"
     },
     "searchBtn": "ค้นหา",
     "searchField": {

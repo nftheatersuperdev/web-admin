@@ -154,6 +154,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     padding: '48px 0',
   },
+  hidenField: {
+    display: 'none',
+  },
 }))
 
 export default function CarAvailability(): JSX.Element {
@@ -237,15 +240,25 @@ export default function CarAvailability(): JSX.Element {
     initialValues: {
       input: '',
       searchType: '',
-      searchLocation: 'all',
+      selectLocation: 'all',
+      selectOwner: 'all',
+      selectReSeller: 'all',
     },
     enableReinitialize: true,
 
     onSubmit: (value) => {
       let keyOfValue = ''
       let updateObj
+      let searchField = filterSearchField
 
-      if (value.searchType === '') {
+      if (value.searchType === '' && value.selectLocation !== 'all') {
+        keyOfValue = `resellerServiceAreaId`
+        searchField = value.selectLocation
+        updateObj = {
+          [keyOfValue]: searchField,
+          ...generateFilterDates(),
+        } as CarAvailableListFilterRequest
+      } else if (value.searchType === '' && value.selectLocation === 'all') {
         filter.carId = undefined
         filter.plateNumberContain = undefined
         filter.plateNumberEqual = undefined
@@ -261,11 +274,19 @@ export default function CarAvailability(): JSX.Element {
         } else {
           keyOfValue = `${value.searchType}`
         }
+
+        if (value.searchType === 'ownerProfileId') {
+          searchField = value.selectOwner
+        }
+        if (value.searchType === 'resellerServiceAreaId') {
+          searchField = value.selectReSeller
+        }
         updateObj = {
-          [keyOfValue]: filterSearchField,
+          [keyOfValue]: searchField,
           ...generateFilterDates(),
         } as CarAvailableListFilterRequest
       }
+
       setFilter(updateObj)
       setPage(0)
     },
@@ -275,7 +296,9 @@ export default function CarAvailability(): JSX.Element {
     setFilterSearchField('')
     setFilterSearchFieldError('')
     formik.setFieldValue('searchType', '')
-    formik.setFieldValue('searchLocation', 'all')
+    formik.setFieldValue('selectLocation', 'all')
+    formik.setFieldValue('selectOwner', 'all')
+    formik.setFieldValue('selectReSeller', 'all')
     formik.handleSubmit()
   }
 
@@ -294,12 +317,7 @@ export default function CarAvailability(): JSX.Element {
       timeOutSearch()
     } else if (value !== '' && formik.values.searchType === 'plateNumber') {
       setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
-    }
-    if (
-      formik.values.searchType === 'carId' ||
-      formik.values.searchType === 'ownerProfileId' ||
-      formik.values.searchType === 'resellerServiceAreaId'
-    ) {
+    } else {
       if (isKeywordUUIDAccepted) {
         timeOutSearch()
       } else {
@@ -500,6 +518,7 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     onChange={(event) => {
                       formik.setFieldValue('searchType', event.target.value)
+                      formik.setFieldValue('selectLocation', 'all')
                       setFilterSearchField('')
                       setFilterSearchFieldError('')
                     }}
@@ -513,6 +532,12 @@ export default function CarAvailability(): JSX.Element {
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={2.2}>
                   <TextField
+                    className={
+                      formik.values.searchType === 'ownerProfileId' ||
+                      formik.values.searchType === 'resellerServiceAreaId'
+                        ? classes.hidenField
+                        : ''
+                    }
                     disabled={formik.values.searchType === ''}
                     fullWidth
                     error={!!filterSearchFieldError}
@@ -541,6 +566,74 @@ export default function CarAvailability(): JSX.Element {
                       ),
                     }}
                   />
+                  <TextField
+                    className={
+                      formik.values.searchType === 'ownerProfileId' ? '' : classes.hidenField
+                    }
+                    fullWidth
+                    select
+                    variant="outlined"
+                    id="car_availability__searchOwner_input"
+                    value={formik.values.selectOwner}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {formik.values.selectOwner !== 'all' && (
+                            <CloseOutlined
+                              className={classes.paddingRigthBtnClear}
+                              onClick={handleClear}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }}
+                    onChange={(event) => {
+                      formik.setFieldValue('selectOwner', event.target.value)
+                    }}
+                  >
+                    <MenuItem className={classes.hidenField} key="all" value="all">
+                      {t('carAvailability.defultSelect.allOwner')}
+                    </MenuItem>
+                    {/* {dataSelect?.map((option) => (
+                      <MenuItem key={option.key} value={option.value}>
+                        {option.name}
+                      </MenuItem>
+                    ))} */}
+                  </TextField>
+                  <TextField
+                    className={
+                      formik.values.searchType === 'resellerServiceAreaId' ? '' : classes.hidenField
+                    }
+                    fullWidth
+                    select
+                    variant="outlined"
+                    id="car_availability__searchReSeller_input"
+                    value={formik.values.selectReSeller}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {formik.values.selectReSeller !== 'all' && (
+                            <CloseOutlined
+                              className={classes.paddingRigthBtnClear}
+                              onClick={handleClear}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
+                    }}
+                    onChange={(event) => {
+                      formik.setFieldValue('selectReSeller', event.target.value)
+                    }}
+                  >
+                    <MenuItem className={classes.hidenField} key="all" value="all">
+                      {t('carAvailability.defultSelect.allReSeller')}
+                    </MenuItem>
+                    {/* {dataSelect?.map((option) => (
+                      <MenuItem key={option.key} value={option.value}>
+                        {option.name}
+                      </MenuItem>
+                    ))} */}
+                  </TextField>
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={2.5}>
                   <DatePicker
@@ -585,12 +678,12 @@ export default function CarAvailability(): JSX.Element {
                     select
                     label={t('carAvailability.searchLocation')}
                     variant="outlined"
-                    id="car_availability__searchlocatio_input"
-                    value={formik.values.searchLocation}
+                    id="car_availability__searchlocation_input"
+                    value={formik.values.selectLocation}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          {formik.values.searchLocation !== 'all' && (
+                          {formik.values.selectLocation !== 'all' && (
                             <CloseOutlined
                               className={classes.paddingRigthBtnClear}
                               onClick={handleClear}
@@ -600,11 +693,20 @@ export default function CarAvailability(): JSX.Element {
                       ),
                     }}
                     onChange={(event) => {
-                      formik.setFieldValue('searchLocation', event.target.value)
+                      setFilterSearchField('')
+                      setFilterSearchFieldError('')
+                      formik.setFieldValue('searchType', '')
+                      formik.setFieldValue('selectOwner', 'all')
+                      formik.setFieldValue('selectReSeller', 'all')
+                      formik.setFieldValue('selectLocation', event.target.value)
+                      formik.handleSubmit()
                     }}
                   >
-                    <MenuItem key="all" value="all">
-                      {t('carAvailability.locationList.all')}
+                    <MenuItem className={classes.hidenField} key="all" value="all">
+                      {t('carAvailability.defultSelect.allLocation')}
+                    </MenuItem>
+                    <MenuItem key="evme" value="7e116360-4b58-4fa2-b2cb-206a35ad6f72">
+                      EVME
                     </MenuItem>
                     {/* {dataSelect?.map((option) => (
                       <MenuItem key={option.key} value={option.value}>
