@@ -475,7 +475,7 @@ export default function CarAvailability(): JSX.Element {
                       }
                     }}
                     InputProps={{
-                      startAdornment: (
+                      endAdornment: (
                         <InputAdornment position="start">
                           <SearchIcon
                             color={formik.values.searchType === '' ? 'disabled' : 'action'}
@@ -578,7 +578,7 @@ export default function CarAvailability(): JSX.Element {
                       filename={t('sidebar.carAvailability') + '.csv'}
                       className={classes.buttonExport}
                     >
-                      {t('button.export')}
+                      {t('carAvailability.export')}
                     </CSVLink>
                   </Button>
                 </GridSearchSectionItem>

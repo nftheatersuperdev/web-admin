@@ -30,7 +30,8 @@
     },
     "none": "ไม่ระบุ",
     "available": "รถว่าง",
-    "inUse": "ใช้งานอยู่"
+    "inUse": "ใช้งานอยู่",
+    "export": "ส่งออกข้อมูล"
   },
   "carAvailabilityDetail": {
     "location": "สถานที่บริการ",

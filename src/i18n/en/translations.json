@@ -30,12 +30,13 @@
     },
     "none": "None",
     "available": "Available",
-    "inUse": "In Use"
+    "inUse": "In Use",
+    "export": "EXPORT"
   },
   "carAvailabilityDetail": {
     "location": "Location Service",
     "carId": "Car ID",
-    "carStatus": "Car Status",
+    "carStatus": "Status",
     "carTrackId": "Cartrack ID",
     "plateNumber": "Plate Number",
     "vin": "VIN",

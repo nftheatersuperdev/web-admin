@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import { makeStyles } from '@mui/styles'
 import DateTimePicker from 'components/DateTimePicker'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
@@ -31,8 +32,14 @@ interface CarAvailabilityDetailParams {
   owner: string
   reSeller: string
 }
+const useStyles = makeStyles(() => ({
+  hideButton: {
+    '& .MuiIconButton-root': { display: 'none' },
+  },
+}))
 export default function CarAvailabilityDetail(): JSX.Element {
   const location = useLocation()
+  const classes = useStyles()
   const CarAvailabilityDetail = location.state as CarAvailabilityDetailParams
   const { t } = useTranslation()
   const [, setText] = useState<string | undefined>()
@@ -83,7 +90,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
               <TextField
                 disabled
                 id="car_availability_detail__carStatus"
-                label={t('carAvailability.searchField.label')}
+                label={t('carAvailabilityDetail.carStatus')}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -239,6 +246,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
               <DateTimePicker
                 fullWidth
                 disabled
+                className={classes.hideButton}
                 label={t('carAvailabilityDetail.createdDate')}
                 id="car_availability_detail__createdDate"
                 name="createdDate"
@@ -254,6 +262,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
               <DateTimePicker
                 disabled
                 fullWidth
+                className={classes.hideButton}
                 label={t('carAvailabilityDetail.updatedDate')}
                 id="car_availability_detail__updateDate"
                 name="updateDate"
