@@ -524,7 +524,10 @@ export const validateRemarkText = (value: string): boolean => {
   const remarkRule = /^[ก-๛a-zA-Z0-9 ]*$/g
   return remarkRule.test(value)
 }
-
+export const validateKeywordUUID = (value: string): boolean => {
+  const remarkRule = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+  return remarkRule.test(value)
+}
 export const getContainFilterOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
   {
     label: t('filter.contains'),

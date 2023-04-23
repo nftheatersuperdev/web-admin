@@ -74,8 +74,8 @@ export interface SelectOption {
 export const getSearchTypeList = (t: TFunction<Namespace>): SelectOption[] => {
   return [
     {
-      key: 'id',
-      value: 'id',
+      key: 'carId',
+      value: 'carId',
       name: t('carAvailabilityDetail.carId'),
     },
     {
@@ -85,22 +85,13 @@ export const getSearchTypeList = (t: TFunction<Namespace>): SelectOption[] => {
     },
     {
       key: 'owner',
-      value: 'owner',
+      value: 'ownerProfileId',
       name: t('carAvailabilityDetail.owner'),
     },
     {
       key: 'reseller',
-      value: 'reSeller',
+      value: 'resellerServiceAreaId',
       name: t('carAvailabilityDetail.reSeller'),
-    },
-  ]
-}
-export const getSearcLocationList = (t: TFunction<Namespace>): SelectOption[] => {
-  return [
-    {
-      key: 'all location',
-      value: 'all location',
-      name: t('carAvailability.locationList.all'),
     },
   ]
 }

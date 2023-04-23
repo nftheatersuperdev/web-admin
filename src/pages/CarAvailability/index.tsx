@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import {
@@ -6,6 +6,7 @@ import {
   DEFAULT_DATE_FORMAT_BFF,
   FieldKeyOparators,
   validateKeywordText,
+  validateKeywordUUID,
 } from 'utils'
 import config from 'config'
 import dayjs from 'dayjs'
@@ -30,7 +31,6 @@ import {
   TableRow,
   TextField,
   Typography,
-  Box,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
@@ -44,7 +44,7 @@ import { CarAvailableListFilterRequest } from 'services/web-bff/car.type'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import { getSearchTypeList, getSearcLocationList } from './utils'
+import { getSearchTypeList } from './utils'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -148,6 +148,12 @@ const useStyles = makeStyles(() => ({
     cursor: 'pointer',
     padding: '4px 4px',
   },
+  noResultMessage: {
+    textAlign: 'center',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    padding: '48px 0',
+  },
 }))
 
 export default function CarAvailability(): JSX.Element {
@@ -160,10 +166,9 @@ export default function CarAvailability(): JSX.Element {
   const [page, setPage] = useState(0)
   const [showPage, setShowPage] = useState(true)
   const searchTypeList = getSearchTypeList(t)
-  const searchLocationList = getSearcLocationList(t)
   const [filterSearchField, setFilterSearchField] = useState<string>('')
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
-
+  const timeoutIdRef = useRef<number | null>(null)
   const generateFilterDates = () => {
     return {
       startDate: dayjs(selectedFromDate).startOf('day').format(DEFAULT_DATE_FORMAT_BFF),
@@ -188,11 +193,26 @@ export default function CarAvailability(): JSX.Element {
     refetch()
     setShowPage(false)
   }, [filter, page, pageSize, refetch])
+
   useEffect(() => {
     if (selectedFromDate > selectedToDate) {
       setSelectedToDate(selectedFromDate)
     }
   }, [selectedFromDate, selectedToDate])
+
+  const conditionConfigs = {
+    minimumToFilterPlateNumber: 2,
+  }
+
+  function timeOutSearch() {
+    if (timeoutIdRef.current !== null) {
+      clearTimeout(timeoutIdRef.current)
+    }
+    timeoutIdRef.current = window.setTimeout(() => {
+      formik.handleSubmit()
+    }, 800)
+  }
+
   const rows =
     carData?.data.records.map(({ car, availabilityStatus: status, booking }) => {
       return {
@@ -217,12 +237,11 @@ export default function CarAvailability(): JSX.Element {
     initialValues: {
       input: '',
       searchType: '',
-      searchLocation: 'all location',
+      searchLocation: 'all',
     },
     enableReinitialize: true,
 
     onSubmit: (value) => {
-      const isId = value.searchType === 'id'
       let keyOfValue = ''
       let updateObj
 
@@ -230,15 +249,17 @@ export default function CarAvailability(): JSX.Element {
         filter.carId = undefined
         filter.plateNumberContain = undefined
         filter.plateNumberEqual = undefined
+        filter.ownerProfileId = undefined
+        filter.resellerServiceAreaId = undefined
         updateObj = {
           ...filter,
           ...generateFilterDates(),
         } as CarAvailableListFilterRequest
       } else {
-        if (isId) {
-          keyOfValue = 'carId'
-        } else {
+        if (value.searchType === 'plateNumber') {
           keyOfValue = `${value.searchType}${FieldKeyOparators.contains}`
+        } else {
+          keyOfValue = `${value.searchType}`
         }
         updateObj = {
           [keyOfValue]: filterSearchField,
@@ -249,23 +270,41 @@ export default function CarAvailability(): JSX.Element {
       setPage(0)
     },
   })
-  const conditionConfigs = {
-    minimumToFilterPlateNumber: 2,
+
+  const handleClear = () => {
+    setFilterSearchField('')
+    setFilterSearchFieldError('')
+    formik.setFieldValue('searchType', '')
+    formik.setFieldValue('searchLocation', 'all')
+    formik.handleSubmit()
   }
+
   const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const isKeywordAccepted = validateKeywordText(value)
+    const isKeywordUUIDAccepted = validateKeywordUUID(value)
     setFilterSearchField(value)
     setFilterSearchFieldError('')
-    if (isKeywordAccepted && value.length >= conditionConfigs.minimumToFilterPlateNumber) {
+    if (
+      formik.values.searchType === 'plateNumber' &&
+      isKeywordAccepted &&
+      value.length >= conditionConfigs.minimumToFilterPlateNumber
+    ) {
       setFilterSearchField(value)
-    } else if (value !== '') {
+      timeOutSearch()
+    } else if (value !== '' && formik.values.searchType === 'plateNumber') {
       setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
-    } else {
-      setFilterSearchField('')
     }
-    if (formik.values.searchType === 'id') {
-      setFilterSearchFieldError('')
+    if (
+      formik.values.searchType === 'carId' ||
+      formik.values.searchType === 'ownerProfileId' ||
+      formik.values.searchType === 'resellerServiceAreaId'
+    ) {
+      if (isKeywordUUIDAccepted) {
+        timeOutSearch()
+      } else {
+        setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidUUIDFormat'))
+      }
     }
   }
 
@@ -402,11 +441,21 @@ export default function CarAvailability(): JSX.Element {
         )
       })) ||
     []
-  const handleClear = () => {
-    formik.setFieldValue('searchType', '')
-    setFilterSearchField('')
-    setFilterSearchFieldError('')
-    formik.handleSubmit()
+
+  const isNoData = carAvailabilityRowData.length > 0
+  const generateDataToTable = () => {
+    if (isNoData) {
+      return <TableBody>{carAvailabilityRowData}</TableBody>
+    }
+    return (
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={9}>
+            <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    )
   }
   return (
     <Page>
@@ -414,17 +463,21 @@ export default function CarAvailability(): JSX.Element {
       <Wrapper>
         <ContentSection>
           {showPage ? (
-            <Box>
-              <Typography variant="h6" component="h2">
-                {t('sidebar.carAvailabilityList')}
-              </Typography>
-            </Box>
+            <Typography variant="h6" component="h2">
+              {t('sidebar.carAvailabilityList')}
+            </Typography>
           ) : (
-            <Box>
+            <div>
               <Typography variant="h6" component="h2">
                 {t('sidebar.carAvailabilityList')}
               </Typography>
-              <GridSearchSection className={classes.searchBar} container spacing={1}>
+              <GridSearchSection
+                className={classes.searchBar}
+                direction="row"
+                justifyContent="flex-start"
+                container
+                spacing={1}
+              >
                 <GridSearchSectionItem item xs={1.8}>
                   <TextField
                     fullWidth
@@ -470,7 +523,11 @@ export default function CarAvailability(): JSX.Element {
                     value={filterSearchField}
                     onChange={handleOnSearchFieldChange}
                     onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
+                      if (
+                        !filterSearchFieldError &&
+                        filterSearchField !== '' &&
+                        event.key === 'Enter'
+                      ) {
                         formik.handleSubmit()
                       }
                     }}
@@ -498,6 +555,7 @@ export default function CarAvailability(): JSX.Element {
                     value={selectedFromDate}
                     onChange={(date) => {
                       date && setSelectedFromDate(date.toDate())
+                      formik.handleSubmit()
                     }}
                     inputVariant="outlined"
                   />
@@ -516,23 +574,11 @@ export default function CarAvailability(): JSX.Element {
                     value={selectedToDate}
                     onChange={(date) => {
                       date && setSelectedToDate(date.toDate())
+                      formik.handleSubmit()
                     }}
                     inputVariant="outlined"
                   />
                 </GridSearchSectionItem>
-                {/* <GridSearchSectionItem item xs={1}>
-                  <Button
-                    fullWidth
-                    id="car_availability__search_btn"
-                    className={classes.buttonWithoutShadow}
-                    color="primary"
-                    variant="contained"
-                    onClick={() => formik.handleSubmit()}
-                    disabled={isFetching}
-                  >
-                    {t('carAvailability.searchBtn')}
-                  </Button>
-                </GridSearchSectionItem> */}
                 <GridSearchSectionItem item xs={2}>
                   <TextField
                     fullWidth
@@ -544,7 +590,7 @@ export default function CarAvailability(): JSX.Element {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          {formik.values.searchType && (
+                          {formik.values.searchLocation !== 'all' && (
                             <CloseOutlined
                               className={classes.paddingRigthBtnClear}
                               onClick={handleClear}
@@ -557,11 +603,14 @@ export default function CarAvailability(): JSX.Element {
                       formik.setFieldValue('searchLocation', event.target.value)
                     }}
                   >
-                    {searchLocationList?.map((option) => (
+                    <MenuItem key="all" value="all">
+                      {t('carAvailability.locationList.all')}
+                    </MenuItem>
+                    {/* {dataSelect?.map((option) => (
                       <MenuItem key={option.key} value={option.value}>
                         {option.name}
                       </MenuItem>
-                    ))}
+                    ))} */}
                   </TextField>
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={1}>
@@ -584,107 +633,105 @@ export default function CarAvailability(): JSX.Element {
                 </GridSearchSectionItem>
               </GridSearchSection>
 
-              <Fragment>
-                <TableContainer component={Paper} className={classes.table}>
-                  <Table>
-                    <TableHead>
+              <TableContainer component={Paper} className={classes.table}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.location')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.carBrand')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.carModel')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                          {t('carAvailabilityDetail.color')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.plateNumber')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                          {t('carAvailabilityDetail.carStatus')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.bookingId')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.owner')}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={classes.textBoldBorder}>
+                          {t('carAvailabilityDetail.reSeller')}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  {isFetching ? (
+                    <TableBody>
                       <TableRow>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.location')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.carBrand')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.carModel')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                            {t('carAvailabilityDetail.color')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.plateNumber')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                            {t('carAvailabilityDetail.carStatus')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.bookingId')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.owner')}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.textBoldBorder}>
-                            {t('carAvailabilityDetail.reSeller')}
-                          </div>
+                        <TableCell colSpan={9} align="center">
+                          <CircularProgress />
                         </TableCell>
                       </TableRow>
-                    </TableHead>
-                    {isFetching ? (
-                      <TableBody>
-                        <TableRow>
-                          <TableCell colSpan={9} align="center">
-                            <CircularProgress />
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    ) : (
-                      <TableBody>{carAvailabilityRowData}</TableBody>
-                    )}
-                  </Table>
-                </TableContainer>
-                <Card>
-                  <div className={classes.paginationContrainer}>
-                    Rows per page:&nbsp;
-                    <FormControl variant="standard" className={classes.inlineElement}>
-                      <Select
-                        value={carData?.data?.pagination?.size || pageSize}
-                        defaultValue={carData?.data?.pagination?.size || pageSize}
-                        onChange={(event) => {
-                          setPage(0)
-                          setPageSize(event.target.value as number)
-                        }}
-                      >
-                        {config.tableRowsPerPageOptions?.map((option) => (
-                          <MenuItem key={option} value={option}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
-                    &nbsp;
-                    {carData?.data.pagination?.totalPage}
-                    <Pagination
-                      count={carData?.data?.pagination?.totalPage}
-                      page={carData?.data?.pagination?.page || page}
-                      defaultPage={carData?.data?.pagination?.page || page}
-                      variant="text"
-                      color="primary"
-                      onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                        setPage(value - 1)
+                    </TableBody>
+                  ) : (
+                    generateDataToTable()
+                  )}
+                </Table>
+              </TableContainer>
+              <Card>
+                <div className={classes.paginationContrainer}>
+                  Rows per page:&nbsp;
+                  <FormControl variant="standard" className={classes.inlineElement}>
+                    <Select
+                      value={carData?.data?.pagination?.size || pageSize}
+                      defaultValue={carData?.data?.pagination?.size || pageSize}
+                      onChange={(event) => {
+                        setPage(0)
+                        setPageSize(event.target.value as number)
                       }}
-                    />
-                  </div>
-                </Card>
-              </Fragment>
-            </Box>
+                    >
+                      {config.tableRowsPerPageOptions?.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
+                  &nbsp;
+                  {carData?.data.pagination?.totalPage}
+                  <Pagination
+                    count={carData?.data?.pagination?.totalPage}
+                    page={carData?.data?.pagination?.page || page}
+                    defaultPage={carData?.data?.pagination?.page || page}
+                    variant="text"
+                    color="primary"
+                    onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                      setPage(value - 1)
+                    }}
+                  />
+                </div>
+              </Card>
+            </div>
           )}
         </ContentSection>
       </Wrapper>

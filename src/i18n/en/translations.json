@@ -25,7 +25,8 @@
       "label": "Enter Search",
       "placeholder": "Please type at lease 2 charators",
       "errors": {
-        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters.",
+        "invalidUUIDFormat": "Please input valid UUID format."
       }
     },
     "none": "None",

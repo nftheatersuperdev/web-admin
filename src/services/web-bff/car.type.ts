@@ -231,6 +231,8 @@ export interface CarListFilterRequestProps {
 
 export interface CarAvailableListFilterRequest {
   carId?: string
+  ownerProfileId?: string
+  resellerServiceAreaId?: string
   plateNumberContain?: string
   plateNumberEqual?: string
   startDate?: string | any
