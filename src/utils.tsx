@@ -657,3 +657,35 @@ export const firstCapitalize = (string: string): string => {
   }
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
+
+export const convertPhoneNumber = (value: string | null | undefined): string => {
+  if (value) {
+    return value.includes('+66') ? value.replaceAll('+66', '0') : value
+  }
+  return ''
+}
+
+export function formaDateStringWithPattern(dateStr?: string, pattern?: string): string {
+  return dateStr ? dayjs(dateStr).format(pattern || DEFAULT_DATE_FORMAT) : '-'
+}
+
+export function formatStringForInputText(str?: string | null | undefined, digit?: number): string {
+  if (!digit) {
+    digit = 20
+  }
+  let formatStr, firstRowStr, secondRowStr
+  if (str) {
+    if (str.length > digit && str?.length < digit * 2) {
+      firstRowStr = str.substring(0, 20)
+      secondRowStr = str.substring(20)
+      formatStr = firstRowStr + '\r\n' + secondRowStr
+    } else if (str.length > digit * 2) {
+      firstRowStr = str.substring(0, 20)
+      secondRowStr = str.substring(20, 40)
+      formatStr = firstRowStr + '\r\n' + secondRowStr + '...'
+    } else {
+      formatStr = str
+    }
+  }
+  return formatStr ? formatStr : ''
+}

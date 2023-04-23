@@ -12,9 +12,8 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   USER_GROUPS: '/user-groups',
-  USER_GROUP_USERS: '/user-groups/:ugid/users',
   SUBSCRIPTION: '/subscription',
-  SUBSCRIPTION_DETAIL: '/subscription/:id',
+  SUBSCRIPTION_DETAIL: '/subscription/:bookingId/:bookingDetailId',
   PRICING: '/pricing',
   MODEL_AND_PRICING: '/model-and-pricing',
   MODEL_AND_PRICING_EDIT: '/model-and-pricing/:id/edit',
@@ -44,7 +43,7 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILE_ADD: '/staff-profile/create',
   SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
   SUBSCRIPTION_PACKAGE_ADD: '/subscription-management/package-management/create',
-  CUSTOMER_PROFILE: '/customer-profile',
+  CUSTOMER_PROFILE: '/customer-profiles',
   CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
   CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   FORBIDDEN: '/403',
@@ -112,11 +111,6 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
     ],
-  },
-  {
-    path: ROUTE_PATHS.USER_GROUP_USERS,
-    component: lazy(() => import('./pages/UserGroupUsers' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
   },
   {
     path: ROUTE_PATHS.USER_GROUPS,
@@ -331,6 +325,18 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.CUSTOMER_PROFILE,
     component: lazy(() => import('./pages/CustomerProfile' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+      ROLES.PRODUCT_SUPPORT,
+    ],
+  },
+  {
+    path: ROUTE_PATHS.CUSTOMER_PROFILE_DETAIL,
+    component: lazy(() => import('./pages/CustomerProfileDetail' /* webpackChunkName: "app" */)),
     allowedRoles: [
       ROLES.SUPER_ADMIN,
       ROLES.ADMIN,

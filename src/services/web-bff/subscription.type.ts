@@ -76,6 +76,13 @@ export interface BookingCarTrack {
   updatedDate: string
 }
 
+export interface BookingCarActivity {
+  carId: string
+  carDetail: SubscriptionCar
+  deliveryTask: BookingCarTrack
+  returnTask: BookingCarTrack
+}
+
 export interface BookingCustomer {
   id: string
   firstName: string
@@ -99,6 +106,7 @@ export interface BookingRentalDetail {
   isAcceptedAgreement: boolean
   isAcceptedCarCondition: boolean
   paymentTerm: string | null
+  status: string
   createdDate: string
   updatedDate: string
 }
@@ -128,17 +136,21 @@ export interface BookingRental {
   car: SubscriptionCar
   carId: string
   carTasks: BookingCarTrack[]
+  carActivities: BookingCarActivity[]
   createdBy: string
   customer: BookingCustomer
   customerId: string
   displayStatus: string
+  status: string
   isExtend: boolean
+  isReplacement: boolean
   isPaymentRequired: boolean
   isTimeslotRequired: boolean
   rentDetail: BookingRentalDetail
   remark: string | null
   payments: BookingPayment[]
   updatedBy: string
+  isSelfPickUp: boolean
 }
 
 export interface SubscriptionCar {
@@ -223,6 +235,21 @@ export interface SubscriptionBookingListFilters {
 export interface SubscriptionBookingListProps {
   query?: SubscriptionBookingListQuery
   filters?: SubscriptionBookingListFilters
+}
+
+export interface CarReplacementDeliveryAddress {
+  full: string
+  latitude: number
+  longitude: number
+  remark?: string | null
+}
+export interface UpdateCarReplacementRequestBody {
+  bookingId: string
+  bookingDetailId: string
+  carId: string
+  deliveryDate: string
+  deliveryTime: string
+  deliveryAddress: CarReplacementDeliveryAddress
 }
 
 export type SubscriptionListResponse = {

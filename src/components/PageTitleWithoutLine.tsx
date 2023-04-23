@@ -1,4 +1,4 @@
-import { Breadcrumbs, Divider, Typography } from '@material-ui/core'
+import { Breadcrumbs, Typography } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { Fragment } from 'react'
@@ -15,9 +15,9 @@ export interface PageBreadcrumbs {
 const BreadcrumbsCustom = styled(Breadcrumbs)`
   margin: 10px 0;
 `
-const DividerCustom = styled(Divider)`
-  margin: 10px 0;
-`
+// const DividerCustom = styled(Divider)`
+//   margin: 10px 0;
+// `
 const StyledLink = styled(Link)`
   color: #999999;
   &:visited,
@@ -26,7 +26,7 @@ const StyledLink = styled(Link)`
     text-decoration: none;
   }
 `
-export default function PageTitle({ title, breadcrumbs }: PageTitleProps): JSX.Element {
+export default function PageTitleWithoutLine({ title, breadcrumbs }: PageTitleProps): JSX.Element {
   const breadcrumbLength = breadcrumbs?.length || null
 
   return (
@@ -54,7 +54,7 @@ export default function PageTitle({ title, breadcrumbs }: PageTitleProps): JSX.E
       ) : (
         ''
       )}
-      <DividerCustom />
+      {/* <DividerCustom /> */}
     </Fragment>
   )
 }

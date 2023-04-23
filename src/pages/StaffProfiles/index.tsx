@@ -23,7 +23,11 @@ import {
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import config from 'config'
-import { formatDate } from 'utils'
+import {
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  formaDateStringWithPattern,
+  formatStringForInputText,
+} from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
@@ -121,13 +125,13 @@ export default function StaffProfiles(): JSX.Element {
     }
   )
   const csvHeaders = [
-    { label: t('user.firstName'), key: 'firstName' },
-    { label: t('user.lastName'), key: 'lastName' },
-    { label: t('user.email'), key: 'email' },
-    { label: t('user.role'), key: 'role' },
-    { label: t('user.status'), key: 'status' },
-    { label: t('staffProfile.createdDate'), key: 'createdDate' },
-    { label: t('user.updatedDate'), key: 'updatedDate' },
+    { label: 'First name', key: 'firstName' },
+    { label: 'Last name', key: 'lastName' },
+    { label: 'Email', key: 'email' },
+    { label: 'Role', key: 'role' },
+    { label: 'Account Status', key: 'status' },
+    { label: 'Created Date', key: 'createdDate' },
+    { label: 'Updated Date', key: 'updatedDate' },
   ]
   // eslint-disable-next-line
   const csvData: any = []
@@ -143,8 +147,14 @@ export default function StaffProfiles(): JSX.Element {
           email: adminUserData.email,
           role: adminUserData.role,
           status: acctStatus,
-          createdDate: formatDate(adminUserData.createdDate),
-          updatedDate: formatDate(adminUserData.updatedDate),
+          createdDate: formaDateStringWithPattern(
+            adminUserData.createdDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
+          updatedDate: formaDateStringWithPattern(
+            adminUserData.updatedDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
         })
         csvData.push(makeCsvData())
         // Build Table Body
@@ -157,9 +167,9 @@ export default function StaffProfiles(): JSX.Element {
             <TableCell>
               <Checkbox className={classes.hideObject} size="small" />
             </TableCell>
-            <TableCell>{adminUserData.firstName}</TableCell>
-            <TableCell>{adminUserData.lastName}</TableCell>
-            <TableCell>{adminUserData.email}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.firstName)}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.lastName)}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.email)}</TableCell>
             <TableCell>{adminUserData.role}</TableCell>
             <TableCell align="center">
               {!adminUserData.isActive ? (
@@ -168,8 +178,18 @@ export default function StaffProfiles(): JSX.Element {
                 <Chip size="small" label={t('user.enabled')} className={classes.chipGreen} />
               )}
             </TableCell>
-            <TableCell>{formatDate(adminUserData.createdDate)}</TableCell>
-            <TableCell>{formatDate(adminUserData.updatedDate)}</TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(
+                adminUserData.createdDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            </TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(
+                adminUserData.updatedDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            </TableCell>
           </TableRow>
         )
       })) ||
@@ -252,7 +272,7 @@ export default function StaffProfiles(): JSX.Element {
                   filename="EVme Admin Dashboard.csv"
                   className={classes.buttonExport}
                 >
-                  {t('button.export')}
+                  {t('button.export').toUpperCase()}
                 </CSVLink>
               </Button>
               &nbsp;&nbsp;
@@ -263,7 +283,7 @@ export default function StaffProfiles(): JSX.Element {
                 variant="contained"
                 onClick={() => history.push(`/staff-profile/create`)}
               >
-                {t('button.addNew')}
+                {t('button.create').toUpperCase()}
               </Button>
             </Grid>
           </Grid>
@@ -280,10 +300,10 @@ export default function StaffProfiles(): JSX.Element {
                       <Checkbox className={classes.hideObject} size="small" />
                     </TableCell>
                     <TableCell align="center">
-                      <div className={classes.textBoldBorder}> {t('user.firstName')}</div>
+                      <div className={classes.textBoldBorder}> {t('staffProfile.firstName')}</div>
                     </TableCell>
                     <TableCell align="center">
-                      <div className={classes.textBoldBorder}> {t('user.lastName')}</div>
+                      <div className={classes.textBoldBorder}> {t('staffProfile.lastName')}</div>
                     </TableCell>
                     <TableCell align="center">
                       <div className={classes.textBoldBorder}> {t('user.email')}</div>
