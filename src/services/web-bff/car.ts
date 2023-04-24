@@ -52,7 +52,11 @@ export const getAvailableListBFF = async ({
       pageIndex,
       size,
     }
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error.response.data
+    })
 
   return response
 }
