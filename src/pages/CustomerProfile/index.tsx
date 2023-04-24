@@ -69,8 +69,11 @@ const useStyles = makeStyles({
   filter: {
     height: '90px',
   },
-  paddingLeft: {
+  pl16: {
     paddingLeft: '16px',
+  },
+  pl17: {
+    paddingLeft: '17px',
   },
   noUnderLine: {
     color: 'white',
@@ -96,7 +99,7 @@ const useStyles = makeStyles({
     round: 'true',
   },
   width120: {
-    paddingLeft: '5px',
+    paddingLeft: '16px',
     width: '120px',
   },
   inlineElement: {
@@ -155,7 +158,8 @@ const useStyles = makeStyles({
 })
 
 const DividerCustom = styled(Divider)`
-  margin: 10px 0;
+  border-width: 1px !important;
+  margin: 10px 0px !important;
 `
 
 export default function CustomerProfile(): JSX.Element {
@@ -313,41 +317,57 @@ export default function CustomerProfile(): JSX.Element {
             <TableCell>
               <Checkbox className={classes.hideObject} size="small" />
             </TableCell>
-            <TableCell>{formatStringForInputText(user.firstName)}</TableCell>
-            <TableCell>{formatStringForInputText(user.lastName)}</TableCell>
-            <TableCell>{formatStringForInputText(user.email)}</TableCell>
-            <TableCell>{convertPhoneNumber(user.phoneNumber)}</TableCell>
             <TableCell>
-              {!user.isActive ? (
-                <Chip
-                  size="small"
-                  label={t('user.statuses.deleted')}
-                  className={classes.chipLightGrey}
-                />
-              ) : (
-                <Chip
-                  size="small"
-                  label={t('user.statuses.active')}
-                  className={classes.chipGreen}
-                />
-              )}
+              <div className={classes.pl17}>{formatStringForInputText(user.firstName)}</div>
             </TableCell>
             <TableCell>
-              {user.kycStatus === null ? (
-                user.kycStatus
-              ) : user.kycStatus.toLowerCase() === 'rejected' ? (
-                <Chip size="small" label={t('user.kyc.rejected')} className={classes.chipRed} />
-              ) : user.kycStatus.toLowerCase() === 'verified' ? (
-                <Chip size="small" label={t('user.kyc.verified')} className={classes.chipGreen} />
-              ) : (
-                <Chip size="small" label={t('user.kyc.pending')} className={classes.chipGrey} />
-              )}
+              <div className={classes.pl17}>{formatStringForInputText(user.lastName)}</div>
             </TableCell>
             <TableCell>
-              {formaDateStringWithPattern(user.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              <div className={classes.pl17}>{formatStringForInputText(user.email)}</div>
             </TableCell>
             <TableCell>
-              {formaDateStringWithPattern(user.updatedDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              <div className={classes.pl17}>{convertPhoneNumber(user.phoneNumber)}</div>
+            </TableCell>
+            <TableCell>
+              <div className={classes.pl17}>
+                {!user.isActive ? (
+                  <Chip
+                    size="small"
+                    label={t('user.statuses.deleted')}
+                    className={classes.chipLightGrey}
+                  />
+                ) : (
+                  <Chip
+                    size="small"
+                    label={t('user.statuses.active')}
+                    className={classes.chipGreen}
+                  />
+                )}
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className={classes.pl17}>
+                {user.kycStatus === null ? (
+                  user.kycStatus
+                ) : user.kycStatus.toLowerCase() === 'rejected' ? (
+                  <Chip size="small" label={t('user.kyc.rejected')} className={classes.chipRed} />
+                ) : user.kycStatus.toLowerCase() === 'verified' ? (
+                  <Chip size="small" label={t('user.kyc.verified')} className={classes.chipGreen} />
+                ) : (
+                  <Chip size="small" label={t('user.kyc.pending')} className={classes.chipGrey} />
+                )}
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className={classes.pl17}>
+                {formaDateStringWithPattern(user.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className={classes.pl17}>
+                {formaDateStringWithPattern(user.updatedDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </div>
             </TableCell>
           </TableRow>
         )
@@ -422,7 +442,7 @@ export default function CustomerProfile(): JSX.Element {
           <Typography className={classes.headerTopicText}>{t('user.custometList')}</Typography>
         </div>
         <Grid className={classes.searchBar} container spacing={1}>
-          <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
+          <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
             <TextField
               className={classes.searchTextField}
               fullWidth
@@ -455,7 +475,7 @@ export default function CustomerProfile(): JSX.Element {
               <MenuItem value="updatedDate">{t('user.updatedDate')}</MenuItem>
             </TextField>
           </Grid>
-          <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
+          <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
             <TextField
               className={showTextField ? '' : classes.hideObject}
               label={t('carAvailability.searchField.label')}
@@ -514,7 +534,7 @@ export default function CustomerProfile(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
+          <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
             <Button
               id="staff_profile__search_btn"
               className={showSearchButton ? classes.buttonWithoutShadow : classes.hideObject}
@@ -525,10 +545,7 @@ export default function CustomerProfile(): JSX.Element {
               {t('carAvailability.searchBtn')}
             </Button>
           </Grid>
-          <Grid
-            className={[classes.filter, classes.paddingLeft, classes.rightPanel].join(' ')}
-            xs={3}
-          >
+          <Grid className={[classes.filter, classes.pl16, classes.rightPanel].join(' ')} xs={3}>
             <Button
               id="customer_profile__export_btn"
               className={classes.exportButton}
