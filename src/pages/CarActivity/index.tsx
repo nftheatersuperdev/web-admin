@@ -41,13 +41,11 @@ import { validateKeywordText } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
-// import NoResultCard from 'components/NoResultCard'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-// import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
-// import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import { getSearcLocationList } from 'pages/CarAvailability/utils'
 
 // interface CarActivityParams {
 //   plate: string
@@ -104,9 +102,10 @@ const useStyles = makeStyles(() => ({
     },
   },
   buttonWithoutShadow: {
+    fontWeight: 'bold',
     display: 'inline-flexbox',
     boxShadow: 'none',
-    padding: '16px 20px',
+    padding: '14px 12px',
   },
   buttonOverridePadding: {
     padding: '16px',
@@ -185,6 +184,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     padding: '48px 0',
   },
+  locationServiceBox: {
+    width: '80%',
+  },
 }))
 
 const useQueryString = () => {
@@ -198,6 +200,7 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
+  const searchLocationList = getSearcLocationList(t)
   const qs = {
     plate: useQueryString().get('plate'),
     brand: useQueryString().get('brand'),
@@ -290,56 +293,55 @@ export default function CarActivity(): JSX.Element {
   }
 
   // const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
-  // const rows =
-  //   carActivitiesData?.cars.map((carActivity) => {
-  //     return {
-  //       id: carActivity.carId,
-  //       brandName: carActivity.brandName,
-  //       modelName: carActivity.modelName,
-  //       color: carActivity.color,
-  //       plateNumber: carActivity.plateNumber,
-  //     }
-  //   }) || []
+  const rows =
+    carActivitiesData?.cars.map((carActivity) => {
+      return {
+        id: carActivity.carId,
+        brandName: carActivity.brandName,
+        modelName: carActivity.modelName,
+        color: carActivity.color,
+        plateNumber: carActivity.plateNumber,
+        owner: carActivity.owner,
+        reseller: carActivity.reseller,
+      }
+    }) || []
 
   const carActivitiesRowData =
-    (carActivitiesData &&
-      carActivitiesData.cars?.length > 0 &&
-      carActivitiesData.cars.map((carActivity) => {
-        return (
-          <TableRow
-            hover
-            key={`car-activity-${carActivity.carId}`}
-            onClick={() =>
-              history.push({
-                pathname: `/car-activity/${carActivity.carId}`,
-                state: carActivity,
-              })
-            }
-          >
-            <TableCell>
-              <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
-            </TableCell>
-            <TableCell>
-              <div className={classes.textBold}>{checkAndRenderValue(carActivity.plateNumber)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.modelName)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-          </TableRow>
-        )
-      })) ||
+    (rows.length > 0 &&
+      rows.map((row) => (
+        <TableRow
+          hover
+          key={`car-activity-${row.id}`}
+          onClick={() =>
+            history.push({
+              pathname: `/car-activity/${row.id}`,
+              state: row,
+            })
+          }
+        >
+          <TableCell>
+            <div className={classes.textBold}>{checkAndRenderValue(row.plateNumber)}</div>
+          </TableCell>
+          <TableCell>
+            <div className={classes.textBold}>{checkAndRenderValue(row.brandName)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(row.modelName)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(row.color)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(row.plateNumber)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(row.owner)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(row.reseller)}</div>
+          </TableCell>
+        </TableRow>
+      ))) ||
     []
 
   // const isNoData = carActivities.length < 1
@@ -635,9 +637,9 @@ export default function CarActivity(): JSX.Element {
                 className={[classes.filter, 'filter-buttons'].join(' ')}
                 xs={6}
                 sm={6}
-                md={4}
-                lg={2}
-                xl={2}
+                md={2}
+                lg={1}
+                xl={1}
               >
                 <Button
                   variant="contained"
@@ -665,10 +667,35 @@ export default function CarActivity(): JSX.Element {
                 item
                 className={[classes.filter, classes.textRight].join(' ')}
                 xs={6}
-                sm={6}
-                md={2}
+                sm={4}
+                md={3}
                 lg={1}
                 xl={1}
+              >
+                <TextField
+                  fullWidth
+                  select
+                  label={t('carAvailability.searchLocation')}
+                  variant="outlined"
+                  id="car_availability__searchlocatio_input"
+                  value={filterModelObject}
+                  onChange={(event) => {
+                    console.log(event)
+                  }}
+                >
+                  {searchLocationList?.map((option) => (
+                    <MenuItem key={option.key} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid
+                item
+                className={[classes.filter, classes.textRight].join(' ')}
+                xs={1}
+                sm={2}
+                md={1}
               >
                 <Button
                   color="primary"

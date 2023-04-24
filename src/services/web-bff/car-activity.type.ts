@@ -27,6 +27,8 @@ export interface CarActivity {
   plateNumber: string
   status: string
   carId: string
+  owner: string
+  reseller: string
 }
 
 export interface Schedule {
@@ -61,6 +63,7 @@ export interface CarActivityListBodyProps {
   carModelId?: string
   carSkuId?: string // In the UI we called as color
   plateNumber?: string
+  resellerServiceAreaId?: string
 }
 
 export interface CarActivityListParamsProps {
