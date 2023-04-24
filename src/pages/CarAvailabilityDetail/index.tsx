@@ -35,6 +35,10 @@ interface CarAvailabilityDetailParams {
 const useStyles = makeStyles(() => ({
   hideButton: {
     '& .MuiIconButton-root': { display: 'none' },
+    backgroundColor: '#F5F5F5',
+  },
+  bgColour: {
+    backgroundColor: '#F5F5F5',
   },
 }))
 export default function CarAvailabilityDetail(): JSX.Element {
@@ -71,7 +75,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__carId"
                 label={t('carAvailabilityDetail.carId')}
                 fullWidth
@@ -88,7 +92,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__carStatus"
                 label={t('carAvailabilityDetail.carStatus')}
                 fullWidth
@@ -109,7 +113,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__carTrackId"
                 label={t('carAvailabilityDetail.carTrackId')}
                 fullWidth
@@ -126,7 +130,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__location"
                 label={t('carAvailabilityDetail.location')}
                 fullWidth
@@ -147,7 +151,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__plateNumber"
                 label={t('carAvailabilityDetail.plateNumber')}
                 fullWidth
@@ -164,7 +168,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__vin"
                 label={t('carAvailabilityDetail.vin')}
                 fullWidth
@@ -185,7 +189,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__carBrand"
                 label={t('carAvailabilityDetail.carBrand')}
                 fullWidth
@@ -202,7 +206,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__carModel"
                 label={t('carAvailabilityDetail.carModel')}
                 fullWidth
@@ -223,7 +227,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__color"
                 label={t('carAvailabilityDetail.color')}
                 fullWidth
@@ -245,7 +249,6 @@ export default function CarAvailabilityDetail(): JSX.Element {
             <Grid item xs={12} sm={6}>
               <DateTimePicker
                 fullWidth
-                disabled
                 className={classes.hideButton}
                 label={t('carAvailabilityDetail.createdDate')}
                 id="car_availability_detail__createdDate"
@@ -260,7 +263,6 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <DateTimePicker
-                disabled
                 fullWidth
                 className={classes.hideButton}
                 label={t('carAvailabilityDetail.updatedDate')}
@@ -280,7 +282,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__bookingId"
                 label={t('carAvailabilityDetail.bookingId')}
                 fullWidth
@@ -300,7 +302,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__owner"
                 label={t('carAvailabilityDetail.owner')}
                 fullWidth
@@ -317,7 +319,7 @@ export default function CarAvailabilityDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                disabled
+                className={classes.bgColour}
                 id="car_availability_detail__reseller"
                 label={t('carAvailabilityDetail.reSeller')}
                 fullWidth

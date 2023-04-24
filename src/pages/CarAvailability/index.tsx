@@ -44,6 +44,10 @@ import { CarAvailableListFilterRequest } from 'services/web-bff/car.type'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
+import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
+import { getCarOwnerList } from 'services/web-bff/car-owner'
+import { getReSellerList } from 'services/web-bff/re-seller-area'
 import { getSearchTypeList } from './utils'
 
 dayjs.extend(dayjsUtc)
@@ -159,6 +163,13 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
+interface LocationList {
+  data: Location[]
+}
+interface Location {
+  id: string
+  name: string
+}
 export default function CarAvailability(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
@@ -172,6 +183,10 @@ export default function CarAvailability(): JSX.Element {
   const [filterSearchField, setFilterSearchField] = useState<string>('')
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
   const timeoutIdRef = useRef<number | null>(null)
+  const [ownerData, setOwnerData] = useState<CarOwnerResponse | null>()
+  const [reSellerData, serReSellerData] = useState<ReSellerResponse | null>()
+  const [locationData] = useState<LocationList | null>()
+
   const generateFilterDates = () => {
     return {
       startDate: dayjs(selectedFromDate).startOf('day').format(DEFAULT_DATE_FORMAT_BFF),
@@ -191,6 +206,17 @@ export default function CarAvailability(): JSX.Element {
       size: pageSize,
     })
   )
+  const {
+    data: carOwners,
+    isFetched: isFetchedOwners,
+    isFetching: isFetchingOwners,
+  } = useQuery('get-car-owner', () => getCarOwnerList())
+
+  const {
+    data: carResellers,
+    isFetched: isFetchedResellers,
+    isFetching: isFetchingResellers,
+  } = useQuery('get-car-reseller', () => getReSellerList())
 
   useEffect(() => {
     refetch()
@@ -201,7 +227,20 @@ export default function CarAvailability(): JSX.Element {
     if (selectedFromDate > selectedToDate) {
       setSelectedToDate(selectedFromDate)
     }
-  }, [selectedFromDate, selectedToDate])
+    if (isFetchedOwners && carOwners) {
+      setOwnerData(carOwners)
+    }
+    if (isFetchedResellers && carResellers) {
+      serReSellerData(carResellers)
+    }
+  }, [
+    selectedFromDate,
+    selectedToDate,
+    carOwners,
+    isFetchedOwners,
+    carResellers,
+    isFetchedResellers,
+  ])
 
   const conditionConfigs = {
     minimumToFilterPlateNumber: 2,
@@ -498,6 +537,7 @@ export default function CarAvailability(): JSX.Element {
               >
                 <GridSearchSectionItem item xs={1.8}>
                   <TextField
+                    disabled={isFetching}
                     fullWidth
                     select
                     label={t('carAvailability.search')}
@@ -507,7 +547,7 @@ export default function CarAvailability(): JSX.Element {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          {formik.values.searchType && (
+                          {formik.values.searchType && !isFetching && (
                             <CloseOutlined
                               className={classes.paddingRigthBtnClear}
                               onClick={handleClear}
@@ -570,6 +610,7 @@ export default function CarAvailability(): JSX.Element {
                     className={
                       formik.values.searchType === 'ownerProfileId' ? '' : classes.hidenField
                     }
+                    disabled={isFetchingOwners}
                     fullWidth
                     select
                     variant="outlined"
@@ -578,7 +619,7 @@ export default function CarAvailability(): JSX.Element {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          {formik.values.selectOwner !== 'all' && (
+                          {formik.values.selectOwner !== 'all' && !isFetching && (
                             <CloseOutlined
                               className={classes.paddingRigthBtnClear}
                               onClick={handleClear}
@@ -589,21 +630,23 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     onChange={(event) => {
                       formik.setFieldValue('selectOwner', event.target.value)
+                      formik.handleSubmit()
                     }}
                   >
                     <MenuItem className={classes.hidenField} key="all" value="all">
                       {t('carAvailability.defultSelect.allOwner')}
                     </MenuItem>
-                    {/* {dataSelect?.map((option) => (
-                      <MenuItem key={option.key} value={option.value}>
-                        {option.name}
+                    {ownerData?.owners.map((item) => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.name}
                       </MenuItem>
-                    ))} */}
+                    ))}
                   </TextField>
                   <TextField
                     className={
                       formik.values.searchType === 'resellerServiceAreaId' ? '' : classes.hidenField
                     }
+                    disabled={isFetchingResellers}
                     fullWidth
                     select
                     variant="outlined"
@@ -612,7 +655,7 @@ export default function CarAvailability(): JSX.Element {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          {formik.values.selectReSeller !== 'all' && (
+                          {formik.values.selectReSeller !== 'all' && !isFetching && (
                             <CloseOutlined
                               className={classes.paddingRigthBtnClear}
                               onClick={handleClear}
@@ -623,16 +666,17 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     onChange={(event) => {
                       formik.setFieldValue('selectReSeller', event.target.value)
+                      formik.handleSubmit()
                     }}
                   >
                     <MenuItem className={classes.hidenField} key="all" value="all">
                       {t('carAvailability.defultSelect.allReSeller')}
                     </MenuItem>
-                    {/* {dataSelect?.map((option) => (
-                      <MenuItem key={option.key} value={option.value}>
-                        {option.name}
+                    {reSellerData?.resellers.map((item) => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.name}
                       </MenuItem>
-                    ))} */}
+                    ))}
                   </TextField>
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={2.5}>
@@ -683,7 +727,7 @@ export default function CarAvailability(): JSX.Element {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          {formik.values.selectLocation !== 'all' && (
+                          {formik.values.selectLocation !== 'all' && !isFetching && (
                             <CloseOutlined
                               className={classes.paddingRigthBtnClear}
                               onClick={handleClear}
@@ -708,11 +752,11 @@ export default function CarAvailability(): JSX.Element {
                     <MenuItem key="evme" value="7e116360-4b58-4fa2-b2cb-206a35ad6f72">
                       EVME
                     </MenuItem>
-                    {/* {dataSelect?.map((option) => (
-                      <MenuItem key={option.key} value={option.value}>
-                        {option.name}
+                    {locationData?.data.map((item) => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.name}
                       </MenuItem>
-                    ))} */}
+                    ))}
                   </TextField>
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={1}>
