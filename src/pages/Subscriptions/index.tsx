@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from 'config'
 import { Button, Card } from '@material-ui/core'
 import {
@@ -5,7 +6,6 @@ import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
-  // GridToolbarExport,
   GridToolbarDensitySelector,
   GridPageChangeParams,
   GridRowData,
@@ -16,16 +16,21 @@ import {
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
+import { CSVLink } from 'react-csv'
 import {
   columnFormatDate,
   columnFormatText,
   convertMoneyFormat,
+  DEFAULT_DATETIME_FORMAT,
   firstCapitalize,
   geEqualtDateOperators,
   getEqualFilterOperators,
   getSelectEqualFilterOperators,
 } from 'utils'
-import { Link, useLocation, useHistory } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import styled from 'styled-components'
+import dayjs from 'dayjs'
+import { ROUTE_PATHS } from 'routes'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getList } from 'services/web-bff/subscription'
 import PageToolbar from 'layout/PageToolbar'
@@ -44,20 +49,29 @@ import {
 import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
+  BookingCarActivity,
 } from 'services/web-bff/subscription.type'
-// import FilterBar from 'pages/Subscriptions/FilterBar'
 
 const customToolbar = () => (
   <GridToolbarContainer>
     <GridToolbarColumnsButton />
     <GridToolbarDensitySelector />
     <GridToolbarFilterButton />
-    {/* <GridToolbarExport csvOptions={{ allColumns: true }} /> */}
   </GridToolbarContainer>
 )
 
+const ExportButton = styled.div`
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+
+  a {
+    text-decoration: none;
+    color: #fff;
+  }
+`
+
 export default function Subscription(): JSX.Element {
-  const history = useHistory()
   const { t } = useTranslation()
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
@@ -92,7 +106,15 @@ export default function Subscription(): JSX.Element {
     data: response,
     isFetching,
     refetch,
-  } = useQuery('subscriptions', () => getList({ query, filters }))
+  } = useQuery('subscriptions', () => getList({ query, filters }), {
+    refetchOnWindowFocus: false,
+  })
+
+  const defaultValue = {
+    true: 'Y',
+    false: 'N',
+    noData: '-',
+  }
 
   const rowCount = response?.data?.pagination?.totalRecords || 0
   const rows =
@@ -104,8 +126,7 @@ export default function Subscription(): JSX.Element {
               : '-'
           const subscriptionPriceFullFormat = `${subscriptionPrice} ${t('pricing.currency.thb')}`
 
-          const deliveryDetail = subscription.carTasks.find((task) => task.type === 'Delivery')
-          const returnDetail = subscription.carTasks.find((task) => task.type === 'Return')
+          const replacement = subscription.isReplacement ? defaultValue.true : defaultValue.false
 
           return (
             {
@@ -129,14 +150,6 @@ export default function Subscription(): JSX.Element {
               duration: convertToDuration(subscription.rentDetail.durationDay, t),
               startDate: subscription.startDate,
               endDate: subscription.endDate,
-              deliveryAddress: deliveryDetail?.fullAddress || '-',
-              deliveryLatitude: deliveryDetail?.latitude || 0,
-              deliveryLongitude: deliveryDetail?.longitude || 0,
-              deliveryRemark: deliveryDetail?.remark || '-',
-              returnAddress: returnDetail?.fullAddress || '-',
-              returnLatitude: returnDetail?.latitude || 0,
-              returnLongitude: returnDetail?.longitude || 0,
-              returnRemark: returnDetail?.remark || '-',
               status: subscription.displayStatus,
               voucherId: subscription.rentDetail.voucherId || '',
               voucherCode: subscription.rentDetail.voucherCode || '',
@@ -145,17 +158,128 @@ export default function Subscription(): JSX.Element {
               paymentStatus: firstCapitalize(subscription?.payments[0]?.status) || '-',
               failureMessage: subscription?.payments[0]?.statusMessage || '-',
               paymentCreateDate: subscription?.payments[0]?.createdDate || '-',
-              deliveryDate: deliveryDetail?.date || '-',
-              returnDate: returnDetail?.date || '-',
+              replacement,
               parentId: subscription.bookingId,
               isExtend: Boolean(subscription.isExtend),
               customerId: subscription.customerId || '-',
               cleaningDate: subscription.endDate,
               payments: subscription?.payments || [],
+              isSelfPickup: subscription.isSelfPickUp,
             } ?? {}
           )
         })
       : []
+
+  const csvHeaders = [
+    { label: t('subscription.bookingDetailId'), key: 'bookingDetailId' },
+    { label: t('subscription.customerId'), key: 'customerId' },
+    { label: t('subscription.firstName'), key: 'firstName' },
+    { label: t('subscription.lastName'), key: 'lastName' },
+    { label: t('subscription.email'), key: 'email' },
+    { label: t('subscription.phone'), key: 'phoneNumber' },
+    { label: t('subscription.carId'), key: 'carId' },
+    { label: t('subscription.model'), key: 'carModel' },
+    { label: t('subscription.brand'), key: 'carBrand' },
+    { label: t('subscription.seats'), key: 'carSeats' },
+    { label: t('subscription.topSpeed'), key: 'carTopSpeed' },
+    { label: t('subscription.plateNumber'), key: 'plateNumber' },
+    { label: t('subscription.vin'), key: 'vin' },
+    { label: t('subscription.fastChargeTime'), key: 'carFastChargeTime' },
+    { label: t('subscription.price'), key: 'price' },
+    { label: t('subscription.duration'), key: 'duration' },
+    { label: t('subscription.startDate'), key: 'startDate' },
+    { label: t('subscription.endDate'), key: 'endDate' },
+    { label: t('booking.carReplacement.deliveryAddress'), key: 'deliveryAddress' },
+    { label: t('booking.carReplacement.returnAddress'), key: 'returnAddress' },
+    { label: t('subscription.status.title'), key: 'status' },
+    { label: t('subscription.parentId'), key: 'parentId' },
+    { label: t('subscription.isExtendedSubscription'), key: 'isExtend' },
+    { label: t('subscription.voucherId'), key: 'voucherId' },
+    { label: t('subscription.voucherCode'), key: 'voucherCode' },
+    { label: t('subscription.createdDate'), key: 'createdDate' },
+    { label: t('subscription.updatedDate'), key: 'updatedDate' },
+    { label: t('subscription.payment.status'), key: 'paymentStatus' },
+    { label: t('subscription.payment.failureMessage'), key: 'paymentFailureMessage' },
+    { label: t('subscription.payment.updatedDate'), key: 'paymentUpdatedDate' },
+    { label: t('subscription.deliveryDate'), key: 'deliveryDate' },
+    { label: t('subscription.returnDate'), key: 'returnDate' },
+    { label: t('subscription.isReplacement'), key: 'isReplacement' },
+    { label: t('subscription.isSelfPickup'), key: 'isSelfPickUp' },
+  ]
+  const csvData: any = []
+  response?.data?.bookingDetails?.forEach((booking) => {
+    const {
+      id,
+      bookingId,
+      customerId,
+      customer,
+      car,
+      rentDetail,
+      displayStatus,
+      startDate,
+      endDate,
+      carActivities,
+      payments,
+      isExtend,
+      isReplacement,
+      isSelfPickUp,
+    } = booking
+    const dateFormat = (date?: string) => {
+      if (!date) {
+        return defaultValue.noData
+      }
+      return dayjs(date).format(DEFAULT_DATETIME_FORMAT)
+    }
+    const makeData = (carActivity?: BookingCarActivity) => ({
+      bookingDetailId: id,
+      customerId,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      phoneNumber: customer.phoneNumber,
+      carId: carActivity ? carActivity?.carDetail?.id : car.id,
+      carBrand: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.brand.name
+        : car.carSku?.carModel?.brand.name || defaultValue.noData,
+      carModel: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.name
+        : car.carSku?.carModel?.name || defaultValue.noData,
+      carSeats: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.seats
+        : car.carSku?.carModel?.seats || defaultValue.noData,
+      carTopSpeed: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.topSpeed
+        : car.carSku?.carModel?.topSpeed || defaultValue.noData,
+      carFastChargeTime: carActivity
+        ? carActivity?.carDetail?.carSku?.carModel?.fastChargeTime
+        : car.carSku?.carModel?.fastChargeTime || defaultValue.noData,
+      plateNumber: carActivity ? carActivity?.carDetail?.plateNumber : car.plateNumber,
+      vin: carActivity ? carActivity?.carDetail?.vin : car.vin,
+      price: rentDetail.chargePrice,
+      duration: convertToDuration(rentDetail.durationDay, t),
+      startDate,
+      endDate,
+      deliveryAddress: carActivity?.deliveryTask?.fullAddress || defaultValue.noData,
+      deliveryDate: dateFormat(carActivity?.deliveryTask?.date),
+      returnAddress: carActivity?.returnTask?.fullAddress || defaultValue.noData,
+      returnDate: dateFormat(carActivity?.returnTask?.date),
+      status: displayStatus || defaultValue.noData,
+      isReplacement: isReplacement ? defaultValue.true : defaultValue.false,
+      parentId: bookingId,
+      isExtend: Boolean(isExtend),
+      paymentStatus: firstCapitalize(payments[0]?.status) || defaultValue.noData,
+      paymentFailureMessage: payments[0]?.statusMessage || defaultValue.noData,
+      paymentUpdatedDate: dateFormat(payments[0]?.updatedDate) || defaultValue.noData,
+      voucherId: rentDetail.voucherId || defaultValue.noData,
+      voucherCode: rentDetail.voucherCode || defaultValue.noData,
+      createdDate: dateFormat(rentDetail.createdDate),
+      updatedDate: dateFormat(rentDetail.updatedDate),
+      isSelfPickUp: isSelfPickUp ? defaultValue.true : defaultValue.false,
+    })
+    if (carActivities.length >= 1) {
+      carActivities.forEach((carActivity) => csvData.push(makeData(carActivity)))
+    }
+  })
 
   useEffect(() => {
     refetch()
@@ -347,26 +471,6 @@ export default function Subscription(): JSX.Element {
       valueFormatter: columnFormatDate,
     },
     {
-      field: 'deliveryAddress',
-      headerName: t('subscription.startAddress'),
-      description: t('subscription.startAddress'),
-      flex: 1,
-      hide: !visibilityColumns.deliveryAddress,
-      filterable: false,
-      sortable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
-      field: 'returnAddress',
-      headerName: t('subscription.endAddress'),
-      description: t('subscription.endAddress'),
-      flex: 1,
-      hide: !visibilityColumns.returnAddress,
-      filterable: false,
-      sortable: false,
-      valueFormatter: columnFormatText,
-    },
-    {
       field: 'status',
       headerName: t('subscription.status.title'),
       description: t('subscription.status.title'),
@@ -378,6 +482,15 @@ export default function Subscription(): JSX.Element {
       },
       filterOperators: equalSelectFilterOperators,
       valueOptions: getSubEventStatusOptions(t),
+    },
+    {
+      field: 'replacement',
+      headerName: t('subscription.replacement'),
+      description: t('subscription.replacement'),
+      flex: 1,
+      hide: !visibilityColumns.replacement,
+      sortable: false,
+      filterable: false,
     },
     {
       field: 'parentId',
@@ -473,27 +586,6 @@ export default function Subscription(): JSX.Element {
       sortable: false,
       valueFormatter: columnFormatDate,
     },
-    {
-      field: 'deliveryDate',
-      headerName: t('subscription.deliveryDate'),
-      description: t('subscription.deliveryDate'),
-      flex: 1,
-      hide: !visibilityColumns.deliveryDate,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'returnDate',
-      headerName: t('subscription.returnDate'),
-      description: t('subscription.returnDate'),
-      flex: 1,
-      hide: !visibilityColumns.returnDate,
-      filterable: true,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
   ]
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -545,9 +637,7 @@ export default function Subscription(): JSX.Element {
   }
 
   const handleRowClick = (data: GridRowData) => {
-    // setUpdateDialogOpen(true)
-    // setSelectedSubscription(data.row)
-    return history.push(`/subscription/${data.row.id}`)
+    return window.open(`/subscription/${data.row.bookingId}/${data.row.bookingDetailId}`, '_blank')
   }
 
   const handleFetchPage = (pageNumber: number) => {
@@ -563,11 +653,11 @@ export default function Subscription(): JSX.Element {
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.dashboard'),
-      link: '/',
+      link: ROUTE_PATHS.ROOT,
     },
     {
       text: t('sidebar.subscriptions'),
-      link: '/subscription',
+      link: ROUTE_PATHS.SUBSCRIPTION,
     },
   ]
 
@@ -583,7 +673,13 @@ export default function Subscription(): JSX.Element {
           </Link>
         )}
       </PageToolbar>
-      {/* <FilterBar /> */}
+      <ExportButton>
+        <Button variant="contained" color="primary" disabled={isFetching}>
+          <CSVLink data={csvData} headers={csvHeaders} filename="subscription.csv">
+            {t('subscription.downloadCSV')}
+          </CSVLink>
+        </Button>
+      </ExportButton>
       <Card>
         <DataGridLocale
           autoHeight
@@ -599,7 +695,7 @@ export default function Subscription(): JSX.Element {
           onColumnVisibilityChange={onColumnVisibilityChange}
           onRowClick={handleRowClick}
           filterMode="server"
-          checkboxSelection
+          checkboxSelection={false}
           onFilterModelChange={handleFilterChange}
           loading={isFetching}
           customToolbar={customToolbar}

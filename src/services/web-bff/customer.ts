@@ -1,15 +1,10 @@
-import { BaseApi } from 'api/baseApi'
 import { AdminBffAPI } from 'api/admin-bff'
 import {
-  CustomerByCustomerGroupListResponse,
-  CustomerDeleteLogListResponse,
-  CustomerDeleteLogProps,
   CustomerGroupListResponse,
   CustomerGroupProps,
   CustomerGroupResponse,
   CustomerListResponse,
   CustomerMeProps,
-  CustomerReActivateResponse,
   CustomerGroupInput,
 } from './customer.type'
 
@@ -66,45 +61,4 @@ export const updateCustomerGroup = async (
     updateObject
   ).then((response) => response.data)
   return response
-}
-
-export const searchCustomerInCustomerGroup = async ({
-  data,
-}: CustomerMeProps): Promise<CustomerByCustomerGroupListResponse> => {
-  const response: CustomerByCustomerGroupListResponse = await BaseApi.post(
-    `b078b478-3b61-4dd8-92ec-bcd05a2c7571`,
-    data
-  ).then((response) => response.data)
-  return response
-}
-
-export const getAllCustomerDeleteLog = async ({
-  customerId,
-  firstName,
-  lastName,
-  email,
-  page = 1,
-  size = 10,
-}: CustomerDeleteLogProps): Promise<CustomerDeleteLogListResponse> => {
-  const response: CustomerDeleteLogListResponse = await BaseApi.get(
-    `/v1/account-deactivation/logs/search`,
-    {
-      params: {
-        customerId,
-        firstName,
-        lastName,
-        email,
-        page,
-        size,
-      },
-    }
-  ).then((response) => response.data)
-  return response
-}
-
-export const reActivateCustomer = async (customerId: string): Promise<boolean> => {
-  const response: CustomerReActivateResponse = await BaseApi.post(
-    `/v1/customers/${customerId}/activation`
-  ).then((response) => response.data)
-  return response.status === 'success'
 }
