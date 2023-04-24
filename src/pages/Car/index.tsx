@@ -206,12 +206,16 @@ export default function Car(): JSX.Element {
     value: 'all',
   }
   const [selectedLocation, setselectedLocation] = useState<SelectOption | null>()
-  const onSetSelectedLocation = (value: SelectOption | null) => {
+  const onSetSelectedLocation = (option: SelectOption | null) => {
     // TODO: Add formik event when change value call filter
-    if (value) {
-      setselectedLocation(value)
+    if (option) {
+      setselectedLocation(option)
+      formik.setFieldValue('searchLocation', option.value)
+      formik.handleSubmit()
     } else {
       setselectedLocation(defaultLocation)
+      formik.setFieldValue('searchLocation', '')
+      formik.handleSubmit()
     }
   }
 
@@ -219,13 +223,14 @@ export default function Car(): JSX.Element {
     initialValues: {
       searchType: '',
       searchInput: '',
+      searchLocation: '',
     },
     enableReinitialize: true,
     onSubmit: (value) => {
       setPage(0)
-      const { searchType, searchInput } = value
+      const { searchType, searchInput, searchLocation } = value
       let filterSearch: FilterSearch = {}
-
+      console.log('searchLocation:', searchLocation)
       if (searchType) {
         let keySearch = searchType
         let valueSearch = searchInput
@@ -240,6 +245,10 @@ export default function Car(): JSX.Element {
         if (searchType === 'ownerProfileId') {
           filterSearch.ownerProfileType = 'BUSINESS'
         }
+      }
+
+      if (searchLocation) {
+        filterSearch.resellerServiceAreaId = searchLocation
       }
 
       setFilter(filterSearch)
