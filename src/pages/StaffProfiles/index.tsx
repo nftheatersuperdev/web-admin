@@ -20,6 +20,7 @@ import {
   TableBody,
   Chip,
   InputLabel,
+  Divider,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import config from 'config'
@@ -31,12 +32,13 @@ import {
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
+import styled from 'styled-components'
 import Pagination from '@material-ui/lab/Pagination'
 import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import NoResultCard from 'components/NoResultCard'
-import PageTitle from 'components/PageTitle'
 import './pagination.css'
+import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
 
 const useStyles = makeStyles({
   textBoldBorder: {
@@ -65,10 +67,12 @@ const useStyles = makeStyles({
   chipGreen: {
     backgroundColor: '#4CAF50',
     color: 'white',
+    borderRadius: '64px',
   },
   chipRed: {
     backgroundColor: '#F44336',
     color: 'white',
+    borderRadius: '64px',
   },
   buttonExport: {
     color: 'white',
@@ -107,8 +111,17 @@ const useStyles = makeStyles({
     color: '#fff',
     backgroundColor: '#424E63',
   },
+  breadcrumText: {
+    color: '#000000DE',
+  },
+  headerTopicText: {
+    fontSize: '20px',
+  },
 })
 
+const DividerCustom = styled(Divider)`
+  margin: 10px 0;
+`
 export default function StaffProfiles(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
@@ -217,15 +230,17 @@ export default function StaffProfiles(): JSX.Element {
   }
   return (
     <Page>
-      <PageTitle title={t('sidebar.staffProfile')} />
+      <PageTitleWithoutLine title={t('sidebar.staffProfile')} />
       <Breadcrumbs aria-label="breadcrumb">
         <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Typography color="primary">{t('sidebar.staffProfile')}</Typography>
+        <Typography className={classes.breadcrumText}>{t('sidebar.staffProfile')}</Typography>
       </Breadcrumbs>
+      <br />
+      <DividerCustom />
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('staffProfile.staffList')}</Typography>
+          <Typography className={classes.headerTopicText}>{t('staffProfile.staffList')}</Typography>
         </div>
         <div className={classes.searchWrapper}>
           <Grid container spacing={2} direction="row" className={classes.gridContainer}>

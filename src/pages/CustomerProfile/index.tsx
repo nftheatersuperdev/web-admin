@@ -246,8 +246,10 @@ export default function CustomerProfile(): JSX.Element {
     data: userResponse,
     refetch,
     isFetching: isFetchingActivities,
-  } = useQuery('customer-list', () =>
-    searchCustomer({ data: customerFilter, page, size: pageSize } as CustomerMeProps)
+  } = useQuery(
+    'customer-list',
+    () => searchCustomer({ data: customerFilter, page, size: pageSize } as CustomerMeProps),
+    { cacheTime: 10 * (60 * 1000), staleTime: 5 * (60 * 1000) }
   )
   const csvHeaders = [
     { label: 'ID', key: 'id' },
