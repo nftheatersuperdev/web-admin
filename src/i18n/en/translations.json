@@ -17,25 +17,31 @@
     "selectedToDate": "End Date",
     "search": "Select Search",
     "searchLocation": "Location Services",
-    "locationList": {
-      "all": "All Location"
+    "searchOwner": "Owner",
+    "searchReSeller": "Reseller",
+    "defultSelect": {
+      "allLocation": "All Location",
+      "allOwner": "All Owner",
+      "allReSeller": "All Reseller"
     },
     "searchBtn": "Search",
     "searchField": {
       "label": "Enter Search",
       "placeholder": "Please type at lease 2 charators",
       "errors": {
-        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters.",
+        "invalidUUIDFormat": "Please input valid UUID format."
       }
     },
     "none": "None",
     "available": "Available",
-    "inUse": "In Use"
+    "inUse": "In Use",
+    "export": "EXPORT"
   },
   "carAvailabilityDetail": {
     "location": "Location Service",
     "carId": "Car ID",
-    "carStatus": "Car Status",
+    "carStatus": "Status",
     "carTrackId": "Cartrack ID",
     "plateNumber": "Plate Number",
     "vin": "VIN",

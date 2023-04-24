@@ -66,7 +66,7 @@ export const setVisibilityColumns = (columns: VisibilityColumns): void => {
 }
 export interface SelectOption {
   key: string
-  label: string
+  name: string
   value: string
   isDefault?: boolean
 }
@@ -74,23 +74,24 @@ export interface SelectOption {
 export const getSearchTypeList = (t: TFunction<Namespace>): SelectOption[] => {
   return [
     {
-      key: 'id',
-      value: 'id',
-      label: t('carAvailabilityDetail.carId'),
+      key: 'carId',
+      value: 'carId',
+      name: t('carAvailabilityDetail.carId'),
     },
     {
       key: 'plateNumber',
       value: 'plateNumber',
-      label: t('carAvailabilityDetail.plateNumber'),
+      name: t('carAvailabilityDetail.plateNumber'),
     },
-  ]
-}
-export const getSearcLocationList = (t: TFunction<Namespace>): SelectOption[] => {
-  return [
     {
-      key: 'all location',
-      value: 'all location',
-      label: t('carAvailability.locationList.all'),
+      key: 'owner',
+      value: 'ownerProfileId',
+      name: t('carAvailabilityDetail.owner'),
+    },
+    {
+      key: 'reseller',
+      value: 'resellerServiceAreaId',
+      name: t('carAvailabilityDetail.reSeller'),
     },
   ]
 }
