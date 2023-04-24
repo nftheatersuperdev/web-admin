@@ -1,6 +1,6 @@
 import { Typography, Breadcrumbs, Card, Link, Button, TextField, Grid } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import { formatDate } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
@@ -84,132 +84,118 @@ export default function StaffProfileDetail(): JSX.Element {
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 id="input-userId"
                 name={t('user.id')}
                 label={t('user.id')}
                 variant="outlined"
                 value={staffData?.id}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('staffProfile.firebaseId')}
                 id="input-firebaseUid"
                 name={t('staffProfile.firebaseId')}
                 variant="outlined"
                 value={staffData?.firebaseId}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 id="input-firstName"
                 name={t('user.firstName')}
                 label={t('user.firstName')}
                 variant="outlined"
                 value={staffData?.firstName}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('user.lastName')}
                 id="input-lastName"
                 name={t('user.lastName')}
                 variant="outlined"
                 value={staffData?.lastName}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('user.email')}
                 id="input-email"
                 name={t('user.email')}
                 variant="outlined"
                 value={staffData?.email}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('user.role')}
                 id="input-role"
                 name={t('user.role')}
                 variant="outlined"
                 value={staffData?.role}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('user.status')}
                 id="input-status"
                 name={t('user.status')}
                 variant="outlined"
                 value={staffData?.isActive ? t('user.statuses.enable') : t('user.statuses.disable')}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 className={classes.hide}
                 fullWidth
+                disabled
                 label={t('user.lastName')}
                 id="input-lastName"
                 name={t('user.lastName')}
                 variant="outlined"
                 value={staffData?.lastName}
-                InputProps={{
-                  readOnly: true,
-                }}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('staffProfile.createdDate')}
                 id="input-createdDate"
                 name={t('staffProfile.createdDate')}
                 variant="outlined"
-                value={formatDate(staffData?.createdDate)}
-                InputProps={{
-                  readOnly: true,
-                }}
+                value={formaDateStringWithPattern(
+                  staffData?.createdDate,
+                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                )}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                disabled
                 label={t('user.updatedDate')}
                 id="input-updatedDate"
                 name={t('user.updatedDate')}
                 variant="outlined"
-                value={formatDate(staffData?.updatedDate)}
-                InputProps={{
-                  readOnly: true,
-                }}
+                value={formaDateStringWithPattern(
+                  staffData?.updatedDate,
+                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                )}
               />
             </Grid>
           </Grid>

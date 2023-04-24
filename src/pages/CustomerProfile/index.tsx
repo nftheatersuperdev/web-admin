@@ -21,6 +21,7 @@ import {
   Chip,
   TextField,
   CircularProgress,
+  Divider,
 } from '@mui/material'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
@@ -40,9 +41,10 @@ import config from 'config'
 import Pagination from '@material-ui/lab/Pagination'
 import { useFormik } from 'formik'
 import { CSVLink } from 'react-csv'
+import styled from 'styled-components'
 import { Page } from 'layout/LayoutRoute'
 import DatePicker from 'components/DatePicker'
-import PageTitle from 'components/PageTitle'
+import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
 import { searchCustomer } from 'services/web-bff/customer'
 import { UserInputRequest } from 'services/web-bff/user.type'
 import { CustomerFilterRequest, CustomerMeProps } from 'services/web-bff/customer.type'
@@ -54,6 +56,9 @@ const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
 const useStyles = makeStyles({
   headerTopic: {
     padding: '8px 16px',
+  },
+  headerTopicText: {
+    fontSize: '20px',
   },
   searchBar: {
     marginTop: '10px',
@@ -91,6 +96,7 @@ const useStyles = makeStyles({
     round: 'true',
   },
   width120: {
+    paddingLeft: '5px',
     width: '120px',
   },
   inlineElement: {
@@ -99,18 +105,22 @@ const useStyles = makeStyles({
   chipGreen: {
     backgroundColor: '#4CAF50',
     color: 'white',
+    borderRadius: '64px',
   },
   chipRed: {
     backgroundColor: '#F44336',
     color: 'white',
+    borderRadius: '64px',
   },
   chipGrey: {
     backgroundColor: '#424E63',
     color: 'white',
+    borderRadius: '64px',
   },
   chipLightGrey: {
     backgroundColor: '#E0E0E0',
     color: 'black',
+    borderRadius: '64px',
   },
   searchTextField: {
     width: '200px',
@@ -139,7 +149,14 @@ const useStyles = makeStyles({
     textAlign: 'right',
     paddingRight: '16px',
   },
+  breadcrumText: {
+    color: '#000000DE',
+  },
 })
+
+const DividerCustom = styled(Divider)`
+  margin: 10px 0;
+`
 
 export default function CustomerProfile(): JSX.Element {
   const classes = useStyles()
@@ -229,8 +246,10 @@ export default function CustomerProfile(): JSX.Element {
     data: userResponse,
     refetch,
     isFetching: isFetchingActivities,
-  } = useQuery('customer-list', () =>
-    searchCustomer({ data: customerFilter, page, size: pageSize } as CustomerMeProps)
+  } = useQuery(
+    'customer-list',
+    () => searchCustomer({ data: customerFilter, page, size: pageSize } as CustomerMeProps),
+    { cacheTime: 10 * (60 * 1000), staleTime: 5 * (60 * 1000) }
   )
   const csvHeaders = [
     { label: 'ID', key: 'id' },
@@ -298,7 +317,7 @@ export default function CustomerProfile(): JSX.Element {
             <TableCell>{formatStringForInputText(user.lastName)}</TableCell>
             <TableCell>{formatStringForInputText(user.email)}</TableCell>
             <TableCell>{convertPhoneNumber(user.phoneNumber)}</TableCell>
-            <TableCell align="center">
+            <TableCell>
               {!user.isActive ? (
                 <Chip
                   size="small"
@@ -313,7 +332,7 @@ export default function CustomerProfile(): JSX.Element {
                 />
               )}
             </TableCell>
-            <TableCell align="center">
+            <TableCell>
               {user.kycStatus === null ? (
                 user.kycStatus
               ) : user.kycStatus.toLowerCase() === 'rejected' ? (
@@ -388,15 +407,19 @@ export default function CustomerProfile(): JSX.Element {
   }
   return (
     <Page>
-      <PageTitle title={t('sidebar.userManagement.customerProfile')} />
+      <PageTitleWithoutLine title={t('sidebar.userManagement.customerProfile')} />
       <Breadcrumbs aria-label="breadcrumb">
         <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Typography color="primary">{t('sidebar.userManagement.customerProfile')}</Typography>
+        <Typography className={classes.breadcrumText}>
+          {t('sidebar.userManagement.customerProfile')}
+        </Typography>
       </Breadcrumbs>
+      <br />
+      <DividerCustom />
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('user.custometList')}</Typography>
+          <Typography className={classes.headerTopicText}>{t('user.custometList')}</Typography>
         </div>
         <Grid className={classes.searchBar} container spacing={1}>
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
@@ -528,45 +551,45 @@ export default function CustomerProfile(): JSX.Element {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <Checkbox className={classes.hideObject} size="small" />
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.firstName')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.lastName')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.email')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.phone')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.status')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.kyc.status')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('staffProfile.createdDate')}
                     </div>
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
                       {t('user.updatedDate')}
                     </div>
