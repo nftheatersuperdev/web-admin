@@ -46,8 +46,10 @@ import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
 import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
+import { LocationResponse } from 'services/web-bff/location.type'
 import { getCarOwnerList } from 'services/web-bff/car-owner'
 import { getReSellerList } from 'services/web-bff/re-seller-area'
+import { getLocationList } from 'services/web-bff/location'
 import { getSearchTypeList } from './utils'
 
 dayjs.extend(dayjsUtc)
@@ -163,13 +165,6 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-interface LocationList {
-  data: Location[]
-}
-interface Location {
-  id: string
-  name: string
-}
 export default function CarAvailability(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
@@ -184,8 +179,8 @@ export default function CarAvailability(): JSX.Element {
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
   const timeoutIdRef = useRef<number | null>(null)
   const [ownerData, setOwnerData] = useState<CarOwnerResponse | null>()
-  const [reSellerData, serReSellerData] = useState<ReSellerResponse | null>()
-  const [locationData] = useState<LocationList | null>()
+  const [reSellerData, setReSellerData] = useState<ReSellerResponse | null>()
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
 
   const generateFilterDates = () => {
     return {
@@ -218,6 +213,12 @@ export default function CarAvailability(): JSX.Element {
     isFetching: isFetchingResellers,
   } = useQuery('get-car-reseller', () => getReSellerList())
 
+  const {
+    data: loactions,
+    isFetched: isFetchedLoactions,
+    isFetching: isFetchingLoactions,
+  } = useQuery('get-location', () => getLocationList())
+
   useEffect(() => {
     refetch()
     setShowPage(false)
@@ -231,7 +232,10 @@ export default function CarAvailability(): JSX.Element {
       setOwnerData(carOwners)
     }
     if (isFetchedResellers && carResellers) {
-      serReSellerData(carResellers)
+      setReSellerData(carResellers)
+    }
+    if (isFetchedLoactions && loactions) {
+      setLocationData(loactions)
     }
   }, [
     selectedFromDate,
@@ -240,6 +244,8 @@ export default function CarAvailability(): JSX.Element {
     isFetchedOwners,
     carResellers,
     isFetchedResellers,
+    isFetchedLoactions,
+    loactions,
   ])
 
   const conditionConfigs = {
@@ -718,6 +724,7 @@ export default function CarAvailability(): JSX.Element {
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={2}>
                   <TextField
+                    disabled={isFetchingLoactions}
                     fullWidth
                     select
                     label={t('carAvailability.searchLocation')}
@@ -749,12 +756,9 @@ export default function CarAvailability(): JSX.Element {
                     <MenuItem className={classes.hidenField} key="all" value="all">
                       {t('carAvailability.defultSelect.allLocation')}
                     </MenuItem>
-                    <MenuItem key="evme" value="7e116360-4b58-4fa2-b2cb-206a35ad6f72">
-                      EVME
-                    </MenuItem>
-                    {locationData?.data.map((item) => (
+                    {locationData?.locations.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
-                        {item.name}
+                        {item.areaNameEn}
                       </MenuItem>
                     ))}
                   </TextField>
