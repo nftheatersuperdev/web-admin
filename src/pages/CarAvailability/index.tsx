@@ -66,12 +66,9 @@ const ContentSection = styled.div`
   margin-bottom: 20px;
 `
 const GridSearchSection = styled(Grid)`
-  padding-top: 20px;
-  display: flex;
-  align-items: left;
-`
-const GridSearchSectionItem = styled(Grid)`
-  height: 90px;
+  padding-top: 20px !important;
+  align-items: left !important;
+  min-height: 100px !important;
 `
 const ButtonExport = styled(Button)`
   background-color: #424e63 !important;
@@ -541,7 +538,7 @@ export default function CarAvailability(): JSX.Element {
                 container
                 spacing={1}
               >
-                <GridSearchSectionItem item xs={1.8}>
+                <Grid item xs={1.8}>
                   <TextField
                     disabled={isFetching}
                     fullWidth
@@ -575,8 +572,8 @@ export default function CarAvailability(): JSX.Element {
                       </MenuItem>
                     ))}
                   </TextField>
-                </GridSearchSectionItem>
-                <GridSearchSectionItem item xs={2.2}>
+                </Grid>
+                <Grid item xs={2.2}>
                   <TextField
                     className={
                       formik.values.searchType === 'ownerProfileId' ||
@@ -684,8 +681,8 @@ export default function CarAvailability(): JSX.Element {
                       </MenuItem>
                     ))}
                   </TextField>
-                </GridSearchSectionItem>
-                <GridSearchSectionItem item xs={2.5}>
+                </Grid>
+                <Grid item xs={2.5}>
                   <DatePicker
                     fullWidth
                     label={t('carAvailability.selectedFromDate')}
@@ -702,8 +699,8 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     inputVariant="outlined"
                   />
-                </GridSearchSectionItem>
-                <GridSearchSectionItem item xs={2.5}>
+                </Grid>
+                <Grid item xs={2.5}>
                   <DatePicker
                     fullWidth
                     label={t('carAvailability.selectedToDate')}
@@ -721,8 +718,8 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     inputVariant="outlined"
                   />
-                </GridSearchSectionItem>
-                <GridSearchSectionItem item xs={2}>
+                </Grid>
+                <Grid item xs={2}>
                   <TextField
                     disabled={isFetchingLoactions}
                     fullWidth
@@ -762,8 +759,8 @@ export default function CarAvailability(): JSX.Element {
                       </MenuItem>
                     ))}
                   </TextField>
-                </GridSearchSectionItem>
-                <GridSearchSectionItem item xs={1}>
+                </Grid>
+                <Grid item xs={1}>
                   <ButtonExport
                     fullWidth
                     variant="contained"
@@ -778,7 +775,7 @@ export default function CarAvailability(): JSX.Element {
                       {t('carAvailability.export')}
                     </CsvButton>
                   </ButtonExport>
-                </GridSearchSectionItem>
+                </Grid>
               </GridSearchSection>
 
               <TableContainer component={Paper} className={classes.table}>
