@@ -33,15 +33,25 @@ import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/car'
 import { CarListFilterRequest } from 'services/web-bff/car.type'
+import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
+import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
+import { LocationResponse } from 'services/web-bff/location.type'
+import { getCarOwnerList } from 'services/web-bff/car-owner'
+import { getReSellerList } from 'services/web-bff/re-seller-area'
+import { getLocationList } from 'services/web-bff/location'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import {
   getCarStatusOnlyUsedInBackendOptions,
+  getOwnerOptions,
   columnFormatCarStatus,
   CarStatus,
   SelectOption,
   CarList,
   Keypress,
   CarCsv,
+  FilterSearch,
+  getResellerOptions,
+  getLocationOptions,
 } from './utils'
 import { useStyles } from './styles'
 
@@ -72,17 +82,32 @@ export default function Car(): JSX.Element {
     })
   )
 
+  const { data: owners, isFetched: isFetchedOwner } = useQuery('get-car-owner', () =>
+    getCarOwnerList()
+  )
+
+  const { data: resellers, isFetched: isFetchedReseller } = useQuery('get-car-reseller', () =>
+    getReSellerList()
+  )
+
+  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
+    getLocationList()
+  )
+
   const cars =
     carData?.data.cars.map((car) => {
       return {
         id: car.id,
         carTrackId: car.carTrackId || '-',
+        location: car.location || '-',
         brand: car.carSku?.carModel.brand.name || '-',
         model: car.carSku?.carModel.name || '-',
         color: car.carSku?.color || '-',
         plateNumber: car.plateNumber || '-',
         vin: car.vin || '-',
         status: car.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
+        owner: car.owner || '-',
+        reseller: car.reSeller || '-',
         createdDate: car.createdDate || '-',
       }
     }) || []
@@ -116,13 +141,18 @@ export default function Car(): JSX.Element {
   ]
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
-  const [selectedStatus, setSelectedStatus] = useState<SelectOption | null>()
+  const [selectedOptionValue, setSelectedOptionValue] = useState<SelectOption | null>()
+  const [ownerData, setOwnerData] = useState<CarOwnerResponse | null>()
+  const [resellerData, setResellerData] = useState<ReSellerResponse | null>()
+
   const onSetSelectedSearch = (value: SelectOption | null) => {
     if (value) {
       setSelectedSearch(value)
+      setSelectedOptionValue(null)
     } else {
       setFilter({})
       setSelectedSearch(null)
+      setSelectedOptionValue(null)
     }
     setSearchValue('')
   }
@@ -134,9 +164,17 @@ export default function Car(): JSX.Element {
     const { value: eventVal } = event.target
     const searchText = value ? value : eventVal
     setSearchValue(searchText)
+
     if (isDropdown) {
-      console.log('val: ', value, isDropdown)
       onEnterSearch(null, isDropdown, searchText)
+    } else {
+      formik.setFieldValue('searchType', selectedSearch?.value)
+      formik.setFieldValue('searchInput', searchText)
+      window.setTimeout(() => {
+        if (searchText.length >= 2) {
+          formik.handleSubmit()
+        }
+      }, 1000)
     }
   }
   const onEnterSearch = (
@@ -144,26 +182,25 @@ export default function Car(): JSX.Element {
     isDropdown?: boolean,
     searchText?: string
   ) => {
-    if ((isDropdown || event?.key === Keypress.ENTER) && searchValue?.length >= 2) {
-      formik.setFieldValue('searchType', selectedSearch?.value)
-      const value = searchText ? searchText : searchValue
-      console.log('search: ', value)
-      formik.setFieldValue('searchInput', value)
-      formik.handleSubmit()
+    const shouldSubmit = isDropdown || (event?.key === Keypress.ENTER && searchValue?.length >= 2)
+
+    if (!shouldSubmit) {
+      return
     }
+
+    formik.setFieldValue('searchType', selectedSearch?.value)
+    const value = isDropdown && searchText ? searchText : searchValue
+    formik.setFieldValue('searchInput', value)
+    formik.handleSubmit()
   }
 
+  const statusOptions = getCarStatusOnlyUsedInBackendOptions(t)
+  const ownerOptions = getOwnerOptions(ownerData)
+  const resellerOptions = getResellerOptions(resellerData)
+
   // == location ==
-  const locationList: SelectOption[] = [
-    {
-      label: 'Bangkok',
-      value: 'bangkok',
-    },
-    {
-      label: 'Phuket',
-      value: 'phuket',
-    },
-  ]
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
+  const locationOptions = getLocationOptions(locationData)
   const defaultLocation = {
     label: t('car.allLocation'),
     value: 'all',
@@ -174,7 +211,6 @@ export default function Car(): JSX.Element {
     if (value) {
       setselectedLocation(value)
     } else {
-      setFilter({})
       setselectedLocation(defaultLocation)
     }
   }
@@ -187,17 +223,25 @@ export default function Car(): JSX.Element {
     enableReinitialize: true,
     onSubmit: (value) => {
       setPage(0)
-      let keySearch = ''
-      let valueSearch
-      let filterSearch = {}
-      if (value.searchType === 'statusEqual') {
-        keySearch = 'isActive'
-        valueSearch = value.searchInput === CarStatus.PUBLISHED ? true : false
-      } else {
-        keySearch = value.searchType
-        valueSearch = value.searchInput
+      const { searchType, searchInput } = value
+      let filterSearch: FilterSearch = {}
+
+      if (searchType) {
+        let keySearch = searchType
+        let valueSearch = searchInput
+
+        if (searchType === 'statusEqual') {
+          keySearch = 'isActive'
+          valueSearch = (searchInput === CarStatus.PUBLISHED).toString()
+        }
+
+        filterSearch = { [keySearch]: valueSearch }
+
+        if (searchType === 'ownerProfileId') {
+          filterSearch.ownerProfileType = 'BUSINESS'
+        }
       }
-      filterSearch = { [keySearch]: valueSearch }
+
       setFilter(filterSearch)
     },
   })
@@ -217,12 +261,15 @@ export default function Car(): JSX.Element {
   cars.forEach((car) => {
     const data = {
       carTrackId: car.carTrackId,
+      location: car.location,
       brand: car.brand,
       model: car.model,
       color: car.color,
       plateNumber: car.plateNumber,
       vin: car.vin,
       status: car.status,
+      owner: car.owner || '-',
+      reseller: car.reseller,
       createdDate: car.createdDate,
     }
     csvData.push(data)
@@ -279,9 +326,6 @@ export default function Car(): JSX.Element {
     {
       field: 'location',
       hidden: false,
-      render: () => {
-        return <div>Bangkok</div> // TODO: bind API location field
-      },
     },
     {
       field: 'brand',
@@ -321,16 +365,10 @@ export default function Car(): JSX.Element {
     {
       field: 'owner',
       hidden: false,
-      render: () => {
-        return <div>EVme</div> // TODO: bind API Owner field
-      },
     },
     {
       field: 'reseller',
       hidden: false,
-      render: () => {
-        return <div>EVme</div> // TODO: bind API Reseller field
-      },
     },
     {
       field: 'createdDate',
@@ -376,19 +414,133 @@ export default function Car(): JSX.Element {
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState<CarListFilterRequest>()
 
-  const statusOptions = getCarStatusOnlyUsedInBackendOptions(t)
-
   useEffect(() => {
     refetch()
-    setPage(0)
+    setPage(1)
   }, [page, pageSize, filter, refetch])
 
   useEffect(() => {
     if (carData?.data?.cars) {
       const totalPages = Math.ceil(carData.data.cars.length / pageSize)
-      setPage(Math.min(page, totalPages - 1))
+      const total = totalPages === 0 ? 0 : totalPages - 1
+      setPage(Math.min(page, total))
     }
   }, [carData, pageSize, page])
+
+  useEffect(() => {
+    if (isFetchedOwner && owners) {
+      setOwnerData(owners)
+    }
+  }, [owners, isFetchedOwner])
+
+  useEffect(() => {
+    if (isFetchedReseller && resellers) {
+      setResellerData(resellers)
+    }
+  }, [resellers, isFetchedReseller])
+
+  useEffect(() => {
+    if (isFetchedLocation && locations) {
+      setLocationData(locations)
+    }
+  }, [locations, isFetchedLocation])
+
+  const renderSearchStatus = () => (
+    <Autocomplete
+      autoHighlight
+      id="status_select_list"
+      options={statusOptions}
+      getOptionLabel={(option) => option.label}
+      renderInput={(params) => {
+        return <TextField {...params} label={t('car.selectStatus')} variant="outlined" />
+      }}
+      isOptionEqualToValue={(option, value) => option.value === value.value || value.value === ''}
+      value={selectedOptionValue || null}
+      onChange={(event, item) => {
+        setSelectedOptionValue(item)
+        onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
+      }}
+    />
+  )
+
+  const renderSearchInputField = () => (
+    <TextField
+      id="car_search_input"
+      type="text"
+      variant="outlined"
+      fullWidth
+      value={searchValue || ''}
+      onChange={onSearchChange}
+      onKeyDown={(event) => onEnterSearch(event as KeyboardEvent<HTMLInputElement>)}
+      disabled={!selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''}
+      placeholder={t('car.search')}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <IconButton>
+              <SearchIcon
+                color={
+                  !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
+                    ? 'disabled'
+                    : 'action'
+                }
+              />
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  )
+
+  const renderSearchOwner = () => (
+    <Autocomplete
+      autoHighlight
+      id="owner_select_list"
+      options={ownerOptions}
+      getOptionLabel={(option) => option.label}
+      renderInput={(params) => {
+        return <TextField {...params} label={t('car.selectOwner')} variant="outlined" />
+      }}
+      isOptionEqualToValue={(option, value) => option.value === value.value || value.value === ''}
+      value={selectedOptionValue || null}
+      onChange={(event, item) => {
+        setSelectedOptionValue(item)
+        onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
+      }}
+    />
+  )
+
+  const renderSearchReseller = () => (
+    <Autocomplete
+      autoHighlight
+      id="reseller_select_list"
+      options={resellerOptions}
+      getOptionLabel={(option) => option.label}
+      renderInput={(params) => {
+        return <TextField {...params} label={t('car.selectReseller')} variant="outlined" />
+      }}
+      isOptionEqualToValue={(option, value) => option.value === value.value || value.value === ''}
+      value={selectedOptionValue || null}
+      onChange={(event, item) => {
+        setSelectedOptionValue(item)
+        onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
+      }}
+    />
+  )
+
+  const renderComponentBasedOnSelectedSearch = () => {
+    if (selectedSearch?.value === 'statusEqual') {
+      return renderSearchStatus()
+    }
+    if (selectedSearch?.value === 'ownerProfileId') {
+      return renderSearchOwner()
+    }
+    if (selectedSearch?.value === 'resellerServiceAreaId') {
+      return renderSearchReseller()
+    }
+
+    return renderSearchInputField()
+  }
 
   return (
     <Page>
@@ -419,63 +571,13 @@ export default function Car(): JSX.Element {
             />
           </Grid>
           <Grid item xs={9} sm={2}>
-            {selectedSearch?.value === 'statusEqual' ? (
-              <Autocomplete
-                autoHighlight
-                id="status_select_list"
-                options={statusOptions}
-                getOptionLabel={(option) => option.label}
-                renderInput={(params) => {
-                  return <TextField {...params} label={t('car.selectStatus')} variant="outlined" />
-                }}
-                isOptionEqualToValue={(option, value) =>
-                  option.value === value.value || value.value === ''
-                }
-                value={selectedStatus || null}
-                onChange={(event, item) => {
-                  console.log('change?')
-                  setSelectedStatus(item)
-                  onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
-                }}
-              />
-            ) : (
-              <TextField
-                id="car_search_input"
-                type="text"
-                variant="outlined"
-                fullWidth
-                value={searchValue || ''}
-                onChange={onSearchChange}
-                onKeyDown={(event) => onEnterSearch(event as KeyboardEvent<HTMLInputElement>)}
-                disabled={
-                  !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
-                }
-                placeholder={t('car.search')}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton>
-                        <SearchIcon
-                          color={
-                            !selectedSearch ||
-                            selectedSearch?.value === 'all' ||
-                            selectedSearch?.value === ''
-                              ? 'disabled'
-                              : 'action'
-                          }
-                        />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
+            {renderComponentBasedOnSelectedSearch()}
           </Grid>
           <Grid item xs={9} sm={2}>
             <Autocomplete
               autoHighlight
               id="search_location_list"
-              options={locationList}
+              options={locationOptions}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => {
                 return (

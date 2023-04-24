@@ -243,6 +243,9 @@ export interface CarListFilterRequest {
   plateNumberContain?: string
   plateNumberEqual?: string
   statusEqual?: string
+  ownerProfileId?: string
+  ownerProfileType?: string
+  resellerServiceAreaId?: string
 }
 
 export interface CarListFilterRequestProps {
