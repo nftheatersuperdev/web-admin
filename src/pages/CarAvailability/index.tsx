@@ -73,7 +73,16 @@ const GridSearchSection = styled(Grid)`
 const GridSearchSectionItem = styled(Grid)`
   height: 90px;
 `
-
+const ButtonExport = styled(Button)`
+  background-color: #424e63 !important;
+  padding: 14px 12px !important;
+  color: white;
+`
+const CsvButton = styled(CSVLink)`
+  color: white !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+`
 const useStyles = makeStyles(() => ({
   searchBar: {
     '& .MuiOutlinedInput-input': { padding: '16px 12px' },
@@ -84,17 +93,6 @@ const useStyles = makeStyles(() => ({
     display: 'inline-flexbox',
     boxShadow: 'none',
     padding: '14px 12px',
-  },
-  buttonWithoutExport: {
-    backgroundColor: '#424E63',
-    display: 'inline-flexbox',
-    boxShadow: 'none',
-    padding: '14px 12px',
-  },
-  buttonExport: {
-    color: 'white',
-    fontWeight: 'bold',
-    textDecoration: 'none',
   },
   exportContrainer: {
     display: 'flex',
@@ -366,7 +364,9 @@ export default function CarAvailability(): JSX.Element {
       if (isKeywordUUIDAccepted) {
         timeOutSearch()
       } else {
-        setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidUUIDFormat'))
+        if (formik.values.searchType === 'carId') {
+          setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidUUIDFormat'))
+        }
       }
     }
   }
@@ -764,22 +764,20 @@ export default function CarAvailability(): JSX.Element {
                   </TextField>
                 </GridSearchSectionItem>
                 <GridSearchSectionItem item xs={1}>
-                  <Button
+                  <ButtonExport
                     fullWidth
-                    id="car_availability__export_btn"
-                    className={classes.buttonWithoutExport}
                     variant="contained"
                     disabled={isFetching}
+                    id="car_availability__export_btn"
                   >
-                    <CSVLink
+                    <CsvButton
                       data={csvData}
                       headers={csvHeaders}
                       filename={t('sidebar.carAvailability') + '.csv'}
-                      className={classes.buttonExport}
                     >
                       {t('carAvailability.export')}
-                    </CSVLink>
-                  </Button>
+                    </CsvButton>
+                  </ButtonExport>
                 </GridSearchSectionItem>
               </GridSearchSection>
 
