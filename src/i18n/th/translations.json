@@ -17,20 +17,26 @@
     "selectedToDate": "วันที่สิ้นสุด",
     "search": "เลือกเพื่อค้นหา",
     "searchLocation": "สถานที่บริการ",
-    "locationList": {
-      "all": "ทุกสถานที่"
+    "searchOwner": "ผู้ถือกรรมสิทธิ์",
+    "searchReSeller": "ตัวแทนจำหน่าย",
+    "defultSelect": {
+      "allLocation": "ทุกสถานที่",
+      "allOwner": "ทุกผู้ถือกรรมสิทธิ์",
+      "allReSeller": "ทุกตัวแทนจำหน่าย"
     },
     "searchBtn": "ค้นหา",
     "searchField": {
       "label": "ค้นหา",
       "placeholder": "กรุณากรอกอย่างน้อย 2 ตัวอักษร",
       "errors": {
-        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร"
+        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร",
+        "invalidUUIDFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ UUID"
       }
     },
     "none": "ไม่ระบุ",
     "available": "รถว่าง",
-    "inUse": "ใช้งานอยู่"
+    "inUse": "ใช้งานอยู่",
+    "export": "ส่งออกข้อมูล"
   },
   "carAvailabilityDetail": {
     "location": "สถานที่บริการ",
