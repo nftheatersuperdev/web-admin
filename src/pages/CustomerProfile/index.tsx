@@ -133,6 +133,7 @@ const useStyles = makeStyles({
     display: 'inline-flexbox',
     boxShadow: 'none',
     padding: '14px 12px',
+    width: '107px',
   },
   exportButton: {
     fontWeight: 'bold',
@@ -141,6 +142,7 @@ const useStyles = makeStyles({
     padding: '14px 12px',
     color: '#fff',
     backgroundColor: '#424E63',
+    width: '107px',
   },
   noResultMessage: {
     textAlign: 'center',
