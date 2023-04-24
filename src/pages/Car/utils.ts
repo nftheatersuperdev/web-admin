@@ -134,7 +134,6 @@ export interface CarList {
   vin: string
   status: string
   createdDate: string
-  updatedDate: string
   [key: string]: string
 }
 
@@ -147,7 +146,6 @@ export interface CarCsv {
   vin: string
   status: string
   createdDate: string
-  updatedDate: string
 }
 
 export enum Keypress {

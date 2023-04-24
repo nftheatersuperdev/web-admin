@@ -146,6 +146,19 @@ export default function CarDetail(): JSX.Element {
               value={carDetail?.carTrackId || ''}
             />
           </Grid>
+          {/* TODO: Add value location service */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="text"
+              id="car_detail__location"
+              className={classes.textField}
+              label={t('car.location')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value="Bangkok"
+            />
+          </Grid>
         </Grid>
 
         <Grid container spacing={3} className={classes.container}>
@@ -217,6 +230,33 @@ export default function CarDetail(): JSX.Element {
               disabled
               variant="outlined"
               value={carDetail?.carSku.color || ''}
+            />
+          </Grid>
+        </Grid>
+        {/* TODO : Add value owner and reseller */}
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="text"
+              id="car_detail__owner"
+              className={classes.textField}
+              label={t('car.owner')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value="EVme"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="text"
+              id="car_detail__reseller"
+              className={classes.textField}
+              label={t('car.reseller')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value="EVme"
             />
           </Grid>
         </Grid>

@@ -84,7 +84,6 @@ export default function Car(): JSX.Element {
         vin: car.vin || '-',
         status: car.isActive ? CarStatus.PUBLISHED : CarStatus.OUT_OF_SERVICE,
         createdDate: car.createdDate || '-',
-        updatedDate: car.updatedDate || '-',
       }
     }) || []
 
@@ -106,33 +105,77 @@ export default function Car(): JSX.Element {
       label: t('car.status'),
       value: 'statusEqual',
     },
+    {
+      label: t('car.owner'),
+      value: 'ownerProfileId',
+    },
+    {
+      label: t('car.reseller'),
+      value: 'resellerServiceAreaId',
+    },
   ]
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
   const [selectedStatus, setSelectedStatus] = useState<SelectOption | null>()
-  const defaultSelect = {
-    label: t('all'),
-    value: 'all',
-  }
   const onSetSelectedSearch = (value: SelectOption | null) => {
     if (value) {
       setSelectedSearch(value)
     } else {
       setFilter({})
-      setSelectedSearch(defaultSelect)
+      setSelectedSearch(null)
     }
     setSearchValue('')
   }
-  const onSearchChange = (event: ChangeEvent<HTMLInputElement>, value?: string) => {
+  const onSearchChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    value?: string,
+    isDropdown?: boolean
+  ) => {
     const { value: eventVal } = event.target
     const searchText = value ? value : eventVal
     setSearchValue(searchText)
+    if (isDropdown) {
+      console.log('val: ', value, isDropdown)
+      onEnterSearch(null, isDropdown, searchText)
+    }
   }
-  const onEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === Keypress.ENTER && searchValue?.length >= 2) {
+  const onEnterSearch = (
+    event: KeyboardEvent<HTMLInputElement> | null,
+    isDropdown?: boolean,
+    searchText?: string
+  ) => {
+    if ((isDropdown || event?.key === Keypress.ENTER) && searchValue?.length >= 2) {
       formik.setFieldValue('searchType', selectedSearch?.value)
-      formik.setFieldValue('searchInput', searchValue)
+      const value = searchText ? searchText : searchValue
+      console.log('search: ', value)
+      formik.setFieldValue('searchInput', value)
       formik.handleSubmit()
+    }
+  }
+
+  // == location ==
+  const locationList: SelectOption[] = [
+    {
+      label: 'Bangkok',
+      value: 'bangkok',
+    },
+    {
+      label: 'Phuket',
+      value: 'phuket',
+    },
+  ]
+  const defaultLocation = {
+    label: t('car.allLocation'),
+    value: 'all',
+  }
+  const [selectedLocation, setselectedLocation] = useState<SelectOption | null>()
+  const onSetSelectedLocation = (value: SelectOption | null) => {
+    // TODO: Add formik event when change value call filter
+    if (value) {
+      setselectedLocation(value)
+    } else {
+      setFilter({})
+      setselectedLocation(defaultLocation)
     }
   }
 
@@ -169,7 +212,6 @@ export default function Car(): JSX.Element {
     { label: t('car.vin'), key: 'vin' },
     { label: t('car.status'), key: 'status' },
     { label: t('car.createdDate'), key: 'createdDate' },
-    { label: t('car.updatedDate'), key: 'updatedDate' },
   ]
   const csvData: CarCsv[] = []
   cars.forEach((car) => {
@@ -182,7 +224,6 @@ export default function Car(): JSX.Element {
       vin: car.vin,
       status: car.status,
       createdDate: car.createdDate,
-      updatedDate: car.updatedDate,
     }
     csvData.push(data)
   })
@@ -191,6 +232,10 @@ export default function Car(): JSX.Element {
   const columnHead = [
     {
       colName: t('car.carTrackId'),
+      hidden: false,
+    },
+    {
+      colName: t('car.location'),
       hidden: false,
     },
     {
@@ -214,11 +259,15 @@ export default function Car(): JSX.Element {
       hidden: false,
     },
     {
-      colName: t('car.createdDate'),
+      colName: t('car.owner'),
       hidden: false,
     },
     {
-      colName: t('car.updatedDate'),
+      colName: t('car.reseller'),
+      hidden: false,
+    },
+    {
+      colName: t('car.createdDate'),
       hidden: false,
     },
   ]
@@ -226,6 +275,13 @@ export default function Car(): JSX.Element {
     {
       field: 'carTrackId',
       hidden: false,
+    },
+    {
+      field: 'location',
+      hidden: false,
+      render: () => {
+        return <div>Bangkok</div> // TODO: bind API location field
+      },
     },
     {
       field: 'brand',
@@ -263,20 +319,21 @@ export default function Car(): JSX.Element {
       },
     },
     {
-      field: 'createdDate',
+      field: 'owner',
       hidden: false,
-      render: (date: string) => {
-        return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>
-              {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-            </div>
-          </div>
-        )
+      render: () => {
+        return <div>EVme</div> // TODO: bind API Owner field
       },
     },
     {
-      field: 'updatedDate',
+      field: 'reseller',
+      hidden: false,
+      render: () => {
+        return <div>EVme</div> // TODO: bind API Reseller field
+      },
+    },
+    {
+      field: 'createdDate',
       hidden: false,
       render: (date: string) => {
         return (
@@ -309,7 +366,7 @@ export default function Car(): JSX.Element {
       )
     })) || (
     <TableRow>
-      <TableCell colSpan={9} align="center">
+      <TableCell colSpan={columnHead.length} align="center">
         {t('car.noData')}
       </TableCell>
     </TableRow>
@@ -323,7 +380,15 @@ export default function Car(): JSX.Element {
 
   useEffect(() => {
     refetch()
+    setPage(0)
   }, [page, pageSize, filter, refetch])
+
+  useEffect(() => {
+    if (carData?.data?.cars) {
+      const totalPages = Math.ceil(carData.data.cars.length / pageSize)
+      setPage(Math.min(page, totalPages - 1))
+    }
+  }, [carData, pageSize, page])
 
   return (
     <Page>
@@ -342,20 +407,12 @@ export default function Car(): JSX.Element {
               options={searchOptions}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label={t('car.selectSearch')}
-                    variant="outlined"
-                    placeholder={t('all')}
-                  />
-                )
+                return <TextField {...params} label={t('car.selectSearch')} variant="outlined" />
               }}
               isOptionEqualToValue={(option, value) =>
-                option.value === value.value || value.value === 'all'
+                option.value === value.value || value.value === ''
               }
-              value={selectedSearch || defaultSelect}
-              defaultValue={selectedSearch || defaultSelect}
+              value={selectedSearch || null}
               onChange={(_e, value) => {
                 onSetSelectedSearch(value)
               }}
@@ -376,10 +433,10 @@ export default function Car(): JSX.Element {
                 }
                 value={selectedStatus || null}
                 onChange={(event, item) => {
+                  console.log('change?')
                   setSelectedStatus(item)
-                  onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value)
+                  onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
                 }}
-                onKeyDown={onEnterSearch}
               />
             ) : (
               <TextField
@@ -389,7 +446,7 @@ export default function Car(): JSX.Element {
                 fullWidth
                 value={searchValue || ''}
                 onChange={onSearchChange}
-                onKeyDown={onEnterSearch}
+                onKeyDown={(event) => onEnterSearch(event as KeyboardEvent<HTMLInputElement>)}
                 disabled={
                   !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
                 }
@@ -414,8 +471,34 @@ export default function Car(): JSX.Element {
               />
             )}
           </Grid>
-          <Grid item xs={9} sm={5} />
-          <Grid item xs={9} sm={3} className={classes.gridExport}>
+          <Grid item xs={9} sm={2}>
+            <Autocomplete
+              autoHighlight
+              id="search_location_list"
+              options={locationList}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => {
+                return (
+                  <TextField
+                    {...params}
+                    label={t('car.location')}
+                    variant="outlined"
+                    placeholder={t('car.allLocation')}
+                  />
+                )
+              }}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value || value.value === 'all'
+              }
+              value={selectedLocation || defaultLocation}
+              defaultValue={selectedLocation || defaultLocation}
+              onChange={(_e, value) => {
+                onSetSelectedLocation(value)
+              }}
+            />
+          </Grid>
+          <Grid item xs={9} sm={4} />
+          <Grid item xs={9} sm={2} className={classes.gridExport}>
             <Button
               id="car_csv_button"
               variant="contained"
@@ -428,7 +511,7 @@ export default function Car(): JSX.Element {
                 filename={t('sidebar.carManagement.car') + '.csv'}
                 className={classes.csvlink}
               >
-                {t('button.export')}
+                {t('button.export').toLocaleUpperCase()}
               </CSVLink>
             </Button>
           </Grid>
@@ -448,7 +531,7 @@ export default function Car(): JSX.Element {
             {isFetching ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={9} align="center">
+                  <TableCell colSpan={columnHead.length} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
