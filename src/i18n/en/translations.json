@@ -1110,6 +1110,10 @@
       "detailLabel": "Car Brand",
       "emptyValue": "Select Brand"
     },
+    "location": {
+      "label": "Location Services",
+      "all": "All Location"
+    },
     "model": {
       "label": "Model",
       "detailLabel": "Car Model",

@@ -1,5 +1,6 @@
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
+import { LocationResponse } from 'services/web-bff/location.type'
 
 const STORAGE_KEYS = {
   VISIBILITY_COLUMNS: 'evme:car:visibility_columns',
@@ -121,4 +122,19 @@ export const getVisibilityColumns = (): VisibilityColumns => {
 
 export const setVisibilityColumns = (columns: VisibilityColumns): void => {
   ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
+}
+
+export interface SelectOption {
+  label: string
+  value: string
+}
+
+export const getLocationOptions = (
+  carActivityLocations: LocationResponse | null | undefined
+): SelectOption[] => {
+  const locations = carActivityLocations?.locations || []
+  return locations.map((location) => ({
+    label: location.areaNameEn,
+    value: location.id,
+  }))
 }

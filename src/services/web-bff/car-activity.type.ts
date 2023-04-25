@@ -19,16 +19,22 @@ export enum CarActivityBookingTypeIds {
 }
 
 export interface CarActivity {
-  brandName: string
+  carId: string
+  plateNumber: string
+  status: string
+  ownerProfileId: string
+  ownerProfileType: string
+  resellerServiceAreaId: string
+  businessId: string
+  owner: string
+  reSeller: string
+  color: string
   modelName: string
   subModelName: string
   modelYear: string
-  color: string
-  plateNumber: string
-  status: string
-  carId: string
-  owner: string
-  reseller: string
+  brandName: string
+  areaNameTh: string
+  areaNameEn: string
 }
 
 export interface Schedule {

@@ -41,11 +41,14 @@ import { validateKeywordText } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
+// import NoResultCard from 'components/NoResultCard'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+// import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
+import { getLocationList } from 'services/web-bff/location'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
-import { getSearcLocationList } from 'pages/CarAvailability/utils'
+import { getLocationOptions, SelectOption } from './utils'
 
 // interface CarActivityParams {
 //   plate: string
@@ -184,9 +187,6 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     padding: '48px 0',
   },
-  locationServiceBox: {
-    width: '80%',
-  },
 }))
 
 const useQueryString = () => {
@@ -200,12 +200,12 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
-  const searchLocationList = getSearcLocationList(t)
   const qs = {
     plate: useQueryString().get('plate'),
     brand: useQueryString().get('brand'),
     model: useQueryString().get('model'),
     color: useQueryString().get('color'),
+    location: useQueryString().get('resellerServiceAreaId'),
   }
 
   const conditionConfigs = {
@@ -244,6 +244,7 @@ export default function CarActivity(): JSX.Element {
   const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
   const [filterModel, setFilterModel] = useState<string>(qs.model || '')
   const [filterColor, setFilterColor] = useState<string>(qs.color || '')
+  const [filterLocation, setFilterLocation] = useState<string>(qs.location || '')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
@@ -281,9 +282,27 @@ export default function CarActivity(): JSX.Element {
         carModelId: filterModel,
         carSkuId: filterColor,
         plateNumber: filterPlate,
+        resellerServiceAreaId: filterLocation,
       }
     )
   )
+  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
+    getLocationList()
+  )
+  const locationOptions = getLocationOptions(locations)
+  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
+  const defaultLocation = {
+    label: t('carActivity.location.all'),
+    value: 'all',
+  }
+  const onSetSelectedLocation = (option: SelectOption | null) => {
+    if (option) {
+      setFilterLocation(option.value)
+      setSelectedLocation(option)
+    } else {
+      setSelectedLocation(defaultLocation)
+    }
+  }
 
   const checkAndRenderValue = (value: string) => {
     if (!value) {
@@ -293,55 +312,56 @@ export default function CarActivity(): JSX.Element {
   }
 
   // const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
-  const rows =
-    carActivitiesData?.cars.map((carActivity) => {
-      return {
-        id: carActivity.carId,
-        brandName: carActivity.brandName,
-        modelName: carActivity.modelName,
-        color: carActivity.color,
-        plateNumber: carActivity.plateNumber,
-        owner: carActivity.owner,
-        reseller: carActivity.reseller,
-      }
-    }) || []
+  // const rows =
+  //   carActivitiesData?.cars.map((carActivity) => {
+  //     return {
+  //       id: carActivity.carId,
+  //       brandName: carActivity.brandName,
+  //       modelName: carActivity.modelName,
+  //       color: carActivity.color,
+  //       plateNumber: carActivity.plateNumber,
+  //     }
+  //   }) || []
 
   const carActivitiesRowData =
-    (rows.length > 0 &&
-      rows.map((row) => (
-        <TableRow
-          hover
-          key={`car-activity-${row.id}`}
-          onClick={() =>
-            history.push({
-              pathname: `/car-activity/${row.id}`,
-              state: row,
-            })
-          }
-        >
-          <TableCell>
-            <div className={classes.textBold}>{checkAndRenderValue(row.plateNumber)}</div>
-          </TableCell>
-          <TableCell>
-            <div className={classes.textBold}>{checkAndRenderValue(row.brandName)}</div>
-          </TableCell>
-          <TableCell>
-            <div>{checkAndRenderValue(row.modelName)}</div>
-          </TableCell>
-          <TableCell>
-            <div>{checkAndRenderValue(row.color)}</div>
-          </TableCell>
-          <TableCell>
-            <div>{checkAndRenderValue(row.plateNumber)}</div>
-          </TableCell>
-          <TableCell>
-            <div>{checkAndRenderValue(row.owner)}</div>
-          </TableCell>
-          <TableCell>
-            <div>{checkAndRenderValue(row.reseller)}</div>
-          </TableCell>
-        </TableRow>
-      ))) ||
+    (carActivitiesData &&
+      carActivitiesData.cars?.length > 0 &&
+      carActivitiesData.cars.map((carActivity) => {
+        return (
+          <TableRow
+            hover
+            key={`car-activity-${carActivity.carId}`}
+            onClick={() =>
+              history.push({
+                pathname: `/car-activity/${carActivity.carId}`,
+                state: carActivity,
+              })
+            }
+          >
+            <TableCell>
+              <div className={classes.textBold}>{checkAndRenderValue(carActivity.areaNameEn)}</div>
+            </TableCell>
+            <TableCell>
+              <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.modelName)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.color)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.plateNumber)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.owner)}</div>
+            </TableCell>
+            <TableCell>
+              <div>{checkAndRenderValue(carActivity.reSeller)}</div>
+            </TableCell>
+          </TableRow>
+        )
+      })) ||
     []
 
   // const isNoData = carActivities.length < 1
@@ -356,7 +376,13 @@ export default function CarActivity(): JSX.Element {
       setPages(carActivitiesData.pagination.totalPage)
     }
 
-    if (isFetchedBrands && isFetchedActivities && carBrands && carBrands.length >= 1) {
+    if (
+      isFetchedLocation &&
+      isFetchedBrands &&
+      isFetchedActivities &&
+      carBrands &&
+      carBrands.length >= 1
+    ) {
       setFilterPlate(qs.plate || '')
 
       const brand = carBrands.find((carBrand) => carBrand.id === qs.brand)
@@ -372,6 +398,14 @@ export default function CarActivity(): JSX.Element {
       const color = model?.carSkus.find((carSku) => carSku.id === qs.color)
       setFilterColor(color?.id || '')
       setFilterColorObject(color)
+
+      const loc = locations?.locations.find((location) => location.id === qs.location)
+      setFilterLocation(loc?.id || '')
+      const locOption: SelectOption = {
+        label: loc?.areaNameEn || '',
+        value: loc?.id || '',
+      }
+      setSelectedLocation(locOption)
 
       refetch()
     }
@@ -405,13 +439,14 @@ export default function CarActivity(): JSX.Element {
       brand: filterBrand,
       model: filterModel,
       color: filterColor,
+      resellerServiceAreaId: filterLocation,
       ...params,
     }
     const validParams: {} = Object.fromEntries(
       Object.entries(adjustParams).filter(([_key, value]) => !!value)
     )
     const searchParams = new URLSearchParams(validParams)
-
+    console.log('adjustParams:', adjustParams)
     return history.push({ search: `?${searchParams.toString()}` })
   }
 
@@ -426,6 +461,8 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
+    setFilterLocation('')
+    setSelectedLocation(null)
     setResetFilters(true)
   }
 
@@ -530,7 +567,7 @@ export default function CarActivity(): JSX.Element {
               alignItems="center"
               className={classes.gridContainer}
             >
-              <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
+              <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} md={6} lg={2} xl={2}>
                 <FormControl variant="outlined" className={classes.fullWidth}>
                   <TextField
                     error={!!filterPlateError}
@@ -637,7 +674,7 @@ export default function CarActivity(): JSX.Element {
                 className={[classes.filter, 'filter-buttons'].join(' ')}
                 xs={6}
                 sm={6}
-                md={2}
+                md={4}
                 lg={1}
                 xl={1}
               >
@@ -665,37 +702,39 @@ export default function CarActivity(): JSX.Element {
               </Grid>
               <Grid
                 item
-                className={[classes.filter, classes.textRight].join(' ')}
-                xs={6}
-                sm={4}
+                className={[classes.filter, 'filter-model'].join(' ')}
+                xs={12}
+                sm={6}
                 md={3}
-                lg={1}
-                xl={1}
+                lg={2}
+                xl={2}
               >
-                <TextField
-                  fullWidth
-                  select
-                  label={t('carAvailability.searchLocation')}
-                  variant="outlined"
-                  id="car_availability__searchlocatio_input"
-                  value={filterModelObject}
-                  onChange={(event) => {
-                    console.log(event)
-                  }}
-                >
-                  {searchLocationList?.map((option) => (
-                    <MenuItem key={option.key} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                <Autocomplete
+                  autoHighlight
+                  id="location-select-list"
+                  options={locationOptions}
+                  getOptionLabel={(option) => option.label}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.location.all')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  value={selectedLocation || defaultLocation}
+                  defaultValue={selectedLocation || defaultLocation}
+                  onChange={(_event, value) => onSetSelectedLocation(value)}
+                />
               </Grid>
               <Grid
                 item
                 className={[classes.filter, classes.textRight].join(' ')}
-                xs={1}
-                sm={2}
-                md={1}
+                xs={6}
+                sm={6}
+                md={2}
+                lg={1}
+                xl={1}
               >
                 <Button
                   color="primary"
