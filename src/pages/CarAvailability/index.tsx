@@ -33,6 +33,7 @@ import {
   Paper,
 } from '@mui/material'
 import styled from 'styled-components'
+import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
 import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
@@ -48,7 +49,6 @@ import { LocationResponse } from 'services/web-bff/location.type'
 import { getCarOwnerList } from 'services/web-bff/car-owner'
 import { getReSellerList } from 'services/web-bff/re-seller-area'
 import { getLocationList } from 'services/web-bff/location'
-import { useStyles } from './styles'
 import { getSearchTypeList } from './utils'
 
 dayjs.extend(dayjsUtc)
@@ -81,6 +81,76 @@ const CsvButton = styled(CSVLink)`
 `
 
 export default function CarAvailability(): JSX.Element {
+  const useStyles = makeStyles(() => ({
+    datePickerFromTo: {
+      '&& .MuiOutlinedInput-input': {
+        padding: '16.5px 14px',
+      },
+    },
+    paginationCarAvailability: {
+      position: 'static',
+      display: 'flex',
+      listStyleType: 'none',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '20px',
+      round: 'true',
+      border: 'none',
+    },
+    inlineElement: {
+      display: 'inline-flex',
+    },
+    chipBgGreen: {
+      backgroundColor: '#4CAF50',
+      color: 'white',
+      borderRadius: '16px',
+    },
+    chipBgPrimary: {
+      backgroundColor: '#4584FF',
+      color: 'white',
+      borderRadius: '16px',
+    },
+    table: {
+      width: '100%',
+    },
+    textBoldBorder: {
+      borderLeft: '2px solid #E0E0E0',
+      fontWeight: 'bold',
+      paddingLeft: '4px',
+    },
+    rowOverflow: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      display: '-webkit-box',
+      '-webkit-line-clamp': 2,
+      '-webkit-box-orient': 'vertical',
+    },
+    setWidth: {
+      width: '80px',
+    },
+    setWidthBookingId: {
+      width: '130px',
+    },
+    hideObject: {
+      display: 'none',
+    },
+    paddingRigthBtnClear: {
+      marginLeft: '-40px',
+      cursor: 'pointer',
+      padding: '4px 4px',
+    },
+    noResultMessage: {
+      textAlign: 'center',
+      fontSize: '1.2em',
+      fontWeight: 'bold',
+      padding: '48px 0',
+    },
+    hidenField: {
+      display: 'none',
+    },
+  }))
+
   const { t } = useTranslation()
   const history = useHistory()
   const classes = useStyles()
@@ -546,7 +616,7 @@ export default function CarAvailability(): JSX.Element {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={2.5}>
+              <Grid item xs={2.5} className={classes.datePickerFromTo}>
                 <DatePicker
                   fullWidth
                   label={t('carAvailability.selectedFromDate')}
@@ -564,7 +634,7 @@ export default function CarAvailability(): JSX.Element {
                   inputVariant="outlined"
                 />
               </Grid>
-              <Grid item xs={2.5}>
+              <Grid item xs={2.5} className={classes.datePickerFromTo}>
                 <DatePicker
                   fullWidth
                   label={t('carAvailability.selectedToDate')}
