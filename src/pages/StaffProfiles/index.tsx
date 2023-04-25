@@ -108,8 +108,13 @@ const useStyles = makeStyles({
     },
   },
   addButton: {
+    fontWeight: 'bold',
+    display: 'inline-flexbox',
+    boxShadow: 'none',
+    padding: '14px 12px',
     color: '#fff',
     backgroundColor: '#424E63',
+    width: '107px',
   },
   breadcrumText: {
     color: '#000000DE',
