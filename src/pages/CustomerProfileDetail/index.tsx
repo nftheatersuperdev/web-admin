@@ -39,6 +39,9 @@ export default function CustomerProfileDetail(): JSX.Element {
     headerTopic: {
       padding: '8px 16px',
     },
+    headerTopicText: {
+      fontSize: '18px',
+    },
     detailContainer: {
       padding: '10px 25px',
     },
@@ -117,7 +120,9 @@ export default function CustomerProfileDetail(): JSX.Element {
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('sidebar.customerDetails')}</Typography>
+          <Typography className={classes.headerTopicText}>
+            {t('sidebar.customerDetails')}
+          </Typography>
         </div>
         <Grid container spacing={2} className={classes.detailContainer}>
           <Grid item xs={6}>
@@ -210,7 +215,9 @@ export default function CustomerProfileDetail(): JSX.Element {
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('user.verificationDetail')}</Typography>
+          <Typography className={classes.headerTopicText}>
+            {t('user.verificationDetail')}
+          </Typography>
         </div>
         <Grid container spacing={2} className={classes.detailContainer}>
           <Grid item xs={6}>
@@ -242,7 +249,7 @@ export default function CustomerProfileDetail(): JSX.Element {
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('user.userGroup')}</Typography>
+          <Typography className={classes.headerTopicText}>{t('user.userGroup')}</Typography>
         </div>
         <Grid container spacing={2} className={classes.detailContainer}>
           <Grid item xs={12}>
