@@ -105,9 +105,10 @@ const useStyles = makeStyles(() => ({
     },
   },
   buttonWithoutShadow: {
+    fontWeight: 'bold',
     display: 'inline-flexbox',
     boxShadow: 'none',
-    padding: '16px 20px',
+    padding: '14px 12px',
   },
   buttonOverridePadding: {
     padding: '16px',
@@ -311,57 +312,57 @@ export default function CarActivity(): JSX.Element {
   }
 
   // const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
-  // const rows =
-  //   carActivitiesData?.cars.map((carActivity) => {
-  //     return {
-  //       id: carActivity.carId,
-  //       brandName: carActivity.brandName,
-  //       modelName: carActivity.modelName,
-  //       color: carActivity.color,
-  //       plateNumber: carActivity.plateNumber,
-  //     }
-  //   }) || []
+  const rows =
+    carActivitiesData?.cars.map((carActivity) => {
+      return {
+        id: carActivity.carId,
+        brandName: carActivity.brandName,
+        modelName: carActivity.modelName,
+        color: carActivity.color,
+        plateNumber: carActivity.plateNumber,
+        location: carActivity.areaNameEn,
+        owner: carActivity.owner,
+        reSeller: carActivity.reSeller,
+      }
+    }) || []
 
   const carActivitiesRowData =
-    (carActivitiesData &&
-      carActivitiesData.cars?.length > 0 &&
-      carActivitiesData.cars.map((carActivity) => {
-        return (
-          <TableRow
-            hover
-            key={`car-activity-${carActivity.carId}`}
-            onClick={() =>
-              history.push({
-                pathname: `/car-activity/${carActivity.carId}`,
-                state: carActivity,
-              })
-            }
-          >
-            <TableCell>
-              <div className={classes.textBold}>{checkAndRenderValue(carActivity.areaNameEn)}</div>
-            </TableCell>
-            <TableCell>
-              <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.modelName)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.plateNumber)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.owner)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.reSeller)}</div>
-            </TableCell>
-          </TableRow>
-        )
-      })) ||
-    []
+    rows?.map((carActivity) => {
+      return (
+        <TableRow
+          hover
+          key={`car-activity-${carActivity.id}`}
+          onClick={() =>
+            history.push({
+              pathname: `/car-activity/${carActivity.id}`,
+              state: carActivity,
+            })
+          }
+        >
+          <TableCell>
+            <div className={classes.textBold}>{checkAndRenderValue(carActivity.location)}</div>
+          </TableCell>
+          <TableCell>
+            <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.modelName)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.color)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.plateNumber)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.owner)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.reSeller)}</div>
+          </TableCell>
+        </TableRow>
+      )
+    }) || []
 
   // const isNoData = carActivities.length < 1
 
@@ -445,7 +446,7 @@ export default function CarActivity(): JSX.Element {
       Object.entries(adjustParams).filter(([_key, value]) => !!value)
     )
     const searchParams = new URLSearchParams(validParams)
-    console.log('adjustParams:', adjustParams)
+    // console.log('adjustParams:', adjustParams)
     return history.push({ search: `?${searchParams.toString()}` })
   }
 

@@ -3,7 +3,7 @@
 import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
 import { Fragment, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
@@ -52,6 +52,11 @@ import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 
 interface CarActivityDetailParams {
   id: string
+}
+interface CarActivityStateParams {
+  location: string
+  owner: string
+  reSeller: string
 }
 enum ScheduleActions {
   Edit = 'edit',
@@ -144,8 +149,10 @@ function CustomToolBar() {
 }
 
 export default function CarActivityDetail(): JSX.Element {
+  const location = useLocation()
   const classes = useStyles()
   const { id: carId } = useParams<CarActivityDetailParams>()
+  const carActivityStateParams = location.state as CarActivityStateParams
   const { t, i18n } = useTranslation()
   const isThaiLanguage = i18n.language === 'th'
   const fixEndDateDays = 31 // the number of date from our PO to fix it
@@ -541,7 +548,7 @@ export default function CarActivityDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={carDetail?.location || '-'}
+                value={carActivityStateParams?.location || '-'}
               />
             </Grid>
           </Grid>
@@ -627,7 +634,7 @@ export default function CarActivityDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={carDetail?.owner || '-'}
+                value={carActivityStateParams?.owner || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={6} className={classes.textBold}>
@@ -639,7 +646,7 @@ export default function CarActivityDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={carDetail?.reSeller || '-'}
+                value={carActivityStateParams?.reSeller || '-'}
               />
             </Grid>
           </Grid>
