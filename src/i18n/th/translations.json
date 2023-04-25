@@ -274,7 +274,8 @@
     "searchDate": "วันที่ค้นหา"
   },
   "user": {
-    "custometList": "รายชื่อลูกค้า",
+    "customerList": "รายชื่อลูกค้า",
+    "customerDetail": "รายละเอียดลูกค้า",
     "customerId": "เลขไอดีลูกค้า",
     "id": "เลขไอดี",
     "email": "อีเมล",

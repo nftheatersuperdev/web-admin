@@ -441,7 +441,7 @@ export default function CustomerProfile(): JSX.Element {
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography className={classes.headerTopicText}>{t('user.custometList')}</Typography>
+          <Typography className={classes.headerTopicText}>{t('user.customerList')}</Typography>
         </div>
         <Grid className={classes.searchBar} container spacing={1}>
           <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
