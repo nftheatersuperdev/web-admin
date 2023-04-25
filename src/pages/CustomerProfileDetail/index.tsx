@@ -120,9 +120,7 @@ export default function CustomerProfileDetail(): JSX.Element {
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography className={classes.headerTopicText}>
-            {t('sidebar.customerDetails')}
-          </Typography>
+          <Typography className={classes.headerTopicText}>{t('user.customerDetail')}</Typography>
         </div>
         <Grid container spacing={2} className={classes.detailContainer}>
           <Grid item xs={6}>
@@ -266,7 +264,7 @@ export default function CustomerProfileDetail(): JSX.Element {
       </Card>
       <Card>
         <div className={classes.bottomContrainer}>
-          <Button variant="outlined" onClick={handleOnCancel}>
+          <Button variant="outlined" onClick={handleOnCancel} className={classes.hide}>
             {t('button.cancel')}
           </Button>
         </div>
