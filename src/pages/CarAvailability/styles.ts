@@ -11,6 +11,7 @@ export const useStyles = makeStyles(() => ({
     justifyContent: 'flex-end',
     padding: '20px',
     round: 'true',
+    border: 'none',
   },
   inlineElement: {
     display: 'inline-flex',
