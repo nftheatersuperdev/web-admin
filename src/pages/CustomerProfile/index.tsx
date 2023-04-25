@@ -544,7 +544,7 @@ export default function CustomerProfile(): JSX.Element {
               onClick={() => formik.handleSubmit()}
               disabled={!isEnableFilterButton}
             >
-              {t('carAvailability.searchBtn')}
+              {t('carAvailability.searchBtn').toUpperCase()}
             </Button>
           </Grid>
           <Grid className={[classes.filter, classes.pl16, classes.rightPanel].join(' ')} xs={3}>
