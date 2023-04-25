@@ -5,12 +5,15 @@ export const useStyles = makeStyles(() => ({
     '& .MuiOutlinedInput-input': { padding: '16.5px 12px' },
     '& .MuiIconButton-root': { padding: '2px 2px' },
   },
-  paginationContrainer: {
+  paginationCarAvailability: {
+    position: 'static',
     display: 'flex',
+    listStyleType: 'none',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '20px',
+    round: 'true',
   },
   inlineElement: {
     display: 'inline-flex',

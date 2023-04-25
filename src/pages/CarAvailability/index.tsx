@@ -707,7 +707,10 @@ export default function CarAvailability(): JSX.Element {
             </GridSearchSection>
             <GridSearchSection container>
               <Grid item xs={12}>
-                <div className={classes.paginationContrainer} id="paginationContrainer-01">
+                <div
+                  className={classes.paginationCarAvailability}
+                  id="paginationCarAvailability-01"
+                >
                   Rows per page:&nbsp;
                   <FormControl variant="standard" className={classes.inlineElement}>
                     <Select
