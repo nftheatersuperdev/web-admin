@@ -21,7 +21,6 @@ import {
   Grid,
   InputAdornment,
   MenuItem,
-  Paper,
   Select,
   Table,
   TableBody,
@@ -58,13 +57,6 @@ dayjs.extend(dayjsTimezone)
 const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
 const initSelectedToDate = dayjs().tz(config.timezone).endOf('day').toDate()
 
-const Wrapper = styled(Card)`
-  padding: 15px;
-  margin-top: 20px;
-`
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`
 const GridSearchSection = styled(Grid)`
   padding-top: 20px !important;
   align-items: left !important;
@@ -405,343 +397,349 @@ export default function CarAvailability(): JSX.Element {
   return (
     <Page>
       <PageTitle title={t('sidebar.carAvailability')} breadcrumbs={breadcrumbs} />
-      <Wrapper>
-        <ContentSection>
+      <Card>
+        <Grid className={classes.gridTitle}>
           <Typography variant="h6" component="h2">
             {t('sidebar.carAvailabilityList')}
           </Typography>
-          <GridSearchSection direction="row" justifyContent="flex-start" container spacing={1}>
-            <Grid item xs={1.8}>
-              <TextField
-                disabled={isFetching}
-                fullWidth
-                select
-                label={t('carAvailability.search')}
-                variant="outlined"
-                id="car_availability__searchtype_input"
-                value={formik.values.searchType}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {formik.values.searchType && !isFetching && (
-                        <CloseOutlined
-                          className={classes.paddingRigthBtnClear}
-                          onClick={handleClear}
-                        />
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(event) => {
-                  formik.setFieldValue('searchType', event.target.value)
-                  setFilterSearchField('')
-                  setFilterSearchFieldError('')
-                }}
-              >
-                {searchTypeList?.map((option) => (
-                  <MenuItem key={option.key} value={option.value}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={2.2}>
-              <TextField
-                className={
-                  formik.values.searchType === 'ownerProfileId' ||
-                  formik.values.searchType === 'resellerServiceAreaId'
-                    ? classes.hidenField
-                    : ''
+        </Grid>
+        <GridSearchSection className={classes.gridSearch} container spacing={1}>
+          <Grid item xs={2}>
+            <TextField
+              disabled={isFetching}
+              fullWidth
+              select
+              label={t('carAvailability.search')}
+              variant="outlined"
+              id="car_availability__searchtype_input"
+              value={formik.values.searchType}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {formik.values.searchType && !isFetching && (
+                      <CloseOutlined
+                        className={classes.paddingRigthBtnClear}
+                        onClick={handleClear}
+                      />
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(event) => {
+                formik.setFieldValue('searchType', event.target.value)
+                setFilterSearchField('')
+                setFilterSearchFieldError('')
+              }}
+            >
+              {searchTypeList?.map((option) => (
+                <MenuItem key={option.key} value={option.value}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid
+            item
+            xs={3}
+            className={
+              formik.values.searchType === 'ownerProfileId' ||
+              formik.values.searchType === 'resellerServiceAreaId'
+                ? classes.hidenField
+                : ''
+            }
+          >
+            <TextField
+              disabled={formik.values.searchType === ''}
+              fullWidth
+              error={!!filterSearchFieldError}
+              helperText={filterSearchFieldError}
+              variant="outlined"
+              id="car_availability__searchField_input"
+              placeholder={t('carAvailability.searchField.label')}
+              value={filterSearchField}
+              onChange={handleOnSearchFieldChange}
+              onKeyDown={(event) => {
+                if (!filterSearchFieldError && filterSearchField !== '' && event.key === 'Enter') {
+                  formik.handleSubmit()
                 }
-                disabled={formik.values.searchType === ''}
-                fullWidth
-                error={!!filterSearchFieldError}
-                helperText={filterSearchFieldError}
-                variant="outlined"
-                id="car_availability__searchField_input"
-                placeholder={t('carAvailability.searchField.label')}
-                value={filterSearchField}
-                onChange={handleOnSearchFieldChange}
-                onKeyDown={(event) => {
-                  if (
-                    !filterSearchFieldError &&
-                    filterSearchField !== '' &&
-                    event.key === 'Enter'
-                  ) {
-                    formik.handleSubmit()
-                  }
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color={formik.values.searchType === '' ? 'disabled' : 'action'} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <TextField
-                className={formik.values.searchType === 'ownerProfileId' ? '' : classes.hidenField}
-                disabled={isFetchingOwners}
-                fullWidth
-                select
-                variant="outlined"
-                id="car_availability__searchOwner_input"
-                value={formik.values.selectOwner}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {formik.values.selectOwner !== 'all' && !isFetching && (
-                        <CloseOutlined
-                          className={classes.paddingRigthBtnClear}
-                          onClick={handleClear}
-                        />
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon color={formik.values.searchType === '' ? 'disabled' : 'action'} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={2}
+            className={formik.values.searchType === 'ownerProfileId' ? '' : classes.hidenField}
+          >
+            <TextField
+              disabled={isFetchingOwners}
+              fullWidth
+              select
+              variant="outlined"
+              id="car_availability__searchOwner_input"
+              value={formik.values.selectOwner}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {formik.values.selectOwner !== 'all' && !isFetching && (
+                      <CloseOutlined
+                        className={classes.paddingRigthBtnClear}
+                        onClick={handleClear}
+                      />
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(event) => {
+                formik.setFieldValue('selectOwner', event.target.value)
+                formik.handleSubmit()
+              }}
+            >
+              <MenuItem className={classes.hidenField} key="all" value="all">
+                {t('carAvailability.defultSelect.allOwner')}
+              </MenuItem>
+              {ownerData?.owners.map((item) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid
+            item
+            xs={2}
+            className={
+              formik.values.searchType === 'resellerServiceAreaId' ? '' : classes.hidenField
+            }
+          >
+            <TextField
+              disabled={isFetchingResellers}
+              fullWidth
+              select
+              variant="outlined"
+              id="car_availability__searchReSeller_input"
+              value={formik.values.selectReSeller}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {formik.values.selectReSeller !== 'all' && !isFetching && (
+                      <CloseOutlined
+                        className={classes.paddingRigthBtnClear}
+                        onClick={handleClear}
+                      />
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(event) => {
+                formik.setFieldValue('selectReSeller', event.target.value)
+                formik.handleSubmit()
+              }}
+            >
+              <MenuItem className={classes.hidenField} key="all" value="all">
+                {t('carAvailability.defultSelect.allReSeller')}
+              </MenuItem>
+              {reSellerData?.resellers.map((item) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid className={classes.searchBar} item xs={2}>
+            <DatePicker
+              fullWidth
+              label={t('carAvailability.selectedFromDate')}
+              id="car_availability__startdate_input"
+              KeyboardButtonProps={{
+                id: 'car_availability__startdate_icon',
+              }}
+              name="selectedFromDate"
+              format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
+              value={selectedFromDate}
+              onChange={(date) => {
+                date && setSelectedFromDate(date.toDate())
+                formik.handleSubmit()
+              }}
+              inputVariant="outlined"
+            />
+          </Grid>
+          <Grid className={classes.searchBar} item xs={2}>
+            <DatePicker
+              fullWidth
+              label={t('carAvailability.selectedToDate')}
+              id="car_availability__enddate_input"
+              minDate={selectedFromDate}
+              KeyboardButtonProps={{
+                id: 'car_availability__enddate_icon',
+              }}
+              name="selectedToDate"
+              format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
+              value={selectedToDate}
+              onChange={(date) => {
+                date && setSelectedToDate(date.toDate())
+                formik.handleSubmit()
+              }}
+              inputVariant="outlined"
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              disabled={isFetchingLoactions}
+              fullWidth
+              select
+              label={t('carAvailability.searchLocation')}
+              variant="outlined"
+              id="car_availability__searchlocation_input"
+              value={formik.values.selectLocation}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {formik.values.selectLocation !== 'all' && !isFetching && (
+                      <CloseOutlined
+                        className={classes.paddingRigthBtnClear}
+                        onClick={handleClear}
+                      />
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(event) => {
+                formik.setFieldValue('selectLocation', event.target.value)
+                formik.handleSubmit()
+              }}
+            >
+              <MenuItem className={classes.hidenField} key="all" value="all">
+                {t('carAvailability.defultSelect.allLocation')}
+              </MenuItem>
+              {locationData?.locations.map((item) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.areaNameEn}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={1}>
+            <ButtonExport
+              fullWidth
+              variant="contained"
+              disabled={isFetching}
+              id="car_availability__export_btn"
+            >
+              <CsvButton
+                data={csvData}
+                headers={csvHeaders}
+                filename={t('sidebar.carAvailability') + '.csv'}
+              >
+                {t('carAvailability.export')}
+              </CsvButton>
+            </ButtonExport>
+          </Grid>
+        </GridSearchSection>
+
+        <TableContainer className={classes.table}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>
+                    {t('carAvailabilityDetail.location')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>
+                    {t('carAvailabilityDetail.carBrand')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>
+                    {t('carAvailabilityDetail.carModel')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                    {t('carAvailabilityDetail.color')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>
+                    {t('carAvailabilityDetail.plateNumber')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                    {t('carAvailabilityDetail.carStatus')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>
+                    {t('carAvailabilityDetail.bookingId')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>{t('carAvailabilityDetail.owner')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.textBoldBorder}>
+                    {t('carAvailabilityDetail.reSeller')}
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            {isFetching ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>{generateDataToTable()}</TableBody>
+            )}
+          </Table>
+        </TableContainer>
+        <Card>
+          <div className={classes.paginationContrainer}>
+            Rows per page:&nbsp;
+            <FormControl variant="standard" className={classes.inlineElement}>
+              <Select
+                value={carData?.data?.pagination?.size || pageSize}
+                defaultValue={carData?.data?.pagination?.size || pageSize}
                 onChange={(event) => {
-                  formik.setFieldValue('selectOwner', event.target.value)
-                  formik.handleSubmit()
+                  setPage(0)
+                  setPageSize(event.target.value as number)
                 }}
               >
-                <MenuItem className={classes.hidenField} key="all" value="all">
-                  {t('carAvailability.defultSelect.allOwner')}
-                </MenuItem>
-                {ownerData?.owners.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
+                {config.tableRowsPerPageOptions?.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
                   </MenuItem>
                 ))}
-              </TextField>
-              <TextField
-                className={
-                  formik.values.searchType === 'resellerServiceAreaId' ? '' : classes.hidenField
-                }
-                disabled={isFetchingResellers}
-                fullWidth
-                select
-                variant="outlined"
-                id="car_availability__searchReSeller_input"
-                value={formik.values.selectReSeller}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {formik.values.selectReSeller !== 'all' && !isFetching && (
-                        <CloseOutlined
-                          className={classes.paddingRigthBtnClear}
-                          onClick={handleClear}
-                        />
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(event) => {
-                  formik.setFieldValue('selectReSeller', event.target.value)
-                  formik.handleSubmit()
-                }}
-              >
-                <MenuItem className={classes.hidenField} key="all" value="all">
-                  {t('carAvailability.defultSelect.allReSeller')}
-                </MenuItem>
-                {reSellerData?.resellers.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid className={classes.searchBar} item xs={2.5}>
-              <DatePicker
-                fullWidth
-                label={t('carAvailability.selectedFromDate')}
-                id="car_availability__startdate_input"
-                KeyboardButtonProps={{
-                  id: 'car_availability__startdate_icon',
-                }}
-                name="selectedFromDate"
-                format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
-                value={selectedFromDate}
-                onChange={(date) => {
-                  date && setSelectedFromDate(date.toDate())
-                  formik.handleSubmit()
-                }}
-                inputVariant="outlined"
-              />
-            </Grid>
-            <Grid className={classes.searchBar} item xs={2.5}>
-              <DatePicker
-                fullWidth
-                label={t('carAvailability.selectedToDate')}
-                id="car_availability__enddate_input"
-                minDate={selectedFromDate}
-                KeyboardButtonProps={{
-                  id: 'car_availability__enddate_icon',
-                }}
-                name="selectedToDate"
-                format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
-                value={selectedToDate}
-                onChange={(date) => {
-                  date && setSelectedToDate(date.toDate())
-                  formik.handleSubmit()
-                }}
-                inputVariant="outlined"
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <TextField
-                disabled={isFetchingLoactions}
-                fullWidth
-                select
-                label={t('carAvailability.searchLocation')}
-                variant="outlined"
-                id="car_availability__searchlocation_input"
-                value={formik.values.selectLocation}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {formik.values.selectLocation !== 'all' && !isFetching && (
-                        <CloseOutlined
-                          className={classes.paddingRigthBtnClear}
-                          onClick={handleClear}
-                        />
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(event) => {
-                  formik.setFieldValue('selectLocation', event.target.value)
-                  formik.handleSubmit()
-                }}
-              >
-                <MenuItem className={classes.hidenField} key="all" value="all">
-                  {t('carAvailability.defultSelect.allLocation')}
-                </MenuItem>
-                {locationData?.locations.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.areaNameEn}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={1}>
-              <ButtonExport
-                fullWidth
-                variant="contained"
-                disabled={isFetching}
-                id="car_availability__export_btn"
-              >
-                <CsvButton
-                  data={csvData}
-                  headers={csvHeaders}
-                  filename={t('sidebar.carAvailability') + '.csv'}
-                >
-                  {t('carAvailability.export')}
-                </CsvButton>
-              </ButtonExport>
-            </Grid>
-          </GridSearchSection>
-          <Fragment>
-            <TableContainer component={Paper} className={classes.table}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.location')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.carBrand')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.carModel')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                        {t('carAvailabilityDetail.color')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.plateNumber')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                        {t('carAvailabilityDetail.carStatus')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.bookingId')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.owner')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.textBoldBorder}>
-                        {t('carAvailabilityDetail.reSeller')}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                {isFetching ? (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell colSpan={9} align="center">
-                        <CircularProgress />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                ) : (
-                  <TableBody>{generateDataToTable()}</TableBody>
-                )}
-              </Table>
-            </TableContainer>
-            <Card>
-              <div className={classes.paginationContrainer}>
-                Rows per page:&nbsp;
-                <FormControl variant="standard" className={classes.inlineElement}>
-                  <Select
-                    value={carData?.data?.pagination?.size || pageSize}
-                    defaultValue={carData?.data?.pagination?.size || pageSize}
-                    onChange={(event) => {
-                      setPage(0)
-                      setPageSize(event.target.value as number)
-                    }}
-                  >
-                    {config.tableRowsPerPageOptions?.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
-                &nbsp;
-                {carData?.data.pagination?.totalPage}
-                <Pagination
-                  count={carData?.data?.pagination?.totalPage}
-                  page={carData?.data?.pagination?.page || page}
-                  defaultPage={carData?.data?.pagination?.page || page}
-                  variant="text"
-                  color="primary"
-                  onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                    setPage(value - 1)
-                  }}
-                />
-              </div>
-            </Card>
-          </Fragment>
-        </ContentSection>
-      </Wrapper>
+              </Select>
+            </FormControl>
+            &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
+            &nbsp;
+            {carData?.data.pagination?.totalPage}
+            <Pagination
+              count={carData?.data?.pagination?.totalPage}
+              page={carData?.data?.pagination?.page || page}
+              defaultPage={carData?.data?.pagination?.page || page}
+              variant="text"
+              color="primary"
+              onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                setPage(value - 1)
+              }}
+            />
+          </div>
+        </Card>
+      </Card>
     </Page>
   )
 }
