@@ -1,9 +1,11 @@
 import { makeStyles } from '@mui/styles'
 
 export const useStyles = makeStyles(() => ({
-  searchBar: {
-    '& .MuiOutlinedInput-input': { padding: '16.5px 12px' },
-    '& .MuiIconButton-root': { padding: '2px 2px' },
+  datePickerFromTo: {
+    display: 'inherit',
+    '&& .MuiOutlinedInput-input': {
+      padding: '16.5px 14px',
+    },
   },
   paginationCarAvailability: {
     position: 'static',
@@ -14,6 +16,7 @@ export const useStyles = makeStyles(() => ({
     justifyContent: 'flex-end',
     padding: '20px',
     round: 'true',
+    border: 'none',
   },
   inlineElement: {
     display: 'inline-flex',
