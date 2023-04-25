@@ -27,41 +27,43 @@ import PageTitle from 'components/PageTitle'
 import { CustomerMeProps } from 'services/web-bff/customer.type'
 import { searchCustomer } from 'services/web-bff/customer'
 
-const useStyles = makeStyles({
-  hide: {
-    display: 'none',
-  },
-  headerTopic: {
-    padding: '8px 16px',
-  },
-  detailContainer: {
-    padding: '10px 25px',
-  },
-  bottomContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '10px 25px',
-  },
-  deleteProfileButton: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  textField: {
-    '& .MuiInputBase-input': {
-      height: '1.4rem',
-    },
-  },
-})
-
 interface CustomerProfileDetailEditParam {
   id: string
 }
 
 export default function CustomerProfileDetail(): JSX.Element {
+  const useStyles = makeStyles({
+    hide: {
+      display: 'none',
+    },
+    headerTopic: {
+      padding: '8px 16px',
+    },
+    detailContainer: {
+      padding: '10px 25px',
+    },
+    bottomContrainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: '10px 25px',
+    },
+    deleteProfileButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+    },
+    textField: {
+      '& .MuiInputBase-input': {
+        height: '1.4rem',
+      },
+    },
+    breadcrumText: {
+      color: '#000000DE',
+    },
+  })
   const history = useHistory()
   const { t } = useTranslation()
   const classes = useStyles()
@@ -110,7 +112,7 @@ export default function CustomerProfileDetail(): JSX.Element {
         <Link underline="hover" color="inherit" href="/customer-profiles">
           {t('sidebar.userManagement.customerProfile')}
         </Link>
-        <Typography color="primary">{t('sidebar.customerDetails')}</Typography>
+        <Typography className={classes.breadcrumText}>{t('sidebar.customerDetails')}</Typography>
       </Breadcrumbs>
       <br />
       <Card>

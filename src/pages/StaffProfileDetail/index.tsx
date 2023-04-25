@@ -10,36 +10,38 @@ import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
 import NoResultCard from 'components/NoResultCard'
 
-const useStyles = makeStyles({
-  hide: {
-    display: 'none',
-  },
-  headerTopic: {
-    padding: '8px 16px',
-  },
-  detailContainer: {
-    padding: '10px 25px',
-  },
-  bottomContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '10px 25px',
-  },
-  deleteProfileButton: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-})
-
 interface StaffProfileDetailEditParam {
   id: string
 }
 
 export default function StaffProfileDetail(): JSX.Element {
+  const useStyles = makeStyles({
+    hide: {
+      display: 'none',
+    },
+    headerTopic: {
+      padding: '8px 16px',
+    },
+    detailContainer: {
+      padding: '10px 25px',
+    },
+    bottomContrainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: '10px 25px',
+    },
+    deleteProfileButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+    },
+    breadcrumText: {
+      color: '#000000DE',
+    },
+  })
   const history = useHistory()
   const { t } = useTranslation()
   const classes = useStyles()
@@ -70,7 +72,7 @@ export default function StaffProfileDetail(): JSX.Element {
         <Link underline="hover" color="inherit" href="/staff-profiles">
           {t('sidebar.staffProfile')}
         </Link>
-        <Typography color="primary">{t('sidebar.staffProfileDetail')}</Typography>
+        <Typography className={classes.breadcrumText}>{t('sidebar.staffProfileDetail')}</Typography>
       </Breadcrumbs>
       <br />
       <Card>
