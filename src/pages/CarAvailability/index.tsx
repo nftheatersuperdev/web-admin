@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import {
@@ -390,9 +390,8 @@ export default function CarAvailability(): JSX.Element {
       })) ||
     []
 
-  const isNoData = carAvailabilityRowData.length > 0
   const generateDataToTable = () => {
-    if (isNoData) {
+    if (carAvailabilityRowData.length > 0) {
       return carAvailabilityRowData
     }
     return (
@@ -641,107 +640,106 @@ export default function CarAvailability(): JSX.Element {
               </ButtonExport>
             </Grid>
           </GridSearchSection>
-
-          <TableContainer component={Paper} className={classes.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>
-                      {t('carAvailabilityDetail.location')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>
-                      {t('carAvailabilityDetail.carBrand')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>
-                      {t('carAvailabilityDetail.carModel')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                      {t('carAvailabilityDetail.color')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>
-                      {t('carAvailabilityDetail.plateNumber')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
-                      {t('carAvailabilityDetail.carStatus')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>
-                      {t('carAvailabilityDetail.bookingId')}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>{t('carAvailabilityDetail.owner')}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.textBoldBorder}>
-                      {t('carAvailabilityDetail.reSeller')}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              {isFetching ? (
-                <TableBody>
+          <Fragment>
+            <TableContainer component={Paper} className={classes.table}>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      <CircularProgress />
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.location')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.carBrand')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.carModel')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                        {t('carAvailabilityDetail.color')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.plateNumber')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={[classes.textBoldBorder, classes.setWidth].join(' ')}>
+                        {t('carAvailabilityDetail.carStatus')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.bookingId')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.owner')}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className={classes.textBoldBorder}>
+                        {t('carAvailabilityDetail.reSeller')}
+                      </div>
                     </TableCell>
                   </TableRow>
-                </TableBody>
-              ) : (
-                <TableBody>{generateDataToTable()}</TableBody>
-              )}
-            </Table>
-          </TableContainer>
-          <Grid container>
-            <Grid item xs={12}>
-              <Card>
-                <div className={classes.paginationContrainer}>
-                  Rows per page:&nbsp;
-                  <FormControl variant="standard" className={classes.inlineElement}>
-                    <Select
-                      value={carData?.data?.pagination?.size || pageSize}
-                      defaultValue={carData?.data?.pagination?.size || pageSize}
-                      onChange={(event) => {
-                        setPage(0)
-                        setPageSize(event.target.value as number)
-                      }}
-                    >
-                      {config.tableRowsPerPageOptions?.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
-                  &nbsp;
-                  {carData?.data.pagination?.totalPage}
-                  <Pagination
-                    count={carData?.data?.pagination?.totalPage}
-                    page={carData?.data?.pagination?.page || page}
-                    defaultPage={carData?.data?.pagination?.page || page}
-                    variant="text"
-                    color="primary"
-                    onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                      setPage(value - 1)
+                </TableHead>
+                {isFetching ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={9} align="center">
+                        <CircularProgress />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  <TableBody>{generateDataToTable()}</TableBody>
+                )}
+              </Table>
+            </TableContainer>
+            <Card>
+              <div className={classes.paginationContrainer}>
+                Rows per page:&nbsp;
+                <FormControl variant="standard" className={classes.inlineElement}>
+                  <Select
+                    value={carData?.data?.pagination?.size || pageSize}
+                    defaultValue={carData?.data?.pagination?.size || pageSize}
+                    onChange={(event) => {
+                      setPage(0)
+                      setPageSize(event.target.value as number)
                     }}
-                  />
-                </div>
-              </Card>
-            </Grid>
-          </Grid>
+                  >
+                    {config.tableRowsPerPageOptions?.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
+                &nbsp;
+                {carData?.data.pagination?.totalPage}
+                <Pagination
+                  count={carData?.data?.pagination?.totalPage}
+                  page={carData?.data?.pagination?.page || page}
+                  defaultPage={carData?.data?.pagination?.page || page}
+                  variant="text"
+                  color="primary"
+                  onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                    setPage(value - 1)
+                  }}
+                />
+              </div>
+            </Card>
+          </Fragment>
         </ContentSection>
       </Wrapper>
     </Page>
