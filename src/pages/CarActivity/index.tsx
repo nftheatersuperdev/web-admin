@@ -340,10 +340,10 @@ export default function CarActivity(): JSX.Element {
           }
         >
           <TableCell>
-            <div className={classes.textBold}>{checkAndRenderValue(carActivity.location)}</div>
+            <div>{checkAndRenderValue(carActivity.location)}</div>
           </TableCell>
           <TableCell>
-            <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
+            <div>{checkAndRenderValue(carActivity.brandName)}</div>
           </TableCell>
           <TableCell>
             <div>{checkAndRenderValue(carActivity.modelName)}</div>
@@ -683,7 +683,7 @@ export default function CarActivity(): JSX.Element {
                   color="primary"
                   className={classes.buttonWithoutShadow}
                   onClick={() => handleOnClickFilters()}
-                  disabled={!isEnableFilterButton || isFetchingBrands || isFetchingActivities}
+                  disabled={isFetchingBrands || isFetchingActivities}
                 >
                   {t('button.search')}
                 </Button>
