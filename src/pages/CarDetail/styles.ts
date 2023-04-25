@@ -23,7 +23,7 @@ export const useStyles = makeStyles(() => ({
       color: '#000000',
       background: '#F5F5F5',
     },
-    '& .css-5a0091-MuiInputBase-root-MuiOutlinedInput-root.Mui-disabled': {
+    '& div.Mui-disabled': {
       background: '#F5F5F5 !important',
     },
   },
