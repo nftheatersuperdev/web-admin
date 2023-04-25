@@ -461,6 +461,7 @@ export default function CarActivity(): JSX.Element {
     setCarModels([])
     setCarColors([])
     setFilterLocation('')
+    setSelectedLocation(null)
     setResetFilters(true)
   }
 

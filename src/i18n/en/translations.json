@@ -1099,7 +1099,7 @@
       "header": "Edit a schedule"
     },
     "activityId": {
-      "label": "ID"
+      "label": "Car ID"
     },
     "plateNumber": {
       "label": "Plate",
