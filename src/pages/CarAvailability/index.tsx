@@ -4,13 +4,13 @@ import { CSVLink } from 'react-csv'
 import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   DEFAULT_DATE_FORMAT_BFF,
-  FieldKeyOparators,
   validateKeywordText,
   validateKeywordUUID,
 } from 'utils'
 import config from 'config'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
+import './pagination.css'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import {
   Button,
@@ -32,7 +32,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
@@ -50,6 +49,7 @@ import { LocationResponse } from 'services/web-bff/location.type'
 import { getCarOwnerList } from 'services/web-bff/car-owner'
 import { getReSellerList } from 'services/web-bff/re-seller-area'
 import { getLocationList } from 'services/web-bff/location'
+import { useStyles } from './styles'
 import { getSearchTypeList } from './utils'
 
 dayjs.extend(dayjsUtc)
@@ -80,85 +80,6 @@ const CsvButton = styled(CSVLink)`
   font-weight: bold !important;
   text-decoration: none !important;
 `
-const useStyles = makeStyles(() => ({
-  searchBar: {
-    '& .MuiOutlinedInput-input': { padding: '16px 12px' },
-    '& .MuiIconButton-root': { padding: '2px 2px' },
-  },
-  buttonWithoutShadow: {
-    fontWeight: 'bold',
-    display: 'inline-flexbox',
-    boxShadow: 'none',
-    padding: '14px 12px',
-  },
-  exportContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  paginationContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '20px',
-  },
-  inlineElement: {
-    display: 'inline-flex',
-  },
-  paddindElement: {
-    marginLeft: '8px',
-  },
-  chipBgGreen: {
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    borderRadius: '16px',
-  },
-  chipBgPrimary: {
-    backgroundColor: '#4584FF',
-    color: 'white',
-    borderRadius: '16px',
-  },
-  table: {
-    width: '100%',
-  },
-  textBoldBorder: {
-    borderLeft: '2px solid #E0E0E0',
-    fontWeight: 'bold',
-    paddingLeft: '4px',
-  },
-  rowOverflow: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    display: '-webkit-box',
-    '-webkit-line-clamp': 2,
-    '-webkit-box-orient': 'vertical',
-  },
-  setWidth: {
-    width: '80px',
-  },
-  setWidthBookingId: {
-    width: '130px',
-  },
-  hideObject: {
-    display: 'none',
-  },
-  paddingRigthBtnClear: {
-    marginLeft: '-40px',
-    cursor: 'pointer',
-    padding: '4px 4px',
-  },
-  noResultMessage: {
-    textAlign: 'center',
-    fontSize: '1.2em',
-    fontWeight: 'bold',
-    padding: '48px 0',
-  },
-  hidenField: {
-    display: 'none',
-  },
-}))
 
 export default function CarAvailability(): JSX.Element {
   const { t } = useTranslation()
@@ -287,18 +208,10 @@ export default function CarAvailability(): JSX.Element {
     enableReinitialize: true,
 
     onSubmit: (value) => {
-      let keyOfValue = ''
       let updateObj
-      let searchField = filterSearchField
+      const searchField = filterSearchField
 
-      if (value.searchType === '' && value.selectLocation !== 'all') {
-        keyOfValue = `resellerServiceAreaId`
-        searchField = value.selectLocation
-        updateObj = {
-          [keyOfValue]: searchField,
-          ...generateFilterDates(),
-        } as CarAvailableListFilterRequest
-      } else if (value.searchType === '' && value.selectLocation === 'all') {
+      if (value.searchType === '' && value.selectLocation === 'all') {
         filter.carId = undefined
         filter.plateNumberContain = undefined
         filter.plateNumberEqual = undefined
@@ -310,19 +223,23 @@ export default function CarAvailability(): JSX.Element {
         } as CarAvailableListFilterRequest
       } else {
         if (value.searchType === 'plateNumber') {
-          keyOfValue = `${value.searchType}${FieldKeyOparators.contains}`
-        } else {
-          keyOfValue = `${value.searchType}`
+          filter.plateNumberContain = searchField
+        }
+        if (value.searchType === 'id') {
+          filter.carId = searchField
         }
 
-        if (value.searchType === 'ownerProfileId') {
-          searchField = value.selectOwner
+        if (value.searchType === 'ownerProfileId' && value.selectOwner !== 'all') {
+          filter.ownerProfileId = value.selectOwner
         }
-        if (value.searchType === 'resellerServiceAreaId') {
-          searchField = value.selectReSeller
+        if (value.searchType === 'resellerServiceAreaId' && value.selectReSeller !== 'all') {
+          filter.resellerServiceAreaId = value.selectReSeller
+        }
+        if (value.selectLocation !== 'all') {
+          filter.resellerServiceAreaId = value.selectLocation
         }
         updateObj = {
-          [keyOfValue]: searchField,
+          ...filter,
           ...generateFilterDates(),
         } as CarAvailableListFilterRequest
       }
@@ -429,48 +346,32 @@ export default function CarAvailability(): JSX.Element {
             }
             key={`car-availability-${row.id}`}
           >
-            <TableCell>
+            <TableCell sx={{ width: '150px' }}>
               <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
                 {row.location}
               </div>
             </TableCell>
-            <TableCell>
-              <div
-                className={[classes.rowOverflow, classes.setWidth, classes.paddindElement].join(
-                  ' '
-                )}
-              >
+            <TableCell sx={{ width: '120px' }}>
+              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
                 {row.brand}
               </div>
             </TableCell>
-            <TableCell>
-              <div
-                className={[classes.rowOverflow, classes.setWidth, classes.paddindElement].join(
-                  ' '
-                )}
-              >
+            <TableCell sx={{ width: '120px' }}>
+              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
                 {row.model}
               </div>
             </TableCell>
-            <TableCell>
-              <div
-                className={[classes.rowOverflow, classes.setWidth, classes.paddindElement].join(
-                  ' '
-                )}
-              >
+            <TableCell sx={{ width: '100px' }}>
+              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
                 {row.color}
               </div>
             </TableCell>
-            <TableCell>
-              <div
-                className={[classes.rowOverflow, classes.setWidth, classes.paddindElement].join(
-                  ' '
-                )}
-              >
+            <TableCell sx={{ width: '130px' }}>
+              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
                 {row.plateNumber}
               </div>
             </TableCell>
-            <TableCell className={classes.setWidth} align="center">
+            <TableCell sx={{ width: '120px' }} align="center">
               <div>
                 <Chip
                   label={row.status}
@@ -482,10 +383,8 @@ export default function CarAvailability(): JSX.Element {
                 />
               </div>
             </TableCell>
-            <TableCell>
-              <div className={[classes.rowOverflow, classes.setWidthBookingId].join(' ')}>
-                {row.subscriptionId}
-              </div>
+            <TableCell sx={{ width: '170px' }}>
+              <div className={classes.rowOverflow}>{row.subscriptionId}</div>
             </TableCell>
             <TableCell>
               <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
@@ -531,13 +430,7 @@ export default function CarAvailability(): JSX.Element {
               <Typography variant="h6" component="h2">
                 {t('sidebar.carAvailabilityList')}
               </Typography>
-              <GridSearchSection
-                className={classes.searchBar}
-                direction="row"
-                justifyContent="flex-start"
-                container
-                spacing={1}
-              >
+              <GridSearchSection direction="row" justifyContent="flex-start" container spacing={1}>
                 <Grid item xs={1.8}>
                   <TextField
                     disabled={isFetching}
@@ -561,7 +454,7 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     onChange={(event) => {
                       formik.setFieldValue('searchType', event.target.value)
-                      formik.setFieldValue('selectLocation', 'all')
+                      // formik.setFieldValue('selectLocation', 'all')
                       setFilterSearchField('')
                       setFilterSearchFieldError('')
                     }}
@@ -682,7 +575,7 @@ export default function CarAvailability(): JSX.Element {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={2.5}>
+                <Grid className={classes.searchBar} item xs={2.5}>
                   <DatePicker
                     fullWidth
                     label={t('carAvailability.selectedFromDate')}
@@ -700,7 +593,7 @@ export default function CarAvailability(): JSX.Element {
                     inputVariant="outlined"
                   />
                 </Grid>
-                <Grid item xs={2.5}>
+                <Grid className={classes.searchBar} item xs={2.5}>
                   <DatePicker
                     fullWidth
                     label={t('carAvailability.selectedToDate')}
@@ -741,11 +634,11 @@ export default function CarAvailability(): JSX.Element {
                       ),
                     }}
                     onChange={(event) => {
-                      setFilterSearchField('')
-                      setFilterSearchFieldError('')
-                      formik.setFieldValue('searchType', '')
-                      formik.setFieldValue('selectOwner', 'all')
-                      formik.setFieldValue('selectReSeller', 'all')
+                      // setFilterSearchField('')
+                      // setFilterSearchFieldError('')
+                      // formik.setFieldValue('searchType', '')
+                      // formik.setFieldValue('selectOwner', 'all')
+                      // formik.setFieldValue('selectReSeller', 'all')
                       formik.setFieldValue('selectLocation', event.target.value)
                       formik.handleSubmit()
                     }}

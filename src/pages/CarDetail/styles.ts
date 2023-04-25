@@ -24,7 +24,7 @@ export const useStyles = makeStyles(() => ({
       background: '#F5F5F5',
     },
     '& .css-5a0091-MuiInputBase-root-MuiOutlinedInput-root.Mui-disabled': {
-      background: '#F5F5F5',
+      background: '#F5F5F5 !important',
     },
   },
   chargeTypeStyle: {

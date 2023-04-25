@@ -1,0 +1,18 @@
+/* Pagination item styles */
+.MuiPaginationItem-page {
+  border-radius: 20px;
+}
+.MuiPaginationItem-page:hover {
+  border-radius: 20px;
+  background-color: #e9eef1;
+}
+.MuiPaginationItem-page.Mui-selected {
+  background-color: #4584ff;
+  color: #fff;
+}
+.MuiOutlinedInput-input {
+  padding: '17px 12px' !important;
+}
+.MuiIconButton-root {
+  padding: '4px 4px' !important;
+}
