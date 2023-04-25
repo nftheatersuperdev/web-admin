@@ -3,7 +3,7 @@
 import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
 import { Fragment, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
@@ -20,6 +20,7 @@ import {
   OutlinedInput,
   Box,
   Chip,
+  TextField,
 } from '@material-ui/core'
 import {
   GridColDef,
@@ -35,7 +36,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
-import { columnFormatCarVisibility } from 'pages/Car/utils'
 import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
@@ -52,6 +52,11 @@ import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 
 interface CarActivityDetailParams {
   id: string
+}
+interface CarActivityStateParams {
+  location: string
+  owner: string
+  reSeller: string
 }
 enum ScheduleActions {
   Edit = 'edit',
@@ -123,6 +128,16 @@ const useStyles = makeStyles({
     background: '#00a152',
     color: 'white',
   },
+  textField: {
+    '& .MuiInputBase-input': {
+      height: '1.4rem',
+    },
+    '& input.Mui-disabled': {
+      WebkitTextFillColor: '#000000',
+      color: '#000000',
+      background: '#F5F5F5',
+    },
+  },
 })
 
 function CustomToolBar() {
@@ -134,8 +149,10 @@ function CustomToolBar() {
 }
 
 export default function CarActivityDetail(): JSX.Element {
+  const location = useLocation()
   const classes = useStyles()
   const { id: carId } = useParams<CarActivityDetailParams>()
+  const carActivityStateParams = location.state as CarActivityStateParams
   const { t, i18n } = useTranslation()
   const isThaiLanguage = i18n.language === 'th'
   const fixEndDateDays = 31 // the number of date from our PO to fix it
@@ -477,19 +494,6 @@ export default function CarActivityDetail(): JSX.Element {
     },
   ]
 
-  const carDetailLabel = (primaryText: string, secondaryText: string) => {
-    return (
-      <Fragment>
-        <Typography className={classes.textPrimary} gutterBottom>
-          {primaryText}
-        </Typography>
-        <Typography className={classes.textSecondary} gutterBottom>
-          {secondaryText}
-        </Typography>
-      </Fragment>
-    )
-  }
-
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -522,47 +526,128 @@ export default function CarActivityDetail(): JSX.Element {
           {t('carActivity.overview.header')}
         </Typography>
         <Box>
-          <Grid className={classes.detailPadding} container spacing={4}>
-            <Grid item xs={12} className={classes.textBold}>
-              {carDetailLabel(carDetail?.id || '-', t('carActivity.activityId.label'))}
+          <Grid className={classes.detailPadding} container spacing={6}>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              <TextField
+                type="text"
+                id="caractivity_detail__id"
+                className={classes.textField}
+                label={t('carActivity.activityId.label')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carDetail?.id || '-'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              <TextField
+                type="text"
+                id="caractivity_detail__location"
+                className={classes.textField}
+                label={t('carActivity.location.label')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carActivityStateParams?.location || '-'}
+              />
             </Grid>
           </Grid>
-          <Grid
-            className={[classes.detailPadding, classes.backgroundSecondaty].join(' ')}
-            container
-            spacing={4}
-          >
+
+          <Grid className={classes.detailPadding} container spacing={6}>
             <Grid item xs={12} sm={6} className={classes.textBold}>
-              {carDetailLabel(
-                carDetail?.carSku?.carModel.brand.name || '-',
-                t('carActivity.brand.detailLabel')
-              )}
+              <TextField
+                type="text"
+                id="caractivity_detail__brand"
+                className={classes.textField}
+                label={t('carActivity.brand.detailLabel')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carDetail?.carSku?.carModel.brand.name || '-'}
+              />
             </Grid>
             <Grid item xs={12} sm={6} className={classes.textBold}>
-              {carDetailLabel(
-                carDetail?.carSku?.carModel.name || '-',
-                t('carActivity.model.detailLabel')
-              )}
+              <TextField
+                type="text"
+                id="caractivity_detail__model"
+                className={classes.textField}
+                label={t('carActivity.model.detailLabel')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carDetail?.carSku?.carModel.name || '-'}
+              />
             </Grid>
           </Grid>
-          <Grid className={classes.detailPadding} container spacing={4}>
-            <Grid item xs={12} className={classes.textBold}>
-              {carDetailLabel(carDetail?.carSku?.color || '-', t('carActivity.color.label'))}
+
+          <Grid className={classes.detailPadding} container spacing={6}>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              <TextField
+                type="text"
+                id="caractivity_detail__color"
+                className={classes.textField}
+                label={t('carActivity.color.label')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carDetail?.carSku?.color || '-'}
+              />
             </Grid>
           </Grid>
-          <Grid
-            className={[classes.detailPadding, classes.backgroundSecondaty].join(' ')}
-            container
-            spacing={4}
-          >
+
+          <Grid className={classes.detailPadding} container spacing={6}>
             <Grid item xs={12} sm={6} className={classes.textBold}>
-              {carDetailLabel(carDetail?.plateNumber || '-', t('carActivity.plateNumber.label'))}
+              <TextField
+                type="text"
+                id="caractivity_detail__plate"
+                className={classes.textField}
+                label={t('carActivity.plateNumber.label')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carDetail?.plateNumber || '-'}
+              />
             </Grid>
             <Grid item xs={12} sm={6} className={classes.textBold}>
-              {carDetailLabel(
-                carDetail ? columnFormatCarVisibility(carDetail.isActive, t) : '-' || '-',
-                t('carActivity.visibility.label')
-              )}
+              <TextField
+                type="text"
+                id="caractivity_detail__visibility"
+                className={classes.textField}
+                label={t('carActivity.visibility.label')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={
+                  carDetail?.isActive ? t('car.statuses.published') : t('car.statuses.unpublished')
+                }
+              />
+            </Grid>
+          </Grid>
+
+          <Grid className={classes.detailPadding} container spacing={6}>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              <TextField
+                type="text"
+                id="caractivity_detail__owner"
+                className={classes.textField}
+                label={t('carActivity.table.header.owner')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carActivityStateParams?.owner || '-'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} className={classes.textBold}>
+              <TextField
+                type="text"
+                id="caractivity_detail__reseller"
+                className={classes.textField}
+                label={t('carActivity.table.header.reseller')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={carActivityStateParams?.reSeller || '-'}
+              />
             </Grid>
           </Grid>
         </Box>
