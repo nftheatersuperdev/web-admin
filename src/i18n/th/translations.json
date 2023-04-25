@@ -1071,6 +1071,10 @@
       "detailLabel": "ยี่ห้อ",
       "emptyValue": "เลือก ยี่ห้อ"
     },
+    "location": {
+      "label": "สถานที่บริการ",
+      "all": "สถานที่บริการทั้งหมด"
+    },
     "model": {
       "label": "รุ่น",
       "detailLabel": "รุ่น",
