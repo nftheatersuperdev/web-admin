@@ -93,6 +93,7 @@ export interface CarSku {
 export interface CarBff {
   id: string
   carSku: CarSku
+  resellerServiceArea: ResellerServiceArea
   carTrackId: string
   plateNumber: string
   vin: string
@@ -102,6 +103,28 @@ export interface CarBff {
   isActive: boolean
   createdDate: string
   updatedDate: string
+  ownerProfileId: string
+  ownerProfileType: string
+}
+
+export interface ResellerServiceArea {
+  id: string
+  businessId: string
+  areaNameTh: string
+  areaNameEn: string
+  serviceTypeLocations: ServiceTypeLocation
+}
+
+export interface ServiceTypeLocation {
+  id: string
+  resellerServiceAreaId: string
+  serviceType: string
+  isActive: boolean
+  addressTh: string
+  addressEn: string
+  latitude: string
+  longtitude: string
+  distance: string
 }
 
 export interface CarModelPriceBff {
@@ -220,6 +243,9 @@ export interface CarListFilterRequest {
   plateNumberContain?: string
   plateNumberEqual?: string
   statusEqual?: string
+  ownerProfileId?: string
+  ownerProfileType?: string
+  resellerServiceAreaId?: string
 }
 
 export interface CarListFilterRequestProps {

@@ -321,6 +321,9 @@
   "car": {
     "id": "Car ID",
     "carTrackId": "Cartrack ID",
+    "location": "Location Service",
+    "owner": "Owner",
+    "reseller": "Reseller",
     "brand": "Car Brand",
     "model": "Car Model",
     "color": "Colour",
@@ -376,8 +379,11 @@
     "subscriptionId": "Booking ID",
     "carList": "Car List",
     "selectSearch": "Select Search",
+    "allLocation": "All Location",
     "search": "Enter Search",
     "selectStatus": "Select Status",
+    "selectOwner": "Select Owner",
+    "selectReseller": "Select Reseller",
     "noData": "No Data Found",
     "of": "of"
   },
@@ -1093,7 +1099,7 @@
       "header": "Edit a schedule"
     },
     "activityId": {
-      "label": "ID"
+      "label": "Car ID"
     },
     "plateNumber": {
       "label": "Plate",

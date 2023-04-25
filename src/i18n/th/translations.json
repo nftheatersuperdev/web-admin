@@ -321,6 +321,9 @@
   "car": {
     "id": "เลขไอดี",
     "carTrackId": "Cartrack ไอดี",
+    "location": "สถานที่บริการ",
+    "owner": "ผู้ถือกรรมสิทธิ์",
+    "reseller": "ตัวแทนจำหน่าย",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
     "color": "สี",
@@ -376,8 +379,11 @@
     "subscriptionId": "หมายเลขการจอง",
     "carList": "รายการรถยนต์",
     "selectSearch": "เลือกเพื่อค้นหา",
+    "allLocation": "สถานที่บริการทั้งหมด",
     "search": "ค้นหา",
     "selectStatus": "เลือกสถานะ",
+    "selectOwner": "เลือกผู้ถือกรรมสิทธิ์",
+    "selectReseller": "เลือกตัวแทนจำหน่าย",
     "noData": "ไม่มีข้อมูล",
     "of": "จาก"
   },
