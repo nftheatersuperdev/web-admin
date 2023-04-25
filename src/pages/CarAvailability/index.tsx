@@ -395,16 +395,14 @@ export default function CarAvailability(): JSX.Element {
   const isNoData = carAvailabilityRowData.length > 0
   const generateDataToTable = () => {
     if (isNoData) {
-      return <TableBody>{carAvailabilityRowData}</TableBody>
+      return carAvailabilityRowData
     }
     return (
-      <TableBody>
-        <TableRow>
-          <TableCell colSpan={9}>
-            <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
-          </TableCell>
-        </TableRow>
-      </TableBody>
+      <TableRow>
+        <TableCell colSpan={9}>
+          <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
+        </TableCell>
+      </TableRow>
     )
   }
   return (
@@ -716,44 +714,48 @@ export default function CarAvailability(): JSX.Element {
                       </TableRow>
                     </TableBody>
                   ) : (
-                    generateDataToTable()
+                    <TableBody>{generateDataToTable()}</TableBody>
                   )}
                 </Table>
               </TableContainer>
-              <Card>
-                <div className={classes.paginationContrainer}>
-                  Rows per page:&nbsp;
-                  <FormControl variant="standard" className={classes.inlineElement}>
-                    <Select
-                      value={carData?.data?.pagination?.size || pageSize}
-                      defaultValue={carData?.data?.pagination?.size || pageSize}
-                      onChange={(event) => {
-                        setPage(0)
-                        setPageSize(event.target.value as number)
-                      }}
-                    >
-                      {config.tableRowsPerPageOptions?.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
-                  &nbsp;
-                  {carData?.data.pagination?.totalPage}
-                  <Pagination
-                    count={carData?.data?.pagination?.totalPage}
-                    page={carData?.data?.pagination?.page || page}
-                    defaultPage={carData?.data?.pagination?.page || page}
-                    variant="text"
-                    color="primary"
-                    onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                      setPage(value - 1)
-                    }}
-                  />
-                </div>
-              </Card>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Card>
+                    <div className={classes.paginationContrainer}>
+                      Rows per page:&nbsp;
+                      <FormControl variant="standard" className={classes.inlineElement}>
+                        <Select
+                          value={carData?.data?.pagination?.size || pageSize}
+                          defaultValue={carData?.data?.pagination?.size || pageSize}
+                          onChange={(event) => {
+                            setPage(0)
+                            setPageSize(event.target.value as number)
+                          }}
+                        >
+                          {config.tableRowsPerPageOptions?.map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
+                      &nbsp;
+                      {carData?.data.pagination?.totalPage}
+                      <Pagination
+                        count={carData?.data?.pagination?.totalPage}
+                        page={carData?.data?.pagination?.page || page}
+                        defaultPage={carData?.data?.pagination?.page || page}
+                        variant="text"
+                        color="primary"
+                        onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                          setPage(value - 1)
+                        }}
+                      />
+                    </div>
+                  </Card>
+                </Grid>
+              </Grid>
             </div>
           )}
         </ContentSection>
