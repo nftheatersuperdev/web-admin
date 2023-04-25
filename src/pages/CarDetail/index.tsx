@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import toast from 'react-hot-toast'
@@ -17,6 +17,7 @@ import {
   getCarStatusOnlyUsedInBackendOptions,
   CarStatus,
   SelectOption,
+  CarStateParams,
 } from './constant'
 import { useStyles } from './styles'
 
@@ -27,9 +28,11 @@ const validationSchema = yup.object({
 })
 
 export default function CarDetail(): JSX.Element {
+  const location = useLocation()
   const classes = useStyles()
   const { t } = useTranslation()
   const { id: carId } = useParams<CarDetailParams>()
+  const stateParams = location.state as CarStateParams
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -146,6 +149,18 @@ export default function CarDetail(): JSX.Element {
               value={carDetail?.carTrackId || ''}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="text"
+              id="car_detail__location"
+              className={classes.textField}
+              label={t('car.location')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={stateParams.location || ''}
+            />
+          </Grid>
         </Grid>
 
         <Grid container spacing={3} className={classes.container}>
@@ -217,6 +232,32 @@ export default function CarDetail(): JSX.Element {
               disabled
               variant="outlined"
               value={carDetail?.carSku.color || ''}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="text"
+              id="car_detail__owner"
+              className={classes.textField}
+              label={t('car.owner')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={stateParams.owner}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="text"
+              id="car_detail__reseller"
+              className={classes.textField}
+              label={t('car.reseller')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={stateParams.reseller}
             />
           </Grid>
         </Grid>

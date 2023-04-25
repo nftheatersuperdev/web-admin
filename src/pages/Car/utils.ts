@@ -1,5 +1,8 @@
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
+import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
+import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
+import { LocationResponse } from 'services/web-bff/location.type'
 
 export interface SelectOption {
   label: string
@@ -134,7 +137,6 @@ export interface CarList {
   vin: string
   status: string
   createdDate: string
-  updatedDate: string
   [key: string]: string
 }
 
@@ -147,9 +149,39 @@ export interface CarCsv {
   vin: string
   status: string
   createdDate: string
-  updatedDate: string
+}
+export interface FilterSearch {
+  [key: string]: string
 }
 
 export enum Keypress {
   ENTER = 'Enter',
+}
+
+export const getOwnerOptions = (carOwners: CarOwnerResponse | null | undefined): SelectOption[] => {
+  const owners = carOwners?.owners || []
+  return owners.map((owner) => ({
+    label: owner.name,
+    value: owner.id,
+  }))
+}
+
+export const getResellerOptions = (
+  carResellers: ReSellerResponse | null | undefined
+): SelectOption[] => {
+  const resellers = carResellers?.resellers || []
+  return resellers.map((reseller) => ({
+    label: reseller.name,
+    value: reseller.id,
+  }))
+}
+
+export const getLocationOptions = (
+  carLocations: LocationResponse | null | undefined
+): SelectOption[] => {
+  const locations = carLocations?.locations || []
+  return locations.map((location) => ({
+    label: location.areaNameEn,
+    value: location.id,
+  }))
 }
