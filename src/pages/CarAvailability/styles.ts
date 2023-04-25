@@ -1,16 +1,9 @@
 import { makeStyles } from '@mui/styles'
 
 export const useStyles = makeStyles(() => ({
-  gridTitle: {
-    padding: '20px',
-    paddingBottom: 0,
-  },
-  gridSearch: {
-    padding: '20px',
-  },
   searchBar: {
-    '& .MuiOutlinedInput-input': { padding: '17px 12px' },
-    '& .MuiIconButton-root': { padding: '4px 4px' },
+    '& .MuiOutlinedInput-input': { padding: '16.5px 12px' },
+    '& .MuiIconButton-root': { padding: '2px 2px' },
   },
   paginationContrainer: {
     display: 'flex',
@@ -21,9 +14,6 @@ export const useStyles = makeStyles(() => ({
   },
   inlineElement: {
     display: 'inline-flex',
-  },
-  paddindElement: {
-    marginLeft: '8px',
   },
   chipBgGreen: {
     backgroundColor: '#4CAF50',
