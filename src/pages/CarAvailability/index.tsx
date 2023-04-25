@@ -548,7 +548,6 @@ export default function CarAvailability(): JSX.Element {
               </Grid>
               <Grid item xs={2.5}>
                 <DatePicker
-                  className={classes.datePickerFromTo}
                   fullWidth
                   label={t('carAvailability.selectedFromDate')}
                   id="car_availability__startdate_input"
@@ -567,7 +566,6 @@ export default function CarAvailability(): JSX.Element {
               </Grid>
               <Grid item xs={2.5}>
                 <DatePicker
-                  className={classes.datePickerFromTo}
                   fullWidth
                   label={t('carAvailability.selectedToDate')}
                   id="car_availability__enddate_input"

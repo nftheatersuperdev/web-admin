@@ -1,12 +1,6 @@
 import { makeStyles } from '@mui/styles'
 
 export const useStyles = makeStyles(() => ({
-  datePickerFromTo: {
-    display: 'inherit',
-    '&& .MuiOutlinedInput-input': {
-      padding: '16.5px 14px',
-    },
-  },
   paginationCarAvailability: {
     position: 'static',
     display: 'flex',
