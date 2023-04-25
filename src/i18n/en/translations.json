@@ -274,7 +274,8 @@
     "searchDate": "Search Date"
   },
   "user": {
-    "custometList": "Customer List",
+    "customerList": "Customer List",
+    "customerDetail": "Customer Detail",
     "customerId": "Customer ID",
     "id": "ID",
     "email": "Email",

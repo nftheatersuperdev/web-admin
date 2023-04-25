@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import {
@@ -382,9 +382,8 @@ export default function CarAvailability(): JSX.Element {
       })) ||
     []
 
-  const isNoData = carAvailabilityRowData.length > 0
   const generateDataToTable = () => {
-    if (isNoData) {
+    if (carAvailabilityRowData.length > 0) {
       return carAvailabilityRowData
     }
     return (
