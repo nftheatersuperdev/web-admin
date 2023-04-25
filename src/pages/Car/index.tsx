@@ -399,7 +399,7 @@ export default function Car(): JSX.Element {
       return (
         <TableRow
           hover
-          onClick={() => history.push({ pathname: `/car/${car.id}` })}
+          onClick={() => history.push({ pathname: `/car/${car.id}`, state: car })}
           key={`car-${car.id}`}
         >
           {columnRow.map((col) => (

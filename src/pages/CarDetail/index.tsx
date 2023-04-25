@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import toast from 'react-hot-toast'
@@ -17,6 +17,7 @@ import {
   getCarStatusOnlyUsedInBackendOptions,
   CarStatus,
   SelectOption,
+  CarStateParams,
 } from './constant'
 import { useStyles } from './styles'
 
@@ -27,9 +28,11 @@ const validationSchema = yup.object({
 })
 
 export default function CarDetail(): JSX.Element {
+  const location = useLocation()
   const classes = useStyles()
   const { t } = useTranslation()
   const { id: carId } = useParams<CarDetailParams>()
+  const stateParams = location.state as CarStateParams
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -146,7 +149,6 @@ export default function CarDetail(): JSX.Element {
               value={carDetail?.carTrackId || ''}
             />
           </Grid>
-          {/* TODO: Add value location service */}
           <Grid item xs={12} sm={6}>
             <TextField
               type="text"
@@ -156,7 +158,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value="Bangkok"
+              value={stateParams.location || ''}
             />
           </Grid>
         </Grid>
@@ -233,7 +235,6 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
         </Grid>
-        {/* TODO : Add value owner and reseller */}
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -244,7 +245,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value="EVme"
+              value={stateParams.owner}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -256,7 +257,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value="EVme"
+              value={stateParams.reseller}
             />
           </Grid>
         </Grid>
