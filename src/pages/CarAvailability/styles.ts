@@ -1,10 +1,7 @@
 import { makeStyles } from '@mui/styles'
 
 export const useStyles = makeStyles(() => ({
-  searchBar: {
-    '& .MuiOutlinedInput-input': { padding: '16.5px 12px' },
-    '& .MuiIconButton-root': { padding: '2px 2px' },
-  },
+  searchBar: {},
   paginationCarAvailability: {
     position: 'static',
     display: 'flex',
