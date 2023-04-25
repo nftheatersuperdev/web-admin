@@ -224,19 +224,24 @@ export default function CarAvailability(): JSX.Element {
       } else {
         if (value.searchType === 'plateNumber') {
           filter.plateNumberContain = searchField
+          localStorage.setItem(filter.plateNumberContain, searchField)
         }
         if (value.searchType === 'id') {
           filter.carId = searchField
+          localStorage.setItem(filter.carId, searchField)
         }
 
         if (value.searchType === 'ownerProfileId' && value.selectOwner !== 'all') {
           filter.ownerProfileId = value.selectOwner
+          localStorage.setItem(filter.ownerProfileId, value.selectOwner)
         }
         if (value.searchType === 'resellerServiceAreaId' && value.selectReSeller !== 'all') {
           filter.resellerServiceAreaId = value.selectReSeller
+          localStorage.setItem(filter.resellerServiceAreaId, value.selectReSeller)
         }
         if (value.selectLocation !== 'all') {
           filter.resellerServiceAreaId = value.selectLocation
+          localStorage.setItem('location', value.selectReSeller)
         }
         updateObj = {
           ...filter,
@@ -347,29 +352,19 @@ export default function CarAvailability(): JSX.Element {
             key={`car-availability-${row.id}`}
           >
             <TableCell sx={{ width: '150px' }}>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.location}
-              </div>
+              <div className={classes.rowOverflow}>{row.location}</div>
             </TableCell>
             <TableCell sx={{ width: '120px' }}>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.brand}
-              </div>
+              <div className={classes.rowOverflow}>{row.brand}</div>
             </TableCell>
             <TableCell sx={{ width: '120px' }}>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.model}
-              </div>
+              <div className={classes.rowOverflow}>{row.model}</div>
             </TableCell>
             <TableCell sx={{ width: '100px' }}>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.color}
-              </div>
+              <div className={classes.rowOverflow}>{row.color}</div>
             </TableCell>
             <TableCell sx={{ width: '130px' }}>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.plateNumber}
-              </div>
+              <div className={classes.rowOverflow}>{row.plateNumber}</div>
             </TableCell>
             <TableCell sx={{ width: '120px' }} align="center">
               <div>
@@ -387,14 +382,10 @@ export default function CarAvailability(): JSX.Element {
               <div className={classes.rowOverflow}>{row.subscriptionId}</div>
             </TableCell>
             <TableCell>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.owner}
-              </div>
+              <div className={classes.rowOverflow}>{row.owner}</div>
             </TableCell>
             <TableCell>
-              <div className={[classes.rowOverflow, classes.paddindElement].join(' ')}>
-                {row.reSeller}
-              </div>
+              <div className={classes.rowOverflow}>{row.reSeller}</div>
             </TableCell>
           </TableRow>
         )
@@ -454,7 +445,6 @@ export default function CarAvailability(): JSX.Element {
                     }}
                     onChange={(event) => {
                       formik.setFieldValue('searchType', event.target.value)
-                      // formik.setFieldValue('selectLocation', 'all')
                       setFilterSearchField('')
                       setFilterSearchFieldError('')
                     }}
@@ -634,11 +624,6 @@ export default function CarAvailability(): JSX.Element {
                       ),
                     }}
                     onChange={(event) => {
-                      // setFilterSearchField('')
-                      // setFilterSearchFieldError('')
-                      // formik.setFieldValue('searchType', '')
-                      // formik.setFieldValue('selectOwner', 'all')
-                      // formik.setFieldValue('selectReSeller', 'all')
                       formik.setFieldValue('selectLocation', event.target.value)
                       formik.handleSubmit()
                     }}
