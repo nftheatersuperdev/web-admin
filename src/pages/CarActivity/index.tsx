@@ -695,7 +695,7 @@ export default function CarActivity(): JSX.Element {
                   onClick={() => handleOnClickFilters()}
                   disabled={isFetchingBrands || isFetchingActivities || !!filterPlateError}
                 >
-                  {t('button.search')}
+                  {t('button.search').toUpperCase()}
                 </Button>
                 <Button
                   color="secondary"
@@ -755,7 +755,7 @@ export default function CarActivity(): JSX.Element {
                   disabled={isFetchingBrands || isFetchingActivities}
                   className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
                 >
-                  {t('button.export')}
+                  {t('button.export').toUpperCase()}
                 </Button>
               </Grid>
             </Grid>
