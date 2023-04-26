@@ -1,9 +1,6 @@
 import {
   Typography,
-  Breadcrumbs,
   Card,
-  Link,
-  Button,
   Grid,
   TextField,
   Table,
@@ -13,17 +10,16 @@ import {
   TableBody,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-// import { formatDate } from 'utils'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import {
   convertPhoneNumber,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
 } from 'utils'
+import { useParams } from 'react-router-dom'
 import { Page } from 'layout/LayoutRoute'
-import PageTitle from 'components/PageTitle'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { CustomerMeProps } from 'services/web-bff/customer.type'
 import { searchCustomer } from 'services/web-bff/customer'
 
@@ -36,38 +32,30 @@ export default function CustomerProfileDetail(): JSX.Element {
     hide: {
       display: 'none',
     },
-    headerTopic: {
-      padding: '8px 16px',
-    },
-    headerTopicText: {
-      fontSize: '18px',
-    },
-    detailContainer: {
-      padding: '10px 25px',
-    },
-    bottomContrainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      padding: '10px 25px',
-    },
-    deleteProfileButton: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
+    container: {
+      marginTop: '5px!important',
+      marginBottom: '5px',
     },
     textField: {
       '& .MuiInputBase-input': {
         height: '1.4rem',
       },
+      '& input.Mui-disabled': {
+        WebkitTextFillColor: '#000000',
+        color: '#000000',
+        background: '#F5F5F5',
+      },
+      '& div.Mui-disabled': {
+        background: '#F5F5F5 !important',
+      },
     },
-    breadcrumText: {
-      color: '#000000DE',
+    card: {
+      padding: '20px',
+    },
+    gridTitle: {
+      marginBottom: '30px',
     },
   })
-  const history = useHistory()
   const { t } = useTranslation()
   const classes = useStyles()
   const params = useParams<CustomerProfileDetailEditParam>()
@@ -103,27 +91,29 @@ export default function CustomerProfileDetail(): JSX.Element {
     }
     return <TableBody>{userGroup}</TableBody>
   }
-  const handleOnCancel = () => {
-    return history.goBack()
-  }
-
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.userManagement.title'),
+      link: '/',
+    },
+    {
+      text: t('sidebar.userManagement.customerProfile'),
+      link: '/customer-profiles',
+    },
+    {
+      text: t('sidebar.customerDetails'),
+      link: `/edit`,
+    },
+  ]
   return (
     <Page>
-      <PageTitle title={t('sidebar.userManagement.customerProfile')} />
-      <Breadcrumbs aria-label="breadcrumb">
-        <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Link underline="hover" color="inherit" href="/customer-profiles">
-          {t('sidebar.userManagement.customerProfile')}
-        </Link>
-        <Typography className={classes.breadcrumText}>{t('sidebar.customerDetails')}</Typography>
-      </Breadcrumbs>
-      <br />
-      <Card>
-        <div className={classes.headerTopic}>
-          <Typography className={classes.headerTopicText}>{t('user.customerDetail')}</Typography>
-        </div>
-        <Grid container spacing={2} className={classes.detailContainer}>
-          <Grid item xs={6}>
+      <PageTitle title={t('user.customerDetail')} breadcrumbs={breadcrumbs} />
+      <Card className={classes.card}>
+        <Grid className={classes.gridTitle}>
+          <Typography variant="h6">{t('user.customerDetail')}</Typography>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__customerId"
@@ -135,7 +125,7 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={customerData?.id || ''}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__accountStatus"
@@ -147,7 +137,9 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={acctStatus || '-'}
             />
           </Grid>
-          <Grid item xs={6}>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__firstName"
@@ -159,7 +151,7 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={customerData?.firstName || '-'}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__lastName"
@@ -171,7 +163,9 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={customerData?.lastName || '-'}
             />
           </Grid>
-          <Grid item xs={6}>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__email"
@@ -183,7 +177,7 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={customerData?.email || '-'}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__phoneNumber"
@@ -195,8 +189,11 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={convertPhoneNumber(customerData?.phoneNumber) || '-'}
             />
           </Grid>
-          <Grid item xs={6}>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
             <TextField
+              className={classes.textField}
               id="customer_profile__createdDate"
               label={t('user.createdDate')}
               fullWidth
@@ -211,14 +208,12 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
       </Card>
       <br />
-      <Card>
-        <div className={classes.headerTopic}>
-          <Typography className={classes.headerTopicText}>
-            {t('user.verificationDetail')}
-          </Typography>
-        </div>
-        <Grid container spacing={2} className={classes.detailContainer}>
-          <Grid item xs={6}>
+      <Card className={classes.card}>
+        <Grid className={classes.gridTitle}>
+          <Typography variant="h6">{t('user.verificationDetail')}</Typography>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__kycStatus"
@@ -230,7 +225,7 @@ export default function CustomerProfileDetail(): JSX.Element {
               value={kycStatusValue || '-'}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <TextField
               type="text"
               id="customer_profile__rejectReason"
@@ -245,12 +240,12 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
       </Card>
       <br />
-      <Card>
-        <div className={classes.headerTopic}>
-          <Typography className={classes.headerTopicText}>{t('user.userGroup')}</Typography>
-        </div>
-        <Grid container spacing={2} className={classes.detailContainer}>
-          <Grid item xs={12}>
+      <Card className={classes.card}>
+        <Grid className={classes.gridTitle}>
+          <Typography variant="h6">{t('user.userGroup')}</Typography>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -261,13 +256,6 @@ export default function CustomerProfileDetail(): JSX.Element {
             </Table>
           </Grid>
         </Grid>
-      </Card>
-      <Card>
-        <div className={classes.bottomContrainer}>
-          <Button variant="outlined" onClick={handleOnCancel} className={classes.hide}>
-            {t('button.cancel')}
-          </Button>
-        </div>
       </Card>
     </Page>
   )
