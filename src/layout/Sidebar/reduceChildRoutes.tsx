@@ -30,6 +30,7 @@ const reduceChildRoutes = ({
         title={page.title}
         href={page.href}
         isActive={isActive}
+        id={page.id}
       >
         <SidebarNavList depth={depth + 1} pages={page.children} />
       </SidebarNavListItem>
@@ -44,6 +45,7 @@ const reduceChildRoutes = ({
         badge={page.badge}
         title={page.title}
         isActive={isActive}
+        id={page.id}
       />
     )
   }

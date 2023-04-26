@@ -54,7 +54,9 @@
     "userManagement": {
       "title": "User Management",
       "customerProfile": "Customer Profile",
-      "staffProfile": "Staff Profile"
+      "staffProfile": "Staff Profile",
+      "userGroup": "User Group",
+      "adminUsers": "Admin Users"
     },
     "carManagement": {
       "title": "Car Management",
@@ -71,7 +73,6 @@
     },
     "voucherManagement": {
       "title": "Voucher Management",
-      "userGroup": "User Group",
       "voucher": "Voucher"
     },
     "documentsManagement": {

@@ -54,7 +54,9 @@
     "userManagement": {
       "title": "การจัดการผู้ใช้งาน",
       "customerProfile": "โปรไฟล์ลูกค้า",
-      "staffProfile": "โปรไฟล์พนักงาน"
+      "staffProfile": "โปรไฟล์พนักงาน",
+      "userGroup": "กลุ่มผู้ใช้งาน",
+      "adminUsers": "ผู้ใช้งานระบบหลังบ้าน"
     },
     "carManagement": {
       "title": "การจัดการรถยนต์",
@@ -71,7 +73,6 @@
     },
     "voucherManagement": {
       "title": "การจัดการวอชเชอร์",
-      "userGroup": "กลุ่มผู้ใช้งาน",
       "voucher": "วอชเชอร์"
     },
     "documentsManagement": {

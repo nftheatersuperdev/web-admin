@@ -104,6 +104,7 @@ type SidebarNavListItemProps = ListItemProps & {
 
 const SidebarNavListItem: React.FC<SidebarNavListItemProps> = (props) => {
   const {
+    id,
     title,
     href,
     depth = 0,
@@ -123,7 +124,7 @@ const SidebarNavListItem: React.FC<SidebarNavListItemProps> = (props) => {
   if (children) {
     return (
       <React.Fragment>
-        <Item depth={depth} onClick={handleToggle}>
+        <Item id={id} depth={depth} onClick={handleToggle}>
           {Icon && <Icon />}
           <Title depth={depth}>
             {title}
@@ -138,7 +139,7 @@ const SidebarNavListItem: React.FC<SidebarNavListItemProps> = (props) => {
 
   return (
     <React.Fragment>
-      <ItemLink to={href} className={isActive ? 'active' : ''}>
+      <ItemLink id={id} to={href} className={isActive ? 'active' : ''}>
         <Item depth={depth}>
           {Icon && <Icon />}
           <Title depth={depth}>
