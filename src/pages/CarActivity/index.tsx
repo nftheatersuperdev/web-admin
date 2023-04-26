@@ -300,6 +300,7 @@ export default function CarActivity(): JSX.Element {
       setFilterLocation(option.value)
       setSelectedLocation(option)
     } else {
+      setFilterLocation('')
       setSelectedLocation(defaultLocation)
     }
   }
@@ -722,6 +723,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.value === value.value || value.value === 'all'
+                  }
                   value={selectedLocation || defaultLocation}
                   defaultValue={selectedLocation || defaultLocation}
                   onChange={(_event, value) => onSetSelectedLocation(value)}
