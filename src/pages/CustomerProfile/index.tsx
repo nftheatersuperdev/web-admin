@@ -376,7 +376,7 @@ export default function CustomerProfile(): JSX.Element {
                 {!user.isActive ? (
                   <Chip
                     size="small"
-                    label={t('user.statuses.deleted')}
+                    label={t('user.statuses.inactive')}
                     className={classes.chipLightGrey}
                   />
                 ) : (
@@ -545,7 +545,7 @@ export default function CustomerProfile(): JSX.Element {
                   variant="outlined"
                 >
                   <MenuItem value="true">{t('user.statuses.active')}</MenuItem>
-                  <MenuItem value="false">{t('user.statuses.deleted')}</MenuItem>
+                  <MenuItem value="false">{t('user.statuses.inactive')}</MenuItem>
                 </TextField>
                 <TextField
                   className={showKycStatusDropdown ? '' : classes.hideObject}
