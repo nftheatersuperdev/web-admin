@@ -154,6 +154,9 @@ export default function Car(): JSX.Element {
       setSelectedSearch(null)
       setSelectedOptionValue(null)
       setSelectedLocation(null)
+      formik.setFieldValue('searchLocation', '')
+      formik.setFieldValue('searchType', '')
+      formik.setFieldValue('searchInput', '')
     }
     setSearchValue('')
   }
