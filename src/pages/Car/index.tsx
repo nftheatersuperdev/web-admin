@@ -422,6 +422,7 @@ export default function Car(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState<CarListFilterRequest>()
+  const currentPage = page + 1
 
   useEffect(() => {
     refetch()
@@ -675,13 +676,14 @@ export default function Car(): JSX.Element {
             {carData?.data.pagination?.totalPage}
             <Pagination
               count={carData?.data?.pagination?.totalPage}
-              page={carData?.data?.pagination?.page || page + 1}
-              defaultPage={carData?.data?.pagination?.page || page + 1}
+              page={carData?.data?.pagination?.page || currentPage}
+              defaultPage={carData?.data?.pagination?.page || currentPage}
               variant="text"
               color="primary"
               onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                if (page !== value - 1) {
-                  setPage(value - 1)
+                const selectedPage = value - 1
+                if (page !== selectedPage) {
+                  setPage(selectedPage)
                 } else {
                   refetch()
                 }
