@@ -229,6 +229,7 @@ export default function CustomerProfile(): JSX.Element {
       setShowKycStatusDropdown(false)
       setShowDatePicker(true)
       setShowSearchButton(true)
+      setIsEnableFilterButton(true)
     } else {
       setShowTextField(true)
       setShowStatusDropdown(false)
