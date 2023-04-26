@@ -668,7 +668,7 @@ export default function CarActivityDetail(): JSX.Element {
                 <DatePicker
                   inputVariant="outlined"
                   label={t('carActivity.startDate.label')}
-                  format="DD/MM/YYYY"
+                  format="DD MMM YYYY"
                   onChange={(date) => {
                     if (date) {
                       setFilterStartDate(date)
@@ -685,7 +685,7 @@ export default function CarActivityDetail(): JSX.Element {
                 <DatePicker
                   inputVariant="outlined"
                   label={t('carActivity.endDate.label')}
-                  format="DD/MM/YYYY"
+                  format="DD MMM YYYY"
                   onChange={(date) => setFilterEndDate(date)}
                   value={filterEndDate}
                   defaultValue={filterEndDate}
