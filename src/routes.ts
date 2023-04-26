@@ -335,6 +335,18 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
+    path: ROUTE_PATHS.CUSTOMER_PROFILE_DETAIL,
+    component: lazy(() => import('./pages/CustomerProfileDetail' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+      ROLES.PRODUCT_SUPPORT,
+    ],
+  },
+  {
     path: ROUTE_PATHS.FORBIDDEN,
     isPublic: true,
     component: lazy(() => import('./pages/Error/Forbidden' /* webpackChunkName: "app" */)),

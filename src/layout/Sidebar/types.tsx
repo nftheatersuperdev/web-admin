@@ -1,3 +1,4 @@
+import { Privilege } from 'auth/privileges'
 import { Role } from 'auth/roles'
 
 export interface SidebarItemsType {
@@ -8,4 +9,5 @@ export interface SidebarItemsType {
   children: SidebarItemsType[]
   badge?: string
   allowedRoles?: Role[]
+  allowedPrivileges?: Privilege[]
 }

@@ -37,6 +37,8 @@ interface AuthProps {
   setUserId: (id: string) => void
   getUserId: () => string | null | undefined
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
+  setPrivileges: (privilege: string[]) => void
+  getPrivileges: () => string[] | null | undefined
 }
 
 const Auth = createContext<AuthProps>({
@@ -54,6 +56,8 @@ const Auth = createContext<AuthProps>({
   setUserId: (_id: string) => undefined,
   getUserId: () => undefined,
   getRemoteConfig: (_key: string) => undefined,
+  setPrivileges: (_privilege: string[]) => undefined,
+  getPrivileges: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
@@ -101,6 +105,14 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     return ls.get<string | null | undefined>(STORAGE_KEYS.ROLE, { encrypt: true })
   }
 
+  const setPrivileges = (privilege: string[]) => {
+    ls.set<string[]>('PRIVILEGES', privilege, { encrypt: true })
+  }
+
+  const getPrivileges = (): string[] | null | undefined => {
+    return ls.get<string[] | null | undefined>('PRIVILEGES', { encrypt: true })
+  }
+
   const getRoleDisplayName = (): string => {
     const role = getRole()
     return getAdminUserRoleLabel(role, t)
@@ -124,6 +136,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
 
       setUserId(user.uid)
       setRole(userProfile.role.toLocaleLowerCase())
+      setPrivileges(userProfile.privileges)
     } catch (error: any) {
       const message = errorMessage(error.code as string)
       throw new Error(message)
@@ -174,6 +187,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         setUserId,
         getUserId,
         getRemoteConfig,
+        setPrivileges,
+        getPrivileges,
       }}
     >
       {children}

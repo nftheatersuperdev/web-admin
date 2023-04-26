@@ -17,20 +17,26 @@
     "selectedToDate": "วันที่สิ้นสุด",
     "search": "เลือกเพื่อค้นหา",
     "searchLocation": "สถานที่บริการ",
-    "locationList": {
-      "all": "ทุกสถานที่"
+    "searchOwner": "ผู้ถือกรรมสิทธิ์",
+    "searchReSeller": "ตัวแทนจำหน่าย",
+    "defultSelect": {
+      "allLocation": "ทุกสถานที่",
+      "allOwner": "ทุกผู้ถือกรรมสิทธิ์",
+      "allReSeller": "ทุกตัวแทนจำหน่าย"
     },
     "searchBtn": "ค้นหา",
     "searchField": {
       "label": "ค้นหา",
       "placeholder": "กรุณากรอกอย่างน้อย 2 ตัวอักษร",
       "errors": {
-        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร"
+        "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮa-zA-Z0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร",
+        "invalidUUIDFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ UUID"
       }
     },
     "none": "ไม่ระบุ",
     "available": "รถว่าง",
-    "inUse": "ใช้งานอยู่"
+    "inUse": "ใช้งานอยู่",
+    "export": "ส่งออกข้อมูล"
   },
   "carAvailabilityDetail": {
     "location": "สถานที่บริการ",
@@ -114,7 +120,8 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "packageManagement": "Package Management"
+    "packageManagement": "Package Management",
+    "customerDetails": "รายละเอียดลูกค้า"
   },
   "button": {
     "add": "เพิ่ม",
@@ -260,12 +267,17 @@
   "staffProfile": {
     "staffList": "รายชื่อพนักงาน",
     "of": "จาก",
+    "firstName": "ชื่อ",
+    "lastName": "นามสกุล",
     "createdDate": "วันที่สร้าง",
     "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
-    "searchCriteria": "ค้นหา"
+    "searchCriteria": "ค้นหา",
+    "searchDate": "วันที่ค้นหา"
   },
   "user": {
-    "custometList": "รายชื่อลูกค้า",
+    "customerList": "รายชื่อลูกค้า",
+    "customerDetail": "รายละเอียดลูกค้า",
+    "customerId": "เลขไอดีลูกค้า",
     "id": "เลขไอดี",
     "email": "อีเมล",
     "phone": "เบอร์โทรศัพท์",
@@ -276,6 +288,7 @@
     "firstName": "ชื่อ",
     "lastName": "นามสกุล",
     "fullName": "ชื่อ-นามสกุล",
+    "name": "ชื่อ",
     "status": "สถานะบัญชี",
     "statuses": {
       "active": "ใช้งานอยู่",
@@ -292,9 +305,12 @@
       "rejectReason": "เหตุผลของการปฏิเสธ"
     },
     "verifyDate": "วันที่ตรวจสอบ",
+    "verificationDetail": "รายละเอียดการตรวจสอบ",
     "note": "โน๊ต",
     "rejectedReason": "เหตุผลของการปฏิเสธ",
     "userGroups": "กลุ่มผู้ใช้งาน",
+    "userGroup": "กลุ่มผู้ใช้งาน",
+    "userGroupUp": "กลุ่มผู้ใช้งาน",
     "enabled": "เปิด",
     "disabled": "ปิด",
     "actions": "ดำเนินการ",
@@ -308,6 +324,9 @@
   "car": {
     "id": "เลขไอดี",
     "carTrackId": "Cartrack ไอดี",
+    "location": "สถานที่บริการ",
+    "owner": "ผู้ถือกรรมสิทธิ์",
+    "reseller": "ตัวแทนจำหน่าย",
     "brand": "ยี่ห้อ",
     "model": "รุ่น",
     "color": "สี",
@@ -363,8 +382,11 @@
     "subscriptionId": "หมายเลขการจอง",
     "carList": "รายการรถยนต์",
     "selectSearch": "เลือกเพื่อค้นหา",
+    "allLocation": "สถานที่บริการทั้งหมด",
     "search": "ค้นหา",
     "selectStatus": "เลือกสถานะ",
+    "selectOwner": "เลือกผู้ถือกรรมสิทธิ์",
+    "selectReseller": "เลือกตัวแทนจำหน่าย",
     "noData": "ไม่มีข้อมูล",
     "of": "จาก"
   },
@@ -1015,7 +1037,8 @@
     "unknown": "เกิดข้อผิดพลาดบางอย่าง"
   },
   "warning": {
-    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่"
+    "noResult": "ยังไม่มีรายการ กรุณาลองใหม่",
+    "noResultList": "ขออภัย เราไม่พบผลลัพธ์ใดๆ"
   },
   "version": "เวอร์ชั่น: {{version}}",
   "carActivity": {
@@ -1024,6 +1047,18 @@
     },
     "table": {
       "header": {
+        "locationService": "Location Service",
+        "brand": "Brand",
+        "model": "Model",
+        "color": "Colour",
+        "plateNumber": "Plate Number",
+        "owner": "Owner",
+        "reseller": "Reseller"
+      }
+    },
+    "export": {
+      "header": {
+        "id": "Car ID",
         "locationService": "Location Service",
         "brand": "Brand",
         "model": "Model",
@@ -1056,6 +1091,10 @@
       "label": "ยี่ห้อ",
       "detailLabel": "ยี่ห้อ",
       "emptyValue": "เลือก ยี่ห้อ"
+    },
+    "location": {
+      "label": "สถานที่บริการ",
+      "all": "สถานที่บริการทั้งหมด"
     },
     "model": {
       "label": "รุ่น",
@@ -1144,7 +1183,23 @@
       "error": "เกิดข้อผิดพลาดบางอย่างขณะทำการลบตารางเวลา"
     },
     "history": {
-      "label": "Car Activity History"
+      "label": "Car Activity History",
+      "export": {
+        "header": {
+          "id": "Schedule ID",
+          "bookingId": "Booking ID",
+          "bookingDetailId": "Booking Detail ID",
+          "carId": "Car ID",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "status": "Car Status",
+          "bookingType": "Service",
+          "remark": "Remark",
+          "updatedBy": "Modified By",
+          "updatedDate": "Modified Date",
+          "action": "Action"
+        }
+      }
     }
   },
   "subscriptionPackageManagement": {

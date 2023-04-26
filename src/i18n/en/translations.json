@@ -17,25 +17,31 @@
     "selectedToDate": "End Date",
     "search": "Select Search",
     "searchLocation": "Location Services",
-    "locationList": {
-      "all": "All Location"
+    "searchOwner": "Owner",
+    "searchReSeller": "Reseller",
+    "defultSelect": {
+      "allLocation": "All Location",
+      "allOwner": "All Owner",
+      "allReSeller": "All Reseller"
     },
     "searchBtn": "Search",
     "searchField": {
       "label": "Enter Search",
       "placeholder": "Please type at lease 2 charators",
       "errors": {
-        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters."
+        "invalidFormat": "Please input valid format (ก-ฮa-zA-Z0-9) and minimum two characters.",
+        "invalidUUIDFormat": "Please input valid UUID format."
       }
     },
     "none": "None",
     "available": "Available",
-    "inUse": "In Use"
+    "inUse": "In Use",
+    "export": "EXPORT"
   },
   "carAvailabilityDetail": {
     "location": "Location Service",
     "carId": "Car ID",
-    "carStatus": "Car Status",
+    "carStatus": "Status",
     "carTrackId": "Cartrack ID",
     "plateNumber": "Plate Number",
     "vin": "VIN",
@@ -114,7 +120,8 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "packageManagement": "Package Management"
+    "packageManagement": "Package Management",
+    "customerDetails": "Customer Details"
   },
   "button": {
     "add": "Add",
@@ -260,12 +267,17 @@
   "staffProfile": {
     "staffList": "Staff List",
     "of": "of",
+    "firstName": "First name",
+    "lastName": "Last name",
     "createdDate": "Created Date",
     "firebaseId": "FirebaseID",
-    "searchCriteria": "Search Criteria"
+    "searchCriteria": "Search Criteria",
+    "searchDate": "Search Date"
   },
   "user": {
-    "custometList": "Customer List",
+    "customerList": "Customer List",
+    "customerDetail": "Customer Detail",
+    "customerId": "Customer ID",
     "id": "ID",
     "email": "Email",
     "phone": "Phone Number",
@@ -276,6 +288,7 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "fullName": "Full Name",
+    "name": "Name",
     "status": "Account Status",
     "statuses": {
       "active": "Active",
@@ -292,9 +305,12 @@
       "rejectReason": "Reject Reason"
     },
     "verifyDate": "Verify Date",
+    "verificationDetail": "Verification Detail",
     "note": "Note",
     "rejectedReason": "Reason of rejection",
     "userGroups": "User groups",
+    "userGroup": "User group",
+    "userGroupUp": "User Groups",
     "enabled": "Enabled",
     "disabled": "Disabled",
     "actions": "Actions",
@@ -308,6 +324,9 @@
   "car": {
     "id": "Car ID",
     "carTrackId": "Cartrack ID",
+    "location": "Location Service",
+    "owner": "Owner",
+    "reseller": "Reseller",
     "brand": "Car Brand",
     "model": "Car Model",
     "color": "Colour",
@@ -363,8 +382,11 @@
     "subscriptionId": "Booking ID",
     "carList": "Car List",
     "selectSearch": "Select Search",
+    "allLocation": "All Location",
     "search": "Enter Search",
     "selectStatus": "Select Status",
+    "selectOwner": "Select Owner",
+    "selectReseller": "Select Reseller",
     "noData": "No Data Found",
     "of": "of"
   },
@@ -1054,7 +1076,8 @@
     "unknown": "something went wrong"
   },
   "warning": {
-    "noResult": "No Result. Please try again"
+    "noResult": "No Result. Please try again",
+    "noResultList": "Sorry, we couldn’t find any results"
   },
   "version": "Version: {{version}}",
   "carActivity": {
@@ -1064,8 +1087,20 @@
     "table": {
       "header": {
         "locationService": "Location Service",
-        "brand": "Brand",
-        "model": "Model",
+        "brand": "Car Brand",
+        "model": "Car Model",
+        "color": "Colour",
+        "plateNumber": "Plate Number",
+        "owner": "Owner",
+        "reseller": "Reseller"
+      }
+    },
+    "export": {
+      "header": {
+        "id": "Car ID",
+        "locationService": "Location Service",
+        "brand": "Car Brand",
+        "model": "Car Model",
         "color": "Colour",
         "plateNumber": "Plate Number",
         "owner": "Owner",
@@ -1079,7 +1114,7 @@
       "header": "Edit a schedule"
     },
     "activityId": {
-      "label": "ID"
+      "label": "Car ID"
     },
     "plateNumber": {
       "label": "Plate",
@@ -1095,6 +1130,10 @@
       "label": "Brand",
       "detailLabel": "Car Brand",
       "emptyValue": "Select Brand"
+    },
+    "location": {
+      "label": "Location Services",
+      "all": "All Location"
     },
     "model": {
       "label": "Model",
@@ -1183,7 +1222,23 @@
       "error": "Something went wrong when deleting the schedule"
     },
     "history": {
-      "label": "Car Activity History"
+      "label": "Car Activity History",
+      "export": {
+        "header": {
+          "id": "Schedule ID",
+          "bookingId": "Booking ID",
+          "bookingDetailId": "Booking Detail ID",
+          "carId": "Car ID",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "status": "Car Status",
+          "bookingType": "Service",
+          "remark": "Remark",
+          "updatedBy": "Modified By",
+          "updatedDate": "Modified Date",
+          "action": "Action"
+        }
+      }
     }
   },
   "subscriptionPackageManagement": {

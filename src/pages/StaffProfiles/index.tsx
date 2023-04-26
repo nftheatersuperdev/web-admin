@@ -20,19 +20,25 @@ import {
   TableBody,
   Chip,
   InputLabel,
+  Divider,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import config from 'config'
-import { formatDate } from 'utils'
+import {
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  formaDateStringWithPattern,
+  formatStringForInputText,
+} from 'utils'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
+import styled from 'styled-components'
 import Pagination from '@material-ui/lab/Pagination'
 import { getAdminUsers } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import NoResultCard from 'components/NoResultCard'
-import PageTitle from 'components/PageTitle'
 import './pagination.css'
+import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
 
 const useStyles = makeStyles({
   textBoldBorder: {
@@ -61,10 +67,12 @@ const useStyles = makeStyles({
   chipGreen: {
     backgroundColor: '#4CAF50',
     color: 'white',
+    borderRadius: '64px',
   },
   chipRed: {
     backgroundColor: '#F44336',
     color: 'white',
+    borderRadius: '64px',
   },
   buttonExport: {
     color: 'white',
@@ -100,11 +108,25 @@ const useStyles = makeStyles({
     },
   },
   addButton: {
+    fontWeight: 'bold',
+    display: 'inline-flexbox',
+    boxShadow: 'none',
+    padding: '14px 12px',
     color: '#fff',
     backgroundColor: '#424E63',
+    width: '107px',
+  },
+  breadcrumText: {
+    color: '#000000DE',
+  },
+  headerTopicText: {
+    fontSize: '20px',
   },
 })
 
+const DividerCustom = styled(Divider)`
+  margin: 10px 0;
+`
 export default function StaffProfiles(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
@@ -121,13 +143,13 @@ export default function StaffProfiles(): JSX.Element {
     }
   )
   const csvHeaders = [
-    { label: t('user.firstName'), key: 'firstName' },
-    { label: t('user.lastName'), key: 'lastName' },
-    { label: t('user.email'), key: 'email' },
-    { label: t('user.role'), key: 'role' },
-    { label: t('user.status'), key: 'status' },
-    { label: t('staffProfile.createdDate'), key: 'createdDate' },
-    { label: t('user.updatedDate'), key: 'updatedDate' },
+    { label: 'First name', key: 'firstName' },
+    { label: 'Last name', key: 'lastName' },
+    { label: 'Email', key: 'email' },
+    { label: 'Role', key: 'role' },
+    { label: 'Account Status', key: 'status' },
+    { label: 'Created Date', key: 'createdDate' },
+    { label: 'Updated Date', key: 'updatedDate' },
   ]
   // eslint-disable-next-line
   const csvData: any = []
@@ -143,8 +165,14 @@ export default function StaffProfiles(): JSX.Element {
           email: adminUserData.email,
           role: adminUserData.role,
           status: acctStatus,
-          createdDate: formatDate(adminUserData.createdDate),
-          updatedDate: formatDate(adminUserData.updatedDate),
+          createdDate: formaDateStringWithPattern(
+            adminUserData.createdDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
+          updatedDate: formaDateStringWithPattern(
+            adminUserData.updatedDate,
+            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          ),
         })
         csvData.push(makeCsvData())
         // Build Table Body
@@ -157,9 +185,9 @@ export default function StaffProfiles(): JSX.Element {
             <TableCell>
               <Checkbox className={classes.hideObject} size="small" />
             </TableCell>
-            <TableCell>{adminUserData.firstName}</TableCell>
-            <TableCell>{adminUserData.lastName}</TableCell>
-            <TableCell>{adminUserData.email}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.firstName)}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.lastName)}</TableCell>
+            <TableCell>{formatStringForInputText(adminUserData.email)}</TableCell>
             <TableCell>{adminUserData.role}</TableCell>
             <TableCell align="center">
               {!adminUserData.isActive ? (
@@ -168,8 +196,18 @@ export default function StaffProfiles(): JSX.Element {
                 <Chip size="small" label={t('user.enabled')} className={classes.chipGreen} />
               )}
             </TableCell>
-            <TableCell>{formatDate(adminUserData.createdDate)}</TableCell>
-            <TableCell>{formatDate(adminUserData.updatedDate)}</TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(
+                adminUserData.createdDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            </TableCell>
+            <TableCell>
+              {formaDateStringWithPattern(
+                adminUserData.updatedDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            </TableCell>
           </TableRow>
         )
       })) ||
@@ -197,15 +235,17 @@ export default function StaffProfiles(): JSX.Element {
   }
   return (
     <Page>
-      <PageTitle title={t('sidebar.staffProfile')} />
+      <PageTitleWithoutLine title={t('sidebar.staffProfile')} />
       <Breadcrumbs aria-label="breadcrumb">
         <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Typography color="primary">{t('sidebar.staffProfile')}</Typography>
+        <Typography className={classes.breadcrumText}>{t('sidebar.staffProfile')}</Typography>
       </Breadcrumbs>
+      <br />
+      <DividerCustom />
       <br />
       <Card>
         <div className={classes.headerTopic}>
-          <Typography>{t('staffProfile.staffList')}</Typography>
+          <Typography className={classes.headerTopicText}>{t('staffProfile.staffList')}</Typography>
         </div>
         <div className={classes.searchWrapper}>
           <Grid container spacing={2} direction="row" className={classes.gridContainer}>
@@ -252,7 +292,7 @@ export default function StaffProfiles(): JSX.Element {
                   filename="EVme Admin Dashboard.csv"
                   className={classes.buttonExport}
                 >
-                  {t('button.export')}
+                  {t('button.export').toUpperCase()}
                 </CSVLink>
               </Button>
               &nbsp;&nbsp;
@@ -263,7 +303,7 @@ export default function StaffProfiles(): JSX.Element {
                 variant="contained"
                 onClick={() => history.push(`/staff-profile/create`)}
               >
-                {t('button.addNew')}
+                {t('button.create').toUpperCase()}
               </Button>
             </Grid>
           </Grid>
@@ -280,10 +320,10 @@ export default function StaffProfiles(): JSX.Element {
                       <Checkbox className={classes.hideObject} size="small" />
                     </TableCell>
                     <TableCell align="center">
-                      <div className={classes.textBoldBorder}> {t('user.firstName')}</div>
+                      <div className={classes.textBoldBorder}> {t('staffProfile.firstName')}</div>
                     </TableCell>
                     <TableCell align="center">
-                      <div className={classes.textBoldBorder}> {t('user.lastName')}</div>
+                      <div className={classes.textBoldBorder}> {t('staffProfile.lastName')}</div>
                     </TableCell>
                     <TableCell align="center">
                       <div className={classes.textBoldBorder}> {t('user.email')}</div>

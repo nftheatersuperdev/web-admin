@@ -36,6 +36,7 @@ import {
 // import Pagination from '@mui/lab/Pagination'
 import { makeStyles } from '@mui/styles'
 import { Search as SearchIcon } from '@mui/icons-material'
+import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
@@ -46,8 +47,9 @@ import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 // import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
+import { getLocationList } from 'services/web-bff/location'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
-// import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import { getLocationOptions, SelectOption } from './utils'
 
 // interface CarActivityParams {
 //   plate: string
@@ -60,9 +62,18 @@ const Wrapper = styled(Card)`
   padding: 15px;
   margin-top: 20px;
 `
-
 const ContentSection = styled.div`
   margin-bottom: 20px;
+`
+const ButtonExport = styled(Button)`
+  background-color: #424e63 !important;
+  padding: 14px 12px !important;
+  color: white;
+`
+const CsvButton = styled(CSVLink)`
+  color: white !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
 `
 
 const useStyles = makeStyles(() => ({
@@ -104,9 +115,10 @@ const useStyles = makeStyles(() => ({
     },
   },
   buttonWithoutShadow: {
+    fontWeight: 'bold',
     display: 'inline-flexbox',
     boxShadow: 'none',
-    padding: '16px 20px',
+    padding: '14px 12px',
   },
   buttonOverridePadding: {
     padding: '16px',
@@ -203,6 +215,7 @@ export default function CarActivity(): JSX.Element {
     brand: useQueryString().get('brand'),
     model: useQueryString().get('model'),
     color: useQueryString().get('color'),
+    location: useQueryString().get('resellerServiceAreaId'),
   }
 
   const conditionConfigs = {
@@ -241,6 +254,7 @@ export default function CarActivity(): JSX.Element {
   const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
   const [filterModel, setFilterModel] = useState<string>(qs.model || '')
   const [filterColor, setFilterColor] = useState<string>(qs.color || '')
+  const [filterLocation, setFilterLocation] = useState<string>(qs.location || '')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
@@ -278,9 +292,28 @@ export default function CarActivity(): JSX.Element {
         carModelId: filterModel,
         carSkuId: filterColor,
         plateNumber: filterPlate,
+        resellerServiceAreaId: filterLocation,
       }
     )
   )
+  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
+    getLocationList()
+  )
+  const locationOptions = getLocationOptions(locations)
+  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
+  const defaultLocation = {
+    label: t('carActivity.location.all'),
+    value: 'all',
+  }
+  const onSetSelectedLocation = (option: SelectOption | null) => {
+    if (option) {
+      setFilterLocation(option.value)
+      setSelectedLocation(option)
+    } else {
+      setFilterLocation('')
+      setSelectedLocation(defaultLocation)
+    }
+  }
 
   const checkAndRenderValue = (value: string) => {
     if (!value) {
@@ -290,57 +323,70 @@ export default function CarActivity(): JSX.Element {
   }
 
   // const rowCount = carActivitiesData?.pagination?.totalRecords ?? 0
-  // const rows =
-  //   carActivitiesData?.cars.map((carActivity) => {
-  //     return {
-  //       id: carActivity.carId,
-  //       brandName: carActivity.brandName,
-  //       modelName: carActivity.modelName,
-  //       color: carActivity.color,
-  //       plateNumber: carActivity.plateNumber,
-  //     }
-  //   }) || []
+  const rows =
+    carActivitiesData?.cars.map((carActivity) => {
+      return {
+        id: carActivity.carId,
+        location: carActivity.areaNameEn,
+        brandName: carActivity.brandName,
+        modelName: carActivity.modelName,
+        color: carActivity.color,
+        plateNumber: carActivity.plateNumber,
+        owner: carActivity.owner,
+        reSeller: carActivity.reSeller,
+      }
+    }) || []
 
   const carActivitiesRowData =
-    (carActivitiesData &&
-      carActivitiesData.cars?.length > 0 &&
-      carActivitiesData.cars.map((carActivity) => {
-        return (
-          <TableRow
-            hover
-            key={`car-activity-${carActivity.carId}`}
-            onClick={() =>
-              history.push({
-                pathname: `/car-activity/${carActivity.carId}`,
-                state: carActivity,
-              })
-            }
-          >
-            <TableCell>
-              <div className={classes.textBold}>{checkAndRenderValue(carActivity.brandName)}</div>
-            </TableCell>
-            <TableCell>
-              <div className={classes.textBold}>{checkAndRenderValue(carActivity.plateNumber)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.modelName)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-            <TableCell>
-              <div>{checkAndRenderValue(carActivity.color)}</div>
-            </TableCell>
-          </TableRow>
-        )
-      })) ||
-    []
+    rows?.map((carActivity) => {
+      return (
+        <TableRow
+          hover
+          key={`car-activity-${carActivity.id}`}
+          onClick={() =>
+            history.push({
+              pathname: `/car-activity/${carActivity.id}`,
+              state: carActivity,
+            })
+          }
+        >
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.location)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.brandName)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.modelName)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.color)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.plateNumber)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.owner)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carActivity.reSeller)}</div>
+          </TableCell>
+        </TableRow>
+      )
+    }) || []
+
+  const csvHeaders = [
+    { label: t('carActivity.export.header.id'), key: 'id' },
+    { label: t('carActivity.export.header.locationService'), key: 'location' },
+    { label: t('carActivity.export.header.brand'), key: 'brandName' },
+    { label: t('carActivity.export.header.model'), key: 'modelName' },
+    { label: t('carActivity.export.header.color'), key: 'color' },
+    { label: t('carActivity.export.header.plateNumber'), key: 'plateNumber' },
+    { label: t('carActivity.export.header.owner'), key: 'owner' },
+    { label: t('carActivity.export.header.reseller'), key: 'reSeller' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = [...rows]
 
   // const isNoData = carActivities.length < 1
 
@@ -354,7 +400,13 @@ export default function CarActivity(): JSX.Element {
       setPages(carActivitiesData.pagination.totalPage)
     }
 
-    if (isFetchedBrands && isFetchedActivities && carBrands && carBrands.length >= 1) {
+    if (
+      isFetchedLocation &&
+      isFetchedBrands &&
+      isFetchedActivities &&
+      carBrands &&
+      carBrands.length >= 1
+    ) {
       setFilterPlate(qs.plate || '')
 
       const brand = carBrands.find((carBrand) => carBrand.id === qs.brand)
@@ -370,6 +422,14 @@ export default function CarActivity(): JSX.Element {
       const color = model?.carSkus.find((carSku) => carSku.id === qs.color)
       setFilterColor(color?.id || '')
       setFilterColorObject(color)
+
+      const loc = locations?.locations.find((location) => location.id === qs.location)
+      setFilterLocation(loc?.id || '')
+      const locOption: SelectOption = {
+        label: loc?.areaNameEn || '',
+        value: loc?.id || '',
+      }
+      setSelectedLocation(locOption)
 
       refetch()
     }
@@ -397,19 +457,24 @@ export default function CarActivity(): JSX.Element {
     setVisibleAddDialog(false)
   }
 
+  const handleOnPlateSearchEnterKeyDown = () => {
+    refetch()
+  }
+
   const adjustBrowserHistory = (params = {}) => {
     const adjustParams = {
       plate: filterPlate,
       brand: filterBrand,
       model: filterModel,
       color: filterColor,
+      resellerServiceAreaId: filterLocation,
       ...params,
     }
     const validParams: {} = Object.fromEntries(
       Object.entries(adjustParams).filter(([_key, value]) => !!value)
     )
     const searchParams = new URLSearchParams(validParams)
-
+    // console.log('adjustParams:', adjustParams)
     return history.push({ search: `?${searchParams.toString()}` })
   }
 
@@ -424,6 +489,8 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
+    setFilterLocation('')
+    setSelectedLocation(null)
     setResetFilters(true)
   }
 
@@ -528,7 +595,7 @@ export default function CarActivity(): JSX.Element {
               alignItems="center"
               className={classes.gridContainer}
             >
-              <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} lg={3} xl={3}>
+              <Grid item className={[classes.filter].join(' ')} xs={12} sm={6} md={6} lg={2} xl={2}>
                 <FormControl variant="outlined" className={classes.fullWidth}>
                   <TextField
                     error={!!filterPlateError}
@@ -538,11 +605,16 @@ export default function CarActivity(): JSX.Element {
                     value={filterPlate}
                     onChange={handleOnPlateChange}
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
+                      endAdornment: (
+                        <InputAdornment position="end">
                           <SearchIcon />
                         </InputAdornment>
                       ),
+                    }}
+                    onKeyDown={(event) => {
+                      if (!filterPlateError && filterPlate !== '' && event.key === 'Enter') {
+                        handleOnPlateSearchEnterKeyDown()
+                      }
                     }}
                   />
                 </FormControl>
@@ -636,19 +708,21 @@ export default function CarActivity(): JSX.Element {
                 xs={6}
                 sm={6}
                 md={4}
-                lg={2}
-                xl={2}
+                lg={1}
+                xl={1}
               >
                 <Button
+                  id="car_activity__search_btn"
                   variant="contained"
                   color="primary"
                   className={classes.buttonWithoutShadow}
                   onClick={() => handleOnClickFilters()}
-                  disabled={!isEnableFilterButton || isFetchingBrands || isFetchingActivities}
+                  disabled={isFetchingBrands || isFetchingActivities || !!filterPlateError}
                 >
-                  {t('button.search')}
+                  {t('button.search').toUpperCase()}
                 </Button>
                 <Button
+                  id="car_activity__clear_all_btn"
                   color="secondary"
                   className={[
                     classes.buttonClearAllFilters,
@@ -663,6 +737,36 @@ export default function CarActivity(): JSX.Element {
               </Grid>
               <Grid
                 item
+                className={[classes.filter, 'filter-model'].join(' ')}
+                xs={12}
+                sm={6}
+                md={3}
+                lg={2}
+                xl={2}
+              >
+                <Autocomplete
+                  autoHighlight
+                  id="location-select-list"
+                  options={locationOptions}
+                  getOptionLabel={(option) => option.label}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={t('carActivity.location.all')}
+                      variant="outlined"
+                      placeholder={t('all')}
+                    />
+                  )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.value === value.value || value.value === 'all'
+                  }
+                  value={selectedLocation || defaultLocation}
+                  defaultValue={selectedLocation || defaultLocation}
+                  onChange={(_event, value) => onSetSelectedLocation(value)}
+                />
+              </Grid>
+              <Grid
+                item
                 className={[classes.filter, classes.textRight].join(' ')}
                 xs={6}
                 sm={6}
@@ -670,14 +774,28 @@ export default function CarActivity(): JSX.Element {
                 lg={1}
                 xl={1}
               >
-                <Button
+                {/* <Button
                   color="primary"
                   variant="contained"
                   disabled={isFetchingBrands || isFetchingActivities}
                   className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
                 >
-                  {t('button.export')}
-                </Button>
+                  {t('button.export').toUpperCase()}
+                </Button> */}
+                <ButtonExport
+                  id="car_activity__export_btn"
+                  fullWidth
+                  variant="contained"
+                  disabled={isFetchingBrands || isFetchingActivities}
+                >
+                  <CsvButton
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename={t('sidebar.carActivity') + '.csv'}
+                  >
+                    {t('button.export').toUpperCase()}
+                  </CsvButton>
+                </ButtonExport>
               </Grid>
             </Grid>
           </div>
@@ -746,7 +864,7 @@ export default function CarActivity(): JSX.Element {
                     value={carActivitiesData?.pagination?.size || pageSize}
                     defaultValue={carActivitiesData?.pagination?.size || pageSize}
                     onChange={(event) => {
-                      setPage(0)
+                      setPage(1)
                       setPageSize(event.target.value as number)
                     }}
                   >

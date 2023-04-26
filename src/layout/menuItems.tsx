@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useTranslation } from 'react-i18next'
 import { ROLES } from 'auth/roles'
+import { PRIVILEGES } from 'auth/privileges'
 import { ROUTE_PATHS } from 'routes'
 import { BarChart, Dashboard, DocumentScanner, Folder, PeopleAlt, Stars } from '@mui/icons-material'
 import { SidebarItemsType } from './Sidebar/types'
@@ -69,12 +70,14 @@ export function useMenuItems() {
             ROLES.MARKETING,
             ROLES.PRODUCT_SUPPORT,
           ],
+          allowedPrivileges: [PRIVILEGES.PERM_CUSTOMER_VIEW],
         },
         {
           id: 'left_menu__staff_profile',
           title: t('sidebar.userManagement.staffProfile'),
           href: ROUTE_PATHS.STAFF_PROFILES,
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+          allowedPrivileges: [PRIVILEGES.PERM_ADMIN_USER_VIEW, PRIVILEGES.PERM_ADMIN_USER_CREATE],
         },
         {
           id: 'left_menu__admin_users',
@@ -192,7 +195,7 @@ export function useMenuItems() {
       ],
       children: [
         {
-          id: 'left_menu__documents',
+          id: 'left_menu__document',
           href: ROUTE_PATHS.DOCUMENTS,
           title: t('sidebar.documentsManagement.document'),
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],

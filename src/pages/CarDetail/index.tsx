@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import { Card, Grid, Typography, TextField, Button, Autocomplete, Chip } from '@mui/material'
+import { Card, Grid, Typography, Button, Autocomplete, Chip } from '@mui/material'
 import { getCarById, updateById } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
@@ -17,8 +17,9 @@ import {
   getCarStatusOnlyUsedInBackendOptions,
   CarStatus,
   SelectOption,
+  CarStateParams,
 } from './constant'
-import { useStyles } from './styles'
+import { useStyles, DisabledField, EnabledTextField } from './styles'
 
 const validationSchema = yup.object({
   vin: yup.string().required('Field is required'),
@@ -27,9 +28,11 @@ const validationSchema = yup.object({
 })
 
 export default function CarDetail(): JSX.Element {
+  const location = useLocation()
   const classes = useStyles()
   const { t } = useTranslation()
   const { id: carId } = useParams<CarDetailParams>()
+  const stateParams = location.state as CarStateParams
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -104,10 +107,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__carId"
-              className={classes.textField}
               label={t('car.id')}
               fullWidth
               disabled
@@ -125,7 +127,9 @@ export default function CarDetail(): JSX.Element {
                 option.value === value.value || value.value === ''
               }
               renderInput={(params) => {
-                return <TextField {...params} label={t('car.carStatus')} variant="outlined" />
+                return (
+                  <EnabledTextField {...params} label={t('car.carStatus')} variant="outlined" />
+                )
               }}
               value={selectedStatus}
               onChange={(_event, item) => onChangeStatus(item)}
@@ -135,10 +139,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__carTrack"
-              className={classes.textField}
               label={t('car.carTrackId')}
               fullWidth
               disabled
@@ -146,14 +149,24 @@ export default function CarDetail(): JSX.Element {
               value={carDetail?.carTrackId || ''}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="car_detail__location"
+              label={t('car.location')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={stateParams.location || ''}
+            />
+          </Grid>
         </Grid>
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <EnabledTextField
               type="text"
               id="car_detail__plateNumber"
-              className={classes.textField}
               label={t('car.plateNumber')}
               fullWidth
               variant="outlined"
@@ -164,10 +177,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <EnabledTextField
               type="text"
               id="car_detail__vin"
-              className={classes.textField}
               label={t('car.vin')}
               fullWidth
               variant="outlined"
@@ -181,10 +193,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__carBrand"
-              className={classes.textField}
               label={t('car.brand')}
               fullWidth
               disabled
@@ -193,10 +204,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__model"
-              className={classes.textField}
               label={t('car.model')}
               fullWidth
               disabled
@@ -208,10 +218,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__color"
-              className={classes.textField}
               label={t('car.color')}
               fullWidth
               disabled
@@ -220,13 +229,36 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
         </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="car_detail__owner"
+              label={t('car.owner')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={stateParams.owner}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="car_detail__reseller"
+              label={t('car.reseller')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={stateParams.reseller}
+            />
+          </Grid>
+        </Grid>
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__createDate"
-              className={classes.textField}
               label={t('car.createdDate')}
               fullWidth
               disabled
@@ -235,10 +267,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__updateDate"
-              className={classes.textField}
               label={t('car.updatedDate')}
               fullWidth
               disabled
@@ -256,10 +287,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__bodyType"
-              className={classes.textField}
               label={t('car.bodyType')}
               fullWidth
               disabled
@@ -268,10 +298,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__seat"
-              className={classes.textField}
               label={t('car.seats')}
               fullWidth
               disabled
@@ -283,10 +312,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__year"
-              className={classes.textField}
               label={t('car.year')}
               fullWidth
               disabled
@@ -298,10 +326,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={12}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__condition"
-              className={classes.textField}
               label={t('car.condition')}
               fullWidth
               disabled
@@ -319,10 +346,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__acc"
-              className={classes.textField}
               label={t('car.acceleration')}
               fullWidth
               disabled
@@ -331,10 +357,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__speed"
-              className={classes.textField}
               label={t('car.topSpeed')}
               fullWidth
               disabled
@@ -346,10 +371,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__range"
-              className={classes.textField}
               label={t('car.range')}
               fullWidth
               disabled
@@ -358,10 +382,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__batt"
-              className={classes.textField}
               label={t('car.batteryCapacity')}
               fullWidth
               disabled
@@ -373,10 +396,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__horsePower"
-              className={classes.textField}
               label={t('car.horsePower')}
               fullWidth
               disabled
@@ -394,10 +416,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__chargeType"
-              className={classes.textField}
               label={t('car.connectorType')}
               fullWidth
               disabled
@@ -425,10 +446,9 @@ export default function CarDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__chargeTime"
-              className={classes.textField}
               label={t('car.chargeTime')}
               fullWidth
               disabled
@@ -440,10 +460,9 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="car_detail__fastCharge"
-              className={classes.textField}
               label={t('car.fastChargeTime')}
               fullWidth
               disabled

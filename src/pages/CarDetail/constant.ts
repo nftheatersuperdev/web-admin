@@ -25,3 +25,9 @@ export const getCarStatusOnlyUsedInBackendOptions = (t: TFunction<Namespace>): S
     value: CarStatus.OUT_OF_SERVICE,
   },
 ]
+
+export interface CarStateParams {
+  location: string
+  owner: string
+  reseller: string
+}
