@@ -154,6 +154,9 @@ export default function Car(): JSX.Element {
       setSelectedSearch(null)
       setSelectedOptionValue(null)
       setSelectedLocation(null)
+      formik.setFieldValue('searchLocation', '')
+      formik.setFieldValue('searchType', '')
+      formik.setFieldValue('searchInput', '')
     }
     setSearchValue('')
   }
@@ -243,7 +246,8 @@ export default function Car(): JSX.Element {
         filterSearch = { [keySearch]: valueSearch }
 
         if (searchType === 'ownerProfileId') {
-          filterSearch.ownerProfileType = 'BUSINESS'
+          const owner = ownerData?.owners.find((o) => o.id === valueSearch)
+          filterSearch.ownerProfileType = owner ? owner.profileType : 'BUSINESS'
         }
       }
 
@@ -422,10 +426,10 @@ export default function Car(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState<CarListFilterRequest>()
+  const currentPage = page + 1
 
   useEffect(() => {
     refetch()
-    setPage(1)
   }, [page, pageSize, filter, refetch])
 
   useEffect(() => {
@@ -676,12 +680,17 @@ export default function Car(): JSX.Element {
             {carData?.data.pagination?.totalPage}
             <Pagination
               count={carData?.data?.pagination?.totalPage}
-              page={carData?.data?.pagination?.page || page}
-              defaultPage={carData?.data?.pagination?.page || page}
+              page={carData?.data?.pagination?.page || currentPage}
+              defaultPage={carData?.data?.pagination?.page || currentPage}
               variant="text"
               color="primary"
               onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                setPage(value - 1)
+                const selectedPage = value - 1
+                if (page !== selectedPage) {
+                  setPage(selectedPage)
+                } else {
+                  refetch()
+                }
               }}
             />
           </div>
