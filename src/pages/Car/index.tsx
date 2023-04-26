@@ -246,7 +246,8 @@ export default function Car(): JSX.Element {
         filterSearch = { [keySearch]: valueSearch }
 
         if (searchType === 'ownerProfileId') {
-          filterSearch.ownerProfileType = 'BUSINESS'
+          const owner = ownerData?.owners.find((o) => o.id === valueSearch)
+          filterSearch.ownerProfileType = owner ? owner.profileType : 'BUSINESS'
         }
       }
 
