@@ -684,7 +684,7 @@ export default function CarActivity(): JSX.Element {
                   color="primary"
                   className={classes.buttonWithoutShadow}
                   onClick={() => handleOnClickFilters()}
-                  disabled={isFetchingBrands || isFetchingActivities}
+                  disabled={isFetchingBrands || isFetchingActivities || !!filterPlateError}
                 >
                   {t('button.search')}
                 </Button>
