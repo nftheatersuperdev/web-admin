@@ -74,7 +74,7 @@ enum ScheduleActions {
 
 const ButtonExport = styled(Button)`
   background-color: #424e63 !important;
-  padding: 16px 14px !important;
+  padding: 14px 12px !important;
   color: white;
 `
 const CsvButton = styled(CSVLink)`
@@ -83,113 +83,8 @@ const CsvButton = styled(CSVLink)`
   text-decoration: none !important;
 `
 
-const useStyles = makeStyles({
-  cardWrapper: {
-    width: '100%',
-    padding: '20px',
-    margin: '20px 0',
-  },
-  marginSpace: {
-    margin: '20px 0',
-  },
-  marginTextButton: {
-    marginLeft: '18px',
-  },
-  textBold: {
-    fontWeight: 'bold',
-  },
-  textAlignRight: {
-    textAlign: 'right',
-  },
-  hide: {
-    display: 'none',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  buttonWithoutShadow: {
-    fontWeight: 'bold',
-    display: 'inline-flexbox',
-    boxShadow: 'none',
-    padding: '14px 12px',
-  },
-  buttonClearAllFilters: {
-    // padding: '16px 9px 16px 9px !important',
-    color: '#3f51b5',
-    '&:hover, &:focus': {
-      background: 'none',
-    },
-  },
-  primaryTextColor: {
-    color: '#3793FF',
-  },
-  table: {
-    '& .MuiDataGrid-columnHeaderTitle': {
-      fontWeight: 'bold',
-    },
-  },
-  textPrimary: {
-    fontSize: '20px',
-  },
-  textSecondary: {
-    fontSize: '14px',
-    color: 'rgba(0, 0, 0, 0.6)',
-  },
-  detailPadding: {
-    padding: '2px 16px',
-  },
-  backgroundSecondaty: {
-    background: '#FAFAFA',
-  },
-  secondaryButton: {
-    background: '#424E63',
-    color: 'white',
-  },
-  greenBackground: {
-    background: '#00a152',
-    color: 'white',
-  },
-  textField: {
-    '& .MuiInputBase-input': {
-      height: '1.4rem',
-    },
-    '& input.Mui-disabled': {
-      WebkitTextFillColor: '#000000',
-      color: '#000000',
-      background: '#F5F5F5',
-    },
-  },
-  textBoldBorder: {
-    borderLeft: '2px solid #E0E0E0',
-    fontWeight: 'bold',
-    padding: '0px 8px',
-  },
-  noResultMessage: {
-    textAlign: 'center',
-    fontSize: '1.2em',
-    fontWeight: 'bold',
-    padding: '48px 0',
-  },
-  paginationContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '20px',
-  },
-  inlineElement: {
-    display: 'inline-flex',
-  },
-  datePickerFromTo: {
-    '&& .MuiOutlinedInput-input': {
-      padding: '16.5px 14px',
-    },
-  },
-})
-
 export default function CarActivityDetail(): JSX.Element {
   const location = useLocation()
-  const classes = useStyles()
   const { id: carId } = useParams<CarActivityDetailParams>()
   const carActivityStateParams = location.state as CarActivityStateParams
   const { t, i18n } = useTranslation()
@@ -212,6 +107,111 @@ export default function CarActivityDetail(): JSX.Element {
   const [filterService, setFilterService] = useState<string>('')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
 
+  const useStyles = makeStyles({
+    cardWrapper: {
+      width: '100%',
+      padding: '20px',
+      margin: '20px 0',
+    },
+    marginSpace: {
+      margin: '20px 0',
+    },
+    marginTextButton: {
+      marginLeft: '18px',
+    },
+    textBold: {
+      fontWeight: 'bold',
+    },
+    textAlignRight: {
+      textAlign: 'right',
+    },
+    hide: {
+      display: 'none',
+    },
+    fullWidth: {
+      width: '100%',
+    },
+    buttonWithoutShadow: {
+      fontWeight: 'bold',
+      display: 'inline-flexbox',
+      boxShadow: 'none',
+      padding: '14px 12px',
+    },
+    buttonClearAllFilters: {
+      // padding: '16px 9px 16px 9px !important',
+      color: '#3f51b5',
+      '&:hover, &:focus': {
+        background: 'none',
+      },
+    },
+    primaryTextColor: {
+      color: '#3793FF',
+    },
+    table: {
+      '& .MuiDataGrid-columnHeaderTitle': {
+        fontWeight: 'bold',
+      },
+    },
+    textPrimary: {
+      fontSize: '20px',
+    },
+    textSecondary: {
+      fontSize: '14px',
+      color: 'rgba(0, 0, 0, 0.6)',
+    },
+    detailPadding: {
+      padding: '2px 16px',
+    },
+    backgroundSecondaty: {
+      background: '#FAFAFA',
+    },
+    secondaryButton: {
+      background: '#424E63',
+      color: 'white',
+    },
+    greenBackground: {
+      background: '#00a152',
+      color: 'white',
+    },
+    textField: {
+      '& .MuiInputBase-input': {
+        height: '1.4rem',
+      },
+      '& input.Mui-disabled': {
+        WebkitTextFillColor: '#000000',
+        color: '#000000',
+        background: '#F5F5F5',
+      },
+    },
+    textBoldBorder: {
+      borderLeft: '2px solid #E0E0E0',
+      fontWeight: 'bold',
+      padding: '0px 8px',
+    },
+    noResultMessage: {
+      textAlign: 'center',
+      fontSize: '1.2em',
+      fontWeight: 'bold',
+      padding: '48px 0',
+    },
+    paginationContrainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '20px',
+    },
+    inlineElement: {
+      display: 'inline-flex',
+    },
+    datePickerFromTo: {
+      '&& .MuiOutlinedInput-input': {
+        padding: '16.5px 14px',
+      },
+    },
+  })
+
+  const classes = useStyles()
   const { data: scheduleServices, isFetching: isFetchingScheduleServices } = useQuery(
     'schedule-services',
     () => getScheduleServices()
