@@ -434,6 +434,10 @@ export default function CarActivity(): JSX.Element {
     setVisibleAddDialog(false)
   }
 
+  const handleOnPlateSearchEnterKeyDown = () => {
+    refetch()
+  }
+
   const adjustBrowserHistory = (params = {}) => {
     const adjustParams = {
       plate: filterPlate,
@@ -583,6 +587,11 @@ export default function CarActivity(): JSX.Element {
                           <SearchIcon />
                         </InputAdornment>
                       ),
+                    }}
+                    onKeyDown={(event) => {
+                      if (!filterPlateError && filterPlate !== '' && event.key === 'Enter') {
+                        handleOnPlateSearchEnterKeyDown()
+                      }
                     }}
                   />
                 </FormControl>
