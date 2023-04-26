@@ -812,7 +812,7 @@ export default function CarActivity(): JSX.Element {
                     value={carActivitiesData?.pagination?.size || pageSize}
                     defaultValue={carActivitiesData?.pagination?.size || pageSize}
                     onChange={(event) => {
-                      setPage(0)
+                      setPage(1)
                       setPageSize(event.target.value as number)
                     }}
                   >
