@@ -108,9 +108,10 @@ const useStyles = makeStyles({
     width: '100%',
   },
   buttonWithoutShadow: {
+    fontWeight: 'bold',
     display: 'inline-flexbox',
     boxShadow: 'none',
-    padding: '16px 20px',
+    padding: '14px 12px',
   },
   buttonClearAllFilters: {
     // padding: '16px 9px 16px 9px !important',
@@ -178,6 +179,11 @@ const useStyles = makeStyles({
   },
   inlineElement: {
     display: 'inline-flex',
+  },
+  datePickerFromTo: {
+    '&& .MuiOutlinedInput-input': {
+      padding: '16.5px 14px',
+    },
   },
 })
 
@@ -512,7 +518,7 @@ export default function CarActivityDetail(): JSX.Element {
     return (
       <TableBody>
         <TableRow>
-          <TableCell colSpan={7}>
+          <TableCell colSpan={9}>
             <div className={classes.noResultMessage}>{t('warning.noResult')}</div>
           </TableCell>
         </TableRow>
@@ -849,7 +855,11 @@ export default function CarActivityDetail(): JSX.Element {
             </Typography>
           </Grid>
         </Grid>
-        <Grid container spacing={2} className={classes.marginSpace}>
+        <Grid
+          container
+          spacing={2}
+          className={[classes.marginSpace, classes.datePickerFromTo].join(' ')}
+        >
           <Grid container xs={12} sm={12} lg={8} spacing={2}>
             <Grid item xs={12} sm={3}>
               <FormControl variant="outlined" className={classes.fullWidth}>
