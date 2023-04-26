@@ -605,8 +605,8 @@ export default function CarActivity(): JSX.Element {
                     value={filterPlate}
                     onChange={handleOnPlateChange}
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
+                      endAdornment: (
+                        <InputAdornment position="end">
                           <SearchIcon />
                         </InputAdornment>
                       ),

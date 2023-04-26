@@ -1220,7 +1220,23 @@
       "error": "Something went wrong when deleting the schedule"
     },
     "history": {
-      "label": "Car Activity History"
+      "label": "Car Activity History",
+      "export": {
+        "header": {
+          "id": "Schedule ID",
+          "bookingId": "Booking ID",
+          "bookingDetailId": "Booking Detail ID",
+          "carId": "Car ID",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "status": "Car Status",
+          "bookingType": "Service",
+          "remark": "Remark",
+          "updatedBy": "Modified By",
+          "updatedDate": "Modified Date",
+          "action": "Action"
+        }
+      }
     }
   },
   "subscriptionPackageManagement": {
