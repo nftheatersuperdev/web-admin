@@ -62,21 +62,12 @@ export function useMenuItems() {
           id: 'left_menu__customer_profile',
           title: t('sidebar.userManagement.customerProfile'),
           href: ROUTE_PATHS.CUSTOMER_PROFILE,
-          allowedRoles: [
-            ROLES.SUPER_ADMIN,
-            ROLES.ADMIN,
-            ROLES.CUSTOMER_SUPPORT,
-            ROLES.OPERATION,
-            ROLES.MARKETING,
-            ROLES.PRODUCT_SUPPORT,
-          ],
           allowedPrivileges: [PRIVILEGES.PERM_CUSTOMER_VIEW],
         },
         {
           id: 'left_menu__staff_profile',
           title: t('sidebar.userManagement.staffProfile'),
           href: ROUTE_PATHS.STAFF_PROFILES,
-          allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
           allowedPrivileges: [PRIVILEGES.PERM_ADMIN_USER_VIEW, PRIVILEGES.PERM_ADMIN_USER_CREATE],
         },
         {

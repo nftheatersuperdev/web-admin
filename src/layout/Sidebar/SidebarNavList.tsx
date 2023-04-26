@@ -14,13 +14,13 @@ interface SidebarNavListProps {
 function SidebarNavList({ pages, depth }: SidebarNavListProps): ReactElement {
   const router = useLocation()
   const { getRole, getPrivileges } = useAuth()
-  const currentUserRole = getRole()
   const currentRoute = router.pathname
-  const privileges = getPrivileges()
+  const currentUserRole = getRole()
+  const currentUserPrivileges = getPrivileges()
   const filteredPages = pages.filter((page) => {
     const isValidRole = page.allowedRoles && hasAllowedRole(currentUserRole, page.allowedRoles)
     const isValidPrivilege =
-      page.allowedPrivileges && hasAllowedPrivilege(privileges, page.allowedPrivileges)
+      page.allowedPrivileges && hasAllowedPrivilege(currentUserPrivileges, page.allowedPrivileges)
 
     if (isValidPrivilege || isValidRole) {
       return page
