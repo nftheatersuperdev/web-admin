@@ -2,7 +2,6 @@ import { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory, useLocation } from 'react-router-dom'
 import {
-  Breadcrumbs,
   Typography,
   Card,
   Grid,
@@ -14,14 +13,13 @@ import {
   TableCell,
   TableBody,
   Paper,
-  Checkbox,
   MenuItem,
   Select,
   FormControl,
   Chip,
   TextField,
   CircularProgress,
-  Divider,
+  InputAdornment,
 } from '@mui/material'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
@@ -29,9 +27,9 @@ import dayjsTimezone from 'dayjs/plugin/timezone'
 import { useTranslation } from 'react-i18next'
 import { makeStyles } from '@mui/styles'
 import {
-  DEFAULT_DATE_FORMAT,
   DEFAULT_DATETIME_FORMAT_ISO,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
   formatStringForInputText,
   validateKeywordText,
@@ -42,9 +40,10 @@ import Pagination from '@material-ui/lab/Pagination'
 import { useFormik } from 'formik'
 import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
+import { CloseOutlined } from '@mui/icons-material'
 import { Page } from 'layout/LayoutRoute'
 import DatePicker from 'components/DatePicker'
-import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { searchCustomer } from 'services/web-bff/customer'
 import { UserInputRequest } from 'services/web-bff/user.type'
 import { CustomerFilterRequest, CustomerMeProps } from 'services/web-bff/customer.type'
@@ -54,9 +53,17 @@ dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
 const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
 
-const DividerCustom = styled(Divider)`
-  border-width: 1px !important;
-  margin: 10px 0px !important;
+const Wrapper = styled(Card)`
+  padding: 15px;
+  margin-top: 20px;
+`
+const ContentSection = styled.div`
+  margin-bottom: 20px;
+`
+const GridSearchSection = styled(Grid)`
+  padding-top: 20px !important;
+  align-items: left !important;
+  min-height: 100px !important;
 `
 
 export default function CustomerProfile(): JSX.Element {
@@ -132,15 +139,15 @@ export default function CustomerProfile(): JSX.Element {
       color: 'black',
       borderRadius: '64px',
     },
-    searchTextField: {
-      width: '200px',
-    },
     buttonWithoutShadow: {
       fontWeight: 'bold',
       display: 'inline-flexbox',
       boxShadow: 'none',
       padding: '14px 12px',
       width: '107px',
+    },
+    gridExport: {
+      textAlign: 'right',
     },
     exportButton: {
       fontWeight: 'bold',
@@ -164,6 +171,16 @@ export default function CustomerProfile(): JSX.Element {
     breadcrumText: {
       color: '#000000DE',
     },
+    paddingRigthBtnClear: {
+      marginLeft: '-40px',
+      cursor: 'pointer',
+      padding: '4px 4px',
+    },
+    datePickerFromTo: {
+      '&& .MuiOutlinedInput-input': {
+        padding: '16.5px 14px',
+      },
+    },
   })
   const classes = useStyles()
   const history = useHistory()
@@ -180,12 +197,12 @@ export default function CustomerProfile(): JSX.Element {
   const [customerFilter, setCustomerFilter] = useState<CustomerFilterRequest>({ ...defaultFilter })
   const [filterSearchField, setFilterSearchField] = useState<string>('')
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
-  const [showTextField, setShowTextField] = useState<boolean>(false)
+  const [showTextField, setShowTextField] = useState<boolean>(true)
   const [showStatusDropdown, setShowStatusDropdown] = useState<boolean>(false)
   const [showKycStatusDropdown, setShowKycStatusDropdown] = useState<boolean>(false)
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
-  const [showSearchButton, setShowSearchButton] = useState<boolean>(false)
+  const [showSearchButton, setShowSearchButton] = useState<boolean>(true)
   const [isEnableFilterButton, setIsEnableFilterButton] = useState<boolean>(false)
   const onCriteriaChange = (params: string) => {
     if (params === ' ') {
@@ -248,6 +265,19 @@ export default function CustomerProfile(): JSX.Element {
       setPage(1)
     },
   })
+
+  const handleClear = () => {
+    setFilterSearchField('')
+    setFilterSearchFieldError('')
+    setIsEnableFilterButton(false)
+    setShowTextField(true)
+    setShowStatusDropdown(false)
+    setShowKycStatusDropdown(false)
+    setShowDatePicker(false)
+    setShowSearchButton(true)
+    formik.setFieldValue('searchType', '')
+    formik.handleSubmit()
+  }
   const {
     data: userResponse,
     refetch,
@@ -257,6 +287,18 @@ export default function CustomerProfile(): JSX.Element {
     () => searchCustomer({ data: customerFilter, page, size: pageSize } as CustomerMeProps),
     { cacheTime: 10 * (60 * 1000), staleTime: 5 * (60 * 1000) }
   )
+
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.userManagement.title'),
+      link: '',
+    },
+    {
+      text: t('sidebar.userManagement.customerProfile'),
+      link: '/customer-profiles',
+    },
+  ]
+
   const csvHeaders = [
     { label: 'ID', key: 'id' },
     { label: 'First name', key: 'firstName' },
@@ -316,9 +358,6 @@ export default function CustomerProfile(): JSX.Element {
             onClick={() => history.push(`/customer-profile/${user.id}/edit`)}
             key={`customer-${user.id}`}
           >
-            <TableCell>
-              <Checkbox className={classes.hideObject} size="small" />
-            </TableCell>
             <TableCell>
               <div className={classes.pl17}>{formatStringForInputText(user.firstName)}</div>
             </TableCell>
@@ -429,243 +468,251 @@ export default function CustomerProfile(): JSX.Element {
   }
   return (
     <Page>
-      <PageTitleWithoutLine title={t('sidebar.userManagement.customerProfile')} />
-      <Breadcrumbs aria-label="breadcrumb">
-        <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Typography className={classes.breadcrumText}>
-          {t('sidebar.userManagement.customerProfile')}
-        </Typography>
-      </Breadcrumbs>
-      <br />
-      <DividerCustom />
-      <br />
-      <Card>
-        <div className={classes.headerTopic}>
-          <Typography className={classes.headerTopicText}>{t('user.customerList')}</Typography>
-        </div>
-        <Grid className={classes.searchBar} container spacing={1}>
-          <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
-            <TextField
-              className={classes.searchTextField}
-              fullWidth
-              select
-              label={t('staffProfile.searchCriteria')}
-              id="staff-profile__criteria_select"
-              name="searchCriteria"
-              value={formik.values.searchType}
-              variant="outlined"
-              onChange={(event) => {
-                formik.setFieldValue('searchType', event.target.value)
-                setIsEnableFilterButton(false)
-                setFilterSearchField('')
-                setFilterSearchFieldError('')
-                onCriteriaChange(event.target.value as string)
-              }}
-            >
-              <MenuItem value=" ">
-                <em />
-              </MenuItem>
-              <MenuItem value="id">{t('user.id')}</MenuItem>
-              <MenuItem value="firstName">{t('user.firstName')}</MenuItem>
-              <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
-              <MenuItem value="email">{t('user.email')}</MenuItem>
-              <MenuItem value="phoneNumber">{t('user.phone')}</MenuItem>
-              <MenuItem value="isActive">{t('user.status')}</MenuItem>
-              <MenuItem value="kycStatus">{t('user.kyc.status')}</MenuItem>
-              <MenuItem value="customerGroupName">{t('user.userGroups')}</MenuItem>
-              <MenuItem value="createdDate">{t('staffProfile.createdDate')}</MenuItem>
-              <MenuItem value="updatedDate">{t('user.updatedDate')}</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
-            <TextField
-              className={showTextField ? '' : classes.hideObject}
-              label={t('carAvailability.searchField.label')}
-              id="customer-profile__search_input"
-              name="searchVal"
-              value={filterSearchField}
-              onChange={handleOnSearchFieldChange}
-              error={!!filterSearchFieldError}
-              helperText={filterSearchFieldError}
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              fullWidth
-            />
-            <TextField
-              className={showStatusDropdown ? '' : classes.hideObject}
-              fullWidth
-              select
-              value={filterSearchField}
-              onChange={handleOnSearchFieldChange}
-              label={t('user.status')}
-              id="customer-profile__status_select"
-              name="status"
-              variant="outlined"
-            >
-              <MenuItem value="true">{t('user.statuses.active')}</MenuItem>
-              <MenuItem value="false">{t('user.statuses.deleted')}</MenuItem>
-            </TextField>
-            <TextField
-              className={showKycStatusDropdown ? '' : classes.hideObject}
-              fullWidth
-              select
-              value={filterSearchField}
-              onChange={handleOnSearchFieldChange}
-              label={t('user.kyc.status')}
-              id="customer-profile__status_select"
-              name="kyCstatus"
-              variant="outlined"
-            >
-              <MenuItem value="PENDING">{t('user.kyc.pending')}</MenuItem>
-              <MenuItem value="VERIFIED">{t('user.kyc.verified')}</MenuItem>
-              <MenuItem value="REJECTED">{t('user.kyc.rejected')}</MenuItem>
-            </TextField>
-            <DatePicker
-              className={showDatePicker ? '' : classes.hideObject}
-              label={t('staffProfile.searchDate')}
-              id="customer-profile__searchdate_input"
-              name="selectedFromDate"
-              value={selectedFromDate}
-              format={DEFAULT_DATE_FORMAT}
-              inputVariant="outlined"
-              onChange={(date) => {
-                date && setSelectedFromDate(date.toDate())
-                setIsEnableFilterButton(true)
-              }}
-            />
-          </Grid>
-          <Grid className={[classes.filter, classes.pl16].join(' ')} xs={3}>
-            <Button
-              id="staff_profile__search_btn"
-              className={showSearchButton ? classes.buttonWithoutShadow : classes.hideObject}
-              variant="contained"
-              onClick={() => formik.handleSubmit()}
-              disabled={!isEnableFilterButton}
-            >
-              {t('carAvailability.searchBtn').toUpperCase()}
-            </Button>
-          </Grid>
-          <Grid className={[classes.filter, classes.pl16, classes.rightPanel].join(' ')} xs={3}>
-            <Button
-              id="customer_profile__export_btn"
-              className={classes.exportButton}
-              color="primary"
-              variant="contained"
-            >
-              <CSVLink
-                data={csvData}
-                headers={csvHeaders}
-                filename="EVme Admin Dashboard.csv"
-                className={classes.noUnderLine}
-              >
-                {t('button.export').toUpperCase()}
-              </CSVLink>
-            </Button>
-          </Grid>
-        </Grid>
-        <Fragment>
-          <TableContainer component={Paper} className={classes.table}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">
-                    <Checkbox className={classes.hideObject} size="small" />
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.firstName')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.lastName')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.email')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.phone')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.status')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.kyc.status')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('staffProfile.createdDate')}
-                    </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                      {t('user.updatedDate')}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              {isFetchingActivities ? (
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      <CircularProgress />
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              ) : (
-                generateDataToTable()
-              )}
-            </Table>
-          </TableContainer>
-          <Card>
-            <div className={classes.paginationContrainer}>
-              {t('table.rowPerPage')}:&nbsp;
-              <FormControl className={classes.inlineElement}>
-                <Select
-                  value={userResponse?.data.pagination?.size || pageSize}
-                  defaultValue={userResponse?.data.pagination?.size || pageSize}
+      <PageTitle title={t('sidebar.userManagement.customerProfile')} breadcrumbs={breadcrumbs} />
+      <Wrapper>
+        <ContentSection>
+          <Typography variant="h6" component="h2">
+            {t('user.customerList')}
+          </Typography>
+          <Fragment>
+            <GridSearchSection container spacing={1}>
+              <Grid item xs={9} sm={3}>
+                <TextField
+                  disabled={isFetchingActivities}
+                  fullWidth
+                  select
+                  label={t('carAvailability.search')}
+                  id="staff-profile__criteria_select"
+                  name="searchCriteria"
+                  value={formik.values.searchType}
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {formik.values.searchType && (
+                          <CloseOutlined
+                            className={classes.paddingRigthBtnClear}
+                            onClick={handleClear}
+                          />
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
                   onChange={(event) => {
-                    setPage(1)
-                    setPages(event.target.value as number)
-                    setPageSize(event.target.value as number)
+                    formik.setFieldValue('searchType', event.target.value)
+                    setIsEnableFilterButton(false)
+                    setFilterSearchField('')
+                    setFilterSearchFieldError('')
+                    onCriteriaChange(event.target.value as string)
                   }}
                 >
-                  {config.tableRowsPerPageOptions?.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              &nbsp;&nbsp;{userResponse?.data.pagination?.page || pages} {t('staffProfile.of')}
-              &nbsp;
-              {userResponse?.data.pagination?.totalPage || pages}
-              <Pagination
-                count={userResponse?.data.pagination?.totalPage || pages}
-                page={userResponse?.data.pagination?.page || page}
-                defaultPage={userResponse?.data.pagination?.page || page}
-                variant="text"
-                shape="rounded"
-                onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                  setPage(value)
-                }}
-              />
-            </div>
-          </Card>
-        </Fragment>
-      </Card>
+                  <MenuItem value="id">{t('user.id')}</MenuItem>
+                  <MenuItem value="firstName">{t('user.firstName')}</MenuItem>
+                  <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
+                  <MenuItem value="email">{t('user.email')}</MenuItem>
+                  <MenuItem value="phoneNumber">{t('user.phone')}</MenuItem>
+                  <MenuItem value="isActive">{t('user.status')}</MenuItem>
+                  <MenuItem value="kycStatus">{t('user.kyc.status')}</MenuItem>
+                  <MenuItem value="customerGroupName">{t('user.userGroupUp')}</MenuItem>
+                  <MenuItem value="createdDate">{t('staffProfile.createdDate')}</MenuItem>
+                  <MenuItem value="updatedDate">{t('user.updatedDate')}</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={9} sm={3}>
+                <TextField
+                  className={showTextField ? '' : classes.hideObject}
+                  id="customer-profile__search_input"
+                  name="searchVal"
+                  value={filterSearchField}
+                  placeholder={t('carAvailability.searchField.label')}
+                  onChange={handleOnSearchFieldChange}
+                  error={!!filterSearchFieldError}
+                  helperText={filterSearchFieldError}
+                  variant="outlined"
+                  disabled={formik.values.searchType === ''}
+                  fullWidth
+                />
+                <TextField
+                  className={showStatusDropdown ? '' : classes.hideObject}
+                  fullWidth
+                  select
+                  value={filterSearchField}
+                  onChange={handleOnSearchFieldChange}
+                  label={t('user.status')}
+                  id="customer-profile__status_select"
+                  name="status"
+                  variant="outlined"
+                >
+                  <MenuItem value="true">{t('user.statuses.active')}</MenuItem>
+                  <MenuItem value="false">{t('user.statuses.deleted')}</MenuItem>
+                </TextField>
+                <TextField
+                  className={showKycStatusDropdown ? '' : classes.hideObject}
+                  fullWidth
+                  select
+                  value={filterSearchField}
+                  onChange={handleOnSearchFieldChange}
+                  label={t('user.kyc.status')}
+                  id="customer-profile__status_select"
+                  name="kyCstatus"
+                  variant="outlined"
+                >
+                  <MenuItem value="PENDING">{t('user.kyc.pending')}</MenuItem>
+                  <MenuItem value="VERIFIED">{t('user.kyc.verified')}</MenuItem>
+                  <MenuItem value="REJECTED">{t('user.kyc.rejected')}</MenuItem>
+                </TextField>
+                <DatePicker
+                  fullWidth
+                  className={showDatePicker ? classes.datePickerFromTo : classes.hideObject}
+                  label={t('staffProfile.searchDate')}
+                  KeyboardButtonProps={{
+                    id: 'customer-profile__searchdate_icon',
+                  }}
+                  id="customer-profile__searchdate_input"
+                  name="selectedFromDate"
+                  value={selectedFromDate}
+                  format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
+                  inputVariant="outlined"
+                  onChange={(date) => {
+                    date && setSelectedFromDate(date.toDate())
+                    setIsEnableFilterButton(true)
+                  }}
+                />
+              </Grid>
+              <Grid item xs={9} sm={2}>
+                <Button
+                  id="staff_profile__search_btn"
+                  className={showSearchButton ? classes.buttonWithoutShadow : classes.hideObject}
+                  variant="contained"
+                  onClick={() => formik.handleSubmit()}
+                  disabled={!isEnableFilterButton}
+                >
+                  {t('carAvailability.searchBtn').toUpperCase()}
+                </Button>
+              </Grid>
+              <Grid item xs={9} sm={2} />
+              <Grid item xs={9} sm={2} className={classes.gridExport}>
+                <Button
+                  id="customer_profile__export_btn"
+                  className={classes.exportButton}
+                  color="primary"
+                  variant="contained"
+                >
+                  <CSVLink
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename="EVme Admin Dashboard.csv"
+                    className={classes.noUnderLine}
+                  >
+                    {t('button.export').toUpperCase()}
+                  </CSVLink>
+                </Button>
+              </Grid>
+            </GridSearchSection>
+            <GridSearchSection container>
+              <Grid item xs={12}>
+                <TableContainer component={Paper} className={classes.table}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.firstName')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.lastName')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.email')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.phone')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.status')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.kyc.status')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('staffProfile.createdDate')}
+                          </div>
+                        </TableCell>
+                        <TableCell align="left">
+                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                            {t('user.updatedDate')}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+
+                    {isFetchingActivities ? (
+                      <TableBody>
+                        <TableRow>
+                          <TableCell colSpan={9} align="center">
+                            <CircularProgress />
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    ) : (
+                      generateDataToTable()
+                    )}
+                  </Table>
+                </TableContainer>
+              </Grid>
+            </GridSearchSection>
+            <GridSearchSection container>
+              <Grid item xs={12}>
+                <div className={classes.paginationContrainer}>
+                  {t('table.rowPerPage')}:&nbsp;
+                  <FormControl className={classes.inlineElement}>
+                    <Select
+                      value={userResponse?.data.pagination?.size || pageSize}
+                      defaultValue={userResponse?.data.pagination?.size || pageSize}
+                      onChange={(event) => {
+                        setPage(1)
+                        setPages(event.target.value as number)
+                        setPageSize(event.target.value as number)
+                      }}
+                    >
+                      {config.tableRowsPerPageOptions?.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  &nbsp;&nbsp;{userResponse?.data.pagination?.page || pages} {t('staffProfile.of')}
+                  &nbsp;
+                  {userResponse?.data.pagination?.totalPage || pages}
+                  <Pagination
+                    count={userResponse?.data.pagination?.totalPage || pages}
+                    page={userResponse?.data.pagination?.page || page}
+                    defaultPage={userResponse?.data.pagination?.page || page}
+                    variant="text"
+                    shape="rounded"
+                    onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                      setPage(value)
+                    }}
+                  />
+                </div>
+              </Grid>
+            </GridSearchSection>
+          </Fragment>
+        </ContentSection>
+      </Wrapper>
     </Page>
   )
 }
