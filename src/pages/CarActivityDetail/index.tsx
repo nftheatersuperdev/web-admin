@@ -22,24 +22,29 @@ import {
   Chip,
   TextField,
 } from '@material-ui/core'
-import {
-  GridColDef,
-  GridToolbarContainer,
-  GridToolbarColumnsButton,
-  GridCellParams,
-  GridPageChangeParams,
-} from '@material-ui/data-grid'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import { CSVLink } from 'react-csv'
+import styled from 'styled-components'
+import config from 'config'
 import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
+import {
+  CircularProgress,
+  Pagination,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
-import DataGridLocale from 'components/DataGridLocale'
 import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 import ConfirmDialog from 'components/ConfirmDialog'
-import NoResultCard from 'components/NoResultCard'
 import Backdrop from 'components/Backdrop'
 import { getCarById } from 'services/web-bff/car'
 import {
@@ -47,7 +52,11 @@ import {
   getScheduleServices,
   deleteSchedule,
 } from 'services/web-bff/car-activity'
-import { CarActivityBookingTypeIds, Schedule } from 'services/web-bff/car-activity.type'
+import {
+  CarActivityBookingTypeIds,
+  Schedule,
+  ScheduleService,
+} from 'services/web-bff/car-activity.type'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 
 interface CarActivityDetailParams {
@@ -62,6 +71,17 @@ enum ScheduleActions {
   Edit = 'edit',
   Delete = 'delete',
 }
+
+const ButtonExport = styled(Button)`
+  background-color: #424e63 !important;
+  padding: 16px 14px !important;
+  color: white;
+`
+const CsvButton = styled(CSVLink)`
+  color: white !important;
+  font-weight: !important;
+  text-decoration: none !important;
+`
 
 const useStyles = makeStyles({
   cardWrapper: {
@@ -138,15 +158,28 @@ const useStyles = makeStyles({
       background: '#F5F5F5',
     },
   },
+  textBoldBorder: {
+    borderLeft: '2px solid #E0E0E0',
+    fontWeight: 'bold',
+    padding: '0px 8px',
+  },
+  noResultMessage: {
+    textAlign: 'center',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    padding: '48px 0',
+  },
+  paginationContrainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '20px',
+  },
+  inlineElement: {
+    display: 'inline-flex',
+  },
 })
-
-function CustomToolBar() {
-  return (
-    <GridToolbarContainer>
-      <GridToolbarColumnsButton />
-    </GridToolbarContainer>
-  )
-}
 
 export default function CarActivityDetail(): JSX.Element {
   const location = useLocation()
@@ -206,6 +239,51 @@ export default function CarActivityDetail(): JSX.Element {
     }
   )
 
+  const checkAndRenderValue = (value: string | null | undefined) => {
+    if (!value) {
+      return '-'
+    }
+    return value
+  }
+
+  const generateLinkToSubscription = (subscriptionId: string) => {
+    return `/subscription?bookingDetailId=${subscriptionId}`
+  }
+
+  const generateBookingTypeChip = (bookingType: ScheduleService, bookingDetailId: string) => {
+    if (!bookingType) {
+      return '-'
+    }
+
+    const mapBookingTypeLabel = () => {
+      if (isThaiLanguage) {
+        if (bookingType.nameTh) {
+          return bookingType.nameTh
+        }
+        return `[${bookingType.nameEn}]`
+      }
+      return bookingType.nameEn
+    }
+
+    if (bookingType.id === CarActivityBookingTypeIds.RENT) {
+      return (
+        <Link to={generateLinkToSubscription(bookingDetailId)}>
+          {t('carActivity.statuses.rent')}
+        </Link>
+      )
+    }
+
+    const bookingTypeLabel = mapBookingTypeLabel()
+
+    return (
+      <Tooltip title={bookingTypeLabel}>
+        <Typography variant="inherit" noWrap>
+          {bookingTypeLabel}
+        </Typography>
+      </Tooltip>
+    )
+  }
+
   const carSchedules =
     (carSchedulesData &&
       carSchedulesData.schedules.length > 0 &&
@@ -217,13 +295,109 @@ export default function CarActivityDetail(): JSX.Element {
       })) ||
     []
 
-  const isNoData = carSchedules.length < 1
+  const carActivityHistoryRowData =
+    carSchedules?.map((carSchedule) => {
+      const isInRent = carSchedule.bookingType.id === CarActivityBookingTypeIds.RENT
+      const buttonClass = isInRent ? classes.hide : ''
+      const subscriptionLinkClass = !isInRent ? classes.hide : ''
+      const isBlockToDelete =
+        dayjs().diff(dayjs(carSchedule.startDate).startOf('day'), 'seconds') > 0
+      const isBlockToEdit = dayjs().diff(dayjs(carSchedule.endDate).endOf('day'), 'seconds') > 0
+      const bookingType = carSchedule.bookingType
+
+      return (
+        <TableRow hover key={`car-activity-history-${carSchedule.id}`}>
+          <TableCell>
+            <div>{checkAndRenderValue(carSchedule.id)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{dayjs(carSchedule.startDate as string).format(DEFAULT_DATE_FORMAT)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{dayjs(carSchedule.endDate as string).format(DEFAULT_DATE_FORMAT)}</div>
+          </TableCell>
+          <TableCell>
+            <div>
+              {carSchedule.bookingType.id === CarActivityBookingTypeIds.RENT ? (
+                <Chip
+                  size="small"
+                  label={t('car.statuses.inUse')}
+                  className={classes.greenBackground}
+                />
+              ) : (
+                <Chip size="small" label={t('car.statuses.outOfService')} />
+              )}
+            </div>
+          </TableCell>
+          <TableCell>
+            <div>{generateBookingTypeChip(bookingType, carSchedule.bookingDetailId)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carSchedule.remark)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{dayjs(carSchedule.updatedBy as string).format(DEFAULT_DATE_FORMAT)}</div>
+          </TableCell>
+          <TableCell>
+            <div>{checkAndRenderValue(carSchedule.updatedDate)}</div>
+          </TableCell>
+          <TableCell>
+            <Fragment>
+              <Link
+                className={[subscriptionLinkClass, classes.marginTextButton].join(' ')}
+                to={generateLinkToSubscription(carSchedule.bookingDetailId)}
+              >
+                {t('carActivity.view.label')}
+              </Link>
+              <IconButton
+                className={buttonClass}
+                disabled={isBlockToDelete}
+                onClick={() =>
+                  handleOnClickButton(carSchedule.id as string, ScheduleActions.Delete)
+                }
+              >
+                <DeleteIcon />
+              </IconButton>
+              <IconButton
+                className={buttonClass}
+                disabled={isBlockToEdit}
+                onClick={() => handleOnClickButton(carSchedule.id as string, ScheduleActions.Edit)}
+              >
+                <EditIcon />
+              </IconButton>
+            </Fragment>
+          </TableCell>
+        </TableRow>
+      )
+    }) || []
+
+  // const isNoData = carSchedules.length < 1
   const isThereFilter =
     filterStartDate?.format(DEFAULT_DATE_FORMAT_BFF) !==
       fixFilterStartDate.format(DEFAULT_DATE_FORMAT_BFF) ||
     filterEndDate?.format(DEFAULT_DATE_FORMAT_BFF) !==
       fixFilterEndDate.format(DEFAULT_DATE_FORMAT_BFF) ||
     filterService
+
+  const csvHeaders = [
+    { label: t('carActivity.history.export.header.bookingId'), key: 'bookingId' },
+    { label: t('carActivity.history.export.header.bookingDetailId'), key: 'bookingDetailId' },
+    { label: t('carActivity.history.export.header.carId'), key: 'carId' },
+    { label: t('carActivity.history.export.header.startDate'), key: 'startDate' },
+    { label: t('carActivity.history.export.header.endDate'), key: 'endDate' },
+    { label: t('carActivity.history.export.header.status'), key: 'status' },
+    { label: t('carActivity.history.export.header.bookingType'), key: 'bookingType' },
+    { label: t('carActivity.history.export.header.remark'), key: 'remark' },
+    { label: t('carActivity.history.export.header.updatedBy'), key: 'updatedBy' },
+    { label: t('carActivity.history.export.header.updatedDate'), key: 'updatedDate' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = carSchedules.map((schedule) => {
+    return {
+      ...schedule,
+      bookingType: schedule.bookingType.nameEn,
+    }
+  })
 
   useEffect(() => {
     refetch()
@@ -330,10 +504,23 @@ export default function CarActivityDetail(): JSX.Element {
       .replace(':service', isThaiLanguage ? nameTh : nameEn)
   }
 
-  const generateLinkToSubscription = (subscriptionId: string) => {
-    return `/subscription?bookingDetailId=${subscriptionId}`
+  const generateDataToTable = () => {
+    if (carActivityHistoryRowData.length > 0) {
+      return <TableBody>{carActivityHistoryRowData}</TableBody>
+    }
+
+    return (
+      <TableBody>
+        <TableRow>
+          <TableCell colSpan={7}>
+            <div className={classes.noResultMessage}>{t('warning.noResult')}</div>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    )
   }
 
+  /*
   const columns: GridColDef[] = [
     {
       field: 'bookingId',
@@ -493,6 +680,7 @@ export default function CarActivityDetail(): JSX.Element {
       },
     },
   ]
+  */
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -668,7 +856,7 @@ export default function CarActivityDetail(): JSX.Element {
                 <DatePicker
                   inputVariant="outlined"
                   label={t('carActivity.startDate.label')}
-                  format="DD/MM/YYYY"
+                  format="DD MMM YYYY"
                   onChange={(date) => {
                     if (date) {
                       setFilterStartDate(date)
@@ -685,7 +873,7 @@ export default function CarActivityDetail(): JSX.Element {
                 <DatePicker
                   inputVariant="outlined"
                   label={t('carActivity.endDate.label')}
-                  format="DD/MM/YYYY"
+                  format="DD MMM YYYY"
                   onChange={(date) => setFilterEndDate(date)}
                   value={filterEndDate}
                   defaultValue={filterEndDate}
@@ -746,12 +934,25 @@ export default function CarActivityDetail(): JSX.Element {
           </Grid>
           <Grid container className={classes.textAlignRight} xs={12} sm={12} lg={4}>
             <Grid item xs={12}>
-              <Button
+              {/* <Button
                 variant="contained"
                 className={[classes.buttonWithoutShadow, classes.secondaryButton].join(' ')}
               >
                 {t('button.export')}
-              </Button>
+              </Button> */}
+              <ButtonExport
+                id="car_activity_history__export_btn"
+                variant="contained"
+                className={[classes.buttonWithoutShadow, classes.secondaryButton].join(' ')}
+              >
+                <CsvButton
+                  data={csvData}
+                  headers={csvHeaders}
+                  filename={t('sidebar.carActivity') + '.csv'}
+                >
+                  {t('button.export').toUpperCase()}
+                </CsvButton>
+              </ButtonExport>
               <Button
                 variant="contained"
                 className={[
@@ -771,7 +972,7 @@ export default function CarActivityDetail(): JSX.Element {
           </Grid>
         </Grid>
 
-        {isNoData ? (
+        {/* {isNoData ? (
           <NoResultCard />
         ) : (
           <DataGridLocale
@@ -791,7 +992,107 @@ export default function CarActivityDetail(): JSX.Element {
               Toolbar: CustomToolBar,
             }}
           />
-        )}
+        )} */}
+        <Fragment>
+          <TableContainer component={Paper} className={classes.table}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.id')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.startDate')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.endDate')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.status')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.bookingType')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.remark')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.updatedBy')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.updatedDate')}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.textBoldBorder}>
+                      {t('carActivity.history.export.header.action')}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+
+              {isFetchingScheduleServices ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={9} align="center">
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : (
+                generateDataToTable()
+              )}
+            </Table>
+          </TableContainer>
+          <Card>
+            <div className={classes.paginationContrainer}>
+              Rows per page:&nbsp;
+              <FormControl className={classes.inlineElement} variant="standard">
+                <Select
+                  value={carSchedulesData?.pagination?.size || pageSize}
+                  defaultValue={carSchedulesData?.pagination?.size || pageSize}
+                  onChange={(event) => {
+                    setPage(1)
+                    setPageSize(event.target.value as number)
+                  }}
+                >
+                  {config.tableRowsPerPageOptions.map((rowOption) => {
+                    return (
+                      <MenuItem key={rowOption} value={rowOption}>
+                        {rowOption}
+                      </MenuItem>
+                    )
+                  })}
+                </Select>
+              </FormControl>
+              <Pagination
+                count={carSchedulesData?.pagination?.totalPage}
+                page={carSchedulesData?.pagination?.page || page}
+                defaultPage={carSchedulesData?.pagination?.page || page}
+                variant="text"
+                color="primary"
+                onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
+                  setPage(value)
+                }}
+              />
+            </div>
+          </Card>
+        </Fragment>
 
         <ActivityScheduleDialog
           visible={visibleUpdateDialog}

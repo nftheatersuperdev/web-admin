@@ -1055,6 +1055,18 @@
         "reseller": "Reseller"
       }
     },
+    "export": {
+      "header": {
+        "id": "Car ID",
+        "locationService": "Location Service",
+        "brand": "Brand",
+        "model": "Model",
+        "color": "Colour",
+        "plateNumber": "Plate Number",
+        "owner": "Owner",
+        "reseller": "Reseller"
+      }
+    },
     "addSchedule": {
       "header": "เพิ่มกำหนดการ"
     },
@@ -1170,7 +1182,23 @@
       "error": "เกิดข้อผิดพลาดบางอย่างขณะทำการลบตารางเวลา"
     },
     "history": {
-      "label": "Car Activity History"
+      "label": "Car Activity History",
+      "export": {
+        "header": {
+          "id": "Schedule ID",
+          "bookingId": "Booking ID",
+          "bookingDetailId": "Booking Detail ID",
+          "carId": "Car ID",
+          "startDate": "Start Date",
+          "endDate": "End Date",
+          "status": "Car Status",
+          "bookingType": "Service",
+          "remark": "Remark",
+          "updatedBy": "Modified By",
+          "updatedDate": "Modified Date",
+          "action": "Action"
+        }
+      }
     }
   },
   "subscriptionPackageManagement": {

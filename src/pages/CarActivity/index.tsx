@@ -36,6 +36,7 @@ import {
 // import Pagination from '@mui/lab/Pagination'
 import { makeStyles } from '@mui/styles'
 import { Search as SearchIcon } from '@mui/icons-material'
+import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
@@ -61,9 +62,18 @@ const Wrapper = styled(Card)`
   padding: 15px;
   margin-top: 20px;
 `
-
 const ContentSection = styled.div`
   margin-bottom: 20px;
+`
+const ButtonExport = styled(Button)`
+  background-color: #424e63 !important;
+  padding: 14px 12px !important;
+  color: white;
+`
+const CsvButton = styled(CSVLink)`
+  color: white !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
 `
 
 const useStyles = makeStyles(() => ({
@@ -300,6 +310,7 @@ export default function CarActivity(): JSX.Element {
       setFilterLocation(option.value)
       setSelectedLocation(option)
     } else {
+      setFilterLocation('')
       setSelectedLocation(defaultLocation)
     }
   }
@@ -316,11 +327,11 @@ export default function CarActivity(): JSX.Element {
     carActivitiesData?.cars.map((carActivity) => {
       return {
         id: carActivity.carId,
+        location: carActivity.areaNameEn,
         brandName: carActivity.brandName,
         modelName: carActivity.modelName,
         color: carActivity.color,
         plateNumber: carActivity.plateNumber,
-        location: carActivity.areaNameEn,
         owner: carActivity.owner,
         reSeller: carActivity.reSeller,
       }
@@ -363,6 +374,19 @@ export default function CarActivity(): JSX.Element {
         </TableRow>
       )
     }) || []
+
+  const csvHeaders = [
+    { label: t('carActivity.export.header.id'), key: 'id' },
+    { label: t('carActivity.export.header.locationService'), key: 'location' },
+    { label: t('carActivity.export.header.brand'), key: 'brandName' },
+    { label: t('carActivity.export.header.model'), key: 'modelName' },
+    { label: t('carActivity.export.header.color'), key: 'color' },
+    { label: t('carActivity.export.header.plateNumber'), key: 'plateNumber' },
+    { label: t('carActivity.export.header.owner'), key: 'owner' },
+    { label: t('carActivity.export.header.reseller'), key: 'reSeller' },
+  ]
+  // eslint-disable-next-line
+  const csvData: any = [...rows]
 
   // const isNoData = carActivities.length < 1
 
@@ -431,6 +455,10 @@ export default function CarActivity(): JSX.Element {
 
   const handleOnScheduleDialogClose = () => {
     setVisibleAddDialog(false)
+  }
+
+  const handleOnPlateSearchEnterKeyDown = () => {
+    refetch()
   }
 
   const adjustBrowserHistory = (params = {}) => {
@@ -577,11 +605,16 @@ export default function CarActivity(): JSX.Element {
                     value={filterPlate}
                     onChange={handleOnPlateChange}
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
+                      endAdornment: (
+                        <InputAdornment position="end">
                           <SearchIcon />
                         </InputAdornment>
                       ),
+                    }}
+                    onKeyDown={(event) => {
+                      if (!filterPlateError && filterPlate !== '' && event.key === 'Enter') {
+                        handleOnPlateSearchEnterKeyDown()
+                      }
                     }}
                   />
                 </FormControl>
@@ -679,15 +712,17 @@ export default function CarActivity(): JSX.Element {
                 xl={1}
               >
                 <Button
+                  id="car_activity__search_btn"
                   variant="contained"
                   color="primary"
                   className={classes.buttonWithoutShadow}
                   onClick={() => handleOnClickFilters()}
-                  disabled={isFetchingBrands || isFetchingActivities}
+                  disabled={isFetchingBrands || isFetchingActivities || !!filterPlateError}
                 >
-                  {t('button.search')}
+                  {t('button.search').toUpperCase()}
                 </Button>
                 <Button
+                  id="car_activity__clear_all_btn"
                   color="secondary"
                   className={[
                     classes.buttonClearAllFilters,
@@ -722,6 +757,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.value === value.value || value.value === 'all'
+                  }
                   value={selectedLocation || defaultLocation}
                   defaultValue={selectedLocation || defaultLocation}
                   onChange={(_event, value) => onSetSelectedLocation(value)}
@@ -736,14 +774,28 @@ export default function CarActivity(): JSX.Element {
                 lg={1}
                 xl={1}
               >
-                <Button
+                {/* <Button
                   color="primary"
                   variant="contained"
                   disabled={isFetchingBrands || isFetchingActivities}
                   className={[classes.buttonWithoutShadow, classes.buttonExport].join(' ')}
                 >
-                  {t('button.export')}
-                </Button>
+                  {t('button.export').toUpperCase()}
+                </Button> */}
+                <ButtonExport
+                  id="car_activity__export_btn"
+                  fullWidth
+                  variant="contained"
+                  disabled={isFetchingBrands || isFetchingActivities}
+                >
+                  <CsvButton
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename={t('sidebar.carActivity') + '.csv'}
+                  >
+                    {t('button.export').toUpperCase()}
+                  </CsvButton>
+                </ButtonExport>
               </Grid>
             </Grid>
           </div>
@@ -812,7 +864,7 @@ export default function CarActivity(): JSX.Element {
                     value={carActivitiesData?.pagination?.size || pageSize}
                     defaultValue={carActivitiesData?.pagination?.size || pageSize}
                     onChange={(event) => {
-                      setPage(0)
+                      setPage(1)
                       setPageSize(event.target.value as number)
                     }}
                   >
