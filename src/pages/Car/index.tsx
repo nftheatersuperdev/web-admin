@@ -425,7 +425,6 @@ export default function Car(): JSX.Element {
 
   useEffect(() => {
     refetch()
-    setPage(1)
   }, [page, pageSize, filter, refetch])
 
   useEffect(() => {
@@ -676,12 +675,16 @@ export default function Car(): JSX.Element {
             {carData?.data.pagination?.totalPage}
             <Pagination
               count={carData?.data?.pagination?.totalPage}
-              page={carData?.data?.pagination?.page || page}
-              defaultPage={carData?.data?.pagination?.page || page}
+              page={carData?.data?.pagination?.page || page + 1}
+              defaultPage={carData?.data?.pagination?.page || page + 1}
               variant="text"
               color="primary"
               onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                setPage(value - 1)
+                if (page !== value - 1) {
+                  setPage(value - 1)
+                } else {
+                  refetch()
+                }
               }}
             />
           </div>
