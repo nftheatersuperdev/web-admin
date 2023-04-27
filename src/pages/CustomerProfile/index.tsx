@@ -320,7 +320,7 @@ export default function CustomerProfile(): JSX.Element {
       userResponse.data?.customers.length > 0 &&
       userResponse.data.customers.map((user) => {
         // Build CSV Data
-        const acctStatus = user.isActive ? 'Active' : 'Deleted'
+        const acctStatus = user.isActive ? 'Active' : 'Inactive'
         let kycStatusValue: string
         if (user.kycStatus === null) {
           kycStatusValue = ''
