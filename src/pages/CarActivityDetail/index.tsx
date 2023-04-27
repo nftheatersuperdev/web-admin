@@ -3,7 +3,7 @@
 import dayjs, { Dayjs } from 'dayjs'
 import toast from 'react-hot-toast'
 import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { TFunction, Namespace, useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import {
@@ -22,14 +22,23 @@ import {
   Chip,
   TextField,
 } from '@material-ui/core'
-import { Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons'
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Visibility as VisibilityIcon,
+} from '@material-ui/icons'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import config from 'config'
-import { DEFAULT_DATE_FORMAT, DEFAULT_DATE_FORMAT_BFF } from 'utils'
+import {
+  DEFAULT_DATE_FORMAT,
+  DEFAULT_DATE_FORMAT_BFF,
+  DEFAULT_DATE_FORMAT_MONTH_TEXT,
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+} from 'utils'
 import {
   CircularProgress,
   Pagination,
@@ -74,17 +83,17 @@ enum ScheduleActions {
 
 const ButtonExport = styled(Button)`
   background-color: #424e63 !important;
-  padding: 14px 12px !important;
+  padding: 8px 16px !important;
   color: white;
 `
 const CsvButton = styled(CSVLink)`
   color: white !important;
-  font-weight: !important;
   text-decoration: none !important;
 `
 
 export default function CarActivityDetail(): JSX.Element {
   const location = useLocation()
+  const history = useHistory()
   const { id: carId } = useParams<CarActivityDetailParams>()
   const carActivityStateParams = location.state as CarActivityStateParams
   const { t, i18n } = useTranslation()
@@ -131,11 +140,21 @@ export default function CarActivityDetail(): JSX.Element {
     fullWidth: {
       width: '100%',
     },
-    buttonWithoutShadow: {
-      fontWeight: 'bold',
+    dropdownService: {
+      // height: '0.8rem',
+      '& .MuiSelect-selectMenu': {
+        height: '12px',
+      },
+    },
+    buttonSearch: {
       display: 'inline-flexbox',
       boxShadow: 'none',
-      padding: '14px 12px',
+      padding: '10px 12px',
+    },
+    buttonWithoutShadow: {
+      display: 'inline-flexbox',
+      boxShadow: 'none',
+      padding: '8px 16px',
     },
     buttonClearAllFilters: {
       // padding: '16px 9px 16px 9px !important',
@@ -206,8 +225,30 @@ export default function CarActivityDetail(): JSX.Element {
     },
     datePickerFromTo: {
       '&& .MuiOutlinedInput-input': {
-        padding: '16.5px 14px',
+        padding: '16px 14px',
+        fontSize: '12px',
       },
+      '&& .MuiIconButton-root': {
+        padding: '0px',
+      },
+    },
+    centerInGrid: {
+      display: 'flex',
+      justifyContent: 'end',
+      alignItems: 'center',
+    },
+    dataPadding: {
+      paddingLeft: '8px',
+    },
+    wrapWidth: {
+      width: '110px',
+    },
+    rowOverflow: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      display: '-webkit-box',
+      '-webkit-line-clamp': 2,
+      '-webkit-box-orient': 'vertical',
     },
   })
 
@@ -314,16 +355,20 @@ export default function CarActivityDetail(): JSX.Element {
       return (
         <TableRow hover key={`car-activity-history-${carSchedule.id}`}>
           <TableCell>
-            <div>{checkAndRenderValue(carSchedule.id)}</div>
+            <div className={classes.dataPadding}>{checkAndRenderValue(carSchedule.id)}</div>
           </TableCell>
           <TableCell>
-            <div>{dayjs(carSchedule.startDate as string).format(DEFAULT_DATE_FORMAT)}</div>
+            <div className={classes.dataPadding}>
+              {dayjs(carSchedule.startDate as string).format(DEFAULT_DATE_FORMAT_MONTH_TEXT)}
+            </div>
           </TableCell>
           <TableCell>
-            <div>{dayjs(carSchedule.endDate as string).format(DEFAULT_DATE_FORMAT)}</div>
+            <div className={classes.dataPadding}>
+              {dayjs(carSchedule.endDate as string).format(DEFAULT_DATE_FORMAT_MONTH_TEXT)}
+            </div>
           </TableCell>
           <TableCell>
-            <div>
+            <div className={classes.dataPadding}>
               {carSchedule.bookingType.id === CarActivityBookingTypeIds.RENT ? (
                 <Chip
                   size="small"
@@ -336,25 +381,35 @@ export default function CarActivityDetail(): JSX.Element {
             </div>
           </TableCell>
           <TableCell>
-            <div>{generateBookingTypeChip(bookingType, carSchedule.bookingDetailId)}</div>
+            <div className={classes.dataPadding}>
+              {generateBookingTypeChip(bookingType, carSchedule.bookingDetailId)}
+            </div>
           </TableCell>
           <TableCell>
-            <div>{checkAndRenderValue(carSchedule.remark)}</div>
+            <div className={classes.dataPadding}>{checkAndRenderValue(carSchedule.remark)}</div>
           </TableCell>
           <TableCell>
-            <div>{dayjs(carSchedule.updatedBy as string).format(DEFAULT_DATE_FORMAT)}</div>
+            <div className={classes.wrapWidth}>
+              <div className={classes.rowOverflow}>
+                {dayjs(carSchedule.updatedDate as string).format(
+                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                )}
+              </div>
+            </div>
           </TableCell>
           <TableCell>
-            <div>{checkAndRenderValue(carSchedule.updatedDate)}</div>
+            <div className={classes.dataPadding}>{checkAndRenderValue(carSchedule.updatedBy)}</div>
           </TableCell>
           <TableCell>
             <Fragment>
-              <Link
-                className={[subscriptionLinkClass, classes.marginTextButton].join(' ')}
-                to={generateLinkToSubscription(carSchedule.bookingDetailId)}
+              <IconButton
+                className={subscriptionLinkClass}
+                onClick={() =>
+                  history.push(generateLinkToSubscription(carSchedule.bookingDetailId))
+                }
               >
-                {t('carActivity.view.label')}
-              </Link>
+                <VisibilityIcon />
+              </IconButton>
               <IconButton
                 className={buttonClass}
                 disabled={isBlockToDelete}
@@ -899,6 +954,7 @@ export default function CarActivityDetail(): JSX.Element {
                 <Select
                   labelId="service-label"
                   id="service"
+                  className={classes.dropdownService}
                   onChange={({ target: { value } }) => setFilterService(value as string)}
                   value={filterService}
                   displayEmpty
@@ -923,7 +979,7 @@ export default function CarActivityDetail(): JSX.Element {
               <Button
                 variant="contained"
                 color="primary"
-                className={classes.buttonWithoutShadow}
+                className={classes.buttonSearch}
                 onClick={() => refetch()}
               >
                 {t('button.search')}
@@ -943,7 +999,7 @@ export default function CarActivityDetail(): JSX.Element {
             </Grid>
           </Grid>
           <Grid container className={classes.textAlignRight} xs={12} sm={12} lg={4}>
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.centerInGrid}>
               {/* <Button
                 variant="contained"
                 className={[classes.buttonWithoutShadow, classes.secondaryButton].join(' ')}
@@ -1040,12 +1096,12 @@ export default function CarActivityDetail(): JSX.Element {
                   </TableCell>
                   <TableCell>
                     <div className={classes.textBoldBorder}>
-                      {t('carActivity.history.export.header.updatedBy')}
+                      {t('carActivity.history.export.header.updatedDate')}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.textBoldBorder}>
-                      {t('carActivity.history.export.header.updatedDate')}
+                      {t('carActivity.history.export.header.updatedBy')}
                     </div>
                   </TableCell>
                   <TableCell>
