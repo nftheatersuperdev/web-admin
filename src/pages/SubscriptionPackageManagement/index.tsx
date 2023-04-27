@@ -145,6 +145,22 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
+const BreadcrumbsWrapper = styled(Breadcrumbs)`
+  margin: 10px 0 20px 0;
+`
+const TableWrapper = styled.div`
+  background-color: #fff;
+`
+const DividerCustom = styled(Divider)`
+  margin-bottom: 25px;
+`
+const CardWrapper = styled(Card)`
+  padding: 21px 0px;
+`
+const CardHeader = styled.div`
+  margin: 0px 16px;
+`
+
 export default function SubscriptionPackageManagement(): JSX.Element {
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
@@ -198,24 +214,6 @@ export default function SubscriptionPackageManagement(): JSX.Element {
       })) ||
     []
 
-  const BreadcrumbsWrapper = styled(Breadcrumbs)`
-    margin: 10px 0 20px 0;
-  `
-  const TableWrapper = styled.div`
-    background-color: #fff;
-  `
-
-  const DividerCustom = styled(Divider)`
-    margin-bottom: 25px;
-  `
-
-  const CardWrapper = styled(Card)`
-    padding: 21px 0px;
-  `
-
-  const CardHeader = styled.div`
-    margin: 0px 16px;
-  `
   /**
    * Managing the pagination variables that will send to the API.
    */
@@ -293,7 +291,7 @@ export default function SubscriptionPackageManagement(): JSX.Element {
       </Typography>
       <BreadcrumbsWrapper aria-label="breadcrumb">
         <Link underline="hover" color="inherit" component={RouterLink} to="/">
-          {t('sidebar.subscriptionManagement')}
+          {t('sidebar.subscriptionManagement.title')}
         </Link>
         <Typography color="textPrimary">{t('subscriptionPackageManagement.header')}</Typography>
       </BreadcrumbsWrapper>

@@ -3,7 +3,15 @@ import { useTranslation } from 'react-i18next'
 import { ROLES } from 'auth/roles'
 import { PRIVILEGES } from 'auth/privileges'
 import { ROUTE_PATHS } from 'routes'
-import { BarChart, Dashboard, DocumentScanner, Folder, PeopleAlt, Stars } from '@mui/icons-material'
+import {
+  BarChart,
+  Dashboard,
+  DocumentScanner,
+  Folder,
+  PeopleAlt,
+  Stars,
+  Subscriptions,
+} from '@mui/icons-material'
 import { SidebarItemsType } from './Sidebar/types'
 
 export function useMenuItems() {
@@ -149,12 +157,6 @@ export function useMenuItems() {
             ROLES.PRODUCT_SUPPORT,
           ],
         },
-        {
-          id: 'left_menu__subscription_management_package_management',
-          title: t('sidebar.packageManagement'),
-          href: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_MANAGEMENT,
-          allowedRoles: [ROLES.SUPER_ADMIN],
-        },
       ],
     },
     {
@@ -216,6 +218,22 @@ export function useMenuItems() {
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CUSTOMER_SUPPORT],
         },
       ],
+    },
+    {
+      id: 'left_menu__subscription_management',
+      title: t('sidebar.subscriptionManagement.title'),
+      href: ROUTE_PATHS.SUBSCRIPTION_MANAGEMENT,
+      icon: Subscriptions,
+      allowedRoles: [ROLES.SUPER_ADMIN],
+      children: [
+        {
+          id: 'left_menu__subscription_management_package_management',
+          title: t('sidebar.subscriptionManagement.packageManagement'),
+          href: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_MANAGEMENT,
+          allowedRoles: [ROLES.SUPER_ADMIN],
+        },
+      ],
+      toggleKey: 'IS_ENABLED_SUBSCRIPTION_MANAGEMENT_FEATURE',
     },
   ] as unknown as SidebarItemsType[]
 
