@@ -88,6 +88,10 @@
       "deleteLog": "ประวัติการลบบัญชีลูกค้า",
       "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้"
     },
+    "subscriptionManagement": {
+      "title": "Subscription Management",
+      "packageManagement": "Package Management"
+    },
     "users": "ผู้ใช้",
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
@@ -99,7 +103,6 @@
     "pricing": "ราคาแพ็คเกจ",
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
-    "subscriptionManagement": "การจัดการการจอง",
     "subscriptions": "ข้อมูลการจอง",
     "subscriptionDetail": "รายละเอียดข้อมูลการจอง",
     "bookingDetail": "ข้อมูลการจอง",
@@ -120,7 +123,6 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "packageManagement": "Package Management",
     "customerDetails": "รายละเอียดลูกค้า"
   },
   "button": {

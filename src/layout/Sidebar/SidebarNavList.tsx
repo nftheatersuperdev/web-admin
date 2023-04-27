@@ -13,7 +13,7 @@ interface SidebarNavListProps {
 
 function SidebarNavList({ pages, depth }: SidebarNavListProps): ReactElement {
   const router = useLocation()
-  const { getRole, getPrivileges } = useAuth()
+  const { getRole, getPrivileges, getRemoteConfig } = useAuth()
   const currentRoute = router.pathname
   const currentUserRole = getRole()
   const currentUserPrivileges = getPrivileges()
@@ -22,6 +22,12 @@ function SidebarNavList({ pages, depth }: SidebarNavListProps): ReactElement {
     const isValidPrivilege =
       page.allowedPrivileges && hasAllowedPrivilege(currentUserPrivileges, page.allowedPrivileges)
 
+    if (page.toggleKey) {
+      const toggle = getRemoteConfig(page.toggleKey)
+      if (toggle && !toggle.asBoolean()) {
+        return false
+      }
+    }
     if (isValidPrivilege || isValidRole) {
       return page
     }
