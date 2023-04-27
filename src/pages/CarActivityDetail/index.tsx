@@ -36,7 +36,6 @@ import config from 'config'
 import {
   DEFAULT_DATE_FORMAT,
   DEFAULT_DATE_FORMAT_BFF,
-  DEFAULT_DATE_FORMAT_MONTH_TEXT,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
 } from 'utils'
 import {
@@ -358,13 +357,17 @@ export default function CarActivityDetail(): JSX.Element {
             <div className={classes.dataPadding}>{checkAndRenderValue(carSchedule.id)}</div>
           </TableCell>
           <TableCell>
-            <div className={classes.dataPadding}>
-              {dayjs(carSchedule.startDate as string).format(DEFAULT_DATE_FORMAT_MONTH_TEXT)}
+            <div className={[classes.dataPadding, classes.wrapWidth].join(' ')}>
+              <div className={classes.rowOverflow}>
+                {dayjs(carSchedule.startDate as string).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </div>
             </div>
           </TableCell>
           <TableCell>
-            <div className={classes.dataPadding}>
-              {dayjs(carSchedule.endDate as string).format(DEFAULT_DATE_FORMAT_MONTH_TEXT)}
+            <div className={[classes.dataPadding, classes.wrapWidth].join(' ')}>
+              <div className={classes.rowOverflow}>
+                {dayjs(carSchedule.endDate as string).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </div>
             </div>
           </TableCell>
           <TableCell>
@@ -389,7 +392,7 @@ export default function CarActivityDetail(): JSX.Element {
             <div className={classes.dataPadding}>{checkAndRenderValue(carSchedule.remark)}</div>
           </TableCell>
           <TableCell>
-            <div className={classes.wrapWidth}>
+            <div className={[classes.dataPadding, classes.wrapWidth].join(' ')}>
               <div className={classes.rowOverflow}>
                 {dayjs(carSchedule.updatedDate as string).format(
                   DEFAULT_DATETIME_FORMAT_MONTH_TEXT
