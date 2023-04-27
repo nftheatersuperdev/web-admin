@@ -41,6 +41,7 @@ export const ROUTE_PATHS = Object.freeze({
   STAFF_PROFILES: '/staff-profiles',
   STAFF_PROFILE_DETAIL: '/staff-profile/:id/edit',
   STAFF_PROFILE_ADD: '/staff-profile/create',
+  SUBSCRIPTION_MANAGEMENT: '/subscription-management',
   SUBSCRIPTION_PACKAGE_MANAGEMENT: '/subscription-management/package-management',
   SUBSCRIPTION_PACKAGE_ADD: '/subscription-management/package-management/create',
   CUSTOMER_PROFILE: '/customer-profiles',
