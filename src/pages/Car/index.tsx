@@ -590,6 +590,7 @@ export default function Car(): JSX.Element {
             <Autocomplete
               autoHighlight
               id="search_location_list"
+              className={classes.autoCompleteSelect}
               options={locationOptions}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => {

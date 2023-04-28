@@ -149,6 +149,11 @@ export default function CarAvailability(): JSX.Element {
     hidenField: {
       display: 'none',
     },
+    locationSelect: {
+      '& fieldSet': {
+        borderColor: '#424E63 !important',
+      },
+    },
   }))
 
   const { t } = useTranslation()
@@ -658,6 +663,7 @@ export default function CarAvailability(): JSX.Element {
                   disabled={isFetchingLoactions}
                   fullWidth
                   select
+                  className={classes.locationSelect}
                   label={t('carAvailability.searchLocation')}
                   variant="outlined"
                   id="car_availability__searchlocation_input"
