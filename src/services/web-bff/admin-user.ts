@@ -4,8 +4,22 @@ import {
   AdminUser,
   AdminUsersResponse,
   AdminUserProfileResponse,
-  GetAdminUsersByCriteriaProps,
-} from 'services/web-bff/admin-user.type'
+  AdminUsersProps,
+} from './admin-user.type'
+
+export const searchAdminUser = async ({
+  data,
+  size,
+  page,
+}: AdminUsersProps): Promise<AdminUsersResponse> => {
+  const response: AdminUsersResponse = await AdminBffAPI.post('/v1/admin-users/search', data, {
+    params: {
+      page,
+      size,
+    },
+  }).then((response) => response.data)
+  return response
+}
 
 export const getAdminUserProfile = async (): Promise<AdminUser> => {
   const response: AdminUserProfileResponse = await AdminBffAPI.get('/v1/admin-users/profiles').then(
@@ -26,23 +40,6 @@ export const getAdminUsers = async (page = 1, size = 10): Promise<AdminUsersResp
       },
     }
   ).then((response) => {
-    return response.data
-  })
-
-  return response
-}
-
-export const getAdminUserByCriteria = async ({
-  data,
-  page = 1,
-  size = 10,
-}: GetAdminUsersByCriteriaProps): Promise<AdminUsersResponse> => {
-  const response: AdminUsersResponse = await AdminBffAPI.post('/v1/admin-users/search', data, {
-    params: {
-      page,
-      size,
-    },
-  }).then((response) => {
     return response.data
   })
 
