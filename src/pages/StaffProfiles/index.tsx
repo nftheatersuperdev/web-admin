@@ -17,8 +17,9 @@ import {
   Select,
   TableBody,
   Chip,
-  InputLabel,
   CircularProgress,
+  InputAdornment,
+  TextField,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import config from 'config'
@@ -27,6 +28,7 @@ import {
   formaDateStringWithPattern,
   formatStringForInputText,
 } from 'utils'
+import { CloseOutlined } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
@@ -116,6 +118,14 @@ export default function StaffProfiles(): JSX.Element {
     width120: {
       paddingLeft: '16px',
       width: '120px',
+    },
+    gridExport: {
+      textAlign: 'right',
+    },
+    paddingRigthBtnClear: {
+      marginLeft: '-40px',
+      cursor: 'pointer',
+      padding: '4px 4px',
     },
   })
   const classes = useStyles()
@@ -284,10 +294,11 @@ export default function StaffProfiles(): JSX.Element {
    */
   useEffect(() => {
     refetch()
-  }, [pages, page, pageSize, refetch])
+  }, [userFilter, pages, page, pageSize, refetch])
 
-  const onCriteriaChange = (params: string) => {
-    params = params + ''
+  const handleClear = () => {
+    formik.setFieldValue('searchType', '')
+    formik.handleSubmit()
   }
   return (
     <Page>
@@ -301,35 +312,39 @@ export default function StaffProfiles(): JSX.Element {
         <Fragment>
           <GridSearchSection container spacing={1}>
             <Grid item xs={9} sm={3}>
-              <FormControl>
-                <InputLabel id="demo-simple-select-helper-label">
-                  {t('staffProfile.searchCriteria')}
-                </InputLabel>
-                <Select
-                  className={[classes.searchTextField].join(' ')}
-                  labelId="demo-simple-select-autowidth-label"
-                  id="demo-simple-select-autowidth"
-                  value={formik.values.searchType}
-                  onChange={(event) => {
-                    onCriteriaChange(event.target.value as string)
-                  }}
-                >
-                  <MenuItem value="">
-                    <em> </em>
-                  </MenuItem>
-                  <MenuItem value="userId">{t('user.id')}</MenuItem>
-                  <MenuItem value="firebaseId">{t('staffProfile.firebaseId')}</MenuItem>
-                  <MenuItem value="firstName">{t('user.firstName')}</MenuItem>
-                  <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
-                  <MenuItem value="email">{t('user.email')}</MenuItem>
-                  <MenuItem value="role">{t('user.role')}</MenuItem>
-                  <MenuItem value="accountStatus">{t('user.status')}</MenuItem>
-                  <MenuItem value="createdDate">{t('staffProfile.createdDate')}</MenuItem>
-                  <MenuItem value="updatedDate">{t('user.updatedDate')}</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                disabled={isFetchingActivities}
+                fullWidth
+                select
+                label={t('carAvailability.search')}
+                id="staff_profile__criteria_select"
+                value={formik.values.searchType}
+                variant="outlined"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {formik.values.searchType && (
+                        <CloseOutlined
+                          className={classes.paddingRigthBtnClear}
+                          onClick={handleClear}
+                        />
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(event) => {
+                  formik.setFieldValue('searchType', event.target.value)
+                }}
+              >
+                <MenuItem value="userId">{t('user.id')}</MenuItem>
+                <MenuItem value="firstName">{t('user.firstName')}</MenuItem>
+                <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
+                <MenuItem value="email">{t('user.email')}</MenuItem>
+                <MenuItem value="role">{t('user.role')}</MenuItem>
+              </TextField>
             </Grid>
-            <Grid item xs={9} sm={3}>
+            <Grid item xs={9} sm={6} />
+            <Grid item xs={9} sm={3} className={classes.gridExport}>
               <Button
                 id="staff_profile__export_btn"
                 className={classes.addButton}
