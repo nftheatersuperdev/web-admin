@@ -1,13 +1,15 @@
-import { Card, Grid, TextField, Typography } from '@mui/material'
+// import { useState } from 'react'
+import { Card, Grid, Typography, Button } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { AdminUsersProps } from 'services/web-bff/admin-user.type'
+import { DisabledField } from './styles'
 
 interface StaffProfileDetailEditParam {
   id: string
@@ -15,12 +17,6 @@ interface StaffProfileDetailEditParam {
 
 export default function StaffProfileDetail(): JSX.Element {
   const useStyles = makeStyles({
-    deleteProfileButton: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-    },
     textField: {
       '& .MuiInputBase-input': {
         height: '1.4rem',
@@ -33,6 +29,9 @@ export default function StaffProfileDetail(): JSX.Element {
       '& div.Mui-disabled': {
         background: '#F5F5F5 !important',
       },
+      '& .MuiInputLabel-root': {
+        color: '#e936a7',
+      },
     },
     card: {
       padding: '20px',
@@ -44,10 +43,30 @@ export default function StaffProfileDetail(): JSX.Element {
       marginTop: '5px!important',
       marginBottom: '5px',
     },
+    alignRight: {
+      textAlign: 'right',
+    },
+    bottomContrainer: {
+      textAlign: 'right',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '10px',
+    },
+    deleteButton: {
+      color: 'red',
+      borderColor: 'red',
+    },
+    w83: {
+      width: '83px',
+    },
   })
   const { t } = useTranslation()
   const classes = useStyles()
+  const history = useHistory()
   const params = useParams<StaffProfileDetailEditParam>()
+  // const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
   const { data: staffResponse } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
@@ -77,11 +96,10 @@ export default function StaffProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               fullWidth
               disabled
-              className={classes.textField}
               id="staff_profile__userId"
               label={t('user.id')}
               variant="outlined"
@@ -89,10 +107,9 @@ export default function StaffProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="staff_profile__firebaseUid"
-              className={classes.textField}
               label={t('staffProfile.firebaseId')}
               fullWidth
               disabled
@@ -103,10 +120,9 @@ export default function StaffProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="staff_profile__firstName"
-              className={classes.textField}
               label={t('user.firstName')}
               fullWidth
               disabled
@@ -115,10 +131,9 @@ export default function StaffProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="staff_profile__lastName"
-              className={classes.textField}
               label={t('user.lastName')}
               fullWidth
               disabled
@@ -129,10 +144,9 @@ export default function StaffProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="staff_profile__email"
-              className={classes.textField}
               label={t('user.email')}
               fullWidth
               disabled
@@ -141,10 +155,9 @@ export default function StaffProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="staff_profile__role"
-              className={classes.textField}
               label={t('user.role')}
               fullWidth
               disabled
@@ -155,10 +168,9 @@ export default function StaffProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="staff_profile__status"
-              className={classes.textField}
               label={t('user.status')}
               fullWidth
               disabled
@@ -170,10 +182,9 @@ export default function StaffProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               fullWidth
               disabled
-              className={classes.textField}
               label={t('staffProfile.createdDate')}
               id="staff_profile__createdDate"
               name={t('staffProfile.createdDate')}
@@ -185,10 +196,9 @@ export default function StaffProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               fullWidth
               disabled
-              className={classes.textField}
               label={t('user.updatedDate')}
               id="staff_profile__updateddDate"
               variant="outlined"
@@ -199,7 +209,34 @@ export default function StaffProfileDetail(): JSX.Element {
             />
           </Grid>
         </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <Button
+              id="staff_profile__update_btn"
+              className={classes.w83}
+              color="primary"
+              disabled={true}
+              variant="contained"
+            >
+              {t('button.save').toUpperCase()}
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => history.goBack()}
+              className={classes.w83}
+            >
+              {t('button.cancel').toUpperCase()}
+            </Button>
+          </Grid>
+        </Grid>
       </Card>
+      <div className={classes.bottomContrainer}>
+        <Button className={classes.deleteButton} variant="outlined">
+          {t('button.deleteProfile').toUpperCase()}
+        </Button>
+      </div>
     </Page>
   )
 }

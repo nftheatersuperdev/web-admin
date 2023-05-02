@@ -2,7 +2,6 @@ import {
   Typography,
   Card,
   Grid,
-  TextField,
   Table,
   TableRow,
   TableHead,
@@ -22,6 +21,7 @@ import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { CustomerMeProps } from 'services/web-bff/customer.type'
 import { searchCustomer } from 'services/web-bff/customer'
+import { DisabledField } from './styles'
 
 interface CustomerProfileDetailEditParam {
   id: string
@@ -114,7 +114,7 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__customerId"
               className={classes.textField}
@@ -126,7 +126,7 @@ export default function CustomerProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__accountStatus"
               className={classes.textField}
@@ -140,7 +140,7 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__firstName"
               className={classes.textField}
@@ -152,7 +152,7 @@ export default function CustomerProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__lastName"
               className={classes.textField}
@@ -166,7 +166,7 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__email"
               className={classes.textField}
@@ -178,7 +178,7 @@ export default function CustomerProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__phoneNumber"
               className={classes.textField}
@@ -192,7 +192,7 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               className={classes.textField}
               id="customer_profile__createdDate"
               label={t('user.createdDate')}
@@ -214,7 +214,7 @@ export default function CustomerProfileDetail(): JSX.Element {
         </Grid>
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__kycStatus"
               className={classes.textField}
@@ -226,7 +226,7 @@ export default function CustomerProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField
+            <DisabledField
               type="text"
               id="customer_profile__rejectReason"
               className={classes.textField}
