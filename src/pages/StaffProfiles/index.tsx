@@ -122,6 +122,10 @@ export default function StaffProfiles(): JSX.Element {
       paddingLeft: '16px',
       width: '120px',
     },
+    width145: {
+      paddingLeft: '16px',
+      width: '145px',
+    },
     gridExport: {
       textAlign: 'right',
     },
@@ -238,7 +242,9 @@ export default function StaffProfiles(): JSX.Element {
               <div className={classes.pl17}>{formatStringForInputText(adminUserData.email)}</div>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{getAdminUserRoleLabel(adminUserData.role, t)}</div>
+              <div className={classes.pl17}>
+                {getAdminUserRoleLabel(adminUserData.role.toLowerCase(), t)}
+              </div>
             </TableCell>
             <TableCell>
               <div className={classes.pl17}>
@@ -361,6 +367,7 @@ export default function StaffProfiles(): JSX.Element {
             <Grid item xs={9} sm={3}>
               <TextField
                 disabled={isFetchingActivities}
+                className={classes.hideObject}
                 fullWidth
                 select
                 label={t('carAvailability.search')}
@@ -392,7 +399,8 @@ export default function StaffProfiles(): JSX.Element {
             </Grid>
             <Grid item xs={9} sm={3}>
               <TextField
-                className={formik.values.searchType === 'role' ? classes.hideObject : ' '}
+                // className={formik.values.searchType === 'role' ? classes.hideObject : ' '}
+                className={classes.hideObject}
                 id="staff_profile__search_input"
                 name="searchVal"
                 value={filterSearchField}
@@ -482,7 +490,7 @@ export default function StaffProfiles(): JSX.Element {
                         </div>
                       </TableCell>
                       <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
+                        <div className={[classes.textBoldBorder, classes.width145].join(' ')}>
                           {t('user.role')}
                         </div>
                       </TableCell>
