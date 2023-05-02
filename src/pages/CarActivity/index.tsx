@@ -197,6 +197,11 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     padding: '48px 0',
   },
+  autoCompleteSelect: {
+    '& fieldSet': {
+      borderColor: '#424E63',
+    },
+  },
 }))
 
 const useQueryString = () => {
@@ -747,14 +752,15 @@ export default function CarActivity(): JSX.Element {
                 <Autocomplete
                   autoHighlight
                   id="location-select-list"
+                  className={classes.autoCompleteSelect}
                   options={locationOptions}
                   getOptionLabel={(option) => option.label}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label={t('carActivity.location.all')}
+                      label={t('car.location')}
                       variant="outlined"
-                      placeholder={t('all')}
+                      placeholder={t('car.allLocation')}
                     />
                   )}
                   isOptionEqualToValue={(option, value) =>
