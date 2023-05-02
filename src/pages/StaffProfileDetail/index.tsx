@@ -1,20 +1,21 @@
-// import { useState } from 'react'
-import { Card, Grid, Typography, Button } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { Card, Grid, Typography, Button, Autocomplete } from '@mui/material'
+import { useFormik } from 'formik'
 import { makeStyles } from '@mui/styles'
+import toast from 'react-hot-toast'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import { useTranslation } from 'react-i18next'
 import { useParams, useHistory } from 'react-router-dom'
+import { useAuth } from 'auth/AuthContext'
 import { useQuery } from 'react-query'
-import { getAdminUserRoleLabel } from 'auth/roles'
+import { getAdminUserRoleLabel, getRoleList } from 'auth/roles'
+import { hasAllowedPrivilege, PRIVILEGES } from 'auth/privileges'
 import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { AdminUsersProps } from 'services/web-bff/admin-user.type'
-import { DisabledField } from './styles'
-
-interface StaffProfileDetailEditParam {
-  id: string
-}
+import { DisabledField, EnabledTextField } from './styles'
+import { StaffProfileDetailEditParam, SelectOption } from './constant'
 
 export default function StaffProfileDetail(): JSX.Element {
   const useStyles = makeStyles({
@@ -67,8 +68,9 @@ export default function StaffProfileDetail(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
   const params = useParams<StaffProfileDetailEditParam>()
-  // const roleList = getRoleList(t)
-  // const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
+  const [selectedRole, setSelectedRole] = useState<SelectOption | null>(null)
+  const roleOptions = getRoleList(t)
+  const { getPrivileges } = useAuth()
   const { data: staffResponse } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
@@ -89,6 +91,35 @@ export default function StaffProfileDetail(): JSX.Element {
     },
   ]
   const pageTitle: string = t('sidebar.staffProfileDetail')
+  const formik = useFormik({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      role: '',
+    },
+    enableReinitialize: true,
+    onSubmit: async () => {
+      await toast.success('xxxx')
+    },
+  })
+  const onChangeRole = (item: SelectOption | null) => {
+    setSelectedRole(item)
+    formik.setFieldValue('role', item?.value)
+  }
+  useEffect(() => {
+    const defaultValue = {
+      key: staffData?.role ? staffData.role.toString() : '-',
+      name: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
+      value: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
+    }
+    setSelectedRole(defaultValue)
+  }, [t, staffData])
+
+  function isAllowEdit() {
+    return hasAllowedPrivilege(getPrivileges(), [PRIVILEGES.PERM_ADMIN_USER_EDIT])
+  }
+
   return (
     <Page>
       <PageTitle title={pageTitle} breadcrumbs={breadcrumbs} />
@@ -157,30 +188,32 @@ export default function StaffProfileDetail(): JSX.Element {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="staff_profile__role"
-              label={t('user.role')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
-            />
-            {/* <TextField
-              id="staff_profile__update_role_select"
-              select
-              value={staffData?.role}
-              label={t('user.role')}
-              placeholder={t('carAvailability.searchField.label')}
-              variant="outlined"
-              fullWidth
-            >
-              {roleList?.map((option) => (
-                <MenuItem key={option.key} value={option.value}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </TextField> */}
+            {isAllowEdit() ? (
+              <Autocomplete
+                autoHighlight
+                id="status-select-list"
+                options={roleOptions}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) =>
+                  option.value === value.value || value.value === ''
+                }
+                renderInput={(params) => {
+                  return <EnabledTextField {...params} label={t('user.role')} variant="outlined" />
+                }}
+                value={selectedRole}
+                onChange={(_event, item) => onChangeRole(item)}
+              />
+            ) : (
+              <DisabledField
+                type="text"
+                id="staff_profile__role"
+                label={t('user.role')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
+              />
+            )}
           </Grid>
         </Grid>
         <Grid container spacing={3} className={classes.container}>
