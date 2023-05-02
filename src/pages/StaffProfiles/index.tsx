@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useRef, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import {
@@ -27,14 +27,17 @@ import {
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
   formatStringForInputText,
+  validateKeywordText,
+  validateKeywordUUID,
 } from 'utils'
-import { CloseOutlined } from '@mui/icons-material'
+import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import { useFormik } from 'formik'
 import styled from 'styled-components'
 import Pagination from '@material-ui/lab/Pagination'
+import { getAdminUserRoleLabel, getRoleList } from 'auth/roles'
 import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import './pagination.css'
@@ -134,9 +137,11 @@ export default function StaffProfiles(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [filterSearchField] = useState<string>('')
-  // const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
+  const [filterSearchField, setFilterSearchField] = useState<string>('')
+  const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
   const [userFilter, setUserFilter] = useState<AdminUserByCriteria>()
+  const roleList = getRoleList(t)
+  const timeoutIdRef = useRef<number | null>(null)
   const {
     data: adminUsersData,
     refetch,
@@ -233,7 +238,7 @@ export default function StaffProfiles(): JSX.Element {
               <div className={classes.pl17}>{formatStringForInputText(adminUserData.email)}</div>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{adminUserData.role}</div>
+              <div className={classes.pl17}>{getAdminUserRoleLabel(adminUserData.role, t)}</div>
             </TableCell>
             <TableCell>
               <div className={classes.pl17}>
@@ -295,10 +300,52 @@ export default function StaffProfiles(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [userFilter, pages, page, pageSize, refetch])
-
+  const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    const isKeywordAccepted = validateKeywordText(value)
+    const isKeywordUUIDAccepted = validateKeywordUUID(value)
+    setFilterSearchField(value)
+    setFilterSearchFieldError('')
+    if (
+      formik.values.searchType !== 'id' &&
+      formik.values.searchType !== 'role' &&
+      isKeywordAccepted &&
+      value.length >= conditionConfigs.minimumToFilterPlateNumber
+    ) {
+      setFilterSearchField(value)
+      timeOutSearch()
+    } else if (
+      value !== '' &&
+      formik.values.searchType !== 'id' &&
+      formik.values.searchType !== 'role'
+    ) {
+      setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
+    } else if (formik.values.searchType === 'id') {
+      if (isKeywordUUIDAccepted) {
+        timeOutSearch()
+      } else {
+        setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidUUIDFormat'))
+      }
+    } else {
+      timeOutSearch()
+    }
+  }
   const handleClear = () => {
+    setFilterSearchField('')
+    setFilterSearchFieldError('')
     formik.setFieldValue('searchType', '')
     formik.handleSubmit()
+  }
+  const conditionConfigs = {
+    minimumToFilterPlateNumber: 2,
+  }
+  function timeOutSearch() {
+    if (timeoutIdRef.current !== null) {
+      clearTimeout(timeoutIdRef.current)
+    }
+    timeoutIdRef.current = window.setTimeout(() => {
+      formik.handleSubmit()
+    }, 800)
   }
   return (
     <Page>
@@ -336,14 +383,55 @@ export default function StaffProfiles(): JSX.Element {
                   formik.setFieldValue('searchType', event.target.value)
                 }}
               >
-                <MenuItem value="userId">{t('user.id')}</MenuItem>
+                <MenuItem value="id">{t('user.id')}</MenuItem>
                 <MenuItem value="firstName">{t('user.firstName')}</MenuItem>
                 <MenuItem value="lastName">{t('user.lastName')}</MenuItem>
                 <MenuItem value="email">{t('user.email')}</MenuItem>
                 <MenuItem value="role">{t('user.role')}</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={9} sm={6} />
+            <Grid item xs={9} sm={3}>
+              <TextField
+                className={formik.values.searchType === 'role' ? classes.hideObject : ' '}
+                id="staff_profile__search_input"
+                name="searchVal"
+                value={filterSearchField}
+                placeholder={t('carAvailability.searchField.label')}
+                onChange={handleOnSearchFieldChange}
+                error={!!filterSearchFieldError}
+                helperText={filterSearchFieldError}
+                variant="outlined"
+                disabled={formik.values.searchType === ''}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon color={formik.values.searchType === '' ? 'disabled' : 'action'} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                className={formik.values.searchType === 'role' ? '' : classes.hideObject}
+                id="staff_profile__search_role_select"
+                select
+                value={filterSearchField}
+                label={t('user.role')}
+                placeholder={t('carAvailability.searchField.label')}
+                onChange={handleOnSearchFieldChange}
+                error={!!filterSearchFieldError}
+                helperText={filterSearchFieldError}
+                variant="outlined"
+                fullWidth
+              >
+                {roleList?.map((option) => (
+                  <MenuItem key={option.key} value={option.value}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={9} sm={3} />
             <Grid item xs={9} sm={3} className={classes.gridExport}>
               <Button
                 id="staff_profile__export_btn"

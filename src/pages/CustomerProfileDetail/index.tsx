@@ -245,7 +245,7 @@ export default function CustomerProfileDetail(): JSX.Element {
           <Typography variant="h6">{t('user.userGroup')}</Typography>
         </Grid>
         <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={12}>
             <Table>
               <TableHead>
                 <TableRow>
