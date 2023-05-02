@@ -5,6 +5,7 @@ import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from '
 import { useTranslation } from 'react-i18next'
 import { useParams, useHistory } from 'react-router-dom'
 import { useQuery } from 'react-query'
+import { getAdminUserRoleLabel } from 'auth/roles'
 import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
@@ -66,6 +67,7 @@ export default function StaffProfileDetail(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
   const params = useParams<StaffProfileDetailEditParam>()
+  // const roleList = getRoleList(t)
   // const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
   const { data: staffResponse } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
@@ -162,8 +164,23 @@ export default function StaffProfileDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={staffData?.role || '-'}
+              value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
             />
+            {/* <TextField
+              id="staff_profile__update_role_select"
+              select
+              value={staffData?.role}
+              label={t('user.role')}
+              placeholder={t('carAvailability.searchField.label')}
+              variant="outlined"
+              fullWidth
+            >
+              {roleList?.map((option) => (
+                <MenuItem key={option.key} value={option.value}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField> */}
           </Grid>
         </Grid>
         <Grid container spacing={3} className={classes.container}>
