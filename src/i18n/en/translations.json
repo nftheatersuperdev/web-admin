@@ -264,6 +264,12 @@
     "createDialog": {
       "success": "The admin user has been created",
       "failed": "Something went wrong ({{error}})"
+    },
+    "updateDialog": {
+      "title": "Update Admin User",
+      "success": "Updated admin user successfully",
+      "error": "Failed to update admin user",
+      "cannotUpdate": "Cannot update same value"
     }
   },
   "staffProfile": {

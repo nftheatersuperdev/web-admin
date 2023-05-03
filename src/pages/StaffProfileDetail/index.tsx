@@ -12,7 +12,7 @@ import { useQuery } from 'react-query'
 import { getAdminUserRoleLabel } from 'auth/roles'
 import { hasAllowedPrivilege, PRIVILEGES } from 'auth/privileges'
 import { getRoles } from 'services/web-bff/admin-user-role'
-import { searchAdminUser } from 'services/web-bff/admin-user'
+import { searchAdminUser, updateAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { AdminUsersProps } from 'services/web-bff/admin-user.type'
@@ -76,7 +76,7 @@ export default function StaffProfileDetail(): JSX.Element {
   const [oldRole, setOldRole] = useState<Role | null>(null)
   const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
   const { data: rolesList } = useQuery('get-roles', () => getRoles())
-  const { data: staffResponse } = useQuery('admin-users', () =>
+  const { data: staffResponse, refetch } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
   const staffData =
@@ -106,9 +106,27 @@ export default function StaffProfileDetail(): JSX.Element {
     }),
     onSubmit: async (values) => {
       if (oldRole?.name === values.role) {
-        toast.error('Cannot update same value')
+        toast.error(t('adminUser.updateDialog.cannotUpdate'))
       } else {
-        await toast.success(values.role)
+        await toast
+          .promise(
+            updateAdminUser({
+              id: staffResponse?.data.adminUsers[0].id || '',
+              firstname: null,
+              lastname: null,
+              email: null,
+              role: values.role,
+            }),
+            {
+              loading: t('toast.loading'),
+              success: t('adminUser.updateDialog.success'),
+              error: t('adminUser.updateDialog.error'),
+            }
+          )
+          .finally(() => {
+            refetch()
+            setIsEnableSaveButton(false)
+          })
       }
     },
   })
@@ -275,7 +293,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 id="staff_profile__updateddDate"
                 variant="outlined"
                 value={formaDateStringWithPattern(
-                  staffData?.createdDate,
+                  staffData?.updatedDate,
                   DEFAULT_DATETIME_FORMAT_MONTH_TEXT
                 )}
               />
