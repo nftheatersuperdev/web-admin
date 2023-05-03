@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import { useTranslation } from 'react-i18next'
 import { useParams, useHistory } from 'react-router-dom'
+import * as Yup from 'yup'
 import { useAuth } from 'auth/AuthContext'
 import { useQuery } from 'react-query'
 import { getAdminUserRoleLabel } from 'auth/roles'
@@ -72,11 +73,9 @@ export default function StaffProfileDetail(): JSX.Element {
   const params = useParams<StaffProfileDetailEditParam>()
   const [selectedRole, setSelectedRole] = useState<Role | null>(null)
   const { getPrivileges } = useAuth()
-
-  // isFetched: isFetchedRoles,
-  // isFetching: isFetchingRoles,
+  const [oldRole, setOldRole] = useState<Role | null>(null)
+  const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
   const { data: rolesList } = useQuery('get-roles', () => getRoles())
-  console.log(JSON.stringify(rolesList))
   const { data: staffResponse } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
@@ -97,21 +96,26 @@ export default function StaffProfileDetail(): JSX.Element {
     },
   ]
   const pageTitle: string = t('sidebar.staffProfileDetail')
-  const formik = useFormik({
+  const { setFieldValue, errors, touched, handleSubmit } = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
       role: '',
     },
     enableReinitialize: true,
-    onSubmit: async () => {
-      await toast.success('xxxx')
+    validationSchema: Yup.object().shape({
+      role: Yup.string().max(255).required(t('validation.roleRequired')),
+    }),
+    onSubmit: async (values) => {
+      if (oldRole?.name === values.role) {
+        toast.error('Cannot update same value')
+      } else {
+        await toast.success(values.role)
+      }
     },
   })
   const onChangeRole = (item: Role | null) => {
     setSelectedRole(item)
-    formik.setFieldValue('role', item?.name)
+    setIsEnableSaveButton(true)
+    setFieldValue('role', item ? item.name : '')
   }
   useEffect(() => {
     const defaultValue = {
@@ -119,6 +123,7 @@ export default function StaffProfileDetail(): JSX.Element {
       displayNameTh: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
       displayNameEn: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
     }
+    setOldRole(defaultValue)
     setSelectedRole(defaultValue)
   }, [t, staffData])
 
@@ -133,162 +138,173 @@ export default function StaffProfileDetail(): JSX.Element {
         <Grid className={classes.gridTitle}>
           <Typography variant="h6">{t('sidebar.staffProfileDetail')}</Typography>
         </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              fullWidth
-              disabled
-              id="staff_profile__userId"
-              label={t('user.id')}
-              variant="outlined"
-              value={staffData?.id || ''}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="staff_profile__firebaseUid"
-              label={t('staffProfile.firebaseId')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={staffData?.firebaseId || ''}
-            />
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="staff_profile__firstName"
-              label={t('user.firstName')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={staffData?.firstName || '-'}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="staff_profile__lastName"
-              label={t('user.lastName')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={staffData?.lastName || '-'}
-            />
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="staff_profile__email"
-              label={t('user.email')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={staffData?.email || '-'}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            {isAllowEdit() ? (
-              <Autocomplete
-                autoHighlight
-                id="status-select-list"
-                options={rolesList || []}
-                getOptionLabel={(option) =>
-                  i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
-                }
-                isOptionEqualToValue={(option, value) =>
-                  option.name === value.name || value.name === ''
-                }
-                renderInput={(params) => {
-                  return <EnabledTextField {...params} label={t('user.role')} variant="outlined" />
-                }}
-                value={selectedRole}
-                onChange={(_event, item) => onChangeRole(item)}
-              />
-            ) : (
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={6}>
               <DisabledField
                 type="text"
-                id="staff_profile__role"
-                label={t('user.role')}
+                fullWidth
+                disabled
+                id="staff_profile__userId"
+                label={t('user.id')}
+                variant="outlined"
+                value={staffData?.id || ''}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                type="text"
+                id="staff_profile__firebaseUid"
+                label={t('staffProfile.firebaseId')}
                 fullWidth
                 disabled
                 variant="outlined"
-                value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
+                value={staffData?.firebaseId || ''}
               />
-            )}
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="staff_profile__status"
-              label={t('user.status')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={staffData?.isActive ? t('user.statuses.enable') : t('user.statuses.disable')}
-            />
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                type="text"
+                id="staff_profile__firstName"
+                label={t('user.firstName')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={staffData?.firstName || '-'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                type="text"
+                id="staff_profile__lastName"
+                label={t('user.lastName')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={staffData?.lastName || '-'}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6} />
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              fullWidth
-              disabled
-              label={t('staffProfile.createdDate')}
-              id="staff_profile__createdDate"
-              name={t('staffProfile.createdDate')}
-              variant="outlined"
-              value={formaDateStringWithPattern(
-                staffData?.createdDate,
-                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                type="text"
+                id="staff_profile__email"
+                label={t('user.email')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={staffData?.email || '-'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              {isAllowEdit() ? (
+                <Autocomplete
+                  autoHighlight
+                  id="status-select-list"
+                  options={rolesList || []}
+                  getOptionLabel={(option) =>
+                    i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
+                  }
+                  isOptionEqualToValue={(option, value) =>
+                    option.name === value.name || value.name === ''
+                  }
+                  renderInput={(params) => {
+                    return (
+                      <EnabledTextField
+                        {...params}
+                        label={t('user.role')}
+                        variant="outlined"
+                        error={Boolean(touched.role && errors.role)}
+                        helperText={touched.role && errors.role}
+                      />
+                    )
+                  }}
+                  value={selectedRole}
+                  onChange={(_event, item) => onChangeRole(item)}
+                />
+              ) : (
+                <DisabledField
+                  type="text"
+                  id="staff_profile__role"
+                  label={t('user.role')}
+                  fullWidth
+                  disabled
+                  variant="outlined"
+                  value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
+                />
               )}
-            />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              fullWidth
-              disabled
-              label={t('user.updatedDate')}
-              id="staff_profile__updateddDate"
-              variant="outlined"
-              value={formaDateStringWithPattern(
-                staffData?.createdDate,
-                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-              )}
-            />
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                type="text"
+                id="staff_profile__status"
+                label={t('user.status')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={staffData?.isActive ? t('user.statuses.enable') : t('user.statuses.disable')}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} />
           </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <Button
-              id="staff_profile__update_btn"
-              className={classes.w83}
-              color="primary"
-              disabled={true}
-              variant="contained"
-            >
-              {t('button.save').toUpperCase()}
-            </Button>
-            &nbsp;&nbsp;
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => history.goBack()}
-              className={classes.w83}
-            >
-              {t('button.cancel').toUpperCase()}
-            </Button>
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                fullWidth
+                disabled
+                label={t('staffProfile.createdDate')}
+                id="staff_profile__createdDate"
+                name={t('staffProfile.createdDate')}
+                variant="outlined"
+                value={formaDateStringWithPattern(
+                  staffData?.createdDate,
+                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                fullWidth
+                disabled
+                label={t('user.updatedDate')}
+                id="staff_profile__updateddDate"
+                variant="outlined"
+                value={formaDateStringWithPattern(
+                  staffData?.createdDate,
+                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                )}
+              />
+            </Grid>
           </Grid>
-        </Grid>
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={6}>
+              <Button
+                id="staff_profile__update_btn"
+                type="submit"
+                className={classes.w83}
+                color="primary"
+                disabled={!isEnableSaveButton}
+                variant="contained"
+              >
+                {t('button.save').toUpperCase()}
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => history.goBack()}
+                className={classes.w83}
+              >
+                {t('button.cancel').toUpperCase()}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Card>
       <div className={classes.bottomContrainer}>
         <Button className={classes.deleteButton} variant="outlined">
