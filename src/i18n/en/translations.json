@@ -177,7 +177,7 @@
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support",
-      "passwordCondition": "Required at least 1 uppercase, 1 lowercase, and 1 number"
+      "passwordCondition": "Password must contain at least 8 characters, one uppercase, one number and one special character"
     }
   },
   "login": {
