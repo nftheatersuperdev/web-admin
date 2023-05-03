@@ -272,7 +272,7 @@
     "firstName": "First name",
     "lastName": "Last name",
     "createdDate": "Created Date",
-    "firebaseId": "FirebaseID",
+    "firebaseId": "Firebase UID",
     "searchCriteria": "Search Criteria",
     "searchDate": "Search Date"
   },

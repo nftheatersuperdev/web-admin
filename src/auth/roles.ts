@@ -8,7 +8,6 @@ export const ROLES = Object.freeze({
   MARKETING: 'marketing',
   PRODUCT_SUPPORT: 'product_support',
   IT_ADMIN: 'it_admin',
-  NOT_PUBLISH: 'not_publish',
 })
 
 export type Role =
@@ -19,7 +18,6 @@ export type Role =
   | typeof ROLES.MARKETING
   | typeof ROLES.PRODUCT_SUPPORT
   | typeof ROLES.IT_ADMIN
-  | typeof ROLES.NOT_PUBLISH
 
 export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boolean => {
   if (!allowedRoles || !allowedRoles.length) {
@@ -48,6 +46,48 @@ export const getAdminUserRoleLabel = (
     case ROLES.IT_ADMIN:
       return t('role.itAdmin')
     default:
-      return '-'
+      return role ? role.toLowerCase() : ''
   }
+}
+
+export interface SelectOption {
+  key: string
+  name: string
+  value: string
+  isDefault?: boolean
+}
+
+export const getRoleList = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    {
+      key: ROLES.ADMIN,
+      value: ROLES.ADMIN,
+      name: t('role.admin'),
+    },
+    {
+      key: ROLES.SUPER_ADMIN,
+      value: ROLES.SUPER_ADMIN,
+      name: t('role.superAdmin'),
+    },
+    {
+      key: ROLES.IT_ADMIN,
+      value: ROLES.IT_ADMIN,
+      name: t('role.itAdmin'),
+    },
+    {
+      key: ROLES.OPERATION,
+      value: ROLES.OPERATION,
+      name: t('role.operation'),
+    },
+    {
+      key: ROLES.CUSTOMER_SUPPORT,
+      value: ROLES.CUSTOMER_SUPPORT,
+      name: t('role.customerSupport'),
+    },
+    {
+      key: ROLES.PRODUCT_SUPPORT,
+      value: ROLES.PRODUCT_SUPPORT,
+      name: t('role.productSupport'),
+    },
+  ]
 }

@@ -1,14 +1,16 @@
-import { Typography, Breadcrumbs, Card, Link, Button, TextField, Grid } from '@mui/material'
+// import { useState } from 'react'
+import { Card, Grid, Typography, Button } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import { useTranslation } from 'react-i18next'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { getAdminUserByCriteria } from 'services/web-bff/admin-user'
-// import { AdminUsers } from 'services/web-bff/admin-user.type'
+import { getAdminUserRoleLabel } from 'auth/roles'
+import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
-import PageTitle from 'components/PageTitle'
-import NoResultCard from 'components/NoResultCard'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import { AdminUsersProps } from 'services/web-bff/admin-user.type'
+import { DisabledField } from './styles'
 
 interface StaffProfileDetailEditParam {
   id: string
@@ -16,208 +18,240 @@ interface StaffProfileDetailEditParam {
 
 export default function StaffProfileDetail(): JSX.Element {
   const useStyles = makeStyles({
-    hide: {
-      display: 'none',
+    textField: {
+      '& .MuiInputBase-input': {
+        height: '1.4rem',
+      },
+      '& input.Mui-disabled': {
+        WebkitTextFillColor: '#000000',
+        color: '#000000',
+        background: '#F5F5F5',
+      },
+      '& div.Mui-disabled': {
+        background: '#F5F5F5 !important',
+      },
+      '& .MuiInputLabel-root': {
+        color: '#e936a7',
+      },
     },
-    headerTopic: {
-      padding: '8px 16px',
+    card: {
+      padding: '20px',
     },
-    detailContainer: {
-      padding: '10px 25px',
+    gridTitle: {
+      marginBottom: '30px',
+    },
+    container: {
+      marginTop: '5px!important',
+      marginBottom: '5px',
+    },
+    alignRight: {
+      textAlign: 'right',
     },
     bottomContrainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      padding: '10px 25px',
-    },
-    deleteProfileButton: {
+      textAlign: 'right',
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-end',
+      padding: '10px',
     },
-    breadcrumText: {
-      color: '#000000DE',
+    deleteButton: {
+      color: 'red',
+      borderColor: 'red',
+    },
+    w83: {
+      width: '83px',
     },
   })
-  const history = useHistory()
   const { t } = useTranslation()
   const classes = useStyles()
+  const history = useHistory()
   const params = useParams<StaffProfileDetailEditParam>()
-  const { data: staffResponse } = useQuery(
-    'admin-user-by-criteria',
-    () =>
-      getAdminUserByCriteria({
-        data: params,
-        page: 1,
-        size: 1,
-      }),
-    {
-      cacheTime: 0,
-    }
+  // const roleList = getRoleList(t)
+  // const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
+  const { data: staffResponse } = useQuery('admin-users', () =>
+    searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
   const staffData =
     staffResponse?.data.adminUsers.length === 1 ? staffResponse?.data.adminUsers[0] : null
-  const isNoData = staffData === undefined || staffData === null
-  const handleOnCancel = () => {
-    return history.goBack()
-  }
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.userManagement.title'),
+      link: '/',
+    },
+    {
+      text: t('sidebar.staffProfile'),
+      link: '/staff-profiles',
+    },
+    {
+      text: t('sidebar.staffProfileDetail'),
+      link: `/edit`,
+    },
+  ]
+  const pageTitle: string = t('sidebar.staffProfileDetail')
   return (
     <Page>
-      <PageTitle title={t('sidebar.staffProfileDetail')} />
-      <Breadcrumbs aria-label="breadcrumb">
-        <Typography>{t('sidebar.userManagement.title')}</Typography>
-        <Link underline="hover" color="inherit" href="/staff-profiles">
-          {t('sidebar.staffProfile')}
-        </Link>
-        <Typography className={classes.breadcrumText}>{t('sidebar.staffProfileDetail')}</Typography>
-      </Breadcrumbs>
-      <br />
-      <Card>
-        <div className={classes.headerTopic}>
-          <Typography> {t('sidebar.staffProfileDetail')}</Typography>
-        </div>
-        {isNoData ? (
-          <NoResultCard />
-        ) : (
-          <Grid container spacing={2} className={classes.detailContainer}>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                id="input-userId"
-                name={t('user.id')}
-                label={t('user.id')}
-                variant="outlined"
-                value={staffData?.id}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('staffProfile.firebaseId')}
-                id="input-firebaseUid"
-                name={t('staffProfile.firebaseId')}
-                variant="outlined"
-                value={staffData?.firebaseId}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                id="input-firstName"
-                name={t('user.firstName')}
-                label={t('user.firstName')}
-                variant="outlined"
-                value={staffData?.firstName}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('user.lastName')}
-                id="input-lastName"
-                name={t('user.lastName')}
-                variant="outlined"
-                value={staffData?.lastName}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('user.email')}
-                id="input-email"
-                name={t('user.email')}
-                variant="outlined"
-                value={staffData?.email}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('user.role')}
-                id="input-role"
-                name={t('user.role')}
-                variant="outlined"
-                value={staffData?.role}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('user.status')}
-                id="input-status"
-                name={t('user.status')}
-                variant="outlined"
-                value={staffData?.isActive ? t('user.statuses.enable') : t('user.statuses.disable')}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                className={classes.hide}
-                fullWidth
-                disabled
-                label={t('user.lastName')}
-                id="input-lastName"
-                name={t('user.lastName')}
-                variant="outlined"
-                value={staffData?.lastName}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('staffProfile.createdDate')}
-                id="input-createdDate"
-                name={t('staffProfile.createdDate')}
-                variant="outlined"
-                value={formaDateStringWithPattern(
-                  staffData?.createdDate,
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                disabled
-                label={t('user.updatedDate')}
-                id="input-updatedDate"
-                name={t('user.updatedDate')}
-                variant="outlined"
-                value={formaDateStringWithPattern(
-                  staffData?.updatedDate,
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
-              />
-            </Grid>
+      <PageTitle title={pageTitle} breadcrumbs={breadcrumbs} />
+      <Card className={classes.card}>
+        <Grid className={classes.gridTitle}>
+          <Typography variant="h6">{t('sidebar.staffProfileDetail')}</Typography>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              fullWidth
+              disabled
+              id="staff_profile__userId"
+              label={t('user.id')}
+              variant="outlined"
+              value={staffData?.id || ''}
+            />
           </Grid>
-        )}
-        <Card>
-          <div className={classes.bottomContrainer}>
-            <Button variant="contained" disabled>
-              {t('button.save')}
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="staff_profile__firebaseUid"
+              label={t('staffProfile.firebaseId')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={staffData?.firebaseId || ''}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="staff_profile__firstName"
+              label={t('user.firstName')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={staffData?.firstName || '-'}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="staff_profile__lastName"
+              label={t('user.lastName')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={staffData?.lastName || '-'}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="staff_profile__email"
+              label={t('user.email')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={staffData?.email || '-'}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="staff_profile__role"
+              label={t('user.role')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
+            />
+            {/* <TextField
+              id="staff_profile__update_role_select"
+              select
+              value={staffData?.role}
+              label={t('user.role')}
+              placeholder={t('carAvailability.searchField.label')}
+              variant="outlined"
+              fullWidth
+            >
+              {roleList?.map((option) => (
+                <MenuItem key={option.key} value={option.value}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField> */}
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              type="text"
+              id="staff_profile__status"
+              label={t('user.status')}
+              fullWidth
+              disabled
+              variant="outlined"
+              value={staffData?.isActive ? t('user.statuses.enable') : t('user.statuses.disable')}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} />
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              fullWidth
+              disabled
+              label={t('staffProfile.createdDate')}
+              id="staff_profile__createdDate"
+              name={t('staffProfile.createdDate')}
+              variant="outlined"
+              value={formaDateStringWithPattern(
+                staffData?.createdDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <DisabledField
+              fullWidth
+              disabled
+              label={t('user.updatedDate')}
+              id="staff_profile__updateddDate"
+              variant="outlined"
+              value={formaDateStringWithPattern(
+                staffData?.createdDate,
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <Button
+              id="staff_profile__update_btn"
+              className={classes.w83}
+              color="primary"
+              disabled={true}
+              variant="contained"
+            >
+              {t('button.save').toUpperCase()}
             </Button>
             &nbsp;&nbsp;
-            <Button variant="outlined" onClick={handleOnCancel}>
-              {t('button.cancel')}
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => history.goBack()}
+              className={classes.w83}
+            >
+              {t('button.cancel').toUpperCase()}
             </Button>
-          </div>
-        </Card>
+          </Grid>
+        </Grid>
       </Card>
-      <br />
-      <div className={classes.deleteProfileButton}>
-        <Button variant="contained" disabled>
-          {t('button.deleteProfile')}
+      <div className={classes.bottomContrainer}>
+        <Button className={classes.deleteButton} variant="outlined">
+          {t('button.deleteProfile').toUpperCase()}
         </Button>
       </div>
     </Page>
