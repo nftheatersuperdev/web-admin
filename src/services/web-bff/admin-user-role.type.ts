@@ -1,5 +1,5 @@
 export interface Role {
-  code: string
-  nameTh: string
-  nameEn: string
+  name: string
+  displayNameTh: string
+  displayNameEn: string
 }

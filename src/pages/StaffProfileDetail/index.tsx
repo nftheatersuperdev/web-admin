@@ -8,14 +8,16 @@ import { useTranslation } from 'react-i18next'
 import { useParams, useHistory } from 'react-router-dom'
 import { useAuth } from 'auth/AuthContext'
 import { useQuery } from 'react-query'
-import { getAdminUserRoleLabel, getRoleList } from 'auth/roles'
+import { getAdminUserRoleLabel } from 'auth/roles'
 import { hasAllowedPrivilege, PRIVILEGES } from 'auth/privileges'
+import { getRoles } from 'services/web-bff/admin-user-role'
 import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { AdminUsersProps } from 'services/web-bff/admin-user.type'
+import { Role } from 'services/web-bff/admin-user-role.type'
 import { DisabledField, EnabledTextField } from './styles'
-import { StaffProfileDetailEditParam, SelectOption } from './constant'
+import { StaffProfileDetailEditParam } from './constant'
 
 export default function StaffProfileDetail(): JSX.Element {
   const useStyles = makeStyles({
@@ -64,13 +66,17 @@ export default function StaffProfileDetail(): JSX.Element {
       width: '83px',
     },
   })
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const classes = useStyles()
   const history = useHistory()
   const params = useParams<StaffProfileDetailEditParam>()
-  const [selectedRole, setSelectedRole] = useState<SelectOption | null>(null)
-  const roleOptions = getRoleList(t)
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null)
   const { getPrivileges } = useAuth()
+
+  // isFetched: isFetchedRoles,
+  // isFetching: isFetchingRoles,
+  const { data: rolesList } = useQuery('get-roles', () => getRoles())
+  console.log(JSON.stringify(rolesList))
   const { data: staffResponse } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
@@ -103,15 +109,15 @@ export default function StaffProfileDetail(): JSX.Element {
       await toast.success('xxxx')
     },
   })
-  const onChangeRole = (item: SelectOption | null) => {
+  const onChangeRole = (item: Role | null) => {
     setSelectedRole(item)
-    formik.setFieldValue('role', item?.value)
+    formik.setFieldValue('role', item?.name)
   }
   useEffect(() => {
     const defaultValue = {
-      key: staffData?.role ? staffData.role.toString() : '-',
-      name: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
-      value: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
+      name: staffData?.role ? staffData.role.toString() : '-',
+      displayNameTh: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
+      displayNameEn: staffData?.role ? getAdminUserRoleLabel(staffData.role.toLowerCase(), t) : '-',
     }
     setSelectedRole(defaultValue)
   }, [t, staffData])
@@ -192,10 +198,12 @@ export default function StaffProfileDetail(): JSX.Element {
               <Autocomplete
                 autoHighlight
                 id="status-select-list"
-                options={roleOptions}
-                getOptionLabel={(option) => option.name}
+                options={rolesList || []}
+                getOptionLabel={(option) =>
+                  i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
+                }
                 isOptionEqualToValue={(option, value) =>
-                  option.value === value.value || value.value === ''
+                  option.name === value.name || value.name === ''
                 }
                 renderInput={(params) => {
                   return <EnabledTextField {...params} label={t('user.role')} variant="outlined" />
