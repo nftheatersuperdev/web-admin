@@ -1,4 +1,4 @@
-import { AdminBffAPI } from 'api/admin-bff-local'
+import { AdminBffAPI } from 'api/admin-bff'
 import { Role } from 'services/web-bff/admin-user-role.type'
 
 export const getRoles = async (): Promise<Role[]> => {
