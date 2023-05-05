@@ -21,6 +21,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
+import { Chip } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
@@ -53,6 +54,10 @@ const ContentSection = styled.div`
 `
 const TableWrapper = styled.div`
   margin: 10px 0;
+`
+const ChipServiceType = styled(Chip)`
+  border-radius: 64px !important;
+  background: #376eff !important;
 `
 
 export function hasStatusAllowedToDoCarReplacement(status: string | undefined): boolean {
@@ -485,7 +490,7 @@ export default function SubscriptionDetail(): JSX.Element {
                     <TableCell>{t('booking.carDetail.vin')}</TableCell>
                     <TableCell>{t('booking.carDetail.deliveryDate')}</TableCell>
                     <TableCell>{t('booking.carDetail.returnDate')}</TableCell>
-                    <TableCell>{t('booking.carDetail.remark')}</TableCell>
+                    <TableCell>{t('booking.carDetail.serviceType')}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -520,7 +525,10 @@ export default function SubscriptionDetail(): JSX.Element {
                           : '-'}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        -
+                        <ChipServiceType
+                          label={carActivity.deliveryTask.remark || '-'}
+                          color="primary"
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
