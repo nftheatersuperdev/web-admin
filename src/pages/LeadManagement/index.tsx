@@ -150,7 +150,7 @@ export default function LeadManagement() {
   }
 
   const onEnterSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && searchValue?.length >= 1) {
+    if (event.key === 'Enter' && searchValue?.length >= 2) {
       formik.setFieldValue('searchInput', searchValue)
       formik.handleSubmit()
     }
