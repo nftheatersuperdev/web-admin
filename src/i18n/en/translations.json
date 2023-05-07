@@ -547,6 +547,49 @@
     "isSelfPickup": "IsSelfPickup"
   },
   "booking": {
+    "search": {
+      "id": "Booking ID",
+      "customer": "Customer ID",
+      "email": "Email",
+      "carId": "Car ID",
+      "plateNumber": "Plate Number",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Booking Status",
+      "isExtend": "Is Extend",
+      "voucherId": "Voucher ID",
+      "deliveryDate": "Delivery Date",
+      "returnDate": "Return Date"
+    },
+    "list": "Booking List",
+    "selectSearch": "Select Search",
+    "selectStatus": "Select Status",
+    "selectIsExtend": "Select Is Extend",
+    "status": {
+      "title": "Status",
+      "reserved": "Reserved",
+      "accepted": "Accepted",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "upcoming_cancelled": "Upcoming Cancelled",
+      "refused": "Refused",
+      "completed": "Completed",
+      "extended": "Extended",
+      "manual_extended": "Manual Extended"
+    },
+    "tableHeader": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "duration": "Duration",
+      "status": "Booking Status",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
     "statuses": {
       "accepted": "Accepted",
       "available": "Available",

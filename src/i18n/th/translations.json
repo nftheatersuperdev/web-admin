@@ -547,6 +547,49 @@
     "isSelfPickup": "รับรถด้วยตนเอง"
   },
   "booking": {
+    "search": {
+      "id": "รหัสการจอง",
+      "customer": "รหัสลูกค้า",
+      "email": "อีเมล",
+      "carId": "รหัสรถยนต์",
+      "plateNumber": "เลขทะเบียน",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "status": "สถานะ",
+      "isExtend": "ขยายเวลา",
+      "voucherId": "วอชเชอร์ ไอดี",
+      "deliveryDate": "วันที่จัดส่ง",
+      "returnDate": "วันที่รับคืน"
+    },
+    "list": "รายการจองรถ",
+    "selectSearch": "เลือกเพื่อค้นหา",
+    "selectStatus": "เลือกสถานะ",
+    "selectIsExtend": "ขยายเวลา",
+    "status": {
+      "title": "สถานะ",
+      "reserved": "สำรองแล้ว",
+      "accepted": "ชำระแล้ว",
+      "delivered": "นำส่งรถแล้ว",
+      "cancelled": "ยกเลิก",
+      "upcoming_cancelled": "ยกเลิกก่อนนำส่ง",
+      "refused": "ชำระเงินถูกปฏิเสธ",
+      "completed": "คืนรถแล้ว",
+      "extended": "ต่ออายุการจอง",
+      "manual_extended": "กำหนด ต่ออายุการจอง"
+    },
+    "tableHeader": {
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "email": "อีเมล",
+      "phone": "เบอร์โทรศัพท์",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "plateNumber": "ป้ายทะเบียน",
+      "duration": "ระยะเวลาการจอง",
+      "status": "สถานะ",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด"
+    },
     "statuses": {
       "accepted": "ยอมรับ",
       "available": "พร้อมใช้งาน",

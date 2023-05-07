@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { StringFieldComparison, DateRangeFieldComparison } from 'services/web-bff/general.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
-import { Subscription } from 'services/web-bff/subscription.type'
+import { Subscription } from 'services/web-bff/booking.type'
 import { RentalPackage } from './package-price.type'
 
 export interface Car {

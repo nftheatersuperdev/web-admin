@@ -34,8 +34,8 @@ import {
 import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import { getDetailsById } from 'services/web-bff/subscription'
-import { BookingCarActivity } from 'services/web-bff/subscription.type'
+import { getDetailsById } from 'services/web-bff/booking'
+import { BookingCarActivity } from 'services/web-bff/booking.type'
 import CarDetailDialog from './CarDetailDialog'
 import CarReplacementDialog from './CarReplacementDialog'
 

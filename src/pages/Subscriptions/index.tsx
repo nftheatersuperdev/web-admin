@@ -32,7 +32,7 @@ import styled from 'styled-components'
 import dayjs from 'dayjs'
 import { ROUTE_PATHS } from 'routes'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import { getList } from 'services/web-bff/subscription'
+import { getList } from 'services/web-bff/booking'
 import PageToolbar from 'layout/PageToolbar'
 import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
@@ -50,7 +50,7 @@ import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
   BookingCarActivity,
-} from 'services/web-bff/subscription.type'
+} from 'services/web-bff/booking.type'
 
 const customToolbar = () => (
   <GridToolbarContainer>
@@ -657,7 +657,7 @@ export default function Subscription(): JSX.Element {
     },
     {
       text: t('sidebar.subscriptions'),
-      link: ROUTE_PATHS.SUBSCRIPTION,
+      link: ROUTE_PATHS.BOOKING,
     },
   ]
 
