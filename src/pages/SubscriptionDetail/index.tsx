@@ -546,6 +546,7 @@ export default function SubscriptionDetail(): JSX.Element {
       <CarDetailDialog
         open={carDetailDialogOpen}
         car={carDetail}
+        isSelfPickUp={bookingDetail.isSelfPickUp}
         onClose={() => {
           setCarDetail(undefined)
           setCarDetailDialogOpen(false)
