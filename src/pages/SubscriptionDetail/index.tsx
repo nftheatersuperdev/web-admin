@@ -526,7 +526,11 @@ export default function SubscriptionDetail(): JSX.Element {
                       </TableCell>
                       <TableCell component="th" scope="row">
                         <ChipServiceType
-                          label={carActivity.deliveryTask.remark || '-'}
+                          label={
+                            bookingDetail.isSelfPickUp
+                              ? t('booking.carDetail.serviceTypes.selfPickUp')
+                              : t('booking.carDetail.serviceTypes.deliverByEVme')
+                          }
                           color="primary"
                         />
                       </TableCell>

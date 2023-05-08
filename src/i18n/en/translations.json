@@ -569,6 +569,10 @@
       "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
       "serviceType": "Service Type",
+      "serviceTypes": {
+        "deliverByEVme": "Deliver by EVme",
+        "selfPickUp": "Self Pick Up"
+      },
       "remark": "Remark"
     },
     "carReplacement": {
