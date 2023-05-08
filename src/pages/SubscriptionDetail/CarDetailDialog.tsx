@@ -67,6 +67,26 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
     >
       <DialogTitle id="form-dialog-title">{t('subscription.carDetails')}</DialogTitle>
       <DialogContent>
+        {/* Service Type */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="car_detail__serviceType"
+              label={t('booking.carDetail.serviceType')}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: true,
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              value={car?.deliveryTask?.remark || '-'}
+            />
+          </Grid>
+        </Grid>
+
         {/* Delivery Date, and Return Date */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>

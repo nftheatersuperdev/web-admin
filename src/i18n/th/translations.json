@@ -123,7 +123,8 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "customerDetails": "รายละเอียดลูกค้า"
+    "customerDetails": "รายละเอียดลูกค้า",
+    "leadManagement": "Lead Management"
   },
   "button": {
     "add": "เพิ่ม",
@@ -574,6 +575,11 @@
       "deliveryDate": "วันที่จัดส่ง",
       "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
+      "serviceType": "ประเภทการบริการ",
+      "serviceTypes": {
+        "deliverByEVme": "จัดส่งโดย EVme",
+        "selfPickUp": "รับเอง"
+      },
       "remark": "หมายเหตุ"
     },
     "carReplacement": {
@@ -1239,6 +1245,23 @@
       },
       "pagination": {
         "of": "of"
+      }
+    }
+  },
+  "leadManagement": {
+    "title": "Lead Management",
+    "leadList": {
+      "title": "Lead List"
+    },
+    "searchBar": {
+      "selectSearch": {
+        "title": "Select Search",
+        "byDate": "Create Date",
+        "byLeadName": "Enter Search",
+        "table": {
+          "leadName": "Lead Name",
+          "createDate": "Created Date"
+        }
       }
     }
   }
