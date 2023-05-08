@@ -175,6 +175,8 @@ export const setVisibilityColumns = (columns: VisibilityColumns): void => {
 
 export interface BookingList {
   id: string
+  detailId: string
+  customerId: string
   firstName: string
   lastName: string
   email: string
@@ -186,7 +188,13 @@ export interface BookingList {
   status: string
   startDate: string
   endDate: string
-  [key: string]: string
+  price: number
+  voucherId: string
+  voucherCode: string
+  createdDate: string
+  updatedDate: string
+  isExtend: boolean
+  [key: string]: any
 }
 
 export interface BookingCsv {

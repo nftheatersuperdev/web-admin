@@ -75,7 +75,8 @@
     },
     "bookingManagement": {
       "title": "การจัดการจอง",
-      "booking": "การจอง"
+      "booking": "การจอง",
+      "detail": "รายละเอียดการจอง"
     },
     "voucherManagement": {
       "title": "การจัดการวอชเชอร์",
@@ -547,6 +548,7 @@
     "isSelfPickup": "รับรถด้วยตนเอง"
   },
   "booking": {
+    "noData": "ไม่มีข้อมูล",
     "search": {
       "id": "รหัสการจอง",
       "customer": "รหัสลูกค้า",
@@ -601,16 +603,37 @@
       "upcomingCancelled": "กำลังถูกยกเลิก",
       "unknown": "ไม่ทราบ"
     },
+    "details": {
+      "id": "รหัสรายละเอียดการจอง",
+      "status": "สถานะการจอง",
+      "price": "ราคา(บาท)",
+      "duration": "ระยะเวลาการจอง",
+      "voucherId": "วอชเชอร์ ไอดี",
+      "voucherCode": "รหัสวอชเชอร์",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "createDate": "วันที่สร้าง",
+      "updateDate": "วันที่แก้ไข",
+      "isExtend": "ขยายเวลา",
+      "parentId": "รหัสอ้างอิง"
+    },
     "carDetail": {
+      "title": "รายละเอียดรถยนต์และการจัดส่ง",
       "replacement": "รถทดแทน",
       "no": "ลำดับ",
+      "location": "สถานที่บริการ",
       "brand": "ยี่ห้อ",
       "model": "รุ่น",
+      "color": "สี",
       "plateNumber": "เลขทะเบียน",
       "vin": "หมายเลขตัวถัง",
+      "pickupDate": "วันที่รับรถ",
       "deliveryDate": "วันที่จัดส่ง",
       "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
+      "service": "ประเภทบริการ",
+      "owner": "ผู้ถือกรรมสิทธิ์",
+      "reseller": "ตัวแทนจำหน่าย",
       "remark": "หมายเหตุ"
     },
     "carReplacement": {
@@ -636,6 +659,24 @@
         "title": "ยืนยันรถทดแทน",
         "description": "คุณต้องการจะอัพเดทรถในหมายเลขการจองนี้ {{bookingDetailId}}?<br/><br/><strong>แก้ไขโดย:</strong> {{editorEmail}}"
       }
+    },
+    "customer": {
+      "title": "ข้อมูลลูกค้า",
+      "customerId": "รหัสลูกค้า",
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "email": "อีเมล",
+      "phone": "เบอร์โทรศัพท์"
+    },
+    "payment": {
+      "title": "สถานะการชำระเงิน",
+      "id": "รหัสการชำระเงิน",
+      "amount": "จำนวนเงิน (บาท)",
+      "paymentType": "ประเภทการชำระเงิน",
+      "purpose": "จุดประสงค์การชำระเงิน",
+      "status": "สถานะการชำระเงิน",
+      "statusMessage": "ข้อความสถานะการชำระเงิน",
+      "updatedDate": "วันที่แก้ไข"
     }
   },
   "newSubcription": {

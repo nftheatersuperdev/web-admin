@@ -104,6 +104,8 @@ export default function Booking(): JSX.Element {
     bookingData?.data.bookingDetails.map((booking) => {
       return {
         id: booking.bookingId,
+        detailId: booking.id,
+        customerId: booking.customer.id,
         firstName: booking.customer?.firstName || '-',
         lastName: booking.customer?.lastName || '-',
         email: booking.customer?.email || '-',
@@ -115,6 +117,12 @@ export default function Booking(): JSX.Element {
         status: booking.displayStatus,
         startDate: booking.startDate,
         endDate: booking.endDate,
+        price: booking.rentDetail?.chargePrice,
+        voucherId: booking.rentDetail?.voucherId || '-',
+        voucherCode: booking.rentDetail?.voucherCode || '-',
+        createdDate: booking.rentDetail?.createdDate || '-',
+        updatedDate: booking.rentDetail?.updatedDate || '-',
+        isExtend: booking.isExtend,
       }
     }) || []
 
@@ -471,12 +479,14 @@ export default function Booking(): JSX.Element {
   ]
   const rowData = (bookings &&
     bookings.length > 0 &&
-    bookings.map((booking: BookingList, i: number) => {
+    bookings.map((booking: BookingList) => {
       return (
         <TableRow
           hover
-          onClick={() => history.push({ pathname: `/booking/${booking.id}`, state: booking })}
-          key={`booking-${booking.id}-${i}`}
+          onClick={() =>
+            history.push({ pathname: `/booking/${booking.id}/${booking.detailId}`, state: booking })
+          }
+          key={`booking-${booking.id}-${booking.detailId}`}
         >
           {columnRow.map((col) => (
             <TableCell key={col.field} hidden={col.hidden}>

@@ -12,8 +12,8 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   USER_GROUPS: '/user-groups',
-  BOOKING: '/booking',
   BOOKING_DETAIL: '/booking/:bookingId/:bookingDetailId',
+  BOOKING: '/booking',
   PRICING: '/pricing',
   MODEL_AND_PRICING: '/model-and-pricing',
   MODEL_AND_PRICING_EDIT: '/model-and-pricing/:id/edit',
@@ -126,7 +126,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   },
   {
     path: ROUTE_PATHS.BOOKING_DETAIL,
-    component: lazy(() => import('./pages/SubscriptionDetail' /* webpackChunkName: "app" */)),
+    component: lazy(() => import('./pages/BookingDetail' /* webpackChunkName: "app" */)),
     allowedRoles: [
       ROLES.SUPER_ADMIN,
       ROLES.ADMIN,
