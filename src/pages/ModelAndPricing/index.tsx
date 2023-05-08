@@ -2,6 +2,7 @@
 import config from 'config'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
+import { CSVLink } from 'react-csv'
 import { useHistory } from 'react-router-dom'
 import { useState, KeyboardEvent, useEffect } from 'react'
 import {
@@ -28,7 +29,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ROUTE_PATHS } from 'routes'
-import { formatStringForInputText } from 'utils'
+import {
+  formaDateStringWithPattern,
+  formatStringForInputText,
+  DEFAULT_DATETIME_FORMAT,
+} from 'utils'
 import { getList } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import { CarListFilterRequest } from 'services/web-bff/car.type'
@@ -51,6 +56,11 @@ const ExportButton = styled(Button)`
   font-weight: bold !important;
   padding: 14px 12px !important;
   width: 110px;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
 `
 const TableHeaderColumn = styled.div`
   border-left: 2px solid #e0e0e0;
@@ -94,15 +104,64 @@ export default function ModelAndPricing(): JSX.Element {
     refetch()
   }, [refetch, page, pageSize])
 
+  const csvHeaders = [
+    { label: 'Car ID', key: 'carId' },
+    { label: 'Model ID', key: 'modelId' },
+    { label: t('car.brand'), key: 'brand' },
+    { label: t('car.model'), key: 'name' },
+    { label: t('car.createdDate'), key: 'createdDate' },
+    { label: t('car.updatedDate'), key: 'updatedDate' },
+  ]
+
+  // eslint-disable-next-line
+  const csvData: any = []
   const cars =
-    carData?.data.cars?.map((car) => ({
-      id: car?.id || '-',
-      modelId: car?.carSku?.carModel?.id,
-      brand: car?.carSku?.carModel?.brand?.name || '-',
-      name: car?.carSku?.carModel?.name || '-',
-      createdDate: car?.createdDate || '-',
-      updatedDate: car?.updatedDate || '-',
-    })) || []
+    carData?.data.cars?.map((car) => {
+      const carId = car?.id || '-'
+      const modelId = car?.carSku?.carModel?.id || '-'
+      const brand = car?.carSku?.carModel?.brand?.name || '-'
+      const name = car?.carSku?.carModel?.name || '-'
+      const createdDate = car?.createdDate || '-'
+      const updatedDate = car?.updatedDate || '-'
+
+      csvData.push({
+        carId,
+        modelId,
+        brand,
+        name,
+        createdDate: formaDateStringWithPattern(createdDate, DEFAULT_DATETIME_FORMAT),
+        updatedDate: formaDateStringWithPattern(updatedDate, DEFAULT_DATETIME_FORMAT),
+      })
+
+      return (
+        <TableRow
+          hover
+          key={`car-${carId}`}
+          onClick={() => history.push(`/model-and-pricing/${modelId}/edit`)}
+        >
+          <TableCell>
+            <DataWrapper>{formatStringForInputText(brand)}</DataWrapper>
+          </TableCell>
+          <TableCell>
+            <DataWrapper>{formatStringForInputText(name)}</DataWrapper>
+          </TableCell>
+          <TableCell>
+            <DataWrapper>
+              {formatDate(createdDate)}
+              <br />
+              {formatTime(createdDate)}
+            </DataWrapper>
+          </TableCell>
+          <TableCell>
+            <DataWrapper>
+              {formatDate(updatedDate)}
+              <br />
+              {formatTime(updatedDate)}
+            </DataWrapper>
+          </TableCell>
+        </TableRow>
+      )
+    }) || []
 
   const handleSubmitSearch = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event?.key.toLocaleLowerCase() === 'enter') {
@@ -130,7 +189,7 @@ export default function ModelAndPricing(): JSX.Element {
       <Wrapper>
         <ContentSection>
           <Typography variant="h6" component="h2">
-            Model & Pricing List
+            {t('sidebar.carManagement.carModelAndPricingList')}
           </Typography>
 
           <GridSearchSection container spacing={1}>
@@ -176,15 +235,9 @@ export default function ModelAndPricing(): JSX.Element {
                   color="primary"
                   variant="contained"
                 >
-                  {/* <CSVLink
-                    data={csvData}
-                    headers={csvHeaders}
-                    filename="EVme Admin Dashboard.csv"
-                    className={classes.noUnderLine}
-                  >
+                  <CSVLink data={csvData} headers={csvHeaders} filename="EVme Model & Pricing.csv">
                     {t('button.export').toUpperCase()}
-                  </CSVLink> */}
-                  {t('button.export').toUpperCase()}
+                  </CSVLink>
                 </ExportButton>
               </Box>
             </Grid>
@@ -197,16 +250,16 @@ export default function ModelAndPricing(): JSX.Element {
                   <TableHead>
                     <TableRow>
                       <TableCell align="left">
-                        <TableHeaderColumn>Car Brand</TableHeaderColumn>
+                        <TableHeaderColumn>{t('car.brand')}</TableHeaderColumn>
                       </TableCell>
                       <TableCell align="left">
-                        <TableHeaderColumn>Car Model</TableHeaderColumn>
+                        <TableHeaderColumn>{t('car.model')}</TableHeaderColumn>
                       </TableCell>
                       <TableCell align="left">
-                        <TableHeaderColumn>Created Date</TableHeaderColumn>
+                        <TableHeaderColumn>{t('car.createdDate')}</TableHeaderColumn>
                       </TableCell>
                       <TableCell align="left">
-                        <TableHeaderColumn>Updated Date</TableHeaderColumn>
+                        <TableHeaderColumn>{t('car.updatedDate')}</TableHeaderColumn>
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -219,36 +272,7 @@ export default function ModelAndPricing(): JSX.Element {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      cars.map((car) => {
-                        return (
-                          <TableRow
-                            hover
-                            key={`car-${car.id}`}
-                            onClick={() => history.push(`/model-and-pricing/${car.modelId}/edit`)}
-                          >
-                            <TableCell>
-                              <DataWrapper>{formatStringForInputText(car.brand)}</DataWrapper>
-                            </TableCell>
-                            <TableCell>
-                              <DataWrapper>{formatStringForInputText(car.name)}</DataWrapper>
-                            </TableCell>
-                            <TableCell>
-                              <DataWrapper>
-                                {formatDate(car.createdDate)}
-                                <br />
-                                {formatTime(car.createdDate)}
-                              </DataWrapper>
-                            </TableCell>
-                            <TableCell>
-                              <DataWrapper>
-                                {formatDate(car.updatedDate)}
-                                <br />
-                                {formatTime(car.updatedDate)}
-                              </DataWrapper>
-                            </TableCell>
-                          </TableRow>
-                        )
-                      })
+                      cars
                     )}
                   </TableBody>
                 </Table>
