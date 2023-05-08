@@ -41,7 +41,7 @@ module.exports = {
   ignorePatterns: ['evme.types.ts'],
   rules: {
     'react/jsx-fragments': ['error', 'element'],
-    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-props-no-spreading': 'error',
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react/boolean-prop-naming': [
