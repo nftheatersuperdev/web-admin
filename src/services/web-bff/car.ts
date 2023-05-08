@@ -32,7 +32,15 @@ export const getList = async ({
       pageIndex,
       size,
     },
-  }).then((response) => response.data)
+  })
+    .then((response) => response.data)
+    .catch(() => {
+      return {
+        data: {
+          cars: [],
+        },
+      }
+    })
 
   return response
 }
