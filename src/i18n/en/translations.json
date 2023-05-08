@@ -123,7 +123,8 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "customerDetails": "Customer Details"
+    "customerDetails": "Customer Details",
+    "leadManagement": "Lead Management"
   },
   "button": {
     "add": "Add",
@@ -264,6 +265,12 @@
     "createDialog": {
       "success": "The admin user has been created",
       "failed": "Something went wrong ({{error}})"
+    },
+    "updateDialog": {
+      "title": "Update Admin User",
+      "success": "Updated admin user successfully",
+      "error": "Failed to update admin user",
+      "cannotUpdate": "Cannot update same value"
     }
   },
   "staffProfile": {
@@ -1277,6 +1284,23 @@
       },
       "pagination": {
         "of": "of"
+      }
+    }
+  },
+  "leadManagement": {
+    "title": "Lead Management",
+    "leadList": {
+      "title": "Lead List"
+    },
+    "searchBar": {
+      "selectSearch": {
+        "title": "Select Search",
+        "byDate": "Create Date",
+        "byLeadName": "Enter Search",
+        "table": {
+          "leadName": "Lead Name",
+          "createDate": "Created Date"
+        }
       }
     }
   }
