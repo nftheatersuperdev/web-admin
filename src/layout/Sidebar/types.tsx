@@ -10,4 +10,5 @@ export interface SidebarItemsType {
   badge?: string
   allowedRoles?: Role[]
   allowedPrivileges?: Privilege[]
+  toggleKey?: string
 }

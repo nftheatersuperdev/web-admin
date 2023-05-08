@@ -88,6 +88,10 @@
       "deleteLog": "Delete Log",
       "cookieConsentLog": "Cookie Consent Log"
     },
+    "subscriptionManagement": {
+      "title": "Subscription Management",
+      "packageManagement": "Package Management"
+    },
     "users": "Users",
     "userGroups": "User Groups",
     "cars": "Cars",
@@ -99,7 +103,6 @@
     "pricing": "Pricing",
     "modelAndPricing": "Model & Pricing",
     "vehicleManagement": "Vehicle Management",
-    "subscriptionManagement": "Subscription Management",
     "subscriptions": "Subscriptions",
     "subscriptionDetail": "Subscription Detail",
     "bookingDetail": "Booking Detail",
@@ -120,7 +123,6 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "packageManagement": "Package Management",
     "customerDetails": "Customer Details"
   },
   "button": {
@@ -175,7 +177,7 @@
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support",
-      "passwordCondition": "Required at least 1 uppercase, 1 lowercase, and 1 number"
+      "passwordCondition": "Password must contain at least 8 characters, one uppercase, one number and one special character"
     }
   },
   "login": {

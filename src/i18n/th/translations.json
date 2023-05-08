@@ -88,6 +88,10 @@
       "deleteLog": "ประวัติการลบบัญชีลูกค้า",
       "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้"
     },
+    "subscriptionManagement": {
+      "title": "Subscription Management",
+      "packageManagement": "Package Management"
+    },
     "users": "ผู้ใช้",
     "userGroups": "กลุ่มผู้ใช้งาน",
     "cars": "รถยนต์",
@@ -99,7 +103,6 @@
     "pricing": "ราคาแพ็คเกจ",
     "modelAndPricing": "รุ่น & ราคาแพ็คเกจ",
     "vehicleManagement": "การจัดการยานพาหนะ",
-    "subscriptionManagement": "การจัดการการจอง",
     "subscriptions": "ข้อมูลการจอง",
     "subscriptionDetail": "รายละเอียดข้อมูลการจอง",
     "bookingDetail": "ข้อมูลการจอง",
@@ -120,7 +123,6 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "packageManagement": "Package Management",
     "customerDetails": "รายละเอียดลูกค้า"
   },
   "button": {
@@ -175,7 +177,7 @@
       "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
       "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
       "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ",
-      "passwordCondition": "ต้องประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร"
+      "passwordCondition": "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร ประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร"
     }
   },
   "login": {

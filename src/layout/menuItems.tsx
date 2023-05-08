@@ -3,7 +3,15 @@ import { useTranslation } from 'react-i18next'
 import { ROLES } from 'auth/roles'
 import { PRIVILEGES } from 'auth/privileges'
 import { ROUTE_PATHS } from 'routes'
-import { BarChart, Dashboard, DocumentScanner, Folder, PeopleAlt, Stars } from '@mui/icons-material'
+import {
+  BarChart,
+  Dashboard,
+  DocumentScanner,
+  Folder,
+  PeopleAlt,
+  Stars,
+  Subscriptions,
+} from '@mui/icons-material'
 import { SidebarItemsType } from './Sidebar/types'
 
 export function useMenuItems() {
@@ -43,20 +51,7 @@ export function useMenuItems() {
           id: 'left_menu__users',
           title: t('sidebar.users'),
           href: ROUTE_PATHS.USER,
-          allowedRoles: [
-            ROLES.SUPER_ADMIN,
-            ROLES.ADMIN,
-            ROLES.CUSTOMER_SUPPORT,
-            ROLES.OPERATION,
-            ROLES.MARKETING,
-            ROLES.PRODUCT_SUPPORT,
-          ],
-        },
-        {
-          id: 'left_menu__user_group',
-          title: t('sidebar.userManagement.userGroup'),
-          href: ROUTE_PATHS.USER_GROUPS,
-          allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
+          allowedPrivileges: [PRIVILEGES.PERM_NOT_PUBLISH],
         },
         {
           id: 'left_menu__customer_profile',
@@ -74,7 +69,7 @@ export function useMenuItems() {
           id: 'left_menu__admin_users',
           title: t('sidebar.userManagement.adminUsers'),
           href: ROUTE_PATHS.ADMIN_USERS,
-          allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
+          allowedPrivileges: [PRIVILEGES.PERM_NOT_PUBLISH],
         },
       ],
     },
@@ -149,12 +144,6 @@ export function useMenuItems() {
             ROLES.PRODUCT_SUPPORT,
           ],
         },
-        {
-          id: 'left_menu__subscription_management_package_management',
-          title: t('sidebar.packageManagement'),
-          href: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_MANAGEMENT,
-          allowedRoles: [ROLES.SUPER_ADMIN],
-        },
       ],
     },
     {
@@ -168,6 +157,12 @@ export function useMenuItems() {
           id: 'left_menu__vouchers',
           title: t('sidebar.voucherManagement.voucher'),
           href: ROUTE_PATHS.VOUCHER,
+          allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
+        },
+        {
+          id: 'left_menu__user_group',
+          title: t('sidebar.userManagement.userGroup'),
+          href: ROUTE_PATHS.USER_GROUPS,
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
         },
       ],
@@ -216,6 +211,22 @@ export function useMenuItems() {
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CUSTOMER_SUPPORT],
         },
       ],
+    },
+    {
+      id: 'left_menu__subscription_management',
+      title: t('sidebar.subscriptionManagement.title'),
+      href: ROUTE_PATHS.SUBSCRIPTION_MANAGEMENT,
+      icon: Subscriptions,
+      allowedRoles: [ROLES.SUPER_ADMIN],
+      children: [
+        {
+          id: 'left_menu__subscription_management_package_management',
+          title: t('sidebar.subscriptionManagement.packageManagement'),
+          href: ROUTE_PATHS.SUBSCRIPTION_PACKAGE_MANAGEMENT,
+          allowedRoles: [ROLES.SUPER_ADMIN],
+        },
+      ],
+      toggleKey: 'IS_ENABLED_SUBSCRIPTION_MANAGEMENT_FEATURE',
     },
   ] as unknown as SidebarItemsType[]
 

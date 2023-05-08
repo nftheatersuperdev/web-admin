@@ -83,4 +83,9 @@ export const useStyles = makeStyles({
   paddingLeftCell: {
     paddingLeft: '12px',
   },
+  autoCompleteSelect: {
+    '& fieldSet': {
+      borderColor: '#424E63',
+    },
+  },
 })
