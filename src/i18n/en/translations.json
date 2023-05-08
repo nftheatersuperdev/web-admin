@@ -568,6 +568,7 @@
       "deliveryDate": "Delivery Date",
       "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
+      "serviceType": "Service Type",
       "remark": "Remark"
     },
     "carReplacement": {
