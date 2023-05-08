@@ -568,6 +568,11 @@
       "deliveryDate": "วันที่จัดส่ง",
       "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
+      "serviceType": "ประเภทการบริการ",
+      "serviceTypes": {
+        "deliverByEVme": "จัดส่งโดย EVme",
+        "selfPickUp": "รับเอง"
+      },
       "remark": "หมายเหตุ"
     },
     "carReplacement": {
