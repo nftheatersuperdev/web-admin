@@ -123,7 +123,8 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "customerDetails": "Customer Details"
+    "customerDetails": "Customer Details",
+    "leadManagement": "Lead Management"
   },
   "button": {
     "add": "Add",
@@ -1277,6 +1278,23 @@
       },
       "pagination": {
         "of": "of"
+      }
+    }
+  },
+  "leadManagement": {
+    "title": "Lead Management",
+    "leadList": {
+      "title": "Lead List"
+    },
+    "searchBar": {
+      "selectSearch": {
+        "title": "Select Search",
+        "byDate": "Create Date",
+        "byLeadName": "Enter Search",
+        "table": {
+          "leadName": "Lead Name",
+          "createDate": "Created Date"
+        }
       }
     }
   }
