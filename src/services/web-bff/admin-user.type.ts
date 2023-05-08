@@ -79,3 +79,17 @@ export interface AdminUsersResponse extends Response {
 export interface AdminUserProfileResponse extends Response {
   adminUser: AdminUser
 }
+
+export interface UpdateAdminUserProps {
+  id: string
+  firstname: string | null
+  lastname: string | null
+  email: string | null
+  role: string
+}
+
+export interface UpdateAdminUserResponse extends Response {
+  data: {
+    id: string
+  }
+}

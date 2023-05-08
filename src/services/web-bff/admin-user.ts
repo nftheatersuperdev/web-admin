@@ -5,6 +5,9 @@ import {
   AdminUsersResponse,
   AdminUserProfileResponse,
   AdminUsersProps,
+  UpdateAdminUserProps,
+  AdminUserById,
+  UpdateAdminUserResponse,
 } from './admin-user.type'
 
 export const searchAdminUser = async ({
@@ -69,6 +72,23 @@ export const createNewAdminUser = async ({
   ).then((response) => response.data)
 
   return response.adminUser
+}
+
+export const updateAdminUser = async ({
+  id,
+  firstname,
+  email,
+  lastname,
+  role,
+}: UpdateAdminUserProps): Promise<AdminUserById> => {
+  const response: UpdateAdminUserResponse = await AdminBffAPI.patch(`/v1/admin-users/${id}`, {
+    firstName: firstname,
+    lastName: lastname,
+    email,
+    role,
+  }).then((response) => response.data)
+
+  return response.data
 }
 
 export default {
