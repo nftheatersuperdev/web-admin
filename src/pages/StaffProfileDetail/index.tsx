@@ -232,6 +232,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   renderInput={(params) => {
                     return (
                       <EnabledTextField
+                        /* eslint-disable react/jsx-props-no-spreading */
                         {...params}
                         label={t('user.role')}
                         variant="outlined"
