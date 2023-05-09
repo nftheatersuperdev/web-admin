@@ -176,6 +176,7 @@ export default function ModelAndPricing(): JSX.Element {
 
   const handleSubmitSearch = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event?.key.toLocaleLowerCase() === 'enter') {
+      setPage(0)
       setFilter({
         [searchField as string]: searchValue,
       })
