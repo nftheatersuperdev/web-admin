@@ -60,13 +60,10 @@ import {
   FilterSearch,
   getLocationOptions,
 } from './utils'
-import { SearchDatePicker, CustomWidthCell } from './styles'
+import { SearchDatePicker } from './styles'
 
 export default function Booking(): JSX.Element {
   const useStyles = makeStyles({
-    cellWidth: {
-      minWidth: '100px',
-    },
     typo: {
       marginBottom: '0px',
     },
@@ -91,34 +88,10 @@ export default function Booking(): JSX.Element {
     table: {
       border: 0,
     },
-    pagination: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '20px',
-    },
-    paginationForm: {
-      display: 'inline-flex',
-    },
-    chipBgGreen: {
-      backgroundColor: '#4CAF50',
-      color: '#fff',
-      height: '24px',
-      borderRadius: '64px',
-    },
     chipBgGray: {
       backgroundColor: '#E0E0E0',
       height: '24px',
       borderRadius: '64px',
-    },
-    wrapText: {
-      lineHeight: '1.5em',
-      height: '3em',
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      width: '100%',
     },
     csvlink: {
       color: '#fff',
@@ -129,14 +102,24 @@ export default function Booking(): JSX.Element {
       fontWeight: '500',
       paddingLeft: '16px',
     },
-    wrapWidth: {
-      width: '110px',
-    },
-    rowOverflow: {
+    rowOverflowSmall: {
+      width: '80px',
+      overflowWrap: 'break-word',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       display: '-webkit-box',
       '-webkit-line-clamp': 2,
+      'line-clamp': 2,
+      '-webkit-box-orient': 'vertical',
+    },
+    rowOverflow: {
+      width: '115px',
+      overflowWrap: 'break-word',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      display: '-webkit-box',
+      '-webkit-line-clamp': 2,
+      'line-clamp': 2,
       '-webkit-box-orient': 'vertical',
     },
     paginationContainer: {
@@ -480,68 +463,57 @@ export default function Booking(): JSX.Element {
       field: 'firstName',
       hidden: false,
       render: (value: string) => {
-        return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>{value}</div>
-          </div>
-        )
+        return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'lastName',
       hidden: false,
       render: (value: string) => {
-        return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>{value}</div>
-          </div>
-        )
+        return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'email',
       hidden: false,
       render: (value: string) => {
-        return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>{value}</div>
-          </div>
-        )
+        return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'phone',
       hidden: false,
       render: (value: string) => {
-        return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>{value}</div>
-          </div>
-        )
+        return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'location',
       hidden: false,
+      render: (value: string) => {
+        return <div className={classes.rowOverflow}>{value}</div>
+      },
     },
     {
       field: 'brand',
       hidden: false,
+      render: (value: string) => {
+        return <div className={classes.rowOverflow}>{value}</div>
+      },
     },
     {
       field: 'model',
       hidden: false,
       render: (value: string) => {
-        return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>{value}</div>
-          </div>
-        )
+        return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'plateNumber',
       hidden: false,
+      render: (value: string) => {
+        return <div className={classes.rowOverflow}>{value}</div>
+      },
     },
     {
       field: 'duration',
@@ -559,10 +531,8 @@ export default function Booking(): JSX.Element {
       hidden: false,
       render: (date: string) => {
         return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>
-              {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-            </div>
+          <div className={classes.rowOverflow}>
+            {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
           </div>
         )
       },
@@ -572,10 +542,8 @@ export default function Booking(): JSX.Element {
       hidden: false,
       render: (date: string) => {
         return (
-          <div className={classes.wrapWidth}>
-            <div className={classes.rowOverflow}>
-              {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-            </div>
+          <div className={classes.rowOverflow}>
+            {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
           </div>
         )
       },
@@ -812,9 +780,9 @@ export default function Booking(): JSX.Element {
             <TableHead>
               <TableRow>
                 {columnHead.map((col) => (
-                  <CustomWidthCell key={col.colName} hidden={col.hidden}>
+                  <TableCell key={col.colName} hidden={col.hidden}>
                     <div className={classes.columnHeader}>{col.colName}</div>
-                  </CustomWidthCell>
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
