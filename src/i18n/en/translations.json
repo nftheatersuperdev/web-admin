@@ -560,15 +560,15 @@
     "allLocation": "All Location",
     "of": "of",
     "search": {
-      "id": "Booking ID",
+      "detailId": "Booking Detail ID",
       "customer": "Customer ID",
       "email": "Email",
       "carId": "Car ID",
       "plateNumber": "Plate Number",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "status": "Booking Status",
-      "isExtend": "Is Extend",
+      "status": "Status",
+      "isExtend": "Is Extended",
       "voucherId": "Voucher ID",
       "deliveryDate": "Delivery Date",
       "returnDate": "Return Date"
