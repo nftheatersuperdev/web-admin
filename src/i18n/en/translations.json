@@ -269,9 +269,9 @@
       "failed": "Something went wrong ({{error}})"
     },
     "updateDialog": {
-      "title": "Update Admin User",
-      "success": "Updated admin user successfully",
-      "error": "Failed to update admin user",
+      "title": "Update Staff",
+      "success": "Update staff successfully",
+      "error": "Failed to update staff",
       "cannotUpdate": "Cannot update same value"
     }
   },
