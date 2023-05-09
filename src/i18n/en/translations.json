@@ -872,6 +872,7 @@
     "overview": "Overview",
     "performance": "Performance",
     "charging": "Charging",
+    "plan": "Plan",
     "success": "Model has been updated",
     "error": "Something went wrong when updating the model"
   },

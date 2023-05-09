@@ -77,8 +77,12 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const { data: car, isFetching } = useQuery('model-and-pricing-edit-page', () =>
-    getModelPriceById({ id })
+  const { data: car, isFetching } = useQuery(
+    'model-and-pricing-edit-page',
+    () => getModelPriceById({ id }),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
 
   const handleOnSubmit = async (values: CarModelInput) => {
@@ -436,7 +440,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   <Grid item md={3}>
                     <TextField
                       fullWidth
-                      label={`${t('pricing.price')} (bath)`}
+                      label={`${t('pricing.price')} (${t('pricing.currency.thb')})`}
                       id={`${packageId}-price`}
                       name={`${packageId}-price`}
                       variant="outlined"
@@ -450,7 +454,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   <Grid item md={3}>
                     <TextField
                       fullWidth
-                      label={`${t('pricing.fullPrice')} (bath)`}
+                      label={`${t('pricing.fullPrice')} (${t('pricing.currency.thb')})`}
                       id={`${packageId}-full-price`}
                       name={`${packageId}-full-price`}
                       variant="outlined"

@@ -851,6 +851,31 @@
   "table": {
     "rowPerPage": "จำนวนรายการต่อหน้า"
   },
+  "carModel": {
+    "brand": "ยี่ห้อ",
+    "model": "รุ่น",
+    "bodyType": "ประเภท",
+    "topSpeed": "ความเร็วสูงสุด",
+    "acceleration": "อัตราเร่ง",
+    "range": "ระยะทาง",
+    "totalPower": "แรงม้า",
+    "batteryCapacity": "ความจุแบตเตอร์รี่",
+    "connectorType": "ประเภทหัวชาร์จ",
+    "chargeTime": "ระยะเวลาชาร์จปกติ",
+    "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
+    "seats": "จำนวนที่นั่ง",
+    "condition": "เงื่อนไข",
+    "horsePower": "แรงม้า",
+    "modelYear": "ปี"
+  },
+  "modelForm": {
+    "overview": "ภาพรวม",
+    "performance": "ประสิทธิภาพ",
+    "charging": "การชาร์จ",
+    "plan": "แผนราคา",
+    "success": "รุ่นรถได้ถูกปรับปรุงเรียบร้อยแล้ว",
+    "error": "เกิดข้อผิดพลาดในการปรับปรุงรุ่นรถ"
+  },
   "voucher": {
     "title": "วอชเชอร์",
     "id": "วอชเชอร์ ไอดี",
