@@ -698,7 +698,6 @@ export default function Booking(): JSX.Element {
           const newDate = date.toDate()
           setSelectedFromDate(newDate)
           const fmtDate = dayjs(newDate).tz(config.timezone).format(DEFAULT_DATE_FORMAT_BFF)
-          console.log('date: ', fmtDate)
           formik.setFieldValue('searchType', label)
           formik.setFieldValue('searchInput', fmtDate)
           formik.handleSubmit()

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import dayjs from 'dayjs'
 import {
   Button,
@@ -20,7 +20,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
-import { DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import {
   convertToDuration,
   columnFormatSubEventStatus,
@@ -52,6 +52,7 @@ export default function SubscriptionDetail(): JSX.Element {
   const { getRole, firebaseUser } = useAuth()
   const currentRole = getRole()
   const { t } = useTranslation()
+  const history = useHistory()
 
   const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
 
@@ -227,7 +228,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.startDate).format(DEFAULT_DATE_FORMAT)}
+              value={dayjs(bookingDetail?.startDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -238,7 +239,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.endDate).format(DEFAULT_DATE_FORMAT)}
+              value={dayjs(bookingDetail?.endDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
             />
           </Grid>
         </Grid>
@@ -252,7 +253,9 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.rentDetail.createdDate).format(DEFAULT_DATETIME_FORMAT)}
+              value={dayjs(bookingDetail?.rentDetail.createdDate).format(
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -263,7 +266,9 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.rentDetail.updatedDate).format(DEFAULT_DATETIME_FORMAT)}
+              value={dayjs(bookingDetail?.rentDetail.updatedDate).format(
+                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+              )}
             />
           </Grid>
         </Grid>
@@ -338,7 +343,7 @@ export default function SubscriptionDetail(): JSX.Element {
                     onClick={() =>
                       history.push({
                         pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity.carId}`,
-                        state: carActivity,
+                        state: { carActivity, isSelfPickUp: bookingDetail.isSelfPickUp },
                       })
                     }
                   >
@@ -362,12 +367,16 @@ export default function SubscriptionDetail(): JSX.Element {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {carActivity.deliveryTask?.date
-                        ? dayjs(carActivity.deliveryTask?.date).format(DEFAULT_DATETIME_FORMAT)
+                        ? dayjs(carActivity.deliveryTask?.date).format(
+                            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                          )
                         : '-'}
                     </TableCell>
                     <TableCell component="th" scope="row">
                       {carActivity.returnTask?.date
-                        ? dayjs(carActivity.returnTask?.date).format(DEFAULT_DATETIME_FORMAT)
+                        ? dayjs(carActivity.returnTask?.date).format(
+                            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                          )
                         : '-'}
                     </TableCell>
                     <TableCell component="th" scope="row">
@@ -490,7 +499,8 @@ export default function SubscriptionDetail(): JSX.Element {
                       {payment.statusMessage || '-'}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {dayjs(payment?.updatedDate).format(DEFAULT_DATETIME_FORMAT) || '-'}
+                      {dayjs(payment?.updatedDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT) ||
+                        '-'}
                     </TableCell>
                   </TableRow>
                 ))
