@@ -20,7 +20,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
-import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formatDate } from 'utils'
 import {
   convertToDuration,
   columnFormatSubEventStatus,
@@ -323,16 +323,36 @@ export default function SubscriptionDetail(): JSX.Element {
             <TableHead>
               <TableRow>
                 <TableCell>{t('booking.carDetail.no')}</TableCell>
-                <TableCell>{t('booking.carDetail.location')}</TableCell>
-                <TableCell>{t('booking.carDetail.brand')}</TableCell>
-                <TableCell>{t('booking.carDetail.model')}</TableCell>
-                <TableCell>{t('booking.carDetail.color')}</TableCell>
-                <TableCell>{t('booking.carDetail.plateNumber')}</TableCell>
-                <TableCell>{t('booking.carDetail.pickupDate')}</TableCell>
-                <TableCell>{t('booking.carDetail.returnDate')}</TableCell>
-                <TableCell>{t('booking.carDetail.serviceType')}</TableCell>
-                <TableCell>{t('booking.carDetail.owner')}</TableCell>
-                <TableCell>{t('booking.carDetail.reseller')}</TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.location')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.brand')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.model')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.color')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.plateNumber')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.pickupDate')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.returnDate')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.serviceType')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.owner')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.carDetail.reseller')}</div>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -351,49 +371,77 @@ export default function SubscriptionDetail(): JSX.Element {
                       {index + 1 || '-'}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.resellerServiceArea.areaNameEn || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.resellerServiceArea.areaNameEn || '-'}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.carSku.carModel.brand.name || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.carSku.carModel.brand.name || '-'}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.carSku.carModel.name || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.carSku.carModel.name || '-'}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.plateNumber || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.plateNumber || '-'}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.vin || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.vin || '-'}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.deliveryTask?.date
-                        ? dayjs(carActivity.deliveryTask?.date).format(
-                            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                          )
-                        : '-'}
+                      <div className={classes.paddingLeftCell}>
+                        <div className={classes.wrapWidth}>
+                          <div className={classes.rowOverflow}>
+                            {carActivity.deliveryTask?.date
+                              ? dayjs(carActivity.deliveryTask?.date).format(
+                                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                                )
+                              : '-'}
+                          </div>
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.returnTask?.date
-                        ? dayjs(carActivity.returnTask?.date).format(
-                            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                          )
-                        : '-'}
+                      <div className={classes.paddingLeftCell}>
+                        <div className={classes.wrapWidth}>
+                          <div className={classes.rowOverflow}>
+                            {carActivity.returnTask?.date
+                              ? dayjs(carActivity.returnTask?.date).format(
+                                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                                )
+                              : '-'}
+                          </div>
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      <ChipServiceType
-                        label={
-                          bookingDetail.isSelfPickUp
-                            ? t('booking.carDetail.serviceTypes.selfPickUp')
-                            : t('booking.carDetail.serviceTypes.deliverByEVme')
-                        }
-                        color="primary"
-                      />
+                      <div className={classes.paddingLeftCell}>
+                        <ChipServiceType
+                          label={
+                            bookingDetail.isSelfPickUp
+                              ? t('booking.carDetail.serviceTypes.selfPickUp')
+                              : t('booking.carDetail.serviceTypes.deliverByEVme')
+                          }
+                          color="primary"
+                        />
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.owner || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.owner || '-'}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {carActivity.carDetail.reSeller || '-'}
+                      <div className={classes.paddingLeftCell}>
+                        {carActivity.carDetail.reSeller || '-'}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -420,10 +468,18 @@ export default function SubscriptionDetail(): JSX.Element {
             <TableHead>
               <TableRow>
                 <TableCell>{t('booking.customer.customerId')}</TableCell>
-                <TableCell>{t('booking.customer.firstName')}</TableCell>
-                <TableCell>{t('booking.customer.lastName')}</TableCell>
-                <TableCell>{t('booking.customer.email')}</TableCell>
-                <TableCell>{t('booking.customer.phone')}</TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.customer.firstName')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.customer.lastName')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.customer.email')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.customer.phone')}</div>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -433,16 +489,24 @@ export default function SubscriptionDetail(): JSX.Element {
                     {bookingDetail.customer.id || '-'}
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {bookingDetail.customer.firstName || '-'}
+                    <div className={classes.paddingLeftCell}>
+                      {bookingDetail.customer.firstName || '-'}
+                    </div>
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {bookingDetail.customer.lastName || '-'}
+                    <div className={classes.paddingLeftCell}>
+                      {bookingDetail.customer.lastName || '-'}
+                    </div>
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {bookingDetail.customer.email || '-'}
+                    <div className={classes.paddingLeftCell}>
+                      {bookingDetail.customer.email || '-'}
+                    </div>
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {bookingDetail.customer.phone || '-'}
+                    <div className={classes.paddingLeftCell}>
+                      {bookingDetail.customer.phone || '-'}
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -468,12 +532,24 @@ export default function SubscriptionDetail(): JSX.Element {
             <TableHead>
               <TableRow>
                 <TableCell>{t('booking.payment.id')}</TableCell>
-                <TableCell>{t('booking.payment.amount')}</TableCell>
-                <TableCell>{t('booking.payment.paymentType')}</TableCell>
-                <TableCell>{t('booking.payment.purpose')}</TableCell>
-                <TableCell>{t('booking.payment.status')}</TableCell>
-                <TableCell>{t('booking.payment.statusMessage')}</TableCell>
-                <TableCell>{t('booking.payment.updatedDate')}</TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.payment.amount')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.payment.paymentType')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.payment.purpose')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.payment.status')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.payment.statusMessage')}</div>
+                </TableCell>
+                <TableCell>
+                  <div className={classes.columnHeader}>{t('booking.payment.updatedDate')}</div>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -484,23 +560,32 @@ export default function SubscriptionDetail(): JSX.Element {
                       {payment.externalTransactionId || '-'}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {Number(payment.amount || 0).toLocaleString()}
+                      <div className={classes.paddingLeftCell}>
+                        {Number(payment.amount || 0).toLocaleString()}
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {payment.type || '-'}
+                      <div className={classes.paddingLeftCell}>{payment.type || '-'}</div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {payment.description || '-'}
+                      <div className={classes.paddingLeftCell}>{payment.description || '-'}</div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      <ChipPaymentType label={payment.status} color="primary" />
+                      <div className={classes.paddingLeftCell}>
+                        <ChipPaymentType label={payment.status} color="primary" />
+                      </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {payment.statusMessage || '-'}
+                      <div className={classes.paddingLeftCell}>{payment.statusMessage || '-'}</div>
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {dayjs(payment?.updatedDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT) ||
-                        '-'}
+                      <div className={classes.paddingLeftCell}>
+                        <div className={classes.wrapWidth}>
+                          <div className={classes.rowOverflow}>
+                            {formatDate(payment?.updatedDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                          </div>
+                        </div>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

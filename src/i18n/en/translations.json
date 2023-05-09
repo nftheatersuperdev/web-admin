@@ -574,6 +574,7 @@
     },
     "list": "Booking List",
     "selectSearch": "Select Search",
+    "enterSearch": "Enter Search",
     "selectStatus": "Select Status",
     "selectIsExtend": "Select Is Extend",
     "status": {
@@ -622,9 +623,9 @@
       "voucherCode": "Voucher Code",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "createDate": "Create Date",
+      "createDate": "Created Date",
       "updateDate": "Update Date",
-      "isExtend": "Is Extend",
+      "isExtend": "Is Extended",
       "parentId": "Parent Id"
     },
     "carDetail": {
@@ -690,7 +691,7 @@
       "purpose": "Purpose",
       "status": "Status",
       "statusMessage": "Status Message",
-      "updatedDate": "Updated Date"
+      "updatedDate": "Update Date"
     }
   },
   "newSubcription": {

@@ -645,7 +645,7 @@ export default function Booking(): JSX.Element {
       onChange={onSearchChange}
       onKeyDown={(event) => onEnterSearch(event as KeyboardEvent<HTMLInputElement>)}
       disabled={!selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''}
-      placeholder={t('booking.selectSearch')}
+      placeholder={t('booking.enterSearch')}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

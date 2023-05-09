@@ -16,11 +16,13 @@ export const TableWrapper = styled.div`
 export const ChipServiceType = styled(Chip)`
   border-radius: 64px !important;
   background: #376eff !important;
+  height: 24px !important;
 `
 
 export const ChipPaymentType = styled(Chip)`
   border-radius: 64px !important;
   background: #4caf50 !important;
+  height: 24px !important;
 `
 
 export const DisabledField = styled(TextField)`
@@ -88,5 +90,15 @@ export const useStyles = makeStyles(() => ({
   },
   paddingLeftCell: {
     paddingLeft: '12px',
+  },
+  wrapWidth: {
+    width: '110px',
+  },
+  rowOverflow: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical',
   },
 }))

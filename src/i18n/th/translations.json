@@ -574,6 +574,7 @@
     },
     "list": "รายการจองรถ",
     "selectSearch": "เลือกเพื่อค้นหา",
+    "enterSearch": "ใส่ข้อมูลเพื่อค้นหา",
     "selectStatus": "เลือกสถานะ",
     "selectIsExtend": "ขยายเวลา",
     "status": {
