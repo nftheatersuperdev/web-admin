@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'

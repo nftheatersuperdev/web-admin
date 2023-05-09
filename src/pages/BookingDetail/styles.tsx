@@ -1,6 +1,27 @@
 import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
-import { TextField } from '@mui/material'
+import { TextField, Chip, Card } from '@mui/material'
+
+export const Wrapper = styled(Card)`
+  padding: 15px;
+  margin-top: 20px;
+`
+export const ContentSection = styled.div`
+  margin-bottom: 20px;
+`
+export const TableWrapper = styled.div`
+  margin: 10px 0;
+`
+
+export const ChipServiceType = styled(Chip)`
+  border-radius: 64px !important;
+  background: #376eff !important;
+`
+
+export const ChipPaymentType = styled(Chip)`
+  border-radius: 64px !important;
+  background: #4caf50 !important;
+`
 
 export const DisabledField = styled(TextField)`
   .MuiInputBase-root {

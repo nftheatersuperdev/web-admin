@@ -23,11 +23,17 @@ const MarginActionButtons = styled.div`
 `
 export interface CarDetailDialogProps {
   open: boolean
+  isSelfPickUp: boolean
   car: BookingCarActivity | undefined
   onClose: () => void
 }
 
-export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogProps): JSX.Element {
+export default function CarDetailDialog({
+  car,
+  isSelfPickUp,
+  open,
+  onClose,
+}: CarDetailDialogProps): JSX.Element {
   const { t } = useTranslation()
   if (!open && !car) {
     return <Fragment />
@@ -67,6 +73,30 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
     >
       <DialogTitle id="form-dialog-title">{t('subscription.carDetails')}</DialogTitle>
       <DialogContent>
+        {/* Service Type */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="car_detail__serviceType"
+              label={t('booking.carDetail.serviceType')}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: true,
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              value={
+                isSelfPickUp
+                  ? t('booking.carDetail.serviceTypes.selfPickUp')
+                  : t('booking.carDetail.serviceTypes.deliverByEVme')
+              }
+            />
+          </Grid>
+        </Grid>
+
         {/* Delivery Date, and Return Date */}
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>

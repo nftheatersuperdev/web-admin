@@ -124,7 +124,8 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "customerDetails": "รายละเอียดลูกค้า"
+    "customerDetails": "รายละเอียดลูกค้า",
+    "leadManagement": "Lead Management"
   },
   "button": {
     "add": "เพิ่ม",
@@ -178,7 +179,7 @@
       "authenticationFailed": "เข้าสู่ระบบไม่สำเร็จ",
       "permissionNotAllowed": "ไม่มีสิทธิ์ในการใช้งาน",
       "unknownError": "เกิดข้อผิดพลาดในการเข้าใช้งานระบบ, กรุณาติดต่อทีมดูแลระบบ",
-      "passwordCondition": "ต้องประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร"
+      "passwordCondition": "รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร ประกอบด้วยตัวเล็ก ตัวใหญ่และรวมถึงสัญญาลักษณพิเศษอย่างน้อยอย่างละ 1 ตัวอักษร"
     }
   },
   "login": {
@@ -265,6 +266,12 @@
     "createDialog": {
       "success": "บัญชีผู้ดูแลระบบถูกสร้างขึ้นแล้ว",
       "failed": "เกิดข้อผิดพลาดบางอย่าง ({{error}})"
+    },
+    "updateDialog": {
+      "title": "แก้ไขข้อมูลพนักงาน",
+      "success": "แก้ไขข้อมูลพนักงานสำเร็จ",
+      "error": "แก้ไขข้อมูลพนักงานไม่สำเร็จ",
+      "cannotUpdate": "ไม่สามารถแก้ไขข้อมูลพนักงานซ้ำได้"
     }
   },
   "staffProfile": {
@@ -549,6 +556,8 @@
   },
   "booking": {
     "noData": "ไม่มีข้อมูล",
+    "allLocation": "สถานที่บริการทั้งหมด",
+    "of": "จาก",
     "search": {
       "id": "รหัสการจอง",
       "customer": "รหัสลูกค้า",
@@ -590,7 +599,8 @@
       "duration": "ระยะเวลาการจอง",
       "status": "สถานะ",
       "startDate": "วันที่เริ่ม",
-      "endDate": "วันที่สิ้นสุด"
+      "endDate": "วันที่สิ้นสุด",
+      "location": "สถานที่บริการ"
     },
     "statuses": {
       "accepted": "ยอมรับ",
@@ -631,7 +641,11 @@
       "deliveryDate": "วันที่จัดส่ง",
       "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
-      "service": "ประเภทบริการ",
+      "serviceType": "ประเภทการบริการ",
+      "serviceTypes": {
+        "deliverByEVme": "จัดส่งโดย EVme",
+        "selfPickUp": "รับเอง"
+      },
       "owner": "ผู้ถือกรรมสิทธิ์",
       "reseller": "ตัวแทนจำหน่าย",
       "remark": "หมายเหตุ"
@@ -1317,6 +1331,23 @@
       },
       "pagination": {
         "of": "of"
+      }
+    }
+  },
+  "leadManagement": {
+    "title": "Lead Management",
+    "leadList": {
+      "title": "Lead List"
+    },
+    "searchBar": {
+      "selectSearch": {
+        "title": "Select Search",
+        "byDate": "Create Date",
+        "byLeadName": "Enter Search",
+        "table": {
+          "leadName": "Lead Name",
+          "createDate": "Created Date"
+        }
       }
     }
   }

@@ -35,8 +35,10 @@ import {
   formatDate,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
+  DEFAULT_DATE_FORMAT_BFF,
 } from 'utils'
 import config from 'config'
+import { makeStyles } from '@mui/styles'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/booking'
 import {
@@ -53,15 +55,109 @@ import {
   BookingCsv,
   BookingList,
   columnFormatBookingStatus,
-  CarStatus,
   SelectOption,
   Keypress,
   FilterSearch,
   getLocationOptions,
 } from './utils'
-import { useStyles, SearchDatePicker } from './styles'
+import { SearchDatePicker, CustomWidthCell } from './styles'
 
 export default function Booking(): JSX.Element {
+  const useStyles = makeStyles({
+    cellWidth: {
+      minWidth: '100px',
+    },
+    typo: {
+      marginBottom: '0px',
+    },
+    gridTitle: {
+      padding: '20px',
+      paddingBottom: 0,
+    },
+    gridSearch: {
+      padding: '20px',
+    },
+    gridExport: {
+      textAlign: 'right',
+    },
+    marginRight: {
+      marginRight: '50px',
+    },
+    exportButton: {
+      background: '#333c4d',
+      color: '#fff',
+      height: '51px',
+    },
+    table: {
+      border: 0,
+    },
+    pagination: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '20px',
+    },
+    paginationForm: {
+      display: 'inline-flex',
+    },
+    chipBgGreen: {
+      backgroundColor: '#4CAF50',
+      color: '#fff',
+      height: '24px',
+      borderRadius: '64px',
+    },
+    chipBgGray: {
+      backgroundColor: '#E0E0E0',
+      height: '24px',
+      borderRadius: '64px',
+    },
+    wrapText: {
+      lineHeight: '1.5em',
+      height: '3em',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      width: '100%',
+    },
+    csvlink: {
+      color: '#fff',
+      textDecoration: 'none',
+    },
+    columnHeader: {
+      borderLeft: '2px solid #E0E0E0',
+      fontWeight: '500',
+      paddingLeft: '16px',
+    },
+    wrapWidth: {
+      width: '110px',
+    },
+    rowOverflow: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      display: '-webkit-box',
+      '-webkit-line-clamp': 2,
+      '-webkit-box-orient': 'vertical',
+    },
+    paginationContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '20px',
+    },
+    inlineElement: {
+      display: 'inline-flex',
+    },
+    paddingLeftCell: {
+      paddingLeft: '12px',
+    },
+    autoCompleteSelect: {
+      '& fieldSet': {
+        borderColor: '#424E63',
+      },
+    },
+  })
   const classes = useStyles()
   const history = useHistory()
   const { t } = useTranslation()
@@ -92,16 +188,14 @@ export default function Booking(): JSX.Element {
     data: bookingData,
     refetch,
     isFetching,
-  } = useQuery('booking', () => getList({ query, filters: filter }), {
-    refetchOnWindowFocus: false,
-  })
+  } = useQuery('booking', () => getList({ query, filters: filter }))
 
   const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
     getLocationList()
   )
 
   const bookings =
-    bookingData?.data.bookingDetails.map((booking) => {
+    bookingData?.data?.bookingDetails?.map((booking) => {
       return {
         id: booking.bookingId,
         detailId: booking.id,
@@ -110,19 +204,20 @@ export default function Booking(): JSX.Element {
         lastName: booking.customer?.lastName || '-',
         email: booking.customer?.email || '-',
         phone: booking.customer?.phoneNumber || '-',
+        location: booking.car?.resellerServiceArea.areaNameEn || '-',
         brand: booking.car?.carSku?.carModel?.brand.name || '-',
         model: booking.car?.carSku?.carModel?.name || '-',
         plateNumber: booking.car?.plateNumber || '-',
         duration: convertToDuration(booking.rentDetail?.durationDay, t) || '-',
-        status: booking.displayStatus,
-        startDate: booking.startDate,
-        endDate: booking.endDate,
-        price: booking.rentDetail?.chargePrice,
+        status: booking.displayStatus || '-',
+        startDate: booking.startDate || '-',
+        endDate: booking.endDate || '-',
+        price: booking.rentDetail?.chargePrice || 0,
         voucherId: booking.rentDetail?.voucherId || '-',
         voucherCode: booking.rentDetail?.voucherCode || '-',
         createdDate: booking.rentDetail?.createdDate || '-',
         updatedDate: booking.rentDetail?.updatedDate || '-',
-        isExtend: booking.isExtend,
+        isExtend: booking.isExtend || false,
       }
     }) || []
 
@@ -184,19 +279,19 @@ export default function Booking(): JSX.Element {
   dayjs.extend(dayjsUtc)
   dayjs.extend(dayjsTimezone)
   const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
-  const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
+  const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(initSelectedFromDate)
 
   const onSetSelectedSearch = (value: SelectOption | null) => {
     if (value) {
       setSelectedSearch(value)
       setSelectedOptionValue(null)
-      setSelectedFromDate(initSelectedFromDate)
+      setSelectedFromDate(null)
     } else {
       setFilter({})
       setSelectedSearch(null)
       setSelectedOptionValue(null)
       setSelectedLocation(null)
-      setSelectedFromDate(initSelectedFromDate)
+      setSelectedFromDate(null)
       formik.setFieldValue('searchLocation', '')
       formik.setFieldValue('searchType', '')
       formik.setFieldValue('searchInput', '')
@@ -235,9 +330,16 @@ export default function Booking(): JSX.Element {
       return
     }
 
+    const newValue = []
     formik.setFieldValue('searchType', selectedSearch?.value)
     const value = isDropdown && searchText ? searchText : searchValue
-    formik.setFieldValue('searchInput', value)
+
+    if (selectedSearch?.value === 'statusList') {
+      newValue.push(value)
+      formik.setFieldValue('searchInput', newValue)
+    } else {
+      formik.setFieldValue('searchInput', value)
+    }
     formik.handleSubmit()
   }
 
@@ -248,7 +350,7 @@ export default function Booking(): JSX.Element {
   const [locationData, setLocationData] = useState<LocationResponse | null>()
   const locationOptions = getLocationOptions(locationData)
   const defaultLocation = {
-    label: t('car.allLocation'),
+    label: t('booking.allLocation'),
     value: 'all',
   }
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
@@ -277,15 +379,7 @@ export default function Booking(): JSX.Element {
       let filterSearch: FilterSearch = {}
 
       if (searchType) {
-        let keySearch = searchType
-        let valueSearch = searchInput
-
-        if (searchType === 'statusEqual') {
-          keySearch = 'isActive'
-          valueSearch = (searchInput === CarStatus.PUBLISHED).toString()
-        }
-
-        filterSearch = { [keySearch]: valueSearch }
+        filterSearch = { [searchType]: searchInput }
       }
 
       if (searchLocation) {
@@ -344,6 +438,10 @@ export default function Booking(): JSX.Element {
     },
     {
       colName: t('booking.tableHeader.phone'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.tableHeader.location'),
       hidden: false,
     },
     {
@@ -419,6 +517,10 @@ export default function Booking(): JSX.Element {
           </div>
         )
       },
+    },
+    {
+      field: 'location',
+      hidden: false,
     },
     {
       field: 'brand',
@@ -500,7 +602,7 @@ export default function Booking(): JSX.Element {
     })) || (
     <TableRow>
       <TableCell colSpan={columnHead.length} align="center">
-        {t('car.noData')}
+        {t('booking.noData')}
       </TableCell>
     </TableRow>
   )
@@ -508,15 +610,6 @@ export default function Booking(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [page, pageSize, filter, refetch])
-
-  // useEffect(() => {
-  //   if (bookingData?.data?.bookingDetails) {
-  //     const totalPages = Math.ceil(bookingData.data.bookingDetails.length / pageSize)
-  //     const total = totalPages === 0 ? 0 : totalPages - 1
-  //     setPage(Math.min(page, total))
-  //     console.log('use2:', Math.min(page, total))
-  //   }
-  // }, [bookingData, pageSize, page])
 
   useEffect(() => {
     if (isFetchedLocation && locations) {
@@ -544,7 +637,7 @@ export default function Booking(): JSX.Element {
 
   const renderSearchInputField = () => (
     <TextField
-      id="car_search_input"
+      id="booking_search_input"
       type="text"
       variant="outlined"
       fullWidth
@@ -552,7 +645,7 @@ export default function Booking(): JSX.Element {
       onChange={onSearchChange}
       onKeyDown={(event) => onEnterSearch(event as KeyboardEvent<HTMLInputElement>)}
       disabled={!selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''}
-      placeholder={t('car.search')}
+      placeholder={t('booking.selectSearch')}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -601,7 +694,15 @@ export default function Booking(): JSX.Element {
       format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
       inputVariant="outlined"
       onChange={(date) => {
-        date && setSelectedFromDate(date.toDate())
+        if (date) {
+          const newDate = date.toDate()
+          setSelectedFromDate(newDate)
+          const fmtDate = dayjs(newDate).tz(config.timezone).format(DEFAULT_DATE_FORMAT_BFF)
+          console.log('date: ', fmtDate)
+          formik.setFieldValue('searchType', label)
+          formik.setFieldValue('searchInput', fmtDate)
+          formik.handleSubmit()
+        }
       }}
     />
   )
@@ -670,9 +771,9 @@ export default function Booking(): JSX.Element {
                 return (
                   <TextField
                     {...params}
-                    label={t('car.location')}
+                    label={t('booking.carDetail.location')}
                     variant="outlined"
-                    placeholder={t('car.allLocation')}
+                    placeholder={t('booking.allLocation')}
                   />
                 )
               }}
@@ -688,7 +789,7 @@ export default function Booking(): JSX.Element {
           </Grid>
           <Grid item className={classes.gridExport}>
             <Button
-              id="car_csv_button"
+              id="booking_csv_button"
               variant="contained"
               className={classes.exportButton}
               size="large"
@@ -696,7 +797,7 @@ export default function Booking(): JSX.Element {
               <CSVLink
                 data={csvData}
                 headers={csvHeaders}
-                filename={t('sidebar.carManagement.car') + '.csv'}
+                filename={t('sidebar.bookingManagement.title') + '.csv'}
                 className={classes.csvlink}
               >
                 {t('button.export').toLocaleUpperCase()}
@@ -710,9 +811,9 @@ export default function Booking(): JSX.Element {
             <TableHead>
               <TableRow>
                 {columnHead.map((col) => (
-                  <TableCell key={col.colName} hidden={col.hidden}>
+                  <CustomWidthCell key={col.colName} hidden={col.hidden}>
                     <div className={classes.columnHeader}>{col.colName}</div>
-                  </TableCell>
+                  </CustomWidthCell>
                 ))}
               </TableRow>
             </TableHead>
@@ -730,45 +831,48 @@ export default function Booking(): JSX.Element {
           </Table>
         </TableContainer>
         <Card>
-          <div className={classes.paginationContainer}>
-            Rows per page:&nbsp;
-            <FormControl variant="standard" className={classes.inlineElement}>
-              <Select
-                value={bookingData?.data?.pagination?.size || pageSize}
-                defaultValue={bookingData?.data?.pagination?.size || pageSize}
-                onChange={(event) => {
-                  setPage(0)
-                  setPageSize(event.target.value as number)
-                  setQuery({ size: event.target.value as number, page: 1 })
+          {bookingData?.data ? (
+            <div className={classes.paginationContainer}>
+              Rows per page:&nbsp;
+              <FormControl variant="standard" className={classes.inlineElement}>
+                <Select
+                  value={bookingData?.data?.pagination?.size || pageSize}
+                  defaultValue={bookingData?.data?.pagination?.size || pageSize}
+                  onChange={(event) => {
+                    setPage(0)
+                    setPageSize(event.target.value as number)
+                    setQuery({ size: event.target.value as number, page: 1 })
+                  }}
+                >
+                  {config.tableRowsPerPageOptions?.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              &nbsp;&nbsp;{bookingData?.data.pagination?.page} {t('booking.of')}
+              &nbsp;
+              {bookingData?.data.pagination?.totalPage}
+              <Pagination
+                count={bookingData?.data?.pagination?.totalPage}
+                page={bookingData?.data?.pagination?.page || currentPage}
+                defaultPage={bookingData?.data?.pagination?.page || currentPage}
+                variant="text"
+                color="primary"
+                onChange={(_event: React.ChangeEvent<unknown>, selectedPage: number) => {
+                  if (page !== selectedPage) {
+                    setPage(selectedPage)
+                    setQuery({ size: pageSize, page: selectedPage })
+                  } else {
+                    refetch()
+                  }
                 }}
-              >
-                {config.tableRowsPerPageOptions?.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            &nbsp;&nbsp;{bookingData?.data.pagination?.page} {t('car.of')}
-            &nbsp;
-            {bookingData?.data.pagination?.totalPage}
-            <Pagination
-              count={bookingData?.data?.pagination?.totalPage}
-              page={bookingData?.data?.pagination?.page || currentPage}
-              defaultPage={bookingData?.data?.pagination?.page || currentPage}
-              variant="text"
-              color="primary"
-              onChange={(_event: React.ChangeEvent<unknown>, selectedPage: number) => {
-                console.log('pagi:', page, selectedPage, pageSize)
-                if (page !== selectedPage) {
-                  setPage(selectedPage)
-                  setQuery({ size: pageSize, page: selectedPage })
-                } else {
-                  refetch()
-                }
-              }}
-            />
-          </div>
+              />
+            </div>
+          ) : (
+            ''
+          )}
         </Card>
       </Card>
     </Page>

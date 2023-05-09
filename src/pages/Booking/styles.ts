@@ -1,10 +1,17 @@
 import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
+import { TableCell } from '@mui/material'
 import DatePicker from 'components/DatePicker'
 
 export const SearchDatePicker = styled(DatePicker)`
   .MuiInputBase-root {
     height: 51.69px;
+  }
+`
+
+export const CustomWidthCell = styled(TableCell)`
+  .MuiTableCell-root {
+    min-width: 100px;
   }
 `
 
