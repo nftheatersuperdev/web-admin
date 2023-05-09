@@ -24,7 +24,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { makeStyles } from '@mui/styles'
 import styled from 'styled-components'
-import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formatDate } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
 import { Search } from '@mui/icons-material'
@@ -95,6 +95,16 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
     padding: '48px 0',
   },
+  wrapWidth: {
+    width: '110px',
+  },
+  rowOverflow: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical',
+  },
 })
 
 const DividerCustom = styled(Divider)`
@@ -121,8 +131,6 @@ export default function LeadManagement() {
       value: 'leadName',
     },
   ]
-
-  const defaultSelect = searchOptions[0]
 
   const formik = useFormik({
     initialValues: {
@@ -161,7 +169,7 @@ export default function LeadManagement() {
       setSelectedSearch(value)
     } else {
       setFilterSearchField({})
-      setSelectedSearch(defaultSelect)
+      setSelectedSearch(null)
     }
     setSearchValue('')
   }
@@ -185,9 +193,13 @@ export default function LeadManagement() {
       ? leadData?.data.leads.map((item) => {
           return (
             <TableRow hover key={`leadName-${item.id}`}>
-              <TableCell>{item.titleTh}</TableCell>
+              <TableCell>{item.name}</TableCell>
               <TableCell>
-                {formaDateStringWithPattern(item.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                <div className={classes.wrapWidth}>
+                  <div className={classes.rowOverflow}>
+                    {formatDate(item.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                  </div>
+                </div>
               </TableCell>
             </TableRow>
           )
@@ -244,17 +256,15 @@ export default function LeadManagement() {
                   <TextField
                     // eslint-disable-next-line react/jsx-props-no-spreading
                     {...params}
-                    label={t('leadManagement.searchBar.selectSearch.title')}
+                    label={t('car.selectSearch')}
                     variant="outlined"
-                    placeholder={t('all')}
                   />
                 )
               }}
               isOptionEqualToValue={(option, value) =>
-                option.value === value.value || value.value === 'all'
+                option.value === value.value || value.value === ''
               }
-              value={selectedSearch || defaultSelect}
-              defaultValue={selectedSearch || defaultSelect}
+              value={selectedSearch || null}
               onChange={(_e, value) => {
                 onSetSelectedSearch(value)
               }}
@@ -267,6 +277,7 @@ export default function LeadManagement() {
               label={t('carAvailability.searchField.label')}
               id="lead_list_search_input"
               name="searchVal"
+              placeholder={t('car.search')}
               onChange={onSearchChange}
               variant="outlined"
               InputLabelProps={{
