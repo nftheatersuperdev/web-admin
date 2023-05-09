@@ -45,6 +45,7 @@ export function useMenuItems() {
         ROLES.OPERATION,
         ROLES.MARKETING,
         ROLES.PRODUCT_SUPPORT,
+        ROLES.IT_ADMIN,
       ],
       children: [
         {

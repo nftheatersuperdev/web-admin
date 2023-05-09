@@ -207,8 +207,8 @@ export default function Booking(): JSX.Element {
   // == search ==
   const searchOptions: SelectOption[] = [
     {
-      label: t('booking.search.id'),
-      value: 'bookingId',
+      label: t('booking.search.detailId'),
+      value: 'bookingDetailId',
     },
     {
       label: t('booking.search.customer'),
@@ -379,6 +379,7 @@ export default function Booking(): JSX.Element {
     { label: t('booking.tableHeader.lastName'), key: 'lastName' },
     { label: t('booking.tableHeader.email'), key: 'email' },
     { label: t('booking.tableHeader.phone'), key: 'phone' },
+    { label: t('booking.tableHeader.location'), key: 'location' },
     { label: t('booking.tableHeader.brand'), key: 'brand' },
     { label: t('booking.tableHeader.model'), key: 'model' },
     { label: t('booking.tableHeader.plateNumber'), key: 'plateNumber' },
@@ -394,6 +395,7 @@ export default function Booking(): JSX.Element {
       lastName: booking.lastName,
       email: booking.email,
       phone: booking.phone,
+      location: booking.location,
       brand: booking.brand,
       model: booking.model,
       plateNumber: booking.plateNumber,

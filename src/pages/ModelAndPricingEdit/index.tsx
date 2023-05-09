@@ -1,27 +1,510 @@
+/* eslint-disable react/forbid-component-props */
+import styled from 'styled-components'
 import toast from 'react-hot-toast'
-import { useParams } from 'react-router-dom'
+import {
+  Button,
+  Card,
+  Grid,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  MenuItem,
+  InputLabel,
+  TextField,
+  Typography,
+  Select,
+} from '@mui/material'
+import { useParams, useHistory } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import { getModelPriceById } from 'services/web-bff/car'
+import { useFormik } from 'formik'
+import { ROUTE_PATHS } from 'routes'
+import { useState } from 'react'
+import { includes } from 'lodash/fp'
+import { getModelPriceById, updateCarModelById } from 'services/web-bff/car'
+import { CarModelInput, CarModelInputProps } from 'services/web-bff/car.type'
 import { Page } from 'layout/LayoutRoute'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import Backdrop from 'components/Backdrop'
 import { ModelAndPricingEditParams } from './types'
-import ModelForm from './ModelForm'
-import PricingForm from './PricingForm'
+import { carConnectorTypes } from './ModelForm/CarConnectorType'
+
+const Wrapper = styled(Card)`
+  padding: 15px;
+  margin-top: 20px;
+`
+const ContentSection = styled.div`
+  margin-bottom: 20px;
+`
+const SubContentSection = styled.div`
+  margin: 20px 0;
+`
+const GridContainer = styled(Grid)`
+  margin: 20px 0;
+`
+const FormControlLabelHorizontal = styled(FormControlLabel)`
+  display: flex !important;
+`
+const ButtonAction = styled(Button)`
+  margin-right: 15px !important;
+`
 
 export default function ModelAndPricingEdit(): JSX.Element {
+  const { t } = useTranslation()
+  const history = useHistory()
   const { id } = useParams<ModelAndPricingEditParams>()
+  const carBodyTypes = ['SUV', 'Hatchback', 'Wagon', 'Luxury', 'Sedan', 'Crossover']
+  const durationLable = (value: string) => {
+    switch (value) {
+      case '3d':
+        return t('pricing.3d')
+      case '7d':
+        return t('pricing.7d')
+      case '1w':
+        return t('pricing.1w')
+      case '1m':
+        return t('pricing.1m')
+      case '3m':
+        return t('pricing.3m')
+      case '6m':
+        return t('pricing.6m')
+      case '12m':
+        return t('pricing.12m')
+      default:
+        return '-'
+    }
+  }
 
-  const { data: car, isLoadingError } = useQuery('model-and-pricing-edit-page', () =>
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const { data: car, isFetching } = useQuery('model-and-pricing-edit-page', () =>
     getModelPriceById({ id })
   )
 
-  if (isLoadingError) {
-    toast.error(`Loading API error`)
+  const handleOnSubmit = async (values: CarModelInput) => {
+    try {
+      setIsLoading(true)
+      await toast.promise(
+        updateCarModelById({ id: car?.id, carModel: values } as CarModelInputProps),
+        {
+          loading: t('toast.loading'),
+          success: () => {
+            history.goBack()
+            return t('modelAndPricing.editDialog.success')
+          },
+          error: t('modelAndPricing.editDialog.error'),
+        }
+      )
+    } finally {
+      formik.resetForm()
+      setIsLoading(false)
+    }
   }
+
+  const formik = useFormik({
+    initialValues: {
+      brand: car?.brand.name || '-',
+      name: car?.name || '-',
+      seats: car?.seats || 0,
+      bodyType: car?.bodyType || '-',
+      year: car?.year || 0,
+      condition: car?.condition || '-',
+      acceleration: car?.acceleration || 0,
+      topSpeed: car?.topSpeed || 0,
+      range: car?.range || 0,
+      batteryCapacity: car?.batteryCapacity || 0,
+      horsePower: car?.horsePower || 0,
+      fastChargeTime: car?.fastChargeTime || 0,
+      chargeTime: car?.chargeTime || 0,
+      chargers: car?.chargers && car?.chargers.length > 0 ? car?.chargers.map((x) => x.type) : [],
+    },
+    enableReinitialize: true,
+    onSubmit: handleOnSubmit,
+  })
+
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.carManagement.title'),
+      link: '',
+    },
+    {
+      text: t('sidebar.carManagement.carModelAndPricing'),
+      link: ROUTE_PATHS.MODEL_AND_PRICING,
+    },
+    {
+      text: t('sidebar.carManagement.carModelAndPricingDetail'),
+      link: ROUTE_PATHS.MODEL_AND_PRICING_EDIT,
+    },
+  ]
 
   return (
     <Page>
-      <ModelForm car={car} />
-      <PricingForm rentalPackages={car?.rentalPackages} />
+      <PageTitle
+        title={t('sidebar.carManagement.carModelAndPricingDetail')}
+        breadcrumbs={breadcrumbs}
+      />
+      <Wrapper>
+        <ContentSection>
+          <Typography variant="h6" component="h1">
+            {t('sidebar.carManagement.carModelAndPricingDetail')}
+          </Typography>
+
+          {/* Overview */}
+          <SubContentSection>
+            <Typography variant="h6" component="h2">
+              {t('modelForm.overview')}
+            </Typography>
+            <br />
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.brand')}
+                  id="brand"
+                  name="brand"
+                  variant="outlined"
+                  value={formik.values.brand}
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                    disabled: true,
+                  }}
+                  disabled
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.model')}
+                  id="name"
+                  name="name"
+                  variant="outlined"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="bodyTypeId">{t('carModel.bodyType')}</InputLabel>
+                  <Select
+                    labelId="bodyType"
+                    label={t('carModel.bodyType')}
+                    id="bodyType"
+                    name="bodyType"
+                    value={formik.values.bodyType.toLocaleUpperCase()}
+                    onChange={formik.handleChange}
+                  >
+                    {carBodyTypes?.map((bodyType) => (
+                      <MenuItem key={bodyType} value={bodyType.toLocaleUpperCase()}>
+                        {bodyType}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.seats')}
+                  id="seats"
+                  name="seats"
+                  variant="outlined"
+                  value={formik.values.seats}
+                  type="number"
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.modelYear')}
+                  id="year"
+                  name="year"
+                  variant="outlined"
+                  value={formik.values.year}
+                  type="number"
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer container spacing={3}>
+              <Grid item md={12}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.condition')}
+                  id="condition"
+                  name="condition"
+                  variant="outlined"
+                  value={formik.values.condition}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={formik.handleChange}
+                  multiline
+                  rows={2}
+                  maxRows={4}
+                />
+              </Grid>
+            </GridContainer>
+          </SubContentSection>
+
+          {/* Performance */}
+          <SubContentSection>
+            <Typography variant="h6" component="h2">
+              {t('modelForm.performance')}
+            </Typography>
+            <br />
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.acceleration')}
+                  id="acceleration"
+                  name="acceleration"
+                  variant="outlined"
+                  type="number"
+                  onChange={formik.handleChange}
+                  value={formik.values.acceleration}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.topSpeed')}
+                  id="topSpeed"
+                  name="topSpeed"
+                  variant="outlined"
+                  type="number"
+                  onChange={formik.handleChange}
+                  value={formik.values.topSpeed}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.range')}
+                  id="range"
+                  name="range"
+                  variant="outlined"
+                  type="number"
+                  onChange={formik.handleChange}
+                  value={formik.values.range}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.batteryCapacity')}
+                  id="batteryCapacity"
+                  name="batteryCapacity"
+                  variant="outlined"
+                  type="number"
+                  value={formik.values.batteryCapacity}
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.horsePower')}
+                  id="horsePower"
+                  name="horsePower"
+                  variant="outlined"
+                  type="number"
+                  value={formik.values.horsePower}
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+          </SubContentSection>
+
+          {/* Charging */}
+          <SubContentSection>
+            <Typography variant="h6" component="h2">
+              {t('modelForm.charging')}
+            </Typography>
+            <br />
+            <GridContainer container spacing={3}>
+              <Grid item md={12}>
+                {t('carModel.connectorType')}
+                <div>
+                  <FormControl
+                    component="fieldset"
+                    style={{ display: 'flex', flexDirection: 'row' }}
+                  >
+                    {carConnectorTypes?.map((connectorType) => (
+                      <FormControlLabelHorizontal
+                        control={
+                          <Checkbox
+                            key={connectorType.type}
+                            onChange={formik.handleChange}
+                            name="chargers"
+                            color="primary"
+                            value={connectorType.type}
+                            checked={includes(connectorType.type)(formik.values.chargers)}
+                          />
+                        }
+                        label={connectorType.type}
+                        key={connectorType.id}
+                      />
+                    ))}
+                  </FormControl>
+                </div>
+              </Grid>
+            </GridContainer>
+            <GridContainer container spacing={3}>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.chargeTime')}
+                  id="chargeTime"
+                  name="chargeTime"
+                  variant="outlined"
+                  type="number"
+                  value={formik.values.chargeTime}
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModel.fastChargeTime')}
+                  id="fastChargeTime"
+                  name="fastChargeTime"
+                  variant="outlined"
+                  value={formik.values.fastChargeTime}
+                  onChange={formik.handleChange}
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </GridContainer>
+          </SubContentSection>
+
+          {/* Plan */}
+          <SubContentSection>
+            <Typography variant="h6" component="h2">
+              {t('pricing.plan')}
+            </Typography>
+            <br />
+            {car?.rentalPackages.map((rentalPackage) => {
+              const packageId = `${rentalPackage.id}-${rentalPackage.durationLabel}`
+              return (
+                <GridContainer container spacing={3} key={packageId}>
+                  <Grid item md={2}>
+                    <Typography variant="subtitle2" align="right" style={{ paddingTop: '14px' }}>
+                      {durationLable(rentalPackage.durationLabel)}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={3}>
+                    <TextField
+                      fullWidth
+                      label={`${t('pricing.price')} (bath)`}
+                      id={`${packageId}-price`}
+                      name={`${packageId}-price`}
+                      variant="outlined"
+                      value={rentalPackage.price.toLocaleString()}
+                      disabled
+                      // InputProps={{
+                      //   readOnly: true,
+                      // }}
+                    />
+                  </Grid>
+                  <Grid item md={3}>
+                    <TextField
+                      fullWidth
+                      label={`${t('pricing.fullPrice')} (bath)`}
+                      id={`${packageId}-full-price`}
+                      name={`${packageId}-full-price`}
+                      variant="outlined"
+                      value={rentalPackage.fullPrice.toLocaleString()}
+                      disabled
+                      // InputProps={{
+                      //   readOnly: true,
+                      // }}
+                    />
+                  </Grid>
+                  <Grid item md={4}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      label={t('pricing.description')}
+                      id={`${packageId}-description`}
+                      name={`${packageId}-description`}
+                      variant="outlined"
+                      value={rentalPackage.description.toLocaleString()}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      disabled
+                      // InputProps={{
+                      //   readOnly: true,
+                      // }}
+                    />
+                  </Grid>
+                </GridContainer>
+              )
+            })}
+          </SubContentSection>
+
+          {/* Buttons */}
+          <SubContentSection>
+            <ButtonAction
+              onClick={() => formik.handleSubmit()}
+              color="primary"
+              variant="contained"
+              disabled={isLoading}
+            >
+              {t('button.update')}
+            </ButtonAction>
+            <ButtonAction
+              onClick={() => history.push(ROUTE_PATHS.MODEL_AND_PRICING)}
+              variant="outlined"
+              disabled={isLoading}
+            >
+              {t('button.cancel')}
+            </ButtonAction>
+          </SubContentSection>
+        </ContentSection>
+      </Wrapper>
+      <Backdrop open={isLoading || isFetching} />
     </Page>
   )
 }

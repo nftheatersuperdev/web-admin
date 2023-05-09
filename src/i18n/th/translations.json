@@ -71,12 +71,15 @@
       "carAvailability": "สถานะการใช้รถ",
       "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
       "carActivity": "การใช้งานรถ",
-      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ"
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ",
+      "carModelAndPricingList": "รายการ รุ่น & ราคาแพ็คเกจ",
+      "carModelAndPricingDetail": "รายละเอียด รุ่น & ราคาแพ็คเกจ"
     },
     "bookingManagement": {
       "title": "การจัดการจอง",
       "booking": "การจอง",
-      "detail": "รายละเอียดการจอง"
+      "detail": "รายละเอียดการจอง",
+      "carDetail": "รายละเอียดรถยนต์ที่ต้องจัดส่ง"
     },
     "voucherManagement": {
       "title": "การจัดการวอชเชอร์",
@@ -269,8 +272,8 @@
     },
     "updateDialog": {
       "title": "แก้ไขข้อมูลพนักงาน",
-      "success": "แก้ไขข้อมูลพนักงานสำเร็จ",
-      "error": "แก้ไขข้อมูลพนักงานไม่สำเร็จ",
+      "success": "แก้ไขข้อมูลสำเร็จ",
+      "error": "แก้ไขข้อมูลไม่สำเร็จ",
       "cannotUpdate": "ไม่สามารถแก้ไขข้อมูลพนักงานซ้ำได้"
     }
   },
@@ -416,6 +419,7 @@
     "pricePerSixMonths": "ราคาต่อ 6 เดือน",
     "pricePerTwelveMonths": "ราคาต่อ 12 เดือน",
     "3d": "3 วัน",
+    "7d": "7 วัน",
     "1w": "1 สัปดาห์",
     "1m": "1 เดือน",
     "3m": "3 เดือน",
@@ -559,7 +563,7 @@
     "allLocation": "สถานที่บริการทั้งหมด",
     "of": "จาก",
     "search": {
-      "id": "รหัสการจอง",
+      "detailId": "รหัสการจอง",
       "customer": "รหัสลูกค้า",
       "email": "อีเมล",
       "carId": "รหัสรถยนต์",
@@ -630,6 +634,7 @@
     },
     "carDetail": {
       "title": "รายละเอียดรถยนต์และการจัดส่ง",
+      "titleCar": "รายละเอียดรถยนต์",
       "replacement": "รถทดแทน",
       "no": "ลำดับ",
       "location": "สถานที่บริการ",
@@ -639,6 +644,11 @@
       "plateNumber": "เลขทะเบียน",
       "vin": "หมายเลขตัวถัง",
       "pickupDate": "วันที่รับรถ",
+      "pickupTime": "เวลาที่รับรถ",
+      "pickupAddress": "สถานที่รับรถ",
+      "ReturnAddress": "สถานที่คืนรถ",
+      "pickupAddressRemark": "หมายเหตุสถานที่รับรถ",
+      "ReturnAddressRemark": "หมายเหตุสถานที่คืนรถ",
       "deliveryDate": "วันที่จัดส่ง",
       "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
@@ -649,7 +659,8 @@
       },
       "owner": "ผู้ถือกรรมสิทธิ์",
       "reseller": "ตัวแทนจำหน่าย",
-      "remark": "หมายเหตุ"
+      "remark": "หมายเหตุ",
+      "createDate": "วันที่สร้าง"
     },
     "carReplacement": {
       "title": "การจัดการรถทดแทน",
@@ -1351,5 +1362,6 @@
         }
       }
     }
-  }
+  },
+  "noData": "ไม่มีข้อมูล"
 }

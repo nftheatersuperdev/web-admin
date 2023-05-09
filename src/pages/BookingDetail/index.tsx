@@ -85,6 +85,7 @@ export default function SubscriptionDetail(): JSX.Element {
       : {
           carActivities: [],
           displayStatus: '',
+          status: '',
           startDate: '',
           endDate: '',
           createdDate: '',
@@ -163,8 +164,8 @@ export default function SubscriptionDetail(): JSX.Element {
               disabled
               variant="outlined"
               value={
-                bookingDetail?.displayStatus
-                  ? columnFormatSubEventStatus(bookingDetail?.displayStatus, t)
+                bookingDetail?.status
+                  ? columnFormatSubEventStatus(bookingDetail?.status, t)
                   : t('booking.statuses.unknown')
               }
             />

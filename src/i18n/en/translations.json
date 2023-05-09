@@ -71,12 +71,15 @@
       "carAvailability": "Car Availability",
       "carAvailabilityDetail": "Car Availability Detail",
       "carActivity": "Car Activity",
-      "carModelAndPricing": "Model & Pricing"
+      "carModelAndPricing": "Model & Pricing",
+      "carModelAndPricingList": "Model & Pricing List",
+      "carModelAndPricingDetail": "Model & Pricing Detail"
     },
     "bookingManagement": {
       "title": "Booking Management",
       "booking": "Booking",
-      "detail": "Booking Details"
+      "detail": "Booking Details",
+      "carDetail": "Car Delivery Detail"
     },
     "voucherManagement": {
       "title": "Voucher Management",
@@ -268,9 +271,9 @@
       "failed": "Something went wrong ({{error}})"
     },
     "updateDialog": {
-      "title": "Update Admin User",
-      "success": "Updated admin user successfully",
-      "error": "Failed to update admin user",
+      "title": "Update Staff",
+      "success": "Update staff successfully",
+      "error": "Failed to update staff",
       "cannotUpdate": "Cannot update same value"
     }
   },
@@ -416,6 +419,7 @@
     "pricePerSixMonths": "6 Months",
     "pricePerTwelveMonths": "12 Months",
     "3d": "3 Days",
+    "7d": "7 Days",
     "1w": "1 Week",
     "1m": "1 Month",
     "3m": "3 Months",
@@ -559,15 +563,15 @@
     "allLocation": "All Location",
     "of": "of",
     "search": {
-      "id": "Booking ID",
+      "detailId": "Booking Detail ID",
       "customer": "Customer ID",
       "email": "Email",
       "carId": "Car ID",
       "plateNumber": "Plate Number",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "status": "Booking Status",
-      "isExtend": "Is Extend",
+      "status": "Status",
+      "isExtend": "Is Extended",
       "voucherId": "Voucher ID",
       "deliveryDate": "Delivery Date",
       "returnDate": "Return Date"
@@ -630,6 +634,7 @@
     },
     "carDetail": {
       "title": "Car Detail & Delivery Detail",
+      "titleCar": "Car Detail",
       "replacement": "Replacement",
       "no": "No.",
       "location": "Location Service",
@@ -639,6 +644,11 @@
       "plateNumber": "Plate Number",
       "vin": "VIN",
       "pickupDate": "Pick Up Date",
+      "pickupTime": "Pick Up Time",
+      "pickupAddress": "Pick Up Address",
+      "ReturnAddress": "Return Address",
+      "pickupAddressRemark": "Pick Up Address Remark",
+      "ReturnAddressRemark": "Return Address Remark",
       "deliveryDate": "Delivery Date",
       "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
@@ -649,7 +659,8 @@
       },
       "owner": "Owner",
       "reseller": "Reseller",
-      "remark": "Remark"
+      "remark": "Remark",
+      "createDate": "Created Date"
     },
     "carReplacement": {
       "title": "Car Replacement",
@@ -1390,5 +1401,6 @@
         }
       }
     }
-  }
+  },
+  "noData": "No records to display"
 }
