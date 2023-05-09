@@ -125,11 +125,6 @@ export default function SubscriptionDetail(): JSX.Element {
   const [carDetailDialogOpen, setCarDetailDialogOpen] = useState<boolean>(false)
   const [carReplacementDialogOpen, setCarReplacementlogOpen] = useState<boolean>(false)
 
-  const handleClickToOpenDetailDialog = (carActivity: BookingCarActivity) => {
-    setCarDetail(carActivity)
-    setCarDetailDialogOpen(true)
-  }
-
   const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
   const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [ROLES.OPERATION])
   const isEndDateOverToday = bookingDetail ? new Date(bookingDetail?.endDate) < new Date() : false
@@ -340,7 +335,12 @@ export default function SubscriptionDetail(): JSX.Element {
                 carActivities.map((carActivity, index) => (
                   <TableRow
                     key={carActivity.carId}
-                    onClick={() => handleClickToOpenDetailDialog(carActivity)}
+                    onClick={() =>
+                      history.push({
+                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity.carId}`,
+                        state: carActivity,
+                      })
+                    }
                   >
                     <TableCell component="th" scope="row">
                       {index + 1 || '-'}
