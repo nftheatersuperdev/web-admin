@@ -76,7 +76,8 @@
     },
     "bookingManagement": {
       "title": "Booking Management",
-      "booking": "Booking"
+      "booking": "Booking",
+      "detail": "Booking Details"
     },
     "voucherManagement": {
       "title": "Voucher Management",
@@ -555,6 +556,54 @@
     "isSelfPickup": "IsSelfPickup"
   },
   "booking": {
+    "noData": "No Data Found",
+    "allLocation": "All Location",
+    "of": "of",
+    "search": {
+      "id": "Booking ID",
+      "customer": "Customer ID",
+      "email": "Email",
+      "carId": "Car ID",
+      "plateNumber": "Plate Number",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Booking Status",
+      "isExtend": "Is Extend",
+      "voucherId": "Voucher ID",
+      "deliveryDate": "Delivery Date",
+      "returnDate": "Return Date"
+    },
+    "list": "Booking List",
+    "selectSearch": "Select Search",
+    "enterSearch": "Enter Search",
+    "selectStatus": "Select Status",
+    "selectIsExtend": "Select Is Extend",
+    "status": {
+      "title": "Status",
+      "reserved": "Reserved",
+      "accepted": "Accepted",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "upcoming_cancelled": "Upcoming Cancelled",
+      "refused": "Refused",
+      "completed": "Completed",
+      "extended": "Extended",
+      "manual_extended": "Manual Extended"
+    },
+    "tableHeader": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "duration": "Duration",
+      "status": "Booking Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "location": "Location Service"
+    },
     "statuses": {
       "accepted": "Accepted",
       "available": "Available",
@@ -566,13 +615,31 @@
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"
     },
+    "details": {
+      "id": "Booking Detail ID",
+      "status": "Booking Status",
+      "price": "Price(Baht)",
+      "duration": "Duration",
+      "voucherId": "Voucher ID",
+      "voucherCode": "Voucher Code",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "createDate": "Created Date",
+      "updateDate": "Update Date",
+      "isExtend": "Is Extended",
+      "parentId": "Parent Id"
+    },
     "carDetail": {
+      "title": "Car Detail & Delivery Detail",
       "replacement": "Replacement",
       "no": "No.",
+      "location": "Location Service",
       "brand": "Car Brand",
       "model": "Car Model",
+      "color": "Colour",
       "plateNumber": "Plate Number",
       "vin": "VIN",
+      "pickupDate": "Pick Up Date",
       "deliveryDate": "Delivery Date",
       "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
@@ -581,6 +648,8 @@
         "deliverByEVme": "Deliver by EVme",
         "selfPickUp": "Self Pick Up"
       },
+      "owner": "Owner",
+      "reseller": "Reseller",
       "remark": "Remark"
     },
     "carReplacement": {
@@ -606,6 +675,24 @@
         "title": "Car Replacement Confirmation",
         "description": "Are you sure to Update Car replacement / Subscription ID {{bookingDetailId}}?<br/><br/><strong>Modify by:</strong> {{editorEmail}}"
       }
+    },
+    "customer": {
+      "title": "Customer Detail",
+      "customerId": "Customer ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number"
+    },
+    "payment": {
+      "title": "Payment Status",
+      "id": "Payment ID",
+      "amount": "Amount(THB)",
+      "paymentType": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message",
+      "updatedDate": "Update Date"
     }
   },
   "newSubcription": {

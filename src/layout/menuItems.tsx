@@ -122,7 +122,7 @@ export function useMenuItems() {
     {
       id: 'left_menu__booking_management',
       title: t('sidebar.bookingManagement.title'),
-      href: ROUTE_PATHS.SUBSCRIPTION,
+      href: ROUTE_PATHS.BOOKING,
       icon: BarChart,
       allowedRoles: [
         ROLES.SUPER_ADMIN,
@@ -135,7 +135,7 @@ export function useMenuItems() {
         {
           id: 'left_menu__booking',
           title: t('sidebar.bookingManagement.booking'),
-          href: ROUTE_PATHS.SUBSCRIPTION,
+          href: ROUTE_PATHS.BOOKING,
           allowedRoles: [
             ROLES.SUPER_ADMIN,
             ROLES.ADMIN,
