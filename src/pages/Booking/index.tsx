@@ -224,8 +224,8 @@ export default function Booking(): JSX.Element {
   // == search ==
   const searchOptions: SelectOption[] = [
     {
-      label: t('booking.search.id'),
-      value: 'bookingId',
+      label: t('booking.search.detailId'),
+      value: 'bookingDetailId',
     },
     {
       label: t('booking.search.customer'),
