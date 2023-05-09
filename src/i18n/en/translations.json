@@ -1304,5 +1304,6 @@
         }
       }
     }
-  }
+  },
+  "noData": "No records to display"
 }

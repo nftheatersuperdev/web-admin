@@ -79,6 +79,9 @@ const PaginationWrapper = styled(Pagination)`
 const PageSize = styled(Box)`
   padding: 5px 0;
 `
+const NoData = styled.div`
+  padding: 20px;
+`
 
 const formatDate = (date: string): string => dayjs(date).format('DD MMM YYYY')
 const formatTime = (date: string): string => dayjs(date).format('HH:mm')
@@ -116,52 +119,60 @@ export default function ModelAndPricing(): JSX.Element {
   // eslint-disable-next-line
   const csvData: any = []
   const cars =
-    carData?.data.cars?.map((car) => {
-      const carId = car?.id || '-'
-      const modelId = car?.carSku?.carModel?.id || '-'
-      const brand = car?.carSku?.carModel?.brand?.name || '-'
-      const name = car?.carSku?.carModel?.name || '-'
-      const createdDate = car?.createdDate || '-'
-      const updatedDate = car?.updatedDate || '-'
+    carData?.data.cars && carData?.data.cars.length >= 1
+      ? carData?.data.cars?.map((car) => {
+          const carId = car?.id || '-'
+          const modelId = car?.carSku?.carModel?.id || '-'
+          const brand = car?.carSku?.carModel?.brand?.name || '-'
+          const name = car?.carSku?.carModel?.name || '-'
+          const createdDate = car?.createdDate || '-'
+          const updatedDate = car?.updatedDate || '-'
 
-      csvData.push({
-        carId,
-        modelId,
-        brand,
-        name,
-        createdDate: formaDateStringWithPattern(createdDate, DEFAULT_DATETIME_FORMAT),
-        updatedDate: formaDateStringWithPattern(updatedDate, DEFAULT_DATETIME_FORMAT),
-      })
+          csvData.push({
+            carId,
+            modelId,
+            brand,
+            name,
+            createdDate: formaDateStringWithPattern(createdDate, DEFAULT_DATETIME_FORMAT),
+            updatedDate: formaDateStringWithPattern(updatedDate, DEFAULT_DATETIME_FORMAT),
+          })
 
-      return (
-        <TableRow
-          hover
-          key={`car-${carId}`}
-          onClick={() => history.push(`/model-and-pricing/${modelId}/edit`)}
-        >
-          <TableCell>
-            <DataWrapper>{formatStringForInputText(brand)}</DataWrapper>
-          </TableCell>
-          <TableCell>
-            <DataWrapper>{formatStringForInputText(name)}</DataWrapper>
-          </TableCell>
-          <TableCell>
-            <DataWrapper>
-              {formatDate(createdDate)}
-              <br />
-              {formatTime(createdDate)}
-            </DataWrapper>
-          </TableCell>
-          <TableCell>
-            <DataWrapper>
-              {formatDate(updatedDate)}
-              <br />
-              {formatTime(updatedDate)}
-            </DataWrapper>
-          </TableCell>
-        </TableRow>
-      )
-    }) || []
+          return (
+            <TableRow
+              hover
+              key={`car-${carId}`}
+              onClick={() => history.push(`/model-and-pricing/${modelId}/edit`)}
+            >
+              <TableCell>
+                <DataWrapper>{formatStringForInputText(brand)}</DataWrapper>
+              </TableCell>
+              <TableCell>
+                <DataWrapper>{formatStringForInputText(name)}</DataWrapper>
+              </TableCell>
+              <TableCell>
+                <DataWrapper>
+                  {formatDate(createdDate)}
+                  <br />
+                  {formatTime(createdDate)}
+                </DataWrapper>
+              </TableCell>
+              <TableCell>
+                <DataWrapper>
+                  {formatDate(updatedDate)}
+                  <br />
+                  {formatTime(updatedDate)}
+                </DataWrapper>
+              </TableCell>
+            </TableRow>
+          )
+        })
+      : [
+          <TableRow key="no-data">
+            <TableCell colSpan={4} align="center">
+              <NoData>{t('noData')}</NoData>
+            </TableCell>
+          </TableRow>,
+        ]
 
   const handleSubmitSearch = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event?.key.toLocaleLowerCase() === 'enter') {
@@ -284,8 +295,8 @@ export default function ModelAndPricing(): JSX.Element {
               {t('table.rowPerPage')}:{' '}
               <Select
                 disabled={isFetching}
-                value={carData?.data.pagination.size}
-                defaultValue={carData?.data.pagination.size}
+                value={carData?.data.pagination?.size || pageSize}
+                defaultValue={pageSize}
                 onChange={(event) => {
                   setPage(0)
                   setPageSize(event.target.value as number)
@@ -303,9 +314,9 @@ export default function ModelAndPricing(): JSX.Element {
             </PageSize>
             <PaginationWrapper
               disabled={isFetching}
-              count={carData?.data.pagination.totalPage}
-              page={carData?.data.pagination.page}
-              defaultPage={carData?.data.pagination.page}
+              count={carData?.data.pagination?.totalPage || 1}
+              page={carData?.data.pagination?.page || page}
+              defaultPage={carData?.data.pagination?.page || page}
               variant="text"
               shape="circular"
               color="primary"
