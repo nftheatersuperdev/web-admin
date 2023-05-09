@@ -72,7 +72,8 @@
       "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
       "carActivity": "การใช้งานรถ",
       "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ",
-      "carModelAndPricingList": "รายการ รุ่น & ราคาแพ็คเกจ"
+      "carModelAndPricingList": "รายการ รุ่น & ราคาแพ็คเกจ",
+      "carModelAndPricingDetail": "รายละเอียด รุ่น & ราคาแพ็คเกจ"
     },
     "bookingManagement": {
       "title": "การจัดการจอง",
@@ -417,6 +418,7 @@
     "pricePerSixMonths": "ราคาต่อ 6 เดือน",
     "pricePerTwelveMonths": "ราคาต่อ 12 เดือน",
     "3d": "3 วัน",
+    "7d": "7 วัน",
     "1w": "1 สัปดาห์",
     "1m": "1 เดือน",
     "3m": "3 เดือน",
