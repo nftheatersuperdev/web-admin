@@ -151,6 +151,8 @@ export interface BookingRental {
   payments: BookingPayment[]
   updatedBy: string
   isSelfPickUp: boolean
+  createdDate: string
+  updatedDate: string
 }
 
 interface ServiceTypeLocation {

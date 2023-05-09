@@ -87,6 +87,8 @@ export default function SubscriptionDetail(): JSX.Element {
           displayStatus: '',
           startDate: '',
           endDate: '',
+          createdDate: '',
+          updatedDate: '',
           customer: {
             firstName: '',
             lastName: '',
@@ -253,9 +255,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.rentDetail.createdDate).format(
-                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-              )}
+              value={dayjs(bookingDetail?.createdDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -266,9 +266,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.rentDetail.updatedDate).format(
-                DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-              )}
+              value={dayjs(bookingDetail?.updatedDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
             />
           </Grid>
         </Grid>
