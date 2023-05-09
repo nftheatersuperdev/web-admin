@@ -71,7 +71,8 @@
       "carAvailability": "Car Availability",
       "carAvailabilityDetail": "Car Availability Detail",
       "carActivity": "Car Activity",
-      "carModelAndPricing": "Model & Pricing"
+      "carModelAndPricing": "Model & Pricing",
+      "carModelAndPricingList": "Model & Pricing List"
     },
     "bookingManagement": {
       "title": "Booking Management",
@@ -1303,5 +1304,6 @@
         }
       }
     }
-  }
+  },
+  "noData": "No records to display"
 }
