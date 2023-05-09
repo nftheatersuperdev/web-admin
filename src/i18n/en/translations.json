@@ -72,7 +72,8 @@
       "carAvailabilityDetail": "Car Availability Detail",
       "carActivity": "Car Activity",
       "carModelAndPricing": "Model & Pricing",
-      "carModelAndPricingList": "Model & Pricing List"
+      "carModelAndPricingList": "Model & Pricing List",
+      "carModelAndPricingDetail": "Model & Pricing Detail"
     },
     "bookingManagement": {
       "title": "Booking Management",
@@ -416,6 +417,7 @@
     "pricePerSixMonths": "6 Months",
     "pricePerTwelveMonths": "12 Months",
     "3d": "3 Days",
+    "7d": "7 Days",
     "1w": "1 Week",
     "1m": "1 Month",
     "3m": "3 Months",
