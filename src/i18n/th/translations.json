@@ -71,7 +71,8 @@
       "carAvailability": "สถานะการใช้รถ",
       "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
       "carActivity": "การใช้งานรถ",
-      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ"
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ",
+      "carModelAndPricingList": "รายการ รุ่น & ราคาแพ็คเกจ"
     },
     "bookingManagement": {
       "title": "การจัดการจอง",
@@ -1351,5 +1352,6 @@
         }
       }
     }
-  }
+  },
+  "noData": "ไม่มีข้อมูล"
 }
