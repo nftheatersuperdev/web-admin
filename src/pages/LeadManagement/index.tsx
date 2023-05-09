@@ -273,16 +273,12 @@ export default function LeadManagement() {
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} item xs={3}>
             <TextField
               fullWidth
-              // className={selectedSearch?.value === 'leadName' ? '' : classes.hideObject}
               label={t('carAvailability.searchField.label')}
               id="lead_list_search_input"
               name="searchVal"
               placeholder={t('car.search')}
               onChange={onSearchChange}
               variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
               onKeyDown={onEnterSearch}
               InputProps={{
                 endAdornment: (
