@@ -66,6 +66,9 @@ export default function StaffProfileDetail(): JSX.Element {
     w83: {
       width: '83px',
     },
+    hideObject: {
+      display: 'none',
+    },
   })
   const { t, i18n } = useTranslation()
   const classes = useStyles()
@@ -326,7 +329,7 @@ export default function StaffProfileDetail(): JSX.Element {
         </form>
       </Card>
       <div className={classes.bottomContrainer}>
-        <Button className={classes.deleteButton} variant="outlined">
+        <Button className={classes.hideObject} variant="outlined">
           {t('button.deleteProfile').toUpperCase()}
         </Button>
       </div>
