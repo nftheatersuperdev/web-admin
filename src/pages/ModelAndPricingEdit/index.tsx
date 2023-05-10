@@ -61,6 +61,9 @@ const TextFieldReadOnly = styled(TextField)`
 const TextIndent = styled.div`
   margin-left: 14px;
 `
+const ConnectorTypeContainer = styled.div`
+  margin-top: 10px;
+`
 
 export default function ModelAndPricingEdit(): JSX.Element {
   const { t } = useTranslation()
@@ -399,7 +402,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={12}>
                 <TextIndent>
                   {t('carModelAndPricing.detail.connectorType')}
-                  <div>
+                  <ConnectorTypeContainer>
                     <FormControl
                       component="fieldset"
                       style={{ display: 'flex', flexDirection: 'row' }}
@@ -421,7 +424,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                         />
                       ))}
                     </FormControl>
-                  </div>
+                  </ConnectorTypeContainer>
                 </TextIndent>
               </Grid>
             </GridContainer>
