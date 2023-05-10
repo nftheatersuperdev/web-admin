@@ -38,7 +38,10 @@ const ContentSection = styled.div`
   margin-bottom: 20px;
 `
 const SubContentSection = styled.div`
-  margin: 20px 0;
+  margin: 40px 0 20px 0;
+`
+const SubContentSectionWithoutMargin = styled.div`
+  margin: 0;
 `
 const GridContainer = styled(Grid)`
   margin: 20px 0;
@@ -519,7 +522,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
           </SubContentSection>
 
           {/* Buttons */}
-          <SubContentSection>
+          <SubContentSectionWithoutMargin>
             <ButtonAction
               onClick={() => formik.handleSubmit()}
               color="primary"
@@ -535,7 +538,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
             >
               {t('carModelAndPricing.detail.button.cancel')}
             </ButtonAction>
-          </SubContentSection>
+          </SubContentSectionWithoutMargin>
         </ContentSection>
       </Wrapper>
       <Backdrop open={isLoading || isFetching} />
