@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
   Select,
+  Skeleton,
 } from '@mui/material'
 import { useParams, useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -140,6 +141,28 @@ export default function ModelAndPricingEdit(): JSX.Element {
       link: ROUTE_PATHS.MODEL_AND_PRICING_EDIT,
     },
   ]
+
+  const maxPricePlan = 6
+  const renderSkeletonPlan = []
+  for (let i = 0; i < maxPricePlan; i++) {
+    renderSkeletonPlan.push(
+      <GridContainer container spacing={3}>
+        <Grid item md={1} />
+        <Grid item md={1}>
+          <Skeleton variant="rectangular" />
+        </Grid>
+        <Grid item md={3}>
+          <Skeleton variant="rectangular" />
+        </Grid>
+        <Grid item md={3}>
+          <Skeleton variant="rectangular" />
+        </Grid>
+        <Grid item md={4}>
+          <Skeleton variant="rectangular" />
+        </Grid>
+      </GridContainer>
+    )
+  }
 
   return (
     <Page>
@@ -428,64 +451,70 @@ export default function ModelAndPricingEdit(): JSX.Element {
               {t('pricing.plan')}
             </Typography>
             <br />
-            {car?.rentalPackages.map((rentalPackage) => {
-              const packageId = `${rentalPackage.id}-${rentalPackage.durationLabel}`
-              return (
-                <GridContainer container spacing={3} key={packageId}>
-                  <Grid item md={2}>
-                    <Typography variant="subtitle2" align="right" style={{ paddingTop: '14px' }}>
-                      {durationLable(rentalPackage.durationLabel)}
-                    </Typography>
-                  </Grid>
-                  <Grid item md={3}>
-                    <TextField
-                      fullWidth
-                      label={`${t('pricing.price')} (${t('pricing.currency.thb')})`}
-                      id={`${packageId}-price`}
-                      name={`${packageId}-price`}
-                      variant="outlined"
-                      value={rentalPackage.price.toLocaleString()}
-                      disabled
-                      // InputProps={{
-                      //   readOnly: true,
-                      // }}
-                    />
-                  </Grid>
-                  <Grid item md={3}>
-                    <TextField
-                      fullWidth
-                      label={`${t('pricing.fullPrice')} (${t('pricing.currency.thb')})`}
-                      id={`${packageId}-full-price`}
-                      name={`${packageId}-full-price`}
-                      variant="outlined"
-                      value={rentalPackage.fullPrice.toLocaleString()}
-                      disabled
-                      // InputProps={{
-                      //   readOnly: true,
-                      // }}
-                    />
-                  </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      fullWidth
-                      multiline
-                      label={t('pricing.description')}
-                      id={`${packageId}-description`}
-                      name={`${packageId}-description`}
-                      variant="outlined"
-                      value={rentalPackage.description.toLocaleString()}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      disabled
-                      // InputProps={{
-                      //   readOnly: true,
-                      // }}
-                    />
-                  </Grid>
-                </GridContainer>
-              )
-            })}
+            {isFetching
+              ? renderSkeletonPlan
+              : car?.rentalPackages.map((rentalPackage) => {
+                  const packageId = `${rentalPackage.id}-${rentalPackage.durationLabel}`
+                  return (
+                    <GridContainer container spacing={3} key={packageId}>
+                      <Grid item md={2}>
+                        <Typography
+                          variant="subtitle2"
+                          align="right"
+                          style={{ paddingTop: '14px' }}
+                        >
+                          {durationLable(rentalPackage.durationLabel)}
+                        </Typography>
+                      </Grid>
+                      <Grid item md={3}>
+                        <TextField
+                          fullWidth
+                          label={`${t('pricing.price')} (${t('pricing.currency.thb')})`}
+                          id={`${packageId}-price`}
+                          name={`${packageId}-price`}
+                          variant="outlined"
+                          value={rentalPackage.price.toLocaleString()}
+                          disabled
+                          // InputProps={{
+                          //   readOnly: true,
+                          // }}
+                        />
+                      </Grid>
+                      <Grid item md={3}>
+                        <TextField
+                          fullWidth
+                          label={`${t('pricing.fullPrice')} (${t('pricing.currency.thb')})`}
+                          id={`${packageId}-full-price`}
+                          name={`${packageId}-full-price`}
+                          variant="outlined"
+                          value={rentalPackage.fullPrice.toLocaleString()}
+                          disabled
+                          // InputProps={{
+                          //   readOnly: true,
+                          // }}
+                        />
+                      </Grid>
+                      <Grid item md={4}>
+                        <TextField
+                          fullWidth
+                          multiline
+                          label={t('pricing.description')}
+                          id={`${packageId}-description`}
+                          name={`${packageId}-description`}
+                          variant="outlined"
+                          value={rentalPackage.description.toLocaleString()}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          disabled
+                          // InputProps={{
+                          //   readOnly: true,
+                          // }}
+                        />
+                      </Grid>
+                    </GridContainer>
+                  )
+                })}
           </SubContentSection>
 
           {/* Buttons */}

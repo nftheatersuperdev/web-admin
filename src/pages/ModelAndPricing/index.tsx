@@ -3,7 +3,7 @@ import config from 'config'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import { CSVLink } from 'react-csv'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useState, KeyboardEvent, useEffect } from 'react'
 import {
   Button,
@@ -87,7 +87,6 @@ const formatDate = (date: string): string => dayjs(date).format('DD MMM YYYY')
 const formatTime = (date: string): string => dayjs(date).format('HH:mm')
 
 export default function ModelAndPricing(): JSX.Element {
-  const history = useHistory()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
@@ -141,7 +140,10 @@ export default function ModelAndPricing(): JSX.Element {
             <TableRow
               hover
               key={`car-${carId}`}
-              onClick={() => history.push(`/model-and-pricing/${modelId}/edit`)}
+              component={Link}
+              to={`/model-and-pricing/${modelId}/edit`}
+              target="_blank"
+              style={{ textDecoration: 'none' }}
             >
               <TableCell>
                 <DataWrapper>{formatStringForInputText(brand)}</DataWrapper>
