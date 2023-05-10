@@ -76,9 +76,9 @@ export default function CarDetail(): JSX.Element {
     onSubmit: async (values) => {
       await toast.promise(
         updateById({
-          id: carDetail?.id || '',
-          vin: values.vin || '',
-          plateNumber: values.plateNumber || '',
+          id: carDetail?.id || '-',
+          vin: values.vin || '-',
+          plateNumber: values.plateNumber || '-',
           isActive: values.status === CarStatus.PUBLISHED ? true : false,
         }),
         {
@@ -114,7 +114,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.id || ''}
+              value={carDetail?.id || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -124,7 +124,7 @@ export default function CarDetail(): JSX.Element {
               options={statusOptions}
               getOptionLabel={(option) => option.label}
               isOptionEqualToValue={(option, value) =>
-                option.value === value.value || value.value === ''
+                option.value === value.value || value.value === '-'
               }
               renderInput={(params) => {
                 return (
@@ -146,7 +146,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carTrackId || ''}
+              value={carDetail?.carTrackId || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -157,7 +157,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={stateParams.location || ''}
+              value={stateParams.location || '-'}
             />
           </Grid>
         </Grid>
@@ -170,7 +170,7 @@ export default function CarDetail(): JSX.Element {
               label={t('car.plateNumber')}
               fullWidth
               variant="outlined"
-              value={formik.values.plateNumber || ''}
+              value={formik.values.plateNumber || '-'}
               onChange={(event) => {
                 formik.setFieldValue('plateNumber', event.target.value)
               }}
@@ -183,7 +183,7 @@ export default function CarDetail(): JSX.Element {
               label={t('car.vin')}
               fullWidth
               variant="outlined"
-              value={formik.values.vin || ''}
+              value={formik.values.vin || '-'}
               onChange={(event) => {
                 formik.setFieldValue('vin', event.target.value)
               }}
@@ -200,7 +200,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.brand.name || ''}
+              value={carDetail?.carSku?.carModel?.brand?.name || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -211,7 +211,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.name || ''}
+              value={carDetail?.carSku?.carModel?.name || '-'}
             />
           </Grid>
         </Grid>
@@ -225,7 +225,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.color || ''}
+              value={carDetail?.carSku?.color || '-'}
             />
           </Grid>
         </Grid>
@@ -263,7 +263,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.createdDate || ''}
+              value={carDetail?.createdDate || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -274,7 +274,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.updatedDate || ''}
+              value={carDetail?.updatedDate || '-'}
             />
           </Grid>
         </Grid>
@@ -294,7 +294,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.bodyType || ''}
+              value={carDetail?.carSku?.carModel?.bodyType || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -305,7 +305,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.seats || ''}
+              value={carDetail?.carSku?.carModel?.seats || '-'}
             />
           </Grid>
         </Grid>
@@ -319,7 +319,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.year || ''}
+              value={carDetail?.carSku?.carModel?.year || '-'}
             />
           </Grid>
         </Grid>
@@ -333,7 +333,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.condition || ''}
+              value={carDetail?.carSku?.carModel?.condition || '-'}
             />
           </Grid>
         </Grid>
@@ -353,7 +353,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.acceleration || ''}
+              value={carDetail?.carSku?.carModel?.acceleration || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -364,7 +364,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.topSpeed || ''}
+              value={carDetail?.carSku?.carModel?.topSpeed || '-'}
             />
           </Grid>
         </Grid>
@@ -378,7 +378,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.range || ''}
+              value={carDetail?.carSku?.carModel?.range || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -389,7 +389,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.batteryCapacity || ''}
+              value={carDetail?.carSku?.carModel?.batteryCapacity || '-'}
             />
           </Grid>
         </Grid>
@@ -403,7 +403,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.horsePower || ''}
+              value={carDetail?.carSku?.carModel?.horsePower || '-'}
             />
           </Grid>
         </Grid>
@@ -426,10 +426,10 @@ export default function CarDetail(): JSX.Element {
               InputProps={{
                 startAdornment: (
                   <div className={classes.chargeTypeStyle}>
-                    {carDetail?.carSku.carModel.connectorTypes &&
-                    carDetail?.carSku.carModel.connectorTypes !== undefined &&
-                    carDetail?.carSku.carModel.connectorTypes.length > 0
-                      ? carDetail?.carSku.carModel.connectorTypes.map(
+                    {carDetail?.carSku?.carModel?.connectorTypes &&
+                    carDetail?.carSku?.carModel?.connectorTypes !== undefined &&
+                    carDetail?.carSku?.carModel?.connectorTypes.length > 0
+                      ? carDetail?.carSku?.carModel?.connectorTypes.map(
                           (charger: CarConnectorType, index: number) => (
                             <Chip
                               color="primary"
@@ -453,7 +453,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.chargeTime || ''}
+              value={carDetail?.carSku?.carModel?.chargeTime || '-'}
             />
           </Grid>
         </Grid>
@@ -467,7 +467,7 @@ export default function CarDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={carDetail?.carSku.carModel.fastChargeTime || ''}
+              value={carDetail?.carSku?.carModel?.fastChargeTime || '-'}
             />
           </Grid>
         </Grid>
