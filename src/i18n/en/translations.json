@@ -71,9 +71,7 @@
       "carAvailability": "Car Availability",
       "carAvailabilityDetail": "Car Availability Detail",
       "carActivity": "Car Activity",
-      "carModelAndPricing": "Model & Pricing",
-      "carModelAndPricingList": "Model & Pricing List",
-      "carModelAndPricingDetail": "Model & Pricing Detail"
+      "carModelAndPricing": "Model & Pricing"
     },
     "bookingManagement": {
       "title": "Booking Management",
@@ -1111,6 +1109,69 @@
       "error": "something went wrong"
     }
   },
+  "carModelAndPricing": {
+    "breadcrumb": {
+      "carManagement": "Car Management",
+      "carModelAndPricing": "Model & Pricing",
+      "carModelAndPricingDetail": "Model & Pricing Detail"
+    },
+    "list": {
+      "title": "Model & Pricing",
+      "subTitle": "Model & Pricing List",
+      "searchBox": {
+        "selectInput": {
+          "label": "Select Search"
+        },
+        "selectValueLabel": {
+          "id": "ID"
+        },
+        "textFieldInput": {
+          "placeholder": "Enter Search"
+        }
+      },
+      "columnHeader": {
+        "brand": "Car Brand",
+        "model": "Car Model",
+        "createdDate": "Created Date",
+        "updatedDate": "Updated Date"
+      },
+      "noData": "No data",
+      "button": {
+        "export": "Export"
+      }
+    },
+    "detail": {
+      "title": "Model & Pricing Detail",
+      "subTitle": "Model & Pricing Detail",
+      "overview": "Overview",
+      "performance": "Performance",
+      "charging": "Charging",
+      "plan": "Plan",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "modelYear": "Model Year",
+      "bodyType": "Body Type",
+      "seats": "Seats",
+      "condition": "Condition",
+      "acceleration": "Acceleration (Seconds)",
+      "topSpeed": "Top Speed (km/h)",
+      "range": "Range (km)(Advertised)",
+      "totalPower": "Total Power",
+      "horsePower": "Horsepower (hp)",
+      "batteryCapacity": "Battery Capacity (kWh)",
+      "connectorType": "Connector Type",
+      "fastChargeTime": "Fast Charge Time (min)",
+      "chargeTime": "Charge Time (min)",
+      "rentalPackage": {
+        "price": "Price (Baht)",
+        "fullPrice": "Full Price (Baht)"
+      },
+      "button": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    }
+  },
   "actionsEvent": {
     "copy": "Copied !!"
   },
@@ -1403,5 +1464,8 @@
       }
     }
   },
-  "noData": "No records to display"
+  "pagination": {
+    "rowsPerPage": "Rows per page",
+    "of": "of"
+  }
 }

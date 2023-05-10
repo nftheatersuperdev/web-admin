@@ -71,9 +71,7 @@
       "carAvailability": "สถานะการใช้รถ",
       "carAvailabilityDetail": "รายละเอียดสถานะการใช้รถ",
       "carActivity": "การใช้งานรถ",
-      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ",
-      "carModelAndPricingList": "รายการ รุ่น & ราคาแพ็คเกจ",
-      "carModelAndPricingDetail": "รายละเอียด รุ่น & ราคาแพ็คเกจ"
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ"
     },
     "bookingManagement": {
       "title": "การจัดการจอง",
@@ -859,23 +857,6 @@
   "table": {
     "rowPerPage": "จำนวนรายการต่อหน้า"
   },
-  "carModel": {
-    "brand": "ยี่ห้อ",
-    "model": "รุ่น",
-    "bodyType": "ประเภท",
-    "topSpeed": "ความเร็วสูงสุด",
-    "acceleration": "อัตราเร่ง",
-    "range": "ระยะทาง",
-    "totalPower": "แรงม้า",
-    "batteryCapacity": "ความจุแบตเตอร์รี่",
-    "connectorType": "ประเภทหัวชาร์จ",
-    "chargeTime": "ระยะเวลาชาร์จปกติ",
-    "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว",
-    "seats": "จำนวนที่นั่ง",
-    "condition": "เงื่อนไข",
-    "horsePower": "แรงม้า",
-    "modelYear": "ปี"
-  },
   "modelForm": {
     "overview": "ภาพรวม",
     "performance": "ประสิทธิภาพ",
@@ -1109,6 +1090,69 @@
     "editDialog": {
       "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
       "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
+    }
+  },
+  "carModelAndPricing": {
+    "breadcrumb": {
+      "carManagement": "การจัดการรถยนต์",
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ",
+      "carModelAndPricingDetail": "รายละเอียด รุ่น & ราคาแพ็คเกจ"
+    },
+    "list": {
+      "title": "รุ่น & ราคาแพ็คเกจ",
+      "subTitle": "รายการ รุ่น & ราคาแพ็คเกจ",
+      "searchBox": {
+        "selectInput": {
+          "label": "เลือกการค้นหา"
+        },
+        "selectValueLabel": {
+          "id": "ไอดี"
+        },
+        "textFieldInput": {
+          "placeholder": "กรอกข้อมูลค้นหา"
+        }
+      },
+      "columnHeader": {
+        "brand": "ยี่ห้อ",
+        "model": "รุ่น",
+        "createdDate": "วันที่สร้าง",
+        "updatedDate": "วันที่แก้ไข"
+      },
+      "noData": "ไม่มีข้อมูล",
+      "button": {
+        "export": "ส่งออกข้อมูล"
+      }
+    },
+    "detail": {
+      "title": "รายละเอียด รุ่น & ราคาแพ็คเกจ",
+      "subTitle": "รายละเอียด รุ่น & ราคาแพ็คเกจ",
+      "overview": "ภาพรวม",
+      "performance": "ประสิทธิภาพ",
+      "charging": "การชาร์จ",
+      "plan": "แผนราคา",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "modelYear": "ปี",
+      "bodyType": "ประเภท",
+      "seats": "จำนวนที่นั่ง",
+      "condition": "เงื่อนไข",
+      "acceleration": "อัตราเร่ง (วินาที)",
+      "topSpeed": "ความเร็วสูงสุด",
+      "range": "ระยะทาง (km/h)(การโฆษณา)",
+      "totalPower": "กำลังทั้งหมด",
+      "horsePower": "แรงม้า (hp)",
+      "batteryCapacity": "ความจุแบตเตอร์รี่ (kWh)",
+      "connectorType": "ประเภทหัวชาร์จ",
+      "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว (นาที)",
+      "chargeTime": "ระยะเวลาชาร์จปกติ (นาที)",
+      "rentalPackage": {
+        "price": "ราคา (บาท)",
+        "fullPrice": "ราคาเต็ม (บาท)"
+      },
+      "button": {
+        "save": "บันทึก",
+        "cancel": "ยกเลิก"
+      }
     }
   },
   "actionsEvent": {
@@ -1388,5 +1432,8 @@
       }
     }
   },
-  "noData": "ไม่มีข้อมูล"
+  "pagination": {
+    "rowsPerPage": "จำนวนรายการต่อหน้า",
+    "of": "ใน"
+  }
 }

@@ -49,6 +49,12 @@ const FormControlLabelHorizontal = styled(FormControlLabel)`
 const ButtonAction = styled(Button)`
   margin-right: 15px !important;
 `
+const TextFieldReadOnly = styled(TextField)`
+  background: #f5f5f5 !important;
+`
+const TextIndent = styled.div`
+  margin-left: 14px;
+`
 
 export default function ModelAndPricingEdit(): JSX.Element {
   const { t } = useTranslation()
@@ -129,15 +135,15 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
-      text: t('sidebar.carManagement.title'),
+      text: t('carModelAndPricing.breadcrumb.carManagement'),
       link: '',
     },
     {
-      text: t('sidebar.carManagement.carModelAndPricing'),
+      text: t('carModelAndPricing.breadcrumb.carModelAndPricing'),
       link: ROUTE_PATHS.MODEL_AND_PRICING,
     },
     {
-      text: t('sidebar.carManagement.carModelAndPricingDetail'),
+      text: t('carModelAndPricing.breadcrumb.carModelAndPricingDetail'),
       link: ROUTE_PATHS.MODEL_AND_PRICING_EDIT,
     },
   ]
@@ -166,27 +172,24 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
   return (
     <Page>
-      <PageTitle
-        title={t('sidebar.carManagement.carModelAndPricingDetail')}
-        breadcrumbs={breadcrumbs}
-      />
+      <PageTitle title={t('carModelAndPricing.detail.title')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
           <Typography variant="h6" component="h1">
-            {t('sidebar.carManagement.carModelAndPricingDetail')}
+            {t('carModelAndPricing.detail.subTitle')}
           </Typography>
 
           {/* Overview */}
           <SubContentSection>
             <Typography variant="h6" component="h2">
-              {t('modelForm.overview')}
+              {t('carModelAndPricing.detail.overview')}
             </Typography>
             <br />
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextField
+                <TextFieldReadOnly
                   fullWidth
-                  label={t('carModel.brand')}
+                  label={t('carModelAndPricing.detail.brand')}
                   id="brand"
                   name="brand"
                   variant="outlined"
@@ -194,15 +197,16 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   onChange={formik.handleChange}
                   InputLabelProps={{
                     shrink: true,
-                    disabled: true,
                   }}
-                  disabled
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Grid>
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.model')}
+                  label={t('carModelAndPricing.detail.model')}
                   id="name"
                   name="name"
                   variant="outlined"
@@ -217,10 +221,10 @@ export default function ModelAndPricingEdit(): JSX.Element {
             <GridContainer container spacing={3}>
               <Grid item md={6}>
                 <FormControl fullWidth variant="outlined">
-                  <InputLabel id="bodyTypeId">{t('carModel.bodyType')}</InputLabel>
+                  <InputLabel id="bodyTypeId">{t('carModelAndPricing.detail.bodyType')}</InputLabel>
                   <Select
                     labelId="bodyType"
-                    label={t('carModel.bodyType')}
+                    label={t('carModelAndPricing.detail.bodyType')}
                     id="bodyType"
                     name="bodyType"
                     value={formik.values.bodyType.toLocaleUpperCase()}
@@ -237,7 +241,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.seats')}
+                  label={t('carModelAndPricing.detail.seats')}
                   id="seats"
                   name="seats"
                   variant="outlined"
@@ -254,7 +258,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.modelYear')}
+                  label={t('carModelAndPricing.detail.modelYear')}
                   id="year"
                   name="year"
                   variant="outlined"
@@ -271,7 +275,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={12}>
                 <TextField
                   fullWidth
-                  label={t('carModel.condition')}
+                  label={t('carModelAndPricing.detail.condition')}
                   id="condition"
                   name="condition"
                   variant="outlined"
@@ -281,8 +285,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   }}
                   onChange={formik.handleChange}
                   multiline
-                  rows={2}
-                  maxRows={4}
+                  rows={1}
                 />
               </Grid>
             </GridContainer>
@@ -291,14 +294,14 @@ export default function ModelAndPricingEdit(): JSX.Element {
           {/* Performance */}
           <SubContentSection>
             <Typography variant="h6" component="h2">
-              {t('modelForm.performance')}
+              {t('carModelAndPricing.detail.performance')}
             </Typography>
             <br />
             <GridContainer container spacing={3}>
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.acceleration')}
+                  label={t('carModelAndPricing.detail.acceleration')}
                   id="acceleration"
                   name="acceleration"
                   variant="outlined"
@@ -313,7 +316,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.topSpeed')}
+                  label={t('carModelAndPricing.detail.topSpeed')}
                   id="topSpeed"
                   name="topSpeed"
                   variant="outlined"
@@ -330,7 +333,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.range')}
+                  label={t('carModelAndPricing.detail.range')}
                   id="range"
                   name="range"
                   variant="outlined"
@@ -345,7 +348,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.batteryCapacity')}
+                  label={t('carModelAndPricing.detail.batteryCapacity')}
                   id="batteryCapacity"
                   name="batteryCapacity"
                   variant="outlined"
@@ -362,7 +365,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.horsePower')}
+                  label={t('carModelAndPricing.detail.horsePower')}
                   id="horsePower"
                   name="horsePower"
                   variant="outlined"
@@ -380,57 +383,44 @@ export default function ModelAndPricingEdit(): JSX.Element {
           {/* Charging */}
           <SubContentSection>
             <Typography variant="h6" component="h2">
-              {t('modelForm.charging')}
+              {t('carModelAndPricing.detail.charging')}
             </Typography>
             <br />
             <GridContainer container spacing={3}>
               <Grid item md={12}>
-                {t('carModel.connectorType')}
-                <div>
-                  <FormControl
-                    component="fieldset"
-                    style={{ display: 'flex', flexDirection: 'row' }}
-                  >
-                    {carConnectorTypes?.map((connectorType) => (
-                      <FormControlLabelHorizontal
-                        control={
-                          <Checkbox
-                            key={connectorType.type}
-                            onChange={formik.handleChange}
-                            name="chargers"
-                            color="primary"
-                            value={connectorType.type}
-                            checked={includes(connectorType.type)(formik.values.chargers)}
-                          />
-                        }
-                        label={connectorType.type}
-                        key={connectorType.id}
-                      />
-                    ))}
-                  </FormControl>
-                </div>
+                <TextIndent>
+                  {t('carModelAndPricing.detail.connectorType')}
+                  <div>
+                    <FormControl
+                      component="fieldset"
+                      style={{ display: 'flex', flexDirection: 'row' }}
+                    >
+                      {carConnectorTypes?.map((connectorType) => (
+                        <FormControlLabelHorizontal
+                          control={
+                            <Checkbox
+                              key={connectorType.type}
+                              onChange={formik.handleChange}
+                              name="chargers"
+                              color="primary"
+                              value={connectorType.type}
+                              checked={includes(connectorType.type)(formik.values.chargers)}
+                            />
+                          }
+                          label={connectorType.type}
+                          key={connectorType.id}
+                        />
+                      ))}
+                    </FormControl>
+                  </div>
+                </TextIndent>
               </Grid>
             </GridContainer>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
                 <TextField
                   fullWidth
-                  label={t('carModel.chargeTime')}
-                  id="chargeTime"
-                  name="chargeTime"
-                  variant="outlined"
-                  type="number"
-                  value={formik.values.chargeTime}
-                  onChange={formik.handleChange}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  fullWidth
-                  label={t('carModel.fastChargeTime')}
+                  label={t('carModelAndPricing.detail.fastChargeTime')}
                   id="fastChargeTime"
                   name="fastChargeTime"
                   variant="outlined"
@@ -442,13 +432,28 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   }}
                 />
               </Grid>
+              <Grid item md={6}>
+                <TextField
+                  fullWidth
+                  label={t('carModelAndPricing.detail.chargeTime')}
+                  id="chargeTime"
+                  name="chargeTime"
+                  variant="outlined"
+                  type="number"
+                  value={formik.values.chargeTime}
+                  onChange={formik.handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
             </GridContainer>
           </SubContentSection>
 
           {/* Plan */}
           <SubContentSection>
             <Typography variant="h6" component="h2">
-              {t('pricing.plan')}
+              {t('carModelAndPricing.detail.plan')}
             </Typography>
             <br />
             {isFetching
@@ -467,38 +472,35 @@ export default function ModelAndPricingEdit(): JSX.Element {
                         </Typography>
                       </Grid>
                       <Grid item md={3}>
-                        <TextField
+                        <TextFieldReadOnly
                           fullWidth
-                          label={`${t('pricing.price')} (${t('pricing.currency.thb')})`}
+                          label={t('carModelAndPricing.detail.rentalPackage.price')}
                           id={`${packageId}-price`}
                           name={`${packageId}-price`}
                           variant="outlined"
                           value={rentalPackage.price.toLocaleString()}
-                          disabled
-                          // InputProps={{
-                          //   readOnly: true,
-                          // }}
+                          InputProps={{
+                            readOnly: true,
+                          }}
                         />
                       </Grid>
                       <Grid item md={3}>
-                        <TextField
+                        <TextFieldReadOnly
                           fullWidth
-                          label={`${t('pricing.fullPrice')} (${t('pricing.currency.thb')})`}
+                          label={t('carModelAndPricing.detail.rentalPackage.fullPrice')}
                           id={`${packageId}-full-price`}
                           name={`${packageId}-full-price`}
                           variant="outlined"
                           value={rentalPackage.fullPrice.toLocaleString()}
-                          disabled
-                          // InputProps={{
-                          //   readOnly: true,
-                          // }}
+                          InputProps={{
+                            readOnly: true,
+                          }}
                         />
                       </Grid>
                       <Grid item md={4}>
                         <TextField
                           fullWidth
                           multiline
-                          label={t('pricing.description')}
                           id={`${packageId}-description`}
                           name={`${packageId}-description`}
                           variant="outlined"
@@ -506,10 +508,9 @@ export default function ModelAndPricingEdit(): JSX.Element {
                           InputLabelProps={{
                             shrink: true,
                           }}
-                          disabled
-                          // InputProps={{
-                          //   readOnly: true,
-                          // }}
+                          InputProps={{
+                            readOnly: true,
+                          }}
                         />
                       </Grid>
                     </GridContainer>
@@ -525,14 +526,14 @@ export default function ModelAndPricingEdit(): JSX.Element {
               variant="contained"
               disabled={isLoading}
             >
-              {t('button.update')}
+              {t('carModelAndPricing.detail.button.save')}
             </ButtonAction>
             <ButtonAction
               onClick={() => history.push(ROUTE_PATHS.MODEL_AND_PRICING)}
               variant="outlined"
               disabled={isLoading}
             >
-              {t('button.cancel')}
+              {t('carModelAndPricing.detail.button.cancel')}
             </ButtonAction>
           </SubContentSection>
         </ContentSection>
