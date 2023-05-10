@@ -43,6 +43,9 @@ const SubContentSection = styled.div`
 const SubContentSectionWithoutMargin = styled.div`
   margin: 0;
 `
+const SubContentSectionTitle = styled.div`
+  margin-bottom: 30px;
+`
 const GridContainer = styled(Grid)`
   margin: 20px 0;
 `
@@ -184,10 +187,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
           {/* Overview */}
           <SubContentSection>
-            <Typography variant="h6" component="h2">
-              {t('carModelAndPricing.detail.overview')}
-            </Typography>
-            <br />
+            <SubContentSectionTitle>
+              <Typography variant="h6" component="h2">
+                {t('carModelAndPricing.detail.overview')}
+              </Typography>
+            </SubContentSectionTitle>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
                 <TextFieldReadOnly
@@ -296,10 +300,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
           {/* Performance */}
           <SubContentSection>
-            <Typography variant="h6" component="h2">
-              {t('carModelAndPricing.detail.performance')}
-            </Typography>
-            <br />
+            <SubContentSectionTitle>
+              <Typography variant="h6" component="h2">
+                {t('carModelAndPricing.detail.performance')}
+              </Typography>
+            </SubContentSectionTitle>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
                 <TextField
@@ -385,10 +390,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
           {/* Charging */}
           <SubContentSection>
-            <Typography variant="h6" component="h2">
-              {t('carModelAndPricing.detail.charging')}
-            </Typography>
-            <br />
+            <SubContentSectionTitle>
+              <Typography variant="h6" component="h2">
+                {t('carModelAndPricing.detail.charging')}
+              </Typography>
+            </SubContentSectionTitle>
             <GridContainer container spacing={3}>
               <Grid item md={12}>
                 <TextIndent>
@@ -455,10 +461,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
 
           {/* Plan */}
           <SubContentSection>
-            <Typography variant="h6" component="h2">
-              {t('carModelAndPricing.detail.plan')}
-            </Typography>
-            <br />
+            <SubContentSectionTitle>
+              <Typography variant="h6" component="h2">
+                {t('carModelAndPricing.detail.plan')}
+              </Typography>
+            </SubContentSectionTitle>
             {isFetching
               ? renderSkeletonPlan
               : car?.rentalPackages.map((rentalPackage) => {
