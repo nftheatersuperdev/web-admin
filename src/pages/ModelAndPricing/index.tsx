@@ -3,7 +3,7 @@ import config from 'config'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import { CSVLink } from 'react-csv'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useState, KeyboardEvent, useEffect } from 'react'
 import {
   Button,
@@ -29,11 +29,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { ROUTE_PATHS } from 'routes'
-import {
-  formaDateStringWithPattern,
-  formatStringForInputText,
-  DEFAULT_DATETIME_FORMAT,
-} from 'utils'
+import { formaDateStringWithPattern, DEFAULT_DATETIME_FORMAT } from 'utils'
 import { getList } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import { CarListFilterRequest } from 'services/web-bff/car.type'
@@ -82,12 +78,18 @@ const PageSize = styled(Box)`
 const NoData = styled.div`
   padding: 20px;
 `
+const TextLineClamp = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+`
 
 const formatDate = (date: string): string => dayjs(date).format('DD MMM YYYY')
 const formatTime = (date: string): string => dayjs(date).format('HH:mm')
 
 export default function ModelAndPricing(): JSX.Element {
-  const history = useHistory()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
@@ -141,22 +143,27 @@ export default function ModelAndPricing(): JSX.Element {
             <TableRow
               hover
               key={`car-${carId}`}
-              onClick={() => history.push(`/model-and-pricing/${modelId}/edit`)}
+              component={Link}
+              to={`/model-and-pricing/${modelId}/edit`}
+              target="_blank"
+              style={{ textDecoration: 'none' }}
             >
-              <TableCell>
-                <DataWrapper>{formatStringForInputText(brand)}</DataWrapper>
+              <TableCell width={200}>
+                <DataWrapper>{brand}</DataWrapper>
               </TableCell>
               <TableCell>
-                <DataWrapper>{formatStringForInputText(name)}</DataWrapper>
+                <DataWrapper>
+                  <TextLineClamp>{name}</TextLineClamp>
+                </DataWrapper>
               </TableCell>
-              <TableCell>
+              <TableCell width={200}>
                 <DataWrapper>
                   {formatDate(createdDate)}
                   <br />
                   {formatTime(createdDate)}
                 </DataWrapper>
               </TableCell>
-              <TableCell>
+              <TableCell width={200}>
                 <DataWrapper>
                   {formatDate(updatedDate)}
                   <br />
@@ -205,7 +212,7 @@ export default function ModelAndPricing(): JSX.Element {
           </Typography>
 
           <GridSearchSection container spacing={1}>
-            <Grid item xs={9} sm={3}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 fullWidth
                 select
@@ -219,7 +226,7 @@ export default function ModelAndPricing(): JSX.Element {
                 <MenuItem value="carId">ID</MenuItem>
               </TextField>
             </Grid>
-            <Grid item xs={9} sm={3}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 id="model-and-pricing__search_value"
                 name="searchValue"
@@ -238,9 +245,8 @@ export default function ModelAndPricing(): JSX.Element {
                 disabled={!searchField || isFetching}
               />
             </Grid>
-            <Grid item xs={9} sm={2} />
-            <Grid item xs={9} sm={2} />
-            <Grid item xs={9} sm={2}>
+            <Grid item xs={12} sm={4} />
+            <Grid item xs={12} sm={2}>
               <Box display="flex" justifyContent="flex-end">
                 <ExportButton
                   id="model-and-pricing__export_button"
