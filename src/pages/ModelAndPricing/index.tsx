@@ -145,7 +145,6 @@ export default function ModelAndPricing(): JSX.Element {
               key={`car-${carId}`}
               component={Link}
               to={`/model-and-pricing/${modelId}/edit`}
-              target="_blank"
               style={{ textDecoration: 'none' }}
             >
               <TableCell width={200}>
@@ -176,7 +175,7 @@ export default function ModelAndPricing(): JSX.Element {
       : [
           <TableRow key="no-data">
             <TableCell colSpan={4} align="center">
-              <NoData>{t('noData')}</NoData>
+              <NoData>{t('carModelAndPricing.list.noData')}</NoData>
             </TableCell>
           </TableRow>,
         ]
@@ -193,22 +192,22 @@ export default function ModelAndPricing(): JSX.Element {
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
-      text: t('sidebar.carManagement.title'),
+      text: t('carModelAndPricing.breadcrumb.carManagement'),
       link: '',
     },
     {
-      text: t('sidebar.carManagement.carModelAndPricing'),
+      text: t('carModelAndPricing.breadcrumb.carModelAndPricing'),
       link: ROUTE_PATHS.MODEL_AND_PRICING,
     },
   ]
 
   return (
     <Page>
-      <PageTitle title={t('sidebar.carManagement.carModelAndPricing')} breadcrumbs={breadcrumbs} />
+      <PageTitle title={t('carModelAndPricing.list.title')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
           <Typography variant="h6" component="h2">
-            {t('sidebar.carManagement.carModelAndPricingList')}
+            {t('carModelAndPricing.list.subTitle')}
           </Typography>
 
           <GridSearchSection container spacing={1}>
@@ -216,14 +215,16 @@ export default function ModelAndPricing(): JSX.Element {
               <TextField
                 fullWidth
                 select
-                label="Select Search"
+                label={t('carModelAndPricing.list.searchBox.selectInput.label')}
                 id="model-and-pricing__search_field"
                 name="searchField"
                 value={searchField}
                 variant="outlined"
                 onChange={(event) => setSearchField(() => event.target.value)}
               >
-                <MenuItem value="carId">ID</MenuItem>
+                <MenuItem value="carId">
+                  {t('carModelAndPricing.list.searchBox.selectValueLabel.id')}
+                </MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -241,7 +242,7 @@ export default function ModelAndPricing(): JSX.Element {
                     </InputAdornment>
                   ),
                 }}
-                placeholder="Enter Search"
+                placeholder={t('carModelAndPricing.list.searchBox.textFieldInput.placeholder')}
                 disabled={!searchField || isFetching}
               />
             </Grid>
@@ -254,7 +255,7 @@ export default function ModelAndPricing(): JSX.Element {
                   variant="contained"
                 >
                   <CSVLink data={csvData} headers={csvHeaders} filename="EVme Model & Pricing.csv">
-                    {t('button.export').toUpperCase()}
+                    {t('carModelAndPricing.list.button.export').toUpperCase()}
                   </CSVLink>
                 </ExportButton>
               </Box>
@@ -268,16 +269,24 @@ export default function ModelAndPricing(): JSX.Element {
                   <TableHead>
                     <TableRow>
                       <TableCell align="left">
-                        <TableHeaderColumn>{t('car.brand')}</TableHeaderColumn>
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.brand')}
+                        </TableHeaderColumn>
                       </TableCell>
                       <TableCell align="left">
-                        <TableHeaderColumn>{t('car.model')}</TableHeaderColumn>
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.model')}
+                        </TableHeaderColumn>
                       </TableCell>
                       <TableCell align="left">
-                        <TableHeaderColumn>{t('car.createdDate')}</TableHeaderColumn>
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.createdDate')}
+                        </TableHeaderColumn>
                       </TableCell>
                       <TableCell align="left">
-                        <TableHeaderColumn>{t('car.updatedDate')}</TableHeaderColumn>
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.updatedDate')}
+                        </TableHeaderColumn>
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -299,7 +308,7 @@ export default function ModelAndPricing(): JSX.Element {
           </GridSearchSection>
           <PaginationBox display="flex" justifyContent="flex-end">
             <PageSize>
-              {t('table.rowPerPage')}:{' '}
+              {t('pagination.rowsPerPage')}:{' '}
               <Select
                 disabled={isFetching}
                 value={carData?.data.pagination?.size || pageSize}
@@ -315,7 +324,7 @@ export default function ModelAndPricing(): JSX.Element {
                   </MenuItem>
                 ))}
               </Select>
-              &nbsp;&nbsp;{carData?.data.pagination?.page} {t('staffProfile.of')}
+              &nbsp;&nbsp;{carData?.data.pagination?.page} {t('pagination.of')}
               &nbsp;
               {carData?.data.pagination?.totalPage}
             </PageSize>
