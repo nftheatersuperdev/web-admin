@@ -12,8 +12,9 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   USER_GROUPS: '/user-groups',
-  SUBSCRIPTION: '/subscription',
-  SUBSCRIPTION_DETAIL: '/subscription/:bookingId/:bookingDetailId',
+  BOOKING_CAR_DETAIL: '/booking/:bookingId/:bookingDetailId/car/:carId',
+  BOOKING_DETAIL: '/booking/:bookingId/:bookingDetailId',
+  BOOKING: '/booking',
   PRICING: '/pricing',
   MODEL_AND_PRICING: '/model-and-pricing',
   MODEL_AND_PRICING_EDIT: '/model-and-pricing/:id/edit',
@@ -47,6 +48,7 @@ export const ROUTE_PATHS = Object.freeze({
   CUSTOMER_PROFILE: '/customer-profiles',
   CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
   CUSTOMER_PROFILE_ADD: '/customer-profile/create',
+  LEAD_MANAGEMENT: '/lead-management',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -125,8 +127,8 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
-    path: ROUTE_PATHS.SUBSCRIPTION_DETAIL,
-    component: lazy(() => import('./pages/SubscriptionDetail' /* webpackChunkName: "app" */)),
+    path: ROUTE_PATHS.BOOKING_CAR_DETAIL,
+    component: lazy(() => import('./pages/BookingCarDetail' /* webpackChunkName: "app" */)),
     allowedRoles: [
       ROLES.SUPER_ADMIN,
       ROLES.ADMIN,
@@ -136,8 +138,19 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
-    path: ROUTE_PATHS.SUBSCRIPTION,
-    component: lazy(() => import('./pages/Subscriptions' /* webpackChunkName: "app" */)),
+    path: ROUTE_PATHS.BOOKING_DETAIL,
+    component: lazy(() => import('./pages/BookingDetail' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.OPERATION,
+      ROLES.PRODUCT_SUPPORT,
+    ],
+  },
+  {
+    path: ROUTE_PATHS.BOOKING,
+    component: lazy(() => import('./pages/Booking' /* webpackChunkName: "app" */)),
     allowedRoles: [
       ROLES.SUPER_ADMIN,
       ROLES.ADMIN,
@@ -346,6 +359,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
     ],
+  },
+  {
+    path: ROUTE_PATHS.LEAD_MANAGEMENT,
+    component: lazy(() => import('./pages/LeadManagement' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

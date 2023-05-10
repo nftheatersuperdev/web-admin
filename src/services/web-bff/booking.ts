@@ -5,7 +5,7 @@ import {
   SubscriptionListResponse,
   SubscriptionChangeCarInBookingProps,
   UpdateCarReplacementRequestBody,
-} from 'services/web-bff/subscription.type'
+} from 'services/web-bff/booking.type'
 
 export const status = {
   RESERVED: 'reserved',
@@ -29,7 +29,6 @@ export const getList = async ({
     '/v2/bookings/rental/search',
     {
       ...filters,
-      isExtend: !!filters?.isExtend || null,
     },
     {
       params: query,

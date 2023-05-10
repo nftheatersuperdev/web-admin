@@ -49,3 +49,45 @@ export const getAdminUserRoleLabel = (
       return role ? role.toLowerCase() : ''
   }
 }
+
+export interface SelectOption {
+  key: string
+  name: string
+  value: string
+  isDefault?: boolean
+}
+
+export const getRoleList = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    {
+      key: ROLES.ADMIN,
+      value: ROLES.ADMIN,
+      name: t('role.admin'),
+    },
+    {
+      key: ROLES.SUPER_ADMIN,
+      value: ROLES.SUPER_ADMIN,
+      name: t('role.superAdmin'),
+    },
+    {
+      key: ROLES.IT_ADMIN,
+      value: ROLES.IT_ADMIN,
+      name: t('role.itAdmin'),
+    },
+    {
+      key: ROLES.OPERATION,
+      value: ROLES.OPERATION,
+      name: t('role.operation'),
+    },
+    {
+      key: ROLES.CUSTOMER_SUPPORT,
+      value: ROLES.CUSTOMER_SUPPORT,
+      name: t('role.customerSupport'),
+    },
+    {
+      key: ROLES.PRODUCT_SUPPORT,
+      value: ROLES.PRODUCT_SUPPORT,
+      name: t('role.productSupport'),
+    },
+  ]
+}

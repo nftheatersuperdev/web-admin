@@ -27,12 +27,36 @@ export interface AdminUserById {
   id: string
 }
 
+export interface AdminUserByCriteria {
+  id?: string
+  firstname?: string
+  lastname?: string
+  email?: string
+  role?: AdminUserRole
+  accountStatus?: boolean
+}
+
 export interface GetAdminUsersProps {
   accessToken: string
 }
 
 export interface GetAdminUsersByCriteriaProps {
-  data?: AdminUserById
+  (data?: AdminUserByCriteria, size?: number, page?: number): Promise<AdminUsersResponse>
+}
+
+export interface AdminUsersProps {
+  (data?: AdminUserByCriteria, size?: number, page?: number): Promise<AdminUsersResponse>
+}
+
+export interface AdminUsersProps {
+  id?: string
+  data?: AdminUserByCriteria
+  size?: number
+  page?: number
+}
+
+export interface AdminUsersProps {
+  data?: AdminUserByCriteria
   size?: number
   page?: number
 }
@@ -54,4 +78,18 @@ export interface AdminUsersResponse extends Response {
 
 export interface AdminUserProfileResponse extends Response {
   adminUser: AdminUser
+}
+
+export interface UpdateAdminUserProps {
+  id: string
+  firstname: string | null
+  lastname: string | null
+  email: string | null
+  role: string
+}
+
+export interface UpdateAdminUserResponse extends Response {
+  data: {
+    id: string
+  }
 }

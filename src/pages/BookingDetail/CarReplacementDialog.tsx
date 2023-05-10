@@ -28,9 +28,9 @@ import Geocode from 'react-geocode'
 import DatePicker from 'components/DatePicker'
 import ConfirmDialog from 'components/ConfirmDialog'
 import { getAvailableListBFF } from 'services/web-bff/car'
-import { status as BookingStatus, updateCarReplacement } from 'services/web-bff/subscription'
+import { status as BookingStatus, updateCarReplacement } from 'services/web-bff/booking'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
-import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/subscription.type'
+import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/booking.type'
 import { SubEventStatus } from 'pages/Subscriptions/utils'
 
 const MarginActionButtons = styled.div`

@@ -36,8 +36,8 @@ import { ROLES } from 'auth/roles'
 import { getAvailableListBFF } from 'services/web-bff/car'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import DataGridLocale from 'components/DataGridLocale'
-import { BookingPayment } from 'services/web-bff/subscription.type'
-import { changeCarInBooking } from 'services/web-bff/subscription'
+import { BookingPayment } from 'services/web-bff/booking.type'
+import { changeCarInBooking } from 'services/web-bff/booking'
 import { columnFormatSubEventStatus, SubEventStatus } from './utils'
 
 const MapWrapper = styled.div`
