@@ -172,7 +172,7 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(carDetail.carActivity?.deliveryTask.date).format(
+                value={dayjs(carDetail.carActivity?.deliveryTask?.date).format(
                   DEFAULT_DATE_FORMAT_MONTH_TEXT
                 )}
               />
@@ -192,10 +192,10 @@ export default function BookingCarDetail(): JSX.Element {
                 }}
                 variant="outlined"
                 value={
-                  dayjs(carDetail.carActivity?.deliveryTask.date).format(DEFAULT_TIME_FORMAT) +
+                  dayjs(carDetail.carActivity?.deliveryTask?.date).format(DEFAULT_TIME_FORMAT) +
                   ' - ' +
                   addTwoHours(
-                    dayjs(carDetail.carActivity?.deliveryTask.date).format(DEFAULT_TIME_FORMAT)
+                    dayjs(carDetail.carActivity?.deliveryTask?.date).format(DEFAULT_TIME_FORMAT)
                   )
                 }
               />
@@ -214,9 +214,13 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(carDetail.carActivity?.returnTask.date).format(
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
+                value={
+                  carDetail.carActivity?.returnTask?.date
+                    ? dayjs(carDetail.carActivity?.returnTask?.date).format(
+                        DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                      )
+                    : '-'
+                }
               />
             </Grid>
           </Grid>
@@ -237,7 +241,7 @@ export default function BookingCarDetail(): JSX.Element {
                 variant="outlined"
                 multiline
                 rows={2}
-                value={carDetail.carActivity?.deliveryTask.fullAddress || 'No Data'}
+                value={carDetail.carActivity?.deliveryTask?.fullAddress || 'No Data'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -256,7 +260,7 @@ export default function BookingCarDetail(): JSX.Element {
                 variant="outlined"
                 multiline
                 rows={2}
-                value={carDetail.carActivity?.returnTask.fullAddress || 'No Data'}
+                value={carDetail.carActivity?.returnTask?.fullAddress || 'No Data'}
               />
             </Grid>
           </Grid>
@@ -275,7 +279,7 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={carDetail.carActivity?.deliveryTask.remark || 'No Data'}
+                value={carDetail.carActivity?.deliveryTask?.remark || 'No Data'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -292,7 +296,7 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={carDetail.carActivity?.returnTask.remark || 'No Data'}
+                value={carDetail.carActivity?.returnTask?.remark || 'No Data'}
               />
             </Grid>
           </Grid>
@@ -321,7 +325,7 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(carDetail.carActivity?.deliveryTask.createdDate).format(
+                value={dayjs(carDetail.carActivity?.deliveryTask?.createdDate).format(
                   DEFAULT_DATETIME_FORMAT_MONTH_TEXT
                 )}
               />
@@ -367,44 +371,44 @@ export default function BookingCarDetail(): JSX.Element {
                 <TableRow>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.location || '-'}
+                      {carDetail.carActivity?.carDetail?.location || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.carSku.carModel.brand.name || '-'}
+                      {carDetail.carActivity?.carDetail?.carSku?.carModel?.brand?.name || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.carSku.carModel.name || '-'}
+                      {carDetail.carActivity?.carDetail?.carSku?.carModel?.name || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.carSku.color || '-'}
+                      {carDetail.carActivity?.carDetail?.carSku?.color || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.plateNumber || '-'}
+                      {carDetail.carActivity?.carDetail?.plateNumber || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {dayjs(carDetail.carActivity?.deliveryTask.date).format(
+                      {dayjs(carDetail.carActivity?.deliveryTask?.date).format(
                         DEFAULT_DATETIME_FORMAT_MONTH_TEXT
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.owner || '-'}
+                      {carDetail.carActivity?.carDetail?.owner || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity.carDetail.reSeller || '-'}
+                      {carDetail.carActivity?.carDetail?.reSeller || '-'}
                     </div>
                   </TableCell>
                 </TableRow>

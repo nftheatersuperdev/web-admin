@@ -504,7 +504,7 @@ export default function SubscriptionDetail(): JSX.Element {
                   </TableCell>
                   <TableCell component="th" scope="row">
                     <div className={classes.paddingLeftCell}>
-                      {bookingDetail.customer.phone || '-'}
+                      {bookingDetail.customer.phoneNumber || '-'}
                     </div>
                   </TableCell>
                 </TableRow>
