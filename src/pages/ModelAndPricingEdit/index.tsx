@@ -52,6 +52,9 @@ const ButtonAction = styled(Button)`
 const TextFieldReadOnly = styled(TextField)`
   background: #f5f5f5 !important;
 `
+const TextIndent = styled.div`
+  margin-left: 14px;
+`
 
 export default function ModelAndPricingEdit(): JSX.Element {
   const { t } = useTranslation()
@@ -385,30 +388,32 @@ export default function ModelAndPricingEdit(): JSX.Element {
             <br />
             <GridContainer container spacing={3}>
               <Grid item md={12}>
-                {t('carModelAndPricing.detail.connectorType')}
-                <div>
-                  <FormControl
-                    component="fieldset"
-                    style={{ display: 'flex', flexDirection: 'row' }}
-                  >
-                    {carConnectorTypes?.map((connectorType) => (
-                      <FormControlLabelHorizontal
-                        control={
-                          <Checkbox
-                            key={connectorType.type}
-                            onChange={formik.handleChange}
-                            name="chargers"
-                            color="primary"
-                            value={connectorType.type}
-                            checked={includes(connectorType.type)(formik.values.chargers)}
-                          />
-                        }
-                        label={connectorType.type}
-                        key={connectorType.id}
-                      />
-                    ))}
-                  </FormControl>
-                </div>
+                <TextIndent>
+                  {t('carModelAndPricing.detail.connectorType')}
+                  <div>
+                    <FormControl
+                      component="fieldset"
+                      style={{ display: 'flex', flexDirection: 'row' }}
+                    >
+                      {carConnectorTypes?.map((connectorType) => (
+                        <FormControlLabelHorizontal
+                          control={
+                            <Checkbox
+                              key={connectorType.type}
+                              onChange={formik.handleChange}
+                              name="chargers"
+                              color="primary"
+                              value={connectorType.type}
+                              checked={includes(connectorType.type)(formik.values.chargers)}
+                            />
+                          }
+                          label={connectorType.type}
+                          key={connectorType.id}
+                        />
+                      ))}
+                    </FormControl>
+                  </div>
+                </TextIndent>
               </Grid>
             </GridContainer>
             <GridContainer container spacing={3}>
