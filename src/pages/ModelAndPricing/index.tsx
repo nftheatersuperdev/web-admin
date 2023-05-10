@@ -1,191 +1,348 @@
-import { useHistory } from 'react-router-dom'
-import { useState, useMemo, useEffect } from 'react'
-import { Card, IconButton } from '@material-ui/core'
-import {
-  GridCellParams,
-  GridColDef,
-  GridPageChangeParams,
-  GridFilterModel,
-  GridFilterItem,
-} from '@material-ui/data-grid'
-import { useTranslation } from 'react-i18next'
-import { columnFormatDate, getOnlyEqualFilterOperator } from 'utils'
+/* eslint-disable react/forbid-component-props */
 import config from 'config'
-import { Edit as EditIcon } from '@material-ui/icons'
+import styled from 'styled-components'
+import dayjs from 'dayjs'
+import { CSVLink } from 'react-csv'
+import { Link } from 'react-router-dom'
+import { useState, KeyboardEvent, useEffect } from 'react'
+import {
+  Button,
+  Box,
+  Card,
+  Grid,
+  InputAdornment,
+  MenuItem,
+  Paper,
+  TableContainer,
+  Table,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableBody,
+  TextField,
+  Typography,
+  Pagination,
+  Select,
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
+import { ROUTE_PATHS } from 'routes'
+import { formaDateStringWithPattern, DEFAULT_DATETIME_FORMAT } from 'utils'
 import { getList } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
-import DataGridLocale from 'components/DataGridLocale'
 import { CarListFilterRequest } from 'services/web-bff/car.type'
-import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+
+const Wrapper = styled(Card)`
+  padding: 15px;
+  margin-top: 20px;
+`
+const ContentSection = styled.div`
+  margin-bottom: 20px;
+`
+const GridSearchSection = styled(Grid)`
+  padding-top: 20px !important;
+  align-items: left !important;
+  min-height: 100px !important;
+`
+const ExportButton = styled(Button)`
+  background-color: #424e63 !important;
+  font-weight: bold !important;
+  padding: 14px 12px !important;
+  width: 110px;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+`
+const TableHeaderColumn = styled.div`
+  border-left: 2px solid #e0e0e0;
+  font-weight: bold;
+  padding-left: 10px;
+`
+const DataWrapper = styled.div`
+  padding: 0 17px;
+`
+const PaginationBox = styled(Box)`
+  padding: 20px 0;
+`
+const PaginationWrapper = styled(Pagination)`
+  padding: 14px 0;
+`
+const PageSize = styled(Box)`
+  padding: 5px 0;
+`
+const NoData = styled.div`
+  padding: 20px;
+`
+const TextLineClamp = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+`
+
+const formatDate = (date: string): string => dayjs(date).format('DD MMM YYYY')
+const formatTime = (date: string): string => dayjs(date).format('HH:mm')
 
 export default function ModelAndPricing(): JSX.Element {
-  const history = useHistory()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
+  const [searchField, setSearchField] = useState<string>()
+  const [searchValue, setSearchValue] = useState<string>()
   const [filter, setFilter] = useState<CarListFilterRequest>({})
 
   const {
-    data: cars,
+    data: carData,
     refetch,
     isFetching,
-  } = useQuery('model-and-pricing-page', () => getList({ filter, page, size: pageSize }))
-
-  const onlyEqualFilterOperator = getOnlyEqualFilterOperator(t)
-  const visibilityColumns = getVisibilityColumns()
-
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setPage(0)
-    setPageSize(params.pageSize)
-  }
-
-  const handleFilterChange = (params: GridFilterModel) => {
-    setFilter(
-      params.items.reduce((filter, { value }: GridFilterItem) => {
-        if (value) {
-          filter.carId = value
-        }
-
-        return filter
-      }, {} as CarListFilterRequest)
-    )
-    setPage(0)
-  }
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const onColumnVisibilityChange = (params: any) => {
-    if (params.field === '__check__') {
-      return
-    }
-
-    const visibilityColumns = params.api.current
-      .getAllColumns()
-      .filter(({ field }: { field: string }) => field !== '__check__')
-      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
-        columns[column.field] = !column.hide
-        return columns
-      }, {})
-
-    visibilityColumns[params.field] = params.isVisible
-
-    setVisibilityColumns(visibilityColumns)
-  }
+  } = useQuery('model-and-pricing', () => getList({ filter, page, size: pageSize }), {
+    refetchOnWindowFocus: false,
+  })
 
   useEffect(() => {
     refetch()
-  }, [filter, page, pageSize, refetch])
+  }, [refetch, page, pageSize])
 
-  const rowCount = cars?.data.pagination.totalRecords
-  const rows = useMemo(
-    () =>
-      cars?.data.cars?.map((car) => ({
-        id: car?.id || '-',
-        modelId: car?.carSku?.carModel?.id,
-        brand: car?.carSku?.carModel?.brand?.name || '-',
-        name: car?.carSku?.carModel?.name || '-',
-        createdDate: car?.createdDate || '-',
-        updatedDate: car?.updatedDate || '-',
-      })) || [],
-    [cars]
-  )
+  const csvHeaders = [
+    { label: 'Car ID', key: 'carId' },
+    { label: 'Model ID', key: 'modelId' },
+    { label: t('car.brand'), key: 'brand' },
+    { label: t('car.model'), key: 'name' },
+    { label: t('car.createdDate'), key: 'createdDate' },
+    { label: t('car.updatedDate'), key: 'updatedDate' },
+  ]
 
-  const columns: GridColDef[] = [
+  // eslint-disable-next-line
+  const csvData: any = []
+  const cars =
+    carData?.data.cars && carData?.data.cars.length >= 1
+      ? carData?.data.cars?.map((car) => {
+          const carId = car?.id || '-'
+          const modelId = car?.carSku?.carModel?.id || '-'
+          const brand = car?.carSku?.carModel?.brand?.name || '-'
+          const name = car?.carSku?.carModel?.name || '-'
+          const createdDate = car?.createdDate || '-'
+          const updatedDate = car?.updatedDate || '-'
+
+          csvData.push({
+            carId,
+            modelId,
+            brand,
+            name,
+            createdDate: formaDateStringWithPattern(createdDate, DEFAULT_DATETIME_FORMAT),
+            updatedDate: formaDateStringWithPattern(updatedDate, DEFAULT_DATETIME_FORMAT),
+          })
+
+          return (
+            <TableRow
+              hover
+              key={`car-${carId}`}
+              component={Link}
+              to={`/model-and-pricing/${modelId}/edit`}
+              style={{ textDecoration: 'none' }}
+            >
+              <TableCell width={200}>
+                <DataWrapper>{brand}</DataWrapper>
+              </TableCell>
+              <TableCell>
+                <DataWrapper>
+                  <TextLineClamp>{name}</TextLineClamp>
+                </DataWrapper>
+              </TableCell>
+              <TableCell width={200}>
+                <DataWrapper>
+                  {formatDate(createdDate)}
+                  <br />
+                  {formatTime(createdDate)}
+                </DataWrapper>
+              </TableCell>
+              <TableCell width={200}>
+                <DataWrapper>
+                  {formatDate(updatedDate)}
+                  <br />
+                  {formatTime(updatedDate)}
+                </DataWrapper>
+              </TableCell>
+            </TableRow>
+          )
+        })
+      : [
+          <TableRow key="no-data">
+            <TableCell colSpan={4} align="center">
+              <NoData>{t('carModelAndPricing.list.noData')}</NoData>
+            </TableCell>
+          </TableRow>,
+        ]
+
+  const handleSubmitSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event?.key.toLocaleLowerCase() === 'enter') {
+      setPage(0)
+      setFilter({
+        [searchField as string]: searchValue,
+      })
+      setTimeout(() => refetch(), 250)
+    }
+  }
+
+  const breadcrumbs: PageBreadcrumbs[] = [
     {
-      field: 'id',
-      headerName: t('pricing.id'),
-      description: t('pricing.id'),
-      hide: !visibilityColumns.id,
-      flex: 1,
-      filterOperators: onlyEqualFilterOperator,
+      text: t('carModelAndPricing.breadcrumb.carManagement'),
+      link: '',
     },
     {
-      field: 'modelId',
-      headerName: t('pricing.modelId'),
-      description: t('pricing.modelId'),
-      hide: !visibilityColumns.modelId,
-      flex: 1,
-      filterable: false,
-      // filterOperators: idFilterOperators,
-    },
-    {
-      field: 'brand',
-      headerName: t('pricing.brand'),
-      description: t('pricing.brand'),
-      hide: !visibilityColumns.brand,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'name',
-      headerName: t('pricing.model'),
-      description: t('pricing.model'),
-      hide: !visibilityColumns.name,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'createdDate',
-      headerName: t('pricing.createdDate'),
-      description: t('pricing.createdDate'),
-      hide: !visibilityColumns.createdDate,
-      valueFormatter: columnFormatDate,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'updatedDate',
-      headerName: t('pricing.updatedDate'),
-      description: t('pricing.updatedDate'),
-      hide: !visibilityColumns.updatedDate,
-      valueFormatter: columnFormatDate,
-      flex: 1,
-      filterable: false,
-    },
-    {
-      field: 'actions',
-      headerName: t('car.actions'),
-      description: t('car.actions'),
-      hide: !visibilityColumns.actions,
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: ({ row }: GridCellParams) =>
-        row.modelId ? (
-          <IconButton
-            size="small"
-            onClick={() => history.push(`/model-and-pricing/${row.modelId}/edit`)}
-          >
-            <EditIcon />
-          </IconButton>
-        ) : (
-          ''
-        ),
+      text: t('carModelAndPricing.breadcrumb.carModelAndPricing'),
+      link: ROUTE_PATHS.MODEL_AND_PRICING,
     },
   ]
 
   return (
     <Page>
-      <Card>
-        <DataGridLocale
-          autoHeight
-          pagination
-          pageSize={pageSize}
-          page={page}
-          rowCount={rowCount}
-          paginationMode="server"
-          onPageSizeChange={handlePageSizeChange}
-          onPageChange={setPage}
-          onColumnVisibilityChange={onColumnVisibilityChange}
-          rows={rows}
-          columns={columns}
-          filterMode="server"
-          onFilterModelChange={handleFilterChange}
-          loading={isFetching}
-        />
-      </Card>
+      <PageTitle title={t('carModelAndPricing.list.title')} breadcrumbs={breadcrumbs} />
+      <Wrapper>
+        <ContentSection>
+          <Typography variant="h6" component="h2">
+            {t('carModelAndPricing.list.subTitle')}
+          </Typography>
+
+          <GridSearchSection container spacing={1}>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                fullWidth
+                select
+                label={t('carModelAndPricing.list.searchBox.selectInput.label')}
+                id="model-and-pricing__search_field"
+                name="searchField"
+                value={searchField}
+                variant="outlined"
+                onChange={(event) => setSearchField(() => event.target.value)}
+              >
+                <MenuItem value="carId">
+                  {t('carModelAndPricing.list.searchBox.selectValueLabel.id')}
+                </MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="model-and-pricing__search_value"
+                name="searchValue"
+                value={searchValue}
+                fullWidth
+                onChange={(event) => setSearchValue(() => event.target.value)}
+                onKeyPress={handleSubmitSearch}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {searchField && isFetching ? <CircularProgress size={20} /> : <SearchIcon />}
+                    </InputAdornment>
+                  ),
+                }}
+                placeholder={t('carModelAndPricing.list.searchBox.textFieldInput.placeholder')}
+                disabled={!searchField || isFetching}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4} />
+            <Grid item xs={12} sm={2}>
+              <Box display="flex" justifyContent="flex-end">
+                <ExportButton
+                  id="model-and-pricing__export_button"
+                  color="primary"
+                  variant="contained"
+                >
+                  <CSVLink data={csvData} headers={csvHeaders} filename="EVme Model & Pricing.csv">
+                    {t('carModelAndPricing.list.button.export').toUpperCase()}
+                  </CSVLink>
+                </ExportButton>
+              </Box>
+            </Grid>
+          </GridSearchSection>
+
+          <GridSearchSection container>
+            <Grid item xs={12}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="left">
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.brand')}
+                        </TableHeaderColumn>
+                      </TableCell>
+                      <TableCell align="left">
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.model')}
+                        </TableHeaderColumn>
+                      </TableCell>
+                      <TableCell align="left">
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.createdDate')}
+                        </TableHeaderColumn>
+                      </TableCell>
+                      <TableCell align="left">
+                        <TableHeaderColumn>
+                          {t('carModelAndPricing.list.columnHeader.updatedDate')}
+                        </TableHeaderColumn>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+
+                  <TableBody>
+                    {isFetching ? (
+                      <TableRow>
+                        <TableCell colSpan={4} align="center">
+                          <CircularProgress />
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      cars
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </GridSearchSection>
+          <PaginationBox display="flex" justifyContent="flex-end">
+            <PageSize>
+              {t('pagination.rowsPerPage')}:{' '}
+              <Select
+                disabled={isFetching}
+                value={carData?.data.pagination?.size || pageSize}
+                defaultValue={pageSize}
+                onChange={(event) => {
+                  setPage(0)
+                  setPageSize(event.target.value as number)
+                }}
+              >
+                {config.tableRowsPerPageOptions?.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+              &nbsp;&nbsp;{carData?.data.pagination?.page} {t('pagination.of')}
+              &nbsp;
+              {carData?.data.pagination?.totalPage}
+            </PageSize>
+            <PaginationWrapper
+              disabled={isFetching}
+              count={carData?.data.pagination?.totalPage || 1}
+              page={carData?.data.pagination?.page || page}
+              defaultPage={carData?.data.pagination?.page || page}
+              variant="text"
+              shape="circular"
+              color="primary"
+              onChange={(_event: React.ChangeEvent<unknown>, newPage: number) =>
+                setPage(newPage - 1)
+              }
+            />
+          </PaginationBox>
+        </ContentSection>
+      </Wrapper>
     </Page>
   )
 }

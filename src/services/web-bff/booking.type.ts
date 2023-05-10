@@ -151,8 +151,29 @@ export interface BookingRental {
   payments: BookingPayment[]
   updatedBy: string
   isSelfPickUp: boolean
+  createdDate: string
+  updatedDate: string
 }
 
+interface ServiceTypeLocation {
+  id: string
+  resellerServiceAreaId: string
+  serviceType: string
+  isActive: boolean
+  addressTh: string
+  addressEn: string
+  latitude: number
+  longitude: number
+  distance: number
+}
+
+interface ResellerServiceArea {
+  id: string
+  businessId: string
+  areaNameTh: string
+  areaNameEn: string
+  serviceTypeLocations: ServiceTypeLocation[]
+}
 export interface SubscriptionCar {
   id: string
   plateNumber: string
@@ -160,8 +181,10 @@ export interface SubscriptionCar {
   carTrackId: string
   isActive: boolean
   carSku: SubscriptionCarSku
+  resellerServiceArea: ResellerServiceArea
   createdDate: string
   updatedDate: string
+  [key: string]: any
 }
 
 export interface SubscriptionCarSku {

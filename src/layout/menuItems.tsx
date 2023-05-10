@@ -45,6 +45,7 @@ export function useMenuItems() {
         ROLES.OPERATION,
         ROLES.MARKETING,
         ROLES.PRODUCT_SUPPORT,
+        ROLES.IT_ADMIN,
       ],
       children: [
         {
@@ -122,7 +123,7 @@ export function useMenuItems() {
     {
       id: 'left_menu__booking_management',
       title: t('sidebar.bookingManagement.title'),
-      href: ROUTE_PATHS.SUBSCRIPTION,
+      href: ROUTE_PATHS.BOOKING,
       icon: BarChart,
       allowedRoles: [
         ROLES.SUPER_ADMIN,
@@ -135,7 +136,7 @@ export function useMenuItems() {
         {
           id: 'left_menu__booking',
           title: t('sidebar.bookingManagement.booking'),
-          href: ROUTE_PATHS.SUBSCRIPTION,
+          href: ROUTE_PATHS.BOOKING,
           allowedRoles: [
             ROLES.SUPER_ADMIN,
             ROLES.ADMIN,
@@ -227,6 +228,13 @@ export function useMenuItems() {
         },
       ],
       toggleKey: 'IS_ENABLED_SUBSCRIPTION_MANAGEMENT_FEATURE',
+    },
+    {
+      id: 'left_menu__subscription_management',
+      title: t('sidebar.leadManagement'),
+      href: ROUTE_PATHS.LEAD_MANAGEMENT,
+      icon: Folder,
+      allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
     },
   ] as unknown as SidebarItemsType[]
 

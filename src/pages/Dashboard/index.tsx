@@ -179,7 +179,7 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalSubscriptions.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
-            detailLink={<DetailLink pathname={ROUTE_PATHS.SUBSCRIPTION} />}
+            detailLink={<DetailLink pathname={ROUTE_PATHS.BOOKING} />}
           />
         </Grid>
         <Grid item sm={4} xs={12}>
@@ -191,7 +191,7 @@ export default function Dashboard(): JSX.Element {
             iconColor="purple"
             detailLink={
               <DetailLink
-                pathname={ROUTE_PATHS.SUBSCRIPTION}
+                pathname={ROUTE_PATHS.BOOKING}
                 search={qs.stringify({
                   deliveryDate: todayLowerUpper,
                   status: 'accepted',
@@ -207,7 +207,7 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalUpcomingCarsReturn.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
-            detailLink={<DetailLink pathname={ROUTE_PATHS.SUBSCRIPTION} search={searchReturn} />}
+            detailLink={<DetailLink pathname={ROUTE_PATHS.BOOKING} search={searchReturn} />}
           />
         </Grid>
 

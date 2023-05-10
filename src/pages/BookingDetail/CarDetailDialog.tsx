@@ -16,18 +16,24 @@ import config from 'config'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import dayjs from 'dayjs'
 import { DEFAULT_DATETIME_FORMAT } from 'utils'
-import { BookingCarActivity } from 'services/web-bff/subscription.type'
+import { BookingCarActivity } from 'services/web-bff/booking.type'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
 `
 export interface CarDetailDialogProps {
   open: boolean
+  isSelfPickUp: boolean
   car: BookingCarActivity | undefined
   onClose: () => void
 }
 
-export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogProps): JSX.Element {
+export default function CarDetailDialog({
+  car,
+  isSelfPickUp,
+  open,
+  onClose,
+}: CarDetailDialogProps): JSX.Element {
   const { t } = useTranslation()
   if (!open && !car) {
     return <Fragment />
@@ -82,7 +88,11 @@ export default function CarDetailDialog({ car, open, onClose }: CarDetailDialogP
                 shrink: true,
               }}
               variant="outlined"
-              value={car?.deliveryTask?.remark || '-'}
+              value={
+                isSelfPickUp
+                  ? t('booking.carDetail.serviceTypes.selfPickUp')
+                  : t('booking.carDetail.serviceTypes.deliverByEVme')
+              }
             />
           </Grid>
         </Grid>

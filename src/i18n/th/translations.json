@@ -75,7 +75,9 @@
     },
     "bookingManagement": {
       "title": "การจัดการจอง",
-      "booking": "การจอง"
+      "booking": "การจอง",
+      "detail": "รายละเอียดการจอง",
+      "carDetail": "รายละเอียดรถยนต์ที่ต้องจัดส่ง"
     },
     "voucherManagement": {
       "title": "การจัดการวอชเชอร์",
@@ -123,7 +125,8 @@
     "staffProfile": "พนักงาน",
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
-    "customerDetails": "รายละเอียดลูกค้า"
+    "customerDetails": "รายละเอียดลูกค้า",
+    "leadManagement": "Lead Management"
   },
   "button": {
     "add": "เพิ่ม",
@@ -264,6 +267,12 @@
     "createDialog": {
       "success": "บัญชีผู้ดูแลระบบถูกสร้างขึ้นแล้ว",
       "failed": "เกิดข้อผิดพลาดบางอย่าง ({{error}})"
+    },
+    "updateDialog": {
+      "title": "แก้ไขข้อมูลพนักงาน",
+      "success": "แก้ไขข้อมูลสำเร็จ",
+      "error": "แก้ไขข้อมูลไม่สำเร็จ",
+      "cannotUpdate": "ไม่สามารถแก้ไขข้อมูลพนักงานซ้ำได้"
     }
   },
   "staffProfile": {
@@ -408,6 +417,7 @@
     "pricePerSixMonths": "ราคาต่อ 6 เดือน",
     "pricePerTwelveMonths": "ราคาต่อ 12 เดือน",
     "3d": "3 วัน",
+    "7d": "7 วัน",
     "1w": "1 สัปดาห์",
     "1m": "1 เดือน",
     "3m": "3 เดือน",
@@ -547,6 +557,54 @@
     "isSelfPickup": "รับรถด้วยตนเอง"
   },
   "booking": {
+    "noData": "ไม่มีข้อมูล",
+    "allLocation": "สถานที่บริการทั้งหมด",
+    "of": "จาก",
+    "search": {
+      "detailId": "รหัสการจอง",
+      "customer": "รหัสลูกค้า",
+      "email": "อีเมล",
+      "carId": "รหัสรถยนต์",
+      "plateNumber": "เลขทะเบียน",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "status": "สถานะ",
+      "isExtend": "ขยายเวลา",
+      "voucherId": "วอชเชอร์ ไอดี",
+      "deliveryDate": "วันที่จัดส่ง",
+      "returnDate": "วันที่รับคืน"
+    },
+    "list": "รายการจองรถ",
+    "selectSearch": "เลือกเพื่อค้นหา",
+    "enterSearch": "ใส่ข้อมูลเพื่อค้นหา",
+    "selectStatus": "เลือกสถานะ",
+    "selectIsExtend": "ขยายเวลา",
+    "status": {
+      "title": "สถานะ",
+      "reserved": "สำรองแล้ว",
+      "accepted": "ชำระแล้ว",
+      "delivered": "นำส่งรถแล้ว",
+      "cancelled": "ยกเลิก",
+      "upcoming_cancelled": "ยกเลิกก่อนนำส่ง",
+      "refused": "ชำระเงินถูกปฏิเสธ",
+      "completed": "คืนรถแล้ว",
+      "extended": "ต่ออายุการจอง",
+      "manual_extended": "กำหนด ต่ออายุการจอง"
+    },
+    "tableHeader": {
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "email": "อีเมล",
+      "phone": "เบอร์โทรศัพท์",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "plateNumber": "ป้ายทะเบียน",
+      "duration": "ระยะเวลาการจอง",
+      "status": "สถานะ",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "location": "สถานที่บริการ"
+    },
     "statuses": {
       "accepted": "ยอมรับ",
       "available": "พร้อมใช้งาน",
@@ -558,18 +616,49 @@
       "upcomingCancelled": "กำลังถูกยกเลิก",
       "unknown": "ไม่ทราบ"
     },
+    "details": {
+      "id": "รหัสรายละเอียดการจอง",
+      "status": "สถานะการจอง",
+      "price": "ราคา(บาท)",
+      "duration": "ระยะเวลาการจอง",
+      "voucherId": "วอชเชอร์ ไอดี",
+      "voucherCode": "รหัสวอชเชอร์",
+      "startDate": "วันที่เริ่ม",
+      "endDate": "วันที่สิ้นสุด",
+      "createDate": "วันที่สร้าง",
+      "updateDate": "วันที่แก้ไข",
+      "isExtend": "ขยายเวลา",
+      "parentId": "รหัสอ้างอิง"
+    },
     "carDetail": {
+      "title": "รายละเอียดรถยนต์และการจัดส่ง",
+      "titleCar": "รายละเอียดรถยนต์",
       "replacement": "รถทดแทน",
       "no": "ลำดับ",
+      "location": "สถานที่บริการ",
       "brand": "ยี่ห้อ",
       "model": "รุ่น",
+      "color": "สี",
       "plateNumber": "เลขทะเบียน",
       "vin": "หมายเลขตัวถัง",
+      "pickupDate": "วันที่รับรถ",
+      "pickupTime": "เวลาที่รับรถ",
+      "pickupAddress": "สถานที่รับรถ",
+      "ReturnAddress": "สถานที่คืนรถ",
+      "pickupAddressRemark": "หมายเหตุสถานที่รับรถ",
+      "ReturnAddressRemark": "หมายเหตุสถานที่คืนรถ",
       "deliveryDate": "วันที่จัดส่ง",
       "deliveryTime": "เวลาจัดส่ง",
       "returnDate": "วันที่รับคืน",
       "serviceType": "ประเภทการบริการ",
-      "remark": "หมายเหตุ"
+      "serviceTypes": {
+        "deliverByEVme": "จัดส่งโดย EVme",
+        "selfPickUp": "รับเอง"
+      },
+      "owner": "ผู้ถือกรรมสิทธิ์",
+      "reseller": "ตัวแทนจำหน่าย",
+      "remark": "หมายเหตุ",
+      "createDate": "วันที่สร้าง"
     },
     "carReplacement": {
       "title": "การจัดการรถทดแทน",
@@ -594,6 +683,24 @@
         "title": "ยืนยันรถทดแทน",
         "description": "คุณต้องการจะอัพเดทรถในหมายเลขการจองนี้ {{bookingDetailId}}?<br/><br/><strong>แก้ไขโดย:</strong> {{editorEmail}}"
       }
+    },
+    "customer": {
+      "title": "ข้อมูลลูกค้า",
+      "customerId": "รหัสลูกค้า",
+      "firstName": "ชื่อ",
+      "lastName": "นามสกุล",
+      "email": "อีเมล",
+      "phone": "เบอร์โทรศัพท์"
+    },
+    "payment": {
+      "title": "สถานะการชำระเงิน",
+      "id": "รหัสการชำระเงิน",
+      "amount": "จำนวนเงิน (บาท)",
+      "paymentType": "ประเภทการชำระเงิน",
+      "purpose": "จุดประสงค์การชำระเงิน",
+      "status": "สถานะการชำระเงิน",
+      "statusMessage": "ข้อความสถานะการชำระเงิน",
+      "updatedDate": "วันที่แก้ไข"
     }
   },
   "newSubcription": {
@@ -749,6 +856,14 @@
   },
   "table": {
     "rowPerPage": "จำนวนรายการต่อหน้า"
+  },
+  "modelForm": {
+    "overview": "ภาพรวม",
+    "performance": "ประสิทธิภาพ",
+    "charging": "การชาร์จ",
+    "plan": "แผนราคา",
+    "success": "รุ่นรถได้ถูกปรับปรุงเรียบร้อยแล้ว",
+    "error": "เกิดข้อผิดพลาดในการปรับปรุงรุ่นรถ"
   },
   "voucher": {
     "title": "วอชเชอร์",
@@ -975,6 +1090,69 @@
     "editDialog": {
       "success": "แก้ไขข้อมูลโมเดลและราคาเรียบร้อยแล้ว",
       "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูลโมเดลและราคา"
+    }
+  },
+  "carModelAndPricing": {
+    "breadcrumb": {
+      "carManagement": "การจัดการรถยนต์",
+      "carModelAndPricing": "รุ่น & ราคาแพ็คเกจ",
+      "carModelAndPricingDetail": "รายละเอียด รุ่น & ราคาแพ็คเกจ"
+    },
+    "list": {
+      "title": "รุ่น & ราคาแพ็คเกจ",
+      "subTitle": "รายการ รุ่น & ราคาแพ็คเกจ",
+      "searchBox": {
+        "selectInput": {
+          "label": "เลือกการค้นหา"
+        },
+        "selectValueLabel": {
+          "id": "ไอดี"
+        },
+        "textFieldInput": {
+          "placeholder": "กรอกข้อมูลค้นหา"
+        }
+      },
+      "columnHeader": {
+        "brand": "ยี่ห้อ",
+        "model": "รุ่น",
+        "createdDate": "วันที่สร้าง",
+        "updatedDate": "วันที่แก้ไข"
+      },
+      "noData": "ไม่มีข้อมูล",
+      "button": {
+        "export": "ส่งออกข้อมูล"
+      }
+    },
+    "detail": {
+      "title": "รายละเอียด รุ่น & ราคาแพ็คเกจ",
+      "subTitle": "รายละเอียด รุ่น & ราคาแพ็คเกจ",
+      "overview": "ภาพรวม",
+      "performance": "ประสิทธิภาพ",
+      "charging": "การชาร์จ",
+      "plan": "แผนราคา",
+      "brand": "ยี่ห้อ",
+      "model": "รุ่น",
+      "modelYear": "ปี",
+      "bodyType": "ประเภท",
+      "seats": "จำนวนที่นั่ง",
+      "condition": "เงื่อนไข",
+      "acceleration": "อัตราเร่ง (วินาที)",
+      "topSpeed": "ความเร็วสูงสุด",
+      "range": "ระยะทาง (km/h)(การโฆษณา)",
+      "totalPower": "กำลังทั้งหมด",
+      "horsePower": "แรงม้า (hp)",
+      "batteryCapacity": "ความจุแบตเตอร์รี่ (kWh)",
+      "connectorType": "ประเภทหัวชาร์จ",
+      "fastChargeTime": "ระยะเวลาชาร์จแบบเร็ว (นาที)",
+      "chargeTime": "ระยะเวลาชาร์จปกติ (นาที)",
+      "rentalPackage": {
+        "price": "ราคา (บาท)",
+        "fullPrice": "ราคาเต็ม (บาท)"
+      },
+      "button": {
+        "save": "บันทึก",
+        "cancel": "ยกเลิก"
+      }
     }
   },
   "actionsEvent": {
@@ -1236,5 +1414,26 @@
         "of": "of"
       }
     }
+  },
+  "leadManagement": {
+    "title": "Lead Management",
+    "leadList": {
+      "title": "Lead List"
+    },
+    "searchBar": {
+      "selectSearch": {
+        "title": "Select Search",
+        "byDate": "Create Date",
+        "byLeadName": "Enter Search",
+        "table": {
+          "leadName": "Lead Name",
+          "createDate": "Created Date"
+        }
+      }
+    }
+  },
+  "pagination": {
+    "rowsPerPage": "จำนวนรายการต่อหน้า",
+    "of": "ใน"
   }
 }

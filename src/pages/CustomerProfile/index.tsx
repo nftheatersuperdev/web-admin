@@ -483,7 +483,7 @@ export default function CustomerProfile(): JSX.Element {
                   fullWidth
                   select
                   label={t('carAvailability.search')}
-                  id="staff-profile__criteria_select"
+                  id="customer_profile__criteria_select"
                   name="searchCriteria"
                   value={formik.values.searchType}
                   variant="outlined"

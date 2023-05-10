@@ -1,5 +1,5 @@
 import { Response } from 'services/web-bff/response.type'
-import { SubscriptionListResponse, SubscriptionStatus } from 'services/web-bff/subscription.type'
+import { SubscriptionListResponse, SubscriptionStatus } from 'services/web-bff/booking.type'
 
 export interface DashboardResponse extends Response {
   data: {

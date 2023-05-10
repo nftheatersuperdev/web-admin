@@ -75,7 +75,9 @@
     },
     "bookingManagement": {
       "title": "Booking Management",
-      "booking": "Booking"
+      "booking": "Booking",
+      "detail": "Booking Details",
+      "carDetail": "Car Delivery Detail"
     },
     "voucherManagement": {
       "title": "Voucher Management",
@@ -123,7 +125,8 @@
     "staffProfile": "Staff Profile",
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
-    "customerDetails": "Customer Details"
+    "customerDetails": "Customer Details",
+    "leadManagement": "Lead Management"
   },
   "button": {
     "add": "Add",
@@ -264,6 +267,12 @@
     "createDialog": {
       "success": "The admin user has been created",
       "failed": "Something went wrong ({{error}})"
+    },
+    "updateDialog": {
+      "title": "Update Staff",
+      "success": "Update staff successfully",
+      "error": "Failed to update staff",
+      "cannotUpdate": "Cannot update same value"
     }
   },
   "staffProfile": {
@@ -272,7 +281,7 @@
     "firstName": "First name",
     "lastName": "Last name",
     "createdDate": "Created Date",
-    "firebaseId": "FirebaseID",
+    "firebaseId": "Firebase UID",
     "searchCriteria": "Search Criteria",
     "searchDate": "Search Date"
   },
@@ -408,6 +417,7 @@
     "pricePerSixMonths": "6 Months",
     "pricePerTwelveMonths": "12 Months",
     "3d": "3 Days",
+    "7d": "7 Days",
     "1w": "1 Week",
     "1m": "1 Month",
     "3m": "3 Months",
@@ -547,6 +557,54 @@
     "isSelfPickup": "IsSelfPickup"
   },
   "booking": {
+    "noData": "No Data Found",
+    "allLocation": "All Location",
+    "of": "of",
+    "search": {
+      "detailId": "Booking Detail ID",
+      "customer": "Customer ID",
+      "email": "Email",
+      "carId": "Car ID",
+      "plateNumber": "Plate Number",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status",
+      "isExtend": "Is Extended",
+      "voucherId": "Voucher ID",
+      "deliveryDate": "Delivery Date",
+      "returnDate": "Return Date"
+    },
+    "list": "Booking List",
+    "selectSearch": "Select Search",
+    "enterSearch": "Enter Search",
+    "selectStatus": "Select Status",
+    "selectIsExtend": "Select Is Extend",
+    "status": {
+      "title": "Status",
+      "reserved": "Reserved",
+      "accepted": "Accepted",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "upcoming_cancelled": "Upcoming Cancelled",
+      "refused": "Refused",
+      "completed": "Completed",
+      "extended": "Extended",
+      "manual_extended": "Manual Extended"
+    },
+    "tableHeader": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "plateNumber": "Plate Number",
+      "duration": "Duration",
+      "status": "Booking Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "location": "Location Service"
+    },
     "statuses": {
       "accepted": "Accepted",
       "available": "Available",
@@ -558,18 +616,49 @@
       "upcomingCancelled": "Upcoming Cancelled",
       "unknown": "Unknown"
     },
+    "details": {
+      "id": "Booking Detail ID",
+      "status": "Booking Status",
+      "price": "Price(Baht)",
+      "duration": "Duration",
+      "voucherId": "Voucher ID",
+      "voucherCode": "Voucher Code",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "createDate": "Created Date",
+      "updateDate": "Update Date",
+      "isExtend": "Is Extended",
+      "parentId": "Parent Id"
+    },
     "carDetail": {
+      "title": "Car Detail & Delivery Detail",
+      "titleCar": "Car Detail",
       "replacement": "Replacement",
       "no": "No.",
+      "location": "Location Service",
       "brand": "Car Brand",
       "model": "Car Model",
+      "color": "Colour",
       "plateNumber": "Plate Number",
       "vin": "VIN",
+      "pickupDate": "Pick Up Date",
+      "pickupTime": "Pick Up Time",
+      "pickupAddress": "Pick Up Address",
+      "ReturnAddress": "Return Address",
+      "pickupAddressRemark": "Pick Up Address Remark",
+      "ReturnAddressRemark": "Return Address Remark",
       "deliveryDate": "Delivery Date",
       "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
       "serviceType": "Service Type",
-      "remark": "Remark"
+      "serviceTypes": {
+        "deliverByEVme": "Deliver by EVme",
+        "selfPickUp": "Self Pick Up"
+      },
+      "owner": "Owner",
+      "reseller": "Reseller",
+      "remark": "Remark",
+      "createDate": "Created Date"
     },
     "carReplacement": {
       "title": "Car Replacement",
@@ -594,6 +683,24 @@
         "title": "Car Replacement Confirmation",
         "description": "Are you sure to Update Car replacement / Subscription ID {{bookingDetailId}}?<br/><br/><strong>Modify by:</strong> {{editorEmail}}"
       }
+    },
+    "customer": {
+      "title": "Customer Detail",
+      "customerId": "Customer ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone Number"
+    },
+    "payment": {
+      "title": "Payment Status",
+      "id": "Payment ID",
+      "amount": "Amount(THB)",
+      "paymentType": "Payment Type",
+      "purpose": "Purpose",
+      "status": "Status",
+      "statusMessage": "Status Message",
+      "updatedDate": "Update Date"
     }
   },
   "newSubcription": {
@@ -771,6 +878,7 @@
     "overview": "Overview",
     "performance": "Performance",
     "charging": "Charging",
+    "plan": "Plan",
     "success": "Model has been updated",
     "error": "Something went wrong when updating the model"
   },
@@ -999,6 +1107,69 @@
     "editDialog": {
       "success": "Edit model and pricing success",
       "error": "something went wrong"
+    }
+  },
+  "carModelAndPricing": {
+    "breadcrumb": {
+      "carManagement": "Car Management",
+      "carModelAndPricing": "Model & Pricing",
+      "carModelAndPricingDetail": "Model & Pricing Detail"
+    },
+    "list": {
+      "title": "Model & Pricing",
+      "subTitle": "Model & Pricing List",
+      "searchBox": {
+        "selectInput": {
+          "label": "Select Search"
+        },
+        "selectValueLabel": {
+          "id": "ID"
+        },
+        "textFieldInput": {
+          "placeholder": "Enter Search"
+        }
+      },
+      "columnHeader": {
+        "brand": "Car Brand",
+        "model": "Car Model",
+        "createdDate": "Created Date",
+        "updatedDate": "Updated Date"
+      },
+      "noData": "No data",
+      "button": {
+        "export": "Export"
+      }
+    },
+    "detail": {
+      "title": "Model & Pricing Detail",
+      "subTitle": "Model & Pricing Detail",
+      "overview": "Overview",
+      "performance": "Performance",
+      "charging": "Charging",
+      "plan": "Plan",
+      "brand": "Car Brand",
+      "model": "Car Model",
+      "modelYear": "Model Year",
+      "bodyType": "Body Type",
+      "seats": "Seats",
+      "condition": "Condition",
+      "acceleration": "Acceleration (Seconds)",
+      "topSpeed": "Top Speed (km/h)",
+      "range": "Range (km)(Advertised)",
+      "totalPower": "Total Power",
+      "horsePower": "Horsepower (hp)",
+      "batteryCapacity": "Battery Capacity (kWh)",
+      "connectorType": "Connector Type",
+      "fastChargeTime": "Fast Charge Time (min)",
+      "chargeTime": "Charge Time (min)",
+      "rentalPackage": {
+        "price": "Price (Baht)",
+        "fullPrice": "Full Price (Baht)"
+      },
+      "button": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
     }
   },
   "actionsEvent": {
@@ -1275,5 +1446,26 @@
         "of": "of"
       }
     }
+  },
+  "leadManagement": {
+    "title": "Lead Management",
+    "leadList": {
+      "title": "Lead List"
+    },
+    "searchBar": {
+      "selectSearch": {
+        "title": "Select Search",
+        "byDate": "Create Date",
+        "byLeadName": "Enter Search",
+        "table": {
+          "leadName": "Lead Name",
+          "createDate": "Created Date"
+        }
+      }
+    }
+  },
+  "pagination": {
+    "rowsPerPage": "Rows per page",
+    "of": "of"
   }
 }
