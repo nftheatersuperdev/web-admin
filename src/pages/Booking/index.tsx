@@ -187,7 +187,7 @@ export default function Booking(): JSX.Element {
         lastName: booking.customer?.lastName || '-',
         email: booking.customer?.email || '-',
         phone: booking.customer?.phoneNumber || '-',
-        location: booking.car?.resellerServiceArea.areaNameEn || '-',
+        location: booking.car?.resellerServiceArea?.areaNameEn || '-',
         brand: booking.car?.carSku?.carModel?.brand.name || '-',
         model: booking.car?.carSku?.carModel?.name || '-',
         plateNumber: booking.car?.plateNumber || '-',
