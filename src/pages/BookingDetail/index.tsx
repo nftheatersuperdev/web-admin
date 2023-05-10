@@ -358,11 +358,11 @@ export default function SubscriptionDetail(): JSX.Element {
               {carActivities.length > 0 ? (
                 carActivities.map((carActivity, index) => (
                   <TableRow
-                    key={carActivity.carId}
+                    key={carActivity?.carId}
                     onClick={() =>
                       history.push({
-                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity.carId}`,
-                        state: { carActivity, isSelfPickUp: bookingDetail.isSelfPickUp },
+                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity?.carId}`,
+                        state: { carActivity, isSelfPickUp: bookingDetail?.isSelfPickUp },
                       })
                     }
                   >
@@ -371,35 +371,35 @@ export default function SubscriptionDetail(): JSX.Element {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.resellerServiceArea.areaNameEn || '-'}
+                        {carActivity?.carDetail?.resellerServiceArea?.areaNameEn || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.carSku.carModel.brand.name || '-'}
+                        {carActivity?.carDetail?.carSku?.carModel?.brand?.name || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.carSku.carModel.name || '-'}
+                        {carActivity?.carDetail?.carSku?.carModel?.name || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.plateNumber || '-'}
+                        {carActivity?.carDetail?.plateNumber || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.vin || '-'}
+                        {carActivity?.carDetail?.vin || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
                         <div className={classes.wrapWidth}>
                           <div className={classes.rowOverflow}>
-                            {carActivity.deliveryTask?.date
-                              ? dayjs(carActivity.deliveryTask?.date).format(
+                            {carActivity?.deliveryTask?.date
+                              ? dayjs(carActivity?.deliveryTask?.date).format(
                                   DEFAULT_DATETIME_FORMAT_MONTH_TEXT
                                 )
                               : '-'}
@@ -411,8 +411,8 @@ export default function SubscriptionDetail(): JSX.Element {
                       <div className={classes.paddingLeftCell}>
                         <div className={classes.wrapWidth}>
                           <div className={classes.rowOverflow}>
-                            {carActivity.returnTask?.date
-                              ? dayjs(carActivity.returnTask?.date).format(
+                            {carActivity?.returnTask?.date
+                              ? dayjs(carActivity?.returnTask?.date).format(
                                   DEFAULT_DATETIME_FORMAT_MONTH_TEXT
                                 )
                               : '-'}
@@ -424,7 +424,7 @@ export default function SubscriptionDetail(): JSX.Element {
                       <div className={classes.paddingLeftCell}>
                         <ChipServiceType
                           label={
-                            bookingDetail.isSelfPickUp
+                            bookingDetail?.isSelfPickUp
                               ? t('booking.carDetail.serviceTypes.selfPickUp')
                               : t('booking.carDetail.serviceTypes.deliverByEVme')
                           }
@@ -434,12 +434,12 @@ export default function SubscriptionDetail(): JSX.Element {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.owner || '-'}
+                        {carActivity?.carDetail?.owner || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity.carDetail.reSeller || '-'}
+                        {carActivity?.carDetail?.reSeller || '-'}
                       </div>
                     </TableCell>
                   </TableRow>
