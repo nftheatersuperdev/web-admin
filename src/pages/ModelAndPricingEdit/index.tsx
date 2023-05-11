@@ -517,7 +517,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                           id={`${packageId}-description`}
                           name={`${packageId}-description`}
                           variant="outlined"
-                          value={rentalPackage.description || '-'}
+                          value={rentalPackage.description.trim() || '-'}
                           InputLabelProps={{
                             shrink: true,
                           }}
