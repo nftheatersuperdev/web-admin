@@ -766,7 +766,7 @@ export default function Booking(): JSX.Element {
               <CSVLink
                 data={csvData}
                 headers={csvHeaders}
-                filename={t('sidebar.bookingManagement.title') + '.csv'}
+                filename="booking.csv"
                 className={classes.csvlink}
               >
                 {t('button.export').toLocaleUpperCase()}
