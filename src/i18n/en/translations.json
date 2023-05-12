@@ -330,6 +330,9 @@
       "reActivate": {
         "success": "The account has been reactivated"
       }
+    },
+    "updateDialog": {
+      "success": "Update customer successfully"
     }
   },
   "car": {
