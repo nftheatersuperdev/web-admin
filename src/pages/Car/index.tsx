@@ -27,6 +27,8 @@ import {
 import { Search as SearchIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
+// import { useAuth } from 'auth/AuthContext'
+// import { ROLES, hasAllowedRole } from 'auth/roles'
 import { CSVLink } from 'react-csv'
 import { formatDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import config from 'config'
@@ -59,6 +61,18 @@ export default function Car(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
   const { t } = useTranslation()
+
+  // TODO: In the future will be support role permission
+  // const { getRole } = useAuth()
+  // const currentUserRole = getRole()
+  // const isAllowToExport = hasAllowedRole(currentUserRole, [
+  //   ROLES.SUPER_ADMIN,
+  //   ROLES.ADMIN,
+  //   ROLES.OPERATION,
+  //   ROLES.MARKETING,
+  //   ROLES.PRODUCT_SUPPORT,
+  // ])
+
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
