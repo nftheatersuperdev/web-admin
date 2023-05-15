@@ -128,7 +128,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
       seats: car?.seats || 0,
       bodyType: car?.bodyType || '-',
       year: car?.year || 0,
-      condition: car?.condition || '-',
+      condition: car?.condition || '',
       acceleration: car?.acceleration || 0,
       topSpeed: car?.topSpeed || 0,
       range: car?.range || 0,
