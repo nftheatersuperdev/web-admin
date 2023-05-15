@@ -517,12 +517,13 @@ export const validateEmail = (email: string): boolean => {
 }
 
 export const validateKeywordText = (value: string): boolean => {
-  const keywordRule = /^[ก-ฮa-zA-Z0-9 ]{2,}$/g
+  const keywordRule = /^[ก-๛a-zA-Z0-9 ]{2,}$/g
   return keywordRule.test(value)
 }
 
 export const validateKeywordTextWithSpecialChar = (value: string): boolean => {
-  const keywordRule = /^[ก-ฮa-zA-Z0-9_@.#&+-\/]{2,}$/g // Add validate special character
+  // eslint-disable-next-line
+  const keywordRule = /^[ก-๛a-zA-Z0-9_@.#&+-\/]{2,}$/g // Add validate special character
   return keywordRule.test(value)
 }
 
