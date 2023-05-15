@@ -262,12 +262,14 @@ export default function Car(): JSX.Element {
   // == export ==
   const csvHeaders = [
     { label: t('car.carTrackId'), key: 'carTrackId' },
+    { label: t('car.location'), key: 'location' },
     { label: t('car.brand'), key: 'brand' },
     { label: t('car.model'), key: 'model' },
     { label: t('car.color'), key: 'color' },
     { label: t('car.plateNumber'), key: 'plateNumber' },
-    { label: t('car.vin'), key: 'vin' },
     { label: t('car.status'), key: 'status' },
+    { label: t('car.owner'), key: 'owner' },
+    { label: t('car.reseller'), key: 'reseller' },
     { label: t('car.createdDate'), key: 'createdDate' },
   ]
   const csvData: CarCsv[] = []
@@ -279,7 +281,6 @@ export default function Car(): JSX.Element {
       model: car.model,
       color: car.color,
       plateNumber: car.plateNumber,
-      vin: car.vin,
       status: car.status,
       owner: car.owner || '-',
       reseller: car.reseller,
