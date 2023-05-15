@@ -32,7 +32,7 @@ import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
   formatStringForInputText,
-  validateKeywordText,
+  validateKeywordTextWithSpecialChar,
   convertPhoneNumber,
 } from 'utils'
 import config from 'config'
@@ -448,7 +448,7 @@ export default function CustomerProfile(): JSX.Element {
   }, [customerFilter, pages, page, pageSize, refetch])
   const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const isKeywordAccepted = validateKeywordText(value)
+    const isKeywordAccepted = validateKeywordTextWithSpecialChar(value)
     setFilterSearchField(value)
     setFilterSearchFieldError('')
     if (formik.values.searchType !== 'id') {

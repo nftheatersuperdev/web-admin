@@ -521,6 +521,11 @@ export const validateKeywordText = (value: string): boolean => {
   return keywordRule.test(value)
 }
 
+export const validateKeywordTextWithSpecialChar = (value: string): boolean => {
+  const keywordRule = /^[ก-ฮa-zA-Z0-9_@.#&+-\/]{2,}$/g // Add validate special character
+  return keywordRule.test(value)
+}
+
 export const validateRemarkText = (value: string): boolean => {
   const remarkRule = /^[ก-๛a-zA-Z0-9 ]*$/g
   return remarkRule.test(value)
