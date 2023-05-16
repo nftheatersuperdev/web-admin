@@ -331,6 +331,9 @@
         "success": "The account has been reactivated"
       }
     },
+    "updateDialog": {
+      "success": "Update customer successfully"
+    },
     "searchField": {
       "invalidFormat": "Please input valid format (ก-ฮ,a-z,A-Z,0-9) and minimum two characters.",
       "invalidSearchEmailFormat": "Please input valid format (ก-ฮ,a-z,A-Z,0-9,.,-,_,+,@) and minimum two characters.",
