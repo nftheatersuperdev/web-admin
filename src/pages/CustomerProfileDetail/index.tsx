@@ -78,9 +78,20 @@ export default function CustomerProfileDetail(): JSX.Element {
   const { data: userResponse, refetch } = useQuery('customer-list', () =>
     searchCustomer({ data: params, page: 1, size: 1 } as CustomerMeProps)
   )
-  const onChangeStatus = () => {
-    setUpdateAccountStatus(true)
-    setIsEnableSaveButton(true)
+  const onChangeStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let isActived
+    if (event.target.value === 'true') {
+      isActived = true
+    } else {
+      isActived = false
+    }
+    if (isActived) {
+      setUpdateAccountStatus(true)
+      setIsEnableSaveButton(true)
+    } else {
+      setUpdateAccountStatus(false)
+      setIsEnableSaveButton(false)
+    }
   }
   const customerData =
     userResponse?.data.customers.length === 1 ? userResponse?.data.customers[0] : null
@@ -126,7 +137,10 @@ export default function CustomerProfileDetail(): JSX.Element {
   ]
   const isDeletedUser = customerData?.isActive !== true
   function isAllowEdit() {
-    return hasAllowedPrivilege(getPrivileges(), [PRIVILEGES.PERM_ADMIN_USER_EDIT]) && isDeletedUser
+    return (
+      hasAllowedPrivilege(getPrivileges(), [PRIVILEGES.PERM_ACCOUNT_ACTIVATION_EDIT]) &&
+      isDeletedUser
+    )
   }
   const formik = useFormik({
     initialValues: {},
