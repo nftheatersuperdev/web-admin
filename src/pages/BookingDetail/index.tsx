@@ -168,8 +168,8 @@ export default function SubscriptionDetail(): JSX.Element {
               disabled
               variant="outlined"
               value={
-                bookingDetail?.status
-                  ? columnFormatSubEventStatus(bookingDetail?.status, t)
+                bookingDetail?.displayStatus
+                  ? columnFormatSubEventStatus(bookingDetail?.displayStatus, t)
                   : t('booking.statuses.unknown')
               }
             />
