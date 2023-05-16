@@ -390,12 +390,12 @@ export default function SubscriptionDetail(): JSX.Element {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.plateNumber || '-'}
+                        {carActivity?.carDetail?.carSku?.color || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.vin || '-'}
+                        {carActivity?.carDetail?.plateNumber || '-'}
                       </div>
                     </TableCell>
                     <TableCell component="th" scope="row">
