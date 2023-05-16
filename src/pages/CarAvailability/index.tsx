@@ -262,7 +262,7 @@ export default function CarAvailability(): JSX.Element {
         brand: car.carSku?.carModel.brand.name || '-',
         color: car.carSku?.color || '-',
         status,
-        subscriptionId: booking?.length > 0 ? booking.map((row) => row.id) : '-',
+        bookingId: booking?.length > 0 ? booking.map((row) => row.id) : '-',
         location: car.location || '-',
         owner: car.owner || '-',
         reSeller: car.reSeller || '-',
@@ -375,15 +375,12 @@ export default function CarAvailability(): JSX.Element {
 
   const csvHeaders = [
     { label: t('carAvailabilityDetail.location'), key: 'location' },
-    { label: t('carAvailabilityDetail.carId'), key: 'id' },
-    { label: t('carAvailabilityDetail.carStatus'), key: 'status' },
-    { label: t('carAvailabilityDetail.carTrackId'), key: 'carTrackId' },
-    { label: t('carAvailabilityDetail.plateNumber'), key: 'plateNumber' },
     { label: t('carAvailabilityDetail.carBrand'), key: 'brand' },
     { label: t('carAvailabilityDetail.carModel'), key: 'model' },
     { label: t('carAvailabilityDetail.color'), key: 'color' },
-    { label: t('carAvailabilityDetail.vin'), key: 'vin' },
-    { label: t('carAvailabilityDetail.bookingId'), key: 'subscriptionId' },
+    { label: t('carAvailabilityDetail.plateNumber'), key: 'plateNumber' },
+    { label: t('carAvailabilityDetail.carStatus'), key: 'status' },
+    { label: t('carAvailabilityDetail.bookingId'), key: 'bookingId' },
     { label: t('carAvailabilityDetail.owner'), key: 'owner' },
     { label: t('carAvailabilityDetail.reSeller'), key: 'reSeller' },
   ]
@@ -391,18 +388,13 @@ export default function CarAvailability(): JSX.Element {
   const csvData: any = []
   rows.forEach((data) => {
     const makeData = () => ({
-      id: data.id,
-      vin: data.vin,
-      carTrackId: data.carTrackId,
-      createdDate: data.createdDate,
-      updatedDate: data.updatedDate,
-      plateNumber: data.plateNumber,
-      model: data.model,
-      brand: data.brand,
-      color: data.color,
-      status: data.status,
-      subscriptionId: data.subscriptionId,
       location: data.location,
+      brand: data.brand,
+      model: data.model,
+      color: data.color,
+      plateNumber: data.plateNumber,
+      status: data.status,
+      bookingId: data.bookingId,
       owner: data.owner,
       reSeller: data.reSeller,
     })
@@ -450,7 +442,7 @@ export default function CarAvailability(): JSX.Element {
             </div>
           </TableCell>
           <TableCell sx={{ width: '170px' }}>
-            <div className={classes.rowOverflow}>{row.subscriptionId}</div>
+            <div className={classes.rowOverflow}>{row.bookingId}</div>
           </TableCell>
           <TableCell>
             <div className={classes.rowOverflow}>{row.owner}</div>

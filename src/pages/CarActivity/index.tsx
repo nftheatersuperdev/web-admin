@@ -381,7 +381,6 @@ export default function CarActivity(): JSX.Element {
     }) || []
 
   const csvHeaders = [
-    { label: t('carActivity.export.header.id'), key: 'id' },
     { label: t('carActivity.export.header.locationService'), key: 'location' },
     { label: t('carActivity.export.header.brand'), key: 'brandName' },
     { label: t('carActivity.export.header.model'), key: 'modelName' },

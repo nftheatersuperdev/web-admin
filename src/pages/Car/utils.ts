@@ -142,12 +142,14 @@ export interface CarList {
 
 export interface CarCsv {
   carTrackId: string
+  location: string
   brand: string
   model: string
   color: string
   plateNumber: string
-  vin: string
   status: string
+  owner: string
+  reseller: string
   createdDate: string
 }
 export interface FilterSearch {
