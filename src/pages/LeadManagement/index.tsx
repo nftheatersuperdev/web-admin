@@ -120,6 +120,7 @@ export default function LeadManagement() {
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
+  const [enableInputSearch, setEnableInputSearch] = useState<boolean>(false)
   // const defaultSelect = {
   //   label: t('all'),
   //   value: 'all',
@@ -151,8 +152,8 @@ export default function LeadManagement() {
     const { value: eventVal } = event.target
     const searchText = value ? value : eventVal
     setSearchValue(searchText)
-    formik.setFieldValue('searchInput', searchText)
     if (searchText.length >= 2 || searchText.length < 1) {
+      formik.setFieldValue('searchInput', searchText)
       formik.handleSubmit()
     }
   }
@@ -167,9 +168,11 @@ export default function LeadManagement() {
   const onSetSelectedSearch = (value: SelectOption | null) => {
     if (value) {
       setSelectedSearch(value)
+      setEnableInputSearch(true)
     } else {
       setFilterSearchField({})
       setSelectedSearch(null)
+      setEnableInputSearch(false)
     }
     setSearchValue('')
   }
@@ -225,7 +228,7 @@ export default function LeadManagement() {
 
   useEffect(() => {
     refetch()
-  }, [filterSearchField, page, pageSize, refetch])
+  }, [filterSearchField, page, pageSize, refetch, selectedSearch])
 
   return (
     <Page>
@@ -273,6 +276,7 @@ export default function LeadManagement() {
           <Grid className={[classes.filter, classes.paddingLeft].join(' ')} item xs={3}>
             <TextField
               fullWidth
+              disabled={!enableInputSearch}
               label={t('carAvailability.searchField.label')}
               id="lead_list_search_input"
               name="searchVal"
@@ -280,6 +284,7 @@ export default function LeadManagement() {
               onChange={onSearchChange}
               variant="outlined"
               onKeyDown={onEnterSearch}
+              value={searchValue || ''}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="start">
