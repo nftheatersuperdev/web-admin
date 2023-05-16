@@ -20,7 +20,11 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES, hasAllowedRole } from 'auth/roles'
-import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formatDate } from 'utils'
+import {
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  DEFAULT_DATE_FORMAT_MONTH_TEXT,
+  formatDate,
+} from 'utils'
 import {
   convertToDuration,
   columnFormatSubEventStatus,
@@ -164,8 +168,8 @@ export default function SubscriptionDetail(): JSX.Element {
               disabled
               variant="outlined"
               value={
-                bookingDetail?.status
-                  ? columnFormatSubEventStatus(bookingDetail?.status, t)
+                bookingDetail?.displayStatus
+                  ? columnFormatSubEventStatus(bookingDetail?.displayStatus, t)
                   : t('booking.statuses.unknown')
               }
             />
@@ -231,7 +235,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.startDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              value={dayjs(bookingDetail?.startDate).format(DEFAULT_DATE_FORMAT_MONTH_TEXT)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -242,7 +246,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={dayjs(bookingDetail?.endDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              value={dayjs(bookingDetail?.endDate).format(DEFAULT_DATE_FORMAT_MONTH_TEXT)}
             />
           </Grid>
         </Grid>
