@@ -32,8 +32,10 @@ import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
   formatStringForInputText,
-  validateKeywordText,
+  validateKeywordTextWithSpecialChar,
   convertPhoneNumber,
+  validateKeywordText,
+  validateKeywordUUID,
 } from 'utils'
 import config from 'config'
 import Pagination from '@material-ui/lab/Pagination'
@@ -446,22 +448,30 @@ export default function CustomerProfile(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [customerFilter, pages, page, pageSize, refetch])
+
   const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const isKeywordAccepted = validateKeywordText(value)
+    const isValidEmailSearchField = validateKeywordTextWithSpecialChar(value)
+    const isValidKeywordText = validateKeywordText(value)
+    const isValidUUIDSearchField = validateKeywordUUID(value)
     setFilterSearchField(value)
     setFilterSearchFieldError('')
-    if (formik.values.searchType !== 'id') {
-      if (isKeywordAccepted && value.length >= 2) {
-        setFilterSearchField(value)
-        setIsEnableFilterButton(true)
-      } else if (value !== '') {
-        setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
-        setIsEnableFilterButton(false)
-      } else {
-        setFilterSearchField('')
-        setIsEnableFilterButton(false)
-      }
+    if (formik.values.searchType === 'id' && !isValidUUIDSearchField) {
+      setFilterSearchFieldError(t('user.searchField.invalidUUIDFormat'))
+      setIsEnableFilterButton(false)
+    } else if (
+      formik.values.searchType === 'email' &&
+      (!isValidEmailSearchField || value.length < 2)
+    ) {
+      setFilterSearchFieldError(t('user.searchField.invalidSearchEmailFormat'))
+      setIsEnableFilterButton(false)
+    } else if (
+      formik.values.searchType !== 'id' &&
+      formik.values.searchType !== 'email' &&
+      (!isValidKeywordText || value.length < 2)
+    ) {
+      setFilterSearchFieldError(t('user.searchField.invalidFormat'))
+      setIsEnableFilterButton(false)
     } else {
       setFilterSearchField(value)
       setIsEnableFilterButton(true)
