@@ -172,9 +172,13 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(carDetail.carActivity?.deliveryTask?.date).format(
-                  DEFAULT_DATE_FORMAT_MONTH_TEXT
-                )}
+                value={
+                  carDetail.carActivity?.deliveryTask?.date
+                    ? dayjs(carDetail.carActivity.deliveryTask.date).format(
+                        DEFAULT_DATE_FORMAT_MONTH_TEXT
+                      )
+                    : '-'
+                }
               />
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -192,11 +196,13 @@ export default function BookingCarDetail(): JSX.Element {
                 }}
                 variant="outlined"
                 value={
-                  dayjs(carDetail.carActivity?.deliveryTask?.date).format(DEFAULT_TIME_FORMAT) +
-                  ' - ' +
-                  addTwoHours(
-                    dayjs(carDetail.carActivity?.deliveryTask?.date).format(DEFAULT_TIME_FORMAT)
-                  )
+                  carDetail.carActivity?.deliveryTask?.date
+                    ? dayjs(carDetail.carActivity?.deliveryTask?.date).format(DEFAULT_TIME_FORMAT) +
+                      ' - ' +
+                      addTwoHours(
+                        dayjs(carDetail.carActivity?.deliveryTask?.date).format(DEFAULT_TIME_FORMAT)
+                      )
+                    : '-'
                 }
               />
             </Grid>
@@ -325,9 +331,13 @@ export default function BookingCarDetail(): JSX.Element {
                   shrink: true,
                 }}
                 variant="outlined"
-                value={dayjs(carDetail.carActivity?.deliveryTask?.createdDate).format(
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
+                value={
+                  carDetail.carActivity?.deliveryTask
+                    ? dayjs(carDetail.carActivity?.deliveryTask?.createdDate).format(
+                        DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                      )
+                    : '-'
+                }
               />
             </Grid>
           </Grid>
@@ -396,9 +406,11 @@ export default function BookingCarDetail(): JSX.Element {
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {dayjs(carDetail.carActivity?.deliveryTask?.date).format(
-                        DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                      )}
+                      {carDetail.carActivity?.deliveryTask?.date
+                        ? dayjs(carDetail.carActivity?.deliveryTask?.date).format(
+                            DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                          )
+                        : '-'}
                     </div>
                   </TableCell>
                   <TableCell>
