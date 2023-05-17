@@ -23,30 +23,14 @@ export function useMenuItems() {
       title: t('sidebar.dashboard'),
       href: ROUTE_PATHS.DASHBOARD,
       icon: Dashboard,
-      allowedRoles: [
-        ROLES.SUPER_ADMIN,
-        ROLES.ADMIN,
-        ROLES.CUSTOMER_SUPPORT,
-        ROLES.OPERATION,
-        ROLES.MARKETING,
-        ROLES.PRODUCT_SUPPORT,
-        ROLES.IT_ADMIN,
-      ],
+      allowedPrivileges: [PRIVILEGES.PERM_DASHBOARD_VIEW],
     },
     {
       id: 'left_menu__user_management',
       href: ROUTE_PATHS.USER,
       icon: PeopleAlt,
       title: t('sidebar.userManagement.title'),
-      allowedRoles: [
-        ROLES.SUPER_ADMIN,
-        ROLES.ADMIN,
-        ROLES.CUSTOMER_SUPPORT,
-        ROLES.OPERATION,
-        ROLES.MARKETING,
-        ROLES.PRODUCT_SUPPORT,
-        ROLES.IT_ADMIN,
-      ],
+      allowedPrivileges: [PRIVILEGES.PERM_CUSTOMER_VIEW, PRIVILEGES.PERM_ADMIN_USER_VIEW],
       children: [
         {
           id: 'left_menu__users',
@@ -64,7 +48,7 @@ export function useMenuItems() {
           id: 'left_menu__staff_profile',
           title: t('sidebar.userManagement.staffProfile'),
           href: ROUTE_PATHS.STAFF_PROFILES,
-          allowedPrivileges: [PRIVILEGES.PERM_ADMIN_USER_VIEW, PRIVILEGES.PERM_ADMIN_USER_CREATE],
+          allowedPrivileges: [PRIVILEGES.PERM_ADMIN_USER_VIEW],
         },
         {
           id: 'left_menu__admin_users',
@@ -79,18 +63,25 @@ export function useMenuItems() {
       title: t('sidebar.carManagement.title'),
       href: ROUTE_PATHS.CAR,
       icon: Folder,
+      // allowedPrivileges: [
+      //   PRIVILEGES.PERM_CAR_ACTIVITY_VIEW,
+      //   PRIVILEGES.PERM_CAR_USABILITY_VIEW,
+      //   PRIVILEGES.PERM_CAR_MODEL_VIEW,
+      // ],
       allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
       children: [
         {
           id: 'left_menu__cars',
           title: t('sidebar.carManagement.car'),
           href: ROUTE_PATHS.CAR,
+          // allowedPrivileges: [PRIVILEGES.PERM_CAR_VIEW],
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
         },
         {
           id: 'left_menu__car_availability',
           title: t('sidebar.carManagement.carAvailability'),
           href: ROUTE_PATHS.CAR_AVAILABILITY,
+          // allowedPrivileges: [PRIVILEGES.PERM_CAR_USABILITY_VIEW],
           allowedRoles: [
             ROLES.SUPER_ADMIN,
             ROLES.ADMIN,
@@ -104,12 +95,14 @@ export function useMenuItems() {
           id: 'left_menu__car_activity',
           title: t('sidebar.carManagement.carActivity'),
           href: ROUTE_PATHS.CAR_ACTIVITY,
+          // allowedPrivileges: [PRIVILEGES.PERM_CAR_ACTIVITY_VIEW],
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
         },
         {
           id: 'left_menu__model',
           title: t('sidebar.carManagement.carModelAndPricing'),
           href: ROUTE_PATHS.MODEL_AND_PRICING,
+          // allowedPrivileges: [PRIVILEGES.PERM_CAR_MODEL_VIEW],
           allowedRoles: [
             ROLES.SUPER_ADMIN,
             ROLES.ADMIN,
@@ -125,25 +118,13 @@ export function useMenuItems() {
       title: t('sidebar.bookingManagement.title'),
       href: ROUTE_PATHS.BOOKING,
       icon: BarChart,
-      allowedRoles: [
-        ROLES.SUPER_ADMIN,
-        ROLES.ADMIN,
-        ROLES.CUSTOMER_SUPPORT,
-        ROLES.OPERATION,
-        ROLES.PRODUCT_SUPPORT,
-      ],
+      allowedPrivileges: [PRIVILEGES.PERM_BOOKING_RENTAL_VIEW],
       children: [
         {
           id: 'left_menu__booking',
           title: t('sidebar.bookingManagement.booking'),
           href: ROUTE_PATHS.BOOKING,
-          allowedRoles: [
-            ROLES.SUPER_ADMIN,
-            ROLES.ADMIN,
-            ROLES.CUSTOMER_SUPPORT,
-            ROLES.OPERATION,
-            ROLES.PRODUCT_SUPPORT,
-          ],
+          allowedPrivileges: [PRIVILEGES.PERM_BOOKING_RENTAL_VIEW],
         },
       ],
     },
@@ -152,18 +133,25 @@ export function useMenuItems() {
       title: t('sidebar.voucherManagement.title'),
       href: ROUTE_PATHS.VOUCHER,
       icon: Stars,
+      // allowedPrivileges: [
+      //   PRIVILEGES.PERM_VOUCHER_CODE_VIEW,
+      //   PRIVILEGES.PERM_VOUCHER_VIEW,
+      //   PRIVILEGES.PERM_CUSTOMER_GROUP_VIEW,
+      // ],
       allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
       children: [
         {
           id: 'left_menu__vouchers',
           title: t('sidebar.voucherManagement.voucher'),
           href: ROUTE_PATHS.VOUCHER,
+          // allowedPrivileges: [PRIVILEGES.PERM_VOUCHER_VIEW, PRIVILEGES.PERM_VOUCHER_CODE_VIEW],
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
         },
         {
           id: 'left_menu__user_group',
           title: t('sidebar.userManagement.userGroup'),
           href: ROUTE_PATHS.USER_GROUPS,
+          // allowedPrivileges: [PRIVILEGES.PERM_CUSTOMER_GROUP_VIEW],
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MARKETING, ROLES.PRODUCT_SUPPORT],
         },
       ],
@@ -173,6 +161,7 @@ export function useMenuItems() {
       title: t('sidebar.documentsManagement.title'),
       href: ROUTE_PATHS.DOCUMENTS,
       icon: DocumentScanner,
+      // allowedPrivileges: [],
       allowedRoles: [
         ROLES.SUPER_ADMIN,
         ROLES.ADMIN,
@@ -185,12 +174,17 @@ export function useMenuItems() {
           id: 'left_menu__document',
           href: ROUTE_PATHS.DOCUMENTS,
           title: t('sidebar.documentsManagement.document'),
+          // allowedPrivileges: [PRIVILEGES.PERM_DOCUMENT_CONTENT_VIEW],
           allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
         },
         {
           id: 'left_menu__consent_log',
           href: ROUTE_PATHS.CONSENT_LOG,
           title: t('sidebar.documentsManagement.consentLog'),
+          // allowedPrivileges: [
+          //   PRIVILEGES.PERM_AGREEMENT_DOCUMENT_VIEW,
+          //   PRIVILEGES.PERM_AGREEMENT_DOCUMENT_ACTIVE_VIEW,
+          // ],
           allowedRoles: [
             ROLES.SUPER_ADMIN,
             ROLES.ADMIN,
@@ -203,6 +197,7 @@ export function useMenuItems() {
           id: 'left_menu__cookie_log',
           title: t('sidebar.cookieConsentLog'),
           href: ROUTE_PATHS.COOKIE_CONSENT_LOG,
+          // allowedPrivileges: [PRIVILEGES.PERM_COOKIE_CONSENT_VIEW],
           allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
         },
         {
