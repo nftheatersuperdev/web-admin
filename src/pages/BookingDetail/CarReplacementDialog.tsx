@@ -98,6 +98,7 @@ export default function CarReplacementDialog({
     status.toLowerCase() === statusCondition.toLowerCase()
 
   const isUpCommingCancelled = bookingDetail.status === 'upcoming_cancelled'
+  const isSelfPickUpBooking = isSelfPickUp && displayStatus === BookingStatus.ACCEPTED
 
   function isArrivingSoon() {
     if (bookingDetail) {
@@ -449,18 +450,28 @@ export default function CarReplacementDialog({
               {t('booking.carReplacement.deliveryAddress')}
             </Typography>
             <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={deliveryMarkerAddress}
-                zoom={15}
-                onClick={handleMarkerChanged}
-              >
-                <Marker
-                  position={deliveryMarkerAddress}
-                  draggable={true}
-                  onDragEnd={handleMarkerChanged}
-                />
-              </GoogleMap>
+              {isSelfPickUpBooking ? (
+                <GoogleMap
+                  mapContainerStyle={containerStyle}
+                  center={deliveryMarkerAddress}
+                  zoom={15}
+                >
+                  <Marker position={deliveryMarkerAddress} draggable={false} />
+                </GoogleMap>
+              ) : (
+                <GoogleMap
+                  mapContainerStyle={containerStyle}
+                  center={deliveryMarkerAddress}
+                  zoom={15}
+                  onClick={handleMarkerChanged}
+                >
+                  <Marker
+                    position={deliveryMarkerAddress}
+                    draggable={true}
+                    onDragEnd={handleMarkerChanged}
+                  />
+                </GoogleMap>
+              )}
             </LoadScript>
           </Grid>
           <Grid item xs={12} sm={6}>
