@@ -51,6 +51,14 @@ const GridSearchSection = styled(Grid)`
   align-items: left !important;
   min-height: 100px !important;
 `
+const TextLineClamp = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+`
+
 export default function ConsentsLog(): JSX.Element {
   const useStyles = makeStyles({
     table: {
@@ -175,13 +183,13 @@ export default function ConsentsLog(): JSX.Element {
               <div className={classes.rowOverflowSmall}>{agreement.customer.lastName}</div>
             </TableCell>
             <TableCell>
-              <div className={classes.rowOverflowSmall}>{agreement.customer.email}</div>
+              <TextLineClamp>{agreement.customer.email}</TextLineClamp>
             </TableCell>
             <TableCell>
-              <div>{convertPhoneNumber(agreement.customer.phoneNumber)}</div>
+              <TextLineClamp>{convertPhoneNumber(agreement.customer.phoneNumber)}</TextLineClamp>
             </TableCell>
             <TableCell>
-              <div className={classes.rowOverflow}>{agreement.documentContent.nameEn}</div>
+              <TextLineClamp>{agreement.documentContent.nameEn}</TextLineClamp>
             </TableCell>
             <TableCell>
               <div className={classes.rowOverflow}>{agreement.documentContent.version}</div>
