@@ -92,34 +92,27 @@ export default function CarReplacementDialog({
 
   const isUpCommingCancelled = bookingDetail.status === 'upcoming_cancelled'
 
+  /**
+   * The logic to get delivery dates does update on May 17, 2023.
+   * Ref: https://evme.atlassian.net/browse/EVME-3977
+   */
   function getDeliveryDates() {
     const displayStatus = bookingDetail?.displayStatus.toLocaleLowerCase()
-    const isExtend = bookingDetail?.isExtend || false
     const maxDate = dayjs(bookingDetail?.endDate).add(-1, 'day').endOf('day')
     const todayDate = dayjs().startOf('day')
 
     switch (displayStatus) {
+      // Accepted
       case BookingStatus.ACCEPTED: {
-        if (isExtend) {
-          return {
-            minDate: bookingDetail?.startDate,
-            maxDate,
-          }
-        }
-        return {
-          minDate: todayDate,
-          maxDate,
-        }
-      }
-      default: {
-        if (isExtend) {
-          return {
-            minDate: todayDate,
-            maxDate,
-          }
-        }
         return {
           minDate: bookingDetail?.startDate,
+          maxDate: bookingDetail?.startDate,
+        }
+      }
+      // Delivered
+      default: {
+        return {
+          minDate: todayDate,
           maxDate,
         }
       }
