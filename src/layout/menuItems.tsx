@@ -200,6 +200,13 @@ export function useMenuItems() {
           ],
         },
         {
+          id: 'left_menu__consents_log',
+          href: ROUTE_PATHS.CONSENTS_LOG,
+          title: t('sidebar.documentsManagement.consentLog'),
+          allowedPrivileges: [PRIVILEGES.PERM_COOKIE_CONTENT_VIEW],
+          toggleKey: 'IS_ENABLED_CONSENT_LOG_FEATURE',
+        },
+        {
           id: 'left_menu__cookie_log',
           title: t('sidebar.cookieConsentLog'),
           href: ROUTE_PATHS.COOKIE_CONSENT_LOG,

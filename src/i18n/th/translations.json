@@ -1179,6 +1179,7 @@
     "documentNameEn": "ชื่อเอกสาร (EN)",
     "documentNameTh": "ชื่อเอกสาร (TH)",
     "acceptedDate": "วันที่กดรับ",
+    "updatedDate": "วันที่ปรับปรุงล่าสุด",
     "status": "สถานะ",
     "documentVersion": "เวอร์ชั่น",
     "documentStatus": {
