@@ -31,7 +31,6 @@ import { getAvailableListBFF } from 'services/web-bff/car'
 import { status as BookingStatus, updateCarReplacement } from 'services/web-bff/booking'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/booking.type'
-import { SubEventStatus } from 'pages/Subscriptions/utils'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
@@ -84,72 +83,53 @@ export default function CarReplacementDialog({
   const {
     bookingId,
     rentDetail: { bookingDetailId },
-    displayStatus,
     carActivities,
     endDate,
     isSelfPickUp,
   } = bookingDetail
 
   const carActivity = carActivities[carActivities.length - 1]
-  const rentalDetail = bookingDetail.rentDetail
-  const todayDate = dayjs()
-
-  const isStatus = (status: string, statusCondition: string) =>
-    status.toLowerCase() === statusCondition.toLowerCase()
 
   const isUpCommingCancelled = bookingDetail.status === 'upcoming_cancelled'
 
-  function isArrivingSoon() {
-    if (bookingDetail) {
-      const { rentDetail, displayStatus, startDate, isExtend } = bookingDetail
-      if (
-        // Normal Case
-        (!isExtend &&
-          isStatus(displayStatus, BookingStatus.ACCEPTED) &&
-          isStatus(rentDetail.status, BookingStatus.RESERVED)) ||
-        // Extend Case
-        (isExtend &&
-          dayjs(startDate) > todayDate &&
-          isStatus(displayStatus, BookingStatus.ACCEPTED) &&
-          isStatus(rentDetail.status, BookingStatus.DELIVERED))
-      ) {
-        return true
-      }
-    }
-    return false
-  }
+  function getDeliveryDates() {
+    const displayStatus = bookingDetail?.displayStatus.toLocaleLowerCase()
+    const isExtend = bookingDetail?.isExtend || false
+    const maxDate = dayjs(bookingDetail?.endDate).add(-1, 'day').endOf('day')
+    const todayDate = dayjs().startOf('day')
 
-  const isArrivingSoonStatus = isArrivingSoon()
-
-  function generateMinAndMaxDates(status: string) {
-    const todayAddOneYear = todayDate.add(1, 'year')
-    const returnDateMinusOneDay = () =>
-      carActivity?.returnTask?.date
-        ? dayjs(carActivity?.returnTask?.date).add(-1, 'day').startOf('day')
-        : dayjs(carActivity?.deliveryTask?.date)
-            .add(rentalDetail.durationDay - 1, 'day')
-            .startOf('day')
-    switch (status.toLocaleLowerCase()) {
-      case SubEventStatus.DELIVERED: {
+    switch (displayStatus) {
+      case BookingStatus.ACCEPTED: {
+        if (isExtend) {
+          return {
+            minDate: bookingDetail?.startDate,
+            maxDate,
+          }
+        }
         return {
-          minDate: todayDate.startOf('day'),
-          maxDate: returnDateMinusOneDay(),
+          minDate: todayDate,
+          maxDate,
         }
       }
       default: {
+        if (isExtend) {
+          return {
+            minDate: todayDate,
+            maxDate,
+          }
+        }
         return {
-          minDate: dayjs(carActivity.deliveryTask.date),
-          maxDate: isArrivingSoonStatus ? returnDateMinusOneDay() : todayAddOneYear,
+          minDate: bookingDetail?.startDate,
+          maxDate,
         }
       }
     }
   }
-
-  const deliveryDateConditions = generateMinAndMaxDates(displayStatus)
+  const deliveryDates = getDeliveryDates()
 
   const defaultState = {
     carId: '',
-    deliveryDate: deliveryDateConditions.minDate,
+    deliveryDate: deliveryDates.minDate,
     deliveryTime: '',
     deliveryAddress: {
       full: '',
@@ -160,9 +140,7 @@ export default function CarReplacementDialog({
 
   const { t } = useTranslation()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
-  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>(
-    defaultState.deliveryDate
-  )
+  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>()
   const [deliveryTime, setDeliveryTime] = useState<DataState['deliveryTime']>(
     defaultState.deliveryTime
   )
@@ -304,8 +282,8 @@ export default function CarReplacementDialog({
               onChange={handleDeliveryDateChange}
               value={deliveryDate}
               margin="normal"
-              minDate={deliveryDateConditions.minDate}
-              maxDate={deliveryDateConditions.maxDate}
+              minDate={deliveryDates.minDate}
+              maxDate={deliveryDates.maxDate}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
