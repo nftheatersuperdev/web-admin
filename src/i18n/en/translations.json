@@ -200,6 +200,8 @@
     "title": "404 - Page Not Found"
   },
   "dashboard": {
+    "allLocation": "All Location",
+    "location": "Location Service",
     "overall": "Overall",
     "kyc": "KYCs (Sumsub)",
     "subscription": "Subscription",

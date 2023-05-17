@@ -1,4 +1,6 @@
-import { Grid, Typography } from '@material-ui/core'
+/* eslint-disable react/jsx-props-no-spreading */
+import { useState, useEffect } from 'react'
+import { Grid, Typography, Autocomplete, TextField } from '@mui/material'
 import {
   PeopleOutlined as PeopleIcon,
   DirectionsCar as CarIcon,
@@ -7,16 +9,20 @@ import {
   PlayForWork as RequestedIcon,
   HowToReg as ApprovedIcon,
   CallMissed as RejectedIcon,
-} from '@material-ui/icons'
+} from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { formatDate } from 'utils'
 import { ROUTE_PATHS } from 'routes'
 import qs from 'qs'
 import { useQuery } from 'react-query'
+import { LocationResponse } from 'services/web-bff/location.type'
 import { getInformations } from 'services/web-bff/dashboard'
+import { getLocationList } from 'services/web-bff/location'
 import { Page } from 'layout/LayoutRoute'
 import { CardStatus, DetailLink } from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
+import { SelectOption, getLocationOptions } from './utils'
+import { useStyles } from './styles'
 
 const quickLinks = [
   {
@@ -64,8 +70,38 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
+  const classes = useStyles()
   const { t } = useTranslation()
   const todayLowerUpper = formatDate(Date(), 'YYYY-MM-DD')
+
+  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
+    getLocationList()
+  )
+
+  useEffect(() => {
+    if (isFetchedLocation && locations) {
+      setLocationData(locations)
+    }
+  }, [locations, isFetchedLocation])
+
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
+  const locationOptions = getLocationOptions(locationData)
+  const defaultLocation = {
+    label: t('dashboard.allLocation'),
+    value: 'all',
+  }
+  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
+  const onSetSelectedLocation = (option: SelectOption | null) => {
+    if (option) {
+      setSelectedLocation(option)
+      // formik.setFieldValue('searchLocation', option.value)
+      // formik.handleSubmit()
+    } else {
+      setSelectedLocation(defaultLocation)
+      // formik.setFieldValue('searchLocation', '')
+      // formik.handleSubmit()
+    }
+  }
 
   const { data: dataInformations } = useQuery('dashboard-informations', () => getInformations())
   const informations = dataInformations?.data.summary
@@ -88,9 +124,38 @@ export default function Dashboard(): JSX.Element {
   return (
     <Page>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={9} sm={9}>
           <h1>{t('dashboard.overall')}</h1>
         </Grid>
+        <Grid item xs={9} sm={3}>
+          <Autocomplete
+            autoHighlight
+            id="search_location_list"
+            className={classes.autoCompleteSelect}
+            options={locationOptions}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => {
+              return (
+                <TextField
+                  {...params}
+                  label={t('dashboard.location')}
+                  variant="outlined"
+                  placeholder={t('dashboard.allLocation')}
+                />
+              )
+            }}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value || value.value === 'all'
+            }
+            value={selectedLocation || defaultLocation}
+            defaultValue={selectedLocation || defaultLocation}
+            onChange={(_e, value) => {
+              onSetSelectedLocation(value)
+            }}
+          />
+        </Grid>
+      </Grid>
+      <Grid container spacing={3}>
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalCars.title')}
