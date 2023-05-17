@@ -84,6 +84,7 @@ export default function CarReplacementDialog({
     bookingId,
     rentDetail: { bookingDetailId },
     carActivities,
+    displayStatus,
     endDate,
     isSelfPickUp,
   } = bookingDetail
