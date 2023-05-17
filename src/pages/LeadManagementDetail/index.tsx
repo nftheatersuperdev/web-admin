@@ -47,14 +47,13 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Search } from '@material-ui/icons'
 import { useFormik } from 'formik'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
 import { Page } from 'layout/LayoutRoute'
 import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
 import { getLeadFormSubmittion } from 'services/web-bff/lead-management-detail'
-import { LeadFormSubmissions } from 'services/web-bff/lead-management-detail.type'
 
 interface ColumnTable {
   label: string
@@ -69,6 +68,20 @@ export interface LeadManagementDetailStateParams {
   leadFormId: string
   leadName: string
   createdDate: string
+}
+
+export interface LeadFormSubmittionCSV {
+  no: string
+  leadName: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
+  email: string
+  leadSource: string
+  interesting: string
+  timeline: string
+  registeredDate: string
+  customerStatus: string
 }
 
 dayjs.extend(dayjsUtc)
@@ -209,6 +222,7 @@ export default function LeadManagementDetail() {
   const { t } = useTranslation()
   const classes = useStyles()
   const location = useLocation()
+  const { id } = useParams<{ id: string }>()
   const { getRole } = useAuth()
   const currentUserRole = getRole()
 
@@ -216,20 +230,22 @@ export default function LeadManagementDetail() {
   const [filterEndDate, setFilterEndDate] = useState<Dayjs | null>(null)
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [showSearchButton, setShowSearchButton] = useState<boolean>(false)
-  const [isEnableFilterButton, setIsEnableFilterButton] = useState<boolean>(false)
+
   const [openDialogExport, setOpenDialogExport] = useState<boolean>(false)
   const [orderBy, setOrderBy] = useState<string>('createdDate')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  // const selectedFromDate = initSelectedFromDate
   const myParam: LeadManagementDetailStateParams = location.state as LeadManagementDetailStateParams
 
   const isColumnChip: string[] = ['interesting', 'timeline']
   const isRoleCanExport: boolean =
     currentUserRole === ROLES.SUPER_ADMIN || currentUserRole === ROLES.OPERATION
 
-  const headerTableCSV = [
+  const fileName = `Lead Form ${myParam.leadName}.csv`
+
+  const csvData: LeadFormSubmittionCSV[] = []
+
+  const headerTableLeadFormSubmittion: ColumnTable[] = [
     { label: 'No', key: 'no' },
     { label: 'First name', key: 'firstName' },
     { label: 'Last name', key: 'lastName' },
@@ -239,6 +255,20 @@ export default function LeadManagementDetail() {
     { label: 'Interesting', key: 'interesting' },
     { label: 'Timeline', key: 'timeline' },
     { label: 'Registered Date', key: 'createdDate' },
+  ]
+
+  const headerTableCSV: ColumnTable[] = [
+    { label: 'No', key: 'no' },
+    { label: 'Lead Name', key: 'leadName' },
+    { label: 'First Name', key: 'firstName' },
+    { label: 'Last Name', key: 'lastName' },
+    { label: 'Phone Number', key: 'phoneNumber' },
+    { label: 'Email', key: 'email' },
+    { label: 'Lead Source', key: 'leadSource' },
+    { label: 'Interesting', key: 'interesting' },
+    { label: 'Timeline', key: 'timeline' },
+    { label: 'Registered Date', key: 'registeredDate' },
+    { label: 'Customer Status', key: 'customerStatus' },
   ]
 
   const formik = useFormik({
@@ -274,7 +304,7 @@ export default function LeadManagementDetail() {
     getLeadFormSubmittion({
       sortBy: 'createdDate',
       sortDirection: sortOrder.toLocaleUpperCase(),
-      leadFormId: myParam.leadFormId,
+      leadFormId: id,
       page,
       size: pageSize,
     })
@@ -289,7 +319,6 @@ export default function LeadManagementDetail() {
   useEffect(() => {
     console.log('sortOrder : ' + sortOrder)
     console.log('orderBy : ' + orderBy)
-    console.log(currentUserRole)
     refetch()
   }, [refetch, pageSize, sortOrder, orderBy, currentUserRole])
 
@@ -349,7 +378,7 @@ export default function LeadManagementDetail() {
           </Typography>
         </div>
         <Grid className={classes.searchBar} container spacing={1}>
-          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
+          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={4}>
             <TextField
               className={classes.searchTextField}
               fullWidth
@@ -361,10 +390,6 @@ export default function LeadManagementDetail() {
               variant="outlined"
               onChange={(event) => {
                 formik.setFieldValue('searchType', event.target.value)
-                // setIsEnableFilterButton(false)
-                // setFilterSearchField('')
-                // setFilterSearchFieldError('')
-                // onSelectSearchChange(event.target.value as string)
               }}
             >
               <MenuItem value=" ">
@@ -384,15 +409,17 @@ export default function LeadManagementDetail() {
               <MenuItem value="period">{t('leadManagementDetail.filter.period')}</MenuItem>
             </TextField>
           </Grid>
-          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
+          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={4}>
             <TextField
               id="customer-profile__search_input"
               name="searchVal"
+              className={classes.searchTextField}
               fullWidth
               value={formik.values.searchValue}
               placeholder={t('carAvailability.searchField.label')}
               // error={!!filterSearchFieldError}
               // helperText={filterSearchFieldError}
+              disabled={formik.values.searchType === '' ? true : false}
               variant="outlined"
               InputLabelProps={{
                 shrink: true,
@@ -405,35 +432,18 @@ export default function LeadManagementDetail() {
                 ),
               }}
               onChange={(event) => {
-                setShowSearchButton(true)
-                setIsEnableFilterButton(true)
                 formik.setFieldValue('searchValue', event.target.value)
               }}
             />
           </Grid>
-          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={3}>
-            <Button
-              id="staff_profile__search_btn"
-              className={showSearchButton ? classes.buttonWithoutShadow : classes.hideObject}
-              variant="contained"
-              onClick={() => formik.handleSubmit()}
-              disabled={!isEnableFilterButton}
-            >
-              {t('carAvailability.searchBtn')}
-            </Button>
-          </Grid>
-          <Grid
-            item
-            className={[classes.filter, classes.paddingLeft, classes.rightPanel].join(' ')}
-            xs={3}
-          >
+          {/* <Grid item xs /> */}
+          <Grid item className={[classes.filter, classes.rightPanel].join(' ')} xs={3}>
             <Button
               id="customer_profile__export_btn"
               className={classes.exportButton}
               color="primary"
               variant="contained"
               disabled={!isRoleCanExport}
-              //   disabled={leadData?.data.leadFormSubmissions.length !== undefined}
               onClick={() => setOpenDialogExport(true)}
             >
               {t('button.export').toUpperCase()}
@@ -451,7 +461,7 @@ export default function LeadManagementDetail() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    {headerTableCSV.map((column: ColumnTable) => (
+                    {headerTableLeadFormSubmittion.map((column: ColumnTable) => (
                       <TableCell key={column.key} align="left">
                         {column.key === 'createdDate' ? (
                           <TableSortLabel
@@ -490,7 +500,7 @@ export default function LeadManagementDetail() {
                   <TableBody>
                     {leadData?.data.leadFormSubmissions.map((row: Row) => (
                       <TableRow key={row.id}>
-                        {headerTableCSV.map((column: ColumnTable) =>
+                        {headerTableLeadFormSubmittion.map((column: ColumnTable) =>
                           isColumnChip.includes(column.key) ? (
                             <TableCell key={column.key}>
                               <Chip
@@ -522,7 +532,6 @@ export default function LeadManagementDetail() {
                     defaultValue={leadData?.data.pagination.size || pageSize}
                     onChange={(event) => {
                       setPage(1)
-                      //   setPages(event.target.value as number)
                       setPageSize(event.target.value as number)
                     }}
                   >
@@ -594,9 +603,9 @@ export default function LeadManagementDetail() {
             <Grid item xs={12} sx={{ paddingLeft: '15px', paddingRight: '15px' }}>
               <Button className={classes.dialogExportBtn} fullWidth variant="contained">
                 <CSVLink
-                  data={leadData?.data.leadFormSubmissions || ([] as LeadFormSubmissions[])}
+                  data={csvData}
                   headers={headerTableCSV}
-                  filename="EVme Admin Dashboard.csv"
+                  filename={fileName}
                   className={classes.noUnderLine}
                 >
                   {t('button.export').toUpperCase()}
