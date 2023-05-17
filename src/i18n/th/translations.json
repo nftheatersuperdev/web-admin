@@ -200,6 +200,8 @@
     "title": "404 - ไม่พบหน้า"
   },
   "dashboard": {
+    "allLocation": "สถานที่บริการทั้งหมด",
+    "location": "สถานที่บริการ",
     "overall": "Overall",
     "kyc": "KYCs (Sumsub)",
     "subscription": "Subscription",
