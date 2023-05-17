@@ -49,6 +49,7 @@ export const ROUTE_PATHS = Object.freeze({
   CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
   CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   LEAD_MANAGEMENT: '/lead-management',
+  LEAD_MANAGEMENT_DETAIL: '/lead-management-detail/:id',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -363,6 +364,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.LEAD_MANAGEMENT,
     component: lazy(() => import('./pages/LeadManagement' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.LEAD_MANAGEMENT_DETAIL,
+    component: lazy(() => import('./pages/LeadManagementDetail' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
   },
   {
