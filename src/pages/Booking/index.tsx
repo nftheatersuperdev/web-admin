@@ -1,7 +1,8 @@
+/* eslint-disable react/forbid-component-props */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Card,
   Grid,
@@ -142,7 +143,6 @@ export default function Booking(): JSX.Element {
     },
   })
   const classes = useStyles()
-  const history = useHistory()
   const { t } = useTranslation()
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -171,7 +171,9 @@ export default function Booking(): JSX.Element {
     data: bookingData,
     refetch,
     isFetching,
-  } = useQuery('booking', () => getList({ query, filters: filter }))
+  } = useQuery('booking', () => getList({ query, filters: filter }), {
+    refetchOnWindowFocus: false,
+  })
 
   const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
     getLocationList()
@@ -555,10 +557,10 @@ export default function Booking(): JSX.Element {
       return (
         <TableRow
           hover
-          onClick={() =>
-            history.push({ pathname: `/booking/${booking.id}/${booking.detailId}`, state: booking })
-          }
           key={`booking-${booking.id}-${booking.detailId}`}
+          component={Link}
+          to={`/booking/${booking.id}/${booking.detailId}`}
+          style={{ textDecoration: 'none' }}
         >
           {columnRow.map((col) => (
             <TableCell key={col.field} hidden={col.hidden}>
