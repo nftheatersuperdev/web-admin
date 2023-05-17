@@ -488,6 +488,7 @@ export default function CarReplacementDialog({
                 InputProps={{
                   readOnly: true,
                 }}
+                disabled={isSelfPickUpBooking}
               />
               <TextField
                 id="car_replacement__deliveryAddressRemark"
