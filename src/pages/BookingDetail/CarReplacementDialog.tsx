@@ -84,7 +84,6 @@ export default function CarReplacementDialog({
     bookingId,
     rentDetail: { bookingDetailId },
     carActivities,
-    displayStatus,
     startDate,
     endDate,
     displayStatus,
