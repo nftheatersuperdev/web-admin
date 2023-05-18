@@ -85,39 +85,54 @@ export default function CarReplacementDialog({
     rentDetail: { bookingDetailId },
     carActivities,
     displayStatus,
+    startDate,
     endDate,
     isSelfPickUp,
+    isExtend,
+    status: backendStatus,
   } = bookingDetail
 
   const carActivity = carActivities[carActivities.length - 1]
 
-  const isUpCommingCancelled = bookingDetail.status === 'upcoming_cancelled'
+  const isUpCommingCancelled = backendStatus === 'upcoming_cancelled'
   const isSelfPickUpBooking = isSelfPickUp && displayStatus === BookingStatus.ACCEPTED
 
   /**
-   * The logic to get delivery dates does update on May 17, 2023.
+   * The logic to get delivery dates does update on May 18, 2023.
    * Ref: https://evme.atlassian.net/browse/EVME-3977
    */
   function getDeliveryDates() {
-    const displayStatus = bookingDetail?.displayStatus.toLocaleLowerCase()
-    const maxDate = dayjs(bookingDetail?.endDate).add(-1, 'day').endOf('day')
+    const status = displayStatus.toLocaleLowerCase()
     const todayDate = dayjs().startOf('day')
+    const bookingStartDate = dayjs(startDate).startOf('day')
+    const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
+    const isAcceptedStatus = status === BookingStatus.ACCEPTED
+    const isDeliveredStatus = status === BookingStatus.DELIVERED
+    const isArrivingSoon = dayjs(startDate) > todayDate
 
-    switch (displayStatus) {
-      // Accepted
-      case BookingStatus.ACCEPTED: {
-        return {
-          minDate: bookingDetail?.startDate,
-          maxDate: bookingDetail?.startDate,
-        }
+    if (
+      (isAcceptedStatus && !isExtend && isArrivingSoon) ||
+      (isAcceptedStatus && isExtend && isArrivingSoon)
+    ) {
+      return {
+        minDate: bookingStartDate,
+        maxDate: bookingEndDateMinusOneDay,
       }
-      // Delivered
-      default: {
-        return {
-          minDate: todayDate,
-          maxDate,
-        }
+    }
+
+    if (
+      (isDeliveredStatus && !isExtend && !isArrivingSoon) ||
+      (isDeliveredStatus && isExtend && !isArrivingSoon)
+    ) {
+      return {
+        minDate: todayDate,
+        maxDate: bookingEndDateMinusOneDay,
       }
+    }
+
+    return {
+      minDate: todayDate,
+      maxDate: todayDate,
     }
   }
   const deliveryDates = getDeliveryDates()
@@ -135,7 +150,9 @@ export default function CarReplacementDialog({
 
   const { t } = useTranslation()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
-  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>()
+  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>(
+    dayjs(deliveryDates?.minDate)
+  )
   const [deliveryTime, setDeliveryTime] = useState<DataState['deliveryTime']>(
     defaultState.deliveryTime
   )
