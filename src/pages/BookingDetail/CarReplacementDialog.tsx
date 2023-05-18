@@ -88,16 +88,17 @@ export default function CarReplacementDialog({
     endDate,
     isSelfPickUp,
     isExtend,
+    displayStatus,
     status: backendStatus,
   } = bookingDetail
 
   const carActivity = carActivities[carActivities.length - 1]
 
   const isUpCommingCancelled = backendStatus === 'upcoming_cancelled'
-  const isSelfPickUpBooking = isSelfPickUp && backendStatus === BookingStatus.ACCEPTED
+  const isSelfPickUpBooking = isSelfPickUp && displayStatus === BookingStatus.ACCEPTED
 
   function getDeliveryDates() {
-    const status = backendStatus.toLocaleLowerCase()
+    const status = displayStatus.toLocaleLowerCase()
     const todayDate = dayjs().startOf('day')
     const bookingStartDate = dayjs(startDate).startOf('day')
     const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
@@ -254,7 +255,7 @@ export default function CarReplacementDialog({
     }))
   }
 
-  function getIsSelfPickUpBookingAddress() {
+  function getSelfPickupAndReturnTask() {
     if (carActivity.deliveryTask) {
       return carActivity.deliveryTask
     }
@@ -262,10 +263,8 @@ export default function CarReplacementDialog({
   }
 
   const deliveryMarkerAddress = {
-    lat: isSelfPickUpBooking ? getIsSelfPickUpBookingAddress().latitude : deliveryAddress.latitude,
-    lng: isSelfPickUpBooking
-      ? getIsSelfPickUpBookingAddress().longitude
-      : deliveryAddress.longitude,
+    lat: isSelfPickUpBooking ? getSelfPickupAndReturnTask().latitude : deliveryAddress.latitude,
+    lng: isSelfPickUpBooking ? getSelfPickupAndReturnTask().longitude : deliveryAddress.longitude,
   }
 
   return (
@@ -477,7 +476,7 @@ export default function CarReplacementDialog({
                 variant="outlined"
                 value={
                   isSelfPickUpBooking
-                    ? getIsSelfPickUpBookingAddress().fullAddress
+                    ? getSelfPickupAndReturnTask().fullAddress
                     : deliveryAddress.full
                 }
                 multiline
@@ -494,9 +493,7 @@ export default function CarReplacementDialog({
                 margin="normal"
                 variant="outlined"
                 value={
-                  isSelfPickUpBooking
-                    ? getIsSelfPickUpBookingAddress().remark
-                    : deliveryAddress.remark
+                  isSelfPickUpBooking ? getSelfPickupAndReturnTask().remark : deliveryAddress.remark
                 }
                 multiline
                 minRows={3}
