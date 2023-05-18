@@ -87,6 +87,7 @@ export default function CarReplacementDialog({
     displayStatus,
     startDate,
     endDate,
+    displayStatus,
     isSelfPickUp,
     isExtend,
     status: backendStatus,
