@@ -94,7 +94,6 @@ export interface CarActivityScheduleEditProps {
     startDate: string
     endDate: string
     remark: string | null
-    resellerServiceAreaId: string
   }
 }
 export interface CarActivityScheduleDeleteProps {
