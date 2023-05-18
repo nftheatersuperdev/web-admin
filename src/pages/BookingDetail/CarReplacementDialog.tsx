@@ -255,8 +255,8 @@ export default function CarReplacementDialog({
   }
 
   const deliveryMarkerAddress = {
-    lat: deliveryAddress.latitude,
-    lng: deliveryAddress.longitude,
+    lat: isSelfPickUpBooking ? carActivity.deliveryTask.latitude : deliveryAddress.latitude,
+    lng: isSelfPickUpBooking ? carActivity.deliveryTask.longitude : deliveryAddress.longitude,
   }
 
   return (
@@ -466,7 +466,9 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={deliveryAddress.full}
+                value={
+                  isSelfPickUpBooking ? carActivity.deliveryTask.fullAddress : deliveryAddress.full
+                }
                 multiline
                 minRows={3}
                 InputProps={{
@@ -480,10 +482,15 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={deliveryAddress.remark}
+                value={
+                  isSelfPickUpBooking ? carActivity.deliveryTask.remark : deliveryAddress.remark
+                }
                 multiline
                 minRows={3}
                 onChange={handleDeliveryAddressRemarkChanged}
+                InputLabelProps={{
+                  shrink: isSelfPickUpBooking,
+                }}
               />
             </MapDetailWrapper>
           </Grid>
