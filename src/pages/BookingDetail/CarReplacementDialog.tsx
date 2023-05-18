@@ -254,9 +254,18 @@ export default function CarReplacementDialog({
     }))
   }
 
+  function getIsSelfPickUpBookingAddress() {
+    if (carActivity.deliveryTask) {
+      return carActivity.deliveryTask
+    }
+    return carActivity.returnTask
+  }
+
   const deliveryMarkerAddress = {
-    lat: isSelfPickUpBooking ? carActivity.deliveryTask.latitude : deliveryAddress.latitude,
-    lng: isSelfPickUpBooking ? carActivity.deliveryTask.longitude : deliveryAddress.longitude,
+    lat: isSelfPickUpBooking ? getIsSelfPickUpBookingAddress().latitude : deliveryAddress.latitude,
+    lng: isSelfPickUpBooking
+      ? getIsSelfPickUpBookingAddress().longitude
+      : deliveryAddress.longitude,
   }
 
   return (
@@ -467,7 +476,9 @@ export default function CarReplacementDialog({
                 margin="normal"
                 variant="outlined"
                 value={
-                  isSelfPickUpBooking ? carActivity.deliveryTask.fullAddress : deliveryAddress.full
+                  isSelfPickUpBooking
+                    ? getIsSelfPickUpBookingAddress().fullAddress
+                    : deliveryAddress.full
                 }
                 multiline
                 minRows={3}
@@ -483,7 +494,9 @@ export default function CarReplacementDialog({
                 margin="normal"
                 variant="outlined"
                 value={
-                  isSelfPickUpBooking ? carActivity.deliveryTask.remark : deliveryAddress.remark
+                  isSelfPickUpBooking
+                    ? getIsSelfPickUpBookingAddress().remark
+                    : deliveryAddress.remark
                 }
                 multiline
                 minRows={3}
