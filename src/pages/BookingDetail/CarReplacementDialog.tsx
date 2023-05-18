@@ -103,7 +103,7 @@ export default function CarReplacementDialog({
     const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
     const isAcceptedStatus = status === BookingStatus.ACCEPTED
     const isDeliveredStatus = status === BookingStatus.DELIVERED
-    const isArrivingSoon = todayDate > dayjs(startDate)
+    const isArrivingSoon = dayjs(startDate) > dayjs(todayDate)
 
     if (
       (isAcceptedStatus && !isExtend && isArrivingSoon) ||
@@ -111,7 +111,7 @@ export default function CarReplacementDialog({
     ) {
       return {
         minDate: bookingStartDate,
-        maxDate: bookingEndDateMinusOneDay,
+        maxDate: bookingStartDate,
       }
     }
 
