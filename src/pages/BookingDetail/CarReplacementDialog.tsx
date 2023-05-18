@@ -86,7 +86,6 @@ export default function CarReplacementDialog({
     carActivities,
     startDate,
     endDate,
-    displayStatus,
     isSelfPickUp,
     isExtend,
     status: backendStatus,
@@ -95,20 +94,16 @@ export default function CarReplacementDialog({
   const carActivity = carActivities[carActivities.length - 1]
 
   const isUpCommingCancelled = backendStatus === 'upcoming_cancelled'
-  const isSelfPickUpBooking = isSelfPickUp && displayStatus === BookingStatus.ACCEPTED
+  const isSelfPickUpBooking = isSelfPickUp && backendStatus === BookingStatus.ACCEPTED
 
-  /**
-   * The logic to get delivery dates does update on May 18, 2023.
-   * Ref: https://evme.atlassian.net/browse/EVME-3977
-   */
   function getDeliveryDates() {
-    const status = displayStatus.toLocaleLowerCase()
+    const status = backendStatus.toLocaleLowerCase()
     const todayDate = dayjs().startOf('day')
     const bookingStartDate = dayjs(startDate).startOf('day')
     const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
     const isAcceptedStatus = status === BookingStatus.ACCEPTED
     const isDeliveredStatus = status === BookingStatus.DELIVERED
-    const isArrivingSoon = dayjs(startDate) > todayDate
+    const isArrivingSoon = todayDate > dayjs(startDate)
 
     if (
       (isAcceptedStatus && !isExtend && isArrivingSoon) ||
