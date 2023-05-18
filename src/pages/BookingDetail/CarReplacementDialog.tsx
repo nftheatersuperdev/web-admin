@@ -108,7 +108,8 @@ export default function CarReplacementDialog({
 
     if (
       (isAcceptedStatus && !isExtend && isArrivingSoon) ||
-      (isAcceptedStatus && isExtend && isArrivingSoon)
+      (isAcceptedStatus && isExtend && isArrivingSoon) ||
+      (isDeliveredStatus && isExtend && isArrivingSoon)
     ) {
       return {
         minDate: bookingStartDate,
