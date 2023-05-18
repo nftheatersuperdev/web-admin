@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/jsx-no-useless-fragment */
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
@@ -94,18 +95,19 @@ export default function CarReplacementDialog({
 
   const carActivity = carActivities[carActivities.length - 1]
 
+  const todayDate = dayjs().startOf('day')
+  const status = displayStatus.toLocaleLowerCase()
+  const bookingStartDate = dayjs(startDate).startOf('day')
+  const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
+  const isAcceptedStatus = status === BookingStatus.ACCEPTED
+  const isDeliveredStatus = status === BookingStatus.DELIVERED
+  const isArrivingSoon = dayjs(startDate) > dayjs(todayDate)
+
   const isUpCommingCancelled = backendStatus === 'upcoming_cancelled'
-  const isSelfPickUpBooking = isSelfPickUp && displayStatus === BookingStatus.ACCEPTED
+  const isSelfPickUpBooking =
+    isSelfPickUp && displayStatus === BookingStatus.ACCEPTED && isArrivingSoon
 
   function getDeliveryDates() {
-    const status = displayStatus.toLocaleLowerCase()
-    const todayDate = dayjs().startOf('day')
-    const bookingStartDate = dayjs(startDate).startOf('day')
-    const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
-    const isAcceptedStatus = status === BookingStatus.ACCEPTED
-    const isDeliveredStatus = status === BookingStatus.DELIVERED
-    const isArrivingSoon = dayjs(startDate) > dayjs(todayDate)
-
     if (
       (isAcceptedStatus && !isExtend && isArrivingSoon) ||
       (isAcceptedStatus && isExtend && isArrivingSoon) ||
@@ -267,6 +269,18 @@ export default function CarReplacementDialog({
     lat: isSelfPickUpBooking ? getSelfPickupAndReturnTask().latitude : deliveryAddress.latitude,
     lng: isSelfPickUpBooking ? getSelfPickupAndReturnTask().longitude : deliveryAddress.longitude,
   }
+
+  useEffect(() => {
+    if (isSelfPickUpBooking && deliveryAddress.full === defaultState.deliveryAddress.full) {
+      const task = getSelfPickupAndReturnTask()
+      setDeliveryAddress((prevState) => ({
+        ...prevState,
+        full: task.fullAddress,
+        latitude: task.latitude,
+        longitude: task.longitude,
+      }))
+    }
+  }, [isSelfPickUpBooking])
 
   return (
     <Dialog
@@ -499,8 +513,8 @@ export default function CarReplacementDialog({
                 multiline
                 minRows={3}
                 onChange={handleDeliveryAddressRemarkChanged}
-                InputLabelProps={{
-                  shrink: isSelfPickUpBooking,
+                InputProps={{
+                  readOnly: isSelfPickUpBooking,
                 }}
               />
             </MapDetailWrapper>
