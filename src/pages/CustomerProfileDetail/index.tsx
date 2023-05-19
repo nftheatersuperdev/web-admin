@@ -9,7 +9,6 @@ import {
   TableCell,
   TableBody,
   MenuItem,
-  TextField,
   Button,
 } from '@mui/material'
 import { useFormik } from 'formik'
@@ -25,12 +24,13 @@ import {
 import { useAuth } from 'auth/AuthContext'
 import { useParams, useHistory } from 'react-router-dom'
 import { hasAllowedPrivilege, PRIVILEGES } from 'auth/privileges'
+import Backdrop from 'components/Backdrop'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { CustomerMeProps } from 'services/web-bff/customer.type'
 import { searchCustomer } from 'services/web-bff/customer'
 import { reActivateCustomer } from 'services/web-bff/user'
-import { DisabledField } from './styles'
+import { DisabledField, EnabledTextField } from './styles'
 
 interface CustomerProfileDetailEditParam {
   id: string
@@ -75,7 +75,11 @@ export default function CustomerProfileDetail(): JSX.Element {
   const [updateAccountStatus, setUpdateAccountStatus] = useState<boolean>(false)
   const [isEnableSaveButton, setIsEnableSaveButton] = useState<boolean>(false)
   const params = useParams<CustomerProfileDetailEditParam>()
-  const { data: userResponse, refetch } = useQuery('customer-list', () =>
+  const {
+    data: userResponse,
+    refetch,
+    isFetching: isFetchingCustomerDetail,
+  } = useQuery('customer-list', () =>
     searchCustomer({ data: params, page: 1, size: 1 } as CustomerMeProps)
   )
   const onChangeStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +99,9 @@ export default function CustomerProfileDetail(): JSX.Element {
   }
   const customerData =
     userResponse?.data.customers.length === 1 ? userResponse?.data.customers[0] : null
-  const acctStatus = customerData?.isActive ? 'Active' : 'Inactive'
+  const acctStatus = customerData?.isActive
+    ? t('user.statuses.active')
+    : t('user.statuses.inactive') || '-'
   let kycStatusValue: string
   if (customerData?.kycStatus === null) {
     kycStatusValue = ''
@@ -184,7 +190,7 @@ export default function CustomerProfileDetail(): JSX.Element {
             </Grid>
             <Grid item xs={12} sm={6}>
               {isAllowEdit() ? (
-                <TextField
+                <EnabledTextField
                   fullWidth
                   select
                   value={updateAccountStatus}
@@ -195,7 +201,7 @@ export default function CustomerProfileDetail(): JSX.Element {
                 >
                   <MenuItem value="true">{t('user.statuses.active')}</MenuItem>
                   <MenuItem value="false">{t('user.statuses.inactive')}</MenuItem>
-                </TextField>
+                </EnabledTextField>
               ) : (
                 <DisabledField
                   type="text"
@@ -278,81 +284,82 @@ export default function CustomerProfileDetail(): JSX.Element {
               />
             </Grid>
           </Grid>
+        </Card>
+        <br />
+        <Card className={classes.card}>
+          <Grid className={classes.gridTitle}>
+            <Typography variant="h6">{t('user.verificationDetail')}</Typography>
+          </Grid>
           <Grid container spacing={3} className={classes.container}>
             <Grid item xs={12} sm={6}>
-              <Button
-                id="staff_profile__update_btn"
-                type="submit"
-                className={classes.w83}
-                color="primary"
-                disabled={!isEnableSaveButton}
-                variant="contained"
-              >
-                {t('button.save').toUpperCase()}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
+              <DisabledField
+                type="text"
+                id="customer_profile__kycStatus"
+                className={classes.textField}
+                label={t('user.kyc.status')}
+                fullWidth
+                disabled
                 variant="outlined"
-                color="primary"
-                onClick={() => history.goBack()}
-                className={classes.w83}
-              >
-                {t('button.cancel').toUpperCase()}
-              </Button>
+                value={kycStatusValue || '-'}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <DisabledField
+                type="text"
+                id="customer_profile__rejectReason"
+                className={classes.textField}
+                label={t('user.rejectedReason')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={customerData?.kycReason || '-'}
+              />
             </Grid>
           </Grid>
         </Card>
+        <br />
+        <Card className={classes.card}>
+          <Grid className={classes.gridTitle}>
+            <Typography variant="h6">{t('user.userGroup')}</Typography>
+          </Grid>
+          <Grid container spacing={3} className={classes.container}>
+            <Grid item xs={12} sm={12}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left">{t('user.name')}</TableCell>
+                  </TableRow>
+                </TableHead>
+                {generateUserGroupTable()}
+              </Table>
+            </Grid>
+          </Grid>
+        </Card>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid item xs={12} sm={6}>
+            <Button
+              id="staff_profile__update_btn"
+              type="submit"
+              className={classes.w83}
+              color="primary"
+              disabled={!isEnableSaveButton}
+              variant="contained"
+            >
+              {t('button.save').toUpperCase()}
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => history.goBack()}
+              className={classes.w83}
+            >
+              {t('button.cancel').toUpperCase()}
+            </Button>
+          </Grid>
+        </Grid>
       </form>
-      <br />
-      <Card className={classes.card}>
-        <Grid className={classes.gridTitle}>
-          <Typography variant="h6">{t('user.verificationDetail')}</Typography>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="customer_profile__kycStatus"
-              className={classes.textField}
-              label={t('user.kyc.status')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={kycStatusValue || '-'}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <DisabledField
-              type="text"
-              id="customer_profile__rejectReason"
-              className={classes.textField}
-              label={t('user.rejectedReason')}
-              fullWidth
-              disabled
-              variant="outlined"
-              value={customerData?.kycReason || '-'}
-            />
-          </Grid>
-        </Grid>
-      </Card>
-      <br />
-      <Card className={classes.card}>
-        <Grid className={classes.gridTitle}>
-          <Typography variant="h6">{t('user.userGroup')}</Typography>
-        </Grid>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} sm={12}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">{t('user.name')}</TableCell>
-                </TableRow>
-              </TableHead>
-              {generateUserGroupTable()}
-            </Table>
-          </Grid>
-        </Grid>
-      </Card>
+      <Backdrop open={isFetchingCustomerDetail} />
     </Page>
   )
 }

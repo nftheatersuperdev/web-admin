@@ -253,6 +253,7 @@ export interface SubscriptionBookingListFilters {
   statusList?: SubscriptionStatus[] | string[]
   email?: string | null
   plateNumber?: string | null
+  resellerServiceAreaId?: string | null
 }
 
 export interface SubscriptionBookingListProps {

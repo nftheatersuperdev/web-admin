@@ -204,14 +204,14 @@
     "location": "Location Service",
     "overall": "Overall",
     "kyc": "KYCs (Sumsub)",
-    "subscription": "Subscription",
+    "booking": "Bookings",
     "totalCars": {
       "title": "Total Cars",
       "subTitle": "Number of cars currently available"
     },
-    "totalSubscriptions": {
-      "title": "Total Subscriptions",
-      "subTitle": "Number of currently active subscriptions"
+    "totalBooking": {
+      "title": "Total Bookings",
+      "subTitle": "Number of currently active bookings"
     },
     "totalUpcomingCarsDelivery": {
       "title": "Upcoming Cars Delivery",
@@ -1193,13 +1193,13 @@
     "id": "ID",
     "userId": "User ID",
     "email": "Email",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "phoneNumber": "Phone Number",
-    "documentNameEn": "Document Name (EN)",
-    "documentNameTh": "Document Name (TH)",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "documentNameEn": "Document name (EN)",
+    "documentNameTh": "Document name (TH)",
     "acceptedDate": "Date",
-    "updatedDate": "Updated Date",
+    "updatedDate": "Updated date",
     "status": "Status",
     "documentVersion": "Version",
     "documentTypes": {
