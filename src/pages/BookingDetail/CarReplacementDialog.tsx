@@ -117,9 +117,7 @@ export default function CarReplacementDialog({
         minDate: bookingStartDate,
         maxDate: bookingStartDate,
       }
-    }
-
-    if (
+    } else if (
       (isDeliveredStatus && !isExtend && !isArrivingSoon) ||
       (isDeliveredStatus && isExtend && !isArrivingSoon)
     ) {
@@ -128,7 +126,6 @@ export default function CarReplacementDialog({
         maxDate: bookingEndDateMinusOneDay,
       }
     }
-
     return {
       minDate: todayDate,
       maxDate: todayDate,
