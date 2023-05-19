@@ -215,6 +215,16 @@ const useStyles = makeStyles({
     fontSize: 50,
     color: '#BDBDBD',
   },
+  wrapWidth: {
+    width: '110px',
+  },
+  rowOverflow: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    '-webkit-line-clamp': 2,
+    '-webkit-box-orient': 'vertical',
+  },
 })
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -279,7 +289,6 @@ export default function LeadManagementDetail() {
     enableReinitialize: true,
     onSubmit: (value) => {
       setPage(1)
-      console.log(value)
     },
   })
 
@@ -317,10 +326,8 @@ export default function LeadManagementDetail() {
   //   })
 
   useEffect(() => {
-    console.log('sortOrder : ' + sortOrder)
-    console.log('orderBy : ' + orderBy)
     refetch()
-  }, [refetch, pageSize, sortOrder, orderBy, currentUserRole])
+  }, [refetch, pageSize, sortOrder, orderBy, currentUserRole, filterCreateDate, filterEndDate])
 
   return (
     <Page>
@@ -436,7 +443,6 @@ export default function LeadManagementDetail() {
               }}
             />
           </Grid>
-          {/* <Grid item xs /> */}
           <Grid item className={[classes.filter, classes.rightPanel].join(' ')} xs={3}>
             <Button
               id="customer_profile__export_btn"
@@ -450,7 +456,7 @@ export default function LeadManagementDetail() {
             </Button>
           </Grid>
         </Grid>
-        {leadData?.data.leadFormSubmissions === undefined ? (
+        {leadData?.data.leadFormSubmissions.length !== 0 ? (
           <div className={classes.boxNoData}>
             <InboxIcon className={classes.iconNoData} />
             <p>{t('leadManagementDetail.noData')}</p>
@@ -511,7 +517,11 @@ export default function LeadManagementDetail() {
                             </TableCell>
                           ) : column.key === 'createdDate' ? (
                             <TableCell key={column.key}>
-                              {formatDate(row[column.key], DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                              <div className={classes.wrapWidth}>
+                                <div className={classes.rowOverflow}>
+                                  {formatDate(row[column.key], DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                                </div>
+                              </div>
                             </TableCell>
                           ) : (
                             <TableCell key={column.key}>{row[column.key]}</TableCell>
@@ -601,15 +611,24 @@ export default function LeadManagementDetail() {
         <DialogActions>
           <Grid container sx={{ marginBottom: '10px' }}>
             <Grid item xs={12} sx={{ paddingLeft: '15px', paddingRight: '15px' }}>
-              <Button className={classes.dialogExportBtn} fullWidth variant="contained">
-                <CSVLink
-                  data={csvData}
-                  headers={headerTableCSV}
-                  filename={fileName}
-                  className={classes.noUnderLine}
-                >
-                  {t('button.export').toUpperCase()}
-                </CSVLink>
+              <Button
+                className={classes.dialogExportBtn}
+                disabled={filterCreateDate !== null && filterEndDate !== null ? false : true}
+                fullWidth
+                variant="contained"
+              >
+                {csvData.length === 0 ? (
+                  <div>{t('button.export').toUpperCase()}</div>
+                ) : (
+                  <CSVLink
+                    data={csvData}
+                    headers={headerTableCSV}
+                    filename={fileName}
+                    className={classes.noUnderLine}
+                  >
+                    {t('button.export').toUpperCase()}
+                  </CSVLink>
+                )}
               </Button>
             </Grid>
             <Grid item xs={12} sx={{ paddingLeft: '15px', paddingRight: '15px' }}>
