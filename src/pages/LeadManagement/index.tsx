@@ -28,10 +28,12 @@ import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formatDate } from 'utils'
 import config from 'config'
 import { useQuery } from 'react-query'
 import { Search } from '@mui/icons-material'
+import { useHistory } from 'react-router-dom'
 import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
 import { Page } from 'layout/LayoutRoute'
 import { getLeadList } from 'services/web-bff/lead-management'
 import { LeadSearchBodyProps } from 'services/web-bff/lead-management.type'
+import { LeadManagementDetailStateParams } from 'pages/LeadManagementDetail'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SelectOption {
@@ -115,16 +117,13 @@ const DividerCustom = styled(Divider)`
 export default function LeadManagement() {
   const classes = useStyles()
   const { t } = useTranslation()
+  const history = useHistory()
   const [filterSearchField, setFilterSearchField] = useState<LeadSearchBodyProps>()
   const [searchValue, setSearchValue] = useState<string>('')
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
   const [enableInputSearch, setEnableInputSearch] = useState<boolean>(false)
-  // const defaultSelect = {
-  //   label: t('all'),
-  //   value: 'all',
-  // }
 
   const searchOptions: SelectOption[] = [
     {
@@ -195,7 +194,17 @@ export default function LeadManagement() {
     leadData?.data.leads && leadData?.data.leads.length > 0
       ? leadData?.data.leads.map((item) => {
           return (
-            <TableRow hover key={`leadName-${item.id}`}>
+            <TableRow
+              hover
+              onClick={() =>
+                history.push(`/lead-management-detail/${item.id}`, {
+                  leadName: item.name,
+                  createdDate: item.createdDate,
+                  leadFormId: item.id,
+                } as LeadManagementDetailStateParams)
+              }
+              key={`leadName-${item.id}`}
+            >
               <TableCell>{item.name}</TableCell>
               <TableCell>
                 <div className={classes.wrapWidth}>
