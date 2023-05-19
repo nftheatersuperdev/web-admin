@@ -104,8 +104,12 @@ export default function CarReplacementDialog({
   const isArrivingSoon = dayjs(startDate) > dayjs(todayDate)
 
   const isUpCommingCancelled = backendStatus === 'upcoming_cancelled'
-  const isSelfPickUpBooking =
+  const isSelfPickUpArrivingSoon =
     isSelfPickUp && displayStatus === BookingStatus.ACCEPTED && isArrivingSoon
+  const isSelfPickUpExtendArrivingSoon =
+    isSelfPickUp && displayStatus === BookingStatus.DELIVERED && isArrivingSoon && isExtend
+
+  const isSelfPickUpAndReturnBooking = isSelfPickUpArrivingSoon || isSelfPickUpExtendArrivingSoon
 
   function getDeliveryDates() {
     if (
@@ -263,12 +267,19 @@ export default function CarReplacementDialog({
   }
 
   const deliveryMarkerAddress = {
-    lat: isSelfPickUpBooking ? getSelfPickupAndReturnTask().latitude : deliveryAddress.latitude,
-    lng: isSelfPickUpBooking ? getSelfPickupAndReturnTask().longitude : deliveryAddress.longitude,
+    lat: isSelfPickUpAndReturnBooking
+      ? getSelfPickupAndReturnTask().latitude
+      : deliveryAddress.latitude,
+    lng: isSelfPickUpAndReturnBooking
+      ? getSelfPickupAndReturnTask().longitude
+      : deliveryAddress.longitude,
   }
 
   useEffect(() => {
-    if (isSelfPickUpBooking && deliveryAddress.full === defaultState.deliveryAddress.full) {
+    if (
+      isSelfPickUpAndReturnBooking &&
+      deliveryAddress.full === defaultState.deliveryAddress.full
+    ) {
       const task = getSelfPickupAndReturnTask()
       setDeliveryAddress((prevState) => ({
         ...prevState,
@@ -277,7 +288,7 @@ export default function CarReplacementDialog({
         longitude: task.longitude,
       }))
     }
-  }, [isSelfPickUpBooking])
+  }, [isSelfPickUpAndReturnBooking])
 
   return (
     <Dialog
@@ -454,7 +465,7 @@ export default function CarReplacementDialog({
               {t('booking.carReplacement.deliveryAddress')}
             </Typography>
             <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
-              {isSelfPickUpBooking ? (
+              {isSelfPickUpAndReturnBooking ? (
                 <GoogleMap
                   mapContainerStyle={containerStyle}
                   center={deliveryMarkerAddress}
@@ -487,7 +498,7 @@ export default function CarReplacementDialog({
                 margin="normal"
                 variant="outlined"
                 value={
-                  isSelfPickUpBooking
+                  isSelfPickUpAndReturnBooking
                     ? getSelfPickupAndReturnTask().fullAddress
                     : deliveryAddress.full
                 }
@@ -496,7 +507,7 @@ export default function CarReplacementDialog({
                 InputProps={{
                   readOnly: true,
                 }}
-                disabled={isSelfPickUpBooking}
+                disabled={isSelfPickUpAndReturnBooking}
               />
               <TextField
                 id="car_replacement__deliveryAddressRemark"
@@ -505,13 +516,15 @@ export default function CarReplacementDialog({
                 margin="normal"
                 variant="outlined"
                 value={
-                  isSelfPickUpBooking ? getSelfPickupAndReturnTask().remark : deliveryAddress.remark
+                  isSelfPickUpAndReturnBooking
+                    ? getSelfPickupAndReturnTask().remark
+                    : deliveryAddress.remark
                 }
                 multiline
                 minRows={3}
                 onChange={handleDeliveryAddressRemarkChanged}
                 InputProps={{
-                  readOnly: isSelfPickUpBooking,
+                  readOnly: isSelfPickUpAndReturnBooking,
                 }}
               />
             </MapDetailWrapper>
