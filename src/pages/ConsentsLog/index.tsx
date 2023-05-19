@@ -155,7 +155,7 @@ export default function ConsentsLog(): JSX.Element {
   const [filterSearchStatus, setFilterSearchStatus] = useState<string>('')
   const [filterSearchEmailError, setFilterSearchEmailError] = useState<string>('')
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [isEnableFilterButton, setIsEnableFilterButton] = useState<boolean>(false)
+  const [isEnableFilterButton, setIsEnableFilterButton] = useState<boolean>(true)
   const { data: documentTypeList } = useQuery('document-type-list', () => getTypeList())
   const {
     data: consentList,
@@ -246,7 +246,6 @@ export default function ConsentsLog(): JSX.Element {
     },
     enableReinitialize: true,
     onSubmit: (value) => {
-      console.log('Value : ' + JSON.stringify(value.isAccepted))
       let updateObj: ConsentInputRequest = {
         ...consentFilter,
       }
@@ -274,7 +273,6 @@ export default function ConsentsLog(): JSX.Element {
       } else {
         delete updateObj.isAccepted
       }
-      console.log('Request : ' + JSON.stringify(updateObj))
       setConsentFilter(updateObj)
       setPage(1)
     },
@@ -327,16 +325,18 @@ export default function ConsentsLog(): JSX.Element {
       setIsEnableFilterButton(true)
     }
   }
-  const handleClear = () => {
+  const handleSearchEmailClear = () => {
     setFilterSearchEmail('')
     setFilterSearchEmailError('')
-    setFilterSearchDocumentType('')
-    setFilterSearchStatus('')
-    setIsEnableFilterButton(false)
     formik.setFieldValue('email', '')
+  }
+  const handleSearchDocumentTypeClear = () => {
+    setFilterSearchDocumentType('')
     formik.setFieldValue('codeName', '')
+  }
+  const handleSearchStatusClear = () => {
+    setFilterSearchStatus('')
     formik.setFieldValue('isAccepted', '')
-    formik.handleSubmit()
   }
   const handleOnSearchDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
@@ -377,7 +377,10 @@ export default function ConsentsLog(): JSX.Element {
                     endAdornment: (
                       <InputAdornment position="end">
                         {formik.values.email !== '' ? (
-                          <CloseOutlined className={classes.buttonClear} onClick={handleClear} />
+                          <CloseOutlined
+                            className={classes.buttonClear}
+                            onClick={handleSearchEmailClear}
+                          />
                         ) : (
                           <SearchIcon />
                         )}
@@ -403,7 +406,7 @@ export default function ConsentsLog(): JSX.Element {
                         {formik.values.codeName !== '' ? (
                           <CloseOutlined
                             className={classes.paddingRightBtnClear}
-                            onClick={handleClear}
+                            onClick={handleSearchDocumentTypeClear}
                           />
                         ) : (
                           ''
@@ -436,7 +439,7 @@ export default function ConsentsLog(): JSX.Element {
                         {formik.values.isAccepted !== '' ? (
                           <CloseOutlined
                             className={classes.paddingRightBtnClear}
-                            onClick={handleClear}
+                            onClick={handleSearchStatusClear}
                           />
                         ) : (
                           ''
