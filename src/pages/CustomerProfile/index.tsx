@@ -170,10 +170,10 @@ export default function CustomerProfile(): JSX.Element {
       textAlign: 'right',
       paddingRight: '16px',
     },
-    breadcrumText: {
+    breadcrumbText: {
       color: '#000000DE',
     },
-    paddingRigthBtnClear: {
+    paddingRightBtnClear: {
       marginLeft: '-40px',
       cursor: 'pointer',
       padding: '4px 4px',
@@ -502,7 +502,7 @@ export default function CustomerProfile(): JSX.Element {
                       <InputAdornment position="end">
                         {formik.values.searchType && (
                           <CloseOutlined
-                            className={classes.paddingRigthBtnClear}
+                            className={classes.paddingRightBtnClear}
                             onClick={handleClear}
                           />
                         )}
