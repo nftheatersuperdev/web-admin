@@ -192,12 +192,13 @@ export default function Booking(): JSX.Element {
 
   const [query, setQuery] = useState<SubscriptionBookingListQuery>(defaultQuery)
 
-  let defaultFilter: SubscriptionBookingListFilters = {
-    resellerServiceAreaId: resellerId,
-    statusList: [status],
-  } as SubscriptionBookingListFilters
+  let defaultFilter: SubscriptionBookingListFilters = {}
+  defaultFilter = resellerId
+    ? { ...defaultFilter, resellerServiceAreaId: resellerId }
+    : defaultFilter
   defaultFilter = deliveryDate ? { ...defaultFilter, deliveryDate } : defaultFilter
   defaultFilter = returnDate ? { ...defaultFilter, returnDate } : defaultFilter
+  defaultFilter = status ? { ...defaultFilter, statusList: [status] } : defaultFilter
   const [filter, setFilter] = useState<SubscriptionBookingListFilters>({ ...defaultFilter })
 
   const {
