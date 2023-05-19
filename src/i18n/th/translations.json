@@ -204,12 +204,12 @@
     "location": "สถานที่บริการ",
     "overall": "Overall",
     "kyc": "KYCs (Sumsub)",
-    "subscription": "Subscription",
+    "booking": "การจอง",
     "totalCars": {
       "title": "รถยนต์",
       "subTitle": "จำนวนรถยนต์ทั้งหมด"
     },
-    "totalSubscriptions": {
+    "totalBooking": {
       "title": "ข้อมูลการจอง",
       "subTitle": "จำนวนการจองทั้งหมด"
     },
