@@ -49,12 +49,34 @@ const GridSearchSection = styled(Grid)`
   align-items: left !important;
   min-height: 100px !important;
 `
-const TextLineClamp = styled.div`
+const TextSmallLineClamp = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
+  overflow-wrap: break-word;
+  width: 85px;
+  -line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   display: -webkit-box;
+`
+const TextLineClamp = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  width: 125px;
+  -line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+`
+
+const DataWrapper = styled.div`
+  padding: 0 17px;
+`
+const TableHeaderColumn = styled.div`
+  border-left: 2px solid #e0e0e0;
+  font-weight: bold;
+  padding-left: 10px;
 `
 
 export default function ConsentsLog(): JSX.Element {
@@ -88,28 +110,6 @@ export default function ConsentsLog(): JSX.Element {
     },
     w160: {
       width: '160px',
-    },
-    rowOverflowSmall: {
-      paddingLeft: '20px',
-      width: '80px',
-      overflowWrap: 'break-word',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      '-webkit-line-clamp': 2,
-      'line-clamp': 2,
-      '-webkit-box-orient': 'vertical',
-    },
-    rowOverflow: {
-      paddingLeft: '20px',
-      width: '115px',
-      overflowWrap: 'break-word',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      '-webkit-line-clamp': 2,
-      'line-clamp': 2,
-      '-webkit-box-orient': 'vertical',
     },
     paginationContainer: {
       display: 'flex',
@@ -157,47 +157,59 @@ export default function ConsentsLog(): JSX.Element {
         return (
           <TableRow key={agreement.id}>
             <TableCell>
-              <div className={classes.rowOverflowSmall}>{agreement.customer.firstName}</div>
+              <DataWrapper>
+                <TextSmallLineClamp>{agreement.customer.firstName}</TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.rowOverflowSmall}>{agreement.customer.lastName}</div>
+              <DataWrapper>
+                <TextSmallLineClamp>{agreement.customer.lastName}</TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <TextLineClamp>{agreement.customer.email}</TextLineClamp>
+              <DataWrapper>
+                <TextSmallLineClamp>{agreement.customer.email}</TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <TextLineClamp>{convertPhoneNumber(agreement.customer.phoneNumber)}</TextLineClamp>
+              <DataWrapper>
+                <TextSmallLineClamp>
+                  {convertPhoneNumber(agreement.customer.phoneNumber)}
+                </TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <TextLineClamp>{agreement.documentContent.nameEn}</TextLineClamp>
+              <DataWrapper>
+                <TextLineClamp>{agreement.documentContent.nameEn}</TextLineClamp>
+              </DataWrapper>
+            </TableCell>
+            <TableCell width={50}>
+              <DataWrapper>{agreement.documentContent.version}</DataWrapper>
+            </TableCell>
+            <TableCell width={50}>
+              {!agreement.isAccepted ? (
+                <Chip
+                  size="small"
+                  label={t('consentLog.documentStatus.decline')}
+                  className={classes.chipLightGrey}
+                />
+              ) : (
+                <Chip
+                  size="small"
+                  label={t('consentLog.documentStatus.accept')}
+                  className={classes.chipGreen}
+                />
+              )}
             </TableCell>
             <TableCell>
-              <div className={classes.rowOverflow}>{agreement.documentContent.version}</div>
-            </TableCell>
-            <TableCell>
-              <div className={classes.rowOverflow}>
-                {!agreement.isAccepted ? (
-                  <Chip
-                    size="small"
-                    label={t('consentLog.documentStatus.decline')}
-                    className={classes.chipLightGrey}
-                  />
-                ) : (
-                  <Chip
-                    size="small"
-                    label={t('consentLog.documentStatus.accept')}
-                    className={classes.chipGreen}
-                  />
-                )}
-              </div>
-            </TableCell>
-            <TableCell>
-              <div>
-                {formaDateStringWithPattern(
-                  agreement.documentContent.updatedDate,
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
-              </div>
+              <DataWrapper>
+                <TextLineClamp>
+                  {formaDateStringWithPattern(
+                    agreement.documentContent.updatedDate,
+                    DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                  )}
+                </TextLineClamp>
+              </DataWrapper>
             </TableCell>
           </TableRow>
         )
@@ -327,44 +339,28 @@ export default function ConsentsLog(): JSX.Element {
                 <TableHead>
                   <TableRow>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.firstName')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.firstName')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.lastName')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.lastName')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.email')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.email')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.phoneNumber')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.phoneNumber')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.documentNameEn')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.documentNameEn')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.documentVersion')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.documentVersion')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.status')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.status')}</TableHeaderColumn>
                     </TableCell>
                     <TableCell align="left">
-                      <div className={[classes.columnHeader].join(' ')}>
-                        {t('consentLog.updatedDate')}
-                      </div>
+                      <TableHeaderColumn>{t('consentLog.updatedDate')}</TableHeaderColumn>
                     </TableCell>
                   </TableRow>
                 </TableHead>
