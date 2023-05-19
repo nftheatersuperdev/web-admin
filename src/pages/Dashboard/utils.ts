@@ -25,6 +25,10 @@ export interface ReturnModelData {
 
 export const MISSING_VALUE = '-'
 
+export interface FilterSearch {
+  [key: string]: string
+}
+
 export interface SelectOption {
   label: string
   value: string
