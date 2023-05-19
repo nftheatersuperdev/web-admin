@@ -21,6 +21,12 @@ export interface LeadFormSubmissionsBodyProps {
   sortDirection?: string
 }
 
+export interface ExportExcelLeadFormSubmittionBodyProps {
+  leadFormId: string
+  startDate: string
+  endDate: string
+}
+
 export type LeadFormSubmissionsResponse = {
   data: {
     leadFormSubmissions: LeadFormSubmissions[]

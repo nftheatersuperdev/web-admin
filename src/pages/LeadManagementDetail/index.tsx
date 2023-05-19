@@ -31,11 +31,11 @@ import InboxIcon from '@mui/icons-material/Inbox'
 import { makeStyles } from '@mui/styles'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { CSVLink } from 'react-csv'
 import { useEffect, useState } from 'react'
 import config from 'config'
 import {
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  DEFAULT_DATE_FORMAT_BFF,
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
   formatDate,
@@ -43,6 +43,7 @@ import {
 import dayjs, { Dayjs } from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
+import { saveAs } from 'file-saver'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Search } from '@material-ui/icons'
@@ -53,15 +54,14 @@ import { useAuth } from 'auth/AuthContext'
 import { ROLES } from 'auth/roles'
 import { Page } from 'layout/LayoutRoute'
 import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
-import { getLeadFormSubmittion } from 'services/web-bff/lead-management-detail'
+import {
+  exportExcellLeadFormSubmittion,
+  getLeadFormSubmittion,
+} from 'services/web-bff/lead-management-detail'
 
 interface ColumnTable {
   label: string
   key: string
-}
-
-interface Row {
-  [key: string]: any
 }
 
 export interface LeadManagementDetailStateParams {
@@ -236,7 +236,7 @@ export default function LeadManagementDetail() {
   const { getRole } = useAuth()
   const currentUserRole = getRole()
 
-  const [filterCreateDate, setFilterCreateDate] = useState<Dayjs | null>(null)
+  const [filterStartDate, setFilterStartDate] = useState<Dayjs | null>(null)
   const [filterEndDate, setFilterEndDate] = useState<Dayjs | null>(null)
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
@@ -251,9 +251,7 @@ export default function LeadManagementDetail() {
   const isRoleCanExport: boolean =
     currentUserRole === ROLES.SUPER_ADMIN || currentUserRole === ROLES.OPERATION
 
-  const fileName = `Lead Form ${myParam.leadName}.csv`
-
-  const csvData: LeadFormSubmittionCSV[] = []
+  // const fileName = `Lead Form ${myParam.leadName}.csv`
 
   const headerTableLeadFormSubmittion: ColumnTable[] = [
     { label: 'No', key: 'no' },
@@ -267,27 +265,13 @@ export default function LeadManagementDetail() {
     { label: 'Registered Date', key: 'createdDate' },
   ]
 
-  const headerTableCSV: ColumnTable[] = [
-    { label: 'No', key: 'no' },
-    { label: 'Lead Name', key: 'leadName' },
-    { label: 'First Name', key: 'firstName' },
-    { label: 'Last Name', key: 'lastName' },
-    { label: 'Phone Number', key: 'phoneNumber' },
-    { label: 'Email', key: 'email' },
-    { label: 'Lead Source', key: 'leadSource' },
-    { label: 'Interesting', key: 'interesting' },
-    { label: 'Timeline', key: 'timeline' },
-    { label: 'Registered Date', key: 'registeredDate' },
-    { label: 'Customer Status', key: 'customerStatus' },
-  ]
-
   const formik = useFormik({
     initialValues: {
       searchType: '',
       searchValue: '',
     },
     enableReinitialize: true,
-    onSubmit: (value) => {
+    onSubmit: () => {
       setPage(1)
     },
   })
@@ -319,6 +303,17 @@ export default function LeadManagementDetail() {
     })
   )
 
+  const exportExcellLeadForm = async () => {
+    const response = await exportExcellLeadFormSubmittion({
+      leadFormId: id,
+      startDate: filterStartDate !== null ? filterStartDate.format(DEFAULT_DATE_FORMAT_BFF) : '',
+      endDate: filterEndDate !== null ? filterEndDate.format(DEFAULT_DATE_FORMAT_BFF) : '',
+    })
+    const fileName = `Lead Form ${myParam.leadName}`
+    const fileExtension = '.csv'
+    saveAs(response, `${fileName}${fileExtension}`)
+  }
+
   //   const sortedRows = [...leadData!.data.leadFormSubmissions].sort((a: Row, b: Row) => {
   //     const sortOrderMultiplier = sortOrder === 'desc' ? -1 : 1
   //     const compareResult = a[orderBy] > b[orderBy] ? -1 : 1
@@ -327,7 +322,7 @@ export default function LeadManagementDetail() {
 
   useEffect(() => {
     refetch()
-  }, [refetch, pageSize, sortOrder, orderBy, currentUserRole, filterCreateDate, filterEndDate])
+  }, [refetch, pageSize, sortOrder, orderBy, currentUserRole, filterStartDate, filterEndDate])
 
   return (
     <Page>
@@ -456,7 +451,7 @@ export default function LeadManagementDetail() {
             </Button>
           </Grid>
         </Grid>
-        {leadData?.data.leadFormSubmissions.length !== 0 ? (
+        {leadData?.data.leadFormSubmissions.length === 0 ? (
           <div className={classes.boxNoData}>
             <InboxIcon className={classes.iconNoData} />
             <p>{t('leadManagementDetail.noData')}</p>
@@ -504,31 +499,44 @@ export default function LeadManagementDetail() {
                   </TableBody>
                 ) : (
                   <TableBody>
-                    {leadData?.data.leadFormSubmissions.map((row: Row) => (
-                      <TableRow key={row.id}>
-                        {headerTableLeadFormSubmittion.map((column: ColumnTable) =>
-                          isColumnChip.includes(column.key) ? (
-                            <TableCell key={column.key}>
-                              <Chip
-                                size="small"
-                                label={row[column.key]}
-                                className={classes.chipBlue}
-                              />
-                            </TableCell>
-                          ) : column.key === 'createdDate' ? (
-                            <TableCell key={column.key}>
-                              <div className={classes.wrapWidth}>
-                                <div className={classes.rowOverflow}>
-                                  {formatDate(row[column.key], DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-                                </div>
-                              </div>
-                            </TableCell>
-                          ) : (
-                            <TableCell key={column.key}>{row[column.key]}</TableCell>
-                          )
-                        )}
-                      </TableRow>
-                    ))}
+                    {leadData?.data.leadFormSubmissions.length !== 0 ? (
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      leadData?.data.leadFormSubmissions.map((row: any) => (
+                        <TableRow key={row.id}>
+                          {headerTableLeadFormSubmittion.map((column: ColumnTable) =>
+                            isColumnChip.includes(column.key) ? (
+                              <TableCell key={column.key}>
+                                <Chip
+                                  size="small"
+                                  label={row[column.key]}
+                                  className={classes.chipBlue}
+                                />
+                              </TableCell>
+                            ) : (
+                              <TableCell key={column.key}>
+                                {column.key === 'createdDate' ? (
+                                  <div className={classes.wrapWidth}>
+                                    <div className={classes.rowOverflow}>
+                                      {formatDate(
+                                        row[column.key],
+                                        DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                                      )}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  row[column.key]
+                                )}
+                              </TableCell>
+                            )
+                          )}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <div className={classes.boxNoData}>
+                        <InboxIcon className={classes.iconNoData} />
+                        <p>{t('leadManagementDetail.noData')}</p>
+                      </div>
+                    )}
                   </TableBody>
                 )}
               </Table>
@@ -586,10 +594,10 @@ export default function LeadManagementDetail() {
                   className={classes.dialogExportDatePicker}
                   label={t('leadManagementDetail.dialog.selectStartDate')}
                   format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
-                  value={filterCreateDate}
+                  value={filterStartDate}
                   minDate={dayjs().subtract(6, 'month')}
                   maxDate={dayjs()}
-                  onChange={(newValue) => setFilterCreateDate(newValue)}
+                  onChange={(newValue) => setFilterStartDate(newValue)}
                 />
               </LocalizationProvider>
             </Grid>
@@ -613,22 +621,12 @@ export default function LeadManagementDetail() {
             <Grid item xs={12} sx={{ paddingLeft: '15px', paddingRight: '15px' }}>
               <Button
                 className={classes.dialogExportBtn}
-                disabled={filterCreateDate !== null && filterEndDate !== null ? false : true}
+                disabled={filterStartDate !== null && filterEndDate !== null ? false : true}
                 fullWidth
                 variant="contained"
+                onClick={exportExcellLeadForm}
               >
-                {csvData.length === 0 ? (
-                  <div>{t('button.export').toUpperCase()}</div>
-                ) : (
-                  <CSVLink
-                    data={csvData}
-                    headers={headerTableCSV}
-                    filename={fileName}
-                    className={classes.noUnderLine}
-                  >
-                    {t('button.export').toUpperCase()}
-                  </CSVLink>
-                )}
+                {t('button.export').toUpperCase()}
               </Button>
             </Grid>
             <Grid item xs={12} sx={{ paddingLeft: '15px', paddingRight: '15px' }}>
