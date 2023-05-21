@@ -128,7 +128,6 @@ export default function ActivityScheduleDialog({
                 remark: state.remark,
                 startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
                 endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
-                resellerServiceAreaId: state.resellerServiceAreaId,
               },
             })
           : createSchedule({
