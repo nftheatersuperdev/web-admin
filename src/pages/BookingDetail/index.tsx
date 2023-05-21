@@ -320,6 +320,24 @@ export default function SubscriptionDetail(): JSX.Element {
           >
             {t('booking.carDetail.replacement')}
           </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() =>
+              history.push({
+                pathname: `/booking/${bookingId}/${bookingDetailId}/car-replacement`,
+                state: { bookingDetail, maxEndDate, editorEmail: firebaseUser?.email || '-' },
+              })
+            }
+            disabled={
+              !bookingDetail ||
+              !isAllowToDoCarReplacement ||
+              !isTherePermissionToDoCarReplacement ||
+              isEndDateOverToday
+            }
+          >
+            {t('booking.carDetail.replacement')}
+          </Button>
         </Grid>
         <TableContainer className={classes.table}>
           <Table>
