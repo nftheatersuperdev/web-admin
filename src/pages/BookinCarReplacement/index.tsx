@@ -136,7 +136,8 @@ export default function BookingCarReplacement(): JSX.Element {
     if (
       (isAcceptedStatus && !bookingDetail?.isExtend && isArrivingSoon) ||
       (isAcceptedStatus && bookingDetail?.isExtend && isArrivingSoon) ||
-      (isDeliveredStatus && bookingDetail?.isExtend && isArrivingSoon)
+      (isDeliveredStatus && bookingDetail?.isExtend && isArrivingSoon) ||
+      (isDeliveredStatus && !bookingDetail?.isExtend && isArrivingSoon)
     ) {
       return {
         minDate: bookingStartDate,
