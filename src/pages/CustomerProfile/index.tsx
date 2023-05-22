@@ -36,6 +36,7 @@ import {
   convertPhoneNumber,
   validateKeywordText,
   validateKeywordUUID,
+  validatePhoneNumberSearch,
 } from 'utils'
 import config from 'config'
 import Pagination from '@material-ui/lab/Pagination'
@@ -200,6 +201,9 @@ export default function CustomerProfile(): JSX.Element {
   const [filterSearchField, setFilterSearchField] = useState<string>('')
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
   const [showTextField, setShowTextField] = useState<boolean>(true)
+  const [TextFieldPlaceholder, setTextFieldPlaceholder] = useState<string>(
+    t('carAvailability.searchField.label')
+  )
   const [showStatusDropdown, setShowStatusDropdown] = useState<boolean>(false)
   const [showKycStatusDropdown, setShowKycStatusDropdown] = useState<boolean>(false)
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
@@ -233,6 +237,11 @@ export default function CustomerProfile(): JSX.Element {
       setShowSearchButton(true)
       setIsEnableFilterButton(true)
     } else {
+      if (params === 'phoneNumber') {
+        setTextFieldPlaceholder(t('user.searchField.phoneNumber'))
+      } else {
+        setTextFieldPlaceholder(t('carAvailability.searchField.label'))
+      }
       setShowTextField(true)
       setShowStatusDropdown(false)
       setShowKycStatusDropdown(false)
@@ -259,9 +268,13 @@ export default function CustomerProfile(): JSX.Element {
         updateObj = {
           [value.searchType]: isActive,
         } as CustomerFilterRequest
+      } else if (value.searchType === 'phoneNumber') {
+        updateObj = {
+          mobileNumberContain: filterSearchField,
+        } as CustomerFilterRequest
       } else {
         updateObj = {
-          [value.searchType]: filterSearchField,
+          mobileNumberContain: filterSearchField,
         } as CustomerFilterRequest
       }
       setCustomerFilter(updateObj)
@@ -454,6 +467,7 @@ export default function CustomerProfile(): JSX.Element {
     const isValidEmailSearchField = validateKeywordTextWithSpecialChar(value)
     const isValidKeywordText = validateKeywordText(value)
     const isValidUUIDSearchField = validateKeywordUUID(value)
+    const isValidPhoneSearchField = validatePhoneNumberSearch(value)
     setFilterSearchField(value)
     setFilterSearchFieldError('')
     if (formik.values.searchType === 'id' && !isValidUUIDSearchField) {
@@ -464,6 +478,12 @@ export default function CustomerProfile(): JSX.Element {
       (!isValidEmailSearchField || value.length < 2)
     ) {
       setFilterSearchFieldError(t('user.searchField.invalidSearchEmailFormat'))
+      setIsEnableFilterButton(false)
+    } else if (
+      formik.values.searchType === 'phoneNumber' &&
+      (!isValidPhoneSearchField || value.length < 4)
+    ) {
+      setFilterSearchFieldError(t('user.searchField.invalidPhoneNumberFormat'))
       setIsEnableFilterButton(false)
     } else if (
       formik.values.searchType !== 'id' &&
@@ -535,7 +555,7 @@ export default function CustomerProfile(): JSX.Element {
                   id="customer-profile__search_input"
                   name="searchVal"
                   value={filterSearchField}
-                  placeholder={t('carAvailability.searchField.label')}
+                  placeholder={TextFieldPlaceholder}
                   onChange={handleOnSearchFieldChange}
                   error={!!filterSearchFieldError}
                   helperText={filterSearchFieldError}

@@ -516,6 +516,11 @@ export const validateEmail = (email: string): boolean => {
   return re.test(String(email).toLowerCase())
 }
 
+export const validatePhoneNumberSearch = (searchValue: string): boolean => {
+  const keywordRule = /^[0-9]{4,15}$/g
+  return keywordRule.test(searchValue)
+}
+
 export const validateKeywordText = (value: string): boolean => {
   const keywordRule = /^[ก-๛a-zA-Z0-9 ]{2,}$/g
   return keywordRule.test(value)
