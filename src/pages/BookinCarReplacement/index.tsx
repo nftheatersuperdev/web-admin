@@ -4,6 +4,7 @@
 
 import { useState } from 'react'
 import {
+  Alert,
   Autocomplete,
   Button,
   Card,
@@ -119,46 +120,40 @@ export default function BookingCarReplacement(): JSX.Element {
   const location = useLocation()
   const classes = useStyles()
   const { t } = useTranslation()
-
+  const bookingDetailProps = location.state as CarReplacementDialogProps
   Geocode.setApiKey(config.googleMapsApiKey)
 
-  const history = useHistory()
-  const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
-  const [pickupReplaceDialogOpen, setPickupReplaceDialogOpen] = useState<boolean>(false)
-
-  const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
-  const bookingDetailProps = location.state as CarReplacementDialogProps
-
-  const bookingDetail = bookingDetailProps?.bookingDetail
-  const editorEmail = bookingDetailProps?.editorEmail
-  const carActivity = bookingDetail?.carActivities[bookingDetail?.carActivities.length - 1]
-
-  const isSelfPickUpBooking =
-    bookingDetail?.isSelfPickUp && bookingDetail?.displayStatus === BookingStatus.ACCEPTED
-  /**
-   * The logic to get delivery dates does update on May 17, 2023.
-   * Ref: https://evme.atlassian.net/browse/EVME-3977
-   */
+  const status = bookingDetailProps.bookingDetail?.displayStatus.toLocaleLowerCase()
+  const isAcceptedStatus = status === BookingStatus.ACCEPTED
+  const isDeliveredStatus = status === BookingStatus.DELIVERED
+  const todayDate = dayjs().startOf('day')
+  const isArrivingSoon = dayjs(bookingDetailProps.bookingDetail?.startDate) > dayjs(todayDate)
+  const bookingStartDate = dayjs(bookingDetailProps.bookingDetail?.startDate).startOf('day')
+  const bookingEndDateMinusOneDay = dayjs(bookingDetailProps.bookingDetail?.endDate)
+    .add(-1, 'day')
+    .endOf('day')
   function getDeliveryDates() {
-    const displayStatus = bookingDetail?.displayStatus.toLocaleLowerCase()
-    const maxDate = dayjs(bookingDetail?.endDate).add(-1, 'day').endOf('day')
-    const todayDate = dayjs().startOf('day')
-
-    switch (displayStatus) {
-      // Accepted
-      case BookingStatus.ACCEPTED: {
-        return {
-          minDate: bookingDetail?.startDate,
-          maxDate: bookingDetail?.startDate,
-        }
+    if (
+      (isAcceptedStatus && !bookingDetailProps.bookingDetail?.isExtend && isArrivingSoon) ||
+      (isAcceptedStatus && bookingDetailProps.bookingDetail?.isExtend && isArrivingSoon) ||
+      (isDeliveredStatus && bookingDetailProps.bookingDetail?.isExtend && isArrivingSoon)
+    ) {
+      return {
+        minDate: bookingStartDate,
+        maxDate: bookingEndDateMinusOneDay,
       }
-      // Delivered
-      default: {
-        return {
-          minDate: todayDate,
-          maxDate,
-        }
+    } else if (
+      (isDeliveredStatus && !bookingDetailProps.bookingDetail?.isExtend && !isArrivingSoon) ||
+      (isDeliveredStatus && bookingDetailProps.bookingDetail?.isExtend && !isArrivingSoon)
+    ) {
+      return {
+        minDate: todayDate,
+        maxDate: bookingEndDateMinusOneDay,
       }
+    }
+    return {
+      minDate: todayDate,
+      maxDate: todayDate,
     }
   }
 
@@ -173,7 +168,38 @@ export default function BookingCarReplacement(): JSX.Element {
       longitude: 100.523186,
     },
   }
-  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>()
+
+  const history = useHistory()
+  const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
+  const [pickupReplaceDialogOpen, setPickupReplaceDialogOpen] = useState<boolean>(false)
+
+  const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
+
+  const bookingDetail = bookingDetailProps?.bookingDetail
+  const editorEmail = bookingDetailProps?.editorEmail
+  const carActivity = bookingDetail?.carActivities[bookingDetail?.carActivities.length - 1]
+
+  const isUpCommingCancelled =
+    bookingDetailProps.bookingDetail?.displayStatus === 'upcoming_cancelled'
+  const isSelfPickUpArrivingSoon =
+    bookingDetailProps.bookingDetail?.isSelfPickUp &&
+    bookingDetailProps.bookingDetail?.displayStatus === BookingStatus.ACCEPTED &&
+    isArrivingSoon
+  const isSelfPickUpExtendArrivingSoon =
+    bookingDetailProps.bookingDetail?.isSelfPickUp &&
+    bookingDetailProps.bookingDetail?.displayStatus === BookingStatus.DELIVERED &&
+    isArrivingSoon &&
+    bookingDetailProps.bookingDetail?.isExtend
+
+  const isSelfPickUpAndReturnBooking = isSelfPickUpArrivingSoon || isSelfPickUpExtendArrivingSoon
+  /**
+   * The logic to get delivery dates does update on May 17, 2023.
+   * Ref: https://evme.atlassian.net/browse/EVME-3977
+   */
+
+  const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>(
+    dayjs(deliveryDates?.minDate)
+  )
   const [deliveryTime, setDeliveryTime] = useState<DataState['deliveryTime']>(
     defaultState.deliveryTime
   )
@@ -338,6 +364,13 @@ export default function BookingCarReplacement(): JSX.Element {
       <PageTitle title={t('booking.carReplacement.title')} breadcrumbs={breadcrumbs} />
       <Wrapper>
         <ContentSection>
+          {isUpCommingCancelled ? (
+            <Alert severity="warning">
+              This booking is upcoming_cancelled and does not have any agreement right now.
+            </Alert>
+          ) : (
+            ''
+          )}
           <Typography variant="h6" component="h2" className={classes.marginBottomText}>
             {t('booking.carReplacement.title')}
           </Typography>
@@ -373,7 +406,7 @@ export default function BookingCarReplacement(): JSX.Element {
                   value={deliveryTime}
                   onChange={handleDeliveryTimeChange}
                 >
-                  <MenuItem value="09:00">09.00 - 10.00</MenuItem>
+                  <MenuItem value="09:00">09.00 - 11.00</MenuItem>
                   <MenuItem value="11:00">11.00 - 13.00</MenuItem>
                   <MenuItem value="13:00">13.00 - 15.00</MenuItem>
                   <MenuItem value="15:00">15.00 - 17.00</MenuItem>
@@ -420,7 +453,7 @@ export default function BookingCarReplacement(): JSX.Element {
                     </IconButton>
                   ),
                 }}
-                disabled={isSelfPickUpBooking}
+                disabled={isSelfPickUpAndReturnBooking}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -631,7 +664,7 @@ export default function BookingCarReplacement(): JSX.Element {
           <DialogContentText>
             <MapDetailWrapper>
               <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
-                {isSelfPickUpBooking ? (
+                {isSelfPickUpAndReturnBooking ? (
                   <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={deliveryMarkerAddress}
@@ -669,7 +702,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 InputProps={{
                   readOnly: true,
                 }}
-                disabled={isSelfPickUpBooking}
+                disabled={isSelfPickUpAndReturnBooking}
               />
             </MapDetailWrapper>
           </DialogContentText>
