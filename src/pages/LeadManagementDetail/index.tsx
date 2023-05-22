@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import {
   Breadcrumbs,
   Button,
@@ -86,7 +87,6 @@ export interface LeadFormSubmittionCSV {
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
-// const initSelectedFromDate = dayjs().tz(config.timezone).toDate()
 
 const DividerCustom = styled(Divider)`
   margin: 10px 0;
@@ -251,7 +251,7 @@ export default function LeadManagementDetail() {
   const isRoleCanExport: boolean =
     currentUserRole === ROLES.SUPER_ADMIN || currentUserRole === ROLES.OPERATION
 
-  // const fileName = `Lead Form ${myParam.leadName}.csv`
+  const fileName = `Lead Form ${myParam.leadName}.csv`
 
   const headerTableLeadFormSubmittion: ColumnTable[] = [
     { label: 'No', key: 'no' },
@@ -306,12 +306,16 @@ export default function LeadManagementDetail() {
   const exportExcellLeadForm = async () => {
     const response = await exportExcellLeadFormSubmittion({
       leadFormId: id,
-      startDate: filterStartDate !== null ? filterStartDate.format(DEFAULT_DATE_FORMAT_BFF) : '',
-      endDate: filterEndDate !== null ? filterEndDate.format(DEFAULT_DATE_FORMAT_BFF) : '',
+      startDate:
+        filterStartDate !== null
+          ? filterStartDate.format(DEFAULT_DATE_FORMAT_BFF)
+          : dayjs().format(DEFAULT_DATE_FORMAT_BFF),
+      endDate:
+        filterEndDate !== null
+          ? filterEndDate.format(DEFAULT_DATE_FORMAT_BFF)
+          : dayjs().format(DEFAULT_DATE_FORMAT_BFF),
     })
-    const fileName = `Lead Form ${myParam.leadName}`
-    const fileExtension = '.csv'
-    saveAs(response, `${fileName}${fileExtension}`)
+    saveAs(response, fileName)
   }
 
   //   const sortedRows = [...leadData!.data.leadFormSubmissions].sort((a: Row, b: Row) => {
@@ -382,6 +386,7 @@ export default function LeadManagementDetail() {
         <Grid className={classes.searchBar} container spacing={1}>
           <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={4}>
             <TextField
+              disabled={true}
               className={classes.searchTextField}
               fullWidth
               select
@@ -419,8 +424,6 @@ export default function LeadManagementDetail() {
               fullWidth
               value={formik.values.searchValue}
               placeholder={t('carAvailability.searchField.label')}
-              // error={!!filterSearchFieldError}
-              // helperText={filterSearchFieldError}
               disabled={formik.values.searchType === '' ? true : false}
               variant="outlined"
               InputLabelProps={{
