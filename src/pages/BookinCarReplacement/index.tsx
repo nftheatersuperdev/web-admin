@@ -124,7 +124,7 @@ export default function BookingCarReplacement(): JSX.Element {
 
   const history = useHistory()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
-  const [pickupReplaceDialogOpen, setpickupReplaceDialogOpen] = useState<boolean>(false)
+  const [pickupReplaceDialogOpen, setPickupReplaceDialogOpen] = useState<boolean>(false)
 
   const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
   const bookingDetailProps = location.state as CarReplacementDialogProps
@@ -181,6 +181,10 @@ export default function BookingCarReplacement(): JSX.Element {
 
   const [carId, setCarId] = useState<DataState['carId']>(defaultState.carId)
   const [deliveryAddress, setDeliveryAddress] = useState<DataState['deliveryAddress']>(
+    defaultState.deliveryAddress
+  )
+
+  const [dialogDeliveryAddress, setDialogDeliveryAddress] = useState<DataState['deliveryAddress']>(
     defaultState.deliveryAddress
   )
 
@@ -251,17 +255,23 @@ export default function BookingCarReplacement(): JSX.Element {
     const { lat, lng } = e.latLng.toJSON()
     const location = await Geocode.fromLatLng(String(lat), String(lng))
     const fullAddress = location?.results[0]?.formatted_address || '-'
-    setDeliveryAddress((prevState) => ({
+    setDialogDeliveryAddress((prevState) => ({
       ...prevState,
       full: fullAddress,
       latitude: lat,
       longitude: lng,
     }))
   }
-
-  const handleClose = (needRefetch?: boolean) => {
-    bookingDetailProps?.onClose(needRefetch)
+  const handleSubmitMarkerChange = () => {
+    setDeliveryAddress((prevState) => ({
+      ...prevState,
+      full: dialogDeliveryAddress.full,
+      latitude: dialogDeliveryAddress.latitude,
+      longitude: dialogDeliveryAddress.longitude,
+    }))
+    setPickupReplaceDialogOpen(() => false)
   }
+
   const handleFormSubmit = async () => {
     if (deliveryDate) {
       await toast.promise(
@@ -276,7 +286,9 @@ export default function BookingCarReplacement(): JSX.Element {
         {
           loading: t('toast.loading'),
           success: () => {
-            handleClose(true)
+            history.push({
+              pathname: `/booking/${bookingId}/${bookingDetailId}`,
+            })
             return t('booking.carReplacement.saveSuccess')
           },
           error: (error) => {
@@ -393,7 +405,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 margin="normal"
                 variant="outlined"
                 value={deliveryAddress.full}
-                onClick={() => setpickupReplaceDialogOpen(() => true)}
+                onClick={() => setPickupReplaceDialogOpen(() => true)}
                 maxRows={2}
                 InputProps={{
                   readOnly: true,
@@ -646,7 +658,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={deliveryAddress.full || '-'}
+                value={dialogDeliveryAddress.full || '-'}
                 multiline
                 minRows={2}
                 InputProps={{
@@ -659,7 +671,7 @@ export default function BookingCarReplacement(): JSX.Element {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={handleFormSubmit}
+            onClick={handleSubmitMarkerChange}
             color="primary"
             variant="contained"
             aria-label="confirm"
@@ -667,7 +679,7 @@ export default function BookingCarReplacement(): JSX.Element {
             {t('booking.carReplacement.button.save')}
           </Button>
           <Button
-            onClick={() => setpickupReplaceDialogOpen(() => false)}
+            onClick={() => setPickupReplaceDialogOpen(() => false)}
             color="primary"
             variant="outlined"
             aria-label="cancel"
