@@ -337,9 +337,11 @@
       "success": "Update customer successfully"
     },
     "searchField": {
+      "phoneNumber": "Enter Search Phone Number",
       "invalidFormat": "Please input valid format (ก-ฮ,a-z,A-Z,0-9) and minimum two characters.",
       "invalidSearchEmailFormat": "Please input valid format (a-z,A-Z,0-9,.,-,_,+,@) and minimum two characters.",
-      "invalidUUIDFormat": "Please input valid UUID format."
+      "invalidUUIDFormat": "Please input valid UUID format.",
+      "invalidPhoneNumberFormat": "Please input valid format (0-9) and minimum 4 characters and maximum 15 characters."
     }
   },
   "car": {
