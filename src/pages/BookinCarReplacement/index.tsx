@@ -682,7 +682,7 @@ export default function BookingCarReplacement(): JSX.Element {
         </DialogContent>
         <DialogActions>
           <Button
-            disabled={!isDisableToSaveMarkerDialog}
+            disabled={isDisableToSaveMarkerDialog}
             onClick={handleSubmitMarkerChange}
             color="primary"
             variant="contained"
