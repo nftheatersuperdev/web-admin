@@ -310,19 +310,6 @@ export default function SubscriptionDetail(): JSX.Element {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => setCarReplacementlogOpen(true)}
-            disabled={
-              !bookingDetail ||
-              !isAllowToDoCarReplacement ||
-              !isTherePermissionToDoCarReplacement ||
-              isEndDateOverToday
-            }
-          >
-            {t('booking.carDetail.replacement')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
             onClick={() =>
               history.push({
                 pathname: `/booking/${bookingId}/${bookingDetailId}/car-replacement`,

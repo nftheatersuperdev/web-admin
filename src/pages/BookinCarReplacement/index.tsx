@@ -133,7 +133,6 @@ export default function BookingCarReplacement(): JSX.Element {
   const editorEmail = bookingDetailProps?.editorEmail
   const carActivity = bookingDetail?.carActivities[bookingDetail?.carActivities.length - 1]
 
-  //   const isUpCommingCancelled = bookingDetail?.status === 'upcoming_cancelled'
   const isSelfPickUpBooking =
     bookingDetail?.isSelfPickUp && bookingDetail?.displayStatus === BookingStatus.ACCEPTED
   /**
@@ -196,6 +195,7 @@ export default function BookingCarReplacement(): JSX.Element {
           startDate: deliveryDate?.format(DEFAULT_DATE_FORMAT_BFF),
           endDate: dayjs(bookingDetailProps?.maxEndDate).format(DEFAULT_DATE_FORMAT_BFF),
           isSkuNotNull: true,
+          resellerServiceAreaId: bookingDetailProps?.bookingDetail?.car?.resellerServiceArea?.id,
         },
         size: 10000,
       } as CarAvailableListBffFilterRequestProps),
@@ -328,6 +328,11 @@ export default function BookingCarReplacement(): JSX.Element {
     !deliveryAddress.full ||
     !deliveryAddress.latitude ||
     !deliveryAddress.longitude
+
+  const isDisableToSaveMarkerDialog =
+    !dialogDeliveryAddress.full ||
+    !dialogDeliveryAddress.latitude ||
+    !dialogDeliveryAddress.longitude
   return (
     <Page>
       <PageTitle title={t('booking.carReplacement.title')} breadcrumbs={breadcrumbs} />
@@ -671,6 +676,7 @@ export default function BookingCarReplacement(): JSX.Element {
         </DialogContent>
         <DialogActions>
           <Button
+            disabled={isDisableToSaveMarkerDialog}
             onClick={handleSubmitMarkerChange}
             color="primary"
             variant="contained"
