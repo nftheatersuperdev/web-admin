@@ -592,7 +592,7 @@ export default function LeadManagementDetail() {
                   label={t('leadManagementDetail.dialog.selectStartDate')}
                   format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
                   value={filterStartDate}
-                  minDate={dayjs().subtract(6, 'month')}
+                  minDate={dayjs().subtract(180, 'day')}
                   maxDate={dayjs()}
                   onChange={(newValue) => setFilterStartDate(newValue)}
                 />
@@ -605,7 +605,7 @@ export default function LeadManagementDetail() {
                   label={t('leadManagementDetail.dialog.selectEndDate')}
                   format={DEFAULT_DATE_FORMAT_MONTH_TEXT}
                   value={filterEndDate}
-                  minDate={dayjs().subtract(6, 'month')}
+                  minDate={dayjs().subtract(180, 'day')}
                   maxDate={dayjs()}
                   onChange={(newValue) => setFilterEndDate(newValue)}
                 />
