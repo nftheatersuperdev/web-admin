@@ -286,6 +286,7 @@ export default function CarReplacementDialog({
         full: task.fullAddress,
         latitude: task.latitude,
         longitude: task.longitude,
+        remark: task.remark,
       }))
     }
   }, [isSelfPickUpAndReturnBooking])
