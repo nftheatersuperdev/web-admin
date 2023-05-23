@@ -150,7 +150,7 @@ export default function Dashboard(): JSX.Element {
   const searchReturn = qs.stringify({
     resellerServiceAreaId,
     returnDate: todayLowerUpper,
-    status: 'delivered',
+    status: ['delivered', 'cancelled'].join(','),
   })
 
   const [open, setOpen] = useState(true)
