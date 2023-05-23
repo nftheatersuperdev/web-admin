@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Alert,
   Autocomplete,
@@ -118,6 +118,7 @@ interface SubscriptionDetailParams {
   bookingDetailId: string
 }
 export default function BookingCarReplacement(): JSX.Element {
+  const noDataText = 'No Data'
   const location = useLocation()
   const classes = useStyles()
   const { t } = useTranslation()
@@ -130,8 +131,11 @@ export default function BookingCarReplacement(): JSX.Element {
   const isDeliveredStatus = status === BookingStatus.DELIVERED
   const todayDate = dayjs().startOf('day')
   const isArrivingSoon = dayjs(bookingDetail?.startDate) > dayjs(todayDate)
+  const isActiveArrivingSoonAndSelfPickUp =
+    isArrivingSoon && !bookingDetail?.isExtend && bookingDetail?.isSelfPickUp
   const bookingStartDate = dayjs(bookingDetail?.startDate).startOf('day')
   const bookingEndDateMinusOneDay = dayjs(bookingDetail?.endDate).add(-1, 'day').endOf('day')
+
   function getDeliveryDates() {
     if (
       (isAcceptedStatus && !bookingDetail?.isExtend && isArrivingSoon) ||
@@ -261,7 +265,7 @@ export default function BookingCarReplacement(): JSX.Element {
   const handleMarkerChanged = async (e: google.maps.MapMouseEvent) => {
     const { lat, lng } = e.latLng.toJSON()
     const location = await Geocode.fromLatLng(String(lat), String(lng))
-    const fullAddress = location?.results[0]?.formatted_address || '-'
+    const fullAddress = location?.results[0]?.formatted_address || noDataText
     setDialogDeliveryAddress((prevState) => ({
       ...prevState,
       full: fullAddress,
@@ -279,6 +283,24 @@ export default function BookingCarReplacement(): JSX.Element {
     }))
     setPickupReplaceDialogOpen(() => false)
   }
+
+  useEffect(() => {
+    if (isActiveArrivingSoonAndSelfPickUp) {
+      setDeliveryAddress((prevState) => ({
+        ...prevState,
+        full: carActivity?.deliveryTask.fullAddress || noDataText,
+        latitude: carActivity?.deliveryTask.latitude || 0,
+        longitude: carActivity?.deliveryTask.longitude || 0,
+        remark: carActivity?.deliveryTask.remark || noDataText,
+      }))
+      setDialogDeliveryAddress((prevState) => ({
+        ...prevState,
+        full: carActivity?.deliveryTask.fullAddress || noDataText,
+        latitude: carActivity?.deliveryTask.latitude || 0,
+        longitude: carActivity?.deliveryTask.longitude || 0,
+      }))
+    }
+  }, [])
 
   const handleFormSubmit = async () => {
     if (deliveryDate) {
@@ -413,7 +435,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 value={
                   bookingDetail?.endDate
                     ? dayjs(bookingDetail?.endDate).format(DEFAULT_DATETIME_FORMAT_MONTH_TEXT)
-                    : '-'
+                    : noDataText
                 }
               />
             </Grid>
@@ -451,7 +473,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 value={
                   carActivity?.returnTask?.fullAddress
                     ? carActivity.returnTask.fullAddress.trim()
-                    : '-'
+                    : noDataText
                 }
                 multiline
                 minRows={2}
@@ -484,7 +506,9 @@ export default function BookingCarReplacement(): JSX.Element {
                 margin="normal"
                 variant="outlined"
                 value={
-                  carActivity?.returnTask?.remark ? carActivity.returnTask.remark.trim() : 'No Data'
+                  carActivity?.returnTask?.remark
+                    ? carActivity.returnTask.remark.trim()
+                    : noDataText
                 }
                 multiline
                 minRows={1}
@@ -546,7 +570,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={selectedCar?.car.vin || '-'}
+                value={selectedCar?.car.vin || noDataText}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -563,7 +587,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={selectedCar?.car?.carSku?.carModel.brand.name || '-'}
+                value={selectedCar?.car?.carSku?.carModel.brand.name || noDataText}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -577,7 +601,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={selectedCar?.car?.carSku?.carModel.name || '-'}
+                value={selectedCar?.car?.carSku?.carModel.name || noDataText}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -594,7 +618,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={selectedCar?.car?.carSku?.color || '-'}
+                value={selectedCar?.car?.carSku?.color || noDataText}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -649,18 +673,29 @@ export default function BookingCarReplacement(): JSX.Element {
           <DialogContentText>
             <MapDetailWrapper>
               <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
-                <GoogleMap
-                  mapContainerStyle={containerStyle}
-                  center={deliveryMarkerAddress}
-                  zoom={15}
-                  onClick={handleMarkerChanged}
-                >
-                  <Marker
-                    position={deliveryMarkerAddress}
-                    draggable={true}
-                    onDragEnd={handleMarkerChanged}
-                  />
-                </GoogleMap>
+                {isActiveArrivingSoonAndSelfPickUp ? (
+                  <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={deliveryMarkerAddress}
+                    zoom={15}
+                    clickableIcons={false}
+                  >
+                    <Marker position={deliveryMarkerAddress} draggable={false} />
+                  </GoogleMap>
+                ) : (
+                  <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={deliveryMarkerAddress}
+                    zoom={15}
+                    onClick={handleMarkerChanged}
+                  >
+                    <Marker
+                      position={deliveryMarkerAddress}
+                      draggable={true}
+                      onDragEnd={handleMarkerChanged}
+                    />
+                  </GoogleMap>
+                )}
               </LoadScript>
             </MapDetailWrapper>
             <MapDetailWrapper>
@@ -671,7 +706,7 @@ export default function BookingCarReplacement(): JSX.Element {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={dialogDeliveryAddress.full || '-'}
+                value={dialogDeliveryAddress.full || noDataText}
                 multiline
                 minRows={2}
                 InputProps={{
@@ -683,7 +718,7 @@ export default function BookingCarReplacement(): JSX.Element {
         </DialogContent>
         <DialogActions>
           <Button
-            disabled={isDisableToSaveMarkerDialog}
+            disabled={isDisableToSaveMarkerDialog || isActiveArrivingSoonAndSelfPickUp}
             onClick={handleSubmitMarkerChange}
             color="primary"
             variant="contained"
