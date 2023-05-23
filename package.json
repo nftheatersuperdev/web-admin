@@ -7,7 +7,7 @@
     "npm": ">=7"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "build:stats": "npm run build -- --stats && webpack-bundle-analyzer ./build/bundle-stats.json",
     "test": "react-scripts test",

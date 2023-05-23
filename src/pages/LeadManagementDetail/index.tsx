@@ -318,12 +318,6 @@ export default function LeadManagementDetail() {
     saveAs(response, fileName)
   }
 
-  //   const sortedRows = [...leadData!.data.leadFormSubmissions].sort((a: Row, b: Row) => {
-  //     const sortOrderMultiplier = sortOrder === 'desc' ? -1 : 1
-  //     const compareResult = a[orderBy] > b[orderBy] ? -1 : 1
-  //     return compareResult * sortOrderMultiplier
-  //   })
-
   useEffect(() => {
     refetch()
   }, [refetch, pageSize, sortOrder, orderBy, currentUserRole, filterStartDate, filterEndDate])
