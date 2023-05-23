@@ -126,7 +126,8 @@
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
     "customerDetails": "รายละเอียดลูกค้า",
-    "leadManagement": "Lead Management"
+    "leadManagement": "Lead Management",
+    "leadManagementDetail": "Lead Detail"
   },
   "button": {
     "add": "เพิ่ม",
@@ -1448,5 +1449,43 @@
   "pagination": {
     "rowsPerPage": "จำนวนรายการต่อหน้า",
     "of": "ใน"
+  },
+  "leadManagementDetail": {
+    "title": "Lead Details",
+    "userRegisterList": "User Register List",
+    "description": {
+      "leadName": "Lead Name",
+      "createDate": "Create Date"
+    },
+    "filter": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "E-mail",
+      "leadSource": "Lead Source",
+      "registeredDate": "Registered Date",
+      "answer": "Answer",
+      "period": "Period"
+    },
+    "table": {
+      "no": "No",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "leadSource": "Lead Source",
+      "interesting": "Interesting",
+      "timeline": "Timeline",
+      "registeredDate": "Registered Date"
+    },
+    "dialog": {
+      "title": "Export",
+      "description": "Please select a time period.",
+      "selectStartDate": "Select Start Date",
+      "selectEndDate": "Select End Date",
+      "submit": "EXPORT",
+      "cancel": "CANCEL"
+    },
+    "noData": "No submitted item."
   }
 }
