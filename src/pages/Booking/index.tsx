@@ -70,7 +70,7 @@ export default function Booking(): JSX.Element {
   const resellerId = queryString.get('resellerServiceAreaId')
   const deliveryDate = queryString.get('deliveryDate')
   const returnDate = queryString.get('returnDate')
-  const status = queryString.get('status')
+  const status = queryString.get('status')?.split(',')
 
   const removeQueryParams = (keepLocation?: boolean) => {
     if (queryString.has('resellerServiceAreaId') && !keepLocation) {
@@ -198,7 +198,7 @@ export default function Booking(): JSX.Element {
     : defaultFilter
   defaultFilter = deliveryDate ? { ...defaultFilter, deliveryDate } : defaultFilter
   defaultFilter = returnDate ? { ...defaultFilter, returnDate } : defaultFilter
-  defaultFilter = status ? { ...defaultFilter, statusList: [status] } : defaultFilter
+  defaultFilter = status ? { ...defaultFilter, statusList: status } : defaultFilter
   const [filter, setFilter] = useState<SubscriptionBookingListFilters>({ ...defaultFilter })
 
   const {
