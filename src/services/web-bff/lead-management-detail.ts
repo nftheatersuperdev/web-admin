@@ -32,7 +32,7 @@ export const exportExcellLeadFormSubmittion = async ({
 }: ExportExcelLeadFormSubmittionBodyProps): Promise<Blob> => {
   const config: AxiosRequestConfig = {
     headers: {
-      'Content-Type': 'application/ms-excel',
+      'Content-Type': 'application/json',
     },
     responseType: 'blob',
   }
