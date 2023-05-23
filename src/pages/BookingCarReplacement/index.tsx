@@ -140,12 +140,11 @@ export default function BookingCarReplacement(): JSX.Element {
     if (
       (isAcceptedStatus && !bookingDetail?.isExtend && isArrivingSoon) ||
       (isAcceptedStatus && bookingDetail?.isExtend && isArrivingSoon) ||
-      (isDeliveredStatus && bookingDetail?.isExtend && isArrivingSoon) ||
-      (isDeliveredStatus && !bookingDetail?.isExtend && isArrivingSoon)
+      (isDeliveredStatus && bookingDetail?.isExtend && isArrivingSoon)
     ) {
       return {
         minDate: bookingStartDate,
-        maxDate: bookingEndDateMinusOneDay,
+        maxDate: bookingStartDate,
       }
     } else if (
       (isDeliveredStatus && !bookingDetail?.isExtend && !isArrivingSoon) ||
@@ -161,7 +160,6 @@ export default function BookingCarReplacement(): JSX.Element {
       maxDate: todayDate,
     }
   }
-
   const deliveryDates = getDeliveryDates()
   const defaultState = {
     carId: '',
@@ -486,15 +484,21 @@ export default function BookingCarReplacement(): JSX.Element {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextField
-                className={classes.autoCompleteSelect}
+                className={[
+                  classes.autoCompleteSelect,
+                  isActiveArrivingSoonAndSelfPickUp ? classes.bgColour : '',
+                ].join(' ')}
                 id="car_replacement__deliveryAddressRemark"
                 label={t('booking.carReplacement.deliveryAddressRemark')}
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                defaultValue="No Data"
+                defaultValue={noDataText}
                 value={deliveryAddress?.remark}
                 onChange={handleDeliveryAddressRemarkChanged}
+                InputProps={{
+                  readOnly: isActiveArrivingSoonAndSelfPickUp,
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
