@@ -72,8 +72,8 @@ export default function Booking(): JSX.Element {
   const returnDate = queryString.get('returnDate')
   const status = queryString.get('status')
 
-  const removeQueryParams = () => {
-    if (queryString.has('resellerServiceAreaId')) {
+  const removeQueryParams = (keepLocation?: boolean) => {
+    if (queryString.has('resellerServiceAreaId') && !keepLocation) {
       queryString.delete('resellerServiceAreaId')
     }
     if (queryString.has('deliveryDate')) {
@@ -305,6 +305,13 @@ export default function Booking(): JSX.Element {
       setSelectedSearch(value)
       setSelectedOptionValue(null)
       setSelectedFromDate(null)
+      if (
+        queryString.has('deliveryDate') ||
+        queryString.has('returnDate') ||
+        queryString.has('status')
+      ) {
+        removeQueryParams(true)
+      }
     } else {
       setFilter({})
       setSelectedSearch(null)
@@ -338,6 +345,10 @@ export default function Booking(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
+      if (defaultResellerId) {
+        setSelectedLocation(defaultResellerId)
+        formik.setFieldValue('searchLocation', defaultResellerId.value)
+      }
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
       window.setTimeout(() => {
@@ -356,6 +367,11 @@ export default function Booking(): JSX.Element {
 
     if (!shouldSubmit) {
       return
+    }
+
+    if (defaultResellerId) {
+      setSelectedLocation(defaultResellerId)
+      formik.setFieldValue('searchLocation', defaultResellerId.value)
     }
 
     const newValue = []
@@ -385,6 +401,15 @@ export default function Booking(): JSX.Element {
   }
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
   const onSetSelectedLocation = (option: SelectOption | null) => {
+    if (
+      queryString.has('resellerServiceAreaId') ||
+      queryString.has('deliveryDate') ||
+      queryString.has('returnDate') ||
+      queryString.has('status')
+    ) {
+      removeQueryParams()
+    }
+
     if (option) {
       setSelectedLocation(option)
       formik.setFieldValue('searchLocation', option.value)
@@ -393,14 +418,7 @@ export default function Booking(): JSX.Element {
       setSelectedLocation(defaultLocation)
       formik.setFieldValue('searchLocation', '')
       formik.handleSubmit()
-      if (
-        queryString.has('resellerServiceAreaId') ||
-        queryString.has('deliveryDate') ||
-        queryString.has('returnDate') ||
-        queryString.has('status')
-      ) {
-        removeQueryParams()
-      }
+
       setSelectedLocation({
         label: t('booking.allLocation'),
         value: 'all',

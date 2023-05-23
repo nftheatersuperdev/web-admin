@@ -211,6 +211,10 @@ export default function Car(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
+      if (defaultResellerId) {
+        setSelectedLocation(defaultResellerId)
+        formik.setFieldValue('searchLocation', defaultResellerId.value)
+      }
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
       window.setTimeout(() => {
@@ -229,6 +233,11 @@ export default function Car(): JSX.Element {
 
     if (!shouldSubmit) {
       return
+    }
+
+    if (defaultResellerId) {
+      setSelectedLocation(defaultResellerId)
+      formik.setFieldValue('searchLocation', defaultResellerId.value)
     }
 
     formik.setFieldValue('searchType', selectedSearch?.value)
@@ -253,6 +262,9 @@ export default function Car(): JSX.Element {
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
   const onSetSelectedLocation = (option: SelectOption | null) => {
     if (option) {
+      if (queryString.has('resellerServiceAreaId')) {
+        removeQueryParams()
+      }
       setSelectedLocation(option)
       formik.setFieldValue('searchLocation', option.value)
       formik.handleSubmit()

@@ -215,12 +215,12 @@
       "subTitle": "จำนวนการจองทั้งหมด"
     },
     "totalUpcomingCarsDelivery": {
-      "title": "Upcoming Cars Delivery",
-      "subTitle": "Today"
+      "title": "การส่งมอบรถยนต์ที่กำลังจะมาถึง",
+      "subTitle": "วันนี้"
     },
     "totalUpcomingCarsReturn": {
-      "title": "Upcoming Cars Return",
-      "subTitle": "Today"
+      "title": "การคืนรถยนต์ที่กำลังจะมาถึง",
+      "subTitle": "วันนี้"
     },
     "totalPayments": {
       "title": "ยอดชำระเงิน",
