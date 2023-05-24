@@ -4,7 +4,6 @@ import {
   KeyboardDatePicker,
   KeyboardDatePickerProps,
 } from '@material-ui/pickers'
-import { makeStyles } from '@mui/styles'
 import DayjsUtils from '@date-io/dayjs'
 import en, { Locale } from 'dayjs/locale/en'
 import th from 'dayjs/locale/th'
@@ -17,15 +16,6 @@ const locales: { [key: string]: Locale } = {
 export default function DatePicker(props: KeyboardDatePickerProps): JSX.Element {
   const { t, i18n } = useTranslation()
 
-  const useStyles = makeStyles(() => ({
-    fontSizeDatePicker: {
-      '&& .MuiOutlinedInput-input': {
-        padding: '18px 13.5px',
-        fontSize: '13px !important;',
-      },
-    },
-  }))
-  const classes = useStyles()
   return (
     <MuiPickersUtilsProvider utils={DayjsUtils} locale={locales[i18n.language]}>
       <KeyboardDatePicker
@@ -37,7 +27,6 @@ export default function DatePicker(props: KeyboardDatePickerProps): JSX.Element 
         clearLabel={t('datetimePicker.clearLabel')}
         okLabel={t('datetimePicker.okLabel')}
         todayLabel={t('datetimePicker.todayLabel')}
-        className={classes.fontSizeDatePicker}
       />
     </MuiPickersUtilsProvider>
   )

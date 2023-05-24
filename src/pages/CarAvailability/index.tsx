@@ -84,7 +84,8 @@ export default function CarAvailability(): JSX.Element {
   const useStyles = makeStyles(() => ({
     datePickerFromTo: {
       '&& .MuiOutlinedInput-input': {
-        padding: '16.5px 14px',
+        padding: '18.5px 14px',
+        fontSize: '13px;',
       },
     },
     paginationCarAvailability: {

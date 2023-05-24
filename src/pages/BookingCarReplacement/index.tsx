@@ -94,6 +94,12 @@ interface SubscriptionDetailParams {
 }
 export default function BookingCarReplacement(): JSX.Element {
   const useStyles = makeStyles(() => ({
+    datePickerFromTo: {
+      '&& .MuiOutlinedInput-input': {
+        padding: '18px 13.5px',
+        fontSize: '13px',
+      },
+    },
     bgColour: {
       backgroundColor: '#F5F5F5',
     },
@@ -376,7 +382,7 @@ export default function BookingCarReplacement(): JSX.Element {
 
           {/* Delivery Date, Delivery Time, and Return Date */}
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={3} className={classes.datePickerFromTo}>
               <DatePicker
                 className={classes.autoCompleteSelect}
                 fullWidth
