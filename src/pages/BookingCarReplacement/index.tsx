@@ -99,6 +99,13 @@ export default function BookingCarReplacement(): JSX.Element {
         padding: '18px 13.5px',
         fontSize: '13px',
       },
+      '&& .MuiFormLabel-filled': {
+        fontSize: '13px',
+        paddingTop: '2px',
+      },
+      '&& .MuiOutlinedInput-notchedOutline': {
+        fontSize: '13px',
+      },
     },
     bgColour: {
       backgroundColor: '#F5F5F5',
