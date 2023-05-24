@@ -32,8 +32,11 @@ import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
   formatStringForInputText,
-  validateKeywordText,
+  validateKeywordTextWithSpecialChar,
   convertPhoneNumber,
+  validateKeywordText,
+  validateKeywordUUID,
+  validatePhoneNumberSearch,
 } from 'utils'
 import config from 'config'
 import Pagination from '@material-ui/lab/Pagination'
@@ -168,10 +171,10 @@ export default function CustomerProfile(): JSX.Element {
       textAlign: 'right',
       paddingRight: '16px',
     },
-    breadcrumText: {
+    breadcrumbText: {
       color: '#000000DE',
     },
-    paddingRigthBtnClear: {
+    paddingRightBtnClear: {
       marginLeft: '-40px',
       cursor: 'pointer',
       padding: '4px 4px',
@@ -198,6 +201,9 @@ export default function CustomerProfile(): JSX.Element {
   const [filterSearchField, setFilterSearchField] = useState<string>('')
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
   const [showTextField, setShowTextField] = useState<boolean>(true)
+  const [TextFieldPlaceholder, setTextFieldPlaceholder] = useState<string>(
+    t('carAvailability.searchField.label')
+  )
   const [showStatusDropdown, setShowStatusDropdown] = useState<boolean>(false)
   const [showKycStatusDropdown, setShowKycStatusDropdown] = useState<boolean>(false)
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
@@ -231,6 +237,11 @@ export default function CustomerProfile(): JSX.Element {
       setShowSearchButton(true)
       setIsEnableFilterButton(true)
     } else {
+      if (params === 'phoneNumber') {
+        setTextFieldPlaceholder(t('user.searchField.phoneNumber'))
+      } else {
+        setTextFieldPlaceholder(t('carAvailability.searchField.label'))
+      }
       setShowTextField(true)
       setShowStatusDropdown(false)
       setShowKycStatusDropdown(false)
@@ -257,9 +268,13 @@ export default function CustomerProfile(): JSX.Element {
         updateObj = {
           [value.searchType]: isActive,
         } as CustomerFilterRequest
+      } else if (value.searchType === 'phoneNumber') {
+        updateObj = {
+          mobileNumberContain: filterSearchField,
+        } as CustomerFilterRequest
       } else {
         updateObj = {
-          [value.searchType]: filterSearchField,
+          mobileNumberContain: filterSearchField,
         } as CustomerFilterRequest
       }
       setCustomerFilter(updateObj)
@@ -446,22 +461,37 @@ export default function CustomerProfile(): JSX.Element {
   useEffect(() => {
     refetch()
   }, [customerFilter, pages, page, pageSize, refetch])
+
   const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    const isKeywordAccepted = validateKeywordText(value)
+    const isValidEmailSearchField = validateKeywordTextWithSpecialChar(value)
+    const isValidKeywordText = validateKeywordText(value)
+    const isValidUUIDSearchField = validateKeywordUUID(value)
+    const isValidPhoneSearchField = validatePhoneNumberSearch(value)
     setFilterSearchField(value)
     setFilterSearchFieldError('')
-    if (formik.values.searchType !== 'id') {
-      if (isKeywordAccepted && value.length >= 2) {
-        setFilterSearchField(value)
-        setIsEnableFilterButton(true)
-      } else if (value !== '') {
-        setFilterSearchFieldError(t('carAvailability.searchField.errors.invalidFormat'))
-        setIsEnableFilterButton(false)
-      } else {
-        setFilterSearchField('')
-        setIsEnableFilterButton(false)
-      }
+    if (formik.values.searchType === 'id' && !isValidUUIDSearchField) {
+      setFilterSearchFieldError(t('user.searchField.invalidUUIDFormat'))
+      setIsEnableFilterButton(false)
+    } else if (
+      formik.values.searchType === 'email' &&
+      (!isValidEmailSearchField || value.length < 2)
+    ) {
+      setFilterSearchFieldError(t('user.searchField.invalidSearchEmailFormat'))
+      setIsEnableFilterButton(false)
+    } else if (
+      formik.values.searchType === 'phoneNumber' &&
+      (!isValidPhoneSearchField || value.length < 4)
+    ) {
+      setFilterSearchFieldError(t('user.searchField.invalidPhoneNumberFormat'))
+      setIsEnableFilterButton(false)
+    } else if (
+      formik.values.searchType !== 'id' &&
+      formik.values.searchType !== 'email' &&
+      (!isValidKeywordText || value.length < 2)
+    ) {
+      setFilterSearchFieldError(t('user.searchField.invalidFormat'))
+      setIsEnableFilterButton(false)
     } else {
       setFilterSearchField(value)
       setIsEnableFilterButton(true)
@@ -492,7 +522,7 @@ export default function CustomerProfile(): JSX.Element {
                       <InputAdornment position="end">
                         {formik.values.searchType && (
                           <CloseOutlined
-                            className={classes.paddingRigthBtnClear}
+                            className={classes.paddingRightBtnClear}
                             onClick={handleClear}
                           />
                         )}
@@ -525,7 +555,7 @@ export default function CustomerProfile(): JSX.Element {
                   id="customer-profile__search_input"
                   name="searchVal"
                   value={filterSearchField}
-                  placeholder={t('carAvailability.searchField.label')}
+                  placeholder={TextFieldPlaceholder}
                   onChange={handleOnSearchFieldChange}
                   error={!!filterSearchFieldError}
                   helperText={filterSearchFieldError}

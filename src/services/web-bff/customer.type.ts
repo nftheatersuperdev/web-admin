@@ -92,6 +92,8 @@ export interface CustomerInputRequest {
   isActive?: boolean
   createdDate?: string
   updatedDate?: string
+  mobileNumberContain?: string
+  countryCodeEqual?: string
 }
 
 export interface CustomerDeleteLog {
@@ -176,4 +178,6 @@ export interface CustomerFilterRequest {
   isActive?: boolean
   createdDateEqual?: string
   updatedDateEqual?: string
+  mobileNumberContain?: string
+  countryCodeEqual?: string
 }

@@ -1,4 +1,13 @@
-import { Grid, Typography } from '@material-ui/core'
+/* eslint-disable react/jsx-props-no-spreading */
+import { useState, useEffect } from 'react'
+import {
+  Grid,
+  Typography,
+  Autocomplete,
+  TextField,
+  CircularProgress,
+  Backdrop,
+} from '@mui/material'
 import {
   PeopleOutlined as PeopleIcon,
   DirectionsCar as CarIcon,
@@ -7,16 +16,21 @@ import {
   PlayForWork as RequestedIcon,
   HowToReg as ApprovedIcon,
   CallMissed as RejectedIcon,
-} from '@material-ui/icons'
+} from '@mui/icons-material'
+import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { formatDate } from 'utils'
 import { ROUTE_PATHS } from 'routes'
 import qs from 'qs'
 import { useQuery } from 'react-query'
+import { LocationResponse } from 'services/web-bff/location.type'
 import { getInformations } from 'services/web-bff/dashboard'
+import { getLocationList } from 'services/web-bff/location'
 import { Page } from 'layout/LayoutRoute'
 import { CardStatus, DetailLink } from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
+import { SelectOption, getLocationOptions } from './utils'
+import { useStyles } from './styles'
 
 const quickLinks = [
   {
@@ -64,15 +78,21 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
+  const classes = useStyles()
   const { t } = useTranslation()
   const todayLowerUpper = formatDate(Date(), 'YYYY-MM-DD')
 
-  const { data: dataInformations } = useQuery('dashboard-informations', () => getInformations())
+  const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>()
+  const {
+    data: dataInformations,
+    refetch,
+    isFetching,
+  } = useQuery('dashboard-informations', () => getInformations(resellerServiceAreaId))
   const informations = dataInformations?.data.summary
 
   const totalCars = informations?.car.total ?? 0
   const totalAvailableCars = informations?.car.numberOfCarInService ?? 0
-  const totalSubscriptions = informations?.booking.total ?? 0
+  const totalBookings = informations?.booking.total ?? 0
   const totalUsers = informations?.customer.total ?? 0
   const totalUpcomingCarsDelivery = informations?.booking.numberOfDeliveryTaskInThisDay ?? 0
   const totalUpcomingCarsReturn = informations?.booking.numberOfReturnTaskInThisDay ?? 0
@@ -80,17 +100,110 @@ export default function Dashboard(): JSX.Element {
   const totalKYCApproved = informations?.customer.numberOfKycVerifiedStatus ?? 0
   const totalKYCRejected = informations?.customer.numberOfKycRejectedStatus ?? 0
 
-  const searchReturn = qs.stringify({
-    returnDate: todayLowerUpper,
-    status: ['delivered', 'cancelled'],
+  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
+    getLocationList()
+  )
+
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
+  const locationOptions = getLocationOptions(locationData)
+  const defaultLocation = {
+    label: t('dashboard.allLocation'),
+    value: 'all',
+  }
+  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
+
+  const formik = useFormik({
+    initialValues: {
+      location: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (value) => {
+      const { location } = value
+      setResellerServiceAreaId(location)
+    },
   })
+
+  const onSetSelectedLocation = (option: SelectOption | null) => {
+    if (option) {
+      setSelectedLocation(option)
+      setResellerServiceAreaId(option.value)
+      formik.setFieldValue('location', option.value)
+      formik.handleSubmit()
+    } else {
+      setSelectedLocation(defaultLocation)
+      setResellerServiceAreaId(null)
+      formik.setFieldValue('location', '')
+      formik.handleSubmit()
+    }
+  }
+
+  useEffect(() => {
+    if (isFetchedLocation && locations) {
+      setLocationData(locations)
+    }
+  }, [locations, isFetchedLocation])
+
+  useEffect(() => {
+    refetch()
+  }, [resellerServiceAreaId, refetch])
+
+  const searchReturn = qs.stringify({
+    resellerServiceAreaId,
+    returnDate: todayLowerUpper,
+    status: ['delivered', 'cancelled'].join(','),
+  })
+
+  const [open, setOpen] = useState(true)
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   return (
     <Page>
+      {isFetching ? (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={open}
+          onClick={handleClose}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : (
+        ''
+      )}
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={9} sm={9}>
           <h1>{t('dashboard.overall')}</h1>
         </Grid>
+        <Grid item xs={9} sm={3}>
+          <Autocomplete
+            autoHighlight
+            id="search_location_list"
+            className={classes.autoCompleteSelect}
+            options={locationOptions}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => {
+              return (
+                <TextField
+                  {...params}
+                  label={t('dashboard.location')}
+                  variant="outlined"
+                  placeholder={t('dashboard.allLocation')}
+                />
+              )
+            }}
+            isOptionEqualToValue={(option, value) =>
+              option.value === value.value || value.value === 'all'
+            }
+            value={selectedLocation || defaultLocation}
+            defaultValue={selectedLocation || defaultLocation}
+            onChange={(_e, value) => {
+              onSetSelectedLocation(value)
+            }}
+          />
+        </Grid>
+      </Grid>
+      <Grid container spacing={3}>
         <Grid item sm={4} xs={12}>
           <CardStatus
             title={t('dashboard.totalCars.title')}
@@ -98,88 +211,114 @@ export default function Dashboard(): JSX.Element {
             subTitle={t('dashboard.totalCars.subTitle')}
             icon={<CarIcon />}
             iconColor="red"
-            detailLink={<DetailLink pathname={ROUTE_PATHS.CAR} />}
+            detailLink={
+              <DetailLink
+                pathname={ROUTE_PATHS.CAR}
+                search={qs.stringify({ resellerServiceAreaId })}
+              />
+            }
           />
         </Grid>
         <Grid item sm={4} xs={12}>
-          <CardStatus
-            title={t('dashboard.totalPayments.title')}
-            value="-"
-            subTitle={t('dashboard.totalPayments.subTitle')}
-            icon={<MoneyIcon />}
-            iconColor="green"
-          />
+          {selectedLocation?.value === 'all' || !selectedLocation?.value ? (
+            <CardStatus
+              title={t('dashboard.totalPayments.title')}
+              value="-"
+              subTitle={t('dashboard.totalPayments.subTitle')}
+              icon={<MoneyIcon />}
+              iconColor="green"
+            />
+          ) : (
+            ''
+          )}
         </Grid>
         <Grid item sm={4} xs={12}>
-          <CardStatus
-            title={t('dashboard.totalUsers.title')}
-            value={totalUsers.toLocaleString()}
-            subTitle={t('dashboard.totalUsers.subTitle')}
-            icon={<PeopleIcon />}
-            iconColor="#5d4037"
-            detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
-          />
+          {selectedLocation?.value === 'all' || !selectedLocation?.value ? (
+            <CardStatus
+              title={t('dashboard.totalUsers.title')}
+              value={totalUsers.toLocaleString()}
+              subTitle={t('dashboard.totalUsers.subTitle')}
+              icon={<PeopleIcon />}
+              iconColor="#5d4037"
+              detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
+            />
+          ) : (
+            ''
+          )}
         </Grid>
-        <Grid item xs={12}>
-          <h1>{t('dashboard.kyc')}</h1>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container spacing={3}>
-            <Grid item lg={4} sm={6} xl={4} xs={12}>
-              <CardStatus
-                title={t('dashboard.totalRequestedCases.title')}
-                value={totalKYC.toLocaleString()}
-                subTitle={t('dashboard.totalRequestedCases.subTitle')}
-                icon={<RequestedIcon />}
-                iconColor="#03a9f4"
-                detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
-              />
-            </Grid>
+      </Grid>
+      {selectedLocation?.value === 'all' || !selectedLocation?.value ? (
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <h1>{t('dashboard.kyc')}</h1>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={3}>
+              <Grid item lg={4} sm={6} xl={4} xs={12}>
+                <CardStatus
+                  title={t('dashboard.totalRequestedCases.title')}
+                  value={totalKYC.toLocaleString()}
+                  subTitle={t('dashboard.totalRequestedCases.subTitle')}
+                  icon={<RequestedIcon />}
+                  iconColor="#03a9f4"
+                  detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
+                />
+              </Grid>
 
-            <Grid item lg={4} sm={6} xl={4} xs={12}>
-              <CardStatus
-                title={t('dashboard.totalApprovedCases.title')}
-                value={totalKYCApproved.toLocaleString()}
-                subTitle={t('dashboard.totalApprovedCases.subTitle')}
-                icon={<ApprovedIcon />}
-                iconColor="#4caf50"
-                detailLink={
-                  <DetailLink
-                    pathname={ROUTE_PATHS.USER}
-                    search={qs.stringify({ kycStatus: 'verified' })}
-                  />
-                }
-              />
-            </Grid>
+              <Grid item lg={4} sm={6} xl={4} xs={12}>
+                <CardStatus
+                  title={t('dashboard.totalApprovedCases.title')}
+                  value={totalKYCApproved.toLocaleString()}
+                  subTitle={t('dashboard.totalApprovedCases.subTitle')}
+                  icon={<ApprovedIcon />}
+                  iconColor="#4caf50"
+                  detailLink={
+                    <DetailLink
+                      pathname={ROUTE_PATHS.USER}
+                      search={qs.stringify({ kycStatus: 'verified' })}
+                    />
+                  }
+                />
+              </Grid>
 
-            <Grid item lg={4} sm={6} xl={4} xs={12}>
-              <CardStatus
-                title={t('dashboard.totalRejectedCases.title')}
-                value={totalKYCRejected.toLocaleString()}
-                subTitle={t('dashboard.totalRejectedCases.subTitle')}
-                icon={<RejectedIcon />}
-                iconColor="#d32f2f"
-                detailLink={
-                  <DetailLink
-                    pathname={ROUTE_PATHS.USER}
-                    search={qs.stringify({ kycStatus: 'rejected' })}
-                  />
-                }
-              />
+              <Grid item lg={4} sm={6} xl={4} xs={12}>
+                <CardStatus
+                  title={t('dashboard.totalRejectedCases.title')}
+                  value={totalKYCRejected.toLocaleString()}
+                  subTitle={t('dashboard.totalRejectedCases.subTitle')}
+                  icon={<RejectedIcon />}
+                  iconColor="#d32f2f"
+                  detailLink={
+                    <DetailLink
+                      pathname={ROUTE_PATHS.USER}
+                      search={qs.stringify({ kycStatus: 'rejected' })}
+                    />
+                  }
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
+      ) : (
+        ''
+      )}
+      <Grid container spacing={3}>
         <Grid item xs={12}>
-          <h1>{t('dashboard.subscription')}</h1>
+          <h1>{t('dashboard.booking')}</h1>
         </Grid>
         <Grid item sm={4} xs={12}>
           <CardStatus
-            title={t('dashboard.totalSubscriptions.title')}
-            value={totalSubscriptions.toLocaleString()}
-            subTitle={t('dashboard.totalSubscriptions.subTitle')}
+            title={t('dashboard.totalBooking.title')}
+            value={totalBookings.toLocaleString()}
+            subTitle={t('dashboard.totalBooking.subTitle')}
             icon={<SubscriptionIcon />}
             iconColor="purple"
-            detailLink={<DetailLink pathname={ROUTE_PATHS.BOOKING} />}
+            detailLink={
+              <DetailLink
+                pathname={ROUTE_PATHS.BOOKING}
+                search={qs.stringify({ resellerServiceAreaId })}
+              />
+            }
           />
         </Grid>
         <Grid item sm={4} xs={12}>
@@ -193,6 +332,7 @@ export default function Dashboard(): JSX.Element {
               <DetailLink
                 pathname={ROUTE_PATHS.BOOKING}
                 search={qs.stringify({
+                  resellerServiceAreaId,
                   deliveryDate: todayLowerUpper,
                   status: 'accepted',
                 })}
@@ -210,7 +350,8 @@ export default function Dashboard(): JSX.Element {
             detailLink={<DetailLink pathname={ROUTE_PATHS.BOOKING} search={searchReturn} />}
           />
         </Grid>
-
+      </Grid>
+      <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h5" color="textSecondary">
             {t('dashboard.quickLinks')}

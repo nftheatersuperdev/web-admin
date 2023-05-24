@@ -126,7 +126,8 @@
     "staffProfileDetail": "รายละเอียดพนักงาน",
     "staffProfileAdd": "เพิ่มพนักงาน",
     "customerDetails": "รายละเอียดลูกค้า",
-    "leadManagement": "Lead Management"
+    "leadManagement": "Lead Management",
+    "leadManagementDetail": "Lead Detail"
   },
   "button": {
     "add": "เพิ่ม",
@@ -200,24 +201,26 @@
     "title": "404 - ไม่พบหน้า"
   },
   "dashboard": {
+    "allLocation": "สถานที่บริการทั้งหมด",
+    "location": "สถานที่บริการ",
     "overall": "Overall",
     "kyc": "KYCs (Sumsub)",
-    "subscription": "Subscription",
+    "booking": "การจอง",
     "totalCars": {
       "title": "รถยนต์",
       "subTitle": "จำนวนรถยนต์ทั้งหมด"
     },
-    "totalSubscriptions": {
+    "totalBooking": {
       "title": "ข้อมูลการจอง",
       "subTitle": "จำนวนการจองทั้งหมด"
     },
     "totalUpcomingCarsDelivery": {
-      "title": "Upcoming Cars Delivery",
-      "subTitle": "Today"
+      "title": "การส่งมอบรถยนต์ที่กำลังจะมาถึง",
+      "subTitle": "วันนี้"
     },
     "totalUpcomingCarsReturn": {
-      "title": "Upcoming Cars Return",
-      "subTitle": "Today"
+      "title": "การคืนรถยนต์ที่กำลังจะมาถึง",
+      "subTitle": "วันนี้"
     },
     "totalPayments": {
       "title": "ยอดชำระเงิน",
@@ -330,6 +333,16 @@
       "reActivate": {
         "success": "บัญชีถูกเปิดใช้งานอีกครั้งแล้ว"
       }
+    },
+    "updateDialog": {
+      "success": "แก้ไขข้อมูลสำเร็จ"
+    },
+    "searchField": {
+      "phoneNumber": "ค้นหาเบอร์โทรศัพท์",
+      "invalidFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮ,a-z,A-Z,0-9) และคำค้นหาอย่างน้อย 2 ตัวอักษร",
+      "invalidSearchEmailFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (ก-ฮ,a-z,A-Z,0-9,.,-,_,+,@) และคำค้นหาอย่างน้อย 2 ตัวอักษร",
+      "invalidUUIDFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ UUID",
+      "invalidPhoneNumberFormat": "กรุณากรอกข้อมูลให้ถูกต้องตามรูปแบบ (0-9) และคำค้นหาอย่างน้อย 4 ตัวอักษร สูงสุด 15 ตัวอักษร"
     }
   },
   "car": {
@@ -1171,6 +1184,7 @@
     "documentNameEn": "ชื่อเอกสาร (EN)",
     "documentNameTh": "ชื่อเอกสาร (TH)",
     "acceptedDate": "วันที่กดรับ",
+    "updatedDate": "วันที่ปรับปรุงล่าสุด",
     "status": "สถานะ",
     "documentVersion": "เวอร์ชั่น",
     "documentStatus": {
@@ -1435,5 +1449,43 @@
   "pagination": {
     "rowsPerPage": "จำนวนรายการต่อหน้า",
     "of": "ใน"
+  },
+  "leadManagementDetail": {
+    "title": "Lead Details",
+    "userRegisterList": "User Register List",
+    "description": {
+      "leadName": "Lead Name",
+      "createDate": "Create Date"
+    },
+    "filter": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "E-mail",
+      "leadSource": "Lead Source",
+      "registeredDate": "Registered Date",
+      "answer": "Answer",
+      "period": "Period"
+    },
+    "table": {
+      "no": "No",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "leadSource": "Lead Source",
+      "interesting": "Interesting",
+      "timeline": "Timeline",
+      "registeredDate": "Registered Date"
+    },
+    "dialog": {
+      "title": "Export",
+      "description": "Please select a time period.",
+      "selectStartDate": "Select Start Date",
+      "selectEndDate": "Select End Date",
+      "submit": "EXPORT",
+      "cancel": "CANCEL"
+    },
+    "noData": "No submitted item."
   }
 }

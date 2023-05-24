@@ -56,6 +56,7 @@ export interface CarActivityCreateScheduleProps {
   endDate: string
   bookingTypeId: string
   remark: string | null
+  resellerServiceAreaId: string
 }
 
 export interface ScheduleService {

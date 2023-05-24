@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogContent,
   Button,
-} from '@material-ui/core'
+} from '@mui/material'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -29,12 +29,20 @@ export default function ConfirmDialog(props: ConfirmDialogProps): JSX.Element {
         <DialogContentText>
           {htmlContent ? <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> : message}
         </DialogContentText>
-        <DialogActions>
-          <Button onClick={onCancel} color="primary" aria-label="cancel">
-            {cancelText || 'Cancel'}
-          </Button>
+        <DialogActions
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            marginLeft: '-8px',
+            marginTop: '14px',
+          }}
+        >
+          {' '}
           <Button onClick={onConfirm} color="primary" variant="contained" aria-label="confirm">
             {confirmText || 'Confirm'}
+          </Button>
+          <Button onClick={onCancel} color="primary" variant="outlined" aria-label="cancel">
+            {cancelText || 'Cancel'}
           </Button>
         </DialogActions>
       </DialogContent>

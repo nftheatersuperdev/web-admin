@@ -33,6 +33,7 @@ interface Props {
   visible: boolean
   carId?: string
   serviceSchedule?: Schedule | null
+  resellerServiceAreaId: string
   onClose: (refetch?: boolean) => void
 }
 
@@ -41,6 +42,7 @@ interface DataState {
   endDate: MaterialUiPickersDate | Dayjs
   service: string
   remark: string
+  resellerServiceAreaId: string
 }
 
 const SpaceButtons = styled.div`
@@ -55,6 +57,7 @@ export default function ActivityScheduleDialog({
   visible,
   carId,
   serviceSchedule,
+  resellerServiceAreaId,
   onClose,
 }: Props): JSX.Element {
   const classes = useStyles()
@@ -68,6 +71,7 @@ export default function ActivityScheduleDialog({
     endDate: todayDate.endOf('day'),
     service: '',
     remark: '',
+    resellerServiceAreaId: '',
   }
 
   const [state, setState] = useState<DataState>(defaultState)
@@ -94,9 +98,10 @@ export default function ActivityScheduleDialog({
         endDate: dayjs(serviceSchedule?.endDate),
         service: String(serviceSchedule?.bookingType.id) || '',
         remark: serviceSchedule?.remark || '',
+        resellerServiceAreaId: resellerServiceAreaId || '',
       })
     }
-  }, [isEdit, visible, serviceSchedule])
+  }, [isEdit, visible, serviceSchedule, resellerServiceAreaId])
 
   const isUnableToSave =
     !state.startDate ||
@@ -131,6 +136,7 @@ export default function ActivityScheduleDialog({
               remark: state.remark,
               startDate: state.startDate.format(DEFAULT_DATE_FORMAT_BFF),
               endDate: state.endDate.format(DEFAULT_DATE_FORMAT_BFF),
+              resellerServiceAreaId,
             })
 
       await toast.promise(requestToApi, {

@@ -516,8 +516,19 @@ export const validateEmail = (email: string): boolean => {
   return re.test(String(email).toLowerCase())
 }
 
+export const validatePhoneNumberSearch = (searchValue: string): boolean => {
+  const keywordRule = /^[0-9]{4,15}$/g
+  return keywordRule.test(searchValue)
+}
+
 export const validateKeywordText = (value: string): boolean => {
-  const keywordRule = /^[ก-ฮa-zA-Z0-9 ]{2,}$/g
+  const keywordRule = /^[ก-๛a-zA-Z0-9 ]{2,}$/g
+  return keywordRule.test(value)
+}
+
+export const validateKeywordTextWithSpecialChar = (value: string): boolean => {
+  // eslint-disable-next-line
+  const keywordRule = /^[a-zA-Z0-9_@.+-\/]{2,}$/g // Add validate special character
   return keywordRule.test(value)
 }
 

@@ -74,6 +74,7 @@ interface CarActivityStateParams {
   location: string
   owner: string
   reSeller: string
+  resellerServiceAreaId: string
 }
 enum ScheduleActions {
   Edit = 'edit',
@@ -1166,6 +1167,7 @@ export default function CarActivityDetail(): JSX.Element {
         <ActivityScheduleDialog
           visible={visibleUpdateDialog}
           serviceSchedule={serviceSchedule}
+          resellerServiceAreaId={carActivityStateParams.resellerServiceAreaId}
           carId={carId}
           onClose={() => {
             refetch()

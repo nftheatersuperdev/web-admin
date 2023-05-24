@@ -12,6 +12,7 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   USER_GROUPS: '/user-groups',
+  BOOKING_CAR_REPLACEMENT: '/booking/:bookingId/:bookingDetailId/car-replacement',
   BOOKING_CAR_DETAIL: '/booking/:bookingId/:bookingDetailId/car/:carId',
   BOOKING_DETAIL: '/booking/:bookingId/:bookingDetailId',
   BOOKING: '/booking',
@@ -35,6 +36,7 @@ export const ROUTE_PATHS = Object.freeze({
   DOCUMENT_VERSION_VIEW: '/documents/:documentCode/versions/:version',
   DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version/edit',
   CONSENT_LOG: '/consent-log',
+  CONSENTS_LOG: '/consents-log',
   USER_DELETE_LOG: '/user-delete-log',
   COOKIE_CONSENT_LOG: '/cookie-consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
@@ -49,6 +51,7 @@ export const ROUTE_PATHS = Object.freeze({
   CUSTOMER_PROFILE_DETAIL: '/customer-profile/:id/edit',
   CUSTOMER_PROFILE_ADD: '/customer-profile/create',
   LEAD_MANAGEMENT: '/lead-management',
+  LEAD_MANAGEMENT_DETAIL: '/lead-management-detail/:id',
   FORBIDDEN: '/403',
   NOT_FOUND: '/404',
 })
@@ -125,6 +128,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
     ],
+  },
+  {
+    path: ROUTE_PATHS.BOOKING_CAR_REPLACEMENT,
+    component: lazy(() => import('./pages/BookingCarReplacement' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
   },
   {
     path: ROUTE_PATHS.BOOKING_CAR_DETAIL,
@@ -295,6 +303,17 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
+    path: ROUTE_PATHS.CONSENTS_LOG,
+    component: lazy(() => import('./pages/ConsentsLog' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.MARKETING,
+    ],
+  },
+  {
     path: ROUTE_PATHS.COOKIE_CONSENT_LOG,
     component: lazy(() => import('./pages/CookieConsentLog' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
@@ -363,6 +382,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.LEAD_MANAGEMENT,
     component: lazy(() => import('./pages/LeadManagement' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.LEAD_MANAGEMENT_DETAIL,
+    component: lazy(() => import('./pages/LeadManagementDetail' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
   },
   {

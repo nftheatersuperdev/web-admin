@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/jsx-no-useless-fragment */
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
@@ -31,7 +32,6 @@ import { getAvailableListBFF } from 'services/web-bff/car'
 import { status as BookingStatus, updateCarReplacement } from 'services/web-bff/booking'
 import { CarAvailableListBffFilterRequestProps } from 'services/web-bff/car.type'
 import { BookingRental, CarReplacementDeliveryAddress } from 'services/web-bff/booking.type'
-import { SubEventStatus } from 'pages/Subscriptions/utils'
 
 const MarginActionButtons = styled.div`
   margin: 10px 15px;
@@ -84,72 +84,62 @@ export default function CarReplacementDialog({
   const {
     bookingId,
     rentDetail: { bookingDetailId },
-    displayStatus,
     carActivities,
+    startDate,
     endDate,
     isSelfPickUp,
+    isExtend,
+    displayStatus,
+    status: backendStatus,
   } = bookingDetail
 
   const carActivity = carActivities[carActivities.length - 1]
-  const rentalDetail = bookingDetail.rentDetail
-  const todayDate = dayjs()
 
-  const isStatus = (status: string, statusCondition: string) =>
-    status.toLowerCase() === statusCondition.toLowerCase()
+  const todayDate = dayjs().startOf('day')
+  const status = displayStatus.toLocaleLowerCase()
+  const bookingStartDate = dayjs(startDate).startOf('day')
+  const bookingEndDateMinusOneDay = dayjs(endDate).add(-1, 'day').endOf('day')
+  const isAcceptedStatus = status === BookingStatus.ACCEPTED
+  const isDeliveredStatus = status === BookingStatus.DELIVERED
+  const isArrivingSoon = dayjs(startDate) > dayjs(todayDate)
 
-  const isUpCommingCancelled = bookingDetail.status === 'upcoming_cancelled'
+  const isUpCommingCancelled = backendStatus === 'upcoming_cancelled'
+  const isSelfPickUpArrivingSoon =
+    isSelfPickUp && displayStatus === BookingStatus.ACCEPTED && isArrivingSoon
+  const isSelfPickUpExtendArrivingSoon =
+    isSelfPickUp && displayStatus === BookingStatus.DELIVERED && isArrivingSoon && isExtend
 
-  function isArrivingSoon() {
-    if (bookingDetail) {
-      const { rentDetail, displayStatus, startDate, isExtend } = bookingDetail
-      if (
-        // Normal Case
-        (!isExtend &&
-          isStatus(displayStatus, BookingStatus.ACCEPTED) &&
-          isStatus(rentDetail.status, BookingStatus.RESERVED)) ||
-        // Extend Case
-        (isExtend &&
-          dayjs(startDate) > todayDate &&
-          isStatus(displayStatus, BookingStatus.ACCEPTED) &&
-          isStatus(rentDetail.status, BookingStatus.DELIVERED))
-      ) {
-        return true
+  const isSelfPickUpAndReturnBooking = isSelfPickUpArrivingSoon || isSelfPickUpExtendArrivingSoon
+
+  function getDeliveryDates() {
+    if (
+      (isAcceptedStatus && !isExtend && isArrivingSoon) ||
+      (isAcceptedStatus && isExtend && isArrivingSoon) ||
+      (isDeliveredStatus && isExtend && isArrivingSoon)
+    ) {
+      return {
+        minDate: bookingStartDate,
+        maxDate: bookingStartDate,
+      }
+    } else if (
+      (isDeliveredStatus && !isExtend && !isArrivingSoon) ||
+      (isDeliveredStatus && isExtend && !isArrivingSoon)
+    ) {
+      return {
+        minDate: todayDate,
+        maxDate: bookingEndDateMinusOneDay,
       }
     }
-    return false
-  }
-
-  const isArrivingSoonStatus = isArrivingSoon()
-
-  function generateMinAndMaxDates(status: string) {
-    const todayAddOneYear = todayDate.add(1, 'year')
-    const returnDateMinusOneDay = () =>
-      carActivity?.returnTask?.date
-        ? dayjs(carActivity?.returnTask?.date).add(-1, 'day').startOf('day')
-        : dayjs(carActivity?.deliveryTask?.date)
-            .add(rentalDetail.durationDay - 1, 'day')
-            .startOf('day')
-    switch (status.toLocaleLowerCase()) {
-      case SubEventStatus.DELIVERED: {
-        return {
-          minDate: todayDate.startOf('day'),
-          maxDate: returnDateMinusOneDay(),
-        }
-      }
-      default: {
-        return {
-          minDate: dayjs(carActivity.deliveryTask.date),
-          maxDate: isArrivingSoonStatus ? returnDateMinusOneDay() : todayAddOneYear,
-        }
-      }
+    return {
+      minDate: todayDate,
+      maxDate: todayDate,
     }
   }
-
-  const deliveryDateConditions = generateMinAndMaxDates(displayStatus)
+  const deliveryDates = getDeliveryDates()
 
   const defaultState = {
     carId: '',
-    deliveryDate: deliveryDateConditions.minDate,
+    deliveryDate: deliveryDates.minDate,
     deliveryTime: '',
     deliveryAddress: {
       full: '',
@@ -161,7 +151,7 @@ export default function CarReplacementDialog({
   const { t } = useTranslation()
   const [confirmReplaceDialogOpen, setConfirmReplaceDialogOpen] = useState<boolean>(false)
   const [deliveryDate, setDeliveryDate] = useState<DataState['deliveryDate']>(
-    defaultState.deliveryDate
+    dayjs(deliveryDates?.minDate)
   )
   const [deliveryTime, setDeliveryTime] = useState<DataState['deliveryTime']>(
     defaultState.deliveryTime
@@ -269,10 +259,37 @@ export default function CarReplacementDialog({
     }))
   }
 
-  const deliveryMarkerAddress = {
-    lat: deliveryAddress.latitude,
-    lng: deliveryAddress.longitude,
+  function getSelfPickupAndReturnTask() {
+    if (carActivity.deliveryTask) {
+      return carActivity.deliveryTask
+    }
+    return carActivity.returnTask
   }
+
+  const deliveryMarkerAddress = {
+    lat: isSelfPickUpAndReturnBooking
+      ? getSelfPickupAndReturnTask().latitude
+      : deliveryAddress.latitude,
+    lng: isSelfPickUpAndReturnBooking
+      ? getSelfPickupAndReturnTask().longitude
+      : deliveryAddress.longitude,
+  }
+
+  useEffect(() => {
+    if (
+      isSelfPickUpAndReturnBooking &&
+      deliveryAddress.full === defaultState.deliveryAddress.full
+    ) {
+      const task = getSelfPickupAndReturnTask()
+      setDeliveryAddress((prevState) => ({
+        ...prevState,
+        full: task.fullAddress,
+        latitude: task.latitude,
+        longitude: task.longitude,
+        remark: task.remark,
+      }))
+    }
+  }, [isSelfPickUpAndReturnBooking])
 
   return (
     <Dialog
@@ -304,8 +321,8 @@ export default function CarReplacementDialog({
               onChange={handleDeliveryDateChange}
               value={deliveryDate}
               margin="normal"
-              minDate={deliveryDateConditions.minDate}
-              maxDate={deliveryDateConditions.maxDate}
+              minDate={deliveryDates.minDate}
+              maxDate={deliveryDates.maxDate}
             />
           </Grid>
           <Grid item xs={12} sm={3}>
@@ -449,18 +466,28 @@ export default function CarReplacementDialog({
               {t('booking.carReplacement.deliveryAddress')}
             </Typography>
             <LoadScript googleMapsApiKey={config.googleMapsApiKey}>
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={deliveryMarkerAddress}
-                zoom={15}
-                onClick={handleMarkerChanged}
-              >
-                <Marker
-                  position={deliveryMarkerAddress}
-                  draggable={true}
-                  onDragEnd={handleMarkerChanged}
-                />
-              </GoogleMap>
+              {isSelfPickUpAndReturnBooking ? (
+                <GoogleMap
+                  mapContainerStyle={containerStyle}
+                  center={deliveryMarkerAddress}
+                  zoom={15}
+                >
+                  <Marker position={deliveryMarkerAddress} draggable={false} />
+                </GoogleMap>
+              ) : (
+                <GoogleMap
+                  mapContainerStyle={containerStyle}
+                  center={deliveryMarkerAddress}
+                  zoom={15}
+                  onClick={handleMarkerChanged}
+                >
+                  <Marker
+                    position={deliveryMarkerAddress}
+                    draggable={true}
+                    onDragEnd={handleMarkerChanged}
+                  />
+                </GoogleMap>
+              )}
             </LoadScript>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -471,12 +498,17 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={deliveryAddress.full}
+                value={
+                  isSelfPickUpAndReturnBooking
+                    ? getSelfPickupAndReturnTask().fullAddress
+                    : deliveryAddress.full
+                }
                 multiline
                 minRows={3}
                 InputProps={{
                   readOnly: true,
                 }}
+                disabled={isSelfPickUpAndReturnBooking}
               />
               <TextField
                 id="car_replacement__deliveryAddressRemark"
@@ -484,10 +516,17 @@ export default function CarReplacementDialog({
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                value={deliveryAddress.remark}
+                value={
+                  isSelfPickUpAndReturnBooking
+                    ? getSelfPickupAndReturnTask().remark
+                    : deliveryAddress.remark
+                }
                 multiline
                 minRows={3}
                 onChange={handleDeliveryAddressRemarkChanged}
+                InputProps={{
+                  readOnly: isSelfPickUpAndReturnBooking,
+                }}
               />
             </MapDetailWrapper>
           </Grid>

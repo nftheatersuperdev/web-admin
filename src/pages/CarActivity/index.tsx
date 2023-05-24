@@ -41,7 +41,6 @@ import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
-import ActivityScheduleDialog from 'components/ActivityScheduleDialog'
 // import NoResultCard from 'components/NoResultCard'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 // import DataGridLocale from 'components/DataGridLocale'
@@ -249,8 +248,6 @@ export default function CarActivity(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [carId] = useState<string>('')
-  const [visibleAddDialog, setVisibleAddDialog] = useState<boolean>(false)
   const [filterPlateError, setFilterPlateError] = useState<string>('')
   const [filterBrandObject, setFilterBrandObject] = useState<CarBrand | null>()
   const [filterModelObject, setFilterModelObject] = useState<CarModel | null>()
@@ -339,6 +336,7 @@ export default function CarActivity(): JSX.Element {
         plateNumber: carActivity.plateNumber,
         owner: carActivity.owner,
         reSeller: carActivity.reSeller,
+        resellerServiceAreaId: carActivity.resellerServiceAreaId,
       }
     }) || []
 
@@ -381,7 +379,6 @@ export default function CarActivity(): JSX.Element {
     }) || []
 
   const csvHeaders = [
-    { label: t('carActivity.export.header.id'), key: 'id' },
     { label: t('carActivity.export.header.locationService'), key: 'location' },
     { label: t('carActivity.export.header.brand'), key: 'brandName' },
     { label: t('carActivity.export.header.model'), key: 'modelName' },
@@ -457,10 +454,6 @@ export default function CarActivity(): JSX.Element {
       setResetFilters(false)
     }
   }, [resetFilters])
-
-  const handleOnScheduleDialogClose = () => {
-    setVisibleAddDialog(false)
-  }
 
   const handleOnPlateSearchEnterKeyDown = () => {
     refetch()
@@ -896,11 +889,6 @@ export default function CarActivity(): JSX.Element {
               </div>
             </Card>
           </Fragment>
-          <ActivityScheduleDialog
-            visible={visibleAddDialog}
-            carId={carId}
-            onClose={handleOnScheduleDialogClose}
-          />
         </ContentSection>
       </Wrapper>
     </Page>
