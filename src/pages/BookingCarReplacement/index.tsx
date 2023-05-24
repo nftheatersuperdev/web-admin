@@ -88,36 +88,31 @@ interface DataState {
   deliveryAddress: CarReplacementDeliveryAddress
 }
 
-const useStyles = makeStyles(() => ({
-  datePickerFromTo: {
-    '&& .MuiOutlinedInput-input': {
-      padding: '16px 13.5px',
-    },
-  },
-  bgColour: {
-    backgroundColor: '#F5F5F5',
-  },
-  marginBottomText: {
-    marginBottom: '20px',
-  },
-  mgBtnLeft: {
-    marginLeft: '15px',
-  },
-  autoCompleteSelect: {
-    '& fieldSet': {
-      borderColor: '#424E63',
-    },
-  },
-  listbox: {
-    marginBlockEnd: '20px',
-    backgroundColor: '#F5F5F5',
-  },
-}))
 interface SubscriptionDetailParams {
   bookingId: string
   bookingDetailId: string
 }
 export default function BookingCarReplacement(): JSX.Element {
+  const useStyles = makeStyles(() => ({
+    bgColour: {
+      backgroundColor: '#F5F5F5',
+    },
+    marginBottomText: {
+      marginBottom: '20px',
+    },
+    mgBtnLeft: {
+      marginLeft: '15px',
+    },
+    autoCompleteSelect: {
+      '& fieldSet': {
+        borderColor: '#424E63',
+      },
+    },
+    listbox: {
+      marginBlockEnd: '20px',
+      backgroundColor: '#F5F5F5',
+    },
+  }))
   const noDataText = 'No Data'
   const location = useLocation()
   const classes = useStyles()
@@ -381,7 +376,7 @@ export default function BookingCarReplacement(): JSX.Element {
 
           {/* Delivery Date, Delivery Time, and Return Date */}
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={3} className={classes.datePickerFromTo}>
+            <Grid item xs={12} sm={3}>
               <DatePicker
                 className={classes.autoCompleteSelect}
                 fullWidth
@@ -720,7 +715,14 @@ export default function BookingCarReplacement(): JSX.Element {
             </MapDetailWrapper>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            marginLeft: '16px',
+            marginBottom: '14px',
+          }}
+        >
           <Button
             disabled={isDisableToSaveMarkerDialog || isActiveArrivingSoonAndSelfPickUp}
             onClick={handleSubmitMarkerChange}
