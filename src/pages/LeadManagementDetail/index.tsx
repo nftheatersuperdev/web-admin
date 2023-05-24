@@ -243,7 +243,7 @@ export default function LeadManagementDetail() {
 
   const [openDialogExport, setOpenDialogExport] = useState<boolean>(false)
   const [orderBy, setOrderBy] = useState<string>('createdDate')
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   const myParam: LeadManagementDetailStateParams = location.state as LeadManagementDetailStateParams
 
@@ -464,7 +464,7 @@ export default function LeadManagementDetail() {
                         {column.key === 'createdDate' ? (
                           <TableSortLabel
                             active={true}
-                            direction={orderBy === column.key ? sortOrder : 'asc'}
+                            direction={sortOrder === 'asc' ? 'desc' : 'asc'}
                             onClick={() => handleSort(column.key)}
                           >
                             <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
