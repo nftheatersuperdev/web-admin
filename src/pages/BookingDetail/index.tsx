@@ -310,7 +310,12 @@ export default function SubscriptionDetail(): JSX.Element {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => setCarReplacementlogOpen(true)}
+            onClick={() =>
+              history.push({
+                pathname: `/booking/${bookingId}/${bookingDetailId}/car-replacement`,
+                state: { bookingDetail, maxEndDate, editorEmail: firebaseUser?.email || '-' },
+              })
+            }
             disabled={
               !bookingDetail ||
               !isAllowToDoCarReplacement ||

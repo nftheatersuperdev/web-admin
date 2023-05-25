@@ -126,7 +126,8 @@
     "staffProfileDetail": "Staff Profile Detail",
     "staffProfileAdd": "Add Staff Profile",
     "customerDetails": "Customer Details",
-    "leadManagement": "Lead Management"
+    "leadManagement": "Lead Management",
+    "leadManagementDetail": "Lead Detail"
   },
   "button": {
     "add": "Add",
@@ -204,14 +205,14 @@
     "location": "Location Service",
     "overall": "Overall",
     "kyc": "KYCs (Sumsub)",
-    "subscription": "Subscription",
+    "booking": "Bookings",
     "totalCars": {
       "title": "Total Cars",
       "subTitle": "Number of cars currently available"
     },
-    "totalSubscriptions": {
-      "title": "Total Subscriptions",
-      "subTitle": "Number of currently active subscriptions"
+    "totalBooking": {
+      "title": "Total Bookings",
+      "subTitle": "Number of currently active bookings"
     },
     "totalUpcomingCarsDelivery": {
       "title": "Upcoming Cars Delivery",
@@ -337,9 +338,11 @@
       "success": "Update customer successfully"
     },
     "searchField": {
+      "phoneNumber": "Enter Search Phone Number",
       "invalidFormat": "Please input valid format (ก-ฮ,a-z,A-Z,0-9) and minimum two characters.",
       "invalidSearchEmailFormat": "Please input valid format (a-z,A-Z,0-9,.,-,_,+,@) and minimum two characters.",
-      "invalidUUIDFormat": "Please input valid UUID format."
+      "invalidUUIDFormat": "Please input valid UUID format.",
+      "invalidPhoneNumberFormat": "Please input valid format (0-9) and minimum 4 characters and maximum 15 characters."
     }
   },
   "car": {
@@ -656,7 +659,7 @@
       "pickupAddress": "Pick Up Address",
       "ReturnAddress": "Return Address",
       "pickupAddressRemark": "Pick Up Address Remark",
-      "ReturnAddressRemark": "Return Address Remark",
+      "ReturnAddressRemark": "Delivery Address Remark",
       "deliveryDate": "Delivery Date",
       "deliveryTime": "Delivery Time",
       "returnDate": "Return Date",
@@ -675,18 +678,19 @@
       "brand": "Car Brand",
       "model": "Car Model",
       "plateNumber": "Plate Number",
-      "vin": "VIN",
+      "vin": "Vin",
       "seat": "Seat",
-      "deliveryDate": "Delivery Date",
-      "deliveryTime": "Delivery Time",
-      "deliveryAddress": "Delivery Address",
-      "deliveryAddressRemark": "Delivery Address Remark",
+      "deliveryDate": "Pick Up Date",
+      "deliveryTime": "Pick Up Time",
+      "deliveryAddress": "Pick Up Address",
+      "deliveryAddressOld": "Delivery Address",
+      "deliveryAddressRemark": "Pick Up Address Remark",
       "returnAddress": "Return Address",
       "returnAddressRemark": "Return Address Remark",
       "returnDate": "Return Date",
       "button": {
-        "cancel": "Cancel",
-        "save": "Save"
+        "cancel": "CANCEL",
+        "save": "SAVE"
       },
       "saveSuccess": "The car has been replaced",
       "saveConfirmation": {
@@ -1193,13 +1197,13 @@
     "id": "ID",
     "userId": "User ID",
     "email": "Email",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "phoneNumber": "Phone Number",
-    "documentNameEn": "Document Name (EN)",
-    "documentNameTh": "Document Name (TH)",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phoneNumber": "Phone number",
+    "documentNameEn": "Document name (EN)",
+    "documentNameTh": "Document name (TH)",
     "acceptedDate": "Date",
-    "updatedDate": "Updated Date",
+    "updatedDate": "Updated date",
     "status": "Status",
     "documentVersion": "Version",
     "documentTypes": {
@@ -1478,5 +1482,43 @@
   "pagination": {
     "rowsPerPage": "Rows per page",
     "of": "of"
+  },
+  "leadManagementDetail": {
+    "title": "Lead Details",
+    "userRegisterList": "User Register List",
+    "description": {
+      "leadName": "Lead Name",
+      "createDate": "Create Date"
+    },
+    "filter": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "E-mail",
+      "leadSource": "Lead Source",
+      "registeredDate": "Registered Date",
+      "answer": "Answer",
+      "period": "Period"
+    },
+    "table": {
+      "no": "No",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phoneNumber": "Phone Number",
+      "email": "Email",
+      "leadSource": "Lead Source",
+      "interesting": "Interesting",
+      "timeline": "Timeline",
+      "registeredDate": "Registered Date"
+    },
+    "dialog": {
+      "title": "Export",
+      "description": "Please select a time period.",
+      "selectStartDate": "Select Start Date",
+      "selectEndDate": "Select End Date",
+      "submit": "EXPORT",
+      "cancel": "CANCEL"
+    },
+    "noData": "No submitted item."
   }
 }

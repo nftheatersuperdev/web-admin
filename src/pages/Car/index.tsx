@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import {
   Card,
   Grid,
@@ -58,9 +58,30 @@ import {
 import { useStyles } from './styles'
 
 export default function Car(): JSX.Element {
+  const locationParam = useLocation().search
+  const queryString = new URLSearchParams(locationParam)
+  const resellerId = queryString.get('resellerServiceAreaId')
+
   const classes = useStyles()
   const history = useHistory()
   const { t } = useTranslation()
+
+  const removeQueryParams = () => {
+    if (queryString.has('resellerServiceAreaId')) {
+      queryString.delete('resellerServiceAreaId')
+      history.replace({
+        search: queryString.toString(),
+      })
+    }
+  }
+
+  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [page, setPage] = useState(0)
+  const defaultFilter: CarListFilterRequest = {
+    resellerServiceAreaId: resellerId,
+  } as CarListFilterRequest
+  const [filter, setFilter] = useState<CarListFilterRequest>({ ...defaultFilter })
+  const currentPage = page + 1
 
   // TODO: In the future will be support role permission
   // const { getRole } = useAuth()
@@ -171,6 +192,10 @@ export default function Car(): JSX.Element {
       formik.setFieldValue('searchLocation', '')
       formik.setFieldValue('searchType', '')
       formik.setFieldValue('searchInput', '')
+
+      if (queryString.has('resellerServiceAreaId')) {
+        removeQueryParams()
+      }
     }
     setSearchValue('')
   }
@@ -186,6 +211,10 @@ export default function Car(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
+      if (defaultResellerId) {
+        setSelectedLocation(defaultResellerId)
+        formik.setFieldValue('searchLocation', defaultResellerId.value)
+      }
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
       window.setTimeout(() => {
@@ -206,6 +235,11 @@ export default function Car(): JSX.Element {
       return
     }
 
+    if (defaultResellerId) {
+      setSelectedLocation(defaultResellerId)
+      formik.setFieldValue('searchLocation', defaultResellerId.value)
+    }
+
     formik.setFieldValue('searchType', selectedSearch?.value)
     const value = isDropdown && searchText ? searchText : searchValue
     formik.setFieldValue('searchInput', value)
@@ -219,20 +253,31 @@ export default function Car(): JSX.Element {
   // == location ==
   const [locationData, setLocationData] = useState<LocationResponse | null>()
   const locationOptions = getLocationOptions(locationData)
-  const defaultLocation = {
+  const defaultResellerId =
+    locationOptions.find((location) => location.value === resellerId) || null
+  const defaultLocation = defaultResellerId || {
     label: t('car.allLocation'),
     value: 'all',
   }
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
   const onSetSelectedLocation = (option: SelectOption | null) => {
     if (option) {
+      if (queryString.has('resellerServiceAreaId')) {
+        removeQueryParams()
+      }
       setSelectedLocation(option)
       formik.setFieldValue('searchLocation', option.value)
       formik.handleSubmit()
     } else {
-      setSelectedLocation(defaultLocation)
       formik.setFieldValue('searchLocation', '')
       formik.handleSubmit()
+      if (queryString.has('resellerServiceAreaId')) {
+        removeQueryParams()
+      }
+      setSelectedLocation({
+        label: t('car.allLocation'),
+        value: 'all',
+      })
     }
   }
 
@@ -437,11 +482,6 @@ export default function Car(): JSX.Element {
       </TableCell>
     </TableRow>
   )
-
-  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [page, setPage] = useState(0)
-  const [filter, setFilter] = useState<CarListFilterRequest>()
-  const currentPage = page + 1
 
   useEffect(() => {
     refetch()

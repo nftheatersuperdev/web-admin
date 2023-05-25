@@ -1,6 +1,9 @@
 import { Response } from 'services/web-bff/response.type'
 import { SubscriptionListResponse, SubscriptionStatus } from 'services/web-bff/booking.type'
 
+export interface DashboardRequest {
+  resellerServiceAreaId?: string
+}
 export interface DashboardResponse extends Response {
   data: {
     summary: {

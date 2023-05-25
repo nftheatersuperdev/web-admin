@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 import {
   Card,
   Grid,
@@ -64,6 +64,32 @@ import {
 import { SearchDatePicker } from './styles'
 
 export default function Booking(): JSX.Element {
+  const history = useHistory()
+  const locationParam = useLocation().search
+  const queryString = new URLSearchParams(locationParam)
+  const resellerId = queryString.get('resellerServiceAreaId')
+  const deliveryDate = queryString.get('deliveryDate')
+  const returnDate = queryString.get('returnDate')
+  const status = queryString.get('status')?.split(',')
+
+  const removeQueryParams = (keepLocation?: boolean) => {
+    if (queryString.has('resellerServiceAreaId') && !keepLocation) {
+      queryString.delete('resellerServiceAreaId')
+    }
+    if (queryString.has('deliveryDate')) {
+      queryString.delete('deliveryDate')
+    }
+    if (queryString.has('returnDate')) {
+      queryString.delete('returnDate')
+    }
+    if (queryString.has('status')) {
+      queryString.delete('status')
+    }
+    history.replace({
+      search: queryString.toString(),
+    })
+  }
+
   const useStyles = makeStyles({
     typo: {
       marginBottom: '0px',
@@ -165,7 +191,15 @@ export default function Booking(): JSX.Element {
   }
 
   const [query, setQuery] = useState<SubscriptionBookingListQuery>(defaultQuery)
-  const [filter, setFilter] = useState<SubscriptionBookingListFilters>()
+
+  let defaultFilter: SubscriptionBookingListFilters = {}
+  defaultFilter = resellerId
+    ? { ...defaultFilter, resellerServiceAreaId: resellerId }
+    : defaultFilter
+  defaultFilter = deliveryDate ? { ...defaultFilter, deliveryDate } : defaultFilter
+  defaultFilter = returnDate ? { ...defaultFilter, returnDate } : defaultFilter
+  defaultFilter = status ? { ...defaultFilter, statusList: status } : defaultFilter
+  const [filter, setFilter] = useState<SubscriptionBookingListFilters>({ ...defaultFilter })
 
   const {
     data: bookingData,
@@ -271,6 +305,13 @@ export default function Booking(): JSX.Element {
       setSelectedSearch(value)
       setSelectedOptionValue(null)
       setSelectedFromDate(null)
+      if (
+        queryString.has('deliveryDate') ||
+        queryString.has('returnDate') ||
+        queryString.has('status')
+      ) {
+        removeQueryParams(true)
+      }
     } else {
       setFilter({})
       setSelectedSearch(null)
@@ -280,6 +321,15 @@ export default function Booking(): JSX.Element {
       formik.setFieldValue('searchLocation', '')
       formik.setFieldValue('searchType', '')
       formik.setFieldValue('searchInput', '')
+
+      if (
+        queryString.has('resellerServiceAreaId') ||
+        queryString.has('deliveryDate') ||
+        queryString.has('returnDate') ||
+        queryString.has('status')
+      ) {
+        removeQueryParams()
+      }
     }
     setSearchValue('')
   }
@@ -295,6 +345,10 @@ export default function Booking(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
+      if (defaultResellerId) {
+        setSelectedLocation(defaultResellerId)
+        formik.setFieldValue('searchLocation', defaultResellerId.value)
+      }
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
       window.setTimeout(() => {
@@ -313,6 +367,11 @@ export default function Booking(): JSX.Element {
 
     if (!shouldSubmit) {
       return
+    }
+
+    if (defaultResellerId) {
+      setSelectedLocation(defaultResellerId)
+      formik.setFieldValue('searchLocation', defaultResellerId.value)
     }
 
     const newValue = []
@@ -334,12 +393,23 @@ export default function Booking(): JSX.Element {
   // == location ==
   const [locationData, setLocationData] = useState<LocationResponse | null>()
   const locationOptions = getLocationOptions(locationData)
-  const defaultLocation = {
+  const defaultResellerId =
+    locationOptions.find((location) => location.value === resellerId) || null
+  const defaultLocation = defaultResellerId || {
     label: t('booking.allLocation'),
     value: 'all',
   }
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
   const onSetSelectedLocation = (option: SelectOption | null) => {
+    if (
+      queryString.has('resellerServiceAreaId') ||
+      queryString.has('deliveryDate') ||
+      queryString.has('returnDate') ||
+      queryString.has('status')
+    ) {
+      removeQueryParams()
+    }
+
     if (option) {
       setSelectedLocation(option)
       formik.setFieldValue('searchLocation', option.value)
@@ -348,6 +418,11 @@ export default function Booking(): JSX.Element {
       setSelectedLocation(defaultLocation)
       formik.setFieldValue('searchLocation', '')
       formik.handleSubmit()
+
+      setSelectedLocation({
+        label: t('booking.allLocation'),
+        value: 'all',
+      })
     }
   }
 
