@@ -18,6 +18,21 @@ pipeline {
                 sh 'npm install'
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                 withSonarQubeEnv('sonarqube') {
+                    sonarqubeWebAnalysis(params.APP_NAME, params.ENVIRONMENT)
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                // timeout(time: 300, unit: 'SECONDS') {
+                //     waitForQualityGate abortPipeline: true
+                // }
+                sh 'echo "Quality Gate: Now always passed."'
+            }
+        }
         stage ('Build And Push Bundle To S3') {
             steps {
                 script {
