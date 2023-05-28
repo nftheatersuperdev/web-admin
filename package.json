@@ -118,7 +118,6 @@
     "lint-staged": "~11.0.0",
     "msw": "~0.29.0",
     "prettier": "~2.3.0",
-    "sonarqube-scanner": "~3.0.1",
     "stylelint": "~13.13.1",
     "stylelint-a11y": "~1.2.3",
     "stylelint-config-prettier": "~8.0.2",
