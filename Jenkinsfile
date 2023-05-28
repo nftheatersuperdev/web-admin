@@ -4,6 +4,10 @@ pipeline {
     agent { label "master" }
     tools { nodejs 'NodeJS' }
 
+    parameters {
+        string(name: 'APP_NAME', defaultValue: 'web-admin', description: 'You Application Name')
+    }
+
     stages {
         stage ('Get Latest Version') {
             steps {
