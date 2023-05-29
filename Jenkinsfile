@@ -4,6 +4,10 @@ pipeline {
     agent { label "master" }
     tools { nodejs 'NodeJS' }
 
+    parameters {
+        string(name: 'APP_NAME', defaultValue: 'web-admin', description: 'You Application Name')
+    }
+
     stages {
         stage ('Get Latest Version') {
             steps {
@@ -16,6 +20,20 @@ pipeline {
         stage ('Install Package') {
             steps {
                 sh 'npm install'
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sonarqubeWebAnalysis(params.APP_NAME, params.ENVIRONMENT)
+                }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 300, unit: 'SECONDS') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
         stage ('Build And Push Bundle To S3') {
