@@ -8,6 +8,7 @@ export enum AdminUserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   PRODUCT_SUPPORT = 'PRODUCT_SUPPORT',
   IT_ADMIN = 'IT_ADMIN',
+  CENTRE_OPERATION = 'CENTRE_OPERATION',
 }
 
 export interface AdminUser {

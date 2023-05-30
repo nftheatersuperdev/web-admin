@@ -825,7 +825,10 @@
     "operation": "ฝ่ายปฏิบัติการ",
     "marketing": "ฝ่ายการตลาด",
     "productSupport": "ฝ่ายบริการสินค้า",
-    "itAdmin": "ผู้ดูแลและจัดการฝ่ายไอที"
+    "itAdmin": "ผู้ดูแลและจัดการฝ่ายไอที",
+    "centreOperation": "Centre Operation",
+    "branchManager": "ผู้จัดการสาขา",
+    "branchOfficer": "ผู้จัดการ"
   },
   "account": {
     "updatePassword": "แก้ไขรหัสผ่าน",
