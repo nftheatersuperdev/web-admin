@@ -286,7 +286,8 @@
     "createdDate": "Created Date",
     "firebaseId": "Firebase UID",
     "searchCriteria": "Search Criteria",
-    "searchDate": "Search Date"
+    "searchDate": "Search Date",
+    "location": "Location Service"
   },
   "user": {
     "customerList": "Customer List",

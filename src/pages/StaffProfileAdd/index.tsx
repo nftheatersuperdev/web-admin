@@ -1,3 +1,6 @@
+/* eslint-disable react/forbid-component-props */
+/* eslint-disable react/jsx-props-no-spreading */
+import { useState, useEffect } from 'react'
 import {
   Typography,
   Breadcrumbs,
@@ -7,8 +10,14 @@ import {
   TextField,
   Grid,
   MenuItem,
+  Autocomplete,
+  Checkbox,
+  Chip,
 } from '@mui/material'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import { makeStyles } from '@mui/styles'
+import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { useAuth } from 'auth/AuthContext'
@@ -20,6 +29,8 @@ import { createNewUser } from 'services/firebase-rest'
 import { AdminUserRole } from 'services/web-bff/admin-user.type'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
+import { getLocationList } from 'services/web-bff/location'
+import { LocationResponse } from 'services/web-bff/location.type'
 
 const useStyles = makeStyles({
   hide: {
@@ -44,13 +55,28 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+  chipLightGrey: {
+    backgroundColor: '#E0E0E0',
+    color: 'black',
+    borderRadius: '64px',
+    padding: '4px',
+    margin: '2px',
+  },
 })
+
+interface SelectOption {
+  label: string
+  value: string
+}
 
 export default function StaffProfileAdd(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
   const classes = useStyles()
+
+  const [selectLocation, setSelectLocation] = useState<{ value: string; label: string }[]>([])
+
   const getValueRole = (role?: string): AdminUserRole => {
     switch (role) {
       case ROLES.SUPER_ADMIN:
@@ -69,6 +95,7 @@ export default function StaffProfileAdd(): JSX.Element {
         return AdminUserRole.OPERATION
     }
   }
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
   const { values, errors, touched, handleSubmit, handleChange, isSubmitting } = useFormik({
     // const formik = useFormik({
     initialValues: {
@@ -123,6 +150,73 @@ export default function StaffProfileAdd(): JSX.Element {
         })
     },
   })
+
+  const {
+    data: loactions,
+    isFetched: isFetchedLoactions,
+    isFetching: isFetchingLoactions,
+  } = useQuery('get-location', () => getLocationList())
+
+  useEffect(() => {
+    if (isFetchedLoactions && loactions) {
+      setLocationData(loactions)
+    }
+  }, [isFetchedLoactions, loactions])
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+  const checkedIcon = <CheckBoxIcon fontSize="small" />
+
+  const setLocationSelect = (locationData: LocationResponse) => {
+    const resultDataSelect = []
+    const defultLocation = {
+      value: '00000000-0000-0000-0000-000000000000',
+      label: 'All Location',
+    }
+    resultDataSelect.push(defultLocation)
+
+    locationData.locations.forEach((location) => {
+      const locationData = {
+        value: location.id,
+        label: location.areaNameEn,
+      }
+      resultDataSelect.push(locationData)
+    })
+    resultDataSelect.sort((a, b) => {
+      const nameA = a.label.toLowerCase()
+      const nameB = b.label.toLowerCase()
+
+      if (nameA < nameB) {
+        return -1
+      }
+      if (nameA > nameB) {
+        return 1
+      }
+      return 0
+    })
+
+    return resultDataSelect
+  }
+  const locationSelect = locationData ? setLocationSelect(locationData) : []
+  const setAllLocationSelected = () => {
+    const defultLocation = [
+      {
+        value: '00000000-0000-0000-0000-000000000000',
+        label: 'All Location',
+      },
+    ]
+    setSelectLocation(defultLocation)
+  }
+  const handleAutocompleteChange = (values: SelectOption[]) => {
+    const checkSelectAllLocation = values.find((data) => {
+      return data.label === 'All Location'
+    })
+    if (values.length > 1 && checkSelectAllLocation) {
+      setSelectLocation([])
+      setAllLocationSelected()
+    } else {
+      setSelectLocation(values)
+    }
+  }
 
   return (
     <Page>
@@ -226,6 +320,58 @@ export default function StaffProfileAdd(): JSX.Element {
                 value={values.password}
                 error={Boolean(touched.password && errors.password)}
                 helperText={touched.password && errors.password}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Autocomplete
+                disabled={isFetchingLoactions}
+                fullWidth
+                multiple
+                limitTags={4}
+                id="staff-profile-add__location_input"
+                options={locationSelect}
+                disableCloseOnSelect
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+                getOptionDisabled={(option) => {
+                  return (
+                    selectLocation.length > 0 &&
+                    option.label !== 'All Location' &&
+                    selectLocation[0].label === 'All Location'
+                  )
+                }}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox
+                      icon={icon}
+                      checkedIcon={checkedIcon}
+                      checked={
+                        selectLocation.length > 0 && selectLocation[0].label === 'All Location'
+                          ? true
+                          : selected
+                      }
+                    />
+                    {option.label}
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label={t('staffProfile.location')} />
+                )}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      size="small"
+                      label={option.label}
+                      {...getTagProps({ index })}
+                      key={index}
+                      className={classes.chipLightGrey}
+                    />
+                  ))
+                }
+                value={selectLocation || []}
+                onChange={(_event, value) => {
+                  handleAutocompleteChange(value)
+                }}
               />
             </Grid>
           </Grid>
