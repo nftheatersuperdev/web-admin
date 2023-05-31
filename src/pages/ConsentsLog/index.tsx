@@ -19,21 +19,23 @@ import {
   Pagination,
   Chip,
 } from '@mui/material'
-import { Search as SearchIcon } from '@mui/icons-material'
+import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
 import styled from 'styled-components'
 import { makeStyles } from '@mui/styles'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
+import { useFormik } from 'formik'
 import config from 'config'
 import {
   convertPhoneNumber,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
+  validateKeywordTextWithSpecialChar,
 } from 'utils'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import { ConsentLogListProps } from 'services/web-bff/consent-log.type'
-import { getList } from 'services/web-bff/consent-log'
+import { ConsentInputRequest, ConsentLogListProps } from 'services/web-bff/consent-log.type'
+import { getConsentLogList } from 'services/web-bff/consent-log'
 import { getTypeList } from 'services/web-bff/document'
 import { SelectOption } from './utils'
 
@@ -133,22 +135,40 @@ export default function ConsentsLog(): JSX.Element {
       color: 'black',
       borderRadius: '64px',
     },
+    buttonClear: {
+      cursor: 'pointer',
+      padding: '4px 4px',
+    },
+    paddingRightBtnClear: {
+      marginRight: '10px',
+      cursor: 'pointer',
+      padding: '4px 4px',
+    },
   })
   const classes = useStyles()
-  const { t, i18n } = useTranslation()
-  const [filterSearchField] = useState<string>('')
+  const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
+  const [consentFilter, setConsentFilter] = useState<ConsentInputRequest>()
+  const [filterSearchEmail, setFilterSearchEmail] = useState<string>('')
+  const [filterSearchDocumentType, setFilterSearchDocumentType] = useState<string>('')
+  const [filterSearchStatus, setFilterSearchStatus] = useState<string>('')
+  const [filterSearchEmailError, setFilterSearchEmailError] = useState<string>('')
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
+  const [isEnableFilterButton, setIsEnableFilterButton] = useState<boolean>(true)
   const { data: documentTypeList } = useQuery('document-type-list', () => getTypeList())
   const {
     data: consentList,
     refetch,
     isFetching: isFetchingActivities,
-  } = useQuery('consent-list', () => getList({ page, size: pageSize } as ConsentLogListProps), {
-    cacheTime: 10 * (60 * 1000),
-    staleTime: 5 * (60 * 1000),
-  })
+  } = useQuery(
+    'consent-list',
+    () => getConsentLogList({ data: consentFilter, page, size: pageSize } as ConsentLogListProps),
+    {
+      cacheTime: 10 * (60 * 1000),
+      staleTime: 5 * (60 * 1000),
+    }
+  )
   const consent =
     (consentList &&
       consentList.data?.agreements.length > 0 &&
@@ -230,6 +250,45 @@ export default function ConsentsLog(): JSX.Element {
       </TableBody>
     )
   }
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      codeName: '',
+      isAccepted: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (value) => {
+      let updateObj: ConsentInputRequest = {
+        ...consentFilter,
+      }
+      if (value.email) {
+        updateObj = {
+          ...updateObj,
+          email: value.email,
+        }
+      } else {
+        delete updateObj.email
+      }
+      if (value.codeName) {
+        updateObj = {
+          ...updateObj,
+          codeName: value.codeName,
+        }
+      } else {
+        delete updateObj.codeName
+      }
+      if (value.isAccepted !== '') {
+        updateObj = {
+          ...updateObj,
+          isAccepted: value.isAccepted,
+        }
+      } else {
+        delete updateObj.isAccepted
+      }
+      setConsentFilter(updateObj)
+      setPage(1)
+    },
+  })
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.documentsManagement.title'),
@@ -244,7 +303,7 @@ export default function ConsentsLog(): JSX.Element {
     documentTypeList?.documents.map((doc) => {
       return {
         key: doc.codeName,
-        label: i18n.language === 'en' ? doc.nameEn : doc.nameTh,
+        label: doc.nameEn,
         value: doc.codeName,
         isDefault: false,
       } as SelectOption
@@ -264,7 +323,45 @@ export default function ConsentsLog(): JSX.Element {
    */
   useEffect(() => {
     refetch()
-  }, [pages, page, pageSize, refetch])
+  }, [consentFilter, pages, page, pageSize, refetch])
+  const handleOnSearchEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    setFilterSearchEmail(value)
+    const isValidEmailSearchField = validateKeywordTextWithSpecialChar(value)
+    if (!isValidEmailSearchField || value.length < 2) {
+      setFilterSearchEmailError(t('user.searchField.invalidSearchEmailFormat'))
+      setIsEnableFilterButton(false)
+    } else {
+      setFilterSearchEmailError('')
+      formik.setFieldValue('email', value)
+      setIsEnableFilterButton(true)
+    }
+  }
+  const handleSearchEmailClear = () => {
+    setFilterSearchEmail('')
+    setFilterSearchEmailError('')
+    formik.setFieldValue('email', '')
+  }
+  const handleSearchDocumentTypeClear = () => {
+    setFilterSearchDocumentType('')
+    formik.setFieldValue('codeName', '')
+  }
+  const handleSearchStatusClear = () => {
+    setFilterSearchStatus('')
+    formik.setFieldValue('isAccepted', '')
+  }
+  const handleOnSearchDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('codeName', value)
+    setFilterSearchDocumentType(value)
+    setIsEnableFilterButton(true)
+  }
+  const handleOnSearchStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('isAccepted', value)
+    setFilterSearchStatus(value)
+    setIsEnableFilterButton(true)
+  }
 
   return (
     <Page>
@@ -276,32 +373,59 @@ export default function ConsentsLog(): JSX.Element {
           </Typography>
           <Fragment>
             <GridSearchSection container spacing={1}>
-              <Grid item xs={9} sm={3} className={classes.hideObject}>
+              <Grid item xs={9} sm={3}>
                 <TextField
-                  id="consents-log__email_search_input"
-                  name="searchVal"
-                  value={filterSearchField}
-                  placeholder={t('consentLog.searchLabel')}
-                  variant="outlined"
+                  disabled={isFetchingActivities}
                   fullWidth
+                  label={t('consentLog.searchLabel')}
+                  id="consents-log__email_search_input"
+                  name="searchEmailInput"
+                  value={filterSearchEmail}
+                  error={!!filterSearchEmailError}
+                  helperText={filterSearchEmailError}
+                  onChange={handleOnSearchEmailChange}
+                  variant="outlined"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <SearchIcon />
+                        {formik.values.email !== '' ? (
+                          <CloseOutlined
+                            className={classes.buttonClear}
+                            onClick={handleSearchEmailClear}
+                          />
+                        ) : (
+                          <SearchIcon />
+                        )}
                       </InputAdornment>
                     ),
                   }}
                 />
               </Grid>
-              <Grid item xs={9} sm={3} className={classes.hideObject}>
+              <Grid item xs={9} sm={3}>
                 <TextField
+                  disabled={isFetchingActivities}
                   fullWidth
                   select
-                  value={filterSearchField}
+                  value={filterSearchDocumentType}
+                  onChange={handleOnSearchDocumentTypeChange}
                   label={t('consentLog.documentTypeLabel')}
                   id="consents-log__category_name_select"
-                  name="status"
+                  name="codeName"
                   variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {formik.values.codeName !== '' ? (
+                          <CloseOutlined
+                            className={classes.paddingRightBtnClear}
+                            onClick={handleSearchDocumentTypeClear}
+                          />
+                        ) : (
+                          ''
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
                 >
                   {documents?.map((option) => (
                     <MenuItem key={option.key} value={option.value}>
@@ -310,25 +434,43 @@ export default function ConsentsLog(): JSX.Element {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={9} sm={3} className={classes.hideObject}>
+              <Grid item xs={9} sm={3}>
                 <TextField
+                  disabled={isFetchingActivities}
                   fullWidth
                   select
-                  value={filterSearchField}
+                  value={filterSearchStatus}
+                  onChange={handleOnSearchStatusChange}
                   label={t('consentLog.statusNameLabel')}
                   id="consents-log__status_select"
                   name="status"
                   variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {formik.values.isAccepted !== '' ? (
+                          <CloseOutlined
+                            className={classes.paddingRightBtnClear}
+                            onClick={handleSearchStatusClear}
+                          />
+                        ) : (
+                          ''
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
                 >
-                  <MenuItem value="True">{t('consentLog.documentStatus.accept')}</MenuItem>
-                  <MenuItem value="False">{t('consentLog.documentStatus.decline')}</MenuItem>
+                  <MenuItem value="true">{t('consentLog.documentStatus.accept')}</MenuItem>
+                  <MenuItem value="false">{t('consentLog.documentStatus.decline')}</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={9} sm={2} className={classes.hideObject}>
+              <Grid item xs={9} sm={2}>
                 <Button
                   id="staff_profile__search_btn"
                   className={classes.buttonWithoutShadow}
                   variant="contained"
+                  disabled={!isEnableFilterButton}
+                  onClick={() => formik.handleSubmit()}
                 >
                   {t('carAvailability.searchBtn').toUpperCase()}
                 </Button>
