@@ -65,6 +65,7 @@ export default function AdminUserCreateDialog({
       email: '',
       password: '',
       role: ROLES.OPERATION,
+      resellerServiceAreaIds: [],
     },
     validationSchema: Yup.object().shape({
       email: Yup.string()
@@ -92,6 +93,7 @@ export default function AdminUserCreateDialog({
             email: values.email,
             password: values.password,
             role: getValueRole(values.role),
+            resellerServiceAreaIds: values.resellerServiceAreaIds,
           }),
           {
             loading: t('toast.loading'),

@@ -119,6 +119,7 @@ export default function StaffProfileDetail(): JSX.Element {
               lastname: null,
               email: null,
               role: values.role,
+              resellerServiceAreaIds: [],
             }),
             {
               loading: t('toast.loading'),

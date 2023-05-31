@@ -9,6 +9,8 @@ export enum AdminUserRole {
   PRODUCT_SUPPORT = 'PRODUCT_SUPPORT',
   IT_ADMIN = 'IT_ADMIN',
   CENTRE_OPERATION = 'CENTRE_OPERATION',
+  BRANCH_MANAGER = 'BRANCH_MANAGER',
+  BRANCH_OFFICER = 'BRANCH_OFFICER',
 }
 
 export interface AdminUser {
@@ -68,6 +70,7 @@ export interface CreateNewAdminUserProps {
   firstname: string
   lastname: string
   role: AdminUserRole
+  resellerServiceAreaIds: string[]
 }
 
 export interface AdminUsersResponse extends Response {
@@ -87,6 +90,7 @@ export interface UpdateAdminUserProps {
   lastname: string | null
   email: string | null
   role: string
+  resellerServiceAreaIds: string[]
 }
 
 export interface UpdateAdminUserResponse extends Response {

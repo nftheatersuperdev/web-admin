@@ -1058,7 +1058,8 @@
     "allowOnlyLettersAndNumbers": "Allow only letters and numbers",
     "firstNameRequired": "First Name is required",
     "lastNameRequired": "Last Name is required",
-    "roleRequired": "Role is required"
+    "roleRequired": "Role is required",
+    "locationRequired": "Location Services is required"
   },
   "cardStatus": {
     "detail": "Detail >"

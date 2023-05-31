@@ -91,65 +91,77 @@ export default function StaffProfileAdd(): JSX.Element {
         return AdminUserRole.PRODUCT_SUPPORT
       case ROLES.IT_ADMIN:
         return AdminUserRole.IT_ADMIN
+      case ROLES.CENTRE_OPERATION:
+        return AdminUserRole.CENTRE_OPERATION
+      case ROLES.BRANCH_MANAGER:
+        return AdminUserRole.BRANCH_MANAGER
+      case ROLES.BRANCH_OFFICER:
+        return AdminUserRole.BRANCH_OFFICER
       default:
         return AdminUserRole.OPERATION
     }
   }
   const [locationData, setLocationData] = useState<LocationResponse | null>()
-  const { values, errors, touched, handleSubmit, handleChange, isSubmitting } = useFormik({
-    // const formik = useFormik({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      role: '',
-    },
-    validationSchema: Yup.object().shape({
-      email: Yup.string()
-        .email(t('authentication.error.invalidEmail'))
-        .max(255)
-        .required(t('authentication.error.emailRequired')),
-      password: Yup.string()
-        .min(8)
-        .required(t('authentication.error.passwordRequired'))
-        .matches(
-          /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
-          t('authentication.error.passwordCondition')
-        ),
-      firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
-      lastName: Yup.string().max(255).required(t('validation.lastNameRequired')),
-      role: Yup.string().max(255).required(t('validation.roleRequired')),
-    }),
-    enableReinitialize: true,
-    onSubmit: (values, actions) => {
-      actions.setSubmitting(true)
-      toast
-        .promise(
-          createNewUser({
-            accessToken,
-            firstname: values.firstName,
-            lastname: values.lastName,
-            email: values.email,
-            password: values.password,
-            role: getValueRole(values.role),
-          }),
-          {
-            loading: t('toast.loading'),
-            success: t('adminUser.createDialog.success'),
-            error: (error) =>
-              t('adminUser.createDialog.failed', {
-                error: error.message || error,
-              }),
-          }
-        )
-        .finally(() => {
-          actions.resetForm()
-          actions.setSubmitting(false)
-          history.goBack()
-        })
-    },
-  })
+  const { values, setFieldValue, errors, touched, handleSubmit, handleChange, isSubmitting } =
+    useFormik({
+      // const formik = useFormik({
+      initialValues: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        role: '',
+        resellerServiceAreaIds: [],
+      },
+      validationSchema: Yup.object().shape({
+        email: Yup.string()
+          .email(t('authentication.error.invalidEmail'))
+          .max(255)
+          .required(t('authentication.error.emailRequired')),
+        password: Yup.string()
+          .min(8)
+          .required(t('authentication.error.passwordRequired'))
+          .matches(
+            /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
+            t('authentication.error.passwordCondition')
+          ),
+        firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
+        lastName: Yup.string().max(255).required(t('validation.lastNameRequired')),
+        role: Yup.string().max(255).required(t('validation.roleRequired')),
+        resellerServiceAreaIds: Yup.array()
+          .min(1, t('validation.locationRequired'))
+          .required(t('validation.locationRequired')),
+      }),
+      enableReinitialize: true,
+      onSubmit: (values, actions) => {
+        actions.setSubmitting(true)
+        toast
+          .promise(
+            createNewUser({
+              accessToken,
+              firstname: values.firstName,
+              lastname: values.lastName,
+              email: values.email,
+              password: values.password,
+              role: getValueRole(values.role),
+              resellerServiceAreaIds: values.resellerServiceAreaIds,
+            }),
+            {
+              loading: t('toast.loading'),
+              success: t('adminUser.createDialog.success'),
+              error: (error) =>
+                t('adminUser.createDialog.failed', {
+                  error: error.message || error,
+                }),
+            }
+          )
+          .finally(() => {
+            actions.resetForm()
+            actions.setSubmitting(false)
+            history.goBack()
+          })
+      },
+    })
 
   const {
     data: loactions,
@@ -204,20 +216,28 @@ export default function StaffProfileAdd(): JSX.Element {
         label: 'All Location',
       },
     ]
+    const defultLocationFormik = ['00000000-0000-0000-0000-000000000000']
     setSelectLocation(defultLocation)
+    setFieldValue('resellerServiceAreaIds', defultLocationFormik)
   }
-  const handleAutocompleteChange = (values: SelectOption[]) => {
-    const checkSelectAllLocation = values.find((data) => {
+  const setFieldInFormik = (valuesSelect: SelectOption[]) => {
+    const dataFormikLocation = valuesSelect.map((item) => {
+      return item.value
+    })
+    setFieldValue('resellerServiceAreaIds', dataFormikLocation)
+  }
+  const handleAutocompleteChange = (valuesSelect: SelectOption[]) => {
+    const checkSelectAllLocation = valuesSelect.find((data) => {
       return data.label === 'All Location'
     })
-    if (values.length > 1 && checkSelectAllLocation) {
+    if (valuesSelect.length > 1 && checkSelectAllLocation) {
       setSelectLocation([])
       setAllLocationSelected()
     } else {
-      setSelectLocation(values)
+      setSelectLocation(valuesSelect)
+      setFieldInFormik(valuesSelect)
     }
   }
-
   return (
     <Page>
       <PageTitle title={t('sidebar.staffProfileAdd')} />
@@ -327,7 +347,7 @@ export default function StaffProfileAdd(): JSX.Element {
                 disabled={isFetchingLoactions}
                 fullWidth
                 multiple
-                limitTags={4}
+                limitTags={3}
                 id="staff-profile-add__location_input"
                 options={locationSelect}
                 disableCloseOnSelect
@@ -355,7 +375,12 @@ export default function StaffProfileAdd(): JSX.Element {
                   </li>
                 )}
                 renderInput={(params) => (
-                  <TextField {...params} label={t('staffProfile.location')} />
+                  <TextField
+                    {...params}
+                    label={t('staffProfile.location')}
+                    error={Boolean(touched.resellerServiceAreaIds && errors.resellerServiceAreaIds)}
+                    helperText={touched.resellerServiceAreaIds && errors.resellerServiceAreaIds}
+                  />
                 )}
                 renderTags={(value, getTagProps) =>
                   value.map((option, index) => (
