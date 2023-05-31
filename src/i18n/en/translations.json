@@ -826,7 +826,10 @@
     "operation": "Operation",
     "marketing": "Marketing",
     "productSupport": "Product Support",
-    "itAdmin": "IT Administrator"
+    "itAdmin": "IT Administrator",
+    "centreOperation": "Centre Operation",
+    "branchManager": "Branch Manager",
+    "branchOfficer": "Branch Officer"
   },
   "account": {
     "updatePassword": "Update password",

@@ -78,6 +78,9 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
       ROLES.IT_ADMIN,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
   {
@@ -91,6 +94,9 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
       ROLES.IT_ADMIN,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
   {
@@ -104,6 +110,9 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
       ROLES.IT_ADMIN,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
   {
@@ -116,6 +125,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
     ],
   },
   {
@@ -154,6 +164,9 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.CUSTOMER_SUPPORT,
       ROLES.OPERATION,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
   {
@@ -165,6 +178,9 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.CUSTOMER_SUPPORT,
       ROLES.OPERATION,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
   {
@@ -199,17 +215,34 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.CUSTOMER_SUPPORT,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
     ],
   },
   {
     path: ROUTE_PATHS.CAR_DETAIL,
     component: lazy(() => import('./pages/CarDetail' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
+    ],
   },
   {
     path: ROUTE_PATHS.CAR,
     component: lazy(() => import('./pages/Car' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.PRODUCT_SUPPORT],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
+    ],
   },
   {
     path: ROUTE_PATHS.CAR_AVAILABILITY_DETAIL,
@@ -221,6 +254,9 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
   {
@@ -233,18 +269,33 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
     ],
   },
 
   {
     path: ROUTE_PATHS.CAR_ACTIVITY_DETAIL,
     component: lazy(() => import('./pages/CarActivityDetail' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.OPERATION,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
+    ],
   },
   {
     path: ROUTE_PATHS.CAR_ACTIVITY,
     component: lazy(() => import('./pages/CarActivity' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.OPERATION,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+      ROLES.BRANCH_OFFICER,
+    ],
   },
   {
     path: ROUTE_PATHS.VOUCHER_CREATE,
@@ -274,22 +325,22 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DOCUMENT_VERSION_EDIT,
     component: lazy(() => import('./pages/DocumentVersionEdit' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {
     path: ROUTE_PATHS.DOCUMENT_VERSION_VIEW,
     component: lazy(() => import('./pages/DocumentVersionView' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {
     path: ROUTE_PATHS.DOCUMENT_VERSIONS,
     component: lazy(() => import('./pages/DocumentVersions' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {
     path: ROUTE_PATHS.DOCUMENTS,
     component: lazy(() => import('./pages/Documents' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {
     path: ROUTE_PATHS.CONSENT_LOG,
@@ -311,6 +362,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.CUSTOMER_SUPPORT,
       ROLES.MARKETING,
+      ROLES.CENTRE_OPERATION,
     ],
   },
   {
@@ -321,7 +373,13 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.USER_DELETE_LOG,
     component: lazy(() => import('./pages/UserDeleteLog' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CUSTOMER_SUPPORT],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.CUSTOMER_SUPPORT,
+      ROLES.CENTRE_OPERATION,
+    ],
   },
   {
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
@@ -365,6 +423,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
     ],
   },
   {
@@ -377,6 +436,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.OPERATION,
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
     ],
   },
   {
