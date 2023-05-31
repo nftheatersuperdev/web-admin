@@ -274,7 +274,7 @@ export default function CustomerProfile(): JSX.Element {
         } as CustomerFilterRequest
       } else {
         updateObj = {
-          mobileNumberContain: filterSearchField,
+          [value.searchType]: filterSearchField,
         } as CustomerFilterRequest
       }
       setCustomerFilter(updateObj)

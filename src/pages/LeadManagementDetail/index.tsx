@@ -13,7 +13,6 @@ import {
   Divider,
   FormControl,
   Grid,
-  InputAdornment,
   MenuItem,
   Pagination,
   Paper,
@@ -47,8 +46,6 @@ import dayjsTimezone from 'dayjs/plugin/timezone'
 import { saveAs } from 'file-saver'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { Search } from '@material-ui/icons'
-import { useFormik } from 'formik'
 import { useLocation, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
@@ -265,16 +262,16 @@ export default function LeadManagementDetail() {
     { label: 'Registered Date', key: 'createdDate' },
   ]
 
-  const formik = useFormik({
-    initialValues: {
-      searchType: '',
-      searchValue: '',
-    },
-    enableReinitialize: true,
-    onSubmit: () => {
-      setPage(1)
-    },
-  })
+  // const formik = useFormik({
+  //   initialValues: {
+  //     searchType: '',
+  //     searchValue: '',
+  //   },
+  //   enableReinitialize: true,
+  //   onSubmit: () => {
+  //     setPage(1)
+  //   },
+  // })
 
   const handleSort = (key: string) => {
     const newOrderBy = key
@@ -378,63 +375,7 @@ export default function LeadManagementDetail() {
           </Typography>
         </div>
         <Grid className={classes.searchBar} container spacing={1}>
-          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={4}>
-            <TextField
-              disabled={true}
-              className={classes.searchTextField}
-              fullWidth
-              select
-              label={t('leadManagement.searchBar.selectSearch.title')}
-              id="lead_management__select_search"
-              name="selectSearch"
-              value={formik.values.searchType}
-              variant="outlined"
-              onChange={(event) => {
-                formik.setFieldValue('searchType', event.target.value)
-              }}
-            >
-              <MenuItem value=" ">
-                <em />
-              </MenuItem>
-              <MenuItem value="firstName">{t('leadManagementDetail.filter.firstName')}</MenuItem>
-              <MenuItem value="lastName">{t('leadManagementDetail.filter.lastName')}</MenuItem>
-              <MenuItem value="phoneNumber">
-                {t('leadManagementDetail.filter.phoneNumber')}
-              </MenuItem>
-              <MenuItem value="email">{t('leadManagementDetail.filter.email')}</MenuItem>
-              <MenuItem value="leadSource">{t('leadManagementDetail.filter.leadSource')}</MenuItem>
-              <MenuItem value="createdDate">
-                {t('leadManagementDetail.filter.registeredDate')}
-              </MenuItem>
-              <MenuItem value="answer">{t('leadManagementDetail.filter.answer')}</MenuItem>
-              <MenuItem value="period">{t('leadManagementDetail.filter.period')}</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={4}>
-            <TextField
-              id="customer-profile__search_input"
-              name="searchVal"
-              className={classes.searchTextField}
-              fullWidth
-              value={formik.values.searchValue}
-              placeholder={t('carAvailability.searchField.label')}
-              disabled={formik.values.searchType === '' ? true : false}
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(event) => {
-                formik.setFieldValue('searchValue', event.target.value)
-              }}
-            />
-          </Grid>
+          <Grid item className={[classes.filter, classes.paddingLeft].join(' ')} xs={8} />
           <Grid item className={[classes.filter, classes.rightPanel].join(' ')} xs={3}>
             <Button
               id="customer_profile__export_btn"

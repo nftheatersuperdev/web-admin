@@ -1,5 +1,9 @@
 import { AdminBffAPI } from 'api/admin-bff'
-import { ConsentLogListProps, ConsentLogListResponse } from './consent-log.type'
+import {
+  ConsentLogListRequest,
+  ConsentLogListProps,
+  ConsentLogListResponse,
+} from './consent-log.type'
 
 export const getList = async ({
   email,
@@ -15,6 +19,19 @@ export const getList = async ({
       isAccepted,
       codeName,
     },
+    { params: { page, size } }
+  ).then((response) => response.data)
+  return response
+}
+
+export const getConsentLogList = async ({
+  data,
+  size,
+  page,
+}: ConsentLogListRequest): Promise<ConsentLogListResponse> => {
+  const response: ConsentLogListResponse = await AdminBffAPI.post(
+    '/v1/customer-agreements/search',
+    data,
     { params: { page, size } }
   ).then((response) => response.data)
   return response
