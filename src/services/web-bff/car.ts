@@ -25,13 +25,11 @@ export const getList = async ({
   page = 0,
 }: CarListFilterRequestProps): Promise<CarListBffResponse> => {
   const pageIndex = page + 1
-  const response: CarListBffResponse = await AdminBffAPI.get('/v1/cars', {
-    params: {
-      ...filter,
-      ...sort,
-      pageIndex,
-      size,
-    },
+  const response: CarListBffResponse = await AdminBffAPI.post('/v1/cars/search', {
+    ...filter,
+    ...sort,
+    pageIndex,
+    size,
   })
     .then((response) => response.data)
     .catch(() => {
