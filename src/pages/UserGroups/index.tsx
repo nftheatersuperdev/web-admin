@@ -256,6 +256,7 @@ export default function UserGroup(): JSX.Element {
       ROLES.SUPER_ADMIN,
       ROLES.ADMIN,
       ROLES.MARKETING,
+      ROLES.PRODUCT_SUPPORT,
     ])
 
     return (
