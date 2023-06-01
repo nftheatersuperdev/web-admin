@@ -27,4 +27,5 @@ export interface CreateNewUserProps {
   firstname: string
   lastname: string
   role: AdminUserRole
+  resellerServiceAreaIds: string[]
 }

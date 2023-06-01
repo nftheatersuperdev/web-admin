@@ -286,7 +286,8 @@
     "createdDate": "วันที่สร้าง",
     "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
     "searchCriteria": "ค้นหา",
-    "searchDate": "วันที่ค้นหา"
+    "searchDate": "วันที่ค้นหา",
+    "location": "สถานที่บริการ"
   },
   "user": {
     "customerList": "รายชื่อลูกค้า",
@@ -1039,7 +1040,8 @@
     "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น",
     "firstNameRequired": "ต้องระบุชื่อ",
     "lastNameRequired": "ต้องระบุนามสกุล",
-    "roleRequired": "ต้องระบุระดับผู้ใช้งาน"
+    "roleRequired": "ต้องระบุระดับผู้ใช้งาน",
+    "locationRequired": "ต้องระบุสถานที่บริการ"
   },
   "cardStatus": {
     "detail": "Detail >"

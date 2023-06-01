@@ -1,3 +1,6 @@
+/* eslint-disable react/forbid-component-props */
+/* eslint-disable react/jsx-props-no-spreading */
+import { useState, useEffect } from 'react'
 import {
   Typography,
   Breadcrumbs,
@@ -7,8 +10,14 @@ import {
   TextField,
   Grid,
   MenuItem,
+  Autocomplete,
+  Checkbox,
+  Chip,
 } from '@mui/material'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import { makeStyles } from '@mui/styles'
+import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { useAuth } from 'auth/AuthContext'
@@ -20,6 +29,8 @@ import { createNewUser } from 'services/firebase-rest'
 import { AdminUserRole } from 'services/web-bff/admin-user.type'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
+import { getLocationList } from 'services/web-bff/location'
+import { LocationResponse } from 'services/web-bff/location.type'
 
 const useStyles = makeStyles({
   hide: {
@@ -44,13 +55,43 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+  chipLightGrey: {
+    backgroundColor: '#E0E0E0',
+    color: 'black',
+    borderRadius: '64px',
+    padding: '4px',
+    margin: '2px',
+  },
+  chipBgPrimary: {
+    backgroundColor: '#4584FF',
+    color: 'white',
+    borderRadius: '64px',
+    padding: '4px',
+    margin: '2px',
+  },
+  checkBoxLightGrey: {
+    '&.Mui-checked': {
+      color: '#999',
+    },
+  },
 })
+
+interface SelectOption {
+  label: string
+  value: string
+}
 
 export default function StaffProfileAdd(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
   const { t } = useTranslation()
   const classes = useStyles()
+
+  const [selectLocation, setSelectLocation] = useState<{ value: string; label: string }[]>([])
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
+
+  const [disableLocation, setDisableLocation] = useState<boolean>(true)
+
   const getValueRole = (role?: string): AdminUserRole => {
     switch (role) {
       case ROLES.SUPER_ADMIN:
@@ -65,64 +106,163 @@ export default function StaffProfileAdd(): JSX.Element {
         return AdminUserRole.PRODUCT_SUPPORT
       case ROLES.IT_ADMIN:
         return AdminUserRole.IT_ADMIN
+      case ROLES.CENTRE_OPERATION:
+        return AdminUserRole.CENTRE_OPERATION
+      case ROLES.BRANCH_MANAGER:
+        return AdminUserRole.BRANCH_MANAGER
+      case ROLES.BRANCH_OFFICER:
+        return AdminUserRole.BRANCH_OFFICER
       default:
         return AdminUserRole.OPERATION
     }
   }
-  const { values, errors, touched, handleSubmit, handleChange, isSubmitting } = useFormik({
-    // const formik = useFormik({
-    initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      role: '',
-    },
-    validationSchema: Yup.object().shape({
-      email: Yup.string()
-        .email(t('authentication.error.invalidEmail'))
-        .max(255)
-        .required(t('authentication.error.emailRequired')),
-      password: Yup.string()
-        .min(8)
-        .required(t('authentication.error.passwordRequired'))
-        .matches(
-          /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
-          t('authentication.error.passwordCondition')
-        ),
-      firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
-      lastName: Yup.string().max(255).required(t('validation.lastNameRequired')),
-      role: Yup.string().max(255).required(t('validation.roleRequired')),
-    }),
-    enableReinitialize: true,
-    onSubmit: (values, actions) => {
-      actions.setSubmitting(true)
-      toast
-        .promise(
-          createNewUser({
-            accessToken,
-            firstname: values.firstName,
-            lastname: values.lastName,
-            email: values.email,
-            password: values.password,
-            role: getValueRole(values.role),
-          }),
-          {
-            loading: t('toast.loading'),
-            success: t('adminUser.createDialog.success'),
-            error: (error) =>
-              t('adminUser.createDialog.failed', {
-                error: error.message || error,
-              }),
-          }
-        )
-        .finally(() => {
-          actions.resetForm()
-          actions.setSubmitting(false)
-          history.goBack()
-        })
-    },
-  })
+
+  const { values, setFieldValue, errors, touched, handleSubmit, handleChange, isSubmitting } =
+    useFormik({
+      // const formik = useFormik({
+      initialValues: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        role: '',
+        resellerServiceAreaIds: [],
+      },
+      validationSchema: Yup.object().shape({
+        email: Yup.string()
+          .email(t('authentication.error.invalidEmail'))
+          .max(255)
+          .required(t('authentication.error.emailRequired')),
+        password: Yup.string()
+          .min(8)
+          .required(t('authentication.error.passwordRequired'))
+          .matches(
+            /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
+            t('authentication.error.passwordCondition')
+          ),
+        firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
+        lastName: Yup.string().max(255).required(t('validation.lastNameRequired')),
+        role: Yup.string().max(255).required(t('validation.roleRequired')),
+        resellerServiceAreaIds: Yup.array()
+          .min(1, t('validation.locationRequired'))
+          .required(t('validation.locationRequired')),
+      }),
+      enableReinitialize: true,
+      onSubmit: (values, actions) => {
+        actions.setSubmitting(true)
+        toast
+          .promise(
+            createNewUser({
+              accessToken,
+              firstname: values.firstName,
+              lastname: values.lastName,
+              email: values.email,
+              password: values.password,
+              role: getValueRole(values.role),
+              resellerServiceAreaIds: values.resellerServiceAreaIds,
+            }),
+            {
+              loading: t('toast.loading'),
+              success: t('adminUser.createDialog.success'),
+              error: (error) =>
+                t('adminUser.createDialog.failed', {
+                  error: error.message || error,
+                }),
+            }
+          )
+          .finally(() => {
+            actions.resetForm()
+            actions.setSubmitting(false)
+            history.goBack()
+          })
+      },
+    })
+
+  const { data: loactions, isFetched: isFetchedLoactions } = useQuery('get-location', () =>
+    getLocationList()
+  )
+
+  useEffect(() => {
+    if (isFetchedLoactions && loactions) {
+      setLocationData(loactions)
+    }
+  }, [isFetchedLoactions, loactions])
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+  const checkedIcon = (
+    <CheckBoxIcon className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
+  )
+
+  const setLocationSelect = (locationData: LocationResponse) => {
+    const resultDataSelect = []
+    const defultLocation = {
+      value: '00000000-0000-0000-0000-000000000000',
+      label: 'All Location',
+    }
+    resultDataSelect.push(defultLocation)
+
+    locationData.locations.forEach((location) => {
+      const locationData = {
+        value: location.id,
+        label: location.areaNameEn,
+      }
+      resultDataSelect.push(locationData)
+    })
+    resultDataSelect.sort((a, b) => {
+      const nameA = a.label.toLowerCase()
+      const nameB = b.label.toLowerCase()
+
+      if (nameA < nameB) {
+        return -1
+      }
+      if (nameA > nameB) {
+        return 1
+      }
+      return 0
+    })
+
+    return resultDataSelect
+  }
+  const locationSelect = locationData ? setLocationSelect(locationData) : []
+  const setAllLocationSelected = () => {
+    const defultLocation = [
+      {
+        value: '00000000-0000-0000-0000-000000000000',
+        label: 'All Location',
+      },
+    ]
+    const defultLocationFormik = ['00000000-0000-0000-0000-000000000000']
+    setSelectLocation(defultLocation)
+    setFieldValue('resellerServiceAreaIds', defultLocationFormik)
+  }
+  const setFieldInFormik = (valuesSelect: SelectOption[]) => {
+    const dataFormikLocation = valuesSelect.map((item) => {
+      return item.value
+    })
+    setFieldValue('resellerServiceAreaIds', dataFormikLocation)
+  }
+  const handleAutocompleteChange = (valuesSelect: SelectOption[]) => {
+    const checkSelectAllLocation = valuesSelect.find((data) => {
+      return data.label === 'All Location'
+    })
+    if (valuesSelect.length > 1 && checkSelectAllLocation) {
+      setSelectLocation([])
+      setAllLocationSelected()
+    } else {
+      setSelectLocation(valuesSelect)
+      setFieldInFormik(valuesSelect)
+    }
+  }
+  const handleChangeRole = (roleSelect: string) => {
+    if (roleSelect === ROLES.BRANCH_MANAGER || roleSelect === ROLES.BRANCH_OFFICER) {
+      setSelectLocation([])
+      setDisableLocation(false)
+    } else {
+      setDisableLocation(true)
+      setSelectLocation([])
+      setAllLocationSelected()
+    }
+  }
 
   return (
     <Page>
@@ -198,7 +338,10 @@ export default function StaffProfileAdd(): JSX.Element {
                 id="staff-profile-add__role_select"
                 name="role"
                 variant="outlined"
-                onChange={handleChange}
+                onChange={(event) => {
+                  handleChange(event)
+                  handleChangeRole(event.target.value)
+                }}
                 value={values.role}
                 error={Boolean(touched.role && errors.role)}
                 helperText={touched.role && errors.role}
@@ -226,6 +369,74 @@ export default function StaffProfileAdd(): JSX.Element {
                 value={values.password}
                 error={Boolean(touched.password && errors.password)}
                 helperText={touched.password && errors.password}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Autocomplete
+                disabled={disableLocation}
+                fullWidth
+                multiple
+                limitTags={3}
+                id="staff-profile-add__location_input"
+                options={locationSelect}
+                disableCloseOnSelect
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+                getOptionDisabled={(option) => {
+                  return (
+                    selectLocation.length > 0 &&
+                    option.label !== 'All Location' &&
+                    selectLocation[0].label === 'All Location'
+                  )
+                }}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox
+                      icon={icon}
+                      className={
+                        selectLocation.length > 0 &&
+                        selectLocation[0].label === 'All Location' &&
+                        selected
+                          ? ''
+                          : selectLocation.length > 0 &&
+                            selectLocation[0].label !== 'All Location' &&
+                            selected
+                          ? ''
+                          : classes.checkBoxLightGrey
+                      }
+                      checkedIcon={checkedIcon}
+                      checked={
+                        selectLocation.length > 0 && selectLocation[0].label === 'All Location'
+                          ? true
+                          : selected
+                      }
+                    />
+                    {option.label}
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t('staffProfile.location')}
+                    error={Boolean(touched.resellerServiceAreaIds && errors.resellerServiceAreaIds)}
+                    helperText={touched.resellerServiceAreaIds && errors.resellerServiceAreaIds}
+                  />
+                )}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      size="small"
+                      label={option.label}
+                      {...getTagProps({ index })}
+                      key={index}
+                      className={disableLocation ? classes.chipLightGrey : classes.chipBgPrimary}
+                    />
+                  ))
+                }
+                value={selectLocation || []}
+                onChange={(_event, value) => {
+                  handleAutocompleteChange(value)
+                }}
               />
             </Grid>
           </Grid>
