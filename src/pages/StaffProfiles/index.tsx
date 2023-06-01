@@ -78,6 +78,12 @@ export default function StaffProfiles(): JSX.Element {
       color: 'white',
       borderRadius: '64px',
     },
+    chipPrimary: {
+      backgroundColor: '#3793FF',
+      color: 'white',
+      borderRadius: '64px',
+      margin: '2px',
+    },
     buttonExport: {
       color: 'white',
       textDecoration: 'none',
@@ -195,6 +201,7 @@ export default function StaffProfiles(): JSX.Element {
     { label: 'Last name', key: 'lastName' },
     { label: 'Email', key: 'email' },
     { label: 'Role', key: 'role' },
+    { label: 'Location Service', key: 'location' },
     { label: 'Account Status', key: 'status' },
     { label: 'Created Date', key: 'createdDate' },
     { label: 'Updated Date', key: 'updatedDate' },
@@ -212,6 +219,9 @@ export default function StaffProfiles(): JSX.Element {
           lastName: adminUserData.lastName,
           email: adminUserData.email,
           role: adminUserData.role,
+          location: adminUserData.resellerServiceAreas.map((item) => {
+            return item.areaNameEn
+          }),
           status: acctStatus,
           createdDate: formaDateStringWithPattern(
             adminUserData.createdDate,
@@ -244,6 +254,18 @@ export default function StaffProfiles(): JSX.Element {
             <TableCell>
               <div className={classes.pl17}>
                 {getAdminUserRoleLabel(adminUserData.role.toLowerCase(), t)}
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className={classes.pl17}>
+                {adminUserData?.resellerServiceAreas?.map((item) => (
+                  <Chip
+                    size="small"
+                    key={item.id}
+                    label={item.areaNameEn}
+                    className={classes.chipPrimary}
+                  />
+                ))}
               </div>
             </TableCell>
             <TableCell>
@@ -492,6 +514,11 @@ export default function StaffProfiles(): JSX.Element {
                       <TableCell align="left">
                         <div className={[classes.textBoldBorder, classes.width145].join(' ')}>
                           {t('user.role')}
+                        </div>
+                      </TableCell>
+                      <TableCell align="left">
+                        <div className={[classes.textBoldBorder, classes.width145].join(' ')}>
+                          {t('staffProfile.location')}
                         </div>
                       </TableCell>
                       <TableCell align="left">

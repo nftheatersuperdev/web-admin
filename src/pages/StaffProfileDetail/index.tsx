@@ -424,7 +424,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 multiple
                 limitTags={3}
-                id="staff-profile-add__location_input"
+                id="staff-profile__location"
                 options={locationSelect}
                 disableCloseOnSelect
                 getOptionLabel={(option) => option.label}
