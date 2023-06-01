@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Card, Grid, Typography, Button, Autocomplete } from '@mui/material'
+import { Card, Grid, Typography, Button, Autocomplete, Chip, Checkbox } from '@mui/material'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import { useFormik } from 'formik'
 import { makeStyles } from '@mui/styles'
 import toast from 'react-hot-toast'
@@ -17,8 +19,15 @@ import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { AdminUsersProps } from 'services/web-bff/admin-user.type'
 import { Role } from 'services/web-bff/admin-user-role.type'
+import { getLocationList } from 'services/web-bff/location'
+import { LocationResponse } from 'services/web-bff/location.type'
 import { DisabledField, EnabledTextField } from './styles'
 import { StaffProfileDetailEditParam } from './constant'
+
+interface SelectOption {
+  label: string
+  value: string
+}
 
 export default function StaffProfileDetail(): JSX.Element {
   const useStyles = makeStyles({
@@ -69,6 +78,30 @@ export default function StaffProfileDetail(): JSX.Element {
     hideObject: {
       display: 'none',
     },
+    chipLightGrey: {
+      backgroundColor: '#E0E0E0',
+      color: 'black !important',
+      borderRadius: '64px',
+      padding: '4px',
+      margin: '2px',
+    },
+    chipBgPrimary: {
+      backgroundColor: '#4584FF',
+      color: 'white',
+      borderRadius: '64px',
+      padding: '4px',
+      margin: '2px',
+    },
+    checkBoxLightGrey: {
+      '&.Mui-checked': {
+        color: '#999',
+      },
+    },
+    locationSelect: {
+      '& fieldSet': {
+        borderColor: '#424E63',
+      },
+    },
   })
   const { t, i18n } = useTranslation()
   const classes = useStyles()
@@ -82,6 +115,12 @@ export default function StaffProfileDetail(): JSX.Element {
   const { data: staffResponse, refetch } = useQuery('admin-users', () =>
     searchAdminUser({ data: params, page: 1, size: 1 } as AdminUsersProps)
   )
+
+  const [selectLocation, setSelectLocation] = useState<{ value: string; label: string }[]>([])
+  const [oldSelectLocation, setOldSelectLocation] = useState<{ value: string; label: string }[]>([])
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
+  const [disableLocation, setDisableLocation] = useState<boolean>(true)
+
   const staffData =
     staffResponse?.data.adminUsers.length === 1 ? staffResponse?.data.adminUsers[0] : null
   const breadcrumbs: PageBreadcrumbs[] = [
@@ -99,16 +138,21 @@ export default function StaffProfileDetail(): JSX.Element {
     },
   ]
   const pageTitle: string = t('sidebar.staffProfileDetail')
+
   const { setFieldValue, errors, touched, handleSubmit } = useFormik({
     initialValues: {
       role: '',
+      resellerServiceAreaIds: [],
     },
     enableReinitialize: true,
     validationSchema: Yup.object().shape({
       role: Yup.string().max(255).required(t('validation.roleRequired')),
+      resellerServiceAreaIds: Yup.array()
+        .min(1, t('validation.locationRequired'))
+        .required(t('validation.locationRequired')),
     }),
     onSubmit: async (values) => {
-      if (oldRole?.name === values.role) {
+      if (oldRole?.name === values.role && oldSelectLocation === values.resellerServiceAreaIds) {
         toast.error(t('adminUser.updateDialog.cannotUpdate'))
       } else {
         await toast
@@ -119,7 +163,7 @@ export default function StaffProfileDetail(): JSX.Element {
               lastname: null,
               email: null,
               role: values.role,
-              resellerServiceAreaIds: [],
+              resellerServiceAreaIds: values.resellerServiceAreaIds,
             }),
             {
               loading: t('toast.loading'),
@@ -134,10 +178,12 @@ export default function StaffProfileDetail(): JSX.Element {
       }
     },
   })
+
   const onChangeRole = (item: Role | null) => {
     setSelectedRole(item)
     setIsEnableSaveButton(true)
     setFieldValue('role', item ? item.name : '')
+    setFieldInFormik(selectLocation)
   }
   useEffect(() => {
     const defaultValue = {
@@ -147,10 +193,106 @@ export default function StaffProfileDetail(): JSX.Element {
     }
     setOldRole(defaultValue)
     setSelectedRole(defaultValue)
+    if (staffData?.role === 'BRANCH_MANAGER' || staffData?.role === 'BRANCH_OFFICER') {
+      setDisableLocation(false)
+    }
   }, [t, staffData])
 
   function isAllowEdit() {
     return hasAllowedPrivilege(getPrivileges(), [PRIVILEGES.PERM_ADMIN_USER_EDIT])
+  }
+
+  const { data: loactions, isFetched: isFetchedLoactions } = useQuery('get-location', () =>
+    getLocationList()
+  )
+
+  useEffect(() => {
+    if (isFetchedLoactions && loactions) {
+      setLocationData(loactions)
+      const locationSelectIsLoad =
+        staffData?.resellerServiceAreas.map((item) => {
+          return { value: item.id, label: item.areaNameEn }
+        }) || []
+      setSelectLocation(locationSelectIsLoad)
+      setOldSelectLocation(locationSelectIsLoad)
+    }
+  }, [isFetchedLoactions, loactions, staffData])
+
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+  const checkedIcon = <CheckBoxIcon fontSize="small" />
+
+  const setLocationSelect = (locationData: LocationResponse) => {
+    const resultDataSelect = []
+    const defultLocation = {
+      value: '00000000-0000-0000-0000-000000000000',
+      label: 'All Location',
+    }
+    resultDataSelect.push(defultLocation)
+
+    locationData.locations.forEach((location) => {
+      const locationData = {
+        value: location.id,
+        label: location.areaNameEn,
+      }
+      resultDataSelect.push(locationData)
+    })
+    resultDataSelect.sort((a, b) => {
+      const nameA = a.label.toLowerCase()
+      const nameB = b.label.toLowerCase()
+
+      if (nameA < nameB) {
+        return -1
+      }
+      if (nameA > nameB) {
+        return 1
+      }
+      return 0
+    })
+
+    return resultDataSelect
+  }
+  const locationSelect = locationData ? setLocationSelect(locationData) : []
+  const setAllLocationSelected = () => {
+    const defultLocation = [
+      {
+        value: '00000000-0000-0000-0000-000000000000',
+        label: 'All Location',
+      },
+    ]
+    const defultLocationFormik = ['00000000-0000-0000-0000-000000000000']
+    setSelectLocation(defultLocation)
+    setFieldValue('resellerServiceAreaIds', defultLocationFormik)
+  }
+  const setFieldInFormik = (valuesSelect: SelectOption[]) => {
+    const dataFormikLocation = valuesSelect.map((item) => {
+      return item.value
+    })
+    setFieldValue('resellerServiceAreaIds', dataFormikLocation)
+  }
+  const handleAutocompleteChange = (valuesSelect: SelectOption[]) => {
+    const checkSelectAllLocation = valuesSelect.find((data) => {
+      return data.label === 'All Location'
+    })
+    if (valuesSelect.length > 1 && checkSelectAllLocation) {
+      setSelectLocation([])
+      setAllLocationSelected()
+    } else {
+      setFieldInFormik(valuesSelect)
+      setSelectLocation(valuesSelect)
+    }
+    setIsEnableSaveButton(true)
+    setFieldValue('role', selectedRole?.name)
+  }
+
+  const handleChangeRole = (roleSelect: string) => {
+    if (roleSelect === 'BRANCH_MANAGER' || roleSelect === 'BRANCH_OFFICER') {
+      setSelectLocation([])
+      setDisableLocation(false)
+    } else {
+      setDisableLocation(true)
+      setSelectLocation([])
+      setAllLocationSelected()
+    }
   }
 
   return (
@@ -246,7 +388,10 @@ export default function StaffProfileDetail(): JSX.Element {
                     )
                   }}
                   value={selectedRole}
-                  onChange={(_event, item) => onChangeRole(item)}
+                  onChange={(_event, item) => {
+                    onChangeRole(item)
+                    handleChangeRole(item?.name || '')
+                  }}
                 />
               ) : (
                 <DisabledField
@@ -273,7 +418,81 @@ export default function StaffProfileDetail(): JSX.Element {
                 value={staffData?.isActive ? t('user.statuses.enable') : t('user.statuses.disable')}
               />
             </Grid>
-            <Grid item xs={12} sm={6} />
+            <Grid item xs={6}>
+              <Autocomplete
+                disabled={disableLocation}
+                fullWidth
+                multiple
+                limitTags={3}
+                id="staff-profile-add__location_input"
+                options={locationSelect}
+                disableCloseOnSelect
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+                getOptionDisabled={(option) => {
+                  return (
+                    selectLocation.length > 0 &&
+                    option.label !== 'All Location' &&
+                    selectLocation[0].label === 'All Location'
+                  )
+                }}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox
+                      icon={icon}
+                      className={
+                        selectLocation.length > 0 &&
+                        selectLocation[0].label === 'All Location' &&
+                        selected
+                          ? ''
+                          : selectLocation.length > 0 &&
+                            selectLocation[0].label !== 'All Location' &&
+                            selected
+                          ? ''
+                          : classes.checkBoxLightGrey
+                      }
+                      checkedIcon={checkedIcon}
+                      checked={
+                        selectLocation.length > 0 && selectLocation[0].label === 'All Location'
+                          ? true
+                          : selected
+                      }
+                    />
+                    {option.label}
+                  </li>
+                )}
+                renderInput={(params) =>
+                  disableLocation ? (
+                    <DisabledField {...params} label={t('staffProfile.location')} />
+                  ) : (
+                    <EnabledTextField
+                      {...params}
+                      className={disableLocation ? '' : classes.locationSelect}
+                      label={t('staffProfile.location')}
+                      error={Boolean(
+                        touched.resellerServiceAreaIds && errors.resellerServiceAreaIds
+                      )}
+                      helperText={touched.resellerServiceAreaIds && errors.resellerServiceAreaIds}
+                    />
+                  )
+                }
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      size="small"
+                      label={option.label}
+                      {...getTagProps({ index })}
+                      key={index}
+                      className={disableLocation ? classes.chipLightGrey : classes.chipBgPrimary}
+                    />
+                  ))
+                }
+                value={selectLocation || []}
+                onChange={(_event, value) => {
+                  handleAutocompleteChange(value)
+                }}
+              />
+            </Grid>
           </Grid>
           <Grid container spacing={3} className={classes.container}>
             <Grid item xs={12} sm={6}>

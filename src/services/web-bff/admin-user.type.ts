@@ -21,11 +21,17 @@ export interface AdminUser {
   lastName: string
   role: AdminUserRole
   privileges: string[]
+  resellerServiceAreas: ResellerServiceArea[]
   isActive: false
   createdDate: string
   updatedDate: string
 }
 
+interface ResellerServiceArea {
+  id: string
+  areaNameTh: string
+  areaNameEn: string
+}
 export interface AdminUserById {
   id: string
 }

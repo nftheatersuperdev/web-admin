@@ -62,6 +62,18 @@ const useStyles = makeStyles({
     padding: '4px',
     margin: '2px',
   },
+  chipBgPrimary: {
+    backgroundColor: '#4584FF',
+    color: 'white',
+    borderRadius: '64px',
+    padding: '4px',
+    margin: '2px',
+  },
+  checkBoxLightGrey: {
+    '&.Mui-checked': {
+      color: '#999',
+    },
+  },
 })
 
 interface SelectOption {
@@ -76,6 +88,9 @@ export default function StaffProfileAdd(): JSX.Element {
   const classes = useStyles()
 
   const [selectLocation, setSelectLocation] = useState<{ value: string; label: string }[]>([])
+  const [locationData, setLocationData] = useState<LocationResponse | null>()
+
+  const [disableLocation, setDisableLocation] = useState<boolean>(true)
 
   const getValueRole = (role?: string): AdminUserRole => {
     switch (role) {
@@ -101,7 +116,7 @@ export default function StaffProfileAdd(): JSX.Element {
         return AdminUserRole.OPERATION
     }
   }
-  const [locationData, setLocationData] = useState<LocationResponse | null>()
+
   const { values, setFieldValue, errors, touched, handleSubmit, handleChange, isSubmitting } =
     useFormik({
       // const formik = useFormik({
@@ -163,11 +178,9 @@ export default function StaffProfileAdd(): JSX.Element {
       },
     })
 
-  const {
-    data: loactions,
-    isFetched: isFetchedLoactions,
-    isFetching: isFetchingLoactions,
-  } = useQuery('get-location', () => getLocationList())
+  const { data: loactions, isFetched: isFetchedLoactions } = useQuery('get-location', () =>
+    getLocationList()
+  )
 
   useEffect(() => {
     if (isFetchedLoactions && loactions) {
@@ -176,7 +189,9 @@ export default function StaffProfileAdd(): JSX.Element {
   }, [isFetchedLoactions, loactions])
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
-  const checkedIcon = <CheckBoxIcon fontSize="small" />
+  const checkedIcon = (
+    <CheckBoxIcon className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
+  )
 
   const setLocationSelect = (locationData: LocationResponse) => {
     const resultDataSelect = []
@@ -238,6 +253,17 @@ export default function StaffProfileAdd(): JSX.Element {
       setFieldInFormik(valuesSelect)
     }
   }
+  const handleChangeRole = (roleSelect: string) => {
+    if (roleSelect === ROLES.BRANCH_MANAGER || roleSelect === ROLES.BRANCH_OFFICER) {
+      setSelectLocation([])
+      setDisableLocation(false)
+    } else {
+      setDisableLocation(true)
+      setSelectLocation([])
+      setAllLocationSelected()
+    }
+  }
+
   return (
     <Page>
       <PageTitle title={t('sidebar.staffProfileAdd')} />
@@ -312,7 +338,10 @@ export default function StaffProfileAdd(): JSX.Element {
                 id="staff-profile-add__role_select"
                 name="role"
                 variant="outlined"
-                onChange={handleChange}
+                onChange={(event) => {
+                  handleChange(event)
+                  handleChangeRole(event.target.value)
+                }}
                 value={values.role}
                 error={Boolean(touched.role && errors.role)}
                 helperText={touched.role && errors.role}
@@ -344,7 +373,7 @@ export default function StaffProfileAdd(): JSX.Element {
             </Grid>
             <Grid item xs={6}>
               <Autocomplete
-                disabled={isFetchingLoactions}
+                disabled={disableLocation}
                 fullWidth
                 multiple
                 limitTags={3}
@@ -364,6 +393,17 @@ export default function StaffProfileAdd(): JSX.Element {
                   <li {...props}>
                     <Checkbox
                       icon={icon}
+                      className={
+                        selectLocation.length > 0 &&
+                        selectLocation[0].label === 'All Location' &&
+                        selected
+                          ? ''
+                          : selectLocation.length > 0 &&
+                            selectLocation[0].label !== 'All Location' &&
+                            selected
+                          ? ''
+                          : classes.checkBoxLightGrey
+                      }
                       checkedIcon={checkedIcon}
                       checked={
                         selectLocation.length > 0 && selectLocation[0].label === 'All Location'
@@ -389,7 +429,7 @@ export default function StaffProfileAdd(): JSX.Element {
                       label={option.label}
                       {...getTagProps({ index })}
                       key={index}
-                      className={classes.chipLightGrey}
+                      className={disableLocation ? classes.chipLightGrey : classes.chipBgPrimary}
                     />
                   ))
                 }
