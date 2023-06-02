@@ -158,7 +158,7 @@ export default function StaffProfileDetail(): JSX.Element {
         await toast
           .promise(
             updateAdminUser({
-              id: staffResponse?.data.adminUsers[0].id || '',
+              id: staffResponse?.data.adminUsers[0].id ?? '',
               firstname: null,
               lastname: null,
               email: null,
@@ -193,7 +193,7 @@ export default function StaffProfileDetail(): JSX.Element {
     }
     setOldRole(defaultValue)
     setSelectedRole(defaultValue)
-    if (staffData?.role === 'BRANCH_MANAGER' || staffData?.role === 'BRANCH_OFFICER') {
+    if (staffData?.role === 'BRANCH_MANAGER' ?? staffData?.role === 'BRANCH_OFFICER') {
       setDisableLocation(false)
     }
   }, [t, staffData])
@@ -212,7 +212,7 @@ export default function StaffProfileDetail(): JSX.Element {
       const locationSelectIsLoad =
         staffData?.resellerServiceAreas.map((item) => {
           return { value: item.id, label: item.areaNameEn }
-        }) || []
+        }) ?? []
       setSelectLocation(locationSelectIsLoad)
       setOldSelectLocation(locationSelectIsLoad)
     }
@@ -221,7 +221,7 @@ export default function StaffProfileDetail(): JSX.Element {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
   const checkedIcon = <CheckBoxIcon fontSize="small" />
 
-  const setLocationSelect = (locationData: LocationResponse) => {
+  const setLocationSelect = (locationDataResponse: LocationResponse) => {
     const resultDataSelect = []
     const defultLocation = {
       value: '00000000-0000-0000-0000-000000000000',
@@ -229,12 +229,12 @@ export default function StaffProfileDetail(): JSX.Element {
     }
     resultDataSelect.push(defultLocation)
 
-    locationData.locations.forEach((location) => {
-      const locationData = {
+    locationDataResponse.locations.forEach((location) => {
+      const locationSet = {
         value: location.id,
         label: location.areaNameEn,
       }
-      resultDataSelect.push(locationData)
+      resultDataSelect.push(locationSet)
     })
     resultDataSelect.sort((a, b) => {
       const nameA = a.label.toLowerCase()
@@ -285,7 +285,7 @@ export default function StaffProfileDetail(): JSX.Element {
   }
 
   const handleChangeRole = (roleSelect: string) => {
-    if (roleSelect === 'BRANCH_MANAGER' || roleSelect === 'BRANCH_OFFICER') {
+    if (roleSelect === 'BRANCH_MANAGER' ?? roleSelect === 'BRANCH_OFFICER') {
       setSelectLocation([])
       setDisableLocation(false)
     } else {
@@ -293,6 +293,20 @@ export default function StaffProfileDetail(): JSX.Element {
       setSelectLocation([])
       setAllLocationSelected()
     }
+  }
+
+  const checkSelectReturnColor = (optionValue: SelectOption, checkSelect: boolean) => {
+    let classColor = classes.checkBoxLightGrey
+    if (selectLocation.length > 0) {
+      if (selectLocation[0].label === 'All Location') {
+        if (checkSelect && optionValue.label === 'All Location') {
+          classColor = ''
+        }
+      } else {
+        classColor = ''
+      }
+    }
+    return classColor
   }
 
   return (
@@ -312,7 +326,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 id="staff_profile__userId"
                 label={t('user.id')}
                 variant="outlined"
-                value={staffData?.id || ''}
+                value={staffData?.id ?? ''}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -323,7 +337,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.firebaseId || ''}
+                value={staffData?.firebaseId ?? ''}
               />
             </Grid>
           </Grid>
@@ -336,7 +350,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.firstName || '-'}
+                value={staffData?.firstName ?? '-'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -347,7 +361,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.lastName || '-'}
+                value={staffData?.lastName ?? '-'}
               />
             </Grid>
           </Grid>
@@ -360,7 +374,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.email || '-'}
+                value={staffData?.email ?? '-'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -368,12 +382,12 @@ export default function StaffProfileDetail(): JSX.Element {
                 <Autocomplete
                   autoHighlight
                   id="status-select-list"
-                  options={rolesList || []}
+                  options={rolesList ?? []}
                   getOptionLabel={(option) =>
                     i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
                   }
                   isOptionEqualToValue={(option, value) =>
-                    option.name === value.name || value.name === ''
+                    option.name === value.name ?? value.name === ''
                   }
                   renderInput={(params) => {
                     return (
@@ -390,7 +404,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   value={selectedRole}
                   onChange={(_event, item) => {
                     onChangeRole(item)
-                    handleChangeRole(item?.name || '')
+                    handleChangeRole(item?.name ?? '')
                   }}
                 />
               ) : (
@@ -401,7 +415,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   fullWidth
                   disabled
                   variant="outlined"
-                  value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
+                  value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) ?? '-'}
                 />
               )}
             </Grid>
@@ -440,17 +454,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   <li {...props}>
                     <Checkbox
                       icon={icon}
-                      className={
-                        selectLocation.length > 0 &&
-                        selectLocation[0].label === 'All Location' &&
-                        selected
-                          ? ''
-                          : selectLocation.length > 0 &&
-                            selectLocation[0].label !== 'All Location' &&
-                            selected
-                          ? ''
-                          : classes.checkBoxLightGrey
-                      }
+                      className={checkSelectReturnColor(option, selected)}
                       checkedIcon={checkedIcon}
                       checked={
                         selectLocation.length > 0 && selectLocation[0].label === 'All Location'
@@ -467,7 +471,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   ) : (
                     <EnabledTextField
                       {...params}
-                      className={disableLocation ? '' : classes.locationSelect}
+                      className={classes.locationSelect}
                       label={t('staffProfile.location')}
                       error={Boolean(
                         touched.resellerServiceAreaIds && errors.resellerServiceAreaIds
@@ -487,7 +491,7 @@ export default function StaffProfileDetail(): JSX.Element {
                     />
                   ))
                 }
-                value={selectLocation || []}
+                value={selectLocation ?? []}
                 onChange={(_event, value) => {
                   handleAutocompleteChange(value)
                 }}
