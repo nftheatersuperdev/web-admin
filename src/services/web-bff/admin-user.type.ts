@@ -75,7 +75,7 @@ export interface CreateNewAdminUserProps {
   firebaseToken: string
   firstname: string
   lastname: string
-  role: AdminUserRole
+  role: string
   resellerServiceAreaIds: string[]
 }
 

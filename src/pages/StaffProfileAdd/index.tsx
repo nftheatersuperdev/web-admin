@@ -1,6 +1,7 @@
 /* eslint-disable react/forbid-component-props */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
+import { useQuery } from 'react-query'
 import {
   Typography,
   Breadcrumbs,
@@ -9,7 +10,6 @@ import {
   Button,
   TextField,
   Grid,
-  MenuItem,
   Autocomplete,
   Checkbox,
   Chip,
@@ -17,20 +17,21 @@ import {
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import { makeStyles } from '@mui/styles'
-import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
+import { ROLES } from 'auth/roles'
 import { useAuth } from 'auth/AuthContext'
-import { getAdminUserRoleLabel, ROLES } from 'auth/roles'
 import { useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 import toast from 'react-hot-toast'
 import { createNewUser } from 'services/firebase-rest'
-import { AdminUserRole } from 'services/web-bff/admin-user.type'
+import { getRoles } from 'services/web-bff/admin-user-role'
+import { Role } from 'services/web-bff/admin-user-role.type'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
 import { getLocationList } from 'services/web-bff/location'
 import { LocationResponse } from 'services/web-bff/location.type'
+import { EnabledTextField } from './styles'
 
 const useStyles = makeStyles({
   hide: {
@@ -84,39 +85,20 @@ interface SelectOption {
 export default function StaffProfileAdd(): JSX.Element {
   const accessToken = useAuth().getToken() ?? ''
   const history = useHistory()
-  const { t } = useTranslation()
+  const { i18n, t } = useTranslation()
   const classes = useStyles()
-
+  const { data: rolesList } = useQuery('get-roles', () => getRoles())
+  const { data: locations, isFetched: isFetchedLocations } = useQuery('get-location', () =>
+    getLocationList()
+  )
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null)
+  const onChangeRole = (item: Role | null) => {
+    setSelectedRole(item)
+    values.role = item ? item.name : ''
+  }
   const [selectLocation, setSelectLocation] = useState<{ value: string; label: string }[]>([])
   const [locationData, setLocationData] = useState<LocationResponse | null>()
-
   const [disableLocation, setDisableLocation] = useState<boolean>(true)
-
-  const getValueRole = (role?: string): AdminUserRole => {
-    switch (role) {
-      case ROLES.SUPER_ADMIN:
-        return AdminUserRole.SUPER_ADMIN
-      case ROLES.ADMIN:
-        return AdminUserRole.ADMIN
-      case ROLES.CUSTOMER_SUPPORT:
-        return AdminUserRole.CUSTOMER_SUPPORT
-      case ROLES.MARKETING:
-        return AdminUserRole.MARKETING
-      case ROLES.PRODUCT_SUPPORT:
-        return AdminUserRole.PRODUCT_SUPPORT
-      case ROLES.IT_ADMIN:
-        return AdminUserRole.IT_ADMIN
-      case ROLES.CENTRE_OPERATION:
-        return AdminUserRole.CENTRE_OPERATION
-      case ROLES.BRANCH_MANAGER:
-        return AdminUserRole.BRANCH_MANAGER
-      case ROLES.BRANCH_OFFICER:
-        return AdminUserRole.BRANCH_OFFICER
-      default:
-        return AdminUserRole.OPERATION
-    }
-  }
-
   const { values, setFieldValue, errors, touched, handleSubmit, handleChange, isSubmitting } =
     useFormik({
       // const formik = useFormik({
@@ -158,7 +140,7 @@ export default function StaffProfileAdd(): JSX.Element {
               lastname: values.lastName,
               email: values.email,
               password: values.password,
-              role: getValueRole(values.role),
+              role: values.role,
               resellerServiceAreaIds: values.resellerServiceAreaIds,
             }),
             {
@@ -177,16 +159,11 @@ export default function StaffProfileAdd(): JSX.Element {
           })
       },
     })
-
-  const { data: loactions, isFetched: isFetchedLoactions } = useQuery('get-location', () =>
-    getLocationList()
-  )
-
   useEffect(() => {
-    if (isFetchedLoactions && loactions) {
-      setLocationData(loactions)
+    if (isFetchedLocations && locations) {
+      setLocationData(locations)
     }
-  }, [isFetchedLoactions, loactions])
+  }, [isFetchedLocations, locations])
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
   const checkedIcon = (
@@ -254,7 +231,10 @@ export default function StaffProfileAdd(): JSX.Element {
     }
   }
   const handleChangeRole = (roleSelect: string) => {
-    if (roleSelect === ROLES.BRANCH_MANAGER || roleSelect === ROLES.BRANCH_OFFICER) {
+    if (
+      roleSelect.toLowerCase() === ROLES.BRANCH_MANAGER ||
+      roleSelect.toLowerCase() === ROLES.BRANCH_OFFICER
+    ) {
       setSelectLocation([])
       setDisableLocation(false)
     } else {
@@ -263,7 +243,6 @@ export default function StaffProfileAdd(): JSX.Element {
       setAllLocationSelected()
     }
   }
-
   return (
     <Page>
       <PageTitle title={t('sidebar.staffProfileAdd')} />
@@ -331,27 +310,34 @@ export default function StaffProfileAdd(): JSX.Element {
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                fullWidth
-                select
-                label={t('user.role')}
+              <Autocomplete
+                autoHighlight
                 id="staff-profile-add__role_select"
-                name="role"
-                variant="outlined"
-                onChange={(event) => {
-                  handleChange(event)
-                  handleChangeRole(event.target.value)
+                options={rolesList || []}
+                getOptionLabel={(option) =>
+                  i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
+                }
+                isOptionEqualToValue={(option, value) =>
+                  option.name === value.name || value.name === ''
+                }
+                renderInput={(params) => {
+                  return (
+                    <EnabledTextField
+                      /* eslint-disable react/jsx-props-no-spreading */
+                      {...params}
+                      label={t('user.role')}
+                      variant="outlined"
+                      error={Boolean(touched.role && errors.role)}
+                      helperText={touched.role && errors.role}
+                    />
+                  )
                 }}
-                value={values.role}
-                error={Boolean(touched.role && errors.role)}
-                helperText={touched.role && errors.role}
-              >
-                {Object.values(ROLES).map((role) => (
-                  <MenuItem key={role} value={role}>
-                    {getAdminUserRoleLabel(role, t)}
-                  </MenuItem>
-                ))}
-              </TextField>
+                value={selectedRole}
+                onChange={(_event, item) => {
+                  onChangeRole(item)
+                  handleChangeRole(item ? item.name : '')
+                }}
+              />
             </Grid>
 
             <Grid item xs={6}>

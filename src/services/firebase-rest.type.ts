@@ -1,5 +1,3 @@
-import { AdminUserRole } from 'services/web-bff/admin-user.type'
-
 export interface RegisterFirebaseUserData {
   kind: string
   idToken: string
@@ -26,6 +24,6 @@ export interface CreateNewUserProps {
   password: string
   firstname: string
   lastname: string
-  role: AdminUserRole
+  role: string
   resellerServiceAreaIds: string[]
 }
