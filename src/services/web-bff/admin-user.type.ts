@@ -11,6 +11,12 @@ export enum AdminUserRole {
   CENTRE_OPERATION = 'CENTRE_OPERATION',
 }
 
+export interface ResellerServiceArea {
+  id: string
+  areaNameEn: string
+  areaNameTh: string
+}
+
 export interface AdminUser {
   id: string
   firebaseId: string
@@ -19,6 +25,7 @@ export interface AdminUser {
   lastName: string
   role: AdminUserRole
   privileges: string[]
+  resellerServiceAreas: []
   isActive: false
   createdDate: string
   updatedDate: string

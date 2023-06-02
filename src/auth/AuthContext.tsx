@@ -4,6 +4,7 @@ import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
 import { useTranslation } from 'react-i18next'
 import { getAdminUserProfile } from 'services/web-bff/admin-user'
+import { ResellerServiceArea } from 'services/web-bff/admin-user.type'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 import { Role, getAdminUserRoleLabel } from './roles'
@@ -12,6 +13,7 @@ export const STORAGE_KEYS = {
   ROLE: 'evme:user_role',
   TOKEN: 'evme:user_token',
   ID: 'evme:user_id',
+  RESELLER_SERVICE_AREA: 'evme:user_reseller_service_area',
 }
 
 interface AuthProviderProps {
@@ -39,6 +41,8 @@ interface AuthProps {
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
   setPrivileges: (privilege: string[]) => void
   getPrivileges: () => string[] | null | undefined
+  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
+  getResellerServiceAreas: () => ResellerServiceArea[] | null | undefined
 }
 
 const Auth = createContext<AuthProps>({
@@ -58,6 +62,8 @@ const Auth = createContext<AuthProps>({
   getRemoteConfig: (_key: string) => undefined,
   setPrivileges: (_privilege: string[]) => undefined,
   getPrivileges: () => undefined,
+  setResellerServiceAreas: (_areas: ResellerServiceArea[]) => undefined,
+  getResellerServiceAreas: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
@@ -113,6 +119,14 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     return ls.get<string[] | null | undefined>('PRIVILEGES', { encrypt: true })
   }
 
+  const setResellerServiceAreas = (areas: ResellerServiceArea[]) => {
+    ls.set<ResellerServiceArea[]>(STORAGE_KEYS.RESELLER_SERVICE_AREA, areas)
+  }
+
+  const getResellerServiceAreas = (): ResellerServiceArea[] | null | undefined => {
+    return ls.get<ResellerServiceArea[] | null | undefined>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+  }
+
   const getRoleDisplayName = (): string => {
     const role = getRole()
     return getAdminUserRoleLabel(role, t)
@@ -137,6 +151,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       setUserId(user.uid)
       setRole(userProfile.role.toLocaleLowerCase())
       setPrivileges(userProfile.privileges)
+      setResellerServiceAreas(userProfile.resellerServiceAreas)
     } catch (error: any) {
       const message = errorMessage(error.code as string)
       throw new Error(message)
@@ -189,6 +204,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getRemoteConfig,
         setPrivileges,
         getPrivileges,
+        setResellerServiceAreas,
+        getResellerServiceAreas,
       }}
     >
       {children}
