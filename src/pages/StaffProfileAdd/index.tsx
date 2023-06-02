@@ -83,7 +83,7 @@ interface SelectOption {
 }
 
 export default function StaffProfileAdd(): JSX.Element {
-  const accessToken = useAuth().getToken() ?? ''
+  const accessToken = useAuth().getToken() || ''
   const history = useHistory()
   const { i18n, t } = useTranslation()
   const classes = useStyles()
@@ -148,7 +148,7 @@ export default function StaffProfileAdd(): JSX.Element {
               success: t('adminUser.createDialog.success'),
               error: (error) =>
                 t('adminUser.createDialog.failed', {
-                  error: error.message ?? error,
+                  error: error.message || error,
                 }),
             }
           )
@@ -232,7 +232,7 @@ export default function StaffProfileAdd(): JSX.Element {
   }
   const handleChangeRole = (roleSelect: string) => {
     if (
-      roleSelect.toLowerCase() === ROLES.BRANCH_MANAGER ??
+      roleSelect.toLowerCase() === ROLES.BRANCH_MANAGER ||
       roleSelect.toLowerCase() === ROLES.BRANCH_OFFICER
     ) {
       setSelectLocation([])
@@ -327,12 +327,12 @@ export default function StaffProfileAdd(): JSX.Element {
               <Autocomplete
                 autoHighlight
                 id="staff-profile-add__role_select"
-                options={rolesList ?? []}
+                options={rolesList || []}
                 getOptionLabel={(option) =>
                   i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
                 }
                 isOptionEqualToValue={(option, value) =>
-                  option.name === value.name ?? value.name === ''
+                  option.name === value.name || value.name === ''
                 }
                 renderInput={(params) => {
                   return (
@@ -423,7 +423,7 @@ export default function StaffProfileAdd(): JSX.Element {
                     />
                   ))
                 }
-                value={selectLocation ?? []}
+                value={selectLocation || []}
                 onChange={(_event, value) => {
                   handleAutocompleteChange(value)
                 }}

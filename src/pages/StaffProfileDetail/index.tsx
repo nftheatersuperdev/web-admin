@@ -158,7 +158,7 @@ export default function StaffProfileDetail(): JSX.Element {
         await toast
           .promise(
             updateAdminUser({
-              id: staffResponse?.data.adminUsers[0].id ?? '',
+              id: staffResponse?.data.adminUsers[0].id || '',
               firstname: null,
               lastname: null,
               email: null,
@@ -193,7 +193,7 @@ export default function StaffProfileDetail(): JSX.Element {
     }
     setOldRole(defaultValue)
     setSelectedRole(defaultValue)
-    if (staffData?.role === 'BRANCH_MANAGER' ?? staffData?.role === 'BRANCH_OFFICER') {
+    if (staffData?.role === 'BRANCH_MANAGER' || staffData?.role === 'BRANCH_OFFICER') {
       setDisableLocation(false)
     }
   }, [t, staffData])
@@ -212,7 +212,7 @@ export default function StaffProfileDetail(): JSX.Element {
       const locationSelectIsLoad =
         staffData?.resellerServiceAreas.map((item) => {
           return { value: item.id, label: item.areaNameEn }
-        }) ?? []
+        }) || []
       setSelectLocation(locationSelectIsLoad)
       setOldSelectLocation(locationSelectIsLoad)
     }
@@ -285,7 +285,7 @@ export default function StaffProfileDetail(): JSX.Element {
   }
 
   const handleChangeRole = (roleSelect: string) => {
-    if (roleSelect === 'BRANCH_MANAGER' ?? roleSelect === 'BRANCH_OFFICER') {
+    if (roleSelect === 'BRANCH_MANAGER' || roleSelect === 'BRANCH_OFFICER') {
       setSelectLocation([])
       setDisableLocation(false)
     } else {
@@ -326,7 +326,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 id="staff_profile__userId"
                 label={t('user.id')}
                 variant="outlined"
-                value={staffData?.id ?? ''}
+                value={staffData?.id || ''}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -337,7 +337,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.firebaseId ?? ''}
+                value={staffData?.firebaseId || ''}
               />
             </Grid>
           </Grid>
@@ -350,7 +350,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.firstName ?? '-'}
+                value={staffData?.firstName || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -361,7 +361,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.lastName ?? '-'}
+                value={staffData?.lastName || '-'}
               />
             </Grid>
           </Grid>
@@ -374,7 +374,7 @@ export default function StaffProfileDetail(): JSX.Element {
                 fullWidth
                 disabled
                 variant="outlined"
-                value={staffData?.email ?? '-'}
+                value={staffData?.email || '-'}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -382,12 +382,12 @@ export default function StaffProfileDetail(): JSX.Element {
                 <Autocomplete
                   autoHighlight
                   id="status-select-list"
-                  options={rolesList ?? []}
+                  options={rolesList || []}
                   getOptionLabel={(option) =>
                     i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
                   }
                   isOptionEqualToValue={(option, value) =>
-                    option.name === value.name ?? value.name === ''
+                    option.name === value.name || value.name === ''
                   }
                   renderInput={(params) => {
                     return (
@@ -404,7 +404,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   value={selectedRole}
                   onChange={(_event, item) => {
                     onChangeRole(item)
-                    handleChangeRole(item?.name ?? '')
+                    handleChangeRole(item?.name || '')
                   }}
                 />
               ) : (
@@ -415,7 +415,7 @@ export default function StaffProfileDetail(): JSX.Element {
                   fullWidth
                   disabled
                   variant="outlined"
-                  value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) ?? '-'}
+                  value={getAdminUserRoleLabel(staffData?.role.toLowerCase(), t) || '-'}
                 />
               )}
             </Grid>
@@ -465,12 +465,12 @@ export default function StaffProfileDetail(): JSX.Element {
                     {option.label}
                   </li>
                 )}
-                renderInput={(params) =>
-                  disableLocation ? (
-                    <DisabledField {...params} label={t('staffProfile.location')} />
+                renderInput={(paramss) => {
+                  return disableLocation ? (
+                    <DisabledField {...paramss} label={t('staffProfile.location')} />
                   ) : (
                     <EnabledTextField
-                      {...params}
+                      {...paramss}
                       className={classes.locationSelect}
                       label={t('staffProfile.location')}
                       error={Boolean(
@@ -479,7 +479,7 @@ export default function StaffProfileDetail(): JSX.Element {
                       helperText={touched.resellerServiceAreaIds && errors.resellerServiceAreaIds}
                     />
                   )
-                }
+                }}
                 renderTags={(value, getTagProps) =>
                   value.map((option, index) => (
                     <Chip
@@ -491,7 +491,7 @@ export default function StaffProfileDetail(): JSX.Element {
                     />
                   ))
                 }
-                value={selectLocation ?? []}
+                value={selectLocation || []}
                 onChange={(_event, value) => {
                   handleAutocompleteChange(value)
                 }}

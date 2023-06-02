@@ -482,7 +482,7 @@ export default function BookingCarReplacement(): JSX.Element {
                     : noDataText
                 }
                 multiline
-                minRows={2}
+                maxRows={2}
                 InputProps={{
                   readOnly: true,
                 }}
