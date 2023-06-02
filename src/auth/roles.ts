@@ -29,7 +29,7 @@ export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boo
   if (!allowedRoles || !allowedRoles.length) {
     return true
   }
-  return !!role && allowedRoles.includes(role as Role)
+  return !!role && allowedRoles.includes(role)
 }
 
 export const getAdminUserRoleLabel = (
