@@ -12,6 +12,17 @@ export const STORAGE_KEYS = {
   ROLE: 'evme:user_role',
   TOKEN: 'evme:user_token',
   ID: 'evme:user_id',
+  LOCATION: 'evme:user_location',
+}
+
+type Text = string | null | undefined
+type ArrayText = string[] | null | undefined
+type Locations = ResellerServiceArea[] | null | undefined
+
+interface ResellerServiceArea {
+  id: string
+  areaNameTh: string
+  areaNameEn: string
 }
 
 interface AuthProviderProps {
@@ -29,16 +40,18 @@ interface AuthProps {
   signOut: () => Promise<void>
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>
   setToken: (token: string) => void
-  getToken: () => string | null | undefined
+  getToken: () => Text
   refreshPersistentToken: () => Promise<void>
   setRole: (role: Role) => void
-  getRole: () => string | null | undefined
+  getRole: () => Text
   getRoleDisplayName: () => string
   setUserId: (id: string) => void
-  getUserId: () => string | null | undefined
+  getUserId: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
   setPrivileges: (privilege: string[]) => void
-  getPrivileges: () => string[] | null | undefined
+  getPrivileges: () => ArrayText
+  setLocations: (resellerServiceAreaId: ResellerServiceArea[]) => void
+  getLocations: () => Locations
 }
 
 const Auth = createContext<AuthProps>({
@@ -58,6 +71,8 @@ const Auth = createContext<AuthProps>({
   getRemoteConfig: (_key: string) => undefined,
   setPrivileges: (_privilege: string[]) => undefined,
   getPrivileges: () => undefined,
+  setLocations: (_resellerServiceAreaId: ResellerServiceArea[]) => undefined,
+  getLocations: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
@@ -78,8 +93,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     ls.set<string>(STORAGE_KEYS.TOKEN, token)
   }
 
-  const getToken = (): string | null | undefined => {
-    return ls.get<string | null | undefined>(STORAGE_KEYS.TOKEN)
+  const getToken = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.TOKEN)
   }
 
   const refreshPersistentToken = async (): Promise<void> => {
@@ -93,24 +108,34 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     ls.set<string>(STORAGE_KEYS.ID, id)
   }
 
-  const getUserId = (): string | null | undefined => {
-    return ls.get<string | null | undefined>(STORAGE_KEYS.ID)
+  const getUserId = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.ID)
   }
 
   const setRole = (role: Role) => {
     ls.set<string>(STORAGE_KEYS.ROLE, role, { encrypt: true })
   }
 
-  const getRole = (): string | null | undefined => {
-    return ls.get<string | null | undefined>(STORAGE_KEYS.ROLE, { encrypt: true })
+  const getRole = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.ROLE, { encrypt: true })
   }
 
   const setPrivileges = (privilege: string[]) => {
     ls.set<string[]>('PRIVILEGES', privilege, { encrypt: true })
   }
 
-  const getPrivileges = (): string[] | null | undefined => {
-    return ls.get<string[] | null | undefined>('PRIVILEGES', { encrypt: true })
+  const getPrivileges = (): ArrayText => {
+    return ls.get<ArrayText>('PRIVILEGES', { encrypt: true })
+  }
+
+  const setLocations = (resellerServiceAreaId: ResellerServiceArea[]) => {
+    ls.set<ResellerServiceArea[]>(STORAGE_KEYS.LOCATION, resellerServiceAreaId, { encrypt: true })
+  }
+
+  const getLocations = (): Locations => {
+    return ls.get<Locations>(STORAGE_KEYS.LOCATION, {
+      encrypt: true,
+    })
   }
 
   const getRoleDisplayName = (): string => {
@@ -135,7 +160,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       const userProfile = await getAdminUserProfile()
 
       setUserId(user.uid)
-      setRole(userProfile.role.toLocaleLowerCase())
+      setLocations(userProfile.resellerServiceAreas)
+      setRole(userProfile.role.toLocaleLowerCase() as Role)
       setPrivileges(userProfile.privileges)
     } catch (error: any) {
       const message = errorMessage(error.code as string)
@@ -189,6 +215,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getRemoteConfig,
         setPrivileges,
         getPrivileges,
+        setLocations,
+        getLocations,
       }}
     >
       {children}
