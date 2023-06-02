@@ -119,7 +119,7 @@ export default function StaffProfileAdd(): JSX.Element {
           .min(8)
           .required(t('authentication.error.passwordRequired'))
           .matches(
-            /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
+            /(?=.{8,})(?=.*?[^\w\s])(?=.*?'\d')(?=.*?[A-Z]).*?[a-z].*/,
             t('authentication.error.passwordCondition')
           ),
         firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
@@ -148,7 +148,7 @@ export default function StaffProfileAdd(): JSX.Element {
               success: t('adminUser.createDialog.success'),
               error: (error) =>
                 t('adminUser.createDialog.failed', {
-                  error: error.message || error,
+                  error: error.message ?? error,
                 }),
             }
           )
@@ -170,7 +170,7 @@ export default function StaffProfileAdd(): JSX.Element {
     <CheckBoxIcon className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
   )
 
-  const setLocationSelect = (locationData: LocationResponse) => {
+  const setLocationSelect = (locationDataResponse: LocationResponse) => {
     const resultDataSelect = []
     const defultLocation = {
       value: '00000000-0000-0000-0000-000000000000',
@@ -178,12 +178,12 @@ export default function StaffProfileAdd(): JSX.Element {
     }
     resultDataSelect.push(defultLocation)
 
-    locationData.locations.forEach((location) => {
-      const locationData = {
-        value: location.id,
-        label: location.areaNameEn,
+    locationDataResponse.locations.forEach((locationR) => {
+      const locationSet = {
+        value: locationR.id,
+        label: locationR.areaNameEn,
       }
-      resultDataSelect.push(locationData)
+      resultDataSelect.push(locationSet)
     })
     resultDataSelect.sort((a, b) => {
       const nameA = a.label.toLowerCase()
@@ -232,7 +232,7 @@ export default function StaffProfileAdd(): JSX.Element {
   }
   const handleChangeRole = (roleSelect: string) => {
     if (
-      roleSelect.toLowerCase() === ROLES.BRANCH_MANAGER ||
+      roleSelect.toLowerCase() === ROLES.BRANCH_MANAGER ??
       roleSelect.toLowerCase() === ROLES.BRANCH_OFFICER
     ) {
       setSelectLocation([])
@@ -242,6 +242,20 @@ export default function StaffProfileAdd(): JSX.Element {
       setSelectLocation([])
       setAllLocationSelected()
     }
+  }
+  const checkSelectReturnColor = (optionValue: SelectOption, checkSelect: boolean) => {
+    let classColor = classes.checkBoxLightGrey
+    if (selectLocation.length > 0) {
+      if (selectLocation[0].label === 'All Location') {
+        if (checkSelect && optionValue.label === 'All Location') {
+          classColor = ''
+        }
+      } else {
+        classColor = ''
+      }
+    }
+
+    return classColor
   }
   return (
     <Page>
@@ -313,12 +327,12 @@ export default function StaffProfileAdd(): JSX.Element {
               <Autocomplete
                 autoHighlight
                 id="staff-profile-add__role_select"
-                options={rolesList || []}
+                options={rolesList ?? []}
                 getOptionLabel={(option) =>
                   i18n.language === 'en' ? option.displayNameEn : option.displayNameTh
                 }
                 isOptionEqualToValue={(option, value) =>
-                  option.name === value.name || value.name === ''
+                  option.name === value.name ?? value.name === ''
                 }
                 renderInput={(params) => {
                   return (
@@ -379,17 +393,7 @@ export default function StaffProfileAdd(): JSX.Element {
                   <li {...props}>
                     <Checkbox
                       icon={icon}
-                      className={
-                        selectLocation.length > 0 &&
-                        selectLocation[0].label === 'All Location' &&
-                        selected
-                          ? ''
-                          : selectLocation.length > 0 &&
-                            selectLocation[0].label !== 'All Location' &&
-                            selected
-                          ? ''
-                          : classes.checkBoxLightGrey
-                      }
+                      className={checkSelectReturnColor(option, selected)}
                       checkedIcon={checkedIcon}
                       checked={
                         selectLocation.length > 0 && selectLocation[0].label === 'All Location'
@@ -419,7 +423,7 @@ export default function StaffProfileAdd(): JSX.Element {
                     />
                   ))
                 }
-                value={selectLocation || []}
+                value={selectLocation ?? []}
                 onChange={(_event, value) => {
                   handleAutocompleteChange(value)
                 }}

@@ -262,17 +262,6 @@ export default function LeadManagementDetail() {
     { label: 'Registered Date', key: 'createdDate' },
   ]
 
-  // const formik = useFormik({
-  //   initialValues: {
-  //     searchType: '',
-  //     searchValue: '',
-  //   },
-  //   enableReinitialize: true,
-  //   onSubmit: () => {
-  //     setPage(1)
-  //   },
-  // })
-
   const handleSort = (key: string) => {
     const newOrderBy = key
     let newSortOrder: 'asc' | 'desc' = 'asc'
