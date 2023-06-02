@@ -13,6 +13,7 @@ import { getLocationList } from 'services/web-bff/location'
 interface LocationSwitcherProps {
   onLocationChanged: (location: ResellerServiceArea | null) => void
   currentLocationId?: string | null
+  allowedLocationList?: ResellerServiceArea[] | null
 }
 interface SelectOption {
   label: string
@@ -24,6 +25,7 @@ export const allLocationId = '00000000-0000-0000-0000-000000000000'
 export default function LocationSwitcher({
   onLocationChanged,
   currentLocationId,
+  allowedLocationList,
 }: LocationSwitcherProps): JSX.Element {
   const useStyles = makeStyles({
     paddingLocation: {
@@ -40,11 +42,28 @@ export default function LocationSwitcher({
   const { t, i18n } = useTranslation()
   const { getResellerServiceAreas } = useAuth()
 
+  const { data } = useQuery('get-location', () => getLocationList(), {
+    refetchOnWindowFocus: false,
+  })
+
   const userServiceAreas = getResellerServiceAreas()
-  const allLocationSelectOption = {
-    label: t('dashboard.allLocation'),
-    value: allLocationId,
+  const getDefaultLocation = () => {
+    if (currentLocationId !== allLocationId) {
+      const current = data?.locations.find((location) => location.id === currentLocationId)
+      if (current) {
+        return {
+          label: current[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn'],
+          value: current?.id,
+        }
+      }
+    }
+    return {
+      label: t('dashboard.allLocation'),
+      value: allLocationId,
+    }
   }
+
+  const allLocationSelectOption = getDefaultLocation()
 
   function mapLocationSelectOptionFields(location: ResellerServiceArea | null | undefined) {
     if (!location) {
@@ -72,10 +91,15 @@ export default function LocationSwitcher({
   }
 
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-  const { data } = useQuery('get-location', () => getLocationList(), {
-    refetchOnWindowFocus: false,
-  })
-  const availableLocations = data?.locations || []
+
+  const getAvailableLocations = (): ResellerServiceArea[] => {
+    if (allowedLocationList && allowedLocationList[0].id !== allLocationId) {
+      return allowedLocationList
+    }
+    return data?.locations || []
+  }
+
+  const availableLocations = getAvailableLocations()
 
   const onSelectChanged = (_event: React.SyntheticEvent, value: any) => {
     const option = value as SelectOption
@@ -108,12 +132,12 @@ export default function LocationSwitcher({
             {...params}
             label={t('dashboard.location')}
             variant="outlined"
-            placeholder={t('dashboard.allLocation')}
+            placeholder=""
           />
         )
       }}
       isOptionEqualToValue={(option, value) =>
-        option.value === value.value || value.value === 'all'
+        option.value === value.value || value.value === allLocationId
       }
       onChange={onSelectChanged}
       defaultValue={allLocationSelectOption}

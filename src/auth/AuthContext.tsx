@@ -19,7 +19,7 @@ export const STORAGE_KEYS = {
 
 type Text = string | null | undefined
 type ArrayText = string[] | null | undefined
-type Locations = ResellerServiceArea[] | null | undefined
+type ResellerServices = ResellerServiceArea[] | null | undefined
 
 interface AuthProviderProps {
   fbase: Firebase
@@ -45,11 +45,9 @@ interface AuthProps {
   getUserId: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
   setPrivileges: (privilege: string[]) => void
-  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
-  getResellerServiceAreas: () => ResellerServiceArea[] | null | undefined
   getPrivileges: () => ArrayText
-  setLocations: (resellerServiceAreaId: ResellerServiceArea[]) => void
-  getLocations: () => Locations
+  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
+  getResellerServiceAreas: () => ResellerServices
 }
 
 const Auth = createContext<AuthProps>({
@@ -71,8 +69,6 @@ const Auth = createContext<AuthProps>({
   getPrivileges: () => undefined,
   setResellerServiceAreas: (_areas: ResellerServiceArea[]) => undefined,
   getResellerServiceAreas: () => undefined,
-  setLocations: (_resellerServiceAreaId: ResellerServiceArea[]) => undefined,
-  getLocations: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
@@ -128,22 +124,12 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     return ls.get<ArrayText>('PRIVILEGES', { encrypt: true })
   }
 
-  const setLocations = (resellerServiceAreaId: ResellerServiceArea[]) => {
-    ls.set<ResellerServiceArea[]>(STORAGE_KEYS.LOCATION, resellerServiceAreaId, { encrypt: true })
-  }
-
-  const getLocations = (): Locations => {
-    return ls.get<Locations>(STORAGE_KEYS.LOCATION, {
-      encrypt: true,
-    })
-  }
-
   const setResellerServiceAreas = (areas: ResellerServiceArea[]) => {
     ls.set<ResellerServiceArea[]>(STORAGE_KEYS.RESELLER_SERVICE_AREA, areas)
   }
 
-  const getResellerServiceAreas = (): ResellerServiceArea[] | null | undefined => {
-    return ls.get<ResellerServiceArea[] | null | undefined>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+  const getResellerServiceAreas = (): ResellerServices => {
+    return ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
   }
 
   const getRoleDisplayName = (): string => {
@@ -168,7 +154,6 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       const userProfile = await getAdminUserProfile()
 
       setUserId(user.uid)
-      setLocations(userProfile.resellerServiceAreas)
       setRole(userProfile.role.toLocaleLowerCase())
       setPrivileges(userProfile.privileges)
       setResellerServiceAreas(userProfile.resellerServiceAreas)
@@ -226,8 +211,6 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getPrivileges,
         setResellerServiceAreas,
         getResellerServiceAreas,
-        setLocations,
-        getLocations,
       }}
     >
       {children}
