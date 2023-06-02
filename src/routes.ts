@@ -203,6 +203,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.CUSTOMER_SUPPORT,
       ROLES.PRODUCT_SUPPORT,
+      ROLES.CENTRE_OPERATION,
     ],
   },
   {

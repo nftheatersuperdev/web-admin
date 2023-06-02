@@ -9,12 +9,14 @@ export enum AdminUserRole {
   PRODUCT_SUPPORT = 'PRODUCT_SUPPORT',
   IT_ADMIN = 'IT_ADMIN',
   CENTRE_OPERATION = 'CENTRE_OPERATION',
+  BRANCH_MANAGER = 'BRANCH_MANAGER',
+  BRANCH_OFFICER = 'BRANCH_OFFICER',
 }
 
 export interface ResellerServiceArea {
   id: string
-  areaNameEn: string
   areaNameTh: string
+  areaNameEn: string
 }
 
 export interface AdminUser {
@@ -25,12 +27,11 @@ export interface AdminUser {
   lastName: string
   role: AdminUserRole
   privileges: string[]
-  resellerServiceAreas: []
+  resellerServiceAreas: ResellerServiceArea[]
   isActive: false
   createdDate: string
   updatedDate: string
 }
-
 export interface AdminUserById {
   id: string
 }
@@ -74,7 +75,8 @@ export interface CreateNewAdminUserProps {
   firebaseToken: string
   firstname: string
   lastname: string
-  role: AdminUserRole
+  role: string
+  resellerServiceAreaIds: string[]
 }
 
 export interface AdminUsersResponse extends Response {
@@ -94,6 +96,7 @@ export interface UpdateAdminUserProps {
   lastname: string | null
   email: string | null
   role: string
+  resellerServiceAreaIds: string[]
 }
 
 export interface UpdateAdminUserResponse extends Response {
