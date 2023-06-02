@@ -112,7 +112,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     return ls.get<Text>(STORAGE_KEYS.ID)
   }
 
-  const setRole = (role: Role) => {
+  const setRole = (role: string | Role) => {
     ls.set<string>(STORAGE_KEYS.ROLE, role, { encrypt: true })
   }
 
@@ -161,7 +161,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
 
       setUserId(user.uid)
       setLocations(userProfile.resellerServiceAreas)
-      setRole(userProfile.role.toLocaleLowerCase() as Role)
+      setRole(userProfile.role.toLocaleLowerCase())
       setPrivileges(userProfile.privileges)
     } catch (error: any) {
       const message = errorMessage(error.code as string)
