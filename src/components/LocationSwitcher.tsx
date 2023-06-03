@@ -14,6 +14,7 @@ interface LocationSwitcherProps {
   onLocationChanged: (location: ResellerServiceArea | null) => void
   currentLocationId?: string | null
   allowedLocationList?: ResellerServiceArea[] | null
+  className?: string
 }
 interface SelectOption {
   label: string
@@ -26,6 +27,7 @@ export default function LocationSwitcher({
   onLocationChanged,
   currentLocationId,
   allowedLocationList,
+  className,
 }: LocationSwitcherProps): JSX.Element {
   const useStyles = makeStyles({
     paddingLocation: {
@@ -123,7 +125,7 @@ export default function LocationSwitcher({
     <Autocomplete
       autoHighlight
       id="search_location_list"
-      className={classes.autoCompleteSelect}
+      className={className ? className : classes.autoCompleteSelect}
       options={generateSelectOptions(availableLocations)}
       getOptionLabel={(option) => option.label}
       renderInput={(params) => {

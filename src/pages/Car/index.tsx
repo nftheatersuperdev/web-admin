@@ -27,20 +27,18 @@ import {
 import { Search as SearchIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-// import { useAuth } from 'auth/AuthContext'
-// import { ROLES, hasAllowedRole } from 'auth/roles'
+import { useAuth } from 'auth/AuthContext'
 import { CSVLink } from 'react-csv'
 import { formatDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/car'
-import { CarListFilterRequest } from 'services/web-bff/car.type'
+import { CarListFilterRequest, ResellerServiceArea } from 'services/web-bff/car.type'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
 import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
-import { LocationResponse } from 'services/web-bff/location.type'
 import { getCarOwnerList } from 'services/web-bff/car-owner'
 import { getReSellerList } from 'services/web-bff/re-seller-area'
-import { getLocationList } from 'services/web-bff/location'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import {
   getCarStatusOnlyUsedInBackendOptions,
@@ -53,7 +51,6 @@ import {
   CarCsv,
   FilterSearch,
   getResellerOptions,
-  getLocationOptions,
 } from './utils'
 import { useStyles } from './styles'
 
@@ -65,6 +62,20 @@ export default function Car(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
   const { t } = useTranslation()
+  const { getResellerServiceAreas } = useAuth()
+  const userServiceAreas = getResellerServiceAreas()
+  const userServiceAreaId =
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
+  const setDefaultLocation = () => {
+    if (resellerId !== allLocationId) {
+      return resellerId ?? userServiceAreaId
+    }
+    return ''
+  }
+  const defaultLocation = setDefaultLocation()
+  const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>(defaultLocation)
 
   const removeQueryParams = () => {
     if (queryString.has('resellerServiceAreaId')) {
@@ -78,21 +89,10 @@ export default function Car(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
   const defaultFilter: CarListFilterRequest = {
-    resellerServiceAreaId: resellerId,
+    resellerServiceAreaId,
   } as CarListFilterRequest
   const [filter, setFilter] = useState<CarListFilterRequest>({ ...defaultFilter })
   const currentPage = page + 1
-
-  // TODO: In the future will be support role permission
-  // const { getRole } = useAuth()
-  // const currentUserRole = getRole()
-  // const isAllowToExport = hasAllowedRole(currentUserRole, [
-  //   ROLES.SUPER_ADMIN,
-  //   ROLES.ADMIN,
-  //   ROLES.OPERATION,
-  //   ROLES.MARKETING,
-  //   ROLES.PRODUCT_SUPPORT,
-  // ])
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -123,10 +123,6 @@ export default function Car(): JSX.Element {
 
   const { data: resellers, isFetched: isFetchedReseller } = useQuery('get-car-reseller', () =>
     getReSellerList()
-  )
-
-  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
-    getLocationList()
   )
 
   const cars =
@@ -185,17 +181,23 @@ export default function Car(): JSX.Element {
       setSelectedSearch(value)
       setSelectedOptionValue(null)
     } else {
-      setFilter({})
-      setSelectedSearch(null)
-      setSelectedOptionValue(null)
-      setSelectedLocation(null)
-      formik.setFieldValue('searchLocation', '')
-      formik.setFieldValue('searchType', '')
-      formik.setFieldValue('searchInput', '')
-
       if (queryString.has('resellerServiceAreaId')) {
         removeQueryParams()
       }
+
+      if (userServiceAreas?.find((area) => area.id === allLocationId)) {
+        setResellerServiceAreaId(allLocationId)
+        setFilter({})
+      } else {
+        setResellerServiceAreaId(userServiceAreaId)
+        formik.setFieldValue('searchLocation', userServiceAreaId)
+        formik.handleSubmit()
+      }
+
+      setSelectedSearch(null)
+      setSelectedOptionValue(null)
+      formik.setFieldValue('searchType', '')
+      formik.setFieldValue('searchInput', '')
     }
     setSearchValue('')
   }
@@ -211,12 +213,9 @@ export default function Car(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
-      if (defaultResellerId) {
-        setSelectedLocation(defaultResellerId)
-        formik.setFieldValue('searchLocation', defaultResellerId.value)
-      }
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
+      formik.setFieldValue('searchLocation', resellerServiceAreaId ?? '')
       window.setTimeout(() => {
         if (searchText.length >= 2) {
           formik.handleSubmit()
@@ -235,14 +234,10 @@ export default function Car(): JSX.Element {
       return
     }
 
-    if (defaultResellerId) {
-      setSelectedLocation(defaultResellerId)
-      formik.setFieldValue('searchLocation', defaultResellerId.value)
-    }
-
     formik.setFieldValue('searchType', selectedSearch?.value)
     const value = isDropdown && searchText ? searchText : searchValue
     formik.setFieldValue('searchInput', value)
+    formik.setFieldValue('searchLocation', resellerServiceAreaId ?? '')
     formik.handleSubmit()
   }
 
@@ -251,35 +246,6 @@ export default function Car(): JSX.Element {
   const resellerOptions = getResellerOptions(resellerData)
 
   // == location ==
-  const [locationData, setLocationData] = useState<LocationResponse | null>()
-  const locationOptions = getLocationOptions(locationData)
-  const defaultResellerId =
-    locationOptions.find((location) => location.value === resellerId) || null
-  const defaultLocation = defaultResellerId || {
-    label: t('car.allLocation'),
-    value: 'all',
-  }
-  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-  const onSetSelectedLocation = (option: SelectOption | null) => {
-    if (option) {
-      if (queryString.has('resellerServiceAreaId')) {
-        removeQueryParams()
-      }
-      setSelectedLocation(option)
-      formik.setFieldValue('searchLocation', option.value)
-      formik.handleSubmit()
-    } else {
-      formik.setFieldValue('searchLocation', '')
-      formik.handleSubmit()
-      if (queryString.has('resellerServiceAreaId')) {
-        removeQueryParams()
-      }
-      setSelectedLocation({
-        label: t('car.allLocation'),
-        value: 'all',
-      })
-    }
-  }
 
   const formik = useFormik({
     initialValues: {
@@ -507,12 +473,6 @@ export default function Car(): JSX.Element {
     }
   }, [resellers, isFetchedReseller])
 
-  useEffect(() => {
-    if (isFetchedLocation && locations) {
-      setLocationData(locations)
-    }
-  }, [locations, isFetchedLocation])
-
   const renderSearchStatus = () => (
     <Autocomplete
       autoHighlight
@@ -619,8 +579,8 @@ export default function Car(): JSX.Element {
             <strong>{t('car.carList')}</strong>
           </Typography>
         </Grid>
-        <Grid className={classes.gridSearch} container spacing={3}>
-          <Grid item xs={9} sm={2}>
+        <Grid className={classes.gridSearch} container spacing={1}>
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             <Autocomplete
               autoHighlight
               id="search_select_list"
@@ -638,38 +598,29 @@ export default function Car(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item xs={9} sm={2}>
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             {renderComponentBasedOnSelectedSearch()}
           </Grid>
-          <Grid item xs={9} sm={2}>
-            <Autocomplete
-              autoHighlight
-              id="search_location_list"
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
+            <LocationSwitcher
               className={classes.autoCompleteSelect}
-              options={locationOptions}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label={t('car.location')}
-                    variant="outlined"
-                    placeholder={t('car.allLocation')}
-                  />
-                )
-              }}
-              isOptionEqualToValue={(option, value) =>
-                option.value === value.value || value.value === 'all'
-              }
-              value={selectedLocation || defaultLocation}
-              defaultValue={selectedLocation || defaultLocation}
-              onChange={(_e, value) => {
-                onSetSelectedLocation(value)
+              currentLocationId={resellerServiceAreaId}
+              allowedLocationList={userServiceAreas}
+              onLocationChanged={(location) => {
+                if (location) {
+                  formik.setFieldValue('searchLocation', location.id)
+                  formik.handleSubmit()
+                  return setResellerServiceAreaId(location.id)
+                }
+                formik.setFieldValue('searchLocation', userServiceAreaId)
+                formik.handleSubmit()
+                return setResellerServiceAreaId(userServiceAreaId)
               }}
             />
           </Grid>
-          <Grid item xs={9} sm={4} />
-          <Grid item xs={9} sm={2} className={classes.gridExport}>
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2} />
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2} />
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2} className={classes.gridExport}>
             <Button
               id="car_csv_button"
               variant="contained"
