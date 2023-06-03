@@ -4,6 +4,7 @@
 import React, { useEffect, useState, useMemo, Fragment } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from 'auth/AuthContext'
 import { useQuery } from 'react-query'
 import {
   Button,
@@ -26,14 +27,6 @@ import {
   CircularProgress,
   Paper,
 } from '@mui/material'
-// import {
-//   GridColDef,
-//   GridPageChangeParams,
-//   GridToolbarColumnsButton,
-//   GridToolbarContainer,
-//   GridToolbarDensitySelector,
-// } from '@material-ui/data-grid'
-// import Pagination from '@mui/lab/Pagination'
 import { makeStyles } from '@mui/styles'
 import { Search as SearchIcon } from '@mui/icons-material'
 import { CSVLink } from 'react-csv'
@@ -41,21 +34,12 @@ import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
-// import NoResultCard from 'components/NoResultCard'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-// import DataGridLocale from 'components/DataGridLocale'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
-import { getLocationList } from 'services/web-bff/location'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
-import { getLocationOptions, SelectOption } from './utils'
-
-// interface CarActivityParams {
-//   plate: string
-//   brand: string
-//   model: string
-//   color: string
-// }
+import { ResellerServiceArea } from 'services/web-bff/car.type'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -210,7 +194,6 @@ const useQueryString = () => {
 }
 
 export default function CarActivity(): JSX.Element {
-  // const { id: carId } = useParams<CarActivityParams>()
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
@@ -222,13 +205,23 @@ export default function CarActivity(): JSX.Element {
     location: useQueryString().get('resellerServiceAreaId'),
   }
 
+  const { getResellerServiceAreas } = useAuth()
+  const userServiceAreas = getResellerServiceAreas()
+  const userServiceAreaId =
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
+  const defaultLocation = userServiceAreaId !== allLocationId ? userServiceAreaId : ''
+  const [resellerServiceAreaId, setResellerServiceAreaId] =
+    useState<string | undefined>(defaultLocation)
+
   const conditionConfigs = {
     minimumToFilterPlateNumber: 2,
   }
   const defaultSelectList = {
     brandAll: { id: 'all', name: t('carActivity.brand.emptyValue'), carModels: [] },
     modelEmpty: {
-      id: 'empty',
+      id: 'all',
       name: `${t('carActivity.model.emptyValue')}`,
       subModelName: '',
       year: 0,
@@ -241,7 +234,7 @@ export default function CarActivity(): JSX.Element {
       year: 0,
       carSkus: [],
     },
-    colorEmpty: { id: 'empty', color: `${t('carActivity.color.emptyValue')}`, cars: [] },
+    colorEmpty: { id: 'all', color: `${t('carActivity.color.emptyValue')}`, cars: [] },
     colorAll: { id: 'all', color: t('all'), cars: [] },
   }
 
@@ -256,7 +249,7 @@ export default function CarActivity(): JSX.Element {
   const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
   const [filterModel, setFilterModel] = useState<string>(qs.model || '')
   const [filterColor, setFilterColor] = useState<string>(qs.color || '')
-  const [filterLocation, setFilterLocation] = useState<string>(qs.location || '')
+  const [filterLocation, setFilterLocation] = useState<string | undefined>(resellerServiceAreaId)
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
@@ -298,24 +291,6 @@ export default function CarActivity(): JSX.Element {
       }
     )
   )
-  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
-    getLocationList()
-  )
-  const locationOptions = getLocationOptions(locations)
-  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-  const defaultLocation = {
-    label: t('carActivity.location.all'),
-    value: 'all',
-  }
-  const onSetSelectedLocation = (option: SelectOption | null) => {
-    if (option) {
-      setFilterLocation(option.value)
-      setSelectedLocation(option)
-    } else {
-      setFilterLocation('')
-      setSelectedLocation(defaultLocation)
-    }
-  }
 
   const checkAndRenderValue = (value: string) => {
     if (!value) {
@@ -403,11 +378,11 @@ export default function CarActivity(): JSX.Element {
     }
 
     if (
-      isFetchedLocation &&
       isFetchedBrands &&
       isFetchedActivities &&
       carBrands &&
-      carBrands.length >= 1
+      carBrands.length >= 1 &&
+      resellerServiceAreaId
     ) {
       setFilterPlate(qs.plate || '')
 
@@ -425,17 +400,13 @@ export default function CarActivity(): JSX.Element {
       setFilterColor(color?.id || '')
       setFilterColorObject(color)
 
-      const loc = locations?.locations.find((location) => location.id === qs.location)
-      setFilterLocation(loc?.id || '')
-      const locOption: SelectOption = {
-        label: loc?.areaNameEn || '',
-        value: loc?.id || '',
-      }
-      setSelectedLocation(locOption)
-
       refetch()
     }
   }, [])
+
+  useEffect(() => {
+    setFilterLocation(resellerServiceAreaId || '')
+  }, [resellerServiceAreaId])
 
   /**
    * Managing the pagination variables that will send to the API.
@@ -487,8 +458,15 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
-    setFilterLocation('')
-    setSelectedLocation(null)
+
+    if (userServiceAreas?.find((area) => area.id === allLocationId)) {
+      setResellerServiceAreaId(allLocationId)
+      setFilterLocation('')
+    } else {
+      setResellerServiceAreaId(userServiceAreaId)
+      setFilterLocation(userServiceAreaId)
+    }
+
     setResetFilters(true)
   }
 
@@ -639,6 +617,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id || value.id === defaultSelectList.brandAll.id
+                  }
                   value={filterBrandObject || defaultSelectList.brandAll}
                   defaultValue={filterBrandObject || defaultSelectList.brandAll}
                   onChange={(_event, value) => handleOnBrandChange(value)}
@@ -667,6 +648,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id || value.id === defaultSelectList.modelEmpty.id
+                  }
                   value={filterModelObject || defaultSelectList.modelEmpty}
                   defaultValue={filterModelObject || defaultSelectList.modelEmpty}
                   onChange={(_event, value) => handleOnModelChange(value)}
@@ -695,6 +679,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id || value.id === defaultSelectList.colorEmpty.id
+                  }
                   value={filterColorObject || defaultSelectList.colorEmpty}
                   defaultValue={filterColorObject || defaultSelectList.colorEmpty}
                   onChange={(_event, value) => handleOnColorChange(value)}
@@ -742,26 +729,16 @@ export default function CarActivity(): JSX.Element {
                 lg={2}
                 xl={2}
               >
-                <Autocomplete
-                  autoHighlight
-                  id="location-select-list"
+                <LocationSwitcher
                   className={classes.autoCompleteSelect}
-                  options={locationOptions}
-                  getOptionLabel={(option) => option.label}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label={t('car.location')}
-                      variant="outlined"
-                      placeholder={t('car.allLocation')}
-                    />
-                  )}
-                  isOptionEqualToValue={(option, value) =>
-                    option.value === value.value || value.value === 'all'
-                  }
-                  value={selectedLocation || defaultLocation}
-                  defaultValue={selectedLocation || defaultLocation}
-                  onChange={(_event, value) => onSetSelectedLocation(value)}
+                  currentLocationId={resellerServiceAreaId}
+                  allowedLocationList={userServiceAreas}
+                  onLocationChanged={(location) => {
+                    if (location) {
+                      return setResellerServiceAreaId(location.id)
+                    }
+                    return setResellerServiceAreaId(userServiceAreaId)
+                  }}
                 />
               </Grid>
               <Grid
