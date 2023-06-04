@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from 'auth/AuthContext'
 import { CSVLink } from 'react-csv'
 import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
@@ -39,16 +40,15 @@ import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { useHistory } from 'react-router-dom'
 import { getAvailableListBFF } from 'services/web-bff/car'
-import { CarAvailableListFilterRequest } from 'services/web-bff/car.type'
+import { CarAvailableListFilterRequest, ResellerServiceArea } from 'services/web-bff/car.type'
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
 import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
-import { LocationResponse } from 'services/web-bff/location.type'
 import { getCarOwnerList } from 'services/web-bff/car-owner'
 import { getReSellerList } from 'services/web-bff/re-seller-area'
-import { getLocationList } from 'services/web-bff/location'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { getSearchTypeList } from './utils'
 
 dayjs.extend(dayjsUtc)
@@ -82,6 +82,11 @@ const CsvButton = styled(CSVLink)`
 
 export default function CarAvailability(): JSX.Element {
   const useStyles = makeStyles(() => ({
+    autoCompleteSelect: {
+      '& fieldSet': {
+        borderColor: '#424E63',
+      },
+    },
     datePickerFromTo: {
       '&& .MuiOutlinedInput-input': {
         padding: '18.5px 14px',
@@ -160,6 +165,15 @@ export default function CarAvailability(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
   const classes = useStyles()
+  const { getResellerServiceAreas } = useAuth()
+  const userServiceAreas = getResellerServiceAreas()
+  const userServiceAreaId =
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
+  const defaultLocation = userServiceAreaId !== allLocationId ? userServiceAreaId : ''
+  const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>(defaultLocation)
+
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
   const [selectedToDate, setSelectedToDate] = useState(initSelectedToDate)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
@@ -170,7 +184,6 @@ export default function CarAvailability(): JSX.Element {
   const timeoutIdRef = useRef<number | null>(null)
   const [ownerData, setOwnerData] = useState<CarOwnerResponse | null>()
   const [reSellerData, setReSellerData] = useState<ReSellerResponse | null>()
-  const [locationData, setLocationData] = useState<LocationResponse | null>()
 
   const generateFilterDates = () => {
     return {
@@ -179,7 +192,11 @@ export default function CarAvailability(): JSX.Element {
     }
   }
 
-  const [filter, setFilter] = useState<CarAvailableListFilterRequest>(generateFilterDates())
+  const defaultFilter: CarAvailableListFilterRequest = {
+    resellerServiceAreaId: defaultLocation,
+    ...generateFilterDates(),
+  } as CarAvailableListFilterRequest
+  const [filter, setFilter] = useState<CarAvailableListFilterRequest>(defaultFilter)
   const {
     data: carData,
     refetch,
@@ -203,12 +220,6 @@ export default function CarAvailability(): JSX.Element {
     isFetching: isFetchingResellers,
   } = useQuery('get-car-reseller', () => getReSellerList())
 
-  const {
-    data: loactions,
-    isFetched: isFetchedLoactions,
-    isFetching: isFetchingLoactions,
-  } = useQuery('get-location', () => getLocationList())
-
   useEffect(() => {
     refetch()
   }, [filter, page, pageSize, refetch])
@@ -223,9 +234,6 @@ export default function CarAvailability(): JSX.Element {
     if (isFetchedResellers && carResellers) {
       setReSellerData(carResellers)
     }
-    if (isFetchedLoactions && loactions) {
-      setLocationData(loactions)
-    }
   }, [
     selectedFromDate,
     selectedToDate,
@@ -233,8 +241,6 @@ export default function CarAvailability(): JSX.Element {
     isFetchedOwners,
     carResellers,
     isFetchedResellers,
-    isFetchedLoactions,
-    loactions,
   ])
 
   const conditionConfigs = {
@@ -331,7 +337,15 @@ export default function CarAvailability(): JSX.Element {
     setFilterSearchField('')
     setFilterSearchFieldError('')
     formik.setFieldValue('searchType', '')
-    formik.setFieldValue('selectLocation', 'all')
+
+    if (userServiceAreas?.find((area) => area.id === allLocationId)) {
+      formik.setFieldValue('selectLocation', 'all')
+      setResellerServiceAreaId(allLocationId)
+    } else {
+      formik.setFieldValue('selectLocation', userServiceAreaId)
+      setResellerServiceAreaId(userServiceAreaId)
+    }
+
     formik.setFieldValue('selectOwner', 'all')
     formik.setFieldValue('selectReSeller', 'all')
     formik.handleSubmit()
@@ -652,41 +666,21 @@ export default function CarAvailability(): JSX.Element {
                 />
               </Grid>
               <Grid item xs={2}>
-                <TextField
-                  disabled={isFetchingLoactions}
-                  fullWidth
-                  select
-                  className={classes.locationSelect}
-                  label={t('carAvailability.searchLocation')}
-                  variant="outlined"
-                  id="car_availability__searchlocation_input"
-                  value={formik.values.selectLocation}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {formik.values.selectLocation !== 'all' && !isFetching && (
-                          <CloseOutlined
-                            className={classes.paddingRigthBtnClear}
-                            onClick={handleClear}
-                          />
-                        )}
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={(event) => {
-                    formik.setFieldValue('selectLocation', event.target.value)
+                <LocationSwitcher
+                  className={classes.autoCompleteSelect}
+                  currentLocationId={resellerServiceAreaId}
+                  allowedLocationList={userServiceAreas}
+                  onLocationChanged={(location) => {
+                    if (location) {
+                      formik.setFieldValue('selectLocation', location.id)
+                      formik.handleSubmit()
+                      return setResellerServiceAreaId(location.id)
+                    }
+                    formik.setFieldValue('selectLocation', defaultLocation)
                     formik.handleSubmit()
+                    return setResellerServiceAreaId(defaultLocation)
                   }}
-                >
-                  <MenuItem className={classes.hidenField} key="all" value="all">
-                    {t('carAvailability.defultSelect.allLocation')}
-                  </MenuItem>
-                  {locationData?.locations.map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {item.areaNameEn}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                />
               </Grid>
               <Grid item xs={1}>
                 <ButtonExport
