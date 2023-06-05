@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
 import { Autocomplete, TextField } from '@mui/material'
@@ -74,8 +73,7 @@ export default function LocationSwitcher({
   })
   const availableLocations = data?.locations || []
 
-  const onSelectChanged = (_event: React.SyntheticEvent, value: any) => {
-    const option = value as SelectOption
+  const onSelectChanged = (option: SelectOption) => {
     setSelectedLocation(option)
     onLocationChanged(
       availableLocations.find((availableLocation) => availableLocation.id === option?.value) || null
@@ -112,7 +110,7 @@ export default function LocationSwitcher({
       isOptionEqualToValue={(option, value) =>
         option.value === value.value || value.value === 'all'
       }
-      onChange={onSelectChanged}
+      onChange={(_event, option) => onSelectChanged(option as SelectOption)}
       defaultValue={allLocationSelectOption}
       value={selectedLocation || allLocationSelectOption}
     />
