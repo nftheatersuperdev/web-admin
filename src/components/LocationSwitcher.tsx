@@ -26,9 +26,6 @@ export default function LocationSwitcher({
   currentLocationId,
 }: LocationSwitcherProps): JSX.Element {
   const useStyles = makeStyles({
-    paddingLocation: {
-      paddingTop: '18px',
-    },
     autoCompleteSelect: {
       marginTop: '10px',
       '& fieldSet': {
