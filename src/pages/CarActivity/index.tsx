@@ -460,7 +460,7 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
-    setFilterLocation('')
+    setFilterLocation(userServiceAreaId)
     setResetFilters(true)
   }
 
