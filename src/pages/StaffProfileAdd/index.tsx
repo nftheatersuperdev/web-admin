@@ -236,6 +236,7 @@ export default function StaffProfileAdd(): JSX.Element {
       roleSelect.toLowerCase() === ROLES.BRANCH_OFFICER
     ) {
       setSelectLocation([])
+      setFieldValue('resellerServiceAreaIds', '')
       setDisableLocation(false)
     } else {
       setDisableLocation(true)
