@@ -1,13 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
-import {
-  Grid,
-  Typography,
-  Autocomplete,
-  TextField,
-  CircularProgress,
-  Backdrop,
-} from '@mui/material'
+import { Grid, Typography, CircularProgress, Backdrop } from '@mui/material'
 import {
   PeopleOutlined as PeopleIcon,
   DirectionsCar as CarIcon,
@@ -17,20 +11,18 @@ import {
   HowToReg as ApprovedIcon,
   CallMissed as RejectedIcon,
 } from '@mui/icons-material'
-import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { formatDate } from 'utils'
 import { ROUTE_PATHS } from 'routes'
 import qs from 'qs'
 import { useQuery } from 'react-query'
-import { LocationResponse } from 'services/web-bff/location.type'
+import { useAuth } from 'auth/AuthContext'
 import { getInformations } from 'services/web-bff/dashboard'
-import { getLocationList } from 'services/web-bff/location'
 import { Page } from 'layout/LayoutRoute'
 import { CardStatus, DetailLink } from 'components/CardStatus'
 import CardQuickLink from 'components/CardQuickLink'
-import { SelectOption, getLocationOptions } from './utils'
-import { useStyles } from './styles'
+import { ResellerServiceArea } from 'services/web-bff/car.type'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 
 const quickLinks = [
   {
@@ -78,16 +70,28 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
-  const classes = useStyles()
   const { t } = useTranslation()
+  const { getResellerServiceAreas } = useAuth()
+  const userServiceAreas = getResellerServiceAreas()
   const todayLowerUpper = formatDate(Date(), 'YYYY-MM-DD')
+  const userServiceAreaId =
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
 
-  const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>()
+  const [resellerServiceAreaId, setResellerServiceAreaId] =
+    useState<string | null>(userServiceAreaId)
   const {
     data: dataInformations,
     refetch,
     isFetching,
-  } = useQuery('dashboard-informations', () => getInformations(resellerServiceAreaId))
+  } = useQuery(
+    'dashboard-informations',
+    () => getInformations(resellerServiceAreaId || userServiceAreaId),
+    {
+      refetchOnWindowFocus: false,
+    }
+  )
   const informations = dataInformations?.data.summary
 
   const totalCars = informations?.car.total ?? 0
@@ -99,49 +103,6 @@ export default function Dashboard(): JSX.Element {
   const totalKYC = informations?.customer.total ?? 0
   const totalKYCApproved = informations?.customer.numberOfKycVerifiedStatus ?? 0
   const totalKYCRejected = informations?.customer.numberOfKycRejectedStatus ?? 0
-
-  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
-    getLocationList()
-  )
-
-  const [locationData, setLocationData] = useState<LocationResponse | null>()
-  const locationOptions = getLocationOptions(locationData)
-  const defaultLocation = {
-    label: t('dashboard.allLocation'),
-    value: 'all',
-  }
-  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-
-  const formik = useFormik({
-    initialValues: {
-      location: '',
-    },
-    enableReinitialize: true,
-    onSubmit: (value) => {
-      const { location } = value
-      setResellerServiceAreaId(location)
-    },
-  })
-
-  const onSetSelectedLocation = (option: SelectOption | null) => {
-    if (option) {
-      setSelectedLocation(option)
-      setResellerServiceAreaId(option.value)
-      formik.setFieldValue('location', option.value)
-      formik.handleSubmit()
-    } else {
-      setSelectedLocation(defaultLocation)
-      setResellerServiceAreaId(null)
-      formik.setFieldValue('location', '')
-      formik.handleSubmit()
-    }
-  }
-
-  useEffect(() => {
-    if (isFetchedLocation && locations) {
-      setLocationData(locations)
-    }
-  }, [locations, isFetchedLocation])
 
   useEffect(() => {
     refetch()
@@ -176,29 +137,13 @@ export default function Dashboard(): JSX.Element {
           <h1>{t('dashboard.overall')}</h1>
         </Grid>
         <Grid item xs={9} sm={3}>
-          <Autocomplete
-            autoHighlight
-            id="search_location_list"
-            className={classes.autoCompleteSelect}
-            options={locationOptions}
-            getOptionLabel={(option) => option.label}
-            renderInput={(params) => {
-              return (
-                <TextField
-                  {...params}
-                  label={t('dashboard.location')}
-                  variant="outlined"
-                  placeholder={t('dashboard.allLocation')}
-                />
-              )
-            }}
-            isOptionEqualToValue={(option, value) =>
-              option.value === value.value || value.value === 'all'
-            }
-            value={selectedLocation || defaultLocation}
-            defaultValue={selectedLocation || defaultLocation}
-            onChange={(_e, value) => {
-              onSetSelectedLocation(value)
+          <LocationSwitcher
+            currentLocationId={resellerServiceAreaId}
+            onLocationChanged={(location) => {
+              if (location) {
+                return setResellerServiceAreaId(location.id)
+              }
+              return setResellerServiceAreaId(userServiceAreaId)
             }}
           />
         </Grid>
@@ -220,7 +165,7 @@ export default function Dashboard(): JSX.Element {
           />
         </Grid>
         <Grid item sm={4} xs={12}>
-          {selectedLocation?.value === 'all' || !selectedLocation?.value ? (
+          {resellerServiceAreaId === allLocationId ? (
             <CardStatus
               title={t('dashboard.totalPayments.title')}
               value="-"
@@ -233,7 +178,7 @@ export default function Dashboard(): JSX.Element {
           )}
         </Grid>
         <Grid item sm={4} xs={12}>
-          {selectedLocation?.value === 'all' || !selectedLocation?.value ? (
+          {resellerServiceAreaId === allLocationId ? (
             <CardStatus
               title={t('dashboard.totalUsers.title')}
               value={totalUsers.toLocaleString()}
@@ -247,7 +192,7 @@ export default function Dashboard(): JSX.Element {
           )}
         </Grid>
       </Grid>
-      {selectedLocation?.value === 'all' || !selectedLocation?.value ? (
+      {resellerServiceAreaId === allLocationId ? (
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <h1>{t('dashboard.kyc')}</h1>
