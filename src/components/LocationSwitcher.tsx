@@ -5,12 +5,12 @@ import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
-import { useAuth } from 'auth/AuthContext'
 import { ResellerServiceArea } from 'services/web-bff/admin-user.type'
 import { getLocationList } from 'services/web-bff/location'
 
 interface LocationSwitcherProps {
   onLocationChanged: (location: ResellerServiceArea | null) => void
+  userServiceAreas: ResellerServiceArea[] | null | undefined
   currentLocationId?: string | null
 }
 interface SelectOption {
@@ -22,9 +22,13 @@ export const allLocationId = '00000000-0000-0000-0000-000000000000'
 
 export default function LocationSwitcher({
   onLocationChanged,
+  userServiceAreas,
   currentLocationId,
 }: LocationSwitcherProps): JSX.Element {
   const useStyles = makeStyles({
+    noMarginTop: {
+      marginTop: '0px !important',
+    },
     autoCompleteSelect: {
       marginTop: '10px',
       '& fieldSet': {
@@ -34,9 +38,7 @@ export default function LocationSwitcher({
   })
   const classes = useStyles()
   const { t, i18n } = useTranslation()
-  const { getResellerServiceAreas } = useAuth()
 
-  const userServiceAreas = getResellerServiceAreas()
   const allLocationSelectOption = {
     label: t('dashboard.allLocation'),
     value: allLocationId,
@@ -81,12 +83,20 @@ export default function LocationSwitcher({
   }
 
   useEffect(() => {
-    if (availableLocations.length >= 1 && currentLocationId) {
-      setSelectedLocation(
-        mapLocationSelectOptionFields(
-          availableLocations.find((location) => location.id === currentLocationId)
+    if (availableLocations.length >= 1) {
+      if (currentLocationId) {
+        setSelectedLocation(
+          mapLocationSelectOptionFields(
+            availableLocations.find((location) => location.id === currentLocationId)
+          )
         )
-      )
+      } else if (userServiceAreas && userServiceAreas.length > 1) {
+        setSelectedLocation(
+          mapLocationSelectOptionFields(
+            availableLocations.find((location) => location.id === userServiceAreas[0].id)
+          )
+        )
+      }
     }
   }, [availableLocations, currentLocationId])
 
@@ -94,7 +104,7 @@ export default function LocationSwitcher({
     <Autocomplete
       autoHighlight
       id="search_location_list"
-      className={classes.autoCompleteSelect}
+      className={[classes.autoCompleteSelect, classes.noMarginTop].join(' ')}
       options={generateSelectOptions(availableLocations)}
       getOptionLabel={(option) => option.label}
       renderInput={(params) => {
@@ -108,7 +118,7 @@ export default function LocationSwitcher({
         )
       }}
       isOptionEqualToValue={(option, value) =>
-        option.value === value.value || value.value === 'all'
+        option.value === value.value || value.value === allLocationId
       }
       onChange={(_event, option) => onSelectChanged(option as SelectOption)}
       defaultValue={allLocationSelectOption}
