@@ -31,6 +31,8 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { makeStyles } from '@material-ui/core/styles'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import { CSVLink } from 'react-csv'
+import { PRIVILEGES, hasAllowedPrivilege } from 'auth/privileges'
+import { useAuth } from 'auth/AuthContext'
 import styled from 'styled-components'
 import config from 'config'
 import {
@@ -92,6 +94,10 @@ const CsvButton = styled(CSVLink)`
 `
 
 export default function CarActivityDetail(): JSX.Element {
+  const { getPrivileges } = useAuth()
+  const currentUserPrivileges = getPrivileges()
+  const isValidPrivilege = hasAllowedPrivilege(currentUserPrivileges, [PRIVILEGES.PERM_CAR_EDIT])
+
   const location = useLocation()
   const history = useHistory()
   const { id: carId } = useParams<CarActivityDetailParams>()
@@ -416,7 +422,7 @@ export default function CarActivityDetail(): JSX.Element {
               </IconButton>
               <IconButton
                 className={buttonClass}
-                disabled={isBlockToDelete}
+                disabled={isBlockToDelete || !isValidPrivilege}
                 onClick={() =>
                   handleOnClickButton(carSchedule.id as string, ScheduleActions.Delete)
                 }
@@ -425,7 +431,7 @@ export default function CarActivityDetail(): JSX.Element {
               </IconButton>
               <IconButton
                 className={buttonClass}
-                disabled={isBlockToEdit}
+                disabled={isBlockToEdit || !isValidPrivilege}
                 onClick={() => handleOnClickButton(carSchedule.id as string, ScheduleActions.Edit)}
               >
                 <EditIcon />
@@ -436,7 +442,6 @@ export default function CarActivityDetail(): JSX.Element {
       )
     }) || []
 
-  // const isNoData = carSchedules.length < 1
   const isThereFilter =
     filterStartDate?.format(DEFAULT_DATE_FORMAT_BFF) !==
       fixFilterStartDate.format(DEFAULT_DATE_FORMAT_BFF) ||
@@ -585,168 +590,6 @@ export default function CarActivityDetail(): JSX.Element {
     )
   }
 
-  /*
-  const columns: GridColDef[] = [
-    {
-      field: 'bookingId',
-      headerName: t('carActivity.scheduleId.label'),
-      description: t('carActivity.scheduleId.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: 'startDate',
-      headerName: t('carActivity.startDate.label'),
-      description: t('carActivity.startDate.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) =>
-        dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
-    },
-    {
-      field: 'endDate',
-      headerName: t('carActivity.endDate.label'),
-      description: t('carActivity.endDate.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) =>
-        dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
-    },
-    {
-      field: 'status',
-      headerName: t('carActivity.status.label'),
-      description: t('carActivity.status.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        if (params.row.bookingType.id === CarActivityBookingTypeIds.RENT) {
-          return (
-            <Chip
-              size="small"
-              label={t('car.statuses.inUse')}
-              className={classes.greenBackground}
-            />
-          )
-        }
-        return <Chip size="small" label={t('car.statuses.outOfService')} />
-      },
-    },
-    {
-      field: 'bookingType',
-      headerName: t('carActivity.service.label'),
-      description: t('carActivity.service.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const bookingType = params.value as Schedule['bookingType']
-        if (!bookingType) {
-          return '-'
-        }
-
-        const mapBookingTypeLabel = () => {
-          if (isThaiLanguage) {
-            if (bookingType.nameTh) {
-              return bookingType.nameTh
-            }
-            return `[${bookingType.nameEn}]`
-          }
-          return bookingType.nameEn
-        }
-
-        if (bookingType.id === CarActivityBookingTypeIds.RENT) {
-          return (
-            <Link to={generateLinkToSubscription(params.row.bookingDetailId)}>
-              {t('carActivity.statuses.rent')}
-            </Link>
-          )
-        }
-
-        const bookingTypeLabel = mapBookingTypeLabel()
-
-        return (
-          <Tooltip title={bookingTypeLabel}>
-            <Typography variant="inherit" noWrap>
-              {bookingTypeLabel}
-            </Typography>
-          </Tooltip>
-        )
-      },
-    },
-    {
-      field: 'remark',
-      headerName: t('carActivity.remark.label'),
-      description: t('carActivity.remark.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) => params.value || '-',
-    },
-    {
-      field: 'updatedDate',
-      headerName: t('carActivity.modifyDate.label'),
-      description: t('carActivity.modifyDate.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) =>
-        dayjs(params.value as string).format(DEFAULT_DATE_FORMAT),
-    },
-    {
-      field: 'updatedBy',
-      headerName: t('carActivity.modifyBy.label'),
-      description: t('carActivity.modifyBy.label'),
-      flex: 1,
-      filterable: false,
-      sortable: false,
-      renderCell: (params: GridCellParams) => params.value || '-',
-    },
-    {
-      field: 'action',
-      headerName: t('carActivity.action.label'),
-      description: t('carActivity.action.label'),
-      flex: 1,
-      renderCell: (params: GridCellParams) => {
-        const isInRent = params.row.bookingType.id === CarActivityBookingTypeIds.RENT
-        const buttonClass = isInRent ? classes.hide : ''
-        const subscriptionLinkClass = !isInRent ? classes.hide : ''
-        const isBlockToDelete =
-          dayjs().diff(dayjs(params.row.startDate).startOf('day'), 'seconds') > 0
-        const isBlockToEdit = dayjs().diff(dayjs(params.row.endDate).endOf('day'), 'seconds') > 0
-
-        return (
-          <Fragment>
-            <Link
-              className={[subscriptionLinkClass, classes.marginTextButton].join(' ')}
-              to={generateLinkToSubscription(params.row.bookingDetailId)}
-            >
-              {t('carActivity.view.label')}
-            </Link>
-            <IconButton
-              className={buttonClass}
-              disabled={isBlockToDelete}
-              onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Delete)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            <IconButton
-              className={buttonClass}
-              disabled={isBlockToEdit}
-              onClick={() => handleOnClickButton(params.id as string, ScheduleActions.Edit)}
-            >
-              <EditIcon />
-            </IconButton>
-          </Fragment>
-        )
-      },
-    },
-  ]
-  */
-
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.carManagement.title'),
@@ -765,14 +608,6 @@ export default function CarActivityDetail(): JSX.Element {
   return (
     <Page>
       <PageTitle title="Car Activity Detail" breadcrumbs={breadcrumbs} />
-      {/* <Typography variant="h5" component="h1" gutterBottom>
-        {t('sidebar.carActivity')}
-      </Typography>
-      <Breadcrumbs>
-        <Link to="/">{t('carActivity.breadcrumbs.vehicle')}</Link>
-        <Link to="/car-activity">{t('sidebar.carActivity')}</Link>
-        <Typography color="textPrimary">{carDetail?.plateNumber || '-'}</Typography>
-      </Breadcrumbs> */}
 
       <Card className={classes.cardWrapper}>
         <Typography variant="h5" component="h2" gutterBottom>
@@ -1024,6 +859,7 @@ export default function CarActivityDetail(): JSX.Element {
                 </CsvButton>
               </ButtonExport>
               <Button
+                disabled={!isValidPrivilege}
                 variant="contained"
                 className={[
                   classes.buttonWithoutShadow,
@@ -1041,28 +877,6 @@ export default function CarActivityDetail(): JSX.Element {
             </Grid>
           </Grid>
         </Grid>
-
-        {/* {isNoData ? (
-          <NoResultCard />
-        ) : (
-          <DataGridLocale
-            className={[classes.marginSpace, classes.table].join(' ')}
-            autoHeight
-            pagination
-            pageSize={carSchedulesData?.pagination.size}
-            page={page}
-            rowCount={carSchedulesData?.pagination.totalRecords}
-            paginationMode="server"
-            onPageSizeChange={(param: GridPageChangeParams) => setPageSize(param.pageSize)}
-            onPageChange={(index: number) => setPage(index)}
-            rows={carSchedules}
-            columns={columns}
-            disableSelectionOnClick
-            components={{
-              Toolbar: CustomToolBar,
-            }}
-          />
-        )} */}
         <Fragment>
           <TableContainer component={Paper} className={classes.table}>
             <Table>
