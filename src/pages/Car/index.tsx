@@ -69,10 +69,13 @@ export default function Car(): JSX.Element {
       ? (userServiceAreas[0] as ResellerServiceArea).id
       : ''
   const setDefaultLocation = () => {
-    if (resellerId !== allLocationId) {
+    if (userServiceAreas?.find((area) => area.id === allLocationId)) {
+      if (resellerId === allLocationId || !resellerId) {
+        return ''
+      }
       return resellerId ?? userServiceAreaId
     }
-    return ''
+    return resellerId ?? userServiceAreaId
   }
   const defaultLocation = setDefaultLocation()
   const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>(defaultLocation)
@@ -244,8 +247,6 @@ export default function Car(): JSX.Element {
   const statusOptions = getCarStatusOnlyUsedInBackendOptions(t)
   const ownerOptions = getOwnerOptions(ownerData)
   const resellerOptions = getResellerOptions(resellerData)
-
-  // == location ==
 
   const formik = useFormik({
     initialValues: {
