@@ -96,7 +96,9 @@ const CsvButton = styled(CSVLink)`
 export default function CarActivityDetail(): JSX.Element {
   const { getPrivileges } = useAuth()
   const currentUserPrivileges = getPrivileges()
-  const isValidPrivilege = hasAllowedPrivilege(currentUserPrivileges, [PRIVILEGES.PERM_CAR_EDIT])
+  const isValidPrivilege = hasAllowedPrivilege(currentUserPrivileges, [
+    PRIVILEGES.PERM_CAR_ACTIVITY_EDIT,
+  ])
 
   const location = useLocation()
   const history = useHistory()
