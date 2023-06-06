@@ -40,15 +40,14 @@ import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
+import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
-// import NoResultCard from 'components/NoResultCard'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-// import DataGridLocale from 'components/DataGridLocale'
+import LocationSwitcher from 'components/LocationSwitcher'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
-import { getLocationList } from 'services/web-bff/location'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
-import { getLocationOptions, SelectOption } from './utils'
+import { ResellerServiceArea } from 'services/web-bff/car.type'
 
 // interface CarActivityParams {
 //   plate: string
@@ -214,12 +213,18 @@ export default function CarActivity(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
+  const { getResellerServiceAreas } = useAuth()
+  const userServiceAreas = getResellerServiceAreas()
+  const userServiceAreaId =
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
   const qs = {
     plate: useQueryString().get('plate'),
     brand: useQueryString().get('brand'),
     model: useQueryString().get('model'),
     color: useQueryString().get('color'),
-    location: useQueryString().get('resellerServiceAreaId'),
+    location: useQueryString().get('resellerServiceAreaId') || userServiceAreaId,
   }
 
   const conditionConfigs = {
@@ -298,24 +303,6 @@ export default function CarActivity(): JSX.Element {
       }
     )
   )
-  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
-    getLocationList()
-  )
-  const locationOptions = getLocationOptions(locations)
-  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-  const defaultLocation = {
-    label: t('carActivity.location.all'),
-    value: 'all',
-  }
-  const onSetSelectedLocation = (option: SelectOption | null) => {
-    if (option) {
-      setFilterLocation(option.value)
-      setSelectedLocation(option)
-    } else {
-      setFilterLocation('')
-      setSelectedLocation(defaultLocation)
-    }
-  }
 
   const checkAndRenderValue = (value: string) => {
     if (!value) {
@@ -402,13 +389,7 @@ export default function CarActivity(): JSX.Element {
       setPages(carActivitiesData.pagination.totalPage)
     }
 
-    if (
-      isFetchedLocation &&
-      isFetchedBrands &&
-      isFetchedActivities &&
-      carBrands &&
-      carBrands.length >= 1
-    ) {
+    if (isFetchedBrands && isFetchedActivities && carBrands && carBrands.length >= 1) {
       setFilterPlate(qs.plate || '')
 
       const brand = carBrands.find((carBrand) => carBrand.id === qs.brand)
@@ -424,14 +405,6 @@ export default function CarActivity(): JSX.Element {
       const color = model?.carSkus.find((carSku) => carSku.id === qs.color)
       setFilterColor(color?.id || '')
       setFilterColorObject(color)
-
-      const loc = locations?.locations.find((location) => location.id === qs.location)
-      setFilterLocation(loc?.id || '')
-      const locOption: SelectOption = {
-        label: loc?.areaNameEn || '',
-        value: loc?.id || '',
-      }
-      setSelectedLocation(locOption)
 
       refetch()
     }
@@ -487,8 +460,7 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
-    setFilterLocation('')
-    setSelectedLocation(null)
+    setFilterLocation(userServiceAreaId)
     setResetFilters(true)
   }
 
@@ -742,26 +714,15 @@ export default function CarActivity(): JSX.Element {
                 lg={2}
                 xl={2}
               >
-                <Autocomplete
-                  autoHighlight
-                  id="location-select-list"
-                  className={classes.autoCompleteSelect}
-                  options={locationOptions}
-                  getOptionLabel={(option) => option.label}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label={t('car.location')}
-                      variant="outlined"
-                      placeholder={t('car.allLocation')}
-                    />
-                  )}
-                  isOptionEqualToValue={(option, value) =>
-                    option.value === value.value || value.value === 'all'
-                  }
-                  value={selectedLocation || defaultLocation}
-                  defaultValue={selectedLocation || defaultLocation}
-                  onChange={(_event, value) => onSetSelectedLocation(value)}
+                <LocationSwitcher
+                  userServiceAreas={userServiceAreas}
+                  currentLocationId={filterLocation}
+                  onLocationChanged={(option) => {
+                    if (option) {
+                      return setFilterLocation(option.id)
+                    }
+                    return setFilterLocation(userServiceAreaId)
+                  }}
                 />
               </Grid>
               <Grid

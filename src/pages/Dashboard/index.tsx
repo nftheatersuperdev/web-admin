@@ -138,6 +138,7 @@ export default function Dashboard(): JSX.Element {
         </Grid>
         <Grid item xs={9} sm={3}>
           <LocationSwitcher
+            userServiceAreas={userServiceAreas}
             currentLocationId={resellerServiceAreaId}
             onLocationChanged={(location) => {
               if (location) {

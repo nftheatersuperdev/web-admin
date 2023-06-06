@@ -40,15 +40,16 @@ import {
 } from 'utils'
 import config from 'config'
 import { makeStyles } from '@mui/styles'
+import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/booking'
 import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
 } from 'services/web-bff/booking.type'
-import { LocationResponse } from 'services/web-bff/location.type'
-import { getLocationList } from 'services/web-bff/location'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import LocationSwitcher from 'components/LocationSwitcher'
+import { ResellerServiceArea } from 'services/web-bff/car.type'
 import {
   getBookingStatusOnlyUsedInBackendOptions,
   getIsExtendOptions,
@@ -59,15 +60,21 @@ import {
   SelectOption,
   Keypress,
   FilterSearch,
-  getLocationOptions,
 } from './utils'
 import { SearchDatePicker } from './styles'
 
 export default function Booking(): JSX.Element {
   const history = useHistory()
   const locationParam = useLocation().search
+  const { getResellerServiceAreas } = useAuth()
+  const userServiceAreas = getResellerServiceAreas()
+  const userServiceAreaId =
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
+
   const queryString = new URLSearchParams(locationParam)
-  const resellerId = queryString.get('resellerServiceAreaId')
+  const resellerId = queryString.get('resellerServiceAreaId') || userServiceAreaId
   const deliveryDate = queryString.get('deliveryDate')
   const returnDate = queryString.get('returnDate')
   const status = queryString.get('status')?.split(',')
@@ -209,10 +216,6 @@ export default function Booking(): JSX.Element {
     refetchOnWindowFocus: false,
   })
 
-  const { data: locations, isFetched: isFetchedLocation } = useQuery('get-location', () =>
-    getLocationList()
-  )
-
   const bookings =
     bookingData?.data?.bookingDetails?.map((booking) => {
       return {
@@ -316,9 +319,8 @@ export default function Booking(): JSX.Element {
       setFilter({})
       setSelectedSearch(null)
       setSelectedOptionValue(null)
-      setSelectedLocation(null)
       setSelectedFromDate(null)
-      formik.setFieldValue('searchLocation', '')
+      formik.setFieldValue('searchLocation', userServiceAreaId)
       formik.setFieldValue('searchType', '')
       formik.setFieldValue('searchInput', '')
 
@@ -345,10 +347,7 @@ export default function Booking(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
-      if (defaultResellerId) {
-        setSelectedLocation(defaultResellerId)
-        formik.setFieldValue('searchLocation', defaultResellerId.value)
-      }
+      formik.setFieldValue('searchLocation', userServiceAreaId)
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
       window.setTimeout(() => {
@@ -369,10 +368,7 @@ export default function Booking(): JSX.Element {
       return
     }
 
-    if (defaultResellerId) {
-      setSelectedLocation(defaultResellerId)
-      formik.setFieldValue('searchLocation', defaultResellerId.value)
-    }
+    formik.setFieldValue('searchLocation', userServiceAreaId)
 
     const newValue = []
     formik.setFieldValue('searchType', selectedSearch?.value)
@@ -390,47 +386,11 @@ export default function Booking(): JSX.Element {
   const statusOptions = getBookingStatusOnlyUsedInBackendOptions(t)
   const isExtendOptions = getIsExtendOptions()
 
-  // == location ==
-  const [locationData, setLocationData] = useState<LocationResponse | null>()
-  const locationOptions = getLocationOptions(locationData)
-  const defaultResellerId =
-    locationOptions.find((location) => location.value === resellerId) || null
-  const defaultLocation = defaultResellerId || {
-    label: t('booking.allLocation'),
-    value: 'all',
-  }
-  const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-  const onSetSelectedLocation = (option: SelectOption | null) => {
-    if (
-      queryString.has('resellerServiceAreaId') ||
-      queryString.has('deliveryDate') ||
-      queryString.has('returnDate') ||
-      queryString.has('status')
-    ) {
-      removeQueryParams()
-    }
-
-    if (option) {
-      setSelectedLocation(option)
-      formik.setFieldValue('searchLocation', option.value)
-      formik.handleSubmit()
-    } else {
-      setSelectedLocation(defaultLocation)
-      formik.setFieldValue('searchLocation', '')
-      formik.handleSubmit()
-
-      setSelectedLocation({
-        label: t('booking.allLocation'),
-        value: 'all',
-      })
-    }
-  }
-
   const formik = useFormik({
     initialValues: {
       searchType: '',
       searchInput: '',
-      searchLocation: '',
+      searchLocation: userServiceAreaId,
     },
     enableReinitialize: true,
     onSubmit: (value) => {
@@ -658,12 +618,6 @@ export default function Booking(): JSX.Element {
     refetch()
   }, [page, pageSize, filter, refetch])
 
-  useEffect(() => {
-    if (isFetchedLocation && locations) {
-      setLocationData(locations)
-    }
-  }, [locations, isFetchedLocation])
-
   const renderSearchStatus = () => (
     <Autocomplete
       autoHighlight
@@ -807,29 +761,16 @@ export default function Booking(): JSX.Element {
           </Grid>
           <Grid item xs />
           <Grid item xs={9} sm={2}>
-            <Autocomplete
-              autoHighlight
-              id="search_location_list"
-              className={classes.autoCompleteSelect}
-              options={locationOptions}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label={t('booking.carDetail.location')}
-                    variant="outlined"
-                    placeholder={t('booking.allLocation')}
-                  />
-                )
-              }}
-              isOptionEqualToValue={(option, value) =>
-                option.value === value.value || value.value === 'all'
-              }
-              value={selectedLocation || defaultLocation}
-              defaultValue={selectedLocation || defaultLocation}
-              onChange={(_e, value) => {
-                onSetSelectedLocation(value)
+            <LocationSwitcher
+              userServiceAreas={userServiceAreas}
+              currentLocationId={formik.values.searchLocation}
+              onLocationChanged={(option) => {
+                if (option) {
+                  formik.setFieldValue('searchLocation', option.id)
+                  formik.submitForm()
+                  return
+                }
+                formik.setFieldValue('searchLocation', userServiceAreaId)
               }}
             />
           </Grid>
