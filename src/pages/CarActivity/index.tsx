@@ -4,7 +4,6 @@
 import React, { useEffect, useState, useMemo, Fragment } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from 'auth/AuthContext'
 import { useQuery } from 'react-query'
 import {
   Button,
@@ -27,19 +26,35 @@ import {
   CircularProgress,
   Paper,
 } from '@mui/material'
+// import {
+//   GridColDef,
+//   GridPageChangeParams,
+//   GridToolbarColumnsButton,
+//   GridToolbarContainer,
+//   GridToolbarDensitySelector,
+// } from '@material-ui/data-grid'
+// import Pagination from '@mui/lab/Pagination'
 import { makeStyles } from '@mui/styles'
 import { Search as SearchIcon } from '@mui/icons-material'
 import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import { validateKeywordText } from 'utils'
 import config from 'config'
+import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import LocationSwitcher from 'components/LocationSwitcher'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
-import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
+
+// interface CarActivityParams {
+//   plate: string
+//   brand: string
+//   model: string
+//   color: string
+// }
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -194,26 +209,23 @@ const useQueryString = () => {
 }
 
 export default function CarActivity(): JSX.Element {
+  // const { id: carId } = useParams<CarActivityParams>()
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
-  const qs = {
-    plate: useQueryString().get('plate'),
-    brand: useQueryString().get('brand'),
-    model: useQueryString().get('model'),
-    color: useQueryString().get('color'),
-    location: useQueryString().get('resellerServiceAreaId'),
-  }
-
   const { getResellerServiceAreas } = useAuth()
   const userServiceAreas = getResellerServiceAreas()
   const userServiceAreaId =
     userServiceAreas && userServiceAreas.length >= 1
       ? (userServiceAreas[0] as ResellerServiceArea).id
       : ''
-  const defaultLocation = userServiceAreaId !== allLocationId ? userServiceAreaId : ''
-  const [resellerServiceAreaId, setResellerServiceAreaId] =
-    useState<string | undefined>(defaultLocation)
+  const qs = {
+    plate: useQueryString().get('plate'),
+    brand: useQueryString().get('brand'),
+    model: useQueryString().get('model'),
+    color: useQueryString().get('color'),
+    location: useQueryString().get('resellerServiceAreaId') || userServiceAreaId,
+  }
 
   const conditionConfigs = {
     minimumToFilterPlateNumber: 2,
@@ -221,7 +233,7 @@ export default function CarActivity(): JSX.Element {
   const defaultSelectList = {
     brandAll: { id: 'all', name: t('carActivity.brand.emptyValue'), carModels: [] },
     modelEmpty: {
-      id: 'all',
+      id: 'empty',
       name: `${t('carActivity.model.emptyValue')}`,
       subModelName: '',
       year: 0,
@@ -234,7 +246,7 @@ export default function CarActivity(): JSX.Element {
       year: 0,
       carSkus: [],
     },
-    colorEmpty: { id: 'all', color: `${t('carActivity.color.emptyValue')}`, cars: [] },
+    colorEmpty: { id: 'empty', color: `${t('carActivity.color.emptyValue')}`, cars: [] },
     colorAll: { id: 'all', color: t('all'), cars: [] },
   }
 
@@ -249,7 +261,7 @@ export default function CarActivity(): JSX.Element {
   const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
   const [filterModel, setFilterModel] = useState<string>(qs.model || '')
   const [filterColor, setFilterColor] = useState<string>(qs.color || '')
-  const [filterLocation, setFilterLocation] = useState<string | undefined>(resellerServiceAreaId)
+  const [filterLocation, setFilterLocation] = useState<string>(qs.location || '')
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
@@ -377,13 +389,7 @@ export default function CarActivity(): JSX.Element {
       setPages(carActivitiesData.pagination.totalPage)
     }
 
-    if (
-      isFetchedBrands &&
-      isFetchedActivities &&
-      carBrands &&
-      carBrands.length >= 1 &&
-      resellerServiceAreaId
-    ) {
+    if (isFetchedBrands && isFetchedActivities && carBrands && carBrands.length >= 1) {
       setFilterPlate(qs.plate || '')
 
       const brand = carBrands.find((carBrand) => carBrand.id === qs.brand)
@@ -403,10 +409,6 @@ export default function CarActivity(): JSX.Element {
       refetch()
     }
   }, [])
-
-  useEffect(() => {
-    setFilterLocation(resellerServiceAreaId || '')
-  }, [resellerServiceAreaId])
 
   /**
    * Managing the pagination variables that will send to the API.
@@ -458,15 +460,7 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
-
-    if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-      setResellerServiceAreaId(allLocationId)
-      setFilterLocation('')
-    } else {
-      setResellerServiceAreaId(userServiceAreaId)
-      setFilterLocation(userServiceAreaId)
-    }
-
+    setFilterLocation(userServiceAreaId)
     setResetFilters(true)
   }
 
@@ -617,9 +611,6 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value.id || value.id === defaultSelectList.brandAll.id
-                  }
                   value={filterBrandObject || defaultSelectList.brandAll}
                   defaultValue={filterBrandObject || defaultSelectList.brandAll}
                   onChange={(_event, value) => handleOnBrandChange(value)}
@@ -648,9 +639,6 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value.id || value.id === defaultSelectList.modelEmpty.id
-                  }
                   value={filterModelObject || defaultSelectList.modelEmpty}
                   defaultValue={filterModelObject || defaultSelectList.modelEmpty}
                   onChange={(_event, value) => handleOnModelChange(value)}
@@ -679,9 +667,6 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value.id || value.id === defaultSelectList.colorEmpty.id
-                  }
                   value={filterColorObject || defaultSelectList.colorEmpty}
                   defaultValue={filterColorObject || defaultSelectList.colorEmpty}
                   onChange={(_event, value) => handleOnColorChange(value)}
@@ -730,14 +715,13 @@ export default function CarActivity(): JSX.Element {
                 xl={2}
               >
                 <LocationSwitcher
-                  className={classes.autoCompleteSelect}
-                  currentLocationId={resellerServiceAreaId}
-                  allowedLocationList={userServiceAreas}
-                  onLocationChanged={(location) => {
-                    if (location) {
-                      return setResellerServiceAreaId(location.id)
+                  userServiceAreas={userServiceAreas}
+                  currentLocationId={filterLocation}
+                  onLocationChanged={(option) => {
+                    if (option) {
+                      return setFilterLocation(option.id)
                     }
-                    return setResellerServiceAreaId(userServiceAreaId)
+                    return setFilterLocation(userServiceAreaId)
                   }}
                 />
               </Grid>

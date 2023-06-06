@@ -31,7 +31,6 @@ import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from 'auth/AuthContext'
 import { CSVLink } from 'react-csv'
 import {
   formatDate,
@@ -41,15 +40,16 @@ import {
 } from 'utils'
 import config from 'config'
 import { makeStyles } from '@mui/styles'
+import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/booking'
 import {
   SubscriptionBookingListQuery,
   SubscriptionBookingListFilters,
 } from 'services/web-bff/booking.type'
-import { ResellerServiceArea } from 'services/web-bff/car.type'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
+import LocationSwitcher from 'components/LocationSwitcher'
+import { ResellerServiceArea } from 'services/web-bff/car.type'
 import {
   getBookingStatusOnlyUsedInBackendOptions,
   getIsExtendOptions,
@@ -66,29 +66,18 @@ import { SearchDatePicker } from './styles'
 export default function Booking(): JSX.Element {
   const history = useHistory()
   const locationParam = useLocation().search
-  const queryString = new URLSearchParams(locationParam)
-  const resellerId = queryString.get('resellerServiceAreaId')
-  const deliveryDate = queryString.get('deliveryDate')
-  const returnDate = queryString.get('returnDate')
-  const status = queryString.get('status')?.split(',')
-
   const { getResellerServiceAreas } = useAuth()
   const userServiceAreas = getResellerServiceAreas()
   const userServiceAreaId =
     userServiceAreas && userServiceAreas.length >= 1
       ? (userServiceAreas[0] as ResellerServiceArea).id
       : ''
-  const setDefaultLocation = () => {
-    if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-      if (resellerId === allLocationId || !resellerId) {
-        return ''
-      }
-      return resellerId ?? userServiceAreaId
-    }
-    return resellerId ?? userServiceAreaId
-  }
-  const defaultLocation = setDefaultLocation()
-  const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>(defaultLocation)
+
+  const queryString = new URLSearchParams(locationParam)
+  const resellerId = queryString.get('resellerServiceAreaId') || userServiceAreaId
+  const deliveryDate = queryString.get('deliveryDate')
+  const returnDate = queryString.get('returnDate')
+  const status = queryString.get('status')?.split(',')
 
   const removeQueryParams = (keepLocation?: boolean) => {
     if (queryString.has('resellerServiceAreaId') && !keepLocation) {
@@ -211,8 +200,8 @@ export default function Booking(): JSX.Element {
   const [query, setQuery] = useState<SubscriptionBookingListQuery>(defaultQuery)
 
   let defaultFilter: SubscriptionBookingListFilters = {}
-  defaultFilter = defaultLocation
-    ? { ...defaultFilter, resellerServiceAreaId: defaultLocation }
+  defaultFilter = resellerId
+    ? { ...defaultFilter, resellerServiceAreaId: resellerId }
     : defaultFilter
   defaultFilter = deliveryDate ? { ...defaultFilter, deliveryDate } : defaultFilter
   defaultFilter = returnDate ? { ...defaultFilter, returnDate } : defaultFilter
@@ -327,6 +316,14 @@ export default function Booking(): JSX.Element {
         removeQueryParams(true)
       }
     } else {
+      setFilter({})
+      setSelectedSearch(null)
+      setSelectedOptionValue(null)
+      setSelectedFromDate(null)
+      formik.setFieldValue('searchLocation', userServiceAreaId)
+      formik.setFieldValue('searchType', '')
+      formik.setFieldValue('searchInput', '')
+
       if (
         queryString.has('resellerServiceAreaId') ||
         queryString.has('deliveryDate') ||
@@ -335,21 +332,6 @@ export default function Booking(): JSX.Element {
       ) {
         removeQueryParams()
       }
-
-      if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-        setResellerServiceAreaId(allLocationId)
-        setFilter({})
-      } else {
-        setResellerServiceAreaId(userServiceAreaId)
-        formik.setFieldValue('searchLocation', userServiceAreaId)
-        formik.handleSubmit()
-      }
-
-      setSelectedSearch(null)
-      setSelectedOptionValue(null)
-      setSelectedFromDate(null)
-      formik.setFieldValue('searchType', '')
-      formik.setFieldValue('searchInput', '')
     }
     setSearchValue('')
   }
@@ -365,9 +347,9 @@ export default function Booking(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
+      formik.setFieldValue('searchLocation', userServiceAreaId)
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
-      formik.setFieldValue('searchLocation', resellerServiceAreaId ?? '')
       window.setTimeout(() => {
         if (searchText.length >= 2) {
           formik.handleSubmit()
@@ -386,6 +368,8 @@ export default function Booking(): JSX.Element {
       return
     }
 
+    formik.setFieldValue('searchLocation', userServiceAreaId)
+
     const newValue = []
     formik.setFieldValue('searchType', selectedSearch?.value)
     const value = isDropdown && searchText ? searchText : searchValue
@@ -396,7 +380,6 @@ export default function Booking(): JSX.Element {
     } else {
       formik.setFieldValue('searchInput', value)
     }
-    formik.setFieldValue('searchLocation', resellerServiceAreaId ?? '')
     formik.handleSubmit()
   }
 
@@ -407,7 +390,7 @@ export default function Booking(): JSX.Element {
     initialValues: {
       searchType: '',
       searchInput: '',
-      searchLocation: '',
+      searchLocation: userServiceAreaId,
     },
     enableReinitialize: true,
     onSubmit: (value) => {
@@ -752,8 +735,8 @@ export default function Booking(): JSX.Element {
             <strong>{t('booking.list')}</strong>
           </Typography>
         </Grid>
-        <Grid className={classes.gridSearch} container spacing={1}>
-          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
+        <Grid className={classes.gridSearch} container spacing={3}>
+          <Grid item xs={9} sm={2}>
             <Autocomplete
               autoHighlight
               id="search_select_list"
@@ -773,24 +756,21 @@ export default function Booking(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
+          <Grid item xs={9} sm={2}>
             {renderComponentBasedOnSelectedSearch()}
           </Grid>
           <Grid item xs />
-          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
+          <Grid item xs={9} sm={2}>
             <LocationSwitcher
-              className={classes.autoCompleteSelect}
-              currentLocationId={resellerServiceAreaId}
-              allowedLocationList={userServiceAreas}
-              onLocationChanged={(location) => {
-                if (location) {
-                  formik.setFieldValue('searchLocation', location.id)
-                  formik.handleSubmit()
-                  return setResellerServiceAreaId(location.id)
+              userServiceAreas={userServiceAreas}
+              currentLocationId={formik.values.searchLocation}
+              onLocationChanged={(option) => {
+                if (option) {
+                  formik.setFieldValue('searchLocation', option.id)
+                  formik.submitForm()
+                  return
                 }
                 formik.setFieldValue('searchLocation', userServiceAreaId)
-                formik.handleSubmit()
-                return setResellerServiceAreaId(userServiceAreaId)
               }}
             />
           </Grid>

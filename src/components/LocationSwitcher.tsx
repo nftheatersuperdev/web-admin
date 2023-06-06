@@ -5,15 +5,13 @@ import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
-import { useAuth } from 'auth/AuthContext'
 import { ResellerServiceArea } from 'services/web-bff/admin-user.type'
 import { getLocationList } from 'services/web-bff/location'
 
 interface LocationSwitcherProps {
   onLocationChanged: (location: ResellerServiceArea | null) => void
+  userServiceAreas: ResellerServiceArea[] | null | undefined
   currentLocationId?: string | null
-  allowedLocationList?: ResellerServiceArea[] | null
-  className?: string
 }
 interface SelectOption {
   label: string
@@ -24,11 +22,13 @@ export const allLocationId = '00000000-0000-0000-0000-000000000000'
 
 export default function LocationSwitcher({
   onLocationChanged,
+  userServiceAreas,
   currentLocationId,
-  allowedLocationList,
-  className,
 }: LocationSwitcherProps): JSX.Element {
   const useStyles = makeStyles({
+    noMarginTop: {
+      marginTop: '0px !important',
+    },
     autoCompleteSelect: {
       marginTop: '10px',
       '& fieldSet': {
@@ -38,30 +38,11 @@ export default function LocationSwitcher({
   })
   const classes = useStyles()
   const { t, i18n } = useTranslation()
-  const { getResellerServiceAreas } = useAuth()
 
-  const { data } = useQuery('get-location', () => getLocationList(), {
-    refetchOnWindowFocus: false,
-  })
-
-  const userServiceAreas = getResellerServiceAreas()
-  const getDefaultLocation = () => {
-    if (currentLocationId !== allLocationId) {
-      const current = data?.locations.find((location) => location.id === currentLocationId)
-      if (current) {
-        return {
-          label: current[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn'],
-          value: current?.id,
-        }
-      }
-    }
-    return {
-      label: t('dashboard.allLocation'),
-      value: allLocationId,
-    }
+  const allLocationSelectOption = {
+    label: t('dashboard.allLocation'),
+    value: allLocationId,
   }
-
-  const allLocationSelectOption = getDefaultLocation()
 
   function mapLocationSelectOptionFields(location: ResellerServiceArea | null | undefined) {
     if (!location) {
@@ -89,15 +70,10 @@ export default function LocationSwitcher({
   }
 
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-
-  const getAvailableLocations = (): ResellerServiceArea[] => {
-    if (allowedLocationList && allowedLocationList[0].id !== allLocationId) {
-      return allowedLocationList
-    }
-    return data?.locations || []
-  }
-
-  const availableLocations = getAvailableLocations()
+  const { data } = useQuery('get-location', () => getLocationList(), {
+    refetchOnWindowFocus: false,
+  })
+  const availableLocations = data?.locations || []
 
   const onSelectChanged = (option: SelectOption) => {
     setSelectedLocation(option)
@@ -107,12 +83,20 @@ export default function LocationSwitcher({
   }
 
   useEffect(() => {
-    if (availableLocations.length >= 1 && currentLocationId) {
-      setSelectedLocation(
-        mapLocationSelectOptionFields(
-          availableLocations.find((location) => location.id === currentLocationId)
+    if (availableLocations.length >= 1) {
+      if (currentLocationId) {
+        setSelectedLocation(
+          mapLocationSelectOptionFields(
+            availableLocations.find((location) => location.id === currentLocationId)
+          )
         )
-      )
+      } else if (userServiceAreas && userServiceAreas.length > 1) {
+        setSelectedLocation(
+          mapLocationSelectOptionFields(
+            availableLocations.find((location) => location.id === userServiceAreas[0].id)
+          )
+        )
+      }
     }
   }, [availableLocations, currentLocationId])
 
@@ -120,7 +104,7 @@ export default function LocationSwitcher({
     <Autocomplete
       autoHighlight
       id="search_location_list"
-      className={className ? className : classes.autoCompleteSelect}
+      className={[classes.autoCompleteSelect, classes.noMarginTop].join(' ')}
       options={generateSelectOptions(availableLocations)}
       getOptionLabel={(option) => option.label}
       renderInput={(params) => {
@@ -129,7 +113,7 @@ export default function LocationSwitcher({
             {...params}
             label={t('dashboard.location')}
             variant="outlined"
-            placeholder=""
+            placeholder={t('dashboard.allLocation')}
           />
         )
       }}
