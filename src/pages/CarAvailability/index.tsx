@@ -277,6 +277,55 @@ export default function CarAvailability(): JSX.Element {
       }
     }) || []
 
+  const resetFilter = () => {
+    filter.carId = undefined
+    filter.plateNumberContain = undefined
+    filter.plateNumberEqual = undefined
+    filter.ownerProfileId = undefined
+    filter.resellerServiceAreaId = undefined
+  }
+
+  const setLocalStorageItem = (key: string, value: string) => {
+    localStorage.setItem(key, value)
+  }
+
+  const setSearchType = (type: string, value: string) => {
+    switch (type) {
+      case 'plateNumber':
+        filter.plateNumberContain = value
+        setLocalStorageItem(filter.plateNumberContain, value)
+        break
+      case 'id':
+        filter.carId = value
+        setLocalStorageItem(filter.carId, value)
+        break
+      case 'ownerProfileId':
+        if (value !== 'all') {
+          filter.ownerProfileId = value
+          setLocalStorageItem(filter.ownerProfileId, value)
+        }
+        break
+      case 'resellerServiceAreaId':
+        if (value !== 'all') {
+          filter.resellerServiceAreaId = value
+          setLocalStorageItem(filter.resellerServiceAreaId, value)
+        }
+        break
+      default:
+        break
+    }
+  }
+
+  const setLocation = (location: string, reSeller: string) => {
+    if (location === allLocationId) {
+      filter.resellerServiceAreaId = undefined
+      setLocalStorageItem('location', '')
+    } else {
+      filter.resellerServiceAreaId = location
+      setLocalStorageItem('location', reSeller)
+    }
+  }
+
   const formik = useFormik({
     initialValues: {
       input: '',
@@ -287,50 +336,20 @@ export default function CarAvailability(): JSX.Element {
     },
     enableReinitialize: true,
     onSubmit: (value) => {
-      let updateObj
       const searchField = filterSearchField
-      console.log('//value.selectLocation:', value.selectLocation)
-      if (value.searchType === '' && value.selectLocation === allLocationId) {
-        filter.carId = undefined
-        filter.plateNumberContain = undefined
-        filter.plateNumberEqual = undefined
-        filter.ownerProfileId = undefined
-        filter.resellerServiceAreaId = undefined
-        updateObj = {
-          ...filter,
-          ...generateFilterDates(),
-        } as CarAvailableListFilterRequest
-      } else {
-        if (value.searchType === 'plateNumber') {
-          filter.plateNumberContain = searchField
-          localStorage.setItem(filter.plateNumberContain, searchField)
-        }
-        if (value.searchType === 'id') {
-          filter.carId = searchField
-          localStorage.setItem(filter.carId, searchField)
-        }
 
-        if (value.searchType === 'ownerProfileId' && value.selectOwner !== 'all') {
-          filter.ownerProfileId = value.selectOwner
-          localStorage.setItem(filter.ownerProfileId, value.selectOwner)
-        }
-        if (value.searchType === 'resellerServiceAreaId' && value.selectReSeller !== 'all') {
-          filter.resellerServiceAreaId = value.selectReSeller
-          localStorage.setItem(filter.resellerServiceAreaId, value.selectReSeller)
-        }
-        if (value.selectLocation === allLocationId) {
-          filter.resellerServiceAreaId = undefined
-          localStorage.setItem('location', '')
-        }
-        if (value.selectLocation !== allLocationId) {
-          filter.resellerServiceAreaId = value.selectLocation
-          localStorage.setItem('location', value.selectReSeller)
-        }
-        updateObj = {
-          ...filter,
-          ...generateFilterDates(),
-        } as CarAvailableListFilterRequest
+      if (value.searchType === '' && value.selectLocation === allLocationId) {
+        resetFilter()
+      } else {
+        setSearchType(value.searchType, searchField)
+        setLocation(value.selectLocation, value.selectReSeller)
       }
+
+      const updateObj = {
+        ...filter,
+        ...generateFilterDates(),
+      } as CarAvailableListFilterRequest
+
       setFilter(updateObj)
       setPage(0)
     },
