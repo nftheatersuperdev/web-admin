@@ -142,7 +142,12 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.BOOKING_CAR_REPLACEMENT,
     component: lazy(() => import('./pages/BookingCarReplacement' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.OPERATION,
+      ROLES.CENTRE_OPERATION,
+      ROLES.BRANCH_MANAGER,
+    ],
   },
   {
     path: ROUTE_PATHS.BOOKING_CAR_DETAIL,
