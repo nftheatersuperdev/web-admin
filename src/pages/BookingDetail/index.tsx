@@ -20,7 +20,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
-import { ROLES, hasAllowedRole } from 'auth/roles'
+import { PRIVILEGES, hasAllowedPrivilege } from 'auth/privileges'
 import {
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
@@ -55,8 +55,8 @@ export function hasStatusAllowedToDoCarReplacement(status: string | undefined): 
 
 export default function SubscriptionDetail(): JSX.Element {
   const classes = useStyles()
-  const { getRole, firebaseUser } = useAuth()
-  const currentRole = getRole()
+  const { getPrivileges, firebaseUser } = useAuth()
+  const currentPrivilege = getPrivileges()
   const { t } = useTranslation()
   const history = useHistory()
   const location = useLocation()
@@ -139,7 +139,9 @@ export default function SubscriptionDetail(): JSX.Element {
   const [carReplacementDialogOpen, setCarReplacementlogOpen] = useState<boolean>(false)
 
   const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
-  const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [ROLES.OPERATION])
+  const isTherePermissionToDoCarReplacement = hasAllowedPrivilege(currentPrivilege, [
+    PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
+  ])
   const isEndDateOverToday = bookingDetail ? new Date(bookingDetail?.endDate) < new Date() : false
 
   return (
