@@ -9,6 +9,8 @@ import { ROUTE_PATHS } from 'routes'
 import { Avatar, Badge, Box, Grid, Menu, MenuItem, ListItemIcon, Typography } from '@mui/material'
 import { deepOrange } from '@mui/material/colors'
 import { AccountCircle, Settings, Logout } from '@mui/icons-material'
+import { useQuery } from 'react-query'
+import { getAdminUserProfile } from 'services/web-bff/admin-user'
 
 const MenuLink = styled(Link)`
   text-decoration: none;
@@ -52,6 +54,7 @@ function SidebarFooter({ ...rest }): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
   const { firebaseUser, signOut } = useAuth()
+  const { data: profile } = useQuery('user-profile', () => getAdminUserProfile())
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -90,8 +93,12 @@ function SidebarFooter({ ...rest }): JSX.Element {
             </FooterBadge>
           </Grid>
           <Grid item lg={6}>
-            <FooterText variant="body2">{firebaseUser?.displayName || 'No Name'}</FooterText>
-            <FooterSubText variant="caption">{firebaseUser?.email || 'No Email'}</FooterSubText>
+            <FooterText variant="body2">
+              {profile?.firstName && profile?.lastName
+                ? `${profile.firstName} ${profile.lastName}`
+                : 'No Name'}
+            </FooterText>
+            <FooterSubText variant="caption">{profile?.email || 'No Email'}</FooterSubText>
           </Grid>
           <Grid item lg={3}>
             <Box

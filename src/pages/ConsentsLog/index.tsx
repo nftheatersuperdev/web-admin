@@ -341,14 +341,17 @@ export default function ConsentsLog(): JSX.Element {
     setFilterSearchEmail('')
     setFilterSearchEmailError('')
     formik.setFieldValue('email', '')
+    setIsEnableFilterButton(true)
   }
   const handleSearchDocumentTypeClear = () => {
     setFilterSearchDocumentType('')
     formik.setFieldValue('codeName', '')
+    setIsEnableFilterButton(true)
   }
   const handleSearchStatusClear = () => {
     setFilterSearchStatus('')
     formik.setFieldValue('isAccepted', '')
+    setIsEnableFilterButton(true)
   }
   const handleOnSearchDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
