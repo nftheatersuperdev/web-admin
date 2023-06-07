@@ -4,6 +4,7 @@ import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
 import { useTranslation } from 'react-i18next'
 import { getAdminUserProfile } from 'services/web-bff/admin-user'
+import { ResellerServiceArea } from 'services/web-bff/admin-user.type'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 import { Role, getAdminUserRoleLabel } from './roles'
@@ -12,7 +13,13 @@ export const STORAGE_KEYS = {
   ROLE: 'evme:user_role',
   TOKEN: 'evme:user_token',
   ID: 'evme:user_id',
+  RESELLER_SERVICE_AREA: 'evme:user_reseller_service_area',
+  LOCATION: 'evme:user_location',
 }
+
+type Text = string | null | undefined
+type ArrayText = string[] | null | undefined
+type ResellerServices = ResellerServiceArea[] | null | undefined
 
 interface AuthProviderProps {
   fbase: Firebase
@@ -29,16 +36,19 @@ interface AuthProps {
   signOut: () => Promise<void>
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>
   setToken: (token: string) => void
-  getToken: () => string | null | undefined
+  getToken: () => Text
   refreshPersistentToken: () => Promise<void>
   setRole: (role: Role) => void
-  getRole: () => string | null | undefined
+  getRole: () => Text
   getRoleDisplayName: () => string
   setUserId: (id: string) => void
-  getUserId: () => string | null | undefined
+  getUserId: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
   setPrivileges: (privilege: string[]) => void
-  getPrivileges: () => string[] | null | undefined
+  getPrivileges: () => ArrayText
+  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
+  getResellerServiceAreas: () => ResellerServices
+  getResellerServiceAreaWithSort: () => ResellerServices
 }
 
 const Auth = createContext<AuthProps>({
@@ -58,12 +68,15 @@ const Auth = createContext<AuthProps>({
   getRemoteConfig: (_key: string) => undefined,
   setPrivileges: (_privilege: string[]) => undefined,
   getPrivileges: () => undefined,
+  setResellerServiceAreas: (_areas: ResellerServiceArea[]) => undefined,
+  getResellerServiceAreas: () => undefined,
+  getResellerServiceAreaWithSort: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
   const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const errorMessage = useErrorMessage()
 
@@ -78,8 +91,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     ls.set<string>(STORAGE_KEYS.TOKEN, token)
   }
 
-  const getToken = (): string | null | undefined => {
-    return ls.get<string | null | undefined>(STORAGE_KEYS.TOKEN)
+  const getToken = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.TOKEN)
   }
 
   const refreshPersistentToken = async (): Promise<void> => {
@@ -93,24 +106,48 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     ls.set<string>(STORAGE_KEYS.ID, id)
   }
 
-  const getUserId = (): string | null | undefined => {
-    return ls.get<string | null | undefined>(STORAGE_KEYS.ID)
+  const getUserId = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.ID)
   }
 
-  const setRole = (role: Role) => {
+  const setRole = (role: string | Role) => {
     ls.set<string>(STORAGE_KEYS.ROLE, role, { encrypt: true })
   }
 
-  const getRole = (): string | null | undefined => {
-    return ls.get<string | null | undefined>(STORAGE_KEYS.ROLE, { encrypt: true })
+  const getRole = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.ROLE, { encrypt: true })
   }
 
   const setPrivileges = (privilege: string[]) => {
     ls.set<string[]>('PRIVILEGES', privilege, { encrypt: true })
   }
 
-  const getPrivileges = (): string[] | null | undefined => {
-    return ls.get<string[] | null | undefined>('PRIVILEGES', { encrypt: true })
+  const getPrivileges = (): ArrayText => {
+    return ls.get<ArrayText>('PRIVILEGES', { encrypt: true })
+  }
+
+  const setResellerServiceAreas = (areas: ResellerServiceArea[]) => {
+    ls.set<ResellerServiceArea[]>(STORAGE_KEYS.RESELLER_SERVICE_AREA, areas)
+  }
+
+  const getResellerServiceAreas = (): ResellerServices => {
+    return ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+  }
+
+  const getResellerServiceAreaWithSort = (): ResellerServices => {
+    const resellerStorage = ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+    const sortedAreas = resellerStorage?.sort((a, b) => {
+      const areaA = a[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
+      const areaB = b[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
+      if (areaA < areaB) {
+        return -1
+      }
+      if (areaA < areaB) {
+        return 1
+      }
+      return 0
+    })
+    return sortedAreas
   }
 
   const getRoleDisplayName = (): string => {
@@ -137,6 +174,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       setUserId(user.uid)
       setRole(userProfile.role.toLocaleLowerCase())
       setPrivileges(userProfile.privileges)
+      setResellerServiceAreas(userProfile.resellerServiceAreas)
     } catch (error: any) {
       const message = errorMessage(error.code as string)
       throw new Error(message)
@@ -189,6 +227,9 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getRemoteConfig,
         setPrivileges,
         getPrivileges,
+        setResellerServiceAreas,
+        getResellerServiceAreas,
+        getResellerServiceAreaWithSort,
       }}
     >
       {children}

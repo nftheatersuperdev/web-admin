@@ -286,7 +286,8 @@
     "createdDate": "วันที่สร้าง",
     "firebaseId": "เลขที่ไฟร์เยอร์เบสไอดี",
     "searchCriteria": "ค้นหา",
-    "searchDate": "วันที่ค้นหา"
+    "searchDate": "วันที่ค้นหา",
+    "location": "สถานที่บริการ"
   },
   "user": {
     "customerList": "รายชื่อลูกค้า",
@@ -825,7 +826,10 @@
     "operation": "ฝ่ายปฏิบัติการ",
     "marketing": "ฝ่ายการตลาด",
     "productSupport": "ฝ่ายบริการสินค้า",
-    "itAdmin": "ผู้ดูแลและจัดการฝ่ายไอที"
+    "itAdmin": "ผู้ดูแลและจัดการฝ่ายไอที",
+    "centreOperation": "Centre Operation",
+    "branchManager": "ผู้จัดการสาขา",
+    "branchOfficer": "ผู้จัดการ"
   },
   "account": {
     "updatePassword": "แก้ไขรหัสผ่าน",
@@ -1036,7 +1040,8 @@
     "allowOnlyLettersAndNumbers": "อนุญาตเฉพาะตัวอักษรและตัวเลขเท่านั้น",
     "firstNameRequired": "ต้องระบุชื่อ",
     "lastNameRequired": "ต้องระบุนามสกุล",
-    "roleRequired": "ต้องระบุระดับผู้ใช้งาน"
+    "roleRequired": "ต้องระบุระดับผู้ใช้งาน",
+    "locationRequired": "ต้องระบุสถานที่บริการ"
   },
   "cardStatus": {
     "detail": "Detail >"

@@ -8,6 +8,18 @@ export interface ConsentLogListProps {
   page?: number
 }
 
+export interface ConsentInputRequest {
+  email?: string
+  codeName?: string
+  isAccepted?: string
+}
+
+export interface ConsentLogListRequest {
+  data?: ConsentInputRequest
+  size?: number
+  page?: number
+}
+
 export interface ConsentLog {
   id: string
   createdDate: string

@@ -286,7 +286,8 @@
     "createdDate": "Created Date",
     "firebaseId": "Firebase UID",
     "searchCriteria": "Search Criteria",
-    "searchDate": "Search Date"
+    "searchDate": "Search Date",
+    "location": "Location Service"
   },
   "user": {
     "customerList": "Customer List",
@@ -826,7 +827,10 @@
     "operation": "Operation",
     "marketing": "Marketing",
     "productSupport": "Product Support",
-    "itAdmin": "IT Administrator"
+    "itAdmin": "IT Administrator",
+    "centreOperation": "Centre Operation",
+    "branchManager": "Branch Manager",
+    "branchOfficer": "Branch Officer"
   },
   "account": {
     "updatePassword": "Update password",
@@ -1054,7 +1058,8 @@
     "allowOnlyLettersAndNumbers": "Allow only letters and numbers",
     "firstNameRequired": "First Name is required",
     "lastNameRequired": "Last Name is required",
-    "roleRequired": "Role is required"
+    "roleRequired": "Role is required",
+    "locationRequired": "Location is required"
   },
   "cardStatus": {
     "detail": "Detail >"

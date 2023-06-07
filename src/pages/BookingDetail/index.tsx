@@ -3,8 +3,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import dayjs from 'dayjs'
+import ls from 'localstorage-slim'
 import {
   Button,
   Card,
@@ -19,7 +20,7 @@ import {
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
-import { ROLES, hasAllowedRole } from 'auth/roles'
+import { PRIVILEGES, hasAllowedPrivilege } from 'auth/privileges'
 import {
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
@@ -38,6 +39,7 @@ import { BookingCarActivity } from 'services/web-bff/booking.type'
 import CarDetailDialog from './CarDetailDialog'
 import CarReplacementDialog from './CarReplacementDialog'
 import { useStyles, ChipServiceType, ChipPaymentType, DisabledField } from './styles'
+import { BookingStateParams } from './utils'
 
 interface SubscriptionDetailParams {
   bookingId: string
@@ -53,10 +55,13 @@ export function hasStatusAllowedToDoCarReplacement(status: string | undefined): 
 
 export default function SubscriptionDetail(): JSX.Element {
   const classes = useStyles()
-  const { getRole, firebaseUser } = useAuth()
-  const currentRole = getRole()
+  const { getPrivileges, firebaseUser } = useAuth()
+  const currentPrivilege = getPrivileges()
   const { t } = useTranslation()
   const history = useHistory()
+  const location = useLocation()
+  const resellerServiceAreaId =
+    (location.state as BookingStateParams) || ls.get<Text>('reseller_car')
 
   const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
 
@@ -79,7 +84,7 @@ export default function SubscriptionDetail(): JSX.Element {
     data: bookingDetails,
     isFetching,
     refetch: refetchBooking,
-  } = useQuery('booking', () => getDetailsById(bookingId), {
+  } = useQuery('booking', () => getDetailsById(resellerServiceAreaId, bookingId), {
     refetchOnWindowFocus: false,
   })
 
@@ -134,7 +139,9 @@ export default function SubscriptionDetail(): JSX.Element {
   const [carReplacementDialogOpen, setCarReplacementlogOpen] = useState<boolean>(false)
 
   const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
-  const isTherePermissionToDoCarReplacement = hasAllowedRole(currentRole, [ROLES.OPERATION])
+  const isTherePermissionToDoCarReplacement = hasAllowedPrivilege(currentPrivilege, [
+    PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
+  ])
   const isEndDateOverToday = bookingDetail ? new Date(bookingDetail?.endDate) < new Date() : false
 
   return (
@@ -371,7 +378,11 @@ export default function SubscriptionDetail(): JSX.Element {
                     onClick={() =>
                       history.push({
                         pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity?.carId}`,
-                        state: { carActivity, isSelfPickUp: bookingDetail?.isSelfPickUp },
+                        state: {
+                          carActivity,
+                          isSelfPickUp: bookingDetail?.isSelfPickUp,
+                          resellerServiceAreaId,
+                        },
                       })
                     }
                   >

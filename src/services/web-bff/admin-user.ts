@@ -55,6 +55,7 @@ export const createNewAdminUser = async ({
   firstname,
   lastname,
   role,
+  resellerServiceAreaIds,
 }: CreateNewAdminUserProps): Promise<AdminUser> => {
   const response: AdminUserProfileResponse = await AdminBffAPI.post(
     '/v1/admin-users',
@@ -63,6 +64,7 @@ export const createNewAdminUser = async ({
       firstName: firstname,
       lastName: lastname,
       role,
+      resellerServiceAreaIds,
     },
     {
       headers: {
@@ -80,12 +82,14 @@ export const updateAdminUser = async ({
   email,
   lastname,
   role,
+  resellerServiceAreaIds,
 }: UpdateAdminUserProps): Promise<AdminUserById> => {
   const response: UpdateAdminUserResponse = await AdminBffAPI.patch(`/v1/admin-users/${id}`, {
     firstName: firstname,
     lastName: lastname,
     email,
     role,
+    resellerServiceAreaIds,
   }).then((response) => response.data)
 
   return response.data
