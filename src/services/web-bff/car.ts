@@ -82,11 +82,13 @@ export const updateById = async ({
   vin,
   plateNumber,
   isActive,
+  resellerServiceAreaIdDefault,
 }: CarUpdateByIdProps): Promise<boolean> => {
   await AdminBffAPI.patch(`/v1/cars/${id}`, {
     vin,
     plateNumber,
     isActive,
+    resellerServiceAreaIdDefault,
   })
 
   return true

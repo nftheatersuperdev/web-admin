@@ -86,6 +86,7 @@ export default function CarDetail(): JSX.Element {
           vin: values.vin || '-',
           plateNumber: values.plateNumber || '-',
           isActive: values.status === CarStatus.PUBLISHED ? true : false,
+          resellerServiceAreaIdDefault: carDetail?.resellerServiceArea.id || '',
         }),
         {
           loading: t('toast.loading'),
