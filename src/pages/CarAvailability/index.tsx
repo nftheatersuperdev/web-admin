@@ -157,15 +157,24 @@ export default function CarAvailability(): JSX.Element {
     },
   }))
 
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const history = useHistory()
   const classes = useStyles()
   const { getResellerServiceAreas } = useAuth()
   const userServiceAreas = getResellerServiceAreas()
+  const sortedAreas = userServiceAreas?.sort((a, b) => {
+    const areaA = a[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
+    const areaB = b[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
+    if (areaA < areaB) {
+      return -1
+    }
+    if (areaA < areaB) {
+      return 1
+    }
+    return 0
+  })
   const userServiceAreaId =
-    userServiceAreas && userServiceAreas.length >= 1
-      ? (userServiceAreas[0] as ResellerServiceArea).id
-      : ''
+    sortedAreas && sortedAreas.length >= 1 ? (sortedAreas[0] as ResellerServiceArea).id : ''
   const defaultResellerId = userServiceAreaId === allLocationId ? '' : userServiceAreaId
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
   const [selectedToDate, setSelectedToDate] = useState(initSelectedToDate)
@@ -280,8 +289,8 @@ export default function CarAvailability(): JSX.Element {
     onSubmit: (value) => {
       let updateObj
       const searchField = filterSearchField
-
-      if (value.searchType === '' && value.selectLocation === 'all') {
+      console.log('//value.selectLocation:', value.selectLocation)
+      if (value.searchType === '' && value.selectLocation === allLocationId) {
         filter.carId = undefined
         filter.plateNumberContain = undefined
         filter.plateNumberEqual = undefined
@@ -309,7 +318,11 @@ export default function CarAvailability(): JSX.Element {
           filter.resellerServiceAreaId = value.selectReSeller
           localStorage.setItem(filter.resellerServiceAreaId, value.selectReSeller)
         }
-        if (value.selectLocation !== 'all') {
+        if (value.selectLocation === allLocationId) {
+          filter.resellerServiceAreaId = undefined
+          localStorage.setItem('location', '')
+        }
+        if (value.selectLocation !== allLocationId) {
           filter.resellerServiceAreaId = value.selectLocation
           localStorage.setItem('location', value.selectReSeller)
         }
