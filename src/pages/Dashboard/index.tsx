@@ -70,23 +70,14 @@ const quickLinks = [
 ]
 
 export default function Dashboard(): JSX.Element {
-  const { t, i18n } = useTranslation()
-  const { getResellerServiceAreas } = useAuth()
-  const userServiceAreas = getResellerServiceAreas()
-  const sortedAreas = userServiceAreas?.sort((a, b) => {
-    const areaA = a[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
-    const areaB = b[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
-    if (areaA < areaB) {
-      return -1
-    }
-    if (areaA < areaB) {
-      return 1
-    }
-    return 0
-  })
+  const { t } = useTranslation()
+  const { getResellerServiceAreaWithSort } = useAuth()
+  const userServiceAreas = getResellerServiceAreaWithSort()
   const todayLowerUpper = formatDate(Date(), 'YYYY-MM-DD')
   const userServiceAreaId =
-    sortedAreas && sortedAreas.length >= 1 ? (sortedAreas[0] as ResellerServiceArea).id : ''
+    userServiceAreas && userServiceAreas.length >= 1
+      ? (userServiceAreas[0] as ResellerServiceArea).id
+      : ''
   const [resellerServiceAreaId, setResellerServiceAreaId] =
     useState<string | null>(userServiceAreaId)
   const {

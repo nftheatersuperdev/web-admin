@@ -48,6 +48,7 @@ interface AuthProps {
   getPrivileges: () => ArrayText
   setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
   getResellerServiceAreas: () => ResellerServices
+  getResellerServiceAreaWithSort: () => ResellerServices
 }
 
 const Auth = createContext<AuthProps>({
@@ -69,12 +70,13 @@ const Auth = createContext<AuthProps>({
   getPrivileges: () => undefined,
   setResellerServiceAreas: (_areas: ResellerServiceArea[]) => undefined,
   getResellerServiceAreas: () => undefined,
+  getResellerServiceAreaWithSort: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
   const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const errorMessage = useErrorMessage()
 
@@ -130,6 +132,22 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
 
   const getResellerServiceAreas = (): ResellerServices => {
     return ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+  }
+
+  const getResellerServiceAreaWithSort = (): ResellerServices => {
+    const resellerStorage = ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+    const sortedAreas = resellerStorage?.sort((a, b) => {
+      const areaA = a[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
+      const areaB = b[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
+      if (areaA < areaB) {
+        return -1
+      }
+      if (areaA < areaB) {
+        return 1
+      }
+      return 0
+    })
+    return sortedAreas
   }
 
   const getRoleDisplayName = (): string => {
@@ -211,6 +229,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getPrivileges,
         setResellerServiceAreas,
         getResellerServiceAreas,
+        getResellerServiceAreaWithSort,
       }}
     >
       {children}
