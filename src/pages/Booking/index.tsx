@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
-import { Link, useLocation, useHistory } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import {
   Card,
   Grid,
@@ -48,7 +48,7 @@ import {
   SubscriptionBookingListFilters,
 } from 'services/web-bff/booking.type'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import LocationSwitcher from 'components/LocationSwitcher'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
 import {
   getBookingStatusOnlyUsedInBackendOptions,
@@ -74,7 +74,15 @@ export default function Booking(): JSX.Element {
       : ''
 
   const queryString = new URLSearchParams(locationParam)
-  const resellerId = queryString.get('resellerServiceAreaId') || userServiceAreaId
+  const getDefaultReseller = () => {
+    const defaultId = queryString.get('resellerServiceAreaId') || userServiceAreaId
+    if (defaultId === allLocationId) {
+      return null
+    }
+    return defaultId
+  }
+
+  const resellerId = getDefaultReseller()
   const deliveryDate = queryString.get('deliveryDate')
   const returnDate = queryString.get('returnDate')
   const status = queryString.get('status')?.split(',')
@@ -303,6 +311,8 @@ export default function Booking(): JSX.Element {
   const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
   const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(initSelectedFromDate)
 
+  const [resellerServiceAreaId, setResellerServiceAreaId] = useState<string | null>(resellerId)
+
   const onSetSelectedSearch = (value: SelectOption | null) => {
     if (value) {
       setSelectedSearch(value)
@@ -316,14 +326,6 @@ export default function Booking(): JSX.Element {
         removeQueryParams(true)
       }
     } else {
-      setFilter({})
-      setSelectedSearch(null)
-      setSelectedOptionValue(null)
-      setSelectedFromDate(null)
-      formik.setFieldValue('searchLocation', userServiceAreaId)
-      formik.setFieldValue('searchType', '')
-      formik.setFieldValue('searchInput', '')
-
       if (
         queryString.has('resellerServiceAreaId') ||
         queryString.has('deliveryDate') ||
@@ -332,9 +334,36 @@ export default function Booking(): JSX.Element {
       ) {
         removeQueryParams()
       }
+
+      if (userServiceAreas?.find((area) => area.id === allLocationId)) {
+        setResellerServiceAreaId(allLocationId)
+        setFilter({})
+      } else {
+        setResellerServiceAreaId(userServiceAreaId)
+        formik.setFieldValue('searchLocation', userServiceAreaId)
+        formik.handleSubmit()
+      }
+
+      setSelectedSearch(null)
+      setSelectedOptionValue(null)
+      setSelectedFromDate(null)
+      formik.setFieldValue('searchType', '')
+      formik.setFieldValue('searchInput', '')
     }
     setSearchValue('')
   }
+
+  const setLocationChange = (optionId: string | null) => {
+    removeQueryParams()
+    if (optionId === allLocationId || !optionId) {
+      const seeAllLocations = userServiceAreas?.find((area) => area.id === allLocationId)
+      optionId = seeAllLocations ? null : resellerId
+    }
+    setResellerServiceAreaId(optionId)
+    formik.setFieldValue('searchLocation', optionId)
+    formik.handleSubmit()
+  }
+
   const onSearchChange = (
     event: ChangeEvent<HTMLInputElement>,
     value?: string,
@@ -347,7 +376,7 @@ export default function Booking(): JSX.Element {
     if (isDropdown) {
       onEnterSearch(null, isDropdown, searchText)
     } else {
-      formik.setFieldValue('searchLocation', userServiceAreaId)
+      formik.setFieldValue('searchLocation', resellerServiceAreaId)
       formik.setFieldValue('searchType', selectedSearch?.value)
       formik.setFieldValue('searchInput', searchText)
       window.setTimeout(() => {
@@ -368,7 +397,7 @@ export default function Booking(): JSX.Element {
       return
     }
 
-    formik.setFieldValue('searchLocation', userServiceAreaId)
+    formik.setFieldValue('searchLocation', resellerServiceAreaId)
 
     const newValue = []
     formik.setFieldValue('searchType', selectedSearch?.value)
@@ -405,7 +434,6 @@ export default function Booking(): JSX.Element {
       if (searchLocation) {
         filterSearch.resellerServiceAreaId = searchLocation
       }
-
       setFilter(filterSearch)
     },
   })
@@ -593,8 +621,12 @@ export default function Booking(): JSX.Element {
         <TableRow
           hover
           key={`booking-${booking.id}-${booking.detailId}`}
-          component={Link}
-          to={`/booking/${booking.id}/${booking.detailId}`}
+          onClick={() =>
+            history.push({
+              pathname: `/booking/${booking.id}/${booking.detailId}`,
+              state: resellerServiceAreaId,
+            })
+          }
           style={{ textDecoration: 'none' }}
         >
           {columnRow.map((col) => (
@@ -735,8 +767,8 @@ export default function Booking(): JSX.Element {
             <strong>{t('booking.list')}</strong>
           </Typography>
         </Grid>
-        <Grid className={classes.gridSearch} container spacing={3}>
-          <Grid item xs={9} sm={2}>
+        <Grid className={classes.gridSearch} container spacing={1}>
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             <Autocomplete
               autoHighlight
               id="search_select_list"
@@ -756,21 +788,20 @@ export default function Booking(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item xs={9} sm={2}>
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             {renderComponentBasedOnSelectedSearch()}
           </Grid>
           <Grid item xs />
-          <Grid item xs={9} sm={2}>
+          <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             <LocationSwitcher
               userServiceAreas={userServiceAreas}
-              currentLocationId={formik.values.searchLocation}
+              currentLocationId={resellerServiceAreaId}
               onLocationChanged={(option) => {
                 if (option) {
-                  formik.setFieldValue('searchLocation', option.id)
-                  formik.submitForm()
-                  return
+                  setLocationChange(option.id)
+                } else {
+                  setLocationChange(null)
                 }
-                formik.setFieldValue('searchLocation', userServiceAreaId)
               }}
             />
           </Grid>

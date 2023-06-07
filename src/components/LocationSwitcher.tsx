@@ -38,11 +38,28 @@ export default function LocationSwitcher({
   })
   const classes = useStyles()
   const { t, i18n } = useTranslation()
+  const { data } = useQuery('get-location', () => getLocationList(), {
+    refetchOnWindowFocus: false,
+  })
 
-  const allLocationSelectOption = {
-    label: t('dashboard.allLocation'),
-    value: allLocationId,
+  // Handle for case: when clear location for some role that can't see all location
+  const getDefaultLocation = () => {
+    if (userServiceAreas && userServiceAreas[0].id !== allLocationId) {
+      const current = data?.locations.find((location) => location.id === userServiceAreas[0].id)
+      if (current) {
+        return {
+          label: current[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn'],
+          value: current?.id,
+        }
+      }
+    }
+    return {
+      label: t('dashboard.allLocation'),
+      value: allLocationId,
+    }
   }
+
+  const allLocationSelectOption = getDefaultLocation()
 
   function mapLocationSelectOptionFields(location: ResellerServiceArea | null | undefined) {
     if (!location) {
@@ -70,16 +87,31 @@ export default function LocationSwitcher({
   }
 
   const [selectedLocation, setSelectedLocation] = useState<SelectOption | null>()
-  const { data } = useQuery('get-location', () => getLocationList(), {
-    refetchOnWindowFocus: false,
-  })
-  const availableLocations = data?.locations || []
+
+  const getAvailableLocations = (): ResellerServiceArea[] => {
+    if (userServiceAreas && userServiceAreas[0].id !== allLocationId) {
+      return userServiceAreas
+    }
+    return data?.locations || []
+  }
+  const availableLocations = getAvailableLocations()
 
   const onSelectChanged = (option: SelectOption) => {
-    setSelectedLocation(option)
-    onLocationChanged(
-      availableLocations.find((availableLocation) => availableLocation.id === option?.value) || null
-    )
+    if (option) {
+      setSelectedLocation(option)
+      onLocationChanged(
+        availableLocations.find((availableLocation) => availableLocation.id === option?.value) ||
+          null
+      )
+    } else {
+      // Handle for case: when clear location for some role that can't see all location
+      setSelectedLocation(allLocationSelectOption)
+      onLocationChanged(
+        availableLocations.find(
+          (availableLocation) => availableLocation.id === allLocationSelectOption.value
+        ) || null
+      )
+    }
   }
 
   useEffect(() => {

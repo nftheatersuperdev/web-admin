@@ -245,7 +245,7 @@ export interface CarListFilterRequest {
   statusEqual?: string
   ownerProfileId?: string
   ownerProfileType?: string
-  resellerServiceAreaId?: string
+  resellerServiceAreaId?: string | null
 }
 
 export interface CarListFilterRequestProps {

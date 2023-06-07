@@ -1059,7 +1059,7 @@
     "firstNameRequired": "First Name is required",
     "lastNameRequired": "Last Name is required",
     "roleRequired": "Role is required",
-    "locationRequired": "Location Services is required"
+    "locationRequired": "Location is required"
   },
   "cardStatus": {
     "detail": "Detail >"

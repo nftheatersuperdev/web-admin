@@ -44,7 +44,7 @@ import { CarAvailableListFilterRequest, ResellerServiceArea } from 'services/web
 import DatePicker from 'components/DatePicker'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import LocationSwitcher from 'components/LocationSwitcher'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
 import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
 import { getCarOwnerList } from 'services/web-bff/car-owner'
@@ -166,7 +166,7 @@ export default function CarAvailability(): JSX.Element {
     userServiceAreas && userServiceAreas.length >= 1
       ? (userServiceAreas[0] as ResellerServiceArea).id
       : ''
-
+  const defaultResellerId = userServiceAreaId === allLocationId ? '' : userServiceAreaId
   const [selectedFromDate, setSelectedFromDate] = useState(initSelectedFromDate)
   const [selectedToDate, setSelectedToDate] = useState(initSelectedToDate)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
@@ -187,7 +187,7 @@ export default function CarAvailability(): JSX.Element {
 
   const [filter, setFilter] = useState<CarAvailableListFilterRequest>({
     ...generateFilterDates(),
-    resellerServiceAreaId: userServiceAreaId,
+    resellerServiceAreaId: defaultResellerId,
   })
   const {
     data: carData,
@@ -277,7 +277,6 @@ export default function CarAvailability(): JSX.Element {
       selectReSeller: 'all',
     },
     enableReinitialize: true,
-
     onSubmit: (value) => {
       let updateObj
       const searchField = filterSearchField
@@ -319,7 +318,6 @@ export default function CarAvailability(): JSX.Element {
           ...generateFilterDates(),
         } as CarAvailableListFilterRequest
       }
-
       setFilter(updateObj)
       setPage(0)
     },
@@ -659,7 +657,11 @@ export default function CarAvailability(): JSX.Element {
                       formik.handleSubmit()
                       return
                     }
-                    formik.setFieldValue('selectLocation', userServiceAreaId)
+                    const seeAllLocations = userServiceAreas?.find(
+                      (area) => area.id === allLocationId
+                    )
+                    const resellerId = seeAllLocations ? '' : defaultResellerId
+                    formik.setFieldValue('selectLocation', resellerId)
                     formik.handleSubmit()
                   }}
                 />

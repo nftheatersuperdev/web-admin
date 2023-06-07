@@ -287,6 +287,7 @@ export default function StaffProfileDetail(): JSX.Element {
   const handleChangeRole = (roleSelect: string) => {
     if (roleSelect === 'BRANCH_MANAGER' || roleSelect === 'BRANCH_OFFICER') {
       setSelectLocation([])
+      setFieldValue('resellerServiceAreaIds', '')
       setDisableLocation(false)
     } else {
       setDisableLocation(true)

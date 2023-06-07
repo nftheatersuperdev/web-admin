@@ -78,7 +78,6 @@ export default function Dashboard(): JSX.Element {
     userServiceAreas && userServiceAreas.length >= 1
       ? (userServiceAreas[0] as ResellerServiceArea).id
       : ''
-
   const [resellerServiceAreaId, setResellerServiceAreaId] =
     useState<string | null>(userServiceAreaId)
   const {
@@ -87,7 +86,10 @@ export default function Dashboard(): JSX.Element {
     isFetching,
   } = useQuery(
     'dashboard-informations',
-    () => getInformations(resellerServiceAreaId || userServiceAreaId),
+    () =>
+      getInformations(
+        resellerServiceAreaId === allLocationId ? null : resellerServiceAreaId || userServiceAreaId
+      ),
     {
       refetchOnWindowFocus: false,
     }

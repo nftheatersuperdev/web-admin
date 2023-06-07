@@ -17,6 +17,8 @@ import {
 } from '@mui/material'
 import { useParams, useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from 'auth/AuthContext'
+import { hasAllowedPrivilege, PRIVILEGES } from 'auth/privileges'
 import { useQuery } from 'react-query'
 import { useFormik } from 'formik'
 import { ROUTE_PATHS } from 'routes'
@@ -27,6 +29,7 @@ import { CarModelInput, CarModelInputProps } from 'services/web-bff/car.type'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import Backdrop from 'components/Backdrop'
+import { useStyles } from './styles'
 import { ModelAndPricingEditParams } from './types'
 import { carConnectorTypes } from './ModelForm/CarConnectorType'
 
@@ -65,10 +68,48 @@ const ConnectorTypeContainer = styled.div`
   margin-top: 10px;
 `
 
+const CustomField = styled(TextField)`
+  div.Mui-disabled {
+    background-color: #f5f5f5;
+  }
+  .MuiInputBase-input:disabled {
+    background-color: #f5f5f5;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+  label.Mui-disabled {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+`
+
+const CustomSelect = styled(Select)`
+  div.Mui-disabled {
+    background-color: #f5f5f5;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+  .MuiSelect-select:disabled {
+    background-color: #f5f5f5;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+  div.Mui-disabled > legend {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+`
+
 export default function ModelAndPricingEdit(): JSX.Element {
   const { t } = useTranslation()
+  const classes = useStyles()
   const history = useHistory()
   const { id } = useParams<ModelAndPricingEditParams>()
+  const { getPrivileges } = useAuth()
+  const checkPermission = () => {
+    return hasAllowedPrivilege(getPrivileges(), [PRIVILEGES.PERM_CAR_MODEL_EDIT])
+  }
+  const isAllowEdit = checkPermission()
   const carBodyTypes = ['SUV', 'Hatchback', 'Wagon', 'Luxury', 'Sedan', 'Crossover']
   const durationLable = (value: string) => {
     switch (value) {
@@ -197,7 +238,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
             </SubContentSectionTitle>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextFieldReadOnly
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.brand')}
                   id="brand"
@@ -208,13 +249,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  InputProps={{
-                    readOnly: true,
-                  }}
+                  disabled
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.model')}
                   id="name"
@@ -225,6 +264,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
@@ -232,20 +272,21 @@ export default function ModelAndPricingEdit(): JSX.Element {
               <Grid item md={6}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel id="bodyTypeId">{t('carModelAndPricing.detail.bodyType')}</InputLabel>
-                  <Select
+                  <CustomSelect
                     labelId="bodyType"
                     label={t('carModelAndPricing.detail.bodyType')}
                     id="bodyType"
                     name="bodyType"
                     value={formik.values.bodyType.toLocaleUpperCase()}
                     onChange={formik.handleChange}
+                    disabled={!isAllowEdit}
                   >
                     {carBodyTypes?.map((bodyType) => (
                       <MenuItem key={bodyType} value={bodyType.toLocaleUpperCase()}>
                         {bodyType}
                       </MenuItem>
                     ))}
-                  </Select>
+                  </CustomSelect>
                 </FormControl>
               </Grid>
               <Grid item md={6}>
@@ -261,12 +302,14 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  className={!isAllowEdit ? classes.disabledField : ''}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.modelYear')}
                   id="year"
@@ -278,12 +321,13 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
             <GridContainer container spacing={3}>
               <Grid item md={12}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.condition')}
                   id="condition"
@@ -295,7 +339,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   }}
                   onChange={formik.handleChange}
                   multiline
-                  rows={1}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
@@ -310,7 +354,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
             </SubContentSectionTitle>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.acceleration')}
                   id="acceleration"
@@ -322,10 +366,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.topSpeed')}
                   id="topSpeed"
@@ -337,12 +382,13 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.range')}
                   id="range"
@@ -354,10 +400,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.batteryCapacity')}
                   id="batteryCapacity"
@@ -369,12 +416,13 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.horsePower')}
                   id="horsePower"
@@ -386,6 +434,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
@@ -421,6 +470,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                           }
                           label={connectorType.type}
                           key={connectorType.id}
+                          disabled={!isAllowEdit}
                         />
                       ))}
                     </FormControl>
@@ -430,7 +480,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
             </GridContainer>
             <GridContainer container spacing={3}>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.fastChargeTime')}
                   id="fastChargeTime"
@@ -442,10 +492,11 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
               <Grid item md={6}>
-                <TextField
+                <CustomField
                   fullWidth
                   label={t('carModelAndPricing.detail.chargeTime')}
                   id="chargeTime"
@@ -457,6 +508,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={!isAllowEdit}
                 />
               </Grid>
             </GridContainer>
@@ -511,7 +563,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                         />
                       </Grid>
                       <Grid item md={4}>
-                        <TextField
+                        <CustomField
                           fullWidth
                           multiline
                           id={`${packageId}-description`}
@@ -524,6 +576,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
                           InputProps={{
                             readOnly: true,
                           }}
+                          disabled={!isAllowEdit}
                         />
                       </Grid>
                     </GridContainer>
@@ -537,7 +590,7 @@ export default function ModelAndPricingEdit(): JSX.Element {
               onClick={() => formik.handleSubmit()}
               color="primary"
               variant="contained"
-              disabled={isLoading}
+              disabled={isLoading || !isAllowEdit}
             >
               {t('carModelAndPricing.detail.button.save')}
             </ButtonAction>

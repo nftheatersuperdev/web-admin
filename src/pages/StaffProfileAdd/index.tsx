@@ -119,7 +119,7 @@ export default function StaffProfileAdd(): JSX.Element {
           .min(8)
           .required(t('authentication.error.passwordRequired'))
           .matches(
-            /(?=.{8,})(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Z]).*?[a-z].*/,
+            /(?=.{8,})(?=.*?[^\w\s])(?=.*?\d)(?=.*?[A-Z]).*?[a-z].*/,
             t('authentication.error.passwordCondition')
           ),
         firstName: Yup.string().max(255).required(t('validation.firstNameRequired')),
@@ -236,6 +236,7 @@ export default function StaffProfileAdd(): JSX.Element {
       roleSelect.toLowerCase() === ROLES.BRANCH_OFFICER
     ) {
       setSelectLocation([])
+      setFieldValue('resellerServiceAreaIds', '')
       setDisableLocation(false)
     } else {
       setDisableLocation(true)

@@ -93,7 +93,7 @@ export default function ModelAndPricing(): JSX.Element {
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(config.tableRowsDefaultPageSize)
-  const [searchField, setSearchField] = useState<string>()
+  const [searchField, setSearchField] = useState<string>('')
   const [searchValue, setSearchValue] = useState<string>()
   const [filter, setFilter] = useState<CarListFilterRequest>({})
 
@@ -184,7 +184,7 @@ export default function ModelAndPricing(): JSX.Element {
     if (event?.key.toLocaleLowerCase() === 'enter') {
       setPage(0)
       setFilter({
-        [searchField as string]: searchValue,
+        [searchField]: searchValue,
       })
       setTimeout(() => refetch(), 250)
     }

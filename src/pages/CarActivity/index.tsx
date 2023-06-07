@@ -43,7 +43,7 @@ import config from 'config'
 import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-import LocationSwitcher from 'components/LocationSwitcher'
+import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { getActivities } from 'services/web-bff/car-activity'
 import { getCarBrands } from 'services/web-bff/car-brand'
 import { CarBrand, CarModel, CarSku as CarColor } from 'services/web-bff/car-brand.type'
@@ -219,14 +219,13 @@ export default function CarActivity(): JSX.Element {
     userServiceAreas && userServiceAreas.length >= 1
       ? (userServiceAreas[0] as ResellerServiceArea).id
       : ''
+  const defaultResellerId = userServiceAreaId !== allLocationId ? userServiceAreaId : ''
   const qs = {
     plate: useQueryString().get('plate'),
     brand: useQueryString().get('brand'),
     model: useQueryString().get('model'),
     color: useQueryString().get('color'),
-    location: useQueryString().get('resellerServiceAreaId') || userServiceAreaId,
   }
-
   const conditionConfigs = {
     minimumToFilterPlateNumber: 2,
   }
@@ -261,7 +260,7 @@ export default function CarActivity(): JSX.Element {
   const [filterBrand, setFilterBrand] = useState<string>(qs.brand || '')
   const [filterModel, setFilterModel] = useState<string>(qs.model || '')
   const [filterColor, setFilterColor] = useState<string>(qs.color || '')
-  const [filterLocation, setFilterLocation] = useState<string>(qs.location || '')
+  const [filterLocation, setFilterLocation] = useState<string>(defaultResellerId)
   const [resetFilters, setResetFilters] = useState<boolean>(false)
   const [carModels, setCarModels] = useState<CarModel[]>([])
   const [carColors, setCarColors] = useState<CarColor[]>([])
@@ -445,7 +444,6 @@ export default function CarActivity(): JSX.Element {
       Object.entries(adjustParams).filter(([_key, value]) => !!value)
     )
     const searchParams = new URLSearchParams(validParams)
-    // console.log('adjustParams:', adjustParams)
     return history.push({ search: `?${searchParams.toString()}` })
   }
 
@@ -460,7 +458,11 @@ export default function CarActivity(): JSX.Element {
     setFilterColorObject(null)
     setCarModels([])
     setCarColors([])
-    setFilterLocation(userServiceAreaId)
+    if (defaultResellerId === allLocationId) {
+      setFilterLocation('')
+    } else {
+      setFilterLocation(defaultResellerId)
+    }
     setResetFilters(true)
   }
 
@@ -611,6 +613,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id || value.id === defaultSelectList.brandAll.id
+                  }
                   value={filterBrandObject || defaultSelectList.brandAll}
                   defaultValue={filterBrandObject || defaultSelectList.brandAll}
                   onChange={(_event, value) => handleOnBrandChange(value)}
@@ -639,6 +644,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id || value.id === defaultSelectList.modelEmpty.id
+                  }
                   value={filterModelObject || defaultSelectList.modelEmpty}
                   defaultValue={filterModelObject || defaultSelectList.modelEmpty}
                   onChange={(_event, value) => handleOnModelChange(value)}
@@ -667,6 +675,9 @@ export default function CarActivity(): JSX.Element {
                       placeholder={t('all')}
                     />
                   )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id || value.id === defaultSelectList.colorEmpty.id
+                  }
                   value={filterColorObject || defaultSelectList.colorEmpty}
                   defaultValue={filterColorObject || defaultSelectList.colorEmpty}
                   onChange={(_event, value) => handleOnColorChange(value)}
@@ -721,7 +732,11 @@ export default function CarActivity(): JSX.Element {
                     if (option) {
                       return setFilterLocation(option.id)
                     }
-                    return setFilterLocation(userServiceAreaId)
+                    const seeAllLocations = userServiceAreas?.find(
+                      (area) => area.id === allLocationId
+                    )
+                    const location = seeAllLocations ? '' : filterLocation
+                    return setFilterLocation(location)
                   }}
                 />
               </Grid>

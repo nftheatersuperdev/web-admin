@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import { useLocation, useParams } from 'react-router-dom'
 import config from 'config'
+import ls from 'localstorage-slim'
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
@@ -36,6 +37,7 @@ interface BookingDetialCarParams {
   // eslint-disable-next-line
   carActivity: any
   isSelfPickUp: boolean
+  resellerServiceAreaId: string
 }
 
 const useStyles = makeStyles(() => ({
@@ -76,9 +78,10 @@ interface SubscriptionDetailParams {
 export default function BookingCarDetail(): JSX.Element {
   const location = useLocation()
   const classes = useStyles()
+  const { t } = useTranslation()
 
   const carDetail = location.state as BookingDetialCarParams
-  const { t } = useTranslation()
+  ls.set<string>('reseller_car', carDetail.resellerServiceAreaId)
 
   // Bangkok Center
   const defaultMapCenter = {

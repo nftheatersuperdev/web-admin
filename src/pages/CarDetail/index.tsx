@@ -7,6 +7,8 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { Card, Grid, Typography, Button, Autocomplete, Chip } from '@mui/material'
+import { PRIVILEGES, hasAllowedPrivilege } from 'auth/privileges'
+import { useAuth } from 'auth/AuthContext'
 import { getCarById, updateById } from 'services/web-bff/car'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
@@ -28,6 +30,10 @@ const validationSchema = yup.object({
 })
 
 export default function CarDetail(): JSX.Element {
+  const { getPrivileges } = useAuth()
+  const currentUserPrivileges = getPrivileges()
+  const isValidPrivilege = hasAllowedPrivilege(currentUserPrivileges, [PRIVILEGES.PERM_CAR_EDIT])
+
   const location = useLocation()
   const classes = useStyles()
   const { t } = useTranslation()
@@ -119,6 +125,7 @@ export default function CarDetail(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Autocomplete
+              disabled={!isValidPrivilege}
               autoHighlight
               id="status-select-list"
               options={statusOptions}
@@ -127,8 +134,15 @@ export default function CarDetail(): JSX.Element {
                 option.value === value.value || value.value === '-'
               }
               renderInput={(params) => {
-                return (
+                return isValidPrivilege ? (
                   <EnabledTextField {...params} label={t('car.carStatus')} variant="outlined" />
+                ) : (
+                  <DisabledField
+                    {...params}
+                    label={t('car.carStatus')}
+                    variant="outlined"
+                    disabled
+                  />
                 )
               }}
               value={selectedStatus}
@@ -164,30 +178,54 @@ export default function CarDetail(): JSX.Element {
 
         <Grid container spacing={3} className={classes.container}>
           <Grid item xs={12} sm={6}>
-            <EnabledTextField
-              type="text"
-              id="car_detail__plateNumber"
-              label={t('car.plateNumber')}
-              fullWidth
-              variant="outlined"
-              value={formik.values.plateNumber || '-'}
-              onChange={(event) => {
-                formik.setFieldValue('plateNumber', event.target.value)
-              }}
-            />
+            {isValidPrivilege ? (
+              <EnabledTextField
+                type="text"
+                id="car_detail__plateNumber"
+                label={t('car.plateNumber')}
+                fullWidth
+                variant="outlined"
+                value={formik.values.plateNumber || '-'}
+                onChange={(event) => {
+                  formik.setFieldValue('plateNumber', event.target.value)
+                }}
+              />
+            ) : (
+              <DisabledField
+                type="text"
+                id="car_detail__plateNumber"
+                label={t('car.plateNumber')}
+                disabled
+                fullWidth
+                variant="outlined"
+                value={formik.values.plateNumber || '-'}
+              />
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
-            <EnabledTextField
-              type="text"
-              id="car_detail__vin"
-              label={t('car.vin')}
-              fullWidth
-              variant="outlined"
-              value={formik.values.vin || '-'}
-              onChange={(event) => {
-                formik.setFieldValue('vin', event.target.value)
-              }}
-            />
+            {isValidPrivilege ? (
+              <EnabledTextField
+                type="text"
+                id="car_detail__vin"
+                label={t('car.vin')}
+                fullWidth
+                variant="outlined"
+                value={formik.values.vin || '-'}
+                onChange={(event) => {
+                  formik.setFieldValue('vin', event.target.value)
+                }}
+              />
+            ) : (
+              <DisabledField
+                type="text"
+                id="car_detail__vin"
+                label={t('car.vin')}
+                disabled
+                fullWidth
+                variant="outlined"
+                value={formik.values.vin || '-'}
+              />
+            )}
           </Grid>
         </Grid>
 
@@ -475,6 +513,7 @@ export default function CarDetail(): JSX.Element {
         <Grid container spacing={3} className={classes.container}>
           <Grid item>
             <Button
+              disabled={!isValidPrivilege}
               id="car_detail__update_btn"
               color="primary"
               variant="contained"

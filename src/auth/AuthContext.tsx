@@ -19,6 +19,7 @@ export const STORAGE_KEYS = {
 
 type Text = string | null | undefined
 type ArrayText = string[] | null | undefined
+type ResellerServices = ResellerServiceArea[] | null | undefined
 
 interface AuthProviderProps {
   fbase: Firebase
@@ -44,9 +45,9 @@ interface AuthProps {
   getUserId: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
   setPrivileges: (privilege: string[]) => void
-  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
-  getResellerServiceAreas: () => ResellerServiceArea[] | null | undefined
   getPrivileges: () => ArrayText
+  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
+  getResellerServiceAreas: () => ResellerServices
 }
 
 const Auth = createContext<AuthProps>({
@@ -127,8 +128,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     ls.set<ResellerServiceArea[]>(STORAGE_KEYS.RESELLER_SERVICE_AREA, areas)
   }
 
-  const getResellerServiceAreas = (): ResellerServiceArea[] | null | undefined => {
-    return ls.get<ResellerServiceArea[] | null | undefined>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
+  const getResellerServiceAreas = (): ResellerServices => {
+    return ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
   }
 
   const getRoleDisplayName = (): string => {
