@@ -285,6 +285,7 @@ export interface CarUpdateByIdProps {
   vin: string
   plateNumber: string
   isActive: boolean
+  resellerServiceAreaIdDefault: string
 }
 
 export interface CarModelInput {
