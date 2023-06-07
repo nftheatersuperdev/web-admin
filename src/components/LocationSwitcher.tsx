@@ -72,7 +72,17 @@ export default function LocationSwitcher({
   }
 
   function mapLocationSelectOptions(locations: ResellerServiceArea[]) {
-    return locations.map((location) => mapLocationSelectOptionFields(location))
+    return locations
+      .map((location) => mapLocationSelectOptionFields(location))
+      .sort((a, b) => {
+        if (a.label < b.label) {
+          return -1
+        }
+        if (a.label > b.label) {
+          return 1
+        }
+        return 0
+      })
   }
 
   function generateSelectOptions(locations: ResellerServiceArea[]) {
