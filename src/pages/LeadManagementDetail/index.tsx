@@ -306,7 +306,7 @@ export default function LeadManagementDetail() {
 
   useEffect(() => {
     refetch()
-  }, [refetch, pageSize, sortOrder, orderBy, currentUserRole, filterStartDate, filterEndDate])
+  }, [refetch, page, pageSize, sortOrder, orderBy, currentUserRole, filterStartDate, filterEndDate])
 
   return (
     <Page>
