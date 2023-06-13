@@ -23,6 +23,11 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
+            when {
+                expression {
+                    return params.ENVIRONMENT == 'dev';
+                }
+            }
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sonarqubeWebAnalysis(params.APP_NAME, params.ENVIRONMENT)
@@ -30,11 +35,16 @@ pipeline {
             }
         }
         stage("Quality Gate") {
+            when {
+                expression {
+                    return params.ENVIRONMENT == 'dev';
+                }
+            }
             steps {
                 timeout(time: 300, unit: 'SECONDS') {
                     waitForQualityGate abortPipeline: true
                 }
-            }
+            } 
         }
         stage ('Build And Push Bundle To S3') {
             steps {
