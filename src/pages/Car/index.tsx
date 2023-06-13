@@ -183,7 +183,7 @@ export default function Car(): JSX.Element {
       removeQueryParams()
 
       if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-        setResellerServiceAreaId(allLocationId)
+        setResellerServiceAreaId('')
         setFilter({})
       } else {
         setResellerServiceAreaId(userServiceAreaId)
@@ -478,10 +478,6 @@ export default function Car(): JSX.Element {
       setResellerData(resellers)
     }
   }, [resellers, isFetchedReseller])
-
-  // useEffect(() => {
-  //   refetch()
-  // }, [resellerServiceAreaId, refetch])
 
   const renderSearchStatus = () => (
     <Autocomplete
