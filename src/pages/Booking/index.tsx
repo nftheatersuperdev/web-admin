@@ -336,7 +336,7 @@ export default function Booking(): JSX.Element {
       }
 
       if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-        setResellerServiceAreaId(allLocationId)
+        setResellerServiceAreaId('')
         setFilter({})
       } else {
         setResellerServiceAreaId(userServiceAreaId)
