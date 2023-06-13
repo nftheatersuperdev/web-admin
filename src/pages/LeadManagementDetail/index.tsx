@@ -264,15 +264,13 @@ export default function LeadManagementDetail() {
 
   const handleSort = (key: string) => {
     const newOrderBy = key
-    let newSortOrder: 'asc' | 'desc' = 'asc'
 
     if (orderBy === newOrderBy && sortOrder === 'asc') {
-      newSortOrder = 'desc'
+      setSortOrder('desc')
     } else {
-      newSortOrder = 'asc'
+      setSortOrder('asc')
     }
     setOrderBy(newOrderBy)
-    setSortOrder(newSortOrder)
   }
 
   const {
@@ -306,7 +304,7 @@ export default function LeadManagementDetail() {
 
   useEffect(() => {
     refetch()
-  }, [refetch, pageSize, sortOrder, orderBy, currentUserRole, filterStartDate, filterEndDate])
+  }, [refetch, page, pageSize, sortOrder, orderBy, currentUserRole, filterStartDate, filterEndDate])
 
   return (
     <Page>
