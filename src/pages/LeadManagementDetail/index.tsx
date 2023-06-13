@@ -264,15 +264,13 @@ export default function LeadManagementDetail() {
 
   const handleSort = (key: string) => {
     const newOrderBy = key
-    let newSortOrder: 'asc' | 'desc' = 'asc'
 
     if (orderBy === newOrderBy && sortOrder === 'asc') {
-      newSortOrder = 'desc'
+      setSortOrder('desc')
     } else {
-      newSortOrder = 'asc'
+      setSortOrder('asc')
     }
     setOrderBy(newOrderBy)
-    setSortOrder(newSortOrder)
   }
 
   const {
