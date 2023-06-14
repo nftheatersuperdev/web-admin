@@ -335,20 +335,21 @@ export default function Booking(): JSX.Element {
         removeQueryParams()
       }
 
-      if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-        setResellerServiceAreaId('')
-        setFilter({})
-      } else {
-        setResellerServiceAreaId(userServiceAreaId)
-        formik.setFieldValue('searchLocation', userServiceAreaId)
-        formik.handleSubmit()
-      }
-
       setSelectedSearch(null)
       setSelectedOptionValue(null)
       setSelectedFromDate(null)
       formik.setFieldValue('searchType', '')
       formik.setFieldValue('searchInput', '')
+
+      if (userServiceAreas?.find((area) => area.id === allLocationId)) {
+        setResellerServiceAreaId(null)
+        formik.setFieldValue('searchLocation', null)
+        formik.handleSubmit()
+      } else {
+        setResellerServiceAreaId(userServiceAreaId)
+        formik.setFieldValue('searchLocation', userServiceAreaId)
+        formik.handleSubmit()
+      }
     }
     setSearchValue('')
   }
@@ -733,6 +734,7 @@ export default function Booking(): JSX.Element {
           const fmtDate = dayjs(newDate).tz(config.timezone).format(DEFAULT_DATE_FORMAT_BFF)
           formik.setFieldValue('searchType', label)
           formik.setFieldValue('searchInput', fmtDate)
+          formik.setFieldValue('searchLocation', resellerServiceAreaId)
           formik.handleSubmit()
         }
       }}
@@ -756,6 +758,13 @@ export default function Booking(): JSX.Element {
     }
 
     return renderSearchInputField()
+  }
+
+  const setCurrentLocation = () => {
+    if (!resellerServiceAreaId) {
+      return allLocationId
+    }
+    return resellerServiceAreaId
   }
 
   return (
@@ -795,7 +804,7 @@ export default function Booking(): JSX.Element {
           <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             <LocationSwitcher
               userServiceAreas={userServiceAreas}
-              currentLocationId={resellerServiceAreaId}
+              currentLocationId={setCurrentLocation()}
               onLocationChanged={(option) => {
                 if (option) {
                   setLocationChange(option.id)
