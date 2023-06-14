@@ -183,8 +183,9 @@ export default function Car(): JSX.Element {
       removeQueryParams()
 
       if (userServiceAreas?.find((area) => area.id === allLocationId)) {
-        setResellerServiceAreaId('')
-        setFilter({})
+        setResellerServiceAreaId(null)
+        formik.setFieldValue('searchLocation', null)
+        formik.handleSubmit()
       } else {
         setResellerServiceAreaId(userServiceAreaId)
         formik.setFieldValue('searchLocation', userServiceAreaId)
@@ -576,6 +577,13 @@ export default function Car(): JSX.Element {
     return renderSearchInputField()
   }
 
+  const setCurrentLocation = () => {
+    if (!resellerServiceAreaId) {
+      return allLocationId
+    }
+    return resellerServiceAreaId
+  }
+
   return (
     <Page>
       <PageTitle title={t('sidebar.carManagement.title')} breadcrumbs={breadcrumbs} />
@@ -610,7 +618,7 @@ export default function Car(): JSX.Element {
           <Grid item xs={12} sm={6} md={3} lg={2} xl={2}>
             <LocationSwitcher
               userServiceAreas={userServiceAreas}
-              currentLocationId={resellerServiceAreaId}
+              currentLocationId={setCurrentLocation()}
               onLocationChanged={(option) => {
                 if (option) {
                   setLocationChange(option.id)
