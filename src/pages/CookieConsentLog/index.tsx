@@ -250,7 +250,7 @@ export default function CookieConsentLogPage(): JSX.Element {
             </GridSearchSection>
             <TableContainer className={classes.table}>
               <Table id="cookie_consent_log___table">
-                <DataTableHeader header={headerText} />
+                <DataTableHeader headers={headerText} />
                 {isFetchingActivities ? (
                   <TableBody>
                     <TableRow>

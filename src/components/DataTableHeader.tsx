@@ -1,9 +1,8 @@
-/* eslint-disable react/jsx-key */
 import { TableCell, TableHead, TableRow } from '@mui/material'
 import styled from 'styled-components'
 
 interface DataTableProps {
-  header: TableHeaderProps[]
+  headers: TableHeaderProps[]
 }
 
 export interface TableHeaderProps {
@@ -17,20 +16,22 @@ const TableHeaderColumn = styled.div`
   padding-left: 10px;
 `
 
-export default function DataTableHeader({ header }: DataTableProps): JSX.Element {
+export default function DataTableHeader({ headers }: DataTableProps): JSX.Element {
   return (
     <TableHead>
-      <TableRow>
-        {header && header.length >= 1 ? (
-          <TableCell align="left">
-            {header.map((text) => {
-              return <TableHeaderColumn>{text}</TableHeaderColumn>
-            })}
-          </TableCell>
-        ) : (
-          ''
-        )}
-      </TableRow>
+      {headers && headers.length >= 1 ? (
+        <TableRow>
+          {headers.map((header) => {
+            return (
+              <TableCell align="left" key={header.text}>
+                <TableHeaderColumn>{header.text}</TableHeaderColumn>
+              </TableCell>
+            )
+          })}
+        </TableRow>
+      ) : (
+        ''
+      )}
     </TableHead>
   )
 }
