@@ -172,10 +172,10 @@ export default function ConsentsLog(): JSX.Element {
   const consent =
     (consentList &&
       consentList.data?.agreements.length > 0 &&
-      consentList.data.agreements.map((agreement) => {
+      consentList.data.agreements.map((agreement, index) => {
         // Build Table Body
         return (
-          <TableRow id={`consent_log__id-${agreement.id}`} key={agreement.id}>
+          <TableRow id={`consent_log__index-${index}`} key={index}>
             <TableCell id="consent_log__firstName">
               <DataWrapper>
                 <TextSmallLineClamp>{agreement.customer.firstName}</TextSmallLineClamp>
@@ -480,7 +480,7 @@ export default function ConsentsLog(): JSX.Element {
               </Grid>
             </GridSearchSection>
             <TableContainer className={classes.table}>
-              <Table>
+              <Table id="consent_log___table">
                 <TableHead>
                   <TableRow>
                     <TableCell align="left">

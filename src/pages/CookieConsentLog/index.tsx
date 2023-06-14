@@ -192,6 +192,32 @@ export default function CookieConsentLogPage(): JSX.Element {
       </TableBody>
     )
   }
+  const generateTableHeader = () => {
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell align="left">
+            <TableHeaderColumn>{t('cookieConsentLog.sessionId')}</TableHeaderColumn>
+          </TableCell>
+          <TableCell align="left">
+            <TableHeaderColumn>{t('cookieConsentLog.ipAddress')}</TableHeaderColumn>
+          </TableCell>
+          <TableCell align="left">
+            <TableHeaderColumn>{t('cookieConsentLog.categoryName')}</TableHeaderColumn>
+          </TableCell>
+          <TableCell align="left">
+            <TableHeaderColumn>{t('cookieConsentLog.createdDate')}</TableHeaderColumn>
+          </TableCell>
+          <TableCell align="left">
+            <TableHeaderColumn>{t('cookieConsentLog.status')}</TableHeaderColumn>
+          </TableCell>
+          <TableCell align="left">
+            <TableHeaderColumn>{t('cookieConsentLog.version')}</TableHeaderColumn>
+          </TableCell>
+        </TableRow>
+      </TableHead>
+    )
+  }
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.documentsManagement.title'),
@@ -235,28 +261,7 @@ export default function CookieConsentLogPage(): JSX.Element {
             </GridSearchSection>
             <TableContainer className={classes.table}>
               <Table id="cookie_consent_log___table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('cookieConsentLog.sessionId')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('cookieConsentLog.ipAddress')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('cookieConsentLog.categoryName')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('cookieConsentLog.createdDate')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('cookieConsentLog.status')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('cookieConsentLog.version')}</TableHeaderColumn>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
+                {generateTableHeader()}
                 {isFetchingActivities ? (
                   <TableBody>
                     <TableRow>
