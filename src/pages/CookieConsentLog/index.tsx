@@ -127,7 +127,7 @@ export default function CookieConsentLogPage(): JSX.Element {
       cookieConsentList.data.cookieConsents.map((cookie, index) => {
         // Build Table Body
         return (
-          <TableRow id={`cookie_consent_log__index-${index}`} key={index}>
+          <TableRow id={`cookie_consent_log__index-${index}`} key={cookie.id}>
             <TableCell id="cookie_consent_log__sessionId">
               <DataWrapper>
                 <TextLineClamp>{cookie.sessionId}</TextLineClamp>

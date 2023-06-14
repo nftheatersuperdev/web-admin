@@ -175,7 +175,7 @@ export default function ConsentsLog(): JSX.Element {
       consentList.data.agreements.map((agreement, index) => {
         // Build Table Body
         return (
-          <TableRow id={`consent_log__index-${index}`} key={index}>
+          <TableRow id={`consent_log__index-${index}`} key={agreement.id}>
             <TableCell id="consent_log__firstName">
               <DataWrapper>
                 <TextSmallLineClamp>{agreement.customer.firstName}</TextSmallLineClamp>
