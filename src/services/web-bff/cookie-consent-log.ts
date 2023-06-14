@@ -30,8 +30,8 @@ export const getList = async ({
 }
 
 export const getCategories = async (): Promise<ContentCategory[]> => {
-  const response: ContentCategory[] = await AdminBffAPI.get(
-    '/v1/documents/cookie-contents/categories'
-  ).then((response) => response.data.data.categories)
+  const response: ContentCategory[] = await AdminBffAPI.get('/v1/documents/cookie-contents').then(
+    (response) => response.data.categories
+  )
   return response
 }

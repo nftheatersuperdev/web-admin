@@ -377,7 +377,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.COOKIE_CONSENT_LOG,
     component: lazy(() => import('./pages/CookieConsentLog' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
   },
   {
     path: ROUTE_PATHS.USER_DELETE_LOG,

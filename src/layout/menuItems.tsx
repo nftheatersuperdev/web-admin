@@ -211,7 +211,7 @@ export function useMenuItems() {
           title: t('sidebar.cookieConsentLog'),
           href: ROUTE_PATHS.COOKIE_CONSENT_LOG,
           // allowedPrivileges: [PRIVILEGES.PERM_COOKIE_CONSENT_VIEW],
-          allowedRoles: [ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
+          allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.CUSTOMER_SUPPORT],
         },
         {
           id: 'left_menu__delete_log',
