@@ -12,7 +12,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   Typography,
 } from '@mui/material'
@@ -24,6 +23,7 @@ import config from 'config'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
 import { CookieConsentLogListProps } from 'services/web-bff/cookie-consent-log.type'
 import { getList } from 'services/web-bff/cookie-consent-log'
 
@@ -62,11 +62,6 @@ const TextLineClamp = styled.div`
 
 const DataWrapper = styled.div`
   padding: 0 17px;
-`
-const TableHeaderColumn = styled.div`
-  border-left: 2px solid #e0e0e0;
-  font-weight: bold;
-  padding-left: 10px;
 `
 
 export default function CookieConsentLogPage(): JSX.Element {
@@ -127,7 +122,7 @@ export default function CookieConsentLogPage(): JSX.Element {
       cookieConsentList.data.cookieConsents.map((cookie, index) => {
         // Build Table Body
         return (
-          <TableRow id={`cookie_consent_log__index-${index}`} key={index}>
+          <TableRow id={`cookie_consent_log__index-${index}`} key={cookie.id}>
             <TableCell id="cookie_consent_log__sessionId">
               <DataWrapper>
                 <TextLineClamp>{cookie.sessionId}</TextLineClamp>
@@ -192,32 +187,26 @@ export default function CookieConsentLogPage(): JSX.Element {
       </TableBody>
     )
   }
-  const generateTableHeader = () => {
-    return (
-      <TableHead>
-        <TableRow>
-          <TableCell align="left">
-            <TableHeaderColumn>{t('cookieConsentLog.sessionId')}</TableHeaderColumn>
-          </TableCell>
-          <TableCell align="left">
-            <TableHeaderColumn>{t('cookieConsentLog.ipAddress')}</TableHeaderColumn>
-          </TableCell>
-          <TableCell align="left">
-            <TableHeaderColumn>{t('cookieConsentLog.categoryName')}</TableHeaderColumn>
-          </TableCell>
-          <TableCell align="left">
-            <TableHeaderColumn>{t('cookieConsentLog.createdDate')}</TableHeaderColumn>
-          </TableCell>
-          <TableCell align="left">
-            <TableHeaderColumn>{t('cookieConsentLog.status')}</TableHeaderColumn>
-          </TableCell>
-          <TableCell align="left">
-            <TableHeaderColumn>{t('cookieConsentLog.version')}</TableHeaderColumn>
-          </TableCell>
-        </TableRow>
-      </TableHead>
-    )
-  }
+  const headerText: TableHeaderProps[] = [
+    {
+      text: t('cookieConsentLog.sessionId'),
+    },
+    {
+      text: t('cookieConsentLog.ipAddress'),
+    },
+    {
+      text: t('cookieConsentLog.categoryName'),
+    },
+    {
+      text: t('cookieConsentLog.createdDate'),
+    },
+    {
+      text: t('cookieConsentLog.status'),
+    },
+    {
+      text: t('cookieConsentLog.version'),
+    },
+  ]
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.documentsManagement.title'),
@@ -261,11 +250,11 @@ export default function CookieConsentLogPage(): JSX.Element {
             </GridSearchSection>
             <TableContainer className={classes.table}>
               <Table id="cookie_consent_log___table">
-                {generateTableHeader()}
+                <DataTableHeader header={headerText} />
                 {isFetchingActivities ? (
                   <TableBody>
                     <TableRow>
-                      <TableCell colSpan={8} align="center">
+                      <TableCell colSpan={6} align="center">
                         <CircularProgress />
                       </TableCell>
                     </TableRow>
