@@ -1,10 +1,12 @@
 import { Fragment, useEffect, useState } from 'react'
 import {
+  Button,
   Card,
   Chip,
   CircularProgress,
   FormControl,
   Grid,
+  InputAdornment,
   MenuItem,
   Pagination,
   Select,
@@ -13,19 +15,30 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material'
+import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
 import { useQuery } from 'react-query'
+import { useFormik } from 'formik'
 import styled from 'styled-components'
 import { makeStyles } from '@mui/styles'
 import { useTranslation } from 'react-i18next'
 import config from 'config'
-import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
+import {
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  formaDateStringWithPattern,
+  validateIpAddress,
+} from 'utils'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
-import { CookieConsentLogListProps } from 'services/web-bff/cookie-consent-log.type'
-import { getList } from 'services/web-bff/cookie-consent-log'
+import {
+  CookieConsentInputRequest,
+  CookieConsentLogListProps,
+} from 'services/web-bff/cookie-consent-log.type'
+import { getCategories, getCookieConsentLogList } from 'services/web-bff/cookie-consent-log'
+import { SelectOption } from './utils'
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -97,20 +110,47 @@ export default function CookieConsentLogPage(): JSX.Element {
     inlineElement: {
       display: 'inline-flex',
     },
+    buttonClear: {
+      cursor: 'pointer',
+      padding: '4px 4px',
+    },
+    buttonWithoutShadow: {
+      fontWeight: 'bold',
+      display: 'inline-flexbox',
+      boxShadow: 'none',
+      padding: '14px 12px',
+      width: '107px',
+    },
+    paddingRightBtnClear: {
+      marginRight: '10px',
+      cursor: 'pointer',
+      padding: '4px 4px',
+    },
   })
   const classes = useStyles()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [cookieConsentFilter] = useState<CookieConsentLogListProps>()
+  const [cookieConsentFilter, setCookieConsentFilter] = useState<CookieConsentInputRequest>()
+  const [filterSearchIpAddress, setFilterSearchIpAddress] = useState<string>('')
+  const [filterSearchIpAddressError, setFilterSearchIpAddressError] = useState<string>('')
+  const [filterSearchCategory, setFilterSearchCategory] = useState<string>('')
+  const [filterSearchStatus, setFilterSearchStatus] = useState<string>('')
+  const [isEnableFilterButton, setIsEnableFilterButton] = useState<boolean>(true)
+  const { data: consentCategoryList } = useQuery('consent-category-list', () => getCategories())
   const {
     data: cookieConsentList,
     refetch,
     isFetching: isFetchingActivities,
   } = useQuery(
     'cookie-consent-list',
-    () => getList({ data: cookieConsentFilter } as CookieConsentLogListProps),
+    () =>
+      getCookieConsentLogList({
+        data: cookieConsentFilter,
+        page,
+        size: pageSize,
+      } as CookieConsentLogListProps),
     {
       cacheTime: 10 * (60 * 1000),
       staleTime: 5 * (60 * 1000),
@@ -217,6 +257,95 @@ export default function CookieConsentLogPage(): JSX.Element {
       link: '/consents-log',
     },
   ]
+  const categoryOptions: SelectOption[] =
+    consentCategoryList?.map((category) => {
+      return {
+        key: category.category,
+        label: category.nameEn,
+        value: category.category,
+        isDefault: false,
+      } as SelectOption
+    }) || []
+  const formik = useFormik({
+    initialValues: {
+      ipAddress: '',
+      category: '',
+      isAccepted: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (value) => {
+      let updateObj: CookieConsentLogListProps = {
+        ...cookieConsentFilter,
+      }
+      if (value.ipAddress) {
+        updateObj = {
+          ...updateObj,
+          ipAddress: value.ipAddress,
+        }
+      } else {
+        delete updateObj.ipAddress
+      }
+      if (value.category) {
+        updateObj = {
+          ...updateObj,
+          category: value.category,
+        }
+      } else {
+        delete updateObj.category
+      }
+      if (value.isAccepted !== '') {
+        updateObj = {
+          ...updateObj,
+          isAccepted: value.isAccepted,
+        }
+      } else {
+        delete updateObj.isAccepted
+      }
+      setCookieConsentFilter(updateObj)
+      setPage(1)
+    },
+  })
+  const handleOnSearchIpAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    setFilterSearchIpAddress(value)
+    const isValidEmailSearchField = validateIpAddress(value)
+    if (!isValidEmailSearchField || value.length < 2) {
+      setFilterSearchIpAddressError(t('cookieConsentLog.invalidIpAddress'))
+      setIsEnableFilterButton(false)
+    } else {
+      setFilterSearchIpAddressError('')
+      formik.setFieldValue('ipAddress', value)
+      setIsEnableFilterButton(true)
+    }
+  }
+  const handleSearchIpAddressClear = () => {
+    setFilterSearchIpAddress('')
+    setFilterSearchIpAddressError('')
+    formik.setFieldValue('ipAddress', '')
+    setIsEnableFilterButton(true)
+  }
+  const handleOnSearchCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('category', value)
+    setFilterSearchCategory(value)
+    setIsEnableFilterButton(true)
+  }
+  const handleSearchCategoryClear = () => {
+    setFilterSearchCategory('')
+    formik.setFieldValue('category', '')
+    setIsEnableFilterButton(true)
+  }
+  const handleOnSearchStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('isAccepted', value)
+    setFilterSearchStatus(value)
+    setIsEnableFilterButton(true)
+  }
+  const handleSearchStatusClear = () => {
+    setFilterSearchStatus('')
+    formik.setFieldValue('isAccepted', '')
+    setIsEnableFilterButton(true)
+  }
   /**
    * Init pagination depends on data from the API.
    */
@@ -246,7 +375,108 @@ export default function CookieConsentLogPage(): JSX.Element {
           </Typography>
           <Fragment>
             <GridSearchSection container spacing={1}>
-              <Grid item xs={9} sm={3} />
+              <Grid item xs={9} sm={3}>
+                <TextField
+                  disabled={isFetchingActivities}
+                  fullWidth
+                  label={t('cookieConsentLog.searchLabel')}
+                  id="cookie-consents-log__ipaddress_search_input"
+                  name="searchIpAddressInput"
+                  value={filterSearchIpAddress}
+                  error={!!filterSearchIpAddressError}
+                  helperText={filterSearchIpAddressError}
+                  onChange={handleOnSearchIpAddressChange}
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {formik.values.ipAddress !== '' ? (
+                          <CloseOutlined
+                            className={classes.buttonClear}
+                            onClick={handleSearchIpAddressClear}
+                          />
+                        ) : (
+                          <SearchIcon />
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item xs={9} sm={3}>
+                <TextField
+                  disabled={isFetchingActivities}
+                  fullWidth
+                  select
+                  value={filterSearchCategory}
+                  onChange={handleOnSearchCategoryChange}
+                  label={t('consentLog.documentTypeLabel')}
+                  id="cookie-consents-log__category_name_select"
+                  name="categoryName"
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {formik.values.category !== '' ? (
+                          <CloseOutlined
+                            className={classes.paddingRightBtnClear}
+                            onClick={handleSearchCategoryClear}
+                          />
+                        ) : (
+                          ''
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  {categoryOptions?.map((option) => (
+                    <MenuItem key={option.key} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={9} sm={3}>
+                <TextField
+                  disabled={isFetchingActivities}
+                  fullWidth
+                  select
+                  value={filterSearchStatus}
+                  onChange={handleOnSearchStatusChange}
+                  label={t('cookieConsentLog.statusNameLabel')}
+                  id="cookie-consents-log__status_select"
+                  name="status"
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {formik.values.isAccepted !== '' ? (
+                          <CloseOutlined
+                            className={classes.paddingRightBtnClear}
+                            onClick={handleSearchStatusClear}
+                          />
+                        ) : (
+                          ''
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  <MenuItem value="true">{t('cookieConsentLog.documentStatus.accept')}</MenuItem>
+                  <MenuItem value="false">{t('cookieConsentLog.documentStatus.decline')}</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={9} sm={2}>
+                <Button
+                  id="staff_profile__search_btn"
+                  className={classes.buttonWithoutShadow}
+                  variant="contained"
+                  disabled={!isEnableFilterButton}
+                  onClick={() => formik.handleSubmit()}
+                >
+                  {t('carAvailability.searchBtn').toUpperCase()}
+                </Button>
+              </Grid>
             </GridSearchSection>
             <TableContainer className={classes.table}>
               <Table id="cookie_consent_log___table">

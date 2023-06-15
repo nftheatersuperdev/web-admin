@@ -1,37 +1,26 @@
 import { AdminBffAPI } from 'api/admin-bff'
 import {
-  CookieConsentLogListProps,
   CookieConsentLogListResponse,
-  ContentCategory,
+  CookieConsentCategoryListResponse,
+  CookieConsentLogListRequest,
 } from './cookie-consent-log.type'
 
-export const getList = async ({
-  ipAddress,
-  category,
-  isAccepted,
-  size = 10,
-  page = 1,
-}: CookieConsentLogListProps): Promise<CookieConsentLogListResponse> => {
-  const response: CookieConsentLogListResponse = await AdminBffAPI.post(
+export const getCookieConsentLogList = async ({
+  data,
+  size,
+  page,
+}: CookieConsentLogListRequest): Promise<CookieConsentLogListResponse> => {
+  const responseAPI: CookieConsentLogListResponse = await AdminBffAPI.post(
     '/v1/customer-cookie-contents/acceptance/search',
-    {
-      ipAddress,
-      category,
-      isAccepted,
-    },
-    {
-      params: {
-        page,
-        size,
-      },
-    }
+    data,
+    { params: { page, size } }
   ).then((response) => response.data)
-  return response
+  return responseAPI
 }
 
-export const getCategories = async (): Promise<ContentCategory[]> => {
-  const response: ContentCategory[] = await AdminBffAPI.get('/v1/documents/cookie-contents').then(
-    (response) => response.data.categories
-  )
-  return response
+export const getCategories = async (): Promise<CookieConsentCategoryListResponse['data']> => {
+  const response: CookieConsentCategoryListResponse = await AdminBffAPI.get(
+    '/v1/documents/cookie-contents/categories'
+  ).then((response) => response.data)
+  return response.data
 }
