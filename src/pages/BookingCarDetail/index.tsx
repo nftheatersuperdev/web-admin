@@ -25,6 +25,7 @@ import { makeStyles } from '@mui/styles'
 import dayjs from 'dayjs'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import { DefaultCarDetail } from 'pages/BookingDetail/utils'
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -34,8 +35,7 @@ const ContentSection = styled.div`
   margin-bottom: 20px;
 `
 interface BookingDetialCarParams {
-  // eslint-disable-next-line
-  carActivity: any
+  carActivity: DefaultCarDetail
   isSelfPickUp: boolean
   resellerServiceAreaId: string
 }
@@ -384,27 +384,23 @@ export default function BookingCarDetail(): JSX.Element {
                 <TableRow>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.location || '-'}
+                      {carDetail.carActivity?.location || '-'}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.rowOverflow}>{carDetail.carActivity?.brand || '-'}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.rowOverflow}>{carDetail.carActivity?.model || '-'}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.rowOverflow}>
+                      {carDetail.carActivity?.colour || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.carSku?.carModel?.brand?.name || '-'}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.carSku?.carModel?.name || '-'}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.carSku?.color || '-'}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.plateNumber || '-'}
+                      {carDetail.carActivity?.plateNumber || '-'}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -417,13 +413,11 @@ export default function BookingCarDetail(): JSX.Element {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.owner || '-'}
-                    </div>
+                    <div className={classes.rowOverflow}>{carDetail.carActivity?.owner || '-'}</div>
                   </TableCell>
                   <TableCell>
                     <div className={classes.rowOverflow}>
-                      {carDetail.carActivity?.carDetail?.reSeller || '-'}
+                      {carDetail.carActivity?.reseller || '-'}
                     </div>
                   </TableCell>
                 </TableRow>

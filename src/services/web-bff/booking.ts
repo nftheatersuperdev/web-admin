@@ -55,12 +55,12 @@ export const getDetailById = async (id: string): Promise<BookingRental> => {
 }
 
 export const getDetailsById = async (
-  resellerServiceAreaId: string,
-  bookingId: string
+  resellerServiceAreaId: string | Text | null,
+  bookingDetailId: string
 ): Promise<BookingRental[]> => {
   const response: BookingRental[] = await AdminBffAPI.post('/v2/bookings/rental/search', {
     resellerServiceAreaId,
-    bookingId,
+    bookingDetailId,
   }).then(({ data }) => data.data.bookingDetails)
 
   return response
