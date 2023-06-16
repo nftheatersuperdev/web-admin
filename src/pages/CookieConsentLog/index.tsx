@@ -481,15 +481,6 @@ export default function CookieConsentLogPage(): JSX.Element {
                 >
                   {t('carAvailability.searchBtn').toUpperCase()}
                 </SearchButton>
-                {/* <Button
-                  id="cookie-consents-log__search_btn"
-                  className={classes.buttonWithoutShadow}
-                  variant="contained"
-                  disabled={!isEnableFilterButton}
-                  onClick={() => formik.handleSubmit()}
-                >
-                  {t('carAvailability.searchBtn').toUpperCase()}
-                </Button> */}
               </Grid>
             </GridSearchSection>
             <TableContainer className={classes.table}>
