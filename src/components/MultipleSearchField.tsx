@@ -128,6 +128,9 @@ export default function MultipleSearchField({
     if (textInputElement.current) {
       textInputElement.current.value = ''
     }
+    if (!selectedOption && stateValue) {
+      setStateValue('')
+    }
 
     if (!searchField || !selectedOption) {
       return renderTextField({
