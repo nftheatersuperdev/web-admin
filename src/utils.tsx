@@ -511,10 +511,20 @@ export const getBooleanFilterOperators = (t: TFunction<Namespace>): GridFilterOp
 ]
 
 export const validateEmail = (email: string): boolean => {
-  // const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  // edit this temporary pattern
-  const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-  return re.test(String(email).toLowerCase())
+  const emailSplit = email.split('@')
+  const prefixEmail = emailSplit[0]
+  const suffixEmail = '@' + emailSplit[1]
+  return validateEmailPrefix(prefixEmail) && validateEmailSuffix(suffixEmail)
+}
+
+const validateEmailPrefix = (email: string): boolean => {
+  const rule = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))$/
+  return rule.test(String(email).toLowerCase())
+}
+
+const validateEmailSuffix = (email: string): boolean => {
+  const rule = /^@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return rule.test(String(email).toLowerCase())
 }
 
 export const validateIpAddress = (ipAddress: string): boolean => {

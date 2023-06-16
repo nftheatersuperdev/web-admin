@@ -38,7 +38,7 @@ import {
   CookieConsentLogListProps,
 } from 'services/web-bff/cookie-consent-log.type'
 import { getCategories, getCookieConsentLogList } from 'services/web-bff/cookie-consent-log'
-import { SelectOption } from './utils'
+import { SelectOption, getStatusList } from './utils'
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -265,6 +265,7 @@ export default function CookieConsentLogPage(): JSX.Element {
       link: '/consents-log',
     },
   ]
+  const statusList: SelectOption[] = getStatusList(t)
   const categoryOptions: SelectOption[] =
     consentCategoryList?.map((category) => {
       return {
@@ -468,8 +469,11 @@ export default function CookieConsentLogPage(): JSX.Element {
                     ),
                   }}
                 >
-                  <MenuItem value="true">{t('cookieConsentLog.documentStatus.accept')}</MenuItem>
-                  <MenuItem value="false">{t('cookieConsentLog.documentStatus.decline')}</MenuItem>
+                  {statusList?.map((option) => (
+                    <MenuItem key={option.key} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Grid>
               <Grid item xs={9} sm={2}>
