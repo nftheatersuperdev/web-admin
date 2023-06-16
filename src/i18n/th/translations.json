@@ -1216,7 +1216,8 @@
       "strictlyNecessary": "คุกกี้ที่มีความจำเป็นอย่างยิ่ง",
       "analytical": "คุกกี้เพื่อการวิเคราะห์",
       "targeting": "คุกกี้เพื่อปรับเนื้อหาเข้ากับกลุ่มเป้าหมาย"
-    }
+    },
+    "invalidIpAddress": "Invalid IP Address format"
   },
   "all": "ทั้งหมด ",
   "browserEvents": {

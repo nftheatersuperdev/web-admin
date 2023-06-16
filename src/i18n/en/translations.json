@@ -1226,7 +1226,7 @@
   "cookieConsentLog": {
     "header": "Cookie Consent Log",
     "categoryName": "Cookie Category Name",
-    "statusNameLabel": "Status name",
+    "statusNameLabel": "Status",
     "searchLabel": "Search IP Address",
     "id": "ID",
     "sessionId": "Session ID",
@@ -1242,7 +1242,8 @@
       "strictlyNecessary": "Strictly Necessary Cookies",
       "analytical": "Analytical Cookies",
       "targeting": "Targeting Cookies"
-    }
+    },
+    "invalidIpAddress": "Invalid IP Address format"
   },
   "all": "All",
   "browserEvents": {

@@ -512,12 +512,36 @@ export const getBooleanFilterOperators = (t: TFunction<Namespace>): GridFilterOp
 
 export const validateEmail = (email: string): boolean => {
   const re =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
 }
 
+export const validateIpAddress = (ipAddress: string): boolean => {
+  const ipAddressSplit = ipAddress.split('.')
+  const firstDigit = ipAddressSplit[0] + '.'
+  const secondDigit = ipAddressSplit[1] + '.'
+  const thirdDigit = ipAddressSplit[2] + '.'
+  const lastDigit = ipAddressSplit[3]
+  return (
+    validateIpAddressDigits(firstDigit) &&
+    validateIpAddressDigits(secondDigit) &&
+    validateIpAddressDigits(thirdDigit) &&
+    validateIpAddressLastDigit(lastDigit)
+  )
+}
+
+const validateIpAddressDigits = (ipAddress: string): boolean => {
+  const keywordRule = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.$/
+  return keywordRule.test(ipAddress)
+}
+
+const validateIpAddressLastDigit = (ipAddress: string): boolean => {
+  const keywordRule = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)$/
+  return keywordRule.test(ipAddress)
+}
+
 export const validatePhoneNumberSearch = (searchValue: string): boolean => {
-  const keywordRule = /^[0-9]{4,15}$/g
+  const keywordRule = /^\d{4,15}$/g
   return keywordRule.test(searchValue)
 }
 

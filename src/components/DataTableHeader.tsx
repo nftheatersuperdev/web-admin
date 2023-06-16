@@ -1,0 +1,37 @@
+import { TableCell, TableHead, TableRow } from '@mui/material'
+import styled from 'styled-components'
+
+interface DataTableProps {
+  headers: TableHeaderProps[]
+}
+
+export interface TableHeaderProps {
+  text: string
+  style?: string
+}
+
+const TableHeaderColumn = styled.div`
+  border-left: 2px solid #e0e0e0;
+  font-weight: bold;
+  padding-left: 10px;
+`
+
+export default function DataTableHeader({ headers }: DataTableProps): JSX.Element {
+  return (
+    <TableHead>
+      {headers && headers.length >= 1 ? (
+        <TableRow>
+          {headers.map((header) => {
+            return (
+              <TableCell align="left" key={header.text}>
+                <TableHeaderColumn>{header.text}</TableHeaderColumn>
+              </TableCell>
+            )
+          })}
+        </TableRow>
+      ) : (
+        ''
+      )}
+    </TableHead>
+  )
+}
