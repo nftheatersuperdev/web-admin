@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams, useHistory, useLocation } from 'react-router-dom'
 import dayjs from 'dayjs'
@@ -26,20 +22,21 @@ import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formatDate,
 } from 'utils'
-import {
-  convertToDuration,
-  columnFormatSubEventStatus,
-  SubEventStatus,
-} from 'pages/Subscriptions/utils'
 import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getDetailsById } from 'services/web-bff/booking'
-import { BookingCarActivity } from 'services/web-bff/booking.type'
-import CarDetailDialog from './CarDetailDialog'
-import CarReplacementDialog from './CarReplacementDialog'
+import { BookingRental, BookingPayment } from 'services/web-bff/booking.type'
 import { useStyles, ChipServiceType, ChipPaymentType, DisabledField } from './styles'
-import { BookingStateParams } from './utils'
+import {
+  defaultBookingDetail,
+  DefaultCarDetail,
+  convertToDuration,
+  columnFormatBookingStatus,
+  BookingStatus,
+  formatIsExtend,
+  ServiceTypeLocation,
+} from './utils'
 
 interface SubscriptionDetailParams {
   bookingId: string
@@ -50,7 +47,7 @@ export function hasStatusAllowedToDoCarReplacement(status: string | undefined): 
   if (!status) {
     return false
   }
-  return [SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(status.toLowerCase())
+  return [BookingStatus.ACCEPTED, BookingStatus.DELIVERED].includes(status.toLowerCase())
 }
 
 export default function SubscriptionDetail(): JSX.Element {
@@ -60,8 +57,23 @@ export default function SubscriptionDetail(): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
   const location = useLocation()
-  const resellerServiceAreaId =
-    (location.state as BookingStateParams) || ls.get<Text>('reseller_car')
+
+  const getStateAsString = (state: string): string | null => {
+    if (typeof state === 'string') {
+      return state
+    }
+    return null
+  }
+
+  const getResellerServiceAreaId = (state: string, localReseller: string): string | null => {
+    return getStateAsString(state) || localReseller || null
+  }
+
+  const resellerCar = ls.get<string>('reseller_car')
+  const resellerServiceAreaId = getResellerServiceAreaId(
+    location.state as string,
+    resellerCar as string
+  )
 
   const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
 
@@ -80,69 +92,419 @@ export default function SubscriptionDetail(): JSX.Element {
     },
   ]
 
-  const {
-    data: bookingDetails,
-    isFetching,
-    refetch: refetchBooking,
-  } = useQuery('booking', () => getDetailsById(resellerServiceAreaId, bookingId), {
-    refetchOnWindowFocus: false,
-  })
+  const { data: bookingDetails, isFetching } = useQuery(
+    'booking',
+    () => getDetailsById(resellerServiceAreaId, bookingDetailId),
+    {
+      refetchOnWindowFocus: false,
+    }
+  )
 
-  const bookingDetail =
-    bookingDetails && bookingDetails?.length > 0
-      ? bookingDetails.find((booking) => booking.id === bookingDetailId)
-      : {
-          carActivities: [],
-          displayStatus: '',
-          status: '',
-          startDate: '',
-          endDate: '',
-          createdDate: '',
-          updatedDate: '',
-          customer: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            phoneNumber: '',
-          },
-          rentDetail: {
-            chargePrice: 0,
-            durationDay: 0,
-            createdDate: '',
-            updatedDate: '',
-            voucherCode: '',
-          },
-          payments: [
-            {
-              id: '',
-              externalTransactionId: '',
-              amount: 0,
-              updatedDate: '',
-              type: '',
-              description: '',
-              status: '',
-              statusMessage: '',
-            },
-          ],
-        }
+  // eslint-disable-next-line
+  const defaultVal = (value: any, defaultValue?: any) => {
+    if (value) {
+      return value
+    }
 
-  let maxEndDate = new Date()
-  if (bookingDetails && bookingDetails.length > 0) {
-    maxEndDate = new Date(
-      Math.max(...bookingDetails.map((bookingDetail) => new Date(bookingDetail.endDate)))
-    )
+    return defaultValue
   }
-  const carActivities = bookingDetail?.carActivities.reverse() || []
 
-  const [carDetail, setCarDetail] = useState<BookingCarActivity | undefined>(undefined)
-  const [carDetailDialogOpen, setCarDetailDialogOpen] = useState<boolean>(false)
-  const [carReplacementDialogOpen, setCarReplacementlogOpen] = useState<boolean>(false)
+  const getBookingDetail = (bookingDetails: BookingRental[] | undefined) => {
+    if (bookingDetails && bookingDetails.length > 0) {
+      const bookingData = bookingDetails.find((booking) => booking.id === bookingDetailId)
+      if (bookingData) {
+        bookingData.id = defaultVal(bookingData.id, '-')
+        bookingData.rentDetail.chargePrice = defaultVal(bookingData.rentDetail.chargePrice, 0)
+        bookingData.rentDetail.durationDay = defaultVal(bookingData.rentDetail.durationDay, 0)
+        bookingData.rentDetail.voucherId = defaultVal(
+          bookingData.rentDetail.voucherId,
+          t('subscription.noData')
+        )
+        bookingData.rentDetail.voucherCode = defaultVal(
+          bookingData.rentDetail.voucherCode,
+          t('subscription.noData')
+        )
+        bookingData.bookingId = defaultVal(bookingData.bookingId, '-')
+        bookingData.customer.id = defaultVal(bookingData.customer.id, '-')
+        bookingData.customer.firstName = defaultVal(bookingData.customer.firstName, '-')
+        bookingData.customer.lastName = defaultVal(bookingData.customer.lastName, '-')
+        bookingData.customer.email = defaultVal(bookingData.customer.email, '-')
+        bookingData.customer.phoneNumber = defaultVal(bookingData.customer.phoneNumber, '-')
+        bookingData.isSelfPickUp = defaultVal(bookingData.isSelfPickUp, false)
+      }
+      return bookingData
+    }
+    return defaultBookingDetail()
+  }
+
+  const bookingDetail = getBookingDetail(bookingDetails)
+
+  const getMaxEndDate = (bookingDetails: BookingRental[] | undefined) => {
+    let endDate = new Date()
+    if (bookingDetails && bookingDetails.length > 0) {
+      endDate = new Date(
+        Math.max(
+          ...bookingDetails.map((bookingDetail) => new Date(bookingDetail.endDate).getTime())
+        )
+      )
+    }
+    return endDate
+  }
+
+  const maxEndDate = getMaxEndDate(bookingDetails)
+
+  const getCarActivities = (bookingDetail: BookingRental | undefined) => {
+    if (bookingDetail) {
+      return bookingDetail.carActivities.reverse()
+    }
+    return []
+  }
+  const carActivities = getCarActivities(bookingDetail)
 
   const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
   const isTherePermissionToDoCarReplacement = hasAllowedPrivilege(currentPrivilege, [
     PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
   ])
-  const isEndDateOverToday = bookingDetail ? new Date(bookingDetail?.endDate) < new Date() : false
+  const checkDateOverToday = (bookingDetail: BookingRental | undefined) => {
+    if (bookingDetail) {
+      return new Date(bookingDetail?.endDate) < new Date()
+    }
+    return false
+  }
+  const isEndDateOverToday = checkDateOverToday(bookingDetail)
+
+  const initialCarDetail = (): DefaultCarDetail => {
+    return {
+      no: 0,
+      carId: '',
+      location: '',
+      brand: '',
+      model: '',
+      colour: '',
+      plateNumber: '',
+      pickupDate: '',
+      returnDate: '',
+      serviceType: false,
+      owner: '',
+      reseller: '',
+      deliveryTask: {
+        latitude: 0,
+        longitude: 0,
+        date: '',
+        fullAddress: '',
+        remark: '',
+        createdDate: '',
+      },
+      returnTask: {
+        latitude: 0,
+        longitude: 0,
+        date: '',
+        fullAddress: '',
+        remark: '',
+      },
+    }
+  }
+  const getServiceTypeLocation = (
+    serviceTypeLocations: ServiceTypeLocation[],
+    isSelfPickup: boolean | undefined
+  ) => {
+    const deliverBy = isSelfPickup === true ? 'SELF_PICK_UP' : 'DELIVERY_BY_EVME'
+    const serviceLocation = serviceTypeLocations.find(
+      (location: ServiceTypeLocation) =>
+        location.isActive === true && location.serviceType === deliverBy
+    )
+    return serviceLocation
+  }
+
+  // eslint-disable-next-line
+  const multipleDefaultVal = (value: any, anotherValue: any, defaultValue?: any) => {
+    if (value) {
+      return value
+    }
+
+    if (anotherValue) {
+      return anotherValue
+    }
+
+    return defaultValue
+  }
+
+  // eslint-disable-next-line
+  const createCarDetail = (car: any, index: number): DefaultCarDetail => {
+    const carDetail = initialCarDetail()
+
+    let task = null
+    if (car?.resellerServiceArea?.serviceTypeLocations) {
+      task = getServiceTypeLocation(
+        car?.resellerServiceArea?.serviceTypeLocations,
+        bookingDetail?.isSelfPickUp
+      )
+    }
+
+    carDetail.no = index + 1
+    carDetail.carId = multipleDefaultVal(car?.carId, bookingDetail?.carId, '-')
+    carDetail.location = multipleDefaultVal(
+      car?.carDetail?.resellerServiceArea?.areaNameEn,
+      car?.location,
+      '-'
+    )
+    carDetail.brand = multipleDefaultVal(
+      car?.carDetail?.carSku?.carModel?.brand?.name,
+      car?.carSku?.carModel?.brand?.name,
+      '-'
+    )
+    carDetail.model = multipleDefaultVal(
+      car?.carDetail?.carSku?.carModel?.name,
+      car?.carSku?.carModel?.name,
+      '-'
+    )
+    carDetail.colour = multipleDefaultVal(car?.carDetail?.carSku?.color, car?.carSku?.color, '-')
+    carDetail.plateNumber = multipleDefaultVal(car?.carDetail?.plateNumber, car?.plateNumber, '-')
+    carDetail.pickupDate = multipleDefaultVal(
+      car?.deliveryTask?.date,
+      bookingDetail?.startDate,
+      '-'
+    )
+    carDetail.returnDate = multipleDefaultVal(car?.returnTask?.date, bookingDetail?.endDate, '-')
+    carDetail.serviceType = multipleDefaultVal(
+      car?.isSelfPickUp,
+      bookingDetail?.isSelfPickUp,
+      false
+    )
+    carDetail.owner = multipleDefaultVal(car?.carDetail?.owner, car?.owner, '-')
+    carDetail.reseller = multipleDefaultVal(car?.carDetail?.reSeller, car?.reSeller, '-')
+    carDetail.deliveryTask.latitude = multipleDefaultVal(
+      car?.deliveryTask?.latitude,
+      task?.latitude,
+      '-'
+    )
+    carDetail.deliveryTask.longitude = multipleDefaultVal(
+      car?.deliveryTask?.longitude,
+      task?.longitude,
+      '-'
+    )
+    carDetail.deliveryTask.fullAddress = multipleDefaultVal(
+      car?.deliveryTask?.fullAddress,
+      task?.addressTh,
+      '-'
+    )
+    carDetail.deliveryTask.date =
+      multipleDefaultVal(car?.deliveryTask?.date, bookingDetail?.startDate, '-') ?? '-'
+    carDetail.deliveryTask.createdDate =
+      multipleDefaultVal(car?.deliveryTask?.createdDate, bookingDetail?.createdDate, '-') ?? '-'
+    carDetail.deliveryTask.remark =
+      multipleDefaultVal(car?.deliveryTask?.remark, bookingDetail?.remark, '-') ?? '-'
+    carDetail.returnTask.latitude = multipleDefaultVal(car?.returnTask?.latitude, task?.latitude, 0)
+    carDetail.returnTask.longitude = multipleDefaultVal(
+      car?.returnTask?.longitude,
+      task?.longitude,
+      0
+    )
+    carDetail.returnTask.fullAddress = multipleDefaultVal(
+      car?.returnTask?.fullAddress,
+      task?.addressTh,
+      '-'
+    )
+    carDetail.returnTask.date = multipleDefaultVal(
+      car?.returnTask?.date,
+      bookingDetail?.endDate,
+      '-'
+    )
+    carDetail.returnTask.remark = multipleDefaultVal(
+      car?.returnTask?.remark,
+      bookingDetail?.remark,
+      '-'
+    )
+
+    return carDetail
+  }
+
+  const getCarDetails = (): DefaultCarDetail[] => {
+    if (carActivities.length > 0) {
+      return carActivities.map(createCarDetail)
+    }
+
+    if (bookingDetail?.car) {
+      return [createCarDetail(bookingDetail.car, 0)]
+    }
+
+    return []
+  }
+  const columnHead = [
+    {
+      colName: t('booking.carDetail.no'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.location'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.brand'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.model'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.color'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.plateNumber'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.pickupDate'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.returnDate'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.serviceType'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.owner'),
+      hidden: false,
+    },
+    {
+      colName: t('booking.carDetail.reseller'),
+      hidden: false,
+    },
+  ]
+  const columnRow = [
+    {
+      field: 'no',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'location',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'brand',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'model',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'colour',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'plateNumber',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'pickupDate',
+      hidden: false,
+      render: (value: string) => {
+        return (
+          <div className={classes.paddingLeftCell}>
+            {value ? formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT) : '-'}
+          </div>
+        )
+      },
+    },
+    {
+      field: 'returnDate',
+      hidden: false,
+      render: (value: string) => {
+        return (
+          <div className={classes.paddingLeftCell}>
+            {value ? formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT) : '-'}
+          </div>
+        )
+      },
+    },
+    {
+      field: 'serviceType',
+      hidden: false,
+      render: (value: string) => {
+        return (
+          <ChipServiceType
+            label={
+              value === 'true'
+                ? t('booking.carDetail.serviceTypes.selfPickUp')
+                : t('booking.carDetail.serviceTypes.deliverByEVme')
+            }
+            color="primary"
+          />
+        )
+      },
+    },
+    {
+      field: 'owner',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+    {
+      field: 'reseller',
+      hidden: false,
+      render: (value: string) => {
+        return <div className={classes.paddingLeftCell}>{value}</div>
+      },
+    },
+  ]
+  const carDetails = getCarDetails()
+  const rowData = carDetails?.map((car: DefaultCarDetail) => {
+    return (
+      <TableRow
+        hover
+        key={`booking-${bookingId}-${bookingDetailId}`}
+        onClick={() =>
+          history.push({
+            pathname: `/booking/${bookingId}/${bookingDetailId}/car/${car.carId}`,
+            state: {
+              carActivity: car,
+              isSelfPickUp: bookingDetail?.isSelfPickUp,
+              resellerServiceAreaId,
+            },
+          })
+        }
+      >
+        {columnRow.map((col) => (
+          <TableCell key={col.field} hidden={col.hidden}>
+            <div className={classes.paddingLeftCell}>
+              {col.render ? col.render(car[col.field].toString()) : <div>{car[col.field]}</div>}
+            </div>
+          </TableCell>
+        ))}
+      </TableRow>
+    )
+  }) || (
+    <TableRow>
+      <TableCell colSpan={columnHead.length} align="center">
+        {t('booking.noData')}
+      </TableCell>
+    </TableRow>
+  )
 
   return (
     <Page>
@@ -163,7 +525,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail.id || '-'}
+              value={bookingDetail?.id}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -174,11 +536,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={
-                bookingDetail?.displayStatus
-                  ? columnFormatSubEventStatus(bookingDetail?.displayStatus, t)
-                  : t('booking.statuses.unknown')
-              }
+              value={columnFormatBookingStatus(bookingDetail?.displayStatus, t)}
             />
           </Grid>
         </Grid>
@@ -192,7 +550,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={Number(bookingDetail.rentDetail.chargePrice || 0).toLocaleString()}
+              value={Number(bookingDetail?.rentDetail.chargePrice).toLocaleString()}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -203,7 +561,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={convertToDuration(bookingDetail?.rentDetail.durationDay || 0, t)}
+              value={convertToDuration(bookingDetail?.rentDetail.durationDay, t)}
             />
           </Grid>
         </Grid>
@@ -217,7 +575,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail?.rentDetail.voucherId || t('subscription.noData')}
+              value={bookingDetail?.rentDetail.voucherId}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -228,7 +586,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail?.rentDetail.voucherCode || t('subscription.noData')}
+              value={bookingDetail?.rentDetail.voucherCode}
             />
           </Grid>
         </Grid>
@@ -292,7 +650,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail.isExtend ? 'Yes' : 'No'}
+              value={formatIsExtend(bookingDetail?.isExtend)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -303,7 +661,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail.bookingId || '-'}
+              value={bookingDetail?.bookingId || '-'}
             />
           </Grid>
         </Grid>
@@ -337,141 +695,14 @@ export default function SubscriptionDetail(): JSX.Element {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('booking.carDetail.no')}</TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.location')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.brand')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.model')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.color')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.plateNumber')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.pickupDate')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.returnDate')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.serviceType')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.owner')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.reseller')}</div>
-                </TableCell>
+                {columnHead.map((col) => (
+                  <TableCell key={col.colName} hidden={col.hidden}>
+                    <div className={classes.columnHeader}>{col.colName}</div>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {carActivities.length > 0 ? (
-                carActivities.map((carActivity, index) => (
-                  <TableRow
-                    key={carActivity?.carId}
-                    onClick={() =>
-                      history.push({
-                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity?.carId}`,
-                        state: {
-                          carActivity,
-                          isSelfPickUp: bookingDetail?.isSelfPickUp,
-                          resellerServiceAreaId,
-                        },
-                      })
-                    }
-                  >
-                    <TableCell component="th" scope="row">
-                      {index + 1 || '-'}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.resellerServiceArea?.areaNameEn || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.carSku?.carModel?.brand?.name || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.carSku?.carModel?.name || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.carSku?.color || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.plateNumber || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        <div className={classes.wrapWidth}>
-                          <div className={classes.rowOverflow}>
-                            {carActivity?.deliveryTask?.date
-                              ? dayjs(carActivity?.deliveryTask?.date).format(
-                                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                                )
-                              : '-'}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        <div className={classes.wrapWidth}>
-                          <div className={classes.rowOverflow}>
-                            {carActivity?.returnTask?.date
-                              ? dayjs(carActivity?.returnTask?.date).format(
-                                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                                )
-                              : '-'}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        <ChipServiceType
-                          label={
-                            bookingDetail?.isSelfPickUp
-                              ? t('booking.carDetail.serviceTypes.selfPickUp')
-                              : t('booking.carDetail.serviceTypes.deliverByEVme')
-                          }
-                          color="primary"
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.owner || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.reSeller || '-'}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan="11" align="center">
-                    {t('booking.noData')}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
+            <TableBody>{rowData}</TableBody>
           </Table>
         </TableContainer>
       </Card>
@@ -502,7 +733,7 @@ export default function SubscriptionDetail(): JSX.Element {
               </TableRow>
             </TableHead>
             <TableBody>
-              {bookingDetail.customer ? (
+              {bookingDetail?.customer ? (
                 <TableRow>
                   <TableCell component="th" scope="row">
                     {bookingDetail.customer.id || '-'}
@@ -530,7 +761,7 @@ export default function SubscriptionDetail(): JSX.Element {
                 </TableRow>
               ) : (
                 <TableRow>
-                  <TableCell colSpan="5" align="center">
+                  <TableCell colSpan={5} align="center">
                     {t('booking.noData')}
                   </TableCell>
                 </TableRow>
@@ -572,8 +803,8 @@ export default function SubscriptionDetail(): JSX.Element {
               </TableRow>
             </TableHead>
             <TableBody>
-              {bookingDetail?.payments.length > 0 ? (
-                bookingDetail?.payments.map((payment: any) => (
+              {bookingDetail?.payments && bookingDetail?.payments.length > 0 ? (
+                bookingDetail?.payments.map((payment: BookingPayment) => (
                   <TableRow key={payment.id}>
                     <TableCell component="th" scope="row">
                       {payment.externalTransactionId || '-'}
@@ -610,7 +841,7 @@ export default function SubscriptionDetail(): JSX.Element {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan="7" align="center">
+                  <TableCell colSpan={7} align="center">
                     {t('booking.noData')}
                   </TableCell>
                 </TableRow>
@@ -620,7 +851,7 @@ export default function SubscriptionDetail(): JSX.Element {
         </TableContainer>
       </Card>
 
-      <CarDetailDialog
+      {/* <CarDetailDialog
         open={carDetailDialogOpen}
         car={carDetail}
         isSelfPickUp={bookingDetail.isSelfPickUp}
@@ -640,7 +871,7 @@ export default function SubscriptionDetail(): JSX.Element {
           }
           setCarReplacementlogOpen(false)
         }}
-      />
+      /> */}
       <Backdrop open={isFetching} />
     </Page>
   )
