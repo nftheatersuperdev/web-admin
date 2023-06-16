@@ -16,7 +16,6 @@ import {
 } from '@mui/material'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
-import { makeStyles } from '@mui/styles'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import { ROLES } from 'auth/roles'
@@ -31,51 +30,7 @@ import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
 import { getLocationList } from 'services/web-bff/location'
 import { LocationResponse } from 'services/web-bff/location.type'
-import { EnabledTextField } from './styles'
-
-const useStyles = makeStyles({
-  hide: {
-    display: 'none',
-  },
-  headerTopic: {
-    padding: '8px 16px',
-  },
-  detailContainer: {
-    padding: '10px 25px',
-  },
-  bottomContrainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '10px 25px',
-  },
-  deleteProfileButton: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  chipLightGrey: {
-    backgroundColor: '#E0E0E0',
-    color: 'black',
-    borderRadius: '64px',
-    padding: '4px',
-    margin: '2px',
-  },
-  chipBgPrimary: {
-    backgroundColor: '#4584FF',
-    color: 'white',
-    borderRadius: '64px',
-    padding: '4px',
-    margin: '2px',
-  },
-  checkBoxLightGrey: {
-    '&.Mui-checked': {
-      color: '#999',
-    },
-  },
-})
+import { useStyles, EnabledTextField } from './styles'
 
 interface SelectOption {
   label: string
@@ -101,7 +56,6 @@ export default function StaffProfileAdd(): JSX.Element {
   const [disableLocation, setDisableLocation] = useState<boolean>(true)
   const { values, setFieldValue, errors, touched, handleSubmit, handleChange, isSubmitting } =
     useFormik({
-      // const formik = useFormik({
       initialValues: {
         firstName: '',
         lastName: '',
@@ -236,7 +190,7 @@ export default function StaffProfileAdd(): JSX.Element {
       roleSelect.toLowerCase() === ROLES.BRANCH_OFFICER
     ) {
       setSelectLocation([])
-      setFieldValue('resellerServiceAreaIds', '')
+      setFieldValue('resellerServiceAreaIds', null)
       setDisableLocation(false)
     } else {
       setDisableLocation(true)
