@@ -73,6 +73,14 @@ const TextLineClamp = styled.div`
   display: -webkit-box;
 `
 
+const SearchButton = styled(Button)`
+  font-weight: bold;
+  display: inline-flexbox;
+  box-shadow: none;
+  padding: 14px 12px !important;
+  width: 107px;
+`
+
 const DataWrapper = styled.div`
   padding: 0 17px;
 `
@@ -405,15 +413,14 @@ export default function CookieConsentLogPage(): JSX.Element {
               </Grid>
               <Grid item xs={9} sm={3}>
                 <TextField
-                  disabled={isFetchingActivities}
                   fullWidth
                   select
                   value={filterSearchCategory}
                   onChange={handleOnSearchCategoryChange}
+                  disabled={isFetchingActivities}
                   label={t('consentLog.documentTypeLabel')}
                   id="cookie-consents-log__category_name_select"
                   name="categoryName"
-                  variant="outlined"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -438,15 +445,14 @@ export default function CookieConsentLogPage(): JSX.Element {
               </Grid>
               <Grid item xs={9} sm={3}>
                 <TextField
-                  disabled={isFetchingActivities}
                   fullWidth
                   select
                   value={filterSearchStatus}
                   onChange={handleOnSearchStatusChange}
+                  disabled={isFetchingActivities}
                   label={t('cookieConsentLog.statusNameLabel')}
                   id="cookie-consents-log__status_select"
-                  name="status"
-                  variant="outlined"
+                  name="documentStatus"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -467,15 +473,23 @@ export default function CookieConsentLogPage(): JSX.Element {
                 </TextField>
               </Grid>
               <Grid item xs={9} sm={2}>
-                <Button
-                  id="staff_profile__search_btn"
+                <SearchButton
+                  id="cookie-consents-log__search_btn"
+                  variant="contained"
+                  disabled={!isEnableFilterButton}
+                  onClick={() => formik.handleSubmit()}
+                >
+                  {t('carAvailability.searchBtn').toUpperCase()}
+                </SearchButton>
+                {/* <Button
+                  id="cookie-consents-log__search_btn"
                   className={classes.buttonWithoutShadow}
                   variant="contained"
                   disabled={!isEnableFilterButton}
                   onClick={() => formik.handleSubmit()}
                 >
                   {t('carAvailability.searchBtn').toUpperCase()}
-                </Button>
+                </Button> */}
               </Grid>
             </GridSearchSection>
             <TableContainer className={classes.table}>
