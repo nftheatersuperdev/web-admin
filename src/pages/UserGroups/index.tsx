@@ -38,6 +38,7 @@ import { Page } from 'layout/LayoutRoute'
 import DataGridLocale from 'components/DataGridLocale'
 import PageToolbar from 'layout/PageToolbar'
 import { UserGroupInputRequest } from 'services/web-bff/user.type'
+import MultipleSearchField from 'components/MultipleSearchField'
 import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
 import CreateUpdateDialog from './CreateUpdateDialog'
 
@@ -284,6 +285,36 @@ export default function UserGroup(): JSX.Element {
       </MarginBottom>
 
       <Card>
+        <MultipleSearchField
+          id="user_group"
+          fields={[
+            {
+              type: 'textbox',
+              optionId: 'id',
+              optionLabel: 'ID',
+              placeholder: 'Please enter ID',
+            },
+            {
+              type: 'textbox',
+              optionId: 'name',
+              optionLabel: 'Name',
+              placeholder: 'Please enter Name',
+            },
+            {
+              type: 'datepicker',
+              optionId: 'createdDate',
+              optionLabel: 'Created Date',
+            },
+            {
+              type: 'datepicker',
+              optionId: 'updatedDate',
+              optionLabel: 'Updated Date',
+            },
+          ]}
+          onInputChanged={(inputId, inputValue) => {
+            console.log('onValueChanged ->', inputId, inputValue)
+          }}
+        />
         <DataGridLocale
           className="sticky-header"
           autoHeight
