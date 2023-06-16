@@ -516,6 +516,11 @@ export const validateEmail = (email: string): boolean => {
   return re.test(String(email).toLowerCase())
 }
 
+export const validateIpAddress = (ipAddress: string): boolean => {
+  const keywordRule =
+    /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+  return keywordRule.test(ipAddress)
+}
 export const validatePhoneNumberSearch = (searchValue: string): boolean => {
   const keywordRule = /^[0-9]{4,15}$/g
   return keywordRule.test(searchValue)
