@@ -5,7 +5,7 @@ import { Search as SearchIcon } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATE_FORMAT_MONTH_TEXT } from 'utils'
 import styled from 'styled-components'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import DatePicker from 'components/DatePicker'
 
 export const SearchDatePicker = styled(DatePicker)`
@@ -34,8 +34,10 @@ export interface SearchField {
 interface MultipleSearchFieldProps {
   id: string
   fields: SearchField[]
-  onSubmit: (inputId: string | undefined | null, inputValue: string | undefined | null) => void
   spacing?: number
+  dateFormat?: string
+  onSubmit: (inputId: string | undefined | null, inputValue: string | undefined | null) => void
+  onClear: () => void
 }
 
 interface RenderTextFieldProps {
@@ -51,11 +53,21 @@ interface RenderDatePickerFieldProps {
   value: string | number | null | undefined
 }
 
+function parseDateFormat(date: Dayjs, format?: string) {
+  const startOfDate = date.startOf('day')
+  if (format) {
+    return startOfDate.format(format)
+  }
+  return startOfDate.toISOString()
+}
+
 export default function MultipleSearchField({
   id,
   fields,
   spacing,
+  dateFormat,
   onSubmit,
+  onClear,
 }: MultipleSearchFieldProps): JSX.Element {
   const { t } = useTranslation()
 
@@ -94,8 +106,8 @@ export default function MultipleSearchField({
         value={stateValue}
         defaultValue={defaultValue}
         InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
+          endAdornment: (
+            <InputAdornment position="end">
               <IconButton disabled={disabled}>
                 <SearchIcon color={disabled ? 'disabled' : 'action'} />
               </IconButton>
@@ -121,8 +133,7 @@ export default function MultipleSearchField({
         inputVariant="outlined"
         onChange={(date) => {
           if (date) {
-            const dateToString = date.startOf('day').toISOString()
-            setStateValue(dateToString)
+            setStateValue(parseDateFormat(date, dateFormat))
             return
           }
           setStateValue('')
@@ -141,6 +152,7 @@ export default function MultipleSearchField({
     }
 
     if (!searchField || !selectedOption) {
+      onSubmit(undefined, undefined)
       return renderTextField({
         fieldId: 'disabled',
         placeholder: t('booking.selectSearch'),
@@ -160,7 +172,7 @@ export default function MultipleSearchField({
       }
       case 'datepicker': {
         if (!stateValue) {
-          setStateValue(() => dayjs().startOf('day').toISOString())
+          setStateValue(() => parseDateFormat(dayjs(), dateFormat))
         }
         return renderDatePickerField({
           fieldId: optionId,
@@ -193,6 +205,7 @@ export default function MultipleSearchField({
               return
             }
             setSelectedOption(() => null)
+            onClear()
           }}
         />
       </Grid>
