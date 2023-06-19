@@ -15,9 +15,7 @@ export interface PageBreadcrumbs {
 const BreadcrumbsCustom = styled(Breadcrumbs)`
   margin: 10px 0;
 `
-// const DividerCustom = styled(Divider)`
-//   margin: 10px 0;
-// `
+
 const StyledLink = styled(Link)`
   color: #999999;
   &:visited,
