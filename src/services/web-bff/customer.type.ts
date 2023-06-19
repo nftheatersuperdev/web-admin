@@ -118,10 +118,10 @@ export interface CustomerGroupInput {
 }
 
 export interface CustomerGroupInputRequest {
-  idEqual?: string
-  nameContain?: string
-  createdDateEqual?: string
-  updatedDateEqual?: string
+  id?: string
+  name?: string
+  createdDate?: string
+  updatedDate?: string
 }
 
 export interface CustomerDeleteLogProps {
@@ -180,4 +180,11 @@ export interface CustomerFilterRequest {
   updatedDateEqual?: string
   mobileNumberContain?: string
   countryCodeEqual?: string
+}
+
+export interface CustomerGroupCSV {
+  id: string
+  name: string
+  createdDate: string
+  updatedDate: string
 }

@@ -1493,5 +1493,25 @@
       "cancel": "CANCEL"
     },
     "noData": "No submitted item."
+  },
+  "noData": "ไม่มีข้อมูล",
+  "voucherManagement": {
+    "title": "การจัดการวอชเชอร์",
+    "userGroup": {
+      "title": "กลุ่มผู้ใช้งาน",
+      "detail": {
+        "title": "รายละเอียด กลุ่มผู้ใช้งาน",
+        "id": "ไอดี",
+        "idPlaceholder": "กรุณากรอก ไอดี",
+        "name": "ชื่อ",
+        "namePlaceholder": "กรุณากรอก ชื่อ",
+        "createdDate": "วันที่สร้าง",
+        "updatedDate": "วันที่ปรับปรุงล่าสุด",
+        "formEdit": {
+          "success": "กลุ่มผู้ใช้งานได้รับการปรับปรุงเรียบร้อยแล้ว",
+          "error": "เกิดข้อผิดพลาดในการแก้ไขข้อมูล!"
+        }
+      }
+    }
   }
 }

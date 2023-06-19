@@ -1,319 +1,311 @@
-import { useState, useEffect, Fragment } from 'react'
-import dayjs from 'dayjs'
-import toast from 'react-hot-toast'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
-import { Card, Button, IconButton, Breadcrumbs, Typography, Tooltip } from '@material-ui/core'
 import {
-  Delete as DeleteIcon,
-  GroupAdd as GroupAddIcon,
-  Edit as EditIcon,
-} from '@material-ui/icons'
-import {
-  GridColDef,
-  GridFilterItem,
-  GridFilterModel,
-  GridPageChangeParams,
-  GridRowData,
-  GridCellParams,
-} from '@material-ui/data-grid'
+  Button,
+  Card,
+  CircularProgress,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import {
-  getEqualFilterOperators,
-  getContainFilterOperators,
-  FieldComparisons,
-  // FieldKeyOparators,
-  columnFormatDate,
-  geEqualtDateTimeOperators,
-  DEFAULT_DATETIME_FORMAT_ISO,
-} from 'utils'
-import config from 'config'
 import { useQuery } from 'react-query'
-import { ROLES, hasAllowedRole } from 'auth/roles'
-import { useAuth } from 'auth/AuthContext'
-import { searchCustomerGroup } from 'services/web-bff/customer'
-import { useDeleteUserGroup } from 'services/evme'
-import { UserGroup as UserGroupType } from 'services/evme.types'
+import { useEffect, useState } from 'react'
+import dayjs from 'dayjs'
+import { DEFAULT_DATETIME_FORMAT_ISO } from 'utils'
+import { CSVLink } from 'react-csv'
+import AddIcon from '@mui/icons-material/ControlPoint'
+import { Link } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles'
 import { Page } from 'layout/LayoutRoute'
-import DataGridLocale from 'components/DataGridLocale'
-import PageToolbar from 'layout/PageToolbar'
-import { UserGroupInputRequest } from 'services/web-bff/user.type'
-import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
-import CreateUpdateDialog from './CreateUpdateDialog'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
+import { searchCustomerGroup } from 'services/web-bff/customer'
+import { CustomerGroup, CustomerGroupCSV } from 'services/web-bff/customer.type'
+import Paginate from 'components/Paginate'
+import CreateDialog from './CreateDialog'
 
-const MarginBottom = styled.div`
-  margin-bottom: 20px;
+const SearchWrapper = styled.div`
+  padding: 20px;
 `
-const defaultFilter: UserGroupInputRequest = {} as UserGroupInputRequest
+const SearchInputWrapper = styled.div`
+  margin-top: 20px;
+`
+const ExportButton = styled(Button)`
+  margin-top: 20px !important;
+  margin-left: 5px !important;
+  background: #333c4d !important;
+  color: #ffffff !important;
+  height: 51px;
+`
+const CreateButton = ExportButton
+const AlignRight = styled.div`
+  text-align: right;
+`
+const HeaderTableCell = styled.div`
+  border-left: 2px solid #e0e0e0;
+  font-weight: 500;
+  padding-left: 16px;
+`
+const RowOverflow = styled.div`
+  width: 200px;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  textoverflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  padding: 0 18px;
+`
+const CSVLinkText = styled(CSVLink)`
+  color: #fff;
+  text-decoration: none;
+`
 
-export default function UserGroup(): JSX.Element {
-  const history = useHistory()
+const formatDate = (date: string): string => dayjs(date).format('DD MMM YYYY')
+const formatTime = (date: string): string => dayjs(date).format('HH:mm')
+
+export default function UserGroups(): JSX.Element {
   const { t } = useTranslation()
-  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [userGroupFilter, setUserGroupFilter] = useState<UserGroupInputRequest>({
-    ...defaultFilter,
+  const useStyles = makeStyles({
+    noTextDecoration: {
+      textDecoration: 'none',
+    },
+    paginationContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '20px',
+    },
   })
-  const [userGroupSelected, setUserGroupSelected] = useState<UserGroupType | null>()
-  const [openCreateUpdateDialog, setOpenCreateUpdateDialog] = useState<boolean>(false)
-  const {
-    data: userGroupData,
-    refetch,
-    isFetching,
-  } = useQuery('user-group-list', () =>
-    searchCustomerGroup({
-      data: userGroupFilter,
-      page: currentPageIndex + 1,
-      size: pageSize,
-    })
+  const classes = useStyles()
+  const pageTitle = t('voucherManagement.userGroup.title')
+
+  const [page, setPage] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [filters, setFilters] = useState({})
+  const [isOpenCreateDialog, setIsOpenCreateDialog] = useState<boolean>(false)
+
+  const { data, isFetching, refetch } = useQuery(
+    'user-group-list',
+    () =>
+      searchCustomerGroup({
+        data: filters,
+        page,
+        size: pageSize,
+      }),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
 
-  const deleteUserGroup = useDeleteUserGroup()
-  const equalOperators = getEqualFilterOperators(t)
-  const containOperators = getContainFilterOperators(t)
-  const dateEqualOperators = geEqualtDateTimeOperators(t)
-  const visibilityColumns = getVisibilityColumns()
-
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setCurrentPageIndex(0)
-    setPageSize(params.pageSize)
-  }
-
-  const handleFilterChange = (params: GridFilterModel) => {
-    let keyValue = ''
-    setUserGroupFilter({
-      ...params.items.reduce((filter, { columnField, value, operatorValue }: GridFilterItem) => {
-        if (value) {
-          switch (operatorValue) {
-            case FieldComparisons.equals:
-              // keyValue = `${columnField}${FieldKeyOparators.equals}`
-              keyValue = `${columnField}`
-              break
-            case FieldComparisons.contains:
-              // keyValue = `${columnField}${FieldKeyOparators.contains}`
-              keyValue = `${columnField}`
-              break
-          }
-          if (['createdDate', 'updatedDate'].includes(columnField as string)) {
-            value = dayjs(value).startOf('day').format(DEFAULT_DATETIME_FORMAT_ISO)
-          }
-          filter = { [keyValue]: value }
-        }
-        return filter
-      }, {} as UserGroupInputRequest),
-    })
-
-    // reset page
-    setCurrentPageIndex(0)
-  }
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const onColumnVisibilityChange = (params: any) => {
-    if (params.field === '__check__') {
-      return
-    }
-
-    const visibilityColumns = params.api.current
-      .getAllColumns()
-      .filter(({ field }: { field: string }) => field !== '__check__')
-      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
-        columns[column.field] = !column.hide
-        return columns
-      }, {})
-
-    visibilityColumns[params.field] = params.isVisible
-
-    setVisibilityColumns(visibilityColumns)
-  }
-
-  const removeUserGroup = async (refId: string) => {
-    await toast.promise(
-      deleteUserGroup.mutateAsync({
-        id: refId,
-      }),
-      {
-        loading: t('toast.loading'),
-        success: t('userGroups.alert.changeName.success'),
-        error: t('userGroups.alert.changeName.error'),
-      }
-    )
-    refetch()
-  }
-
-  const handleDeleteRow = (rowData: GridRowData) => {
-    // eslint-disable-next-line no-alert
-    const confirmed = window.confirm(t('userGroups.dialog.delete.confirmationMessage'))
-    if (confirmed) {
-      removeUserGroup(rowData.id)
-    }
-  }
-
-  const handleOpenUpdateDialog = (rowData: GridRowData) => {
-    const updateObject: UserGroupType = {
-      id: rowData.id,
-      name: rowData.name,
-      createdDate: rowData.createdDate,
-      updatedDate: rowData.updatedDate,
-    }
-    setUserGroupSelected(updateObject)
-    setOpenCreateUpdateDialog(true)
-  }
-
   useEffect(() => {
     refetch()
-  }, [userGroupFilter, refetch, currentPageIndex])
+  }, [filters, page, pageSize, refetch])
 
-  useEffect(() => {
-    refetch()
-  }, [refetch, pageSize])
-
-  const columns: GridColDef[] = [
+  const breadcrumbs: PageBreadcrumbs[] = [
     {
-      field: 'id',
-      headerName: t('userGroups.id'),
-      description: t('userGroups.id'),
-      hide: !visibilityColumns.id,
-      flex: 1,
-      sortable: false,
-      filterOperators: equalOperators,
+      text: t('voucherManagement.title'),
+      link: '/',
     },
     {
-      field: 'name',
-      headerName: t('userGroups.name'),
-      description: t('userGroups.name'),
-      hide: !visibilityColumns.name,
-      flex: 1,
-      sortable: false,
-      filterOperators: containOperators,
-      editable: false,
-    },
-    {
-      field: 'createdDate',
-      headerName: t('userGroups.createdDate'),
-      description: t('userGroups.createdDate'),
-      hide: !visibilityColumns.createdDate,
-      flex: 1,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'updatedDate',
-      headerName: t('userGroups.updatedDate'),
-      description: t('userGroups.updatedDate'),
-      hide: !visibilityColumns.updatedDate,
-      flex: 1,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'actions',
-      headerName: t('car.actions'),
-      description: t('car.actions'),
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      width: 140,
-      renderCell: (params: GridCellParams) => {
-        const { name } = params.row
-        return (
-          <Fragment>
-            <IconButton onClick={() => handleOpenUpdateDialog(params.row)}>
-              <EditIcon />
-            </IconButton>
-            <Tooltip title={t('userGroups.button.addUser.tooltip', { name })} arrow>
-              <IconButton disabled onClick={() => history.push(`/user-groups/${params.id}/users`)}>
-                <GroupAddIcon />
-              </IconButton>
-            </Tooltip>
-            <IconButton aria-label="delete" disabled onClick={() => handleDeleteRow(params.row)}>
-              <DeleteIcon />
-            </IconButton>
-          </Fragment>
-        )
-      },
+      text: pageTitle,
+      link: '/user-groups',
     },
   ]
 
-  const userGroups =
-    userGroupData?.data.customerGroups.map((userGroup) => {
-      return {
-        id: userGroup.id,
-        name: userGroup.name,
-        createdDate: userGroup.createdDate,
-        updatedDate: userGroup.updatedDate,
-      }
-    }) || []
-  const pagination = userGroupData?.data.pagination || null
+  const searchFields: SearchField[] = [
+    {
+      type: 'textbox',
+      optionId: 'id',
+      optionLabel: t('voucherManagement.userGroup.detail.id'),
+      placeholder: t('voucherManagement.userGroup.detail.idPlaceholder'),
+    },
+    {
+      type: 'textbox',
+      optionId: 'name',
+      optionLabel: t('voucherManagement.userGroup.detail.name'),
+      placeholder: t('voucherManagement.userGroup.detail.namePlaceholder'),
+    },
+    {
+      type: 'datepicker',
+      optionId: 'createdDate',
+      optionLabel: t('voucherManagement.userGroup.detail.createdDate'),
+    },
+    {
+      type: 'datepicker',
+      optionId: 'updatedDate',
+      optionLabel: t('voucherManagement.userGroup.detail.updatedDate'),
+    },
+  ]
 
-  const handleFetchPage = (pageNumber: number) => {
-    setCurrentPageIndex(pageNumber)
-  }
+  const csvData: CustomerGroupCSV[] = []
+  const csvHeaders = [
+    { label: 'id', key: 'id' },
+    { label: 'name', key: 'name' },
+    { label: 'createdDate', key: 'createdDate' },
+    { label: 'updatedDate', key: 'updatedDate' },
+  ]
 
-  function RenderCreateButton() {
-    const isAllowToCreate = hasAllowedRole(useAuth().getRole(), [
-      ROLES.SUPER_ADMIN,
-      ROLES.ADMIN,
-      ROLES.MARKETING,
-      ROLES.PRODUCT_SUPPORT,
-    ])
+  const tableHeaders = [
+    {
+      colName: t('voucherManagement.userGroup.detail.name'),
+      hidden: false,
+    },
+    {
+      colName: t('voucherManagement.userGroup.detail.createdDate'),
+      hidden: false,
+    },
+    {
+      colName: t('voucherManagement.userGroup.detail.updatedDate'),
+      hidden: false,
+    },
+  ]
 
-    return (
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => setOpenCreateUpdateDialog(true)}
-        disabled={!isAllowToCreate}
-      >
-        {t('userGroups.button.createNew')}
-      </Button>
-    )
-  }
+  const rowData = (data?.data.customerGroups &&
+    data?.data.customerGroups.length >= 1 &&
+    data?.data.customerGroups.map((customerGroup: CustomerGroup) => {
+      const id = customerGroup.id
+
+      csvData.push({
+        id,
+        name: customerGroup.name,
+        createdDate: customerGroup.createdDate,
+        updatedDate: customerGroup.updatedDate,
+      })
+      return (
+        <TableRow
+          key={`table_row_${id}`}
+          component={Link}
+          to={`/user-groups/${id}`}
+          className={classes.noTextDecoration}
+        >
+          <TableCell key={`table_cell_name_${id}`}>
+            <RowOverflow>{customerGroup.name}</RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_createdDate_${id}`}>
+            <RowOverflow>
+              {formatDate(customerGroup.createdDate)}
+              <br />
+              {formatTime(customerGroup.createdDate)}
+            </RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_updatedDate_${id}`}>
+            <RowOverflow>
+              {formatDate(customerGroup.updatedDate)}
+              <br />
+              {formatTime(customerGroup.updatedDate)}
+            </RowOverflow>
+          </TableCell>
+        </TableRow>
+      )
+    })) || (
+    <TableRow>
+      <TableCell colSpan={tableHeaders.length} align="center">
+        {t('noData')}
+      </TableCell>
+    </TableRow>
+  )
 
   return (
     <Page>
-      <PageToolbar>
-        <RenderCreateButton />
-      </PageToolbar>
-
-      <MarginBottom>
-        <Breadcrumbs aria-label="breadcrumb" separator="›">
-          <Typography>{t('userGroups.title')}</Typography>
-        </Breadcrumbs>
-      </MarginBottom>
-
+      <PageTitle title={pageTitle} breadcrumbs={breadcrumbs} />
       <Card>
-        <DataGridLocale
-          className="sticky-header"
-          autoHeight
-          pagination
-          pageSize={pageSize}
-          page={currentPageIndex}
-          rowCount={pagination?.totalRecords}
-          paginationMode="server"
-          onPageSizeChange={handlePageSizeChange}
-          onPageChange={setCurrentPageIndex}
-          rows={userGroups}
-          columns={columns}
-          checkboxSelection
-          disableSelectionOnClick
-          filterMode="server"
-          onFilterModelChange={handleFilterChange}
-          onColumnVisibilityChange={onColumnVisibilityChange}
-          loading={isFetching}
-          onFetchNextPage={() => handleFetchPage(currentPageIndex + 1)}
-          onFetchPreviousPage={() => handleFetchPage(currentPageIndex - 1)}
-        />
+        <SearchWrapper>
+          <Typography id="user_group_title_table" variant="h6">
+            <strong>{pageTitle}</strong>
+          </Typography>
+          <Grid container spacing={1} justifyContent="flex-end">
+            <Grid item xs={12} sm={6} md={6}>
+              <SearchInputWrapper>
+                <MultipleSearchField
+                  id="user_group"
+                  spacing={1}
+                  fields={searchFields}
+                  dateFormat={DEFAULT_DATETIME_FORMAT_ISO}
+                  onClear={() => setFilters({})}
+                  onSubmit={(id, value) => {
+                    if (id && value) {
+                      setFilters({
+                        [id as string]: value,
+                      })
+                    }
+                  }}
+                />
+              </SearchInputWrapper>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} />
+            <Grid item xs={12} sm={6} md={3}>
+              <AlignRight>
+                <ExportButton id="user_group_csv_button" variant="contained" size="large">
+                  <CSVLinkText data={csvData} headers={csvHeaders} filename="user_group.csv">
+                    {t('button.export').toLocaleUpperCase()}
+                  </CSVLinkText>
+                </ExportButton>
+                <CreateButton
+                  id="user_group_create_button"
+                  variant="contained"
+                  size="large"
+                  endIcon={<AddIcon />}
+                  onClick={() => setIsOpenCreateDialog(() => true)}
+                >
+                  {t('button.create').toLocaleUpperCase()}
+                </CreateButton>
+              </AlignRight>
+            </Grid>
+          </Grid>
+        </SearchWrapper>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {tableHeaders.map((col) => (
+                  <TableCell key={col.colName} hidden={col.hidden}>
+                    <HeaderTableCell>{col.colName}</HeaderTableCell>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            {isFetching ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={tableHeaders.length} align="center">
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>{rowData}</TableBody>
+            )}
+          </Table>
+        </TableContainer>
       </Card>
 
-      <CreateUpdateDialog
-        open={openCreateUpdateDialog}
-        userGroup={userGroupSelected}
-        onClose={() => {
-          setOpenCreateUpdateDialog(false)
-          setUserGroupSelected(null)
-          refetch()
+      {data?.data.pagination ? (
+        <Paginate
+          pagination={data?.data.pagination}
+          page={page}
+          pageSize={pageSize}
+          setPage={setPage}
+          setPageSize={setPageSize}
+          refetch={refetch}
+        />
+      ) : (
+        ''
+      )}
+      <CreateDialog
+        open={isOpenCreateDialog}
+        onClose={(reload) => {
+          if (reload) {
+            refetch()
+          }
+          setIsOpenCreateDialog(() => false)
         }}
       />
     </Page>
