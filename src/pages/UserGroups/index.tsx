@@ -16,11 +16,12 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import { DEFAULT_DATETIME_FORMAT_ISO } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_ISO, validatePrivileges } from 'utils'
 import { CSVLink } from 'react-csv'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
+import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
@@ -35,14 +36,6 @@ const SearchWrapper = styled.div`
 const SearchInputWrapper = styled.div`
   margin-top: 20px;
 `
-const ExportButton = styled(Button)`
-  margin-top: 20px !important;
-  margin-left: 5px !important;
-  background: #333c4d !important;
-  color: #ffffff !important;
-  height: 51px;
-`
-const CreateButton = ExportButton
 const AlignRight = styled.div`
   text-align: right;
 `
@@ -50,6 +43,19 @@ const HeaderTableCell = styled.div`
   border-left: 2px solid #e0e0e0;
   font-weight: 500;
   padding-left: 16px;
+`
+const ActionButton = styled(Button)`
+  margin-top: 20px !important;
+  margin-left: 5px !important;
+  background-color: #333c4d !important;
+  height: 51px;
+
+  &:hover {
+    background-color: #1e3b80 !important;
+  }
+  &:disabled {
+    background-color: #dddddd !important;
+  }
 `
 const RowOverflow = styled.div`
   width: 200px;
@@ -72,16 +78,12 @@ const formatTime = (date: string): string => dayjs(date).format('HH:mm')
 
 export default function UserGroups(): JSX.Element {
   const { t } = useTranslation()
+  const { getPrivileges } = useAuth()
+  const userPrivileges = getPrivileges()
+
   const useStyles = makeStyles({
     noTextDecoration: {
       textDecoration: 'none',
-    },
-    paginationContainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '20px',
     },
   })
   const classes = useStyles()
@@ -183,7 +185,11 @@ export default function UserGroups(): JSX.Element {
         <TableRow
           key={`table_row_${id}`}
           component={Link}
-          to={`/user-groups/${id}`}
+          to={
+            validatePrivileges('PERM_CUSTOMER_GROUP_EDIT', userPrivileges)
+              ? `/user-groups/${id}`
+              : '#'
+          }
           className={classes.noTextDecoration}
         >
           <TableCell key={`table_cell_name_${id}`}>
@@ -243,20 +249,26 @@ export default function UserGroups(): JSX.Element {
             <Grid item xs={12} sm={6} md={3} />
             <Grid item xs={12} sm={6} md={3}>
               <AlignRight>
-                <ExportButton id="user_group_csv_button" variant="contained" size="large">
+                <ActionButton
+                  id="user_group_csv_button"
+                  variant="contained"
+                  size="large"
+                  disabled={!validatePrivileges('PERM_CUSTOMER_GROUP_VIEW', userPrivileges)}
+                >
                   <CSVLinkText data={csvData} headers={csvHeaders} filename="user_group.csv">
                     {t('button.export').toLocaleUpperCase()}
                   </CSVLinkText>
-                </ExportButton>
-                <CreateButton
+                </ActionButton>
+                <ActionButton
                   id="user_group_create_button"
                   variant="contained"
                   size="large"
                   endIcon={<AddIcon />}
                   onClick={() => setIsOpenCreateDialog(() => true)}
+                  disabled={!validatePrivileges('PERM_CUSTOMER_GROUP_CREATE', userPrivileges)}
                 >
                   {t('button.create').toLocaleUpperCase()}
-                </CreateButton>
+                </ActionButton>
               </AlignRight>
             </Grid>
           </Grid>

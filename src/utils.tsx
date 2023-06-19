@@ -739,3 +739,13 @@ export function formatStringForInputText(str?: string | null | undefined, digit?
   }
   return formatStr ? formatStr : ''
 }
+
+export function validatePrivileges(
+  requiredPrivillage = '',
+  userPrivileges: string[] | null | undefined
+): boolean {
+  if (!userPrivileges) {
+    return false
+  }
+  return userPrivileges.includes(requiredPrivillage)
+}
