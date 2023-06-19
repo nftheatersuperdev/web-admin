@@ -102,6 +102,7 @@ export default function UserGroupCreateDialog({
             onClick={() => formik.handleSubmit()}
             color="primary"
             variant="contained"
+            size="large"
           >
             {t('button.create')}
           </ButtonSpace>
@@ -113,6 +114,7 @@ export default function UserGroupCreateDialog({
             }}
             color="primary"
             variant="outlined"
+            size="large"
             disabled={isLoading}
           >
             {t('button.cancel')}

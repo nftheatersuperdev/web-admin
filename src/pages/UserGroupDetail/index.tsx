@@ -5,10 +5,11 @@ import { useQuery } from 'react-query'
 import { useParams, useHistory, Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import dayjs from 'dayjs'
-import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
+import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, validatePrivileges } from 'utils'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { ROUTE_PATHS } from 'routes'
+import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
@@ -27,6 +28,8 @@ const ButtonSpace = styled(Button)`
 
 export default function Booking(): JSX.Element {
   const { t } = useTranslation()
+  const { getPrivileges } = useAuth()
+  const userPrivileges = getPrivileges()
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
   const pageTitle = t('voucherManagement.userGroup.detail.title')
@@ -46,7 +49,8 @@ export default function Booking(): JSX.Element {
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const isDisabledButton = isLoading || isFetching
+  const isDisabledButton =
+    isLoading || isFetching || !validatePrivileges('PERM_CUSTOMER_GROUP_EDIT', userPrivileges)
 
   const customerGroup = data?.data.customerGroups[0]
 
@@ -139,6 +143,7 @@ export default function Booking(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled={isDisabledButton}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -183,9 +188,10 @@ export default function Booking(): JSX.Element {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <ButtonSpace
+              type="submit"
               color="primary"
               variant="contained"
-              type="submit"
+              size="large"
               disabled={isDisabledButton}
             >
               {t('button.save')}
@@ -195,6 +201,7 @@ export default function Booking(): JSX.Element {
                 onClick={() => formik.resetForm()}
                 color="primary"
                 variant="outlined"
+                size="large"
                 disabled={isDisabledButton}
               >
                 {t('button.cancel')}
