@@ -95,9 +95,9 @@ export default function CookieConsentLogPage(): JSX.Element {
       color: 'white',
       borderRadius: '64px',
     },
-    chipLightGrey: {
-      backgroundColor: '#E0E0E0',
-      color: 'black',
+    chipLightRed: {
+      backgroundColor: '#F44336',
+      color: 'white',
       borderRadius: '64px',
     },
     noResultMessage: {
@@ -201,7 +201,7 @@ export default function CookieConsentLogPage(): JSX.Element {
                 <Chip
                   size="small"
                   label={t('cookieConsentLog.documentStatus.decline')}
-                  className={classes.chipLightGrey}
+                  className={classes.chipLightRed}
                 />
               ) : (
                 <Chip
