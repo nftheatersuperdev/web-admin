@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
+import { ResellerServiceArea } from 'services/web-bff/car.type'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
 import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
 import { LocationResponse } from 'services/web-bff/location.type'
@@ -270,4 +271,11 @@ export const convertToDuration = (value: number, t: TFunction<Namespace>): strin
       return t('pricing.12m')
   }
   return value.toString()
+}
+
+export const getUserResellerServiceAreaId = (userServiceAreas: ResellerServiceArea[]) => {
+  if (userServiceAreas && userServiceAreas.length >= 1) {
+    return (userServiceAreas[0] as ResellerServiceArea).id
+  }
+  return ''
 }

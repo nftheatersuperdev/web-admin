@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-component-props */
-/* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useHistory } from 'react-router-dom'
@@ -39,7 +37,6 @@ import {
   DEFAULT_DATE_FORMAT_BFF,
 } from 'utils'
 import config from 'config'
-import { makeStyles } from '@mui/styles'
 import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/booking'
@@ -50,6 +47,7 @@ import {
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
+import { useStyles, SearchDatePicker } from './styles'
 import {
   getBookingStatusOnlyUsedInBackendOptions,
   getIsExtendOptions,
@@ -61,10 +59,20 @@ import {
   Keypress,
   FilterSearch,
 } from './utils'
-import { SearchDatePicker } from './styles'
 
 export default function Booking(): JSX.Element {
   const { t } = useTranslation()
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.bookingManagement.title'),
+      link: '',
+    },
+    {
+      text: t('sidebar.bookingManagement.booking'),
+      link: '/booking',
+    },
+  ]
+  const classes = useStyles()
   const history = useHistory()
   const locationParam = useLocation().search
   const { getResellerServiceAreaWithSort } = useAuth()
@@ -105,96 +113,6 @@ export default function Booking(): JSX.Element {
       search: queryString.toString(),
     })
   }
-
-  const useStyles = makeStyles({
-    typo: {
-      marginBottom: '0px',
-    },
-    gridTitle: {
-      padding: '20px',
-      paddingBottom: 0,
-    },
-    gridSearch: {
-      padding: '20px',
-    },
-    gridExport: {
-      textAlign: 'right',
-    },
-    marginRight: {
-      marginRight: '50px',
-    },
-    exportButton: {
-      background: '#333c4d',
-      color: '#fff',
-      height: '51px',
-    },
-    table: {
-      border: 0,
-    },
-    chipBgGray: {
-      backgroundColor: '#E0E0E0',
-      height: '24px',
-      borderRadius: '64px',
-    },
-    csvlink: {
-      color: '#fff',
-      textDecoration: 'none',
-    },
-    columnHeader: {
-      borderLeft: '2px solid #E0E0E0',
-      fontWeight: '500',
-      paddingLeft: '16px',
-    },
-    rowOverflowSmall: {
-      width: '80px',
-      overflowWrap: 'break-word',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      '-webkit-line-clamp': 2,
-      'line-clamp': 2,
-      '-webkit-box-orient': 'vertical',
-    },
-    rowOverflow: {
-      width: '115px',
-      overflowWrap: 'break-word',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      '-webkit-line-clamp': 2,
-      'line-clamp': 2,
-      '-webkit-box-orient': 'vertical',
-    },
-    paginationContainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '20px',
-    },
-    inlineElement: {
-      display: 'inline-flex',
-    },
-    paddingLeftCell: {
-      paddingLeft: '12px',
-    },
-    autoCompleteSelect: {
-      '& fieldSet': {
-        borderColor: '#424E63',
-      },
-    },
-  })
-  const classes = useStyles()
-  const breadcrumbs: PageBreadcrumbs[] = [
-    {
-      text: t('sidebar.bookingManagement.title'),
-      link: '',
-    },
-    {
-      text: t('sidebar.bookingManagement.booking'),
-      link: '/booking',
-    },
-  ]
 
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
@@ -503,124 +421,101 @@ export default function Booking(): JSX.Element {
   const columnHead = [
     {
       colName: t('booking.tableHeader.firstName'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.lastName'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.email'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.phone'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.location'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.brand'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.model'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.plateNumber'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.duration'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.status'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.startDate'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.endDate'),
-      hidden: false,
     },
   ]
   const columnRow = [
     {
       field: 'firstName',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'lastName',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'email',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'phone',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'location',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'brand',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'model',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'plateNumber',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'duration',
-      hidden: false,
     },
     {
       field: 'status',
-      hidden: false,
       render: (status: string) => {
         return <Chip label={columnFormatBookingStatus(status, t)} className={classes.chipBgGray} />
       },
     },
     {
       field: 'startDate',
-      hidden: false,
       render: (date: string) => {
         return (
           <div className={classes.rowOverflow}>
@@ -631,7 +526,6 @@ export default function Booking(): JSX.Element {
     },
     {
       field: 'endDate',
-      hidden: false,
       render: (date: string) => {
         return (
           <div className={classes.rowOverflow}>
@@ -657,7 +551,7 @@ export default function Booking(): JSX.Element {
           style={{ textDecoration: 'none' }}
         >
           {columnRow.map((col) => (
-            <TableCell key={col.field} hidden={col.hidden}>
+            <TableCell key={col.field}>
               <div className={classes.paddingLeftCell}>
                 {col.render ? col.render(booking[col.field]) : <div>{booking[col.field]}</div>}
               </div>
@@ -864,7 +758,7 @@ export default function Booking(): JSX.Element {
             <TableHead>
               <TableRow>
                 {columnHead.map((col) => (
-                  <TableCell key={col.colName} hidden={col.hidden}>
+                  <TableCell key={col.colName}>
                     <div className={classes.columnHeader}>{col.colName}</div>
                   </TableCell>
                 ))}
