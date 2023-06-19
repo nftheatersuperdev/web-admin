@@ -81,7 +81,10 @@
     },
     "voucherManagement": {
       "title": "Voucher Management",
-      "voucher": "Voucher"
+      "voucher": "Voucher",
+      "userGroup": {
+        "title": "User Group"
+      }
     },
     "documentsManagement": {
       "title": "Document Management",
@@ -1551,5 +1554,25 @@
       "cancel": "CANCEL"
     },
     "noData": "No submitted item."
+  },
+  "noData": "No Data",
+  "voucherManagement": {
+    "title": "Voucher Management",
+    "userGroup": {
+      "title": "User Group",
+      "detail": {
+        "title": "User Group Detail",
+        "id": "User Group ID",
+        "idPlaceholder": "Please enter ID",
+        "name": "User Group Name",
+        "namePlaceholder": "Please enter Name",
+        "createdDate": "Created Date",
+        "updatedDate": "Updated Date",
+        "formEdit": {
+          "success": "The use group has been updated",
+          "error": "Something went wrong on updateing a user group"
+        }
+      }
+    }
   }
 }

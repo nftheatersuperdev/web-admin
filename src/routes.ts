@@ -12,6 +12,7 @@ export const ROUTE_PATHS = Object.freeze({
   ACCOUNT_SETTINGS: '/account/settings',
   USER: '/user',
   USER_GROUPS: '/user-groups',
+  USER_GROUP_DETAIL: '/user-groups/:id',
   BOOKING_CAR_REPLACEMENT: '/booking/:bookingId/:bookingDetailId/car-replacement',
   BOOKING_CAR_DETAIL: '/booking/:bookingId/:bookingDetailId/car/:carId',
   BOOKING_DETAIL: '/booking/:bookingId/:bookingDetailId',
@@ -126,6 +127,17 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
       ROLES.MARKETING,
       ROLES.PRODUCT_SUPPORT,
       ROLES.CENTRE_OPERATION,
+    ],
+  },
+  {
+    path: ROUTE_PATHS.USER_GROUP_DETAIL,
+    component: lazy(() => import('./pages/UserGroupDetail' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.ADMIN,
+      ROLES.OPERATION,
+      ROLES.MARKETING,
+      ROLES.PRODUCT_SUPPORT,
     ],
   },
   {
