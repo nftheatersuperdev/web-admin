@@ -98,10 +98,8 @@ export default function VoucherGeneralInformationTab({
   const handleOnDescriptionChange = (value: string, language: string) => {
     if (language === 'en') {
       setDescriptionEnTemp(value)
-      return true
     }
     setDescriptionThTemp(value)
-    return true
   }
 
   const formik = useFormik({

@@ -745,13 +745,13 @@ export default function CustomerProfile(): JSX.Element {
                       ))}
                     </Select>
                   </FormControl>
-                  &nbsp;&nbsp;{userResponse?.data.pagination?.page || pages} {t('staffProfile.of')}
+                  &nbsp;&nbsp;{pages} {t('staffProfile.of')}
                   &nbsp;
-                  {userResponse?.data.pagination?.totalPage || pages}
+                  {pages}
                   <Pagination
-                    count={userResponse?.data.pagination?.totalPage || pages}
-                    page={userResponse?.data.pagination?.page || page}
-                    defaultPage={userResponse?.data.pagination?.page || page}
+                    count={pages}
+                    page={page}
+                    defaultPage={page}
                     variant="text"
                     shape="rounded"
                     onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
