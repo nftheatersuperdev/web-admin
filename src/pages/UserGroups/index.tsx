@@ -233,7 +233,7 @@ export default function UserGroups(): JSX.Element {
                   onSubmit={(id, value) => {
                     if (id && value) {
                       setFilters({
-                        [id as string]: value,
+                        [id]: value,
                       })
                     }
                   }}

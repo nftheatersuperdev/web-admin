@@ -26,8 +26,8 @@ export interface SearchField {
   type: 'textbox' | 'datepicker'
   optionId: string
   optionLabel: string
-  defaultValue?: string | undefined
-  defaultDate?: string | undefined
+  defaultValue?: string
+  defaultDate?: string
   placeholder?: string
 }
 
@@ -42,7 +42,7 @@ interface MultipleSearchFieldProps {
 
 interface RenderTextFieldProps {
   fieldId: string
-  placeholder?: string | undefined
+  placeholder?: string
   defaultValue?: string
   disabled?: boolean
 }
