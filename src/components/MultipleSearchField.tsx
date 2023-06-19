@@ -75,7 +75,7 @@ export default function MultipleSearchField({
   const [selectedOption, setSelectedOption] = useState<SelectOption | null | undefined>(null)
   const [stateValue, setStateValue] = useState<string>()
 
-  const isDisabledSearchButton = !stateValue
+  const isDisabledSearchButton = !!(!stateValue || (stateValue && stateValue?.length < 2))
 
   const searchOptions: SelectOption[] = fields.map((field) => {
     return {
@@ -100,6 +100,13 @@ export default function MultipleSearchField({
           const { value: eventValue } = event.target
           const fieldValue = value ? value : eventValue
           setStateValue(() => fieldValue)
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            const { value } = event.target as HTMLTextAreaElement
+            setStateValue(() => value)
+            handleOnSubmit()
+          }
         }}
         placeholder={placeholder}
         disabled={disabled}
