@@ -22,6 +22,7 @@ import AddIcon from '@mui/icons-material/ControlPoint'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useAuth } from 'auth/AuthContext'
+import { ROUTE_PATHS } from 'routes'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
@@ -89,6 +90,8 @@ export default function UserGroups(): JSX.Element {
   const classes = useStyles()
   const pageTitle = t('voucherManagement.userGroup.title')
 
+  // User Group
+
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [filters, setFilters] = useState({})
@@ -114,11 +117,11 @@ export default function UserGroups(): JSX.Element {
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('voucherManagement.title'),
-      link: '/',
+      link: ROUTE_PATHS.ROOT,
     },
     {
       text: pageTitle,
-      link: '/user-groups',
+      link: ROUTE_PATHS.USER_GROUPS,
     },
   ]
 
@@ -225,7 +228,7 @@ export default function UserGroups(): JSX.Element {
       <Card>
         <SearchWrapper>
           <Typography id="user_group_title_table" variant="h6">
-            <strong>{pageTitle}</strong>
+            <strong>{t('voucherManagement.userGroup.subTitle')}</strong>
           </Typography>
           <Grid container spacing={1} justifyContent="flex-end">
             <Grid item xs={12} sm={6} md={6}>

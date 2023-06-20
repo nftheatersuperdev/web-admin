@@ -1531,10 +1531,44 @@
     "noData": "No submitted item."
   },
   "noData": "No Data",
+  "search": {
+    "initPlaceholderInputField": "Enter Search"
+  },
   "voucherManagement": {
     "title": "Voucher Management",
+    "voucher": {
+      "title": "Voucher",
+      "breadcrumb": "All Voucher",
+      "detail": {
+        "title": "Voucher Detail",
+        "id": "Voucher id",
+        "idPlaceholder": "Please enter voucher id",
+        "code": "Voucher code",
+        "codePlaceholder": "Please enter voucher code",
+        "description": "Voucher description",
+        "descriptionPlaceholder": "Please enter voucher description",
+        "discountPercent": "Discount (%)",
+        "quantity": "Quantity",
+        "limitPerUser": "Limit Per User",
+        "startAt": "Start Date",
+        "endAt": "End Date",
+        "createdDate": "Created Date",
+        "updatedDate": "Updated Date",
+        "formEdit": {
+          "title": "Edit Voucher",
+          "success": "The voucher has been updated",
+          "error": "Something went wrong on updateing a voucher"
+        },
+        "formCreate": {
+          "title": "Create Voucher",
+          "success": "The voucher has been updated",
+          "error": "Something went wrong on updateing a voucher"
+        }
+      }
+    },
     "userGroup": {
       "title": "User Group",
+      "subTitle": "User Group (Voucher)",
       "detail": {
         "title": "User Group Detail",
         "id": "User Group ID",
@@ -1544,7 +1578,7 @@
         "createdDate": "Created Date",
         "updatedDate": "Updated Date",
         "formEdit": {
-          "success": "The use group has been updated",
+          "success": "The user group has been updated",
           "error": "Something went wrong on updateing a user group"
         }
       }
