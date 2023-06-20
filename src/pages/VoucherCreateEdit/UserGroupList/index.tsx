@@ -54,13 +54,13 @@ export default function VoucherUserGroupTab({ voucher, formik }: UserGroupListPr
           <FormControlLabel
             value={selectOptions.ALL}
             control={<Radio />}
-            label="All User Groups"
+            label={t('voucherManagement.voucher.detail.option.userGroup.all')}
             disabled={isInactive}
           />
           <FormControlLabel
             value={selectOptions.SELECT}
             control={<Radio />}
-            label={t('voucher.dialog.userGroups.selectAvailableUserGroups')}
+            label={t('voucherManagement.voucher.detail.option.userGroup.select')}
             disabled={isInactive}
           />
         </RadioGroup>

@@ -80,13 +80,13 @@ export default function PackagePriceList({ voucher, formik }: PackagePriceListPr
           <FormControlLabel
             value={selectOptions.ALL}
             control={<Radio />}
-            label="All Packages"
+            label={t('voucherManagement.voucher.detail.option.packagePrice.all')}
             disabled={isInactive}
           />
           <FormControlLabel
             value={selectOptions.SELECT}
             control={<Radio />}
-            label={t('voucher.dialog.packagePrice.selectAvailablePackages')}
+            label={t('voucherManagement.voucher.detail.option.packagePrice.select')}
             disabled={isInactive}
           />
         </RadioGroup>

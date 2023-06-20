@@ -1588,6 +1588,16 @@
           "title": "Create Voucher",
           "success": "The voucher has been updated",
           "error": "Something went wrong on updateing a voucher"
+        },
+        "option": {
+          "userGroup": {
+            "all": "All User Group",
+            "select": "Select available user groups"
+          },
+          "packagePrice": {
+            "all": "All packages",
+            "select": "Select available user groups"
+          }
         }
       }
     },
@@ -1607,6 +1617,9 @@
           "error": "Something went wrong on updateing a user group"
         }
       }
+    },
+    "packagePrice": {
+      "title": "Package Price"
     }
   }
 }

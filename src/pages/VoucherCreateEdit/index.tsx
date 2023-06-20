@@ -465,7 +465,7 @@ export default function VoucherCreateEditPage(): JSX.Element {
           </Grid>
           <SelectListSection>
             <Typography id="voucher_sub_title__user_group" variant="h6">
-              <strong>User Group</strong>
+              <strong>{t('voucherManagement.userGroup.title')}</strong>
             </Typography>
             <SelectListWrapper>
               <UserGroupList voucher={voucher} formik={formik} />
@@ -473,7 +473,7 @@ export default function VoucherCreateEditPage(): JSX.Element {
           </SelectListSection>
           <SelectListSection>
             <Typography id="voucher_sub_title__package_price" variant="h6">
-              Package Price
+              <strong>{t('voucherManagement.packagePrice.title')}</strong>
             </Typography>
             <SelectListWrapper>
               <PackagePriceList voucher={voucher} formik={formik} />

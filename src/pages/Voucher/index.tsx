@@ -142,7 +142,11 @@ export default function VoucherListPage(): JSX.Element {
   const csvHeaders = [
     { label: t('voucherManagement.voucher.detail.id'), key: 'id' },
     { label: t('voucherManagement.voucher.detail.code'), key: 'code' },
-    { label: t('voucherManagement.voucher.detail.description'), key: 'description' },
+    { label: t('voucherManagement.voucher.detail.discountPercent'), key: 'discountPercent' },
+    { label: t('voucherManagement.voucher.detail.quantity'), key: 'quantity' },
+    { label: t('voucherManagement.voucher.detail.limitPerUser'), key: 'limitPerUser' },
+    { label: t('voucherManagement.voucher.detail.startAt'), key: 'startDate' },
+    { label: t('voucherManagement.voucher.detail.endAt'), key: 'endDate' },
     { label: t('voucherManagement.voucher.detail.createdDate'), key: 'createdDate' },
     { label: t('voucherManagement.voucher.detail.updatedDate'), key: 'updatedDate' },
   ]
