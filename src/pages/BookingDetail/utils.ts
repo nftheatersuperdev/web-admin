@@ -248,7 +248,7 @@ const setReturnTask = (
     newReturnTask.latitude = defaultVal(task?.latitude, '-')
     newReturnTask.longitude = defaultVal(task?.longitude, '-')
     newReturnTask.fullAddress = defaultVal(task?.addressTh, '-')
-    newReturnTask.date = defaultVal(booking?.startDate, '-')
+    newReturnTask.date = defaultVal(booking?.endDate, '-')
     newReturnTask.remark = defaultVal(booking?.remark, '-')
   }
 
@@ -351,7 +351,7 @@ export const getCarActivities = (
 ): Promise<BookingCarActivity[]> => {
   return new Promise((resolve) => {
     if (bookingDetail?.carActivities) {
-      resolve(bookingDetail.carActivities.reverse())
+      resolve(bookingDetail.carActivities)
     }
     resolve([{} as BookingCarActivity])
   })
