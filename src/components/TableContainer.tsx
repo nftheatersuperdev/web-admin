@@ -9,12 +9,13 @@ import {
   TableRow,
 } from '@mui/material'
 
-interface TableContainerHeader {
-  colName: string
+export interface TableColmun {
+  key: string
+  name: string
   hidden: boolean
 }
 interface TableContainerProps {
-  columnHeaders: TableContainerHeader[]
+  columns: TableColmun[]
   isFetching?: boolean
   data: JSX.Element | JSX.Element[]
 }
@@ -26,7 +27,7 @@ const HeaderTableCell = styled.div`
 `
 
 export default function TableContainer({
-  columnHeaders,
+  columns,
   isFetching,
   data,
 }: TableContainerProps): JSX.Element {
@@ -35,9 +36,9 @@ export default function TableContainer({
       <Table>
         <TableHead>
           <TableRow>
-            {columnHeaders.map(({ colName, hidden }) => (
-              <TableCell key={colName} hidden={hidden}>
-                <HeaderTableCell>{colName}</HeaderTableCell>
+            {columns.map(({ key, name, hidden }) => (
+              <TableCell key={key} hidden={hidden}>
+                <HeaderTableCell>{name}</HeaderTableCell>
               </TableCell>
             ))}
           </TableRow>
@@ -45,7 +46,7 @@ export default function TableContainer({
         {isFetching ? (
           <TableBody>
             <TableRow>
-              <TableCell colSpan={columnHeaders.length} align="center">
+              <TableCell colSpan={columns.length} align="center">
                 <CircularProgress />
               </TableCell>
             </TableRow>

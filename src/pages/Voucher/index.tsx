@@ -15,7 +15,7 @@ import { Page } from 'layout/LayoutRoute'
 import Paginate from 'components/Paginate'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
-import TableContainer from 'components/TableContainer'
+import TableContainer, { TableColmun } from 'components/TableContainer'
 import TableRowNoData from 'components/TableRowNoData'
 import { getList } from 'services/web-bff/voucher'
 import { Voucher, VoucherCSV } from 'services/web-bff/voucher.type'
@@ -147,37 +147,45 @@ export default function VoucherListPage(): JSX.Element {
     { label: t('voucherManagement.voucher.detail.updatedDate'), key: 'updatedDate' },
   ]
 
-  const tableHeaders = [
+  const tableColmuns: TableColmun[] = [
     {
-      colName: t('voucherManagement.voucher.detail.code'),
+      key: 'voucher_detail_code',
+      name: t('voucherManagement.voucher.detail.code'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.discountPercent'),
+      key: 'voucher_detail_discountPercent',
+      name: t('voucherManagement.voucher.detail.discountPercent'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.quantity'),
+      key: 'voucher_detail_quantity',
+      name: t('voucherManagement.voucher.detail.quantity'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.limitPerUser'),
+      key: 'voucher_detail_limitPerUser',
+      name: t('voucherManagement.voucher.detail.limitPerUser'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.startAt'),
+      key: 'voucher_detail_startAt',
+      name: t('voucherManagement.voucher.detail.startAt'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.endAt'),
+      key: 'voucher_detail_endAt',
+      name: t('voucherManagement.voucher.detail.endAt'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.createdDate'),
+      key: 'voucher_detail_createdDate',
+      name: t('voucherManagement.voucher.detail.createdDate'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.voucher.detail.updatedDate'),
+      key: 'voucher_detail_updatedDate',
+      name: t('voucherManagement.voucher.detail.updatedDate'),
       hidden: false,
     },
   ]
@@ -249,7 +257,7 @@ export default function VoucherListPage(): JSX.Element {
           </TableCell>
         </TableRow>
       )
-    })) || <TableRowNoData colSpan={tableHeaders.length} />
+    })) || <TableRowNoData colSpan={tableColmuns.length} />
 
   return (
     <Page>
@@ -305,7 +313,7 @@ export default function VoucherListPage(): JSX.Element {
             </Grid>
           </Grid>
         </SearchWrapper>
-        <TableContainer columnHeaders={tableHeaders} isFetching={isFetching} data={rowData} />
+        <TableContainer columns={tableColmuns} isFetching={isFetching} data={rowData} />
       </Card>
 
       <Paginate

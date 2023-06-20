@@ -14,7 +14,7 @@ import { ROUTE_PATHS } from 'routes'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
-import TableContainer from 'components/TableContainer'
+import TableContainer, { TableColmun } from 'components/TableContainer'
 import TableRowNoData from 'components/TableRowNoData'
 import { searchCustomerGroup } from 'services/web-bff/customer'
 import { CustomerGroup, CustomerGroupCSV } from 'services/web-bff/customer.type'
@@ -143,17 +143,20 @@ export default function UserGroups(): JSX.Element {
     { label: 'updatedDate', key: 'updatedDate' },
   ]
 
-  const tableHeaders = [
+  const tableColmuns: TableColmun[] = [
     {
-      colName: t('voucherManagement.userGroup.detail.name'),
+      key: 'user_group_detail_name',
+      name: t('voucherManagement.userGroup.detail.name'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.userGroup.detail.createdDate'),
+      key: 'user_group_detail_createdDate',
+      name: t('voucherManagement.userGroup.detail.createdDate'),
       hidden: false,
     },
     {
-      colName: t('voucherManagement.userGroup.detail.updatedDate'),
+      key: 'user_group_detail_updatedDate',
+      name: t('voucherManagement.userGroup.detail.updatedDate'),
       hidden: false,
     },
   ]
@@ -199,7 +202,7 @@ export default function UserGroups(): JSX.Element {
           </TableCell>
         </TableRow>
       )
-    })) || <TableRowNoData colSpan={tableHeaders.length} />
+    })) || <TableRowNoData colSpan={tableColmuns.length} />
 
   return (
     <Page>
@@ -255,7 +258,7 @@ export default function UserGroups(): JSX.Element {
             </Grid>
           </Grid>
         </SearchWrapper>
-        <TableContainer columnHeaders={tableHeaders} isFetching={isFetching} data={rowData} />
+        <TableContainer columns={tableColmuns} isFetching={isFetching} data={rowData} />
       </Card>
 
       <Paginate
