@@ -74,7 +74,7 @@ const TextLineClamp = styled.div`
 `
 
 const SearchButton = styled(Button)`
-  font-weight: bold;
+  font-weight: bold !important;
   display: inline-flexbox;
   box-shadow: none;
   padding: 14px 12px !important;

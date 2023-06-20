@@ -741,8 +741,8 @@ export function formatStringForInputText(str?: string | null | undefined, digit?
 }
 
 export function validatePrivileges(
-  requiredPrivillage = '',
-  userPrivileges: string[] | null | undefined
+  userPrivileges: string[] | null | undefined,
+  requiredPrivillage = ''
 ): boolean {
   if (!userPrivileges) {
     return false
