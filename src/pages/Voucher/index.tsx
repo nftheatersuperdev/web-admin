@@ -147,45 +147,54 @@ export default function VoucherListPage(): JSX.Element {
     { label: t('voucherManagement.voucher.detail.updatedDate'), key: 'updatedDate' },
   ]
 
+  const voucherCode = t('voucherManagement.voucher.detail.code')
+  const voucherDiscountPercent = t('voucherManagement.voucher.detail.discountPercent')
+  const voucherQuantity = t('voucherManagement.voucher.detail.quantity')
+  const voucherLimitPerUser = t('voucherManagement.voucher.detail.limitPerUser')
+  const voucherStartAt = t('voucherManagement.voucher.detail.startAt')
+  const voucherEndAt = t('voucherManagement.voucher.detail.endAt')
+  const voucherCreatedDate = t('voucherManagement.voucher.detail.createdDate')
+  const voucherUpdatedDate = t('voucherManagement.voucher.detail.updatedDate')
+
   const tableColmuns: TableColmun[] = [
     {
       key: 'voucher_detail_code',
-      name: t('voucherManagement.voucher.detail.code'),
+      name: voucherCode,
       hidden: false,
     },
     {
       key: 'voucher_detail_discountPercent',
-      name: t('voucherManagement.voucher.detail.discountPercent'),
+      name: voucherDiscountPercent,
       hidden: false,
     },
     {
       key: 'voucher_detail_quantity',
-      name: t('voucherManagement.voucher.detail.quantity'),
+      name: voucherQuantity,
       hidden: false,
     },
     {
       key: 'voucher_detail_limitPerUser',
-      name: t('voucherManagement.voucher.detail.limitPerUser'),
+      name: voucherLimitPerUser,
       hidden: false,
     },
     {
       key: 'voucher_detail_startAt',
-      name: t('voucherManagement.voucher.detail.startAt'),
+      name: voucherStartAt,
       hidden: false,
     },
     {
       key: 'voucher_detail_endAt',
-      name: t('voucherManagement.voucher.detail.endAt'),
+      name: voucherEndAt,
       hidden: false,
     },
     {
       key: 'voucher_detail_createdDate',
-      name: t('voucherManagement.voucher.detail.createdDate'),
+      name: voucherCreatedDate,
       hidden: false,
     },
     {
       key: 'voucher_detail_updatedDate',
-      name: t('voucherManagement.voucher.detail.updatedDate'),
+      name: voucherUpdatedDate,
       hidden: false,
     },
   ]
