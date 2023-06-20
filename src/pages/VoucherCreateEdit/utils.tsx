@@ -1,7 +1,7 @@
 import { FormEvent, KeyboardEvent } from 'react'
 
 export const handleValidateNumericKeyPress = (event: KeyboardEvent): void => {
-  const allowCharacters = /[0-9]/
+  const allowCharacters = /\d/
   if (!allowCharacters.test(event.key)) {
     event.preventDefault()
   }
