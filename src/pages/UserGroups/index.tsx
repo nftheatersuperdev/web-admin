@@ -143,20 +143,24 @@ export default function UserGroups(): JSX.Element {
     { label: 'updatedDate', key: 'updatedDate' },
   ]
 
+  const userGroupName = t('voucherManagement.userGroup.detail.name')
+  const userGroupCreatedDate = t('voucherManagement.userGroup.detail.createdDate')
+  const userGroupUpdatedDate = t('voucherManagement.userGroup.detail.updatedDate')
+
   const tableColmuns: TableColmun[] = [
     {
-      key: 'user_group_detail_name',
-      name: t('voucherManagement.userGroup.detail.name'),
+      key: 'user_group_name',
+      name: userGroupName,
       hidden: false,
     },
     {
-      key: 'user_group_detail_createdDate',
-      name: t('voucherManagement.userGroup.detail.createdDate'),
+      key: 'user_group_createdDate',
+      name: userGroupCreatedDate,
       hidden: false,
     },
     {
-      key: 'user_group_detail_updatedDate',
-      name: t('voucherManagement.userGroup.detail.updatedDate'),
+      key: 'user_group_updatedDate',
+      name: userGroupUpdatedDate,
       hidden: false,
     },
   ]
