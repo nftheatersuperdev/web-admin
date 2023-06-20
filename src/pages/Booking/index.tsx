@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useHistory } from 'react-router-dom'
@@ -49,15 +50,16 @@ import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
 import { useStyles, SearchDatePicker } from './styles'
 import {
+  getBookingList,
   getBookingStatusOnlyUsedInBackendOptions,
   getIsExtendOptions,
-  convertToDuration,
   BookingCsv,
   BookingList,
   columnFormatBookingStatus,
   SelectOption,
   Keypress,
   FilterSearch,
+  getCsvData,
 } from './utils'
 
 export default function Booking(): JSX.Element {
@@ -142,32 +144,7 @@ export default function Booking(): JSX.Element {
     refetchOnWindowFocus: false,
   })
 
-  const bookings =
-    bookingData?.data?.bookingDetails?.map((booking) => {
-      return {
-        id: booking.bookingId,
-        detailId: booking.id,
-        customerId: booking.customer.id,
-        firstName: booking.customer?.firstName || '-',
-        lastName: booking.customer?.lastName || '-',
-        email: booking.customer?.email || '-',
-        phone: booking.customer?.phoneNumber || '-',
-        location: booking.car?.resellerServiceArea?.areaNameEn || '-',
-        brand: booking.car?.carSku?.carModel?.brand.name || '-',
-        model: booking.car?.carSku?.carModel?.name || '-',
-        plateNumber: booking.car?.plateNumber || '-',
-        duration: convertToDuration(booking.rentDetail?.durationDay, t) || '-',
-        status: booking.displayStatus || '-',
-        startDate: booking.startDate || '-',
-        endDate: booking.endDate || '-',
-        price: booking.rentDetail?.chargePrice || 0,
-        voucherId: booking.rentDetail?.voucherId || '-',
-        voucherCode: booking.rentDetail?.voucherCode || '-',
-        createdDate: booking.rentDetail?.createdDate || '-',
-        updatedDate: booking.rentDetail?.updatedDate || '-',
-        isExtend: booking.isExtend || false,
-      }
-    }) || []
+  const bookings = getBookingList(bookingData?.data?.bookingDetails, t)
 
   // == search ==
   const searchOptions: SelectOption[] = [
@@ -379,7 +356,7 @@ export default function Booking(): JSX.Element {
     { label: t('booking.tableHeader.endDate'), key: 'endDate' },
     { label: t('booking.tableHeader.deliveryAddress'), key: 'deliveryAddress' },
     { label: t('booking.tableHeader.returnAddress'), key: 'returnAddress' },
-    { label: t('booking.tableHeader.status'), key: 'status' },
+    { label: t('booking.tableHeader.statusCsv'), key: 'status' },
     { label: t('booking.tableHeader.parentId'), key: 'parentId' },
     { label: t('booking.tableHeader.isExtend'), key: 'isExtend' },
     { label: t('booking.tableHeader.location'), key: 'location' },
@@ -394,28 +371,9 @@ export default function Booking(): JSX.Element {
     { label: t('booking.tableHeader.paymentUpdatedDate'), key: 'paymentUpdatedDate' },
     { label: t('booking.tableHeader.deliveryDate'), key: 'deliveryDate' },
     { label: t('booking.tableHeader.returnDate'), key: 'returnDate' },
-    { label: t('booking.tableHeader.isReplacement'), key: 'isReplacement' },
+    { label: t('booking.tableHeader.isReplacement'), key: 'displayReplacement' },
   ]
-  const csvData: BookingCsv[] = []
-  bookings.forEach((booking) => {
-    const data = {
-      detailId: booking.detailId,
-      customerId: booking.customerId,
-      firstName: booking.firstName,
-      lastName: booking.lastName,
-      email: booking.email,
-      phone: booking.phone,
-      location: booking.location,
-      brand: booking.brand,
-      model: booking.model,
-      plateNumber: booking.plateNumber,
-      duration: booking.duration,
-      status: booking.status,
-      startDate: booking.startDate,
-      endDate: booking.endDate,
-    }
-    csvData.push(data)
-  })
+  const csvData: BookingCsv[] = getCsvData(bookings, t)
 
   // == table ==
   const columnHead = [
@@ -548,7 +506,7 @@ export default function Booking(): JSX.Element {
               state: resellerServiceAreaId,
             })
           }
-          style={{ textDecoration: 'none' }}
+          className={classes.textDecoration}
         >
           {columnRow.map((col) => (
             <TableCell key={col.field}>

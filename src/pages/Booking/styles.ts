@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import DatePicker from 'components/DatePicker'
 import { makeStyles } from '@mui/styles'
+import DatePicker from 'components/DatePicker'
 
 export const SearchDatePicker = styled(DatePicker)`
   .MuiInputBase-root {
@@ -9,6 +9,9 @@ export const SearchDatePicker = styled(DatePicker)`
 `
 
 export const useStyles = makeStyles({
+  textDecoration: {
+    textDecoration: 'none',
+  },
   typo: {
     marginBottom: '0px',
   },
