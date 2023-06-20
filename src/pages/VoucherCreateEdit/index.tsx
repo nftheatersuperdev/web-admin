@@ -119,6 +119,17 @@ export default function VoucherCreateEditPage(): JSX.Element {
   const isInactive = currentDateTime > endAtDateTime
   const isDisableTextField = isInactive || isActive
 
+  function generatePackagePriceOption() {
+    if (voucher) {
+      if (voucher.isAllPackages) {
+        return selectOptions.ALL
+      } else if (voucher.packagePrices.length >= 1) {
+        return selectOptions.SELECT
+      }
+    }
+    return ''
+  }
+
   const initialValues =
     isEdit && voucher
       ? {
@@ -134,11 +145,7 @@ export default function VoucherCreateEditPage(): JSX.Element {
           customerGroupOption:
             voucher.customerGroups.length >= 1 ? selectOptions.SELECT : selectOptions.ALL,
           packagePrices: voucher.packagePrices,
-          packagePriceOption: voucher.isAllPackages
-            ? selectOptions.ALL
-            : voucher.packagePrices.length >= 1
-            ? selectOptions.SELECT
-            : '',
+          packagePriceOption: generatePackagePriceOption(),
           isAllPackages: voucher.isAllPackages,
         }
       : {
