@@ -104,6 +104,16 @@ export default function VoucherCreateEditPage(): JSX.Element {
       .number()
       .min(1, t('validation.minimumIsOne'))
       .required(t('validation.required')),
+    customerGroupOption: yup.string(),
+    customerGroups: yup.array().when('customerGroupOption', {
+      is: selectOptions.SELECT,
+      then: yup.array().min(1, 'Required at least one user group'),
+    }),
+    packagePriceOption: yup.string(),
+    packagePrices: yup.array().when('packagePriceOption', {
+      is: selectOptions.SELECT,
+      then: yup.array().min(1, 'Required at least one package price'),
+    }),
   })
   const datePlusOneDay = dayjs().add(1, 'day')
   const defaultDate = {
