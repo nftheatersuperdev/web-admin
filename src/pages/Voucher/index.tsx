@@ -16,6 +16,7 @@ import Paginate from 'components/Paginate'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
 import TableContainer from 'components/TableContainer'
+import TableRowNoData from 'components/TableRowNoData'
 import { getList } from 'services/web-bff/voucher'
 import { Voucher, VoucherCSV } from 'services/web-bff/voucher.type'
 
@@ -248,13 +249,7 @@ export default function VoucherListPage(): JSX.Element {
           </TableCell>
         </TableRow>
       )
-    })) || (
-    <TableRow>
-      <TableCell colSpan={tableHeaders.length} align="center">
-        {t('noData')}
-      </TableCell>
-    </TableRow>
-  )
+    })) || <TableRowNoData colSpan={tableHeaders.length} />
 
   return (
     <Page>
@@ -313,18 +308,14 @@ export default function VoucherListPage(): JSX.Element {
         <TableContainer columnHeaders={tableHeaders} isFetching={isFetching} data={rowData} />
       </Card>
 
-      {data?.data.pagination ? (
-        <Paginate
-          pagination={data?.data.pagination}
-          page={page}
-          pageSize={pageSize}
-          setPage={setPage}
-          setPageSize={setPageSize}
-          refetch={refetch}
-        />
-      ) : (
-        ''
-      )}
+      <Paginate
+        pagination={data?.data.pagination}
+        page={page}
+        pageSize={pageSize}
+        setPage={setPage}
+        setPageSize={setPageSize}
+        refetch={refetch}
+      />
     </Page>
   )
 }

@@ -1,7 +1,9 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import config from 'config'
 import styled from 'styled-components'
 import { FormControl, Select, MenuItem, Pagination } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { Fragment } from 'react'
 import { Pagination as IPagination } from 'services/web-bff/response.type'
 
 const PaginateContainer = styled.div`
@@ -16,7 +18,7 @@ const FormControlInline = styled(FormControl)`
 `
 
 interface PaginateProps {
-  pagination: IPagination
+  pagination: IPagination | undefined
   page: number
   pageSize: number
   setPage: (page: number) => void
@@ -33,6 +35,10 @@ export default function Paginate({
   refetch,
 }: PaginateProps): JSX.Element {
   const { t } = useTranslation()
+
+  if (!pagination) {
+    return <Fragment />
+  }
 
   return (
     <PaginateContainer>
