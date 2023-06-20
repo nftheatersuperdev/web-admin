@@ -29,7 +29,6 @@ import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
 import { getList } from 'services/web-bff/voucher'
 import { Voucher, VoucherCSV } from 'services/web-bff/voucher.type'
-// import { VoucherListQuery } from 'services/web-bff/voucher.type'
 
 const SearchWrapper = styled.div`
   padding: 20px;
