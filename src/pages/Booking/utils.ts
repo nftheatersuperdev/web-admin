@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFunction, Namespace } from 'react-i18next'
-import ls from 'localstorage-slim'
 import { formatDate, DEFAULT_DATETIME_FORMAT } from 'utils'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
-import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
-import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
-import { LocationResponse } from 'services/web-bff/location.type'
 import {
   BookingCarActivity,
   BookingPayment,
@@ -29,10 +25,6 @@ export interface SelectOption {
   value: string
 }
 
-const STORAGE_KEYS = {
-  VISIBILITY_COLUMNS: 'evme:car:visibility_columns',
-}
-
 export const CarStatus = {
   ACCEPTED: 'accepted',
   AVAILABLE: 'available',
@@ -52,47 +44,6 @@ export const BookingStatus = {
   REFUSED: 'refused',
   COMPLETED: 'completed',
 }
-
-export const defaultVisibilityColumns: VisibilityColumns = {
-  id: true,
-  carTrackId: true,
-  brand: true,
-  model: true,
-  price: true,
-  duration: true,
-  status: true,
-  updatedAt: true,
-  carModelId: false,
-  seats: false,
-  topSpeed: false,
-  plateNumber: true,
-  vin: true,
-  fastChargeTime: false,
-  startDate: false,
-  endDate: false,
-  startAddress: false,
-  endAddress: false,
-  createdAt: false,
-}
-
-export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
-  {
-    label: t('car.statuses.published'),
-    value: CarStatus.AVAILABLE,
-  },
-  {
-    label: t('car.statuses.outOfService'),
-    value: CarStatus.OUT_OF_SERVICE,
-  },
-  {
-    label: t('car.statuses.published'),
-    value: CarStatus.PUBLISHED,
-  },
-  {
-    label: t('car.statuses.inUse'),
-    value: CarStatus.IN_USE,
-  },
-]
 
 export const getBookingStatusOnlyUsedInBackendOptions = (
   t: TFunction<Namespace>
@@ -160,27 +111,6 @@ export const columnFormatBookingStatus = (status: string, t: TFunction<Namespace
   }
 }
 
-export const columnFormatCarVisibility = (isActive: boolean, t: TFunction<Namespace>): string => {
-  if (isActive) {
-    return t('car.statuses.published')
-  }
-  return t('car.statuses.unpublished')
-}
-
-export interface VisibilityColumns {
-  [key: string]: boolean
-}
-
-export const getVisibilityColumns = (): VisibilityColumns => {
-  return (
-    ls.get<VisibilityColumns | undefined>(STORAGE_KEYS.VISIBILITY_COLUMNS) ||
-    defaultVisibilityColumns
-  )
-}
-
-export const setVisibilityColumns = (columns: VisibilityColumns): void => {
-  ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
-}
 export interface FilterSearch {
   [key: string]: string
 }
@@ -195,34 +125,6 @@ export const getIsExtendOptions = (): SelectOption[] => [
     value: 'true',
   },
 ]
-
-export const getOwnerOptions = (carOwners: CarOwnerResponse | null | undefined): SelectOption[] => {
-  const owners = carOwners?.owners || []
-  return owners.map((owner) => ({
-    label: owner.name,
-    value: owner.id,
-  }))
-}
-
-export const getResellerOptions = (
-  carResellers: ReSellerResponse | null | undefined
-): SelectOption[] => {
-  const resellers = carResellers?.resellers || []
-  return resellers.map((reseller) => ({
-    label: reseller.name,
-    value: reseller.id,
-  }))
-}
-
-export const getLocationOptions = (
-  carLocations: LocationResponse | null | undefined
-): SelectOption[] => {
-  const locations = carLocations?.locations || []
-  return locations.map((location) => ({
-    label: location.areaNameEn,
-    value: location.id,
-  }))
-}
 
 export const convertToDuration = (value: number, t: TFunction<Namespace>): string => {
   switch (value) {
@@ -249,45 +151,7 @@ export const getUserResellerServiceAreaId = (userServiceAreas: ResellerServiceAr
   return ''
 }
 
-export interface BookingList {
-  id: string
-  detailId: string
-  customerId: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  carId: string
-  model: string
-  brand: string
-  seats: number
-  topSpeed: number
-  plateNumber: string
-  vin: string
-  fastChargeTime: number
-  price: string
-  duration: string
-  startDate: string
-  endDate: string
-  deliveryAddress: string
-  returnAddress: string
-  status: string
-  parentId: string
-  isExtend: boolean
-  location: string
-  owner: string
-  reseller: string
-  voucherId: string
-  voucherCode: string
-  createdDate: string
-  updatedDate: string
-  paymentStatus: string
-  paymentFailure: string
-  paymentUpdated: string
-  deliveryDate: string
-  returnDate: string
-  isReplacement: boolean
-  displayReplacement: string
+export interface BookingList extends BookingObject {
   isSelfPickUp: boolean
   cars: SubscriptionCar
   carActivities: BookingCarActivity[]
@@ -295,7 +159,7 @@ export interface BookingList {
   [key: string]: any
 }
 
-export interface BookingCsv {
+export interface BookingObject {
   id: string
   detailId: string
   customerId: string
@@ -428,8 +292,8 @@ const getServiceTypeLocation = (
   return serviceLocation
 }
 
-export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): BookingCsv[] => {
-  const csvData: BookingCsv[] = []
+export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): BookingObject[] => {
+  const csvData: BookingObject[] = []
   bookings.forEach((book) => {
     const newBook = { ...book }
     const task = getServiceTypeLocation(
@@ -512,4 +376,69 @@ export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): Bo
   })
 
   return csvData
+}
+
+export const getHeaderCsvFile = (t: TFunction<Namespace>): any[] => {
+  return [
+    { label: t('booking.tableHeader.detailId'), key: 'detailId' },
+    { label: t('booking.tableHeader.customerId'), key: 'customerId' },
+    { label: t('booking.tableHeader.firstName'), key: 'firstName' },
+    { label: t('booking.tableHeader.lastName'), key: 'lastName' },
+    { label: t('booking.tableHeader.email'), key: 'email' },
+    { label: t('booking.tableHeader.phone'), key: 'phone' },
+    { label: t('booking.tableHeader.carId'), key: 'carId' },
+    { label: t('booking.tableHeader.model'), key: 'model' },
+    { label: t('booking.tableHeader.brand'), key: 'brand' },
+    { label: t('booking.tableHeader.seats'), key: 'seats' },
+    { label: t('booking.tableHeader.topSpeed'), key: 'topSpeed' },
+    { label: t('booking.tableHeader.plateNumber'), key: 'plateNumber' },
+    { label: t('booking.tableHeader.vin'), key: 'vin' },
+    { label: t('booking.tableHeader.fastChargeTime'), key: 'fastChargeTime' },
+    { label: t('booking.tableHeader.price'), key: 'price' },
+    { label: t('booking.tableHeader.duration'), key: 'duration' },
+    { label: t('booking.tableHeader.startDate'), key: 'startDate' },
+    { label: t('booking.tableHeader.endDate'), key: 'endDate' },
+    { label: t('booking.tableHeader.deliveryAddress'), key: 'deliveryAddress' },
+    { label: t('booking.tableHeader.returnAddress'), key: 'returnAddress' },
+    { label: t('booking.tableHeader.statusCsv'), key: 'status' },
+    { label: t('booking.tableHeader.parentId'), key: 'parentId' },
+    { label: t('booking.tableHeader.isExtend'), key: 'isExtend' },
+    { label: t('booking.tableHeader.location'), key: 'location' },
+    { label: t('booking.tableHeader.owner'), key: 'owner' },
+    { label: t('booking.tableHeader.reseller'), key: 'reseller' },
+    { label: t('booking.tableHeader.voucherId'), key: 'voucherId' },
+    { label: t('booking.tableHeader.voucherCode'), key: 'voucherCode' },
+    { label: t('booking.tableHeader.createdDate'), key: 'createdDate' },
+    { label: t('booking.tableHeader.updatedDate'), key: 'updatedDate' },
+    { label: t('booking.tableHeader.paymentStatus'), key: 'paymentStatus' },
+    { label: t('booking.tableHeader.paymentFailureMessage'), key: 'paymentFailureMessage' },
+    { label: t('booking.tableHeader.paymentUpdatedDate'), key: 'paymentUpdatedDate' },
+    { label: t('booking.tableHeader.deliveryDate'), key: 'deliveryDate' },
+    { label: t('booking.tableHeader.returnDate'), key: 'returnDate' },
+    { label: t('booking.tableHeader.isReplacement'), key: 'displayReplacement' },
+  ]
+}
+
+const createOption = (label: string, value: string): SelectOption => {
+  return {
+    label: label,
+    value: value,
+  }
+}
+
+export const getSearchOptions = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    createOption(t('booking.search.detailId'), 'bookingDetailId'),
+    createOption(t('booking.search.customer'), 'customerId'),
+    createOption(t('booking.search.email'), 'email'),
+    createOption(t('booking.search.carId'), 'carId'),
+    createOption(t('booking.search.plateNumber'), 'plateNumber'),
+    createOption(t('booking.search.startDate'), 'startDate'),
+    createOption(t('booking.search.endDate'), 'endDate'),
+    createOption(t('booking.search.status'), 'statusList'),
+    createOption(t('booking.search.isExtend'), 'isExtend'),
+    createOption(t('booking.search.voucherId'), 'voucherId'),
+    createOption(t('booking.search.deliveryDate'), 'deliveryDate'),
+    createOption(t('booking.search.returnDate'), 'returnDate'),
+  ]
 }
