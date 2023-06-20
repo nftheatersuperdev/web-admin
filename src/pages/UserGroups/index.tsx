@@ -189,7 +189,7 @@ export default function UserGroups(): JSX.Element {
           key={`table_row_${id}`}
           component={Link}
           to={
-            validatePrivileges('PERM_CUSTOMER_GROUP_EDIT', userPrivileges)
+            validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_EDIT')
               ? `/user-groups/${id}`
               : '#'
           }
@@ -256,7 +256,7 @@ export default function UserGroups(): JSX.Element {
                   id="user_group_csv_button"
                   variant="contained"
                   size="large"
-                  disabled={!validatePrivileges('PERM_CUSTOMER_GROUP_VIEW', userPrivileges)}
+                  disabled={!validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_VIEW')}
                 >
                   <CSVLinkText data={csvData} headers={csvHeaders} filename="user_group.csv">
                     {t('button.export').toLocaleUpperCase()}
@@ -268,7 +268,7 @@ export default function UserGroups(): JSX.Element {
                   size="large"
                   endIcon={<AddIcon />}
                   onClick={() => setIsOpenCreateDialog(() => true)}
-                  disabled={!validatePrivileges('PERM_CUSTOMER_GROUP_CREATE', userPrivileges)}
+                  disabled={!validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_CREATE')}
                 >
                   {t('button.create').toLocaleUpperCase()}
                 </ActionButton>

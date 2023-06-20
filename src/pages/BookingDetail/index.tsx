@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams, useHistory, useLocation } from 'react-router-dom'
 import dayjs from 'dayjs'
@@ -26,7 +27,7 @@ import { Page } from 'layout/LayoutRoute'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getDetailsById } from 'services/web-bff/booking'
-import { BookingPayment } from 'services/web-bff/booking.type'
+import { BookingCarActivity, BookingPayment, BookingRental } from 'services/web-bff/booking.type'
 import { useStyles, ChipServiceType, ChipPaymentType, DisabledField } from './styles'
 import {
   convertToDuration,
@@ -46,9 +47,10 @@ import {
 
 export const formatCell = (value: string, classes: string, dateFormat?: string): JSX.Element => {
   if (dateFormat) {
+    value = formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)
     return (
       <div className={classes}>
-        {value ? formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT) : '-'}
+        {value === 'Invalid Date' ? '-' : formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
       </div>
     )
   }
@@ -78,26 +80,6 @@ export default function SubscriptionDetail(): JSX.Element {
       link: `/booking/${bookingId}`,
     },
   ]
-
-  const { data: bookingDetails, isFetching } = useQuery(
-    'booking',
-    () => getDetailsById(resellerServiceAreaId, bookingDetailId),
-    {
-      refetchOnWindowFocus: false,
-    }
-  )
-
-  const maxEndDate = getMaxEndDate(bookingDetails)
-  const bookingDetail = getBookingDetail(bookingDetails, bookingDetailId)
-  const carActivities = getCarActivities(bookingDetail)
-
-  const { getPrivileges, firebaseUser } = useAuth()
-  const currentPrivilege = getPrivileges()
-  const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
-  const isTherePermissionToDoCarReplacement = hasAllowedPrivilege(currentPrivilege, [
-    PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
-  ])
-  const isEndDateOverToday = checkDateOverToday(bookingDetail)
 
   const columnHead = [
     t('booking.carDetail.no'),
@@ -167,41 +149,43 @@ export default function SubscriptionDetail(): JSX.Element {
     },
   ]
 
-  const carDetails = getCarDetails(carActivities, bookingDetail)
-  const rowData = carDetails?.map((car: DefaultCarDetail) => {
-    return (
-      <TableRow
-        hover
-        key={`booking-${bookingId}-${bookingDetailId}`}
-        onClick={() =>
-          history.push({
-            pathname: `/booking/${bookingId}/${bookingDetailId}/car/${car.carId}`,
-            state: {
-              carActivity: car,
-              isSelfPickUp: bookingDetail?.isSelfPickUp,
-              resellerServiceAreaId,
-            },
-          })
-        }
-      >
-        {columnRow.map((col) => (
-          <TableCell key={col.field}>
-            <div className={classes.paddingLeftCell}>
-              {col.render
-                ? col.render(car[col.field].toString())
-                : formatCell(car[col.field].toString(), classes.paddingLeftCell)}
-            </div>
-          </TableCell>
-        ))}
-      </TableRow>
-    )
-  }) || (
-    <TableRow>
-      <TableCell colSpan={columnHead.length} align="center">
-        {t('booking.noData')}
-      </TableCell>
-    </TableRow>
+  const { data: bookingDetails, isFetching } = useQuery(
+    'booking',
+    () => getDetailsById(resellerServiceAreaId, bookingDetailId),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
+
+  const maxEndDate = getMaxEndDate(bookingDetails)
+  const [bookingDetail, setBookingDetail] = useState<BookingRental>({} as BookingRental)
+  const [carActivities, setCarActivities] = useState<BookingCarActivity[]>([])
+  const [carDetails, setCarDetails] = useState<DefaultCarDetail[]>([])
+
+  useEffect(() => {
+    async function getAllData() {
+      const fetchedBookingDetail = await getBookingDetail(bookingDetails, bookingDetailId)
+      setBookingDetail(fetchedBookingDetail)
+
+      const fetchedCarActivities = await getCarActivities(fetchedBookingDetail)
+      setCarActivities(fetchedCarActivities)
+
+      const fetchedCarDetails = await getCarDetails(fetchedCarActivities, fetchedBookingDetail)
+      if (fetchedCarDetails) {
+        setCarDetails(fetchedCarDetails)
+      }
+    }
+
+    getAllData()
+  }, [bookingDetails, bookingDetailId, carActivities.length])
+
+  const { getPrivileges, firebaseUser } = useAuth()
+  const currentPrivilege = getPrivileges()
+  const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
+  const isTherePermissionToDoCarReplacement = hasAllowedPrivilege(currentPrivilege, [
+    PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
+  ])
+  const isEndDateOverToday = checkDateOverToday(bookingDetail)
 
   return (
     <Page>
@@ -399,7 +383,42 @@ export default function SubscriptionDetail(): JSX.Element {
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>{rowData}</TableBody>
+            <TableBody>
+              {carDetails?.map((car: DefaultCarDetail, index: number) => {
+                return (
+                  <TableRow
+                    hover
+                    key={`booking-${bookingId}-${bookingDetailId}_${index}`}
+                    onClick={() =>
+                      history.push({
+                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${car.carId}`,
+                        state: {
+                          carActivity: car,
+                          isSelfPickUp: bookingDetail?.isSelfPickUp,
+                          resellerServiceAreaId,
+                        },
+                      })
+                    }
+                  >
+                    {columnRow.map((col) => (
+                      <TableCell key={col.field}>
+                        <div className={classes.paddingLeftCell}>
+                          {col.render
+                            ? col.render(car[col.field].toString())
+                            : formatCell(car[col.field].toString(), classes.paddingLeftCell)}
+                        </div>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )
+              }) || (
+                <TableRow>
+                  <TableCell colSpan={columnHead.length} align="center">
+                    {t('booking.noData')}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
       </Card>

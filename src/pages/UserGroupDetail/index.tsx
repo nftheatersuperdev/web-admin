@@ -50,7 +50,7 @@ export default function Booking(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const isDisabledButton =
-    isLoading || isFetching || !validatePrivileges('PERM_CUSTOMER_GROUP_EDIT', userPrivileges)
+    isLoading || isFetching || !validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_EDIT')
 
   const customerGroup = data?.data.customerGroups[0]
 
