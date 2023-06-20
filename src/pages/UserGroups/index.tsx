@@ -44,7 +44,7 @@ const ActionButton = styled(Button)`
   }
 `
 const RowOverflow = styled.div`
-  width: 200px;
+  width: 185px;
   overflow-wrap: break-word;
   overflow: hidden;
   textoverflow: ellipsis;
