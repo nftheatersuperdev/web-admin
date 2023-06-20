@@ -53,13 +53,15 @@ import {
   getBookingList,
   getBookingStatusOnlyUsedInBackendOptions,
   getIsExtendOptions,
-  BookingCsv,
+  BookingObject,
   BookingList,
   columnFormatBookingStatus,
   SelectOption,
   Keypress,
   FilterSearch,
   getCsvData,
+  getHeaderCsvFile,
+  getSearchOptions,
 } from './utils'
 
 export default function Booking(): JSX.Element {
@@ -147,56 +149,7 @@ export default function Booking(): JSX.Element {
   const bookings = getBookingList(bookingData?.data?.bookingDetails, t)
 
   // == search ==
-  const searchOptions: SelectOption[] = [
-    {
-      label: t('booking.search.detailId'),
-      value: 'bookingDetailId',
-    },
-    {
-      label: t('booking.search.customer'),
-      value: 'customerId',
-    },
-    {
-      label: t('booking.search.email'),
-      value: 'email',
-    },
-    {
-      label: t('booking.search.carId'),
-      value: 'carId',
-    },
-    {
-      label: t('booking.search.plateNumber'),
-      value: 'plateNumber',
-    },
-    {
-      label: t('booking.search.startDate'),
-      value: 'startDate',
-    },
-    {
-      label: t('booking.search.endDate'),
-      value: 'endDate',
-    },
-    {
-      label: t('booking.search.status'),
-      value: 'statusList',
-    },
-    {
-      label: t('booking.search.isExtend'),
-      value: 'isExtend',
-    },
-    {
-      label: t('booking.search.voucherId'),
-      value: 'voucherId',
-    },
-    {
-      label: t('booking.search.deliveryDate'),
-      value: 'deliveryDate',
-    },
-    {
-      label: t('booking.search.returnDate'),
-      value: 'returnDate',
-    },
-  ]
+  const searchOptions: SelectOption[] = getSearchOptions(t)
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
   const [selectedOptionValue, setSelectedOptionValue] = useState<SelectOption | null>()
@@ -335,45 +288,8 @@ export default function Booking(): JSX.Element {
   })
 
   // == export ==
-  const csvHeaders = [
-    { label: t('booking.tableHeader.detailId'), key: 'detailId' },
-    { label: t('booking.tableHeader.customerId'), key: 'customerId' },
-    { label: t('booking.tableHeader.firstName'), key: 'firstName' },
-    { label: t('booking.tableHeader.lastName'), key: 'lastName' },
-    { label: t('booking.tableHeader.email'), key: 'email' },
-    { label: t('booking.tableHeader.phone'), key: 'phone' },
-    { label: t('booking.tableHeader.carId'), key: 'carId' },
-    { label: t('booking.tableHeader.model'), key: 'model' },
-    { label: t('booking.tableHeader.brand'), key: 'brand' },
-    { label: t('booking.tableHeader.seats'), key: 'seats' },
-    { label: t('booking.tableHeader.topSpeed'), key: 'topSpeed' },
-    { label: t('booking.tableHeader.plateNumber'), key: 'plateNumber' },
-    { label: t('booking.tableHeader.vin'), key: 'vin' },
-    { label: t('booking.tableHeader.fastChargeTime'), key: 'fastChargeTime' },
-    { label: t('booking.tableHeader.price'), key: 'price' },
-    { label: t('booking.tableHeader.duration'), key: 'duration' },
-    { label: t('booking.tableHeader.startDate'), key: 'startDate' },
-    { label: t('booking.tableHeader.endDate'), key: 'endDate' },
-    { label: t('booking.tableHeader.deliveryAddress'), key: 'deliveryAddress' },
-    { label: t('booking.tableHeader.returnAddress'), key: 'returnAddress' },
-    { label: t('booking.tableHeader.statusCsv'), key: 'status' },
-    { label: t('booking.tableHeader.parentId'), key: 'parentId' },
-    { label: t('booking.tableHeader.isExtend'), key: 'isExtend' },
-    { label: t('booking.tableHeader.location'), key: 'location' },
-    { label: t('booking.tableHeader.owner'), key: 'owner' },
-    { label: t('booking.tableHeader.reseller'), key: 'reseller' },
-    { label: t('booking.tableHeader.voucherId'), key: 'voucherId' },
-    { label: t('booking.tableHeader.voucherCode'), key: 'voucherCode' },
-    { label: t('booking.tableHeader.createdDate'), key: 'createdDate' },
-    { label: t('booking.tableHeader.updatedDate'), key: 'updatedDate' },
-    { label: t('booking.tableHeader.paymentStatus'), key: 'paymentStatus' },
-    { label: t('booking.tableHeader.paymentFailureMessage'), key: 'paymentFailureMessage' },
-    { label: t('booking.tableHeader.paymentUpdatedDate'), key: 'paymentUpdatedDate' },
-    { label: t('booking.tableHeader.deliveryDate'), key: 'deliveryDate' },
-    { label: t('booking.tableHeader.returnDate'), key: 'returnDate' },
-    { label: t('booking.tableHeader.isReplacement'), key: 'displayReplacement' },
-  ]
-  const csvData: BookingCsv[] = getCsvData(bookings, t)
+  const csvHeaders = getHeaderCsvFile(t)
+  const csvData: BookingObject[] = getCsvData(bookings, t)
 
   // == table ==
   const columnHead = [
