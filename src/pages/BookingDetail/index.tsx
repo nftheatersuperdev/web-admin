@@ -388,7 +388,7 @@ export default function SubscriptionDetail(): JSX.Element {
                 return (
                   <TableRow
                     hover
-                    key={`booking-${bookingId}-${bookingDetailId}_${index}`}
+                    key={`booking-${bookingId}-${bookingDetailId}_${car.carId}`}
                     onClick={() =>
                       history.push({
                         pathname: `/booking/${bookingId}/${bookingDetailId}/car/${car.carId}`,
