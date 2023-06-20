@@ -33,11 +33,12 @@ export default function PackagePriceList({ voucher, formik }: PackagePriceListPr
   const currentDateTime = new Date()
   const endAtDateTime = new Date(voucher?.endAt || new Date())
   const isInactive = currentDateTime > endAtDateTime
+  const { packagePriceOption, packagePrices } = formik.values
 
   const { data: masterPackagePricesData } = useQuery('master-package-prices', () => getActive())
 
   const masterPackagePrices = masterPackagePricesData || []
-  const packagePricesValues = formik.values.packagePrices.map((packagePrice) =>
+  const packagePricesValues = packagePrices.map((packagePrice) =>
     masterPackagePrices.find((masterData) => masterData.id === packagePrice.id)
   )
 
@@ -74,8 +75,11 @@ export default function PackagePriceList({ voucher, formik }: PackagePriceListPr
           id="voucher_add_edit__package_price_radio_list"
           name="package-price-radio"
           aria-label="package-price-radio"
-          onChange={(_, value) => formik.setFieldValue('packagePriceOption', value)}
-          value={formik.values.packagePriceOption}
+          onChange={async (_, value) => {
+            await formik.setFieldValue('packagePrices', [])
+            await formik.setFieldValue('packagePriceOption', value)
+          }}
+          value={packagePriceOption}
         >
           <FormControlLabel
             value={selectOptions.ALL}
@@ -115,7 +119,7 @@ export default function PackagePriceList({ voucher, formik }: PackagePriceListPr
                 variant="outlined"
               />
             )}
-            disabled={formik.values.packagePriceOption !== selectOptions.SELECT}
+            disabled={packagePriceOption !== selectOptions.SELECT}
           />
         </AutocompleteSpace>
       </Grid>

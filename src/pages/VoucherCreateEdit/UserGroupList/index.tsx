@@ -31,13 +31,14 @@ export default function VoucherUserGroupTab({ voucher, formik }: UserGroupListPr
   const currentDateTime = new Date()
   const endAtDateTime = new Date(voucher?.endAt || new Date())
   const isInactive = currentDateTime > endAtDateTime
+  const { customerGroupOption, customerGroups } = formik.values
 
   const { data: masterCustomerGroupsData } = useQuery('master-customer-groups', () =>
     searchCustomerGroup({ data: {}, size: 1000 })
   )
 
   const masterCustomerGroups = masterCustomerGroupsData?.data.customerGroups || []
-  const customerGroupValues = formik.values.customerGroups.map((customerGroup) =>
+  const customerGroupValues = customerGroups.map((customerGroup) =>
     masterCustomerGroups.find((masterData) => masterData.id === customerGroup.id)
   )
 
@@ -48,8 +49,11 @@ export default function VoucherUserGroupTab({ voucher, formik }: UserGroupListPr
           id="voucher_add_edit__user_group_radio_list"
           name="user-group-radio"
           aria-label="user-group-radio"
-          onChange={(_, value) => formik.setFieldValue('customerGroupOption', value)}
-          value={formik.values.customerGroupOption}
+          onChange={async (_, value) => {
+            await formik.setFieldValue('customerGroups', [])
+            await formik.setFieldValue('customerGroupOption', value)
+          }}
+          value={customerGroupOption}
         >
           <FormControlLabel
             value={selectOptions.ALL}
@@ -89,7 +93,7 @@ export default function VoucherUserGroupTab({ voucher, formik }: UserGroupListPr
                 variant="outlined"
               />
             )}
-            disabled={formik.values.customerGroupOption !== selectOptions.SELECT}
+            disabled={customerGroupOption !== selectOptions.SELECT}
           />
         </AutocompleteSpace>
       </Grid>
