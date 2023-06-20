@@ -384,7 +384,7 @@ export default function SubscriptionDetail(): JSX.Element {
               </TableRow>
             </TableHead>
             <TableBody>
-              {carDetails?.map((car: DefaultCarDetail, index: number) => {
+              {carDetails?.map((car: DefaultCarDetail) => {
                 return (
                   <TableRow
                     hover
