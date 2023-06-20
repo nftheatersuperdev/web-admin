@@ -24,7 +24,7 @@ export default function DataTableHeader({ headers }: DataTableProps): JSX.Elemen
           {headers.map((header) => {
             return (
               <TableCell align="left" key={header.text}>
-                <TableHeaderColumn>{header.text}</TableHeaderColumn>
+                <TableHeaderColumn className={header?.style}>{header.text}</TableHeaderColumn>
               </TableCell>
             )
           })}
