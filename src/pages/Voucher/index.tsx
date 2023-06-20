@@ -1,17 +1,5 @@
 import styled from 'styled-components'
-import {
-  Button,
-  Card,
-  CircularProgress,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material'
+import { Button, Card, Grid, TableCell, TableRow, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useEffect, useState } from 'react'
@@ -27,6 +15,7 @@ import { Page } from 'layout/LayoutRoute'
 import Paginate from 'components/Paginate'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
+import TableContainer from 'components/TableContainer'
 import { getList } from 'services/web-bff/voucher'
 import { Voucher, VoucherCSV } from 'services/web-bff/voucher.type'
 
@@ -38,11 +27,6 @@ const SearchInputWrapper = styled.div`
 `
 const AlignRight = styled.div`
   text-align: right;
-`
-const HeaderTableCell = styled.div`
-  border-left: 2px solid #e0e0e0;
-  font-weight: 500;
-  padding-left: 16px;
 `
 const ActionButton = styled(Button)`
   margin-top: 20px !important;
@@ -326,30 +310,7 @@ export default function VoucherListPage(): JSX.Element {
             </Grid>
           </Grid>
         </SearchWrapper>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {tableHeaders.map((col) => (
-                  <TableCell key={col.colName} hidden={col.hidden}>
-                    <HeaderTableCell>{col.colName}</HeaderTableCell>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            {isFetching ? (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={tableHeaders.length} align="center">
-                    <CircularProgress />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            ) : (
-              <TableBody>{rowData}</TableBody>
-            )}
-          </Table>
-        </TableContainer>
+        <TableContainer columnHeaders={tableHeaders} isFetching={isFetching} data={rowData} />
       </Card>
 
       {data?.data.pagination ? (
