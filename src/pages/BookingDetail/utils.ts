@@ -1,5 +1,5 @@
 import { TFunction, Namespace } from 'react-i18next'
-import { BookingRental, BookingCarActivity } from 'services/web-bff/booking.type'
+import { BookingRental, BookingCarActivity, BookingCarTrack } from 'services/web-bff/booking.type'
 
 export interface BookingDetailParams {
   bookingId: string
@@ -185,15 +185,17 @@ export function getMaxEndDate(bookingDetails: BookingRental[] | undefined): Date
 export function getBookingDetail(
   bookingDetails: BookingRental[] | undefined,
   bookingDetailId: string
-): BookingRental {
-  let bookingDetail = {} as BookingRental
-  if (bookingDetails && bookingDetails.length > 0) {
-    const detail = bookingDetails.find((booking) => booking.id === bookingDetailId)
-    if (detail) {
-      bookingDetail = detail
+): Promise<BookingRental> {
+  return new Promise((resolve) => {
+    let bookingDetail = {} as BookingRental
+    if (bookingDetails && bookingDetails.length > 0) {
+      const detail = bookingDetails.find((booking) => booking.id === bookingDetailId)
+      if (detail) {
+        bookingDetail = detail
+      }
     }
-  }
-  return bookingDetail
+    resolve(bookingDetail)
+  })
 }
 
 // eslint-disable-next-line
@@ -205,12 +207,68 @@ export const defaultVal = (value: any, defaultValue?: any) => {
   return defaultValue
 }
 
+const setDeliveryTask = (
+  booking: BookingRental,
+  task: ServiceTypeLocation | undefined,
+  delivery?: BookingCarTrack
+): DeliveryTask => {
+  const newDeliveryTask = {} as DeliveryTask
+  if (delivery) {
+    newDeliveryTask.latitude = defaultVal(delivery.latitude, '-')
+    newDeliveryTask.longitude = defaultVal(delivery.longitude, '-')
+    newDeliveryTask.fullAddress = defaultVal(delivery.fullAddress, '-')
+    newDeliveryTask.date = defaultVal(delivery.date, '-')
+    newDeliveryTask.createdDate = defaultVal(delivery.createdDate, '-')
+    newDeliveryTask.remark = defaultVal(delivery.remark, '-')
+  } else {
+    newDeliveryTask.latitude = defaultVal(task?.latitude, '-')
+    newDeliveryTask.longitude = defaultVal(task?.longitude, '-')
+    newDeliveryTask.fullAddress = defaultVal(task?.addressTh, '-')
+    newDeliveryTask.date = defaultVal(booking?.startDate, '-')
+    newDeliveryTask.createdDate = defaultVal(booking?.createdDate, '-')
+    newDeliveryTask.remark = defaultVal(booking?.remark, '-')
+  }
+
+  return newDeliveryTask
+}
+
+const setReturnTask = (
+  booking: BookingRental,
+  task: ServiceTypeLocation | undefined,
+  returnTask?: BookingCarTrack
+): ReturnTask => {
+  const newReturnTask = {} as ReturnTask
+  if (returnTask) {
+    newReturnTask.latitude = defaultVal(returnTask.latitude, '-')
+    newReturnTask.longitude = defaultVal(returnTask.longitude, '-')
+    newReturnTask.fullAddress = defaultVal(returnTask.fullAddress, '-')
+    newReturnTask.date = defaultVal(returnTask.date, '-')
+    newReturnTask.remark = defaultVal(returnTask.remark, '-')
+  } else {
+    newReturnTask.latitude = defaultVal(task?.latitude, '-')
+    newReturnTask.longitude = defaultVal(task?.longitude, '-')
+    newReturnTask.fullAddress = defaultVal(task?.addressTh, '-')
+    newReturnTask.date = defaultVal(booking?.startDate, '-')
+    newReturnTask.remark = defaultVal(booking?.remark, '-')
+  }
+
+  return newReturnTask
+}
+
 const createCarDetailFromCarActivity = (
   car: BookingCarActivity,
   booking: BookingRental,
   index: number
 ): DefaultCarDetail => {
   const carDetail = initialCarDetail()
+  const bookingCar = booking?.car
+  let task: ServiceTypeLocation | undefined = {} as ServiceTypeLocation
+  if (bookingCar) {
+    task = getServiceTypeLocation(
+      bookingCar.resellerServiceArea.serviceTypeLocations,
+      booking.isSelfPickUp
+    )
+  }
 
   carDetail.no = index + 1
   carDetail.carId = defaultVal(car.carId, '-')
@@ -219,22 +277,13 @@ const createCarDetailFromCarActivity = (
   carDetail.model = defaultVal(car?.carDetail?.carSku?.carModel?.name, '-')
   carDetail.colour = defaultVal(car?.carDetail?.carSku?.color, '-')
   carDetail.plateNumber = defaultVal(car?.carDetail?.plateNumber, '-')
-  carDetail.pickupDate = defaultVal(car?.deliveryTask?.date, '-')
-  carDetail.returnDate = defaultVal(car?.returnTask?.date, '-')
   carDetail.serviceType = defaultVal(booking?.isSelfPickUp, false)
   carDetail.owner = defaultVal(car?.carDetail?.owner, '-')
   carDetail.reseller = defaultVal(car?.carDetail?.reSeller, '-')
-  carDetail.deliveryTask.latitude = defaultVal(car?.deliveryTask?.latitude, '-')
-  carDetail.deliveryTask.longitude = defaultVal(car?.deliveryTask?.longitude, '-')
-  carDetail.deliveryTask.fullAddress = defaultVal(car?.deliveryTask?.fullAddress, '-')
-  carDetail.deliveryTask.date = defaultVal(car?.deliveryTask?.date, '-')
-  carDetail.deliveryTask.createdDate = defaultVal(car?.deliveryTask?.createdDate, '-')
-  carDetail.deliveryTask.remark = defaultVal(car?.deliveryTask?.remark, '-')
-  carDetail.returnTask.latitude = defaultVal(car?.returnTask?.latitude, 0)
-  carDetail.returnTask.longitude = defaultVal(car?.returnTask?.longitude, 0)
-  carDetail.returnTask.fullAddress = defaultVal(car?.returnTask?.fullAddress, '-')
-  carDetail.returnTask.date = defaultVal(car?.returnTask?.date, '-')
-  carDetail.returnTask.remark = defaultVal(car?.returnTask?.remark, '-')
+  carDetail.deliveryTask = setDeliveryTask(booking, task, car?.deliveryTask)
+  carDetail.pickupDate = carDetail.deliveryTask.date
+  carDetail.returnTask = setReturnTask(booking, task, car?.returnTask)
+  carDetail.returnDate = carDetail.returnTask.date
 
   return carDetail
 }
@@ -299,28 +348,34 @@ export const getResellerServiceAreaId = (state: string, localReseller: string): 
 
 export const getCarActivities = (
   bookingDetail: BookingRental | undefined
-): BookingCarActivity[] => {
-  if (bookingDetail?.carActivities) {
-    return bookingDetail.carActivities.reverse()
-  }
-  return [{} as BookingCarActivity]
+): Promise<BookingCarActivity[]> => {
+  return new Promise((resolve) => {
+    if (bookingDetail?.carActivities) {
+      resolve(bookingDetail.carActivities.reverse())
+    }
+    resolve([{} as BookingCarActivity])
+  })
 }
 
 export const getCarDetails = (
   carActivities: BookingCarActivity[],
   bookingDetail: BookingRental
-): DefaultCarDetail[] => {
-  if (carActivities.length > 0) {
-    return carActivities.map((carActivity, index) =>
-      createCarDetailFromCarActivity(carActivity, bookingDetail, index)
-    )
-  }
+): Promise<DefaultCarDetail[]> => {
+  return new Promise((resolve) => {
+    if (carActivities.length > 0) {
+      resolve(
+        carActivities.map((carActivity, index) =>
+          createCarDetailFromCarActivity(carActivity, bookingDetail, index)
+        )
+      )
+    }
 
-  if (bookingDetail?.car) {
-    return [createCarDetailFromCar(bookingDetail, 0)]
-  }
+    if (bookingDetail?.car) {
+      resolve([createCarDetailFromCar(bookingDetail, 0)])
+    }
 
-  return []
+    resolve([])
+  })
 }
 
 export const permissionToReplacement = (
