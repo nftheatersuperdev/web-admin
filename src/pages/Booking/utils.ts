@@ -421,8 +421,8 @@ export const getHeaderCsvFile = (t: TFunction<Namespace>): any[] => {
 
 const createOption = (label: string, value: string): SelectOption => {
   return {
-    label: label,
-    value: value,
+    label,
+    value,
   }
 }
 

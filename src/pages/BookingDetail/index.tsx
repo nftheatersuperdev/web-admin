@@ -24,6 +24,7 @@ import {
   formatDate,
 } from 'utils'
 import { Page } from 'layout/LayoutRoute'
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getDetailsById } from 'services/web-bff/booking'
@@ -186,6 +187,60 @@ export default function SubscriptionDetail(): JSX.Element {
     PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
   ])
   const isEndDateOverToday = checkDateOverToday(bookingDetail)
+
+  const headerPaymentText: TableHeaderProps[] = [
+    {
+      text: t('booking.payment.id'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.amount'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.paymentType'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.purpose'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.status'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.statusMessage'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.updatedDate'),
+      style: classes.columnHeader,
+    },
+  ]
+
+  const headerCustomerText: TableHeaderProps[] = [
+    {
+      text: t('booking.customer.customerId'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.firstName'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.lastName'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.email'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.phone'),
+      style: classes.columnHeader,
+    },
+  ]
 
   return (
     <Page>
@@ -431,23 +486,7 @@ export default function SubscriptionDetail(): JSX.Element {
         </Grid>
         <TableContainer className={classes.table}>
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('booking.customer.customerId')}</TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.firstName')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.lastName')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.email')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.phone')}</div>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <DataTableHeader headers={headerCustomerText} />
             <TableBody>
               {bookingDetail?.customer ? (
                 <TableRow>
@@ -495,29 +534,7 @@ export default function SubscriptionDetail(): JSX.Element {
         </Grid>
         <TableContainer className={classes.table}>
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('booking.payment.id')}</TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.amount')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.paymentType')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.purpose')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.status')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.statusMessage')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.updatedDate')}</div>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <DataTableHeader headers={headerPaymentText} />
             <TableBody>
               {bookingDetail?.payments && bookingDetail?.payments.length > 0 ? (
                 bookingDetail?.payments.map((payment: BookingPayment) => (
