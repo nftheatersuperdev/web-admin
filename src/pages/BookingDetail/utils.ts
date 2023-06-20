@@ -351,7 +351,7 @@ export const getCarActivities = (
 ): Promise<BookingCarActivity[]> => {
   return new Promise((resolve) => {
     if (bookingDetail?.carActivities) {
-      resolve(bookingDetail.carActivities.reverse())
+      resolve(bookingDetail.carActivities)
     }
     resolve([{} as BookingCarActivity])
   })
