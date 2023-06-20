@@ -419,7 +419,7 @@ export default function CookieConsentLogPage(): JSX.Element {
                   value={filterSearchCategory}
                   onChange={handleOnSearchCategoryChange}
                   disabled={isFetchingActivities}
-                  label={t('consentLog.documentTypeLabel')}
+                  label={t('cookieConsentLog.categoryName')}
                   id="cookie-consents-log__category_name_select"
                   name="categoryName"
                   InputProps={{
