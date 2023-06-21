@@ -1606,10 +1606,12 @@
       "subTitle": "User Group (Voucher)",
       "detail": {
         "title": "User Group Detail",
-        "id": "ID",
-        "idPlaceholder": "Please enter ID",
-        "name": "Name",
-        "namePlaceholder": "Please enter Name",
+        "id": "User Group ID",
+        "idInput": "ID",
+        "idInputPlaceholder": "Please enter ID",
+        "name": "User Group Name",
+        "nameInput": "Name",
+        "nameInputPlaceholder": "Please enter Name",
         "createdDate": "Created Date",
         "updatedDate": "Updated Date",
         "formEdit": {

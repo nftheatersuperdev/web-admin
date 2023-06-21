@@ -114,14 +114,14 @@ export default function UserGroups(): JSX.Element {
     {
       type: 'textbox',
       optionId: 'id',
-      optionLabel: t('voucherManagement.userGroup.detail.id'),
-      placeholder: t('voucherManagement.userGroup.detail.idPlaceholder'),
+      optionLabel: t('voucherManagement.userGroup.detail.idInput'),
+      placeholder: t('voucherManagement.userGroup.detail.idInputPlaceholder'),
     },
     {
       type: 'textbox',
       optionId: 'name',
-      optionLabel: t('voucherManagement.userGroup.detail.name'),
-      placeholder: t('voucherManagement.userGroup.detail.namePlaceholder'),
+      optionLabel: t('voucherManagement.userGroup.detail.nameInput'),
+      placeholder: t('voucherManagement.userGroup.detail.nameInputPlaceholder'),
     },
     {
       type: 'datepicker',

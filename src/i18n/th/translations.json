@@ -1568,9 +1568,11 @@
       "detail": {
         "title": "รายละเอียดกลุ่มผู้ใช้งาน",
         "id": "ไอดี กลุ่มผู้ใช้งาน",
-        "idPlaceholder": "กรุณากรอก ไอดี กลุ่มผู้ใช้งาน",
+        "idInput": "ไอดี",
+        "idInputPlaceholder": "กรุณากรอก ไอดี กลุ่มผู้ใช้งาน",
         "name": "ชื่อกลุ่มผู้ใช้งาน",
-        "namePlaceholder": "กรุณากรอก ชื่อกลุ่มผู้ใช้งาน",
+        "nameInput": "ชื่อ",
+        "nameInputPlaceholder": "กรุณากรอก ชื่อ",
         "createdDate": "วันที่สร้าง",
         "updatedDate": "วันที่ปรับปรุงล่าสุด",
         "formEdit": {
