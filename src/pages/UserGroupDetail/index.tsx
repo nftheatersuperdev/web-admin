@@ -115,7 +115,7 @@ export default function Booking(): JSX.Element {
               <strong>{pageTitle}</strong>
             </Typography>
             <br />
-            <Grid container spacing={2}>
+            <Grid container spacing={6}>
               <Grid item xs={12} sm={6} md={6}>
                 <DisableTextField
                   fullWidth
@@ -185,7 +185,7 @@ export default function Booking(): JSX.Element {
             </Grid>
           </Wrapper>
         </Card>
-        <Grid container spacing={2}>
+        <Grid container spacing={6}>
           <Grid item xs={12}>
             <ButtonSpace
               type="submit"

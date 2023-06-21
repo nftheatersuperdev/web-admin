@@ -102,8 +102,9 @@ export default function MultipleSearchField({
           setStateValue(() => fieldValue)
         }}
         onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            const { value } = event.target as HTMLTextAreaElement
+          const { value } = event.target as HTMLTextAreaElement
+
+          if (event.key === 'Enter' && value.length >= 2) {
             setStateValue(() => value)
             handleOnSubmit()
           }
@@ -162,7 +163,7 @@ export default function MultipleSearchField({
       onSubmit(undefined, undefined)
       return renderTextField({
         fieldId: 'disabled',
-        placeholder: t('booking.selectSearch'),
+        placeholder: t('search.initPlaceholderInputField'),
         disabled: true,
       })
     }

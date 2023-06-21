@@ -1,105 +1,507 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/forbid-component-props */
-import styled from 'styled-components'
-import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { AppBar, Box, Breadcrumbs, Card, Grid, Tab, Tabs, Typography } from '@material-ui/core'
+import * as yup from 'yup'
+import { Link, useHistory, useParams } from 'react-router-dom'
+import { Card, Grid, Typography, TextField } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import { getByCodeBff } from 'services/web-bff/voucher'
+import { ROUTE_PATHS } from 'routes'
+import styled from 'styled-components'
+import toast from 'react-hot-toast'
+import { FormikProps, useFormik } from 'formik'
+import dayjs from 'dayjs'
+import { useState } from 'react'
+import { DEFAULT_DATETIME_FORMAT } from 'utils'
 import { Page } from 'layout/LayoutRoute'
-import { VoucherCreateEditParams } from 'pages/VoucherCreateEdit/types'
-import GeneralInformationTab from 'pages/VoucherCreateEdit/GeneralInformationTab'
-import PackagePriceTab from 'pages/VoucherCreateEdit/PackagePriceTab'
-import UserGroupTab from 'pages/VoucherCreateEdit/UserGroupTab'
+import Backdrop from 'components/Backdrop'
+import DateTimePicker from 'components/DateTimePicker'
+import HTMLEditor from 'components/HTMLEditor'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import voucherService, { getByCodeBff } from 'services/web-bff/voucher'
+import { VoucherInputBff } from 'services/web-bff/voucher.type'
+import { PackagePriceBff } from 'services/web-bff/package-price.type'
+import { UserGroup } from 'services/web-bff/user.type'
+import UserGroupList from './UserGroupList'
+import PackagePriceList from './PackagePriceList'
+import {
+  handleValidateNumericKeyPress,
+  handleValidatePercentageValue,
+  handleValidateCodeValue,
+  handleValidateCodeKeyPress,
+  handleDisableEvent,
+  selectOptions,
+} from './utils'
 
-const CardSpacing = styled(Card)`
-  margin: 20px 0;
+const CardWrapper = styled(Card)`
+  padding: 20px;
+`
+const FormWrapper = styled.div`
+  padding-top: 20px;
+`
+const ButtonSpace = styled(LoadingButton)`
+  margin: 20px 10px 0 0 !important;
+`
+const DateTimePickerSpace = styled(DateTimePicker)`
+  margin-top: 15px;
+`
+const SelectListSection = styled.div`
+  margin: 30px 0;
+`
+const SelectListWrapper = styled.div`
+  margin-top: 30px;
 `
 
-interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
+export interface VoucherCreateEditPageParams {
+  voucherCode: string
+}
+export interface VoucherFormInitialValues {
+  code: string
+  discountPercent: number
+  limitPerUser: number
+  quantity: number
+  startAt: string
+  endAt: string
+  descriptionTh: string | undefined
+  descriptionEn: string | undefined
+  customerGroups: UserGroup[]
+  customerGroupOption: string
+  packagePrices: PackagePriceBff[]
+  packagePriceOption: string
+  isAllPackages: boolean
 }
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`voucher-create-edit-tab-${index}`}
-      aria-labelledby={`voucher-create-edit-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  )
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `voucher-create-edit-tab-${index}`,
-    'aria-controls': `voucher-create-edit-tab-${index}`,
-  }
-}
-
-export default function VoucherCreateEdit(): JSX.Element {
-  const { voucherCode } = useParams<VoucherCreateEditParams>()
+export default function VoucherCreateEditPage(): JSX.Element {
+  const { t } = useTranslation()
+  const history = useHistory()
+  const { voucherCode } = useParams<VoucherCreateEditPageParams>()
   const isEdit = !!voucherCode
-  const [tabIndex, setTabIndex] = useState<number>(0)
+  const pageTitle = isEdit
+    ? t('voucherManagement.voucher.detail.formEdit.title')
+    : t('voucherManagement.voucher.detail.formCreate.title')
 
-  const { data: voucher, refetch } = useQuery('voucher', () => getByCodeBff(voucherCode, isEdit))
+  const {
+    data: voucher,
+    refetch,
+    isFetching,
+  } = useQuery('voucher', () => getByCodeBff(voucherCode, isEdit), { refetchOnWindowFocus: false })
 
-  const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
-    setTabIndex(newValue)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [descriptionEnTemp, setDescriptionEnTemp] = useState<string | null>()
+  const [descriptionThTemp, setDescriptionThTemp] = useState<string | null>()
+
+  const validationSchema = yup.object({
+    code: yup
+      .string()
+      .matches(/^[a-zA-Z0-9]+$/, t('validation.invalidVoucherCode'))
+      .required(t('validation.required')),
+    description: yup.string(),
+    discountPercent: yup
+      .number()
+      .min(1, t('validation.minimumIsOne'))
+      .max(100, t('validation.maximumIsOneHundred'))
+      .required(t('validation.required')),
+    quantity: yup.number().min(1, t('validation.minimumIsOne')).required(t('validation.required')),
+    limitPerUser: yup
+      .number()
+      .min(1, t('validation.minimumIsOne'))
+      .required(t('validation.required')),
+    customerGroupOption: yup.string(),
+    customerGroups: yup.array().when('customerGroupOption', {
+      is: selectOptions.SELECT,
+      then: yup.array().min(1, 'Required at least one user group'),
+    }),
+    packagePriceOption: yup.string(),
+    packagePrices: yup.array().when('packagePriceOption', {
+      is: selectOptions.SELECT,
+      then: yup.array().min(1, 'Required at least one package price'),
+    }),
+  })
+  const datePlusOneDay = dayjs().add(1, 'day')
+  const defaultDate = {
+    startAt: datePlusOneDay.startOf('day'),
+    endAt: datePlusOneDay.endOf('day'),
   }
+  const currentDateTime = new Date()
+  const startAtDateTime = new Date(voucher?.startAt || new Date())
+  const endAtDateTime = new Date(voucher?.endAt || new Date())
+  const isActive = isEdit
+    ? currentDateTime >= startAtDateTime && currentDateTime <= endAtDateTime
+    : false
+  const isInactive = currentDateTime > endAtDateTime
+  const isDisableTextField = isInactive || isActive
+
+  function generatePackagePriceOption() {
+    if (voucher) {
+      if (voucher.isAllPackages) {
+        return selectOptions.ALL
+      } else if (voucher.packagePrices.length >= 1) {
+        return selectOptions.SELECT
+      }
+    }
+    return ''
+  }
+
+  const initialValues =
+    isEdit && voucher
+      ? {
+          code: voucher.code,
+          discountPercent: voucher.discountPercent,
+          quantity: voucher.quantity,
+          limitPerUser: voucher.limitPerUser,
+          startAt: voucher.startAt,
+          endAt: voucher.endAt,
+          descriptionTh: voucher.descriptionTh,
+          descriptionEn: voucher.descriptionEn,
+          customerGroups: voucher.customerGroups,
+          customerGroupOption:
+            voucher.customerGroups.length >= 1 ? selectOptions.SELECT : selectOptions.ALL,
+          packagePrices: voucher.packagePrices,
+          packagePriceOption: generatePackagePriceOption(),
+          isAllPackages: voucher.isAllPackages,
+        }
+      : {
+          code: '',
+          discountPercent: 0,
+          quantity: 0,
+          limitPerUser: 0,
+          startAt: defaultDate.startAt,
+          endAt: defaultDate.endAt,
+          descriptionTh: '',
+          descriptionEn: '',
+          customerGroups: [],
+          customerGroupOption: selectOptions.ALL,
+          packagePrices: [],
+          packagePriceOption: '',
+          isAllPackages: false,
+        }
+
+  const formik: FormikProps<VoucherFormInitialValues> = useFormik<VoucherFormInitialValues>({
+    enableReinitialize: true,
+    validationSchema,
+    initialValues,
+    onSubmit: (values, _actions) => {
+      setIsLoading(true)
+
+      const packagePrices =
+        values.packagePriceOption === selectOptions.SELECT &&
+        values.packagePrices &&
+        values.packagePrices?.length > 0
+          ? values.packagePrices.map((packagePrice) => packagePrice.id)
+          : []
+      const customerGroups =
+        values.customerGroupOption === selectOptions.SELECT &&
+        values.customerGroups &&
+        values.customerGroups?.length > 0
+          ? values.customerGroups.map((customerGroup) => customerGroup.id)
+          : []
+
+      const requestBody: VoucherInputBff = {
+        code: values.code,
+        descriptionEn: descriptionEnTemp || voucher?.descriptionEn,
+        descriptionTh: descriptionThTemp || voucher?.descriptionTh,
+        discountPercent: values?.discountPercent,
+        quantity: values?.quantity,
+        limitPerUser: values?.limitPerUser,
+        startAt: values.startAt,
+        endAt: values.endAt,
+        isAllPackages: values.packagePriceOption === selectOptions.ALL,
+        packagePrices,
+        customerGroups,
+      }
+
+      const mutate = isEdit
+        ? {
+            function: voucherService.updateBff,
+            data: { id: voucher?.id, ...requestBody },
+            successMessage: t('voucher.dialog.update.success'),
+            errorMessage: t('voucher.dialog.update.error'),
+          }
+        : {
+            function: voucherService.createBff,
+            data: requestBody,
+            successMessage: t('voucher.dialog.create.success'),
+            errorMessage: t('voucher.dialog.create.error'),
+          }
+      toast.promise(mutate.function(mutate.data), {
+        loading: t('toast.loading'),
+        success: () => {
+          formik.resetForm()
+          setIsLoading(false)
+          refetch()
+          if (!isEdit) {
+            history.push('/vouchers')
+          }
+          return mutate.successMessage
+        },
+        error: (error) => {
+          setIsLoading(false)
+          let errorMessage = mutate.errorMessage
+          let errorField = ''
+          if (error.message) {
+            // The voucher code is duplicated
+            if (error.message.includes('unique constraint')) {
+              errorField = 'code'
+              errorMessage = t('voucher.errors.duplicatedCode')
+            }
+            formik.setFieldError(errorField, errorMessage)
+            return errorMessage
+          }
+          return errorMessage
+        },
+      })
+    },
+  })
+
+  const handleOnDescriptionChange = (value: string, language: string) => {
+    if (language === 'en') {
+      setDescriptionEnTemp(value)
+    }
+    setDescriptionThTemp(value)
+  }
+
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('voucherManagement.title'),
+      link: ROUTE_PATHS.ROOT,
+    },
+    {
+      text: t('voucherManagement.voucher.breadcrumb'),
+      link: ROUTE_PATHS.VOUCHER,
+    },
+    {
+      text: t('voucherManagement.voucher.detail.title'),
+      link: ROUTE_PATHS.VOUCHER,
+    },
+  ]
 
   return (
     <Page>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <Breadcrumbs aria-label="breadcrumb" separator="›">
-            <Link color="textPrimary" to="/vouchers">
-              Vouchers
-            </Link>
-            <Typography>{isEdit ? `Edit ${voucher?.code}` : 'Create'}</Typography>
-          </Breadcrumbs>
-        </Grid>
-        {/* <Grid item xs={12} sm={6} style={{ textAlign: 'right' }}>
-          Right
-        </Grid> */}
-      </Grid>
-      <CardSpacing>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={tabIndex}
-            onChange={handleChange}
-            aria-label="voucher-create-edit-tabs"
-            indicatorColor="primary"
-            textColor="primary"
+      <PageTitle title={pageTitle} breadcrumbs={breadcrumbs} />
+      <CardWrapper>
+        <Typography id="voucher_title_table" variant="h6">
+          <strong>{pageTitle}</strong>
+        </Typography>
+        <FormWrapper>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                id="voucher_create_edit__voucher_code_input"
+                label={t('voucherManagement.voucher.detail.code')}
+                margin="normal"
+                name="code"
+                type="text"
+                variant="outlined"
+                value={formik.values.code}
+                onChange={formik.handleChange}
+                error={formik.touched.code && Boolean(formik.errors.code)}
+                helperText={formik.touched.code && formik.errors.code}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+                onInput={handleValidateCodeValue}
+                onKeyPress={handleValidateCodeKeyPress}
+                disabled={isInactive || isActive || isEdit}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <DateTimePickerSpace
+                inputVariant="outlined"
+                fullWidth
+                disablePast
+                ampm={false}
+                label={t('voucherManagement.voucher.detail.startAt')}
+                id="startAt"
+                name="startAt"
+                format={DEFAULT_DATETIME_FORMAT}
+                minDate={defaultDate.startAt}
+                minDateMessage=""
+                defaultValue={formik.values.startAt}
+                value={formik.values.startAt}
+                onChange={(date) => {
+                  formik.setFieldValue('startAt', date)
+                  formik.setFieldValue('endAt', dayjs(date || new Date()).endOf('day'))
+                }}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  readOnly: true,
+                }}
+                disabled={isDisableTextField}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DateTimePickerSpace
+                inputVariant="outlined"
+                fullWidth
+                disablePast
+                ampm={false}
+                label={t('voucherManagement.voucher.detail.endAt')}
+                id="endAt"
+                name="endAt"
+                format={DEFAULT_DATETIME_FORMAT}
+                minDate={formik.values.startAt}
+                minDateMessage=""
+                defaultValue={formik.values.endAt}
+                value={formik.values.endAt}
+                onChange={(date) => {
+                  formik.setFieldValue('endAt', date)
+                }}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  readOnly: true,
+                }}
+                disabled={isInactive}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="voucher_create_edit__discountPercent_input"
+                label={t('voucherManagement.voucher.detail.discountPercent')}
+                name="discountPercent"
+                variant="outlined"
+                margin="normal"
+                value={formik.values.discountPercent}
+                onChange={formik.handleChange}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ min: 1, max: 100, step: 1 }}
+                error={formik.touched.discountPercent && Boolean(formik.errors.discountPercent)}
+                helperText={formik.touched.discountPercent && formik.errors.discountPercent}
+                disabled={isDisableTextField}
+                onInput={handleValidatePercentageValue}
+                onKeyPress={handleValidateNumericKeyPress}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="voucher_create_edit__quantity_input"
+                label={t('voucherManagement.voucher.detail.quantity')}
+                name="quantity"
+                variant="outlined"
+                margin="normal"
+                value={formik.values.quantity}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{ min: 1 }}
+                error={formik.touched.quantity && Boolean(formik.errors.quantity)}
+                helperText={formik.touched.quantity && formik.errors.quantity}
+                disabled={isDisableTextField}
+                onKeyPress={handleValidateNumericKeyPress}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type="number"
+                id="voucher_create_edit__limit_per_user_input"
+                label={t('voucherManagement.voucher.detail.limitPerUser')}
+                margin="normal"
+                name="limitPerUser"
+                variant="outlined"
+                value={formik.values.limitPerUser}
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{ min: 1 }}
+                error={formik.touched.limitPerUser && Boolean(formik.errors.limitPerUser)}
+                helperText={formik.touched.limitPerUser && formik.errors.limitPerUser}
+                disabled={isDisableTextField}
+                onKeyPress={handleValidateNumericKeyPress}
+                onCut={handleDisableEvent}
+                onCopy={handleDisableEvent}
+                onPaste={handleDisableEvent}
+              />
+            </Grid>
+          </Grid>
+          <br />
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <HTMLEditor
+                id="description-en"
+                label={t('voucher.description.en')}
+                initialValue={formik.values.descriptionEn}
+                handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'en')}
+                disabled={isDisableTextField}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <HTMLEditor
+                id="description-th"
+                label={t('voucher.description.th')}
+                initialValue={formik.values.descriptionTh}
+                handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'th')}
+                disabled={isDisableTextField}
+              />
+            </Grid>
+          </Grid>
+          <SelectListSection>
+            <Typography id="voucher_sub_title__user_group" variant="h6">
+              <strong>{t('voucherManagement.userGroup.title')}</strong>
+            </Typography>
+            <SelectListWrapper>
+              <UserGroupList voucher={voucher} formik={formik} />
+            </SelectListWrapper>
+          </SelectListSection>
+          <SelectListSection>
+            <Typography id="voucher_sub_title__package_price" variant="h6">
+              <strong>{t('voucherManagement.packagePrice.title')}</strong>
+            </Typography>
+            <SelectListWrapper>
+              <PackagePriceList voucher={voucher} formik={formik} />
+            </SelectListWrapper>
+          </SelectListSection>
+        </FormWrapper>
+      </CardWrapper>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <ButtonSpace
+            type="submit"
+            color="primary"
+            variant="contained"
+            size="large"
+            onClick={() => formik.handleSubmit()}
+            loading={isLoading}
+            disabled={!(formik.isValid && formik.dirty) || isLoading || isInactive}
           >
-            <Tab label="General Information" {...a11yProps(0)} />
-            <Tab label="Package Prices" {...a11yProps(1)} disabled={!isEdit} />
-            <Tab label="User Groups" {...a11yProps(2)} disabled={!isEdit} />
-          </Tabs>
-        </AppBar>
-        <TabPanel value={tabIndex} index={0}>
-          <GeneralInformationTab voucher={voucher} isEdit={isEdit} refetch={refetch} />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={1}>
-          <PackagePriceTab voucher={voucher} refetch={refetch} />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={2}>
-          <UserGroupTab voucher={voucher} refetch={refetch} />
-        </TabPanel>
-      </CardSpacing>
+            {t(isEdit ? 'button.save' : 'button.create')}
+          </ButtonSpace>
+          <Link to="/vouchers">
+            <ButtonSpace color="primary" variant="outlined" size="large">
+              {t('button.cancel')}
+            </ButtonSpace>
+          </Link>
+        </Grid>
+      </Grid>
+      <Backdrop open={isFetching} />
     </Page>
   )
 }

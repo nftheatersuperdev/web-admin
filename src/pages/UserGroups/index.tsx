@@ -1,17 +1,5 @@
 import styled from 'styled-components'
-import {
-  Button,
-  Card,
-  CircularProgress,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material'
+import { Button, Card, Grid, TableCell, TableRow, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useEffect, useState } from 'react'
@@ -22,9 +10,12 @@ import AddIcon from '@mui/icons-material/ControlPoint'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useAuth } from 'auth/AuthContext'
+import { ROUTE_PATHS } from 'routes'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
+import TableContainer, { TableColmun } from 'components/TableContainer'
+import TableRowNoData from 'components/TableRowNoData'
 import { searchCustomerGroup } from 'services/web-bff/customer'
 import { CustomerGroup, CustomerGroupCSV } from 'services/web-bff/customer.type'
 import Paginate from 'components/Paginate'
@@ -38,11 +29,6 @@ const SearchInputWrapper = styled.div`
 `
 const AlignRight = styled.div`
   text-align: right;
-`
-const HeaderTableCell = styled.div`
-  border-left: 2px solid #e0e0e0;
-  font-weight: 500;
-  padding-left: 16px;
 `
 const ActionButton = styled(Button)`
   margin-top: 20px !important;
@@ -58,7 +44,7 @@ const ActionButton = styled(Button)`
   }
 `
 const RowOverflow = styled.div`
-  width: 200px;
+  width: 185px;
   overflow-wrap: break-word;
   overflow: hidden;
   textoverflow: ellipsis;
@@ -89,6 +75,8 @@ export default function UserGroups(): JSX.Element {
   const classes = useStyles()
   const pageTitle = t('voucherManagement.userGroup.title')
 
+  // User Group
+
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [filters, setFilters] = useState({})
@@ -114,11 +102,11 @@ export default function UserGroups(): JSX.Element {
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('voucherManagement.title'),
-      link: '/',
+      link: ROUTE_PATHS.ROOT,
     },
     {
       text: pageTitle,
-      link: '/user-groups',
+      link: ROUTE_PATHS.USER_GROUPS,
     },
   ]
 
@@ -155,17 +143,24 @@ export default function UserGroups(): JSX.Element {
     { label: 'updatedDate', key: 'updatedDate' },
   ]
 
-  const tableHeaders = [
+  const userGroupName = t('voucherManagement.userGroup.detail.name')
+  const userGroupCreatedDate = t('voucherManagement.userGroup.detail.createdDate')
+  const userGroupUpdatedDate = t('voucherManagement.userGroup.detail.updatedDate')
+
+  const tableColmuns: TableColmun[] = [
     {
-      colName: t('voucherManagement.userGroup.detail.name'),
+      key: 'user_group_name',
+      name: userGroupName,
       hidden: false,
     },
     {
-      colName: t('voucherManagement.userGroup.detail.createdDate'),
+      key: 'user_group_createdDate',
+      name: userGroupCreatedDate,
       hidden: false,
     },
     {
-      colName: t('voucherManagement.userGroup.detail.updatedDate'),
+      key: 'user_group_updatedDate',
+      name: userGroupUpdatedDate,
       hidden: false,
     },
   ]
@@ -211,13 +206,7 @@ export default function UserGroups(): JSX.Element {
           </TableCell>
         </TableRow>
       )
-    })) || (
-    <TableRow>
-      <TableCell colSpan={tableHeaders.length} align="center">
-        {t('noData')}
-      </TableCell>
-    </TableRow>
-  )
+    })) || <TableRowNoData colSpan={tableColmuns.length} />
 
   return (
     <Page>
@@ -225,7 +214,7 @@ export default function UserGroups(): JSX.Element {
       <Card>
         <SearchWrapper>
           <Typography id="user_group_title_table" variant="h6">
-            <strong>{pageTitle}</strong>
+            <strong>{t('voucherManagement.userGroup.subTitle')}</strong>
           </Typography>
           <Grid container spacing={1} justifyContent="flex-end">
             <Grid item xs={12} sm={6} md={6}>
@@ -273,44 +262,17 @@ export default function UserGroups(): JSX.Element {
             </Grid>
           </Grid>
         </SearchWrapper>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {tableHeaders.map((col) => (
-                  <TableCell key={col.colName} hidden={col.hidden}>
-                    <HeaderTableCell>{col.colName}</HeaderTableCell>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            {isFetching ? (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={tableHeaders.length} align="center">
-                    <CircularProgress />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            ) : (
-              <TableBody>{rowData}</TableBody>
-            )}
-          </Table>
-        </TableContainer>
+        <TableContainer columns={tableColmuns} isFetching={isFetching} data={rowData} />
       </Card>
 
-      {data?.data.pagination ? (
-        <Paginate
-          pagination={data?.data.pagination}
-          page={page}
-          pageSize={pageSize}
-          setPage={setPage}
-          setPageSize={setPageSize}
-          refetch={refetch}
-        />
-      ) : (
-        ''
-      )}
+      <Paginate
+        pagination={data?.data.pagination}
+        page={page}
+        pageSize={pageSize}
+        setPage={setPage}
+        setPageSize={setPageSize}
+        refetch={refetch}
+      />
       <CreateDialog
         open={isOpenCreateDialog}
         onClose={(reload) => {
