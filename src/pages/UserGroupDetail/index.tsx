@@ -6,7 +6,7 @@ import { useParams, useHistory, Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import dayjs from 'dayjs'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, validatePrivileges } from 'utils'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { ROUTE_PATHS } from 'routes'
 import { useAuth } from 'auth/AuthContext'
@@ -34,7 +34,7 @@ export default function Booking(): JSX.Element {
   const history = useHistory()
   const pageTitle = t('voucherManagement.userGroup.detail.title')
 
-  const { data, isFetching, isFetched } = useQuery(
+  const { data, isFetching } = useQuery(
     `user-group-detail-${id}`,
     () =>
       searchCustomerGroup({
@@ -49,15 +49,13 @@ export default function Booking(): JSX.Element {
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const isDisabledButton =
-    isLoading || isFetching || !validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_EDIT')
-
   const customerGroup = data?.data.customerGroups[0]
 
   const formik = useFormik({
     initialValues: {
-      name: '',
+      name: customerGroup?.name || '',
     },
+    enableReinitialize: true,
     onSubmit: (values, actions) => {
       setIsLoading(true)
       toast.promise(
@@ -83,12 +81,11 @@ export default function Booking(): JSX.Element {
     },
   })
 
-  useEffect(() => {
-    if (isFetched && customerGroup && !formik.values.name) {
-      formik.setFieldValue('name', customerGroup.name)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetched])
+  const isDisabledButton =
+    isLoading ||
+    isFetching ||
+    !formik.dirty ||
+    !validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_EDIT')
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -143,7 +140,6 @@ export default function Booking(): JSX.Element {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  disabled={isDisabledButton}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
@@ -202,7 +198,6 @@ export default function Booking(): JSX.Element {
                 color="primary"
                 variant="outlined"
                 size="large"
-                disabled={isDisabledButton}
               >
                 {t('button.cancel').toUpperCase()}
               </ButtonSpace>

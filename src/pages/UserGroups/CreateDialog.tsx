@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Grid, TextField, Dialog, DialogTitle, DialogContent, Button, Box } from '@mui/material'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
@@ -37,7 +37,6 @@ export default function UserGroupCreateDialog({
   })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isNoChange, setIsNoChange] = useState<boolean>(true)
 
   const createUserGroup = (param: UserGroupInput): Promise<UserGroupResponse> => {
     return creatUserGroup(param)
@@ -71,15 +70,6 @@ export default function UserGroupCreateDialog({
     },
   })
 
-  useEffect(() => {
-    if (formik.values.name.length > 0) {
-      setIsNoChange(false)
-    } else {
-      setIsNoChange(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.name])
-
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
@@ -105,7 +95,7 @@ export default function UserGroupCreateDialog({
         </Grid>
         <Box textAlign="left">
           <ButtonSpace
-            disabled={isLoading || isNoChange}
+            disabled={isLoading}
             onClick={() => formik.handleSubmit()}
             color="primary"
             variant="contained"
@@ -116,7 +106,6 @@ export default function UserGroupCreateDialog({
           <ButtonSpace
             onClick={() => {
               onClose(false)
-              setIsNoChange(false)
               formik.resetForm()
             }}
             color="primary"
