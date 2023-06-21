@@ -327,7 +327,7 @@ export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): Bo
         } else {
           newCarActivity.deliveryAddress = defaultVal(ac?.deliveryTask?.fullAddress, '-')
           newCarActivity.deliveryDate = defaultVal(
-            formatDate(ac?.deliveryTask?.createdDate, DEFAULT_DATETIME_FORMAT),
+            formatDate(ac?.deliveryTask?.date, DEFAULT_DATETIME_FORMAT),
             '-'
           )
         }
@@ -338,7 +338,7 @@ export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): Bo
         } else {
           newCarActivity.returnAddress = defaultVal(ac?.returnTask?.fullAddress, '-')
           newCarActivity.returnDate = defaultVal(
-            formatDate(ac?.returnTask?.createdDate, DEFAULT_DATETIME_FORMAT),
+            formatDate(ac?.returnTask?.date, DEFAULT_DATETIME_FORMAT),
             '-'
           )
         }
@@ -411,8 +411,8 @@ export const getHeaderCsvFile = (t: TFunction<Namespace>): any[] => {
     { label: t('booking.tableHeader.createdDate'), key: 'createdDate' },
     { label: t('booking.tableHeader.updatedDate'), key: 'updatedDate' },
     { label: t('booking.tableHeader.paymentStatus'), key: 'paymentStatus' },
-    { label: t('booking.tableHeader.paymentFailureMessage'), key: 'paymentFailureMessage' },
-    { label: t('booking.tableHeader.paymentUpdatedDate'), key: 'paymentUpdatedDate' },
+    { label: t('booking.tableHeader.paymentFailureMessage'), key: 'paymentFailure' },
+    { label: t('booking.tableHeader.paymentUpdatedDate'), key: 'paymentUpdated' },
     { label: t('booking.tableHeader.deliveryDate'), key: 'deliveryDate' },
     { label: t('booking.tableHeader.returnDate'), key: 'returnDate' },
     { label: t('booking.tableHeader.isReplacement'), key: 'displayReplacement' },
