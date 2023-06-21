@@ -1596,7 +1596,7 @@
           },
           "packagePrice": {
             "all": "All packages",
-            "select": "Select available user groups"
+            "select": "Select available packages"
           }
         }
       }
