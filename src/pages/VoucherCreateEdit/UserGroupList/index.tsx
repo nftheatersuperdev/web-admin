@@ -49,10 +49,13 @@ export default function VoucherUserGroupTab({ voucher, formik }: UserGroupListPr
           id="voucher_add_edit__user_group_radio_list"
           name="user-group-radio"
           aria-label="user-group-radio"
-          onChange={async (_, value) => {
-            await formik.setFieldValue('customerGroups', [])
-            await formik.setFieldValue('customerGroupOption', value)
-          }}
+          onChange={(_, value) =>
+            formik.setValues({
+              ...formik.values,
+              customerGroups: [],
+              customerGroupOption: value,
+            })
+          }
           value={customerGroupOption}
         >
           <FormControlLabel

@@ -75,10 +75,13 @@ export default function PackagePriceList({ voucher, formik }: PackagePriceListPr
           id="voucher_add_edit__package_price_radio_list"
           name="package-price-radio"
           aria-label="package-price-radio"
-          onChange={async (_, value) => {
-            await formik.setFieldValue('packagePrices', [])
-            await formik.setFieldValue('packagePriceOption', value)
-          }}
+          onChange={(_, value) =>
+            formik.setValues({
+              ...formik.values,
+              packagePrices: [],
+              packagePriceOption: value,
+            })
+          }
           value={packagePriceOption}
         >
           <FormControlLabel

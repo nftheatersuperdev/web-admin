@@ -1606,9 +1606,9 @@
       "subTitle": "User Group (Voucher)",
       "detail": {
         "title": "User Group Detail",
-        "id": "User Group ID",
+        "id": "ID",
         "idPlaceholder": "Please enter ID",
-        "name": "User Group Name",
+        "name": "Name",
         "namePlaceholder": "Please enter Name",
         "createdDate": "Created Date",
         "updatedDate": "Updated Date",
