@@ -492,7 +492,7 @@ export default function VoucherCreateEditPage(): JSX.Element {
             loading={isLoading}
             disabled={!(formik.isValid && formik.dirty) || isLoading || isInactive}
           >
-            {t(isEdit ? 'button.save' : 'button.create')}
+            {t('button.save')}
           </ButtonSpace>
           <Link to="/vouchers">
             <ButtonSpace color="primary" variant="outlined" size="large">
