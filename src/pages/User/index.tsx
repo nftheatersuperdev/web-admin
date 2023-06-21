@@ -45,7 +45,7 @@ export default function User(): JSX.Element {
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const defaultFilter: UserInputRequest = {
-    kycStatusEqual: kycStatus || null,
+    kycStatus: kycStatus?.toUpperCase() || null,
   } as UserInputRequest
   const [userFilter, setUserFilter] = useState<UserInputRequest>({ ...defaultFilter })
   const [userDetail, setUserDetail] = useState<UserType>()

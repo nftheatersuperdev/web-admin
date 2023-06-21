@@ -172,41 +172,41 @@ export default function ConsentsLog(): JSX.Element {
   const consent =
     (consentList &&
       consentList.data?.agreements.length > 0 &&
-      consentList.data.agreements.map((agreement) => {
+      consentList.data.agreements.map((agreement, index) => {
         // Build Table Body
         return (
-          <TableRow key={agreement.id}>
-            <TableCell>
+          <TableRow id={`consent_log__index-${index}`} key={agreement.id}>
+            <TableCell id="consent_log__firstName">
               <DataWrapper>
                 <TextSmallLineClamp>{agreement.customer.firstName}</TextSmallLineClamp>
               </DataWrapper>
             </TableCell>
-            <TableCell>
+            <TableCell id="consent_log__lastName">
               <DataWrapper>
                 <TextSmallLineClamp>{agreement.customer.lastName}</TextSmallLineClamp>
               </DataWrapper>
             </TableCell>
-            <TableCell>
+            <TableCell id="consent_log__email">
               <DataWrapper>
                 <TextSmallLineClamp>{agreement.customer.email}</TextSmallLineClamp>
               </DataWrapper>
             </TableCell>
-            <TableCell>
+            <TableCell id="consent_log__phoneNumber">
               <DataWrapper>
                 <TextSmallLineClamp>
                   {convertPhoneNumber(agreement.customer.phoneNumber)}
                 </TextSmallLineClamp>
               </DataWrapper>
             </TableCell>
-            <TableCell>
+            <TableCell id="consent_log__documentName">
               <DataWrapper>
                 <TextLineClamp>{agreement.documentContent.nameEn}</TextLineClamp>
               </DataWrapper>
             </TableCell>
-            <TableCell width={50}>
+            <TableCell id="consent_log__documentVersion" width={50}>
               <DataWrapper>{agreement.documentContent.version}</DataWrapper>
             </TableCell>
-            <TableCell width={50}>
+            <TableCell id="consent_log__documentStatus" width={50}>
               {!agreement.isAccepted ? (
                 <Chip
                   size="small"
@@ -221,7 +221,7 @@ export default function ConsentsLog(): JSX.Element {
                 />
               )}
             </TableCell>
-            <TableCell>
+            <TableCell id="consent_log__updatedDate">
               <DataWrapper>
                 <TextLineClamp>
                   {formaDateStringWithPattern(
@@ -480,7 +480,7 @@ export default function ConsentsLog(): JSX.Element {
               </Grid>
             </GridSearchSection>
             <TableContainer className={classes.table}>
-              <Table>
+              <Table id="consent_log___table">
                 <TableHead>
                   <TableRow>
                     <TableCell align="left">

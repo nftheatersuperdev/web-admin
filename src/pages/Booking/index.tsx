@@ -1,4 +1,3 @@
-/* eslint-disable react/forbid-component-props */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
 import { useQuery } from 'react-query'
@@ -39,7 +38,6 @@ import {
   DEFAULT_DATE_FORMAT_BFF,
 } from 'utils'
 import config from 'config'
-import { makeStyles } from '@mui/styles'
 import { useAuth } from 'auth/AuthContext'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/booking'
@@ -50,21 +48,35 @@ import {
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
+import { useStyles, SearchDatePicker } from './styles'
 import {
+  getBookingList,
   getBookingStatusOnlyUsedInBackendOptions,
   getIsExtendOptions,
-  convertToDuration,
-  BookingCsv,
+  BookingObject,
   BookingList,
   columnFormatBookingStatus,
   SelectOption,
   Keypress,
   FilterSearch,
+  getCsvData,
+  getHeaderCsvFile,
+  getSearchOptions,
 } from './utils'
-import { SearchDatePicker } from './styles'
 
 export default function Booking(): JSX.Element {
   const { t } = useTranslation()
+  const breadcrumbs: PageBreadcrumbs[] = [
+    {
+      text: t('sidebar.bookingManagement.title'),
+      link: '',
+    },
+    {
+      text: t('sidebar.bookingManagement.booking'),
+      link: '/booking',
+    },
+  ]
+  const classes = useStyles()
   const history = useHistory()
   const locationParam = useLocation().search
   const { getResellerServiceAreaWithSort } = useAuth()
@@ -106,96 +118,6 @@ export default function Booking(): JSX.Element {
     })
   }
 
-  const useStyles = makeStyles({
-    typo: {
-      marginBottom: '0px',
-    },
-    gridTitle: {
-      padding: '20px',
-      paddingBottom: 0,
-    },
-    gridSearch: {
-      padding: '20px',
-    },
-    gridExport: {
-      textAlign: 'right',
-    },
-    marginRight: {
-      marginRight: '50px',
-    },
-    exportButton: {
-      background: '#333c4d',
-      color: '#fff',
-      height: '51px',
-    },
-    table: {
-      border: 0,
-    },
-    chipBgGray: {
-      backgroundColor: '#E0E0E0',
-      height: '24px',
-      borderRadius: '64px',
-    },
-    csvlink: {
-      color: '#fff',
-      textDecoration: 'none',
-    },
-    columnHeader: {
-      borderLeft: '2px solid #E0E0E0',
-      fontWeight: '500',
-      paddingLeft: '16px',
-    },
-    rowOverflowSmall: {
-      width: '80px',
-      overflowWrap: 'break-word',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      '-webkit-line-clamp': 2,
-      'line-clamp': 2,
-      '-webkit-box-orient': 'vertical',
-    },
-    rowOverflow: {
-      width: '115px',
-      overflowWrap: 'break-word',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      '-webkit-line-clamp': 2,
-      'line-clamp': 2,
-      '-webkit-box-orient': 'vertical',
-    },
-    paginationContainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '20px',
-    },
-    inlineElement: {
-      display: 'inline-flex',
-    },
-    paddingLeftCell: {
-      paddingLeft: '12px',
-    },
-    autoCompleteSelect: {
-      '& fieldSet': {
-        borderColor: '#424E63',
-      },
-    },
-  })
-  const classes = useStyles()
-  const breadcrumbs: PageBreadcrumbs[] = [
-    {
-      text: t('sidebar.bookingManagement.title'),
-      link: '',
-    },
-    {
-      text: t('sidebar.bookingManagement.booking'),
-      link: '/booking',
-    },
-  ]
-
   const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
   const [page, setPage] = useState(0)
   const currentPage = page + 1
@@ -224,84 +146,10 @@ export default function Booking(): JSX.Element {
     refetchOnWindowFocus: false,
   })
 
-  const bookings =
-    bookingData?.data?.bookingDetails?.map((booking) => {
-      return {
-        id: booking.bookingId,
-        detailId: booking.id,
-        customerId: booking.customer.id,
-        firstName: booking.customer?.firstName || '-',
-        lastName: booking.customer?.lastName || '-',
-        email: booking.customer?.email || '-',
-        phone: booking.customer?.phoneNumber || '-',
-        location: booking.car?.resellerServiceArea?.areaNameEn || '-',
-        brand: booking.car?.carSku?.carModel?.brand.name || '-',
-        model: booking.car?.carSku?.carModel?.name || '-',
-        plateNumber: booking.car?.plateNumber || '-',
-        duration: convertToDuration(booking.rentDetail?.durationDay, t) || '-',
-        status: booking.displayStatus || '-',
-        startDate: booking.startDate || '-',
-        endDate: booking.endDate || '-',
-        price: booking.rentDetail?.chargePrice || 0,
-        voucherId: booking.rentDetail?.voucherId || '-',
-        voucherCode: booking.rentDetail?.voucherCode || '-',
-        createdDate: booking.rentDetail?.createdDate || '-',
-        updatedDate: booking.rentDetail?.updatedDate || '-',
-        isExtend: booking.isExtend || false,
-      }
-    }) || []
+  const bookings = getBookingList(bookingData?.data?.bookingDetails, t)
 
   // == search ==
-  const searchOptions: SelectOption[] = [
-    {
-      label: t('booking.search.detailId'),
-      value: 'bookingDetailId',
-    },
-    {
-      label: t('booking.search.customer'),
-      value: 'customerId',
-    },
-    {
-      label: t('booking.search.email'),
-      value: 'email',
-    },
-    {
-      label: t('booking.search.carId'),
-      value: 'carId',
-    },
-    {
-      label: t('booking.search.plateNumber'),
-      value: 'plateNumber',
-    },
-    {
-      label: t('booking.search.startDate'),
-      value: 'startDate',
-    },
-    {
-      label: t('booking.search.endDate'),
-      value: 'endDate',
-    },
-    {
-      label: t('booking.search.status'),
-      value: 'statusList',
-    },
-    {
-      label: t('booking.search.isExtend'),
-      value: 'isExtend',
-    },
-    {
-      label: t('booking.search.voucherId'),
-      value: 'voucherId',
-    },
-    {
-      label: t('booking.search.deliveryDate'),
-      value: 'deliveryDate',
-    },
-    {
-      label: t('booking.search.returnDate'),
-      value: 'returnDate',
-    },
-  ]
+  const searchOptions: SelectOption[] = getSearchOptions(t)
   const [searchValue, setSearchValue] = useState<string>('')
   const [selectedSearch, setSelectedSearch] = useState<SelectOption | null>()
   const [selectedOptionValue, setSelectedOptionValue] = useState<SelectOption | null>()
@@ -440,161 +288,108 @@ export default function Booking(): JSX.Element {
   })
 
   // == export ==
-  const csvHeaders = [
-    { label: t('booking.tableHeader.firstName'), key: 'firstName' },
-    { label: t('booking.tableHeader.lastName'), key: 'lastName' },
-    { label: t('booking.tableHeader.email'), key: 'email' },
-    { label: t('booking.tableHeader.phone'), key: 'phone' },
-    { label: t('booking.tableHeader.location'), key: 'location' },
-    { label: t('booking.tableHeader.brand'), key: 'brand' },
-    { label: t('booking.tableHeader.model'), key: 'model' },
-    { label: t('booking.tableHeader.plateNumber'), key: 'plateNumber' },
-    { label: t('booking.tableHeader.duration'), key: 'duration' },
-    { label: t('booking.tableHeader.status'), key: 'status' },
-    { label: t('booking.tableHeader.startDate'), key: 'startDate' },
-    { label: t('booking.tableHeader.endDate'), key: 'endDate' },
-  ]
-  const csvData: BookingCsv[] = []
-  bookings.forEach((booking) => {
-    const data = {
-      firstName: booking.firstName,
-      lastName: booking.lastName,
-      email: booking.email,
-      phone: booking.phone,
-      location: booking.location,
-      brand: booking.brand,
-      model: booking.model,
-      plateNumber: booking.plateNumber,
-      duration: booking.duration,
-      status: booking.status,
-      startDate: booking.startDate,
-      endDate: booking.endDate,
-    }
-    csvData.push(data)
-  })
+  const csvHeaders = getHeaderCsvFile(t)
+  const csvData: BookingObject[] = getCsvData(bookings, t)
 
   // == table ==
   const columnHead = [
     {
       colName: t('booking.tableHeader.firstName'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.lastName'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.email'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.phone'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.location'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.brand'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.model'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.plateNumber'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.duration'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.status'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.startDate'),
-      hidden: false,
     },
     {
       colName: t('booking.tableHeader.endDate'),
-      hidden: false,
     },
   ]
   const columnRow = [
     {
       field: 'firstName',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'lastName',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'email',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflowSmall}>{value}</div>
       },
     },
     {
       field: 'phone',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'location',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'brand',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'model',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'plateNumber',
-      hidden: false,
       render: (value: string) => {
         return <div className={classes.rowOverflow}>{value}</div>
       },
     },
     {
       field: 'duration',
-      hidden: false,
     },
     {
       field: 'status',
-      hidden: false,
       render: (status: string) => {
         return <Chip label={columnFormatBookingStatus(status, t)} className={classes.chipBgGray} />
       },
     },
     {
       field: 'startDate',
-      hidden: false,
       render: (date: string) => {
         return (
           <div className={classes.rowOverflow}>
@@ -605,7 +400,6 @@ export default function Booking(): JSX.Element {
     },
     {
       field: 'endDate',
-      hidden: false,
       render: (date: string) => {
         return (
           <div className={classes.rowOverflow}>
@@ -628,10 +422,10 @@ export default function Booking(): JSX.Element {
               state: resellerServiceAreaId,
             })
           }
-          style={{ textDecoration: 'none' }}
+          className={classes.textDecoration}
         >
           {columnRow.map((col) => (
-            <TableCell key={col.field} hidden={col.hidden}>
+            <TableCell key={col.field}>
               <div className={classes.paddingLeftCell}>
                 {col.render ? col.render(booking[col.field]) : <div>{booking[col.field]}</div>}
               </div>
@@ -838,7 +632,7 @@ export default function Booking(): JSX.Element {
             <TableHead>
               <TableRow>
                 {columnHead.map((col) => (
-                  <TableCell key={col.colName} hidden={col.hidden}>
+                  <TableCell key={col.colName}>
                     <div className={classes.columnHeader}>{col.colName}</div>
                   </TableCell>
                 ))}

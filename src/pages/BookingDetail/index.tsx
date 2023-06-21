@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams, useHistory, useLocation } from 'react-router-dom'
 import dayjs from 'dayjs'
@@ -26,44 +23,49 @@ import {
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formatDate,
 } from 'utils'
-import {
-  convertToDuration,
-  columnFormatSubEventStatus,
-  SubEventStatus,
-} from 'pages/Subscriptions/utils'
 import { Page } from 'layout/LayoutRoute'
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
 import Backdrop from 'components/Backdrop'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { getDetailsById } from 'services/web-bff/booking'
-import { BookingCarActivity } from 'services/web-bff/booking.type'
-import CarDetailDialog from './CarDetailDialog'
-import CarReplacementDialog from './CarReplacementDialog'
+import { BookingCarActivity, BookingPayment, BookingRental } from 'services/web-bff/booking.type'
 import { useStyles, ChipServiceType, ChipPaymentType, DisabledField } from './styles'
-import { BookingStateParams } from './utils'
+import {
+  convertToDuration,
+  columnFormatBookingStatus,
+  hasStatusAllowedToDoCarReplacement,
+  formatIsExtend,
+  getMaxEndDate,
+  getBookingDetail,
+  checkDateOverToday,
+  getResellerServiceAreaId,
+  getCarActivities,
+  getCarDetails,
+  permissionToReplacement,
+  DefaultCarDetail,
+  BookingDetailParams,
+} from './utils'
 
-interface SubscriptionDetailParams {
-  bookingId: string
-  bookingDetailId: string
-}
-
-export function hasStatusAllowedToDoCarReplacement(status: string | undefined): boolean {
-  if (!status) {
-    return false
+export const formatCell = (value: string, classes: string, dateFormat?: string): JSX.Element => {
+  if (dateFormat) {
+    value = formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)
+    return (
+      <div className={classes}>
+        {value === 'Invalid Date' ? '-' : formatDate(value, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+      </div>
+    )
   }
-  return [SubEventStatus.ACCEPTED, SubEventStatus.DELIVERED].includes(status.toLowerCase())
+  return <div className={classes}>{value}</div>
 }
 
 export default function SubscriptionDetail(): JSX.Element {
   const classes = useStyles()
-  const { getPrivileges, firebaseUser } = useAuth()
-  const currentPrivilege = getPrivileges()
   const { t } = useTranslation()
   const history = useHistory()
-  const location = useLocation()
-  const resellerServiceAreaId =
-    (location.state as BookingStateParams) || ls.get<Text>('reseller_car')
-
-  const { bookingId, bookingDetailId } = useParams<SubscriptionDetailParams>()
+  const { state: routeState } = useLocation()
+  const resellerCar = ls.get<string>('reseller_car') as string
+  const resellerServiceAreaId = getResellerServiceAreaId(routeState as string, resellerCar)
+  const { bookingId, bookingDetailId } = useParams<BookingDetailParams>()
 
   const breadcrumbs: PageBreadcrumbs[] = [
     {
@@ -80,69 +82,165 @@ export default function SubscriptionDetail(): JSX.Element {
     },
   ]
 
-  const {
-    data: bookingDetails,
-    isFetching,
-    refetch: refetchBooking,
-  } = useQuery('booking', () => getDetailsById(resellerServiceAreaId, bookingId), {
-    refetchOnWindowFocus: false,
-  })
+  const columnHead = [
+    t('booking.carDetail.no'),
+    t('booking.carDetail.location'),
+    t('booking.carDetail.brand'),
+    t('booking.carDetail.model'),
+    t('booking.carDetail.color'),
+    t('booking.carDetail.plateNumber'),
+    t('booking.carDetail.pickupDate'),
+    t('booking.carDetail.returnDate'),
+    t('booking.carDetail.serviceType'),
+    t('booking.carDetail.owner'),
+    t('booking.carDetail.reseller'),
+  ]
 
-  const bookingDetail =
-    bookingDetails && bookingDetails?.length > 0
-      ? bookingDetails.find((booking) => booking.id === bookingDetailId)
-      : {
-          carActivities: [],
-          displayStatus: '',
-          status: '',
-          startDate: '',
-          endDate: '',
-          createdDate: '',
-          updatedDate: '',
-          customer: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            phoneNumber: '',
-          },
-          rentDetail: {
-            chargePrice: 0,
-            durationDay: 0,
-            createdDate: '',
-            updatedDate: '',
-            voucherCode: '',
-          },
-          payments: [
-            {
-              id: '',
-              externalTransactionId: '',
-              amount: 0,
-              updatedDate: '',
-              type: '',
-              description: '',
-              status: '',
-              statusMessage: '',
-            },
-          ],
-        }
+  const columnRow = [
+    {
+      field: 'no',
+    },
+    {
+      field: 'location',
+    },
+    {
+      field: 'brand',
+    },
+    {
+      field: 'model',
+    },
+    {
+      field: 'colour',
+    },
+    {
+      field: 'plateNumber',
+    },
+    {
+      field: 'pickupDate',
+      render: (value: string) => {
+        return formatCell(value, classes.paddingLeftCell, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)
+      },
+    },
+    {
+      field: 'returnDate',
+      render: (value: string) => {
+        return formatCell(value, classes.paddingLeftCell, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)
+      },
+    },
+    {
+      field: 'serviceType',
+      render: (value: string) => {
+        return (
+          <ChipServiceType
+            label={
+              value === 'true'
+                ? t('booking.carDetail.serviceTypes.selfPickUp')
+                : t('booking.carDetail.serviceTypes.deliverByEVme')
+            }
+            color="primary"
+          />
+        )
+      },
+    },
+    {
+      field: 'owner',
+    },
+    {
+      field: 'reseller',
+    },
+  ]
 
-  let maxEndDate = new Date()
-  if (bookingDetails && bookingDetails.length > 0) {
-    maxEndDate = new Date(
-      Math.max(...bookingDetails.map((bookingDetail) => new Date(bookingDetail.endDate)))
-    )
-  }
-  const carActivities = bookingDetail?.carActivities.reverse() || []
+  const { data: bookingDetails, isFetching } = useQuery(
+    'booking',
+    () => getDetailsById(resellerServiceAreaId, bookingDetailId),
+    {
+      refetchOnWindowFocus: false,
+    }
+  )
 
-  const [carDetail, setCarDetail] = useState<BookingCarActivity | undefined>(undefined)
-  const [carDetailDialogOpen, setCarDetailDialogOpen] = useState<boolean>(false)
-  const [carReplacementDialogOpen, setCarReplacementlogOpen] = useState<boolean>(false)
+  const maxEndDate = getMaxEndDate(bookingDetails)
+  const [bookingDetail, setBookingDetail] = useState<BookingRental>({} as BookingRental)
+  const [carActivities, setCarActivities] = useState<BookingCarActivity[]>([])
+  const [carDetails, setCarDetails] = useState<DefaultCarDetail[]>([])
 
+  useEffect(() => {
+    async function getAllData() {
+      const fetchedBookingDetail = await getBookingDetail(bookingDetails, bookingDetailId)
+      setBookingDetail(fetchedBookingDetail)
+
+      const fetchedCarActivities = await getCarActivities(fetchedBookingDetail)
+      setCarActivities(fetchedCarActivities)
+
+      const fetchedCarDetails = await getCarDetails(fetchedCarActivities, fetchedBookingDetail)
+      if (fetchedCarDetails) {
+        setCarDetails(fetchedCarDetails)
+      }
+    }
+
+    getAllData()
+  }, [bookingDetails, bookingDetailId, carActivities.length])
+
+  const { getPrivileges, firebaseUser } = useAuth()
+  const currentPrivilege = getPrivileges()
   const isAllowToDoCarReplacement = hasStatusAllowedToDoCarReplacement(bookingDetail?.displayStatus)
   const isTherePermissionToDoCarReplacement = hasAllowedPrivilege(currentPrivilege, [
     PRIVILEGES.PERM_BOOKING_RENTAL_EDIT,
   ])
-  const isEndDateOverToday = bookingDetail ? new Date(bookingDetail?.endDate) < new Date() : false
+  const isEndDateOverToday = checkDateOverToday(bookingDetail)
+
+  const headerPaymentText: TableHeaderProps[] = [
+    {
+      text: t('booking.payment.id'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.amount'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.paymentType'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.purpose'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.status'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.statusMessage'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.payment.updatedDate'),
+      style: classes.columnHeader,
+    },
+  ]
+
+  const headerCustomerText: TableHeaderProps[] = [
+    {
+      text: t('booking.customer.customerId'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.firstName'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.lastName'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.email'),
+      style: classes.columnHeader,
+    },
+    {
+      text: t('booking.customer.phone'),
+      style: classes.columnHeader,
+    },
+  ]
 
   return (
     <Page>
@@ -163,7 +261,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail.id || '-'}
+              value={bookingDetail?.id || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -174,11 +272,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={
-                bookingDetail?.displayStatus
-                  ? columnFormatSubEventStatus(bookingDetail?.displayStatus, t)
-                  : t('booking.statuses.unknown')
-              }
+              value={columnFormatBookingStatus(bookingDetail?.displayStatus, t)}
             />
           </Grid>
         </Grid>
@@ -192,7 +286,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={Number(bookingDetail.rentDetail.chargePrice || 0).toLocaleString()}
+              value={Number(bookingDetail?.rentDetail?.chargePrice).toLocaleString()}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -203,7 +297,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={convertToDuration(bookingDetail?.rentDetail.durationDay || 0, t)}
+              value={convertToDuration(bookingDetail?.rentDetail?.durationDay, t)}
             />
           </Grid>
         </Grid>
@@ -217,7 +311,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail?.rentDetail.voucherId || t('subscription.noData')}
+              value={bookingDetail?.rentDetail?.voucherId || '-'}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -228,7 +322,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail?.rentDetail.voucherCode || t('subscription.noData')}
+              value={bookingDetail?.rentDetail?.voucherCode || '-'}
             />
           </Grid>
         </Grid>
@@ -292,7 +386,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail.isExtend ? 'Yes' : 'No'}
+              value={formatIsExtend(bookingDetail?.isExtend)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -303,7 +397,7 @@ export default function SubscriptionDetail(): JSX.Element {
               fullWidth
               disabled
               variant="outlined"
-              value={bookingDetail.bookingId || '-'}
+              value={bookingDetail?.bookingId || '-'}
             />
           </Grid>
         </Grid>
@@ -323,12 +417,12 @@ export default function SubscriptionDetail(): JSX.Element {
                 state: { bookingDetail, maxEndDate, editorEmail: firebaseUser?.email || '-' },
               })
             }
-            disabled={
-              !bookingDetail ||
-              !isAllowToDoCarReplacement ||
-              !isTherePermissionToDoCarReplacement ||
+            disabled={permissionToReplacement(
+              bookingDetail,
+              isAllowToDoCarReplacement,
+              isTherePermissionToDoCarReplacement,
               isEndDateOverToday
-            }
+            )}
           >
             {t('booking.carDetail.replacement')}
           </Button>
@@ -337,136 +431,44 @@ export default function SubscriptionDetail(): JSX.Element {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>{t('booking.carDetail.no')}</TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.location')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.brand')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.model')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.color')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.plateNumber')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.pickupDate')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.returnDate')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.serviceType')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.owner')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.carDetail.reseller')}</div>
-                </TableCell>
+                {columnHead.map((headerLabel) => (
+                  <TableCell key={headerLabel}>
+                    <div className={classes.columnHeader}>{headerLabel}</div>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {carActivities.length > 0 ? (
-                carActivities.map((carActivity, index) => (
+              {carDetails?.map((car: DefaultCarDetail) => {
+                return (
                   <TableRow
-                    key={carActivity?.carId}
+                    hover
+                    key={`booking-${bookingId}-${bookingDetailId}_${car.carId}`}
                     onClick={() =>
                       history.push({
-                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${carActivity?.carId}`,
+                        pathname: `/booking/${bookingId}/${bookingDetailId}/car/${car.carId}`,
                         state: {
-                          carActivity,
+                          carActivity: car,
                           isSelfPickUp: bookingDetail?.isSelfPickUp,
                           resellerServiceAreaId,
                         },
                       })
                     }
                   >
-                    <TableCell component="th" scope="row">
-                      {index + 1 || '-'}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.resellerServiceArea?.areaNameEn || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.carSku?.carModel?.brand?.name || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.carSku?.carModel?.name || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.carSku?.color || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.plateNumber || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        <div className={classes.wrapWidth}>
-                          <div className={classes.rowOverflow}>
-                            {carActivity?.deliveryTask?.date
-                              ? dayjs(carActivity?.deliveryTask?.date).format(
-                                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                                )
-                              : '-'}
-                          </div>
+                    {columnRow.map((col) => (
+                      <TableCell key={col.field}>
+                        <div className={classes.paddingLeftCell}>
+                          {col.render
+                            ? col.render(car[col.field].toString())
+                            : formatCell(car[col.field].toString(), classes.paddingLeftCell)}
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        <div className={classes.wrapWidth}>
-                          <div className={classes.rowOverflow}>
-                            {carActivity?.returnTask?.date
-                              ? dayjs(carActivity?.returnTask?.date).format(
-                                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                                )
-                              : '-'}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        <ChipServiceType
-                          label={
-                            bookingDetail?.isSelfPickUp
-                              ? t('booking.carDetail.serviceTypes.selfPickUp')
-                              : t('booking.carDetail.serviceTypes.deliverByEVme')
-                          }
-                          color="primary"
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.owner || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <div className={classes.paddingLeftCell}>
-                        {carActivity?.carDetail?.reSeller || '-'}
-                      </div>
-                    </TableCell>
+                      </TableCell>
+                    ))}
                   </TableRow>
-                ))
-              ) : (
+                )
+              }) || (
                 <TableRow>
-                  <TableCell colSpan="11" align="center">
+                  <TableCell colSpan={columnHead.length} align="center">
                     {t('booking.noData')}
                   </TableCell>
                 </TableRow>
@@ -484,25 +486,9 @@ export default function SubscriptionDetail(): JSX.Element {
         </Grid>
         <TableContainer className={classes.table}>
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('booking.customer.customerId')}</TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.firstName')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.lastName')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.email')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.customer.phone')}</div>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <DataTableHeader headers={headerCustomerText} />
             <TableBody>
-              {bookingDetail.customer ? (
+              {bookingDetail?.customer ? (
                 <TableRow>
                   <TableCell component="th" scope="row">
                     {bookingDetail.customer.id || '-'}
@@ -530,7 +516,7 @@ export default function SubscriptionDetail(): JSX.Element {
                 </TableRow>
               ) : (
                 <TableRow>
-                  <TableCell colSpan="5" align="center">
+                  <TableCell colSpan={5} align="center">
                     {t('booking.noData')}
                   </TableCell>
                 </TableRow>
@@ -548,32 +534,10 @@ export default function SubscriptionDetail(): JSX.Element {
         </Grid>
         <TableContainer className={classes.table}>
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('booking.payment.id')}</TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.amount')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.paymentType')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.purpose')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.status')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.statusMessage')}</div>
-                </TableCell>
-                <TableCell>
-                  <div className={classes.columnHeader}>{t('booking.payment.updatedDate')}</div>
-                </TableCell>
-              </TableRow>
-            </TableHead>
+            <DataTableHeader headers={headerPaymentText} />
             <TableBody>
-              {bookingDetail?.payments.length > 0 ? (
-                bookingDetail?.payments.map((payment: any) => (
+              {bookingDetail?.payments && bookingDetail?.payments.length > 0 ? (
+                bookingDetail?.payments.map((payment: BookingPayment) => (
                   <TableRow key={payment.id}>
                     <TableCell component="th" scope="row">
                       {payment.externalTransactionId || '-'}
@@ -610,7 +574,7 @@ export default function SubscriptionDetail(): JSX.Element {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan="7" align="center">
+                  <TableCell colSpan={7} align="center">
                     {t('booking.noData')}
                   </TableCell>
                 </TableRow>
@@ -619,28 +583,6 @@ export default function SubscriptionDetail(): JSX.Element {
           </Table>
         </TableContainer>
       </Card>
-
-      <CarDetailDialog
-        open={carDetailDialogOpen}
-        car={carDetail}
-        isSelfPickUp={bookingDetail.isSelfPickUp}
-        onClose={() => {
-          setCarDetail(undefined)
-          setCarDetailDialogOpen(false)
-        }}
-      />
-      <CarReplacementDialog
-        editorEmail={firebaseUser?.email || '-'}
-        open={carReplacementDialogOpen}
-        bookingDetail={bookingDetail}
-        maxEndDate={maxEndDate}
-        onClose={(needRefetch) => {
-          if (needRefetch) {
-            refetchBooking()
-          }
-          setCarReplacementlogOpen(false)
-        }}
-      />
       <Backdrop open={isFetching} />
     </Page>
   )

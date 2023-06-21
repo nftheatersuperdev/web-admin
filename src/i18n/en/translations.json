@@ -81,7 +81,10 @@
     },
     "voucherManagement": {
       "title": "Voucher Management",
-      "voucher": "Voucher"
+      "voucher": "Voucher",
+      "userGroup": {
+        "title": "User Group"
+      }
     },
     "documentsManagement": {
       "title": "Document Management",
@@ -617,7 +620,32 @@
       "status": "Booking Status",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "location": "Location Service"
+      "location": "Location Service",
+      "detailId": "Booking Detail ID",
+      "customerId": "Customer ID",
+      "carId": "Car ID",
+      "seats": "Seats",
+      "topSpeed": "Top Speed",
+      "vin": "VIN",
+      "fastChargeTime": "Fast Charge Time",
+      "price": "Price",
+      "deliveryAddress": "Delivery Address",
+      "returnAddress": "Return Address",
+      "statusCsv": "Status",
+      "parentId": "Parent Id",
+      "isExtend": "Is Extended",
+      "owner": "Owner",
+      "reseller": "Reseller",
+      "voucherId": "Voucher ID",
+      "voucherCode": "Voucher Code",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "paymentStatus": "Payment Status",
+      "paymentFailureMessage": "Payment Failure Message",
+      "paymentUpdatedDate": "Payment Updated Date",
+      "deliveryDate": "Delivery Date",
+      "returnDate": "Return Date",
+      "isReplacement": "isReplacement"
     },
     "statuses": {
       "accepted": "Accepted",
@@ -991,7 +1019,7 @@
     },
     "dialog": {
       "create": {
-        "title": "Create new user group",
+        "title": "Create New User Group",
         "success": "User group has been created",
         "error": "Something went wrong!"
       },
@@ -1226,7 +1254,7 @@
   "cookieConsentLog": {
     "header": "Cookie Consent Log",
     "categoryName": "Cookie Category Name",
-    "statusNameLabel": "Status name",
+    "statusNameLabel": "Status",
     "searchLabel": "Search IP Address",
     "id": "ID",
     "sessionId": "Session ID",
@@ -1242,7 +1270,8 @@
       "strictlyNecessary": "Strictly Necessary Cookies",
       "analytical": "Analytical Cookies",
       "targeting": "Targeting Cookies"
-    }
+    },
+    "invalidIpAddress": "Invalid IP Address format"
   },
   "all": "All",
   "browserEvents": {
@@ -1525,5 +1554,74 @@
       "cancel": "CANCEL"
     },
     "noData": "No submitted item."
+  },
+  "noData": "No Data",
+  "search": {
+    "initPlaceholderInputField": "Enter Search"
+  },
+  "voucherManagement": {
+    "title": "Voucher Management",
+    "voucher": {
+      "title": "Voucher",
+      "breadcrumb": "All Voucher",
+      "detail": {
+        "title": "Voucher Detail",
+        "id": "Voucher id",
+        "idPlaceholder": "Please enter voucher id",
+        "code": "Voucher code",
+        "codePlaceholder": "Please enter voucher code",
+        "description": "Voucher description",
+        "descriptionPlaceholder": "Please enter voucher description",
+        "discountPercent": "Discount (%)",
+        "quantity": "Quantity",
+        "limitPerUser": "Limit Per User",
+        "startAt": "Start Date",
+        "endAt": "End Date",
+        "createdDate": "Created Date",
+        "updatedDate": "Updated Date",
+        "formEdit": {
+          "title": "Edit Voucher",
+          "success": "The voucher has been updated",
+          "error": "Something went wrong on updateing a voucher"
+        },
+        "formCreate": {
+          "title": "Create Voucher",
+          "success": "The voucher has been updated",
+          "error": "Something went wrong on updateing a voucher"
+        },
+        "option": {
+          "userGroup": {
+            "all": "All User Group",
+            "select": "Select available user groups"
+          },
+          "packagePrice": {
+            "all": "All packages",
+            "select": "Select available packages"
+          }
+        }
+      }
+    },
+    "userGroup": {
+      "title": "User Group",
+      "subTitle": "User Group (Voucher)",
+      "detail": {
+        "title": "User Group Detail",
+        "id": "User Group ID",
+        "idInput": "ID",
+        "idInputPlaceholder": "Please enter ID",
+        "name": "User Group Name",
+        "nameInput": "Name",
+        "nameInputPlaceholder": "Please enter Name",
+        "createdDate": "Created Date",
+        "updatedDate": "Updated Date",
+        "formEdit": {
+          "success": "The user group has been updated",
+          "error": "Something went wrong on updateing a user group"
+        }
+      }
+    },
+    "packagePrice": {
+      "title": "Package Price"
+    }
   }
 }

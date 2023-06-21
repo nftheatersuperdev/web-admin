@@ -511,13 +511,48 @@ export const getBooleanFilterOperators = (t: TFunction<Namespace>): GridFilterOp
 ]
 
 export const validateEmail = (email: string): boolean => {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  return re.test(String(email).toLowerCase())
+  const emailSplit = email.split('@')
+  const prefixEmail = emailSplit[0]
+  const suffixEmail = '@' + emailSplit[1]
+  return validateEmailPrefix(prefixEmail) && validateEmailSuffix(suffixEmail)
+}
+
+const validateEmailPrefix = (email: string): boolean => {
+  const rule = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))$/
+  return rule.test(String(email).toLowerCase())
+}
+
+const validateEmailSuffix = (email: string): boolean => {
+  const rule = /^@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return rule.test(String(email).toLowerCase())
+}
+
+export const validateIpAddress = (ipAddress: string): boolean => {
+  const ipAddressSplit = ipAddress.split('.')
+  const firstDigit = ipAddressSplit[0] + '.'
+  const secondDigit = ipAddressSplit[1] + '.'
+  const thirdDigit = ipAddressSplit[2] + '.'
+  const lastDigit = ipAddressSplit[3]
+  return (
+    validateIpAddressDigits(firstDigit) &&
+    validateIpAddressDigits(secondDigit) &&
+    validateIpAddressDigits(thirdDigit) &&
+    validateIpAddressLastDigit(lastDigit)
+  )
+}
+
+const validateIpAddressDigits = (ipAddress: string): boolean => {
+  const keywordRule = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.$/
+  return keywordRule.test(ipAddress)
+}
+
+const validateIpAddressLastDigit = (ipAddress: string): boolean => {
+  const keywordRule = /^(25[0-5]|2[0-4]\d|[01]?\d\d?)$/
+  return keywordRule.test(ipAddress)
 }
 
 export const validatePhoneNumberSearch = (searchValue: string): boolean => {
-  const keywordRule = /^[0-9]{4,15}$/g
+  const keywordRule = /^\d{4,15}$/g
   return keywordRule.test(searchValue)
 }
 
@@ -703,4 +738,14 @@ export function formatStringForInputText(str?: string | null | undefined, digit?
     }
   }
   return formatStr ? formatStr : ''
+}
+
+export function validatePrivileges(
+  userPrivileges: string[] | null | undefined,
+  requiredPrivillage = ''
+): boolean {
+  if (!userPrivileges) {
+    return false
+  }
+  return userPrivileges.includes(requiredPrivillage)
 }

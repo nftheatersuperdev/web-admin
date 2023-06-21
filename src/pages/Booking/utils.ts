@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFunction, Namespace } from 'react-i18next'
-import ls from 'localstorage-slim'
-import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
-import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
-import { LocationResponse } from 'services/web-bff/location.type'
+import { formatDate, DEFAULT_DATETIME_FORMAT } from 'utils'
+import { ResellerServiceArea } from 'services/web-bff/car.type'
+import {
+  BookingCarActivity,
+  BookingPayment,
+  BookingRental,
+  SubscriptionCar,
+} from 'services/web-bff/booking.type'
 
 export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: string): string[] => {
   const results: string[] = []
@@ -19,10 +23,6 @@ export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: st
 export interface SelectOption {
   label: string
   value: string
-}
-
-const STORAGE_KEYS = {
-  VISIBILITY_COLUMNS: 'evme:car:visibility_columns',
 }
 
 export const CarStatus = {
@@ -44,47 +44,6 @@ export const BookingStatus = {
   REFUSED: 'refused',
   COMPLETED: 'completed',
 }
-
-export const defaultVisibilityColumns: VisibilityColumns = {
-  id: true,
-  carTrackId: true,
-  brand: true,
-  model: true,
-  price: true,
-  duration: true,
-  status: true,
-  updatedAt: true,
-  carModelId: false,
-  seats: false,
-  topSpeed: false,
-  plateNumber: true,
-  vin: true,
-  fastChargeTime: false,
-  startDate: false,
-  endDate: false,
-  startAddress: false,
-  endAddress: false,
-  createdAt: false,
-}
-
-export const getCarStatusOptions = (t: TFunction<Namespace>): SelectOption[] => [
-  {
-    label: t('car.statuses.published'),
-    value: CarStatus.AVAILABLE,
-  },
-  {
-    label: t('car.statuses.outOfService'),
-    value: CarStatus.OUT_OF_SERVICE,
-  },
-  {
-    label: t('car.statuses.published'),
-    value: CarStatus.PUBLISHED,
-  },
-  {
-    label: t('car.statuses.inUse'),
-    value: CarStatus.IN_USE,
-  },
-]
 
 export const getBookingStatusOnlyUsedInBackendOptions = (
   t: TFunction<Namespace>
@@ -152,65 +111,6 @@ export const columnFormatBookingStatus = (status: string, t: TFunction<Namespace
   }
 }
 
-export const columnFormatCarVisibility = (isActive: boolean, t: TFunction<Namespace>): string => {
-  if (isActive) {
-    return t('car.statuses.published')
-  }
-  return t('car.statuses.unpublished')
-}
-
-export interface VisibilityColumns {
-  [key: string]: boolean
-}
-
-export const getVisibilityColumns = (): VisibilityColumns => {
-  return (
-    ls.get<VisibilityColumns | undefined>(STORAGE_KEYS.VISIBILITY_COLUMNS) ||
-    defaultVisibilityColumns
-  )
-}
-
-export const setVisibilityColumns = (columns: VisibilityColumns): void => {
-  ls.set<VisibilityColumns>(STORAGE_KEYS.VISIBILITY_COLUMNS, columns)
-}
-
-export interface BookingList {
-  id: string
-  detailId: string
-  customerId: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  brand: string
-  model: string
-  plateNumber: string
-  duration: string
-  status: string
-  startDate: string
-  endDate: string
-  price: number
-  voucherId: string
-  voucherCode: string
-  createdDate: string
-  updatedDate: string
-  isExtend: boolean
-  [key: string]: any
-}
-
-export interface BookingCsv {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  brand: string
-  model: string
-  plateNumber: string
-  duration: string
-  status: string
-  startDate: string
-  endDate: string
-}
 export interface FilterSearch {
   [key: string]: string
 }
@@ -225,34 +125,6 @@ export const getIsExtendOptions = (): SelectOption[] => [
     value: 'true',
   },
 ]
-
-export const getOwnerOptions = (carOwners: CarOwnerResponse | null | undefined): SelectOption[] => {
-  const owners = carOwners?.owners || []
-  return owners.map((owner) => ({
-    label: owner.name,
-    value: owner.id,
-  }))
-}
-
-export const getResellerOptions = (
-  carResellers: ReSellerResponse | null | undefined
-): SelectOption[] => {
-  const resellers = carResellers?.resellers || []
-  return resellers.map((reseller) => ({
-    label: reseller.name,
-    value: reseller.id,
-  }))
-}
-
-export const getLocationOptions = (
-  carLocations: LocationResponse | null | undefined
-): SelectOption[] => {
-  const locations = carLocations?.locations || []
-  return locations.map((location) => ({
-    label: location.areaNameEn,
-    value: location.id,
-  }))
-}
 
 export const convertToDuration = (value: number, t: TFunction<Namespace>): string => {
   switch (value) {
@@ -270,4 +142,303 @@ export const convertToDuration = (value: number, t: TFunction<Namespace>): strin
       return t('pricing.12m')
   }
   return value.toString()
+}
+
+export const getUserResellerServiceAreaId = (userServiceAreas: ResellerServiceArea[]): string => {
+  if (userServiceAreas && userServiceAreas.length >= 1) {
+    return userServiceAreas[0].id
+  }
+  return ''
+}
+
+export interface BookingList extends BookingObject {
+  isSelfPickUp: boolean
+  cars: SubscriptionCar
+  carActivities: BookingCarActivity[]
+  payments: BookingPayment[]
+  [key: string]: any
+}
+
+export interface BookingObject {
+  id: string
+  detailId: string
+  customerId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  carId: string
+  model: string
+  brand: string
+  seats: number
+  topSpeed: number
+  plateNumber: string
+  vin: string
+  fastChargeTime: number
+  price: string
+  duration: string
+  startDate: string
+  endDate: string
+  deliveryAddress: string
+  returnAddress: string
+  status: string
+  parentId: string
+  isExtend: boolean
+  location: string
+  owner: string
+  reseller: string
+  voucherId: string
+  voucherCode: string
+  createdDate: string
+  updatedDate: string
+  paymentStatus: string
+  paymentFailure: string
+  paymentUpdated: string
+  deliveryDate: string
+  returnDate: string
+  isReplacement: boolean
+  displayReplacement: string
+}
+
+// eslint-disable-next-line
+export const defaultVal = (value: any, defaultValue: any) => {
+  if (value) {
+    return value
+  }
+
+  return defaultValue
+}
+
+export const getBookingList = (
+  bookings: BookingRental[] | undefined,
+  t: TFunction<Namespace>
+): BookingList[] => {
+  const bookingDetails: BookingList[] = []
+
+  if (bookings) {
+    bookings.forEach((detail) => {
+      const booking: BookingList = {} as BookingList
+      booking.id = defaultVal(detail?.bookingId, '-')
+      booking.detailId = defaultVal(detail?.id, '-')
+      booking.customerId = defaultVal(detail.customer?.id, '-')
+      booking.firstName = defaultVal(detail.customer?.firstName, '-')
+      booking.lastName = defaultVal(detail.customer?.lastName, '-')
+      booking.email = defaultVal(detail.customer?.email, '-')
+      booking.phone = defaultVal(detail.customer?.phoneNumber, '-')
+      booking.carId = defaultVal(detail.carId, '-')
+      booking.model = defaultVal(detail.car?.carSku?.carModel?.name, '-')
+      booking.brand = defaultVal(detail.car?.carSku?.carModel?.brand.name, '-')
+      booking.seats = defaultVal(detail.car.carSku.carModel.seats, 0)
+      booking.topSpeed = defaultVal(detail.car.carSku.carModel.topSpeed, 0)
+      booking.plateNumber = defaultVal(detail.car?.plateNumber, '-')
+      booking.vin = defaultVal(detail.car.vin, '-')
+      booking.fastChargeTime = defaultVal(detail.car.carSku.carModel.fastChargeTime, 0)
+      booking.price = defaultVal(detail.rentDetail?.chargePrice, '-')
+      booking.duration = defaultVal(convertToDuration(detail.rentDetail?.durationDay, t), '-')
+      booking.startDate = defaultVal(detail.startDate, '-')
+      booking.endDate = defaultVal(detail.endDate, '-')
+      booking.deliveryAddress = defaultVal('-', '-')
+      booking.returnAddress = defaultVal('-', '-')
+      booking.status = defaultVal(detail.displayStatus, '-')
+      booking.parentId = defaultVal(detail.bookingId, '-')
+      booking.isExtend = defaultVal(detail.isExtend, false)
+      booking.location = defaultVal(detail.car?.resellerServiceArea?.areaNameEn, '-')
+      booking.owner = defaultVal(detail.car.owner, '-')
+      booking.reseller = defaultVal(detail.car.reSeller, '-')
+      booking.voucherId = defaultVal(detail.rentDetail?.voucherId, '-')
+      booking.voucherCode = defaultVal(detail.rentDetail?.voucherCode, '-')
+      booking.createdDate = defaultVal(detail.rentDetail?.createdDate, '-')
+      booking.updatedDate = defaultVal(detail.rentDetail?.updatedDate, '-')
+      booking.paymentStatus = defaultVal('-', '-')
+      booking.paymentFailure = defaultVal('-', '-')
+      booking.paymentUpdated = defaultVal('-', '-')
+      booking.deliveryDate = defaultVal('-', '-')
+      booking.returnDate = defaultVal('-', '-')
+      booking.isReplacement = defaultVal(detail.isReplacement, false)
+      booking.displayReplacement = booking.isReplacement ? 'Y' : 'N'
+      booking.isSelfPickUp = defaultVal(detail.isSelfPickUp, false)
+      booking.cars = detail.car
+      booking.carActivities = detail.carActivities
+      booking.payments = detail.payments
+
+      bookingDetails.push(booking)
+    })
+  }
+
+  return bookingDetails
+}
+
+export interface ServiceTypeLocation {
+  addressEn: string
+  addressTh: string
+  distance: number
+  id: string
+  isActive: boolean
+  latitude: number
+  longitude: number
+  resellerServiceAreaId: string
+  serviceType: string
+}
+
+const getServiceTypeLocation = (
+  serviceTypeLocations: ServiceTypeLocation[],
+  isSelfPickup: boolean | undefined
+) => {
+  const deliverBy = isSelfPickup === true ? 'SELF_PICK_UP' : 'DELIVERY_BY_EVME'
+  const serviceLocation = serviceTypeLocations.find(
+    (location: ServiceTypeLocation) =>
+      location.isActive === true && location.serviceType === deliverBy
+  )
+  return serviceLocation
+}
+
+export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): BookingObject[] => {
+  const csvData: BookingObject[] = []
+  bookings.forEach((book) => {
+    const newBook = { ...book }
+    const task = getServiceTypeLocation(
+      newBook.cars.resellerServiceArea.serviceTypeLocations,
+      newBook.isSelfPickUp
+    )
+    newBook.startDate = defaultVal(formatDate(newBook.startDate, DEFAULT_DATETIME_FORMAT), '-')
+    newBook.endDate = defaultVal(formatDate(newBook.endDate, DEFAULT_DATETIME_FORMAT), '-')
+    newBook.createdDate = defaultVal(formatDate(newBook.createdDate, DEFAULT_DATETIME_FORMAT), '-')
+    newBook.updatedDate = defaultVal(formatDate(newBook.updatedDate, DEFAULT_DATETIME_FORMAT), '-')
+    newBook.status = columnFormatBookingStatus(newBook.status, t)
+
+    if (newBook.carActivities.length > 0) {
+      newBook.carActivities.forEach((ac) => {
+        const newCarActivity = { ...newBook }
+        newCarActivity.carId = defaultVal(ac.carId, '-')
+        newCarActivity.brand = defaultVal(ac.carDetail.carSku.carModel.brand.name, '-')
+        newCarActivity.model = defaultVal(ac.carDetail.carSku.carModel.name, '-')
+        newCarActivity.seats = defaultVal(ac.carDetail.carSku.carModel.seats, '-')
+        newCarActivity.topSpeed = defaultVal(ac.carDetail.carSku.carModel.topSpeed, '-')
+        newCarActivity.plateNumber = defaultVal(ac.carDetail.plateNumber, '-')
+        newCarActivity.vin = defaultVal(ac.carDetail.vin, '-')
+        newCarActivity.fastChargeTime = defaultVal(ac.carDetail.carSku.carModel.fastChargeTime, '-')
+        newCarActivity.owner = defaultVal(ac?.carDetail?.owner, '-')
+        newCarActivity.reseller = defaultVal(ac?.carDetail?.reSeller, '-')
+        newCarActivity.location = defaultVal(ac?.carDetail?.location, '-')
+
+        if (!ac?.deliveryTask) {
+          newCarActivity.deliveryAddress = defaultVal(task?.addressTh, '-')
+          newCarActivity.deliveryDate = newCarActivity.startDate
+        } else {
+          newCarActivity.deliveryAddress = defaultVal(ac?.deliveryTask?.fullAddress, '-')
+          newCarActivity.deliveryDate = defaultVal(
+            formatDate(ac?.deliveryTask?.date, DEFAULT_DATETIME_FORMAT),
+            '-'
+          )
+        }
+
+        if (!ac?.returnTask) {
+          newCarActivity.returnAddress = defaultVal(task?.addressTh, '-')
+          newCarActivity.returnDate = newCarActivity.endDate
+        } else {
+          newCarActivity.returnAddress = defaultVal(ac?.returnTask?.fullAddress, '-')
+          newCarActivity.returnDate = defaultVal(
+            formatDate(ac?.returnTask?.date, DEFAULT_DATETIME_FORMAT),
+            '-'
+          )
+        }
+
+        if (newCarActivity.payments.length > 0) {
+          const pay = newCarActivity.payments[0]
+          newCarActivity.paymentStatus = defaultVal(pay?.status, '-')
+          newCarActivity.paymentFailure = defaultVal(pay?.statusMessage, '-')
+          newCarActivity.paymentUpdated = defaultVal(
+            formatDate(pay?.updatedDate, DEFAULT_DATETIME_FORMAT),
+            '-'
+          )
+        }
+
+        csvData.push(newCarActivity)
+      })
+    } else {
+      newBook.deliveryAddress = defaultVal(task?.addressTh, '-')
+      newBook.deliveryDate = newBook.startDate
+      newBook.returnAddress = defaultVal(task?.addressTh, '-')
+      newBook.returnDate = newBook.endDate
+
+      if (newBook.payments.length > 0) {
+        const pay = newBook.payments[0]
+        newBook.paymentStatus = defaultVal(pay?.status, '-')
+        newBook.paymentFailure = defaultVal(pay?.statusMessage, '-')
+        newBook.paymentUpdated = defaultVal(
+          formatDate(pay?.updatedDate, DEFAULT_DATETIME_FORMAT),
+          '-'
+        )
+      }
+
+      csvData.push(newBook)
+    }
+  })
+
+  return csvData
+}
+
+export const getHeaderCsvFile = (t: TFunction<Namespace>): any[] => {
+  return [
+    { label: t('booking.tableHeader.detailId'), key: 'detailId' },
+    { label: t('booking.tableHeader.customerId'), key: 'customerId' },
+    { label: t('booking.tableHeader.firstName'), key: 'firstName' },
+    { label: t('booking.tableHeader.lastName'), key: 'lastName' },
+    { label: t('booking.tableHeader.email'), key: 'email' },
+    { label: t('booking.tableHeader.phone'), key: 'phone' },
+    { label: t('booking.tableHeader.carId'), key: 'carId' },
+    { label: t('booking.tableHeader.model'), key: 'model' },
+    { label: t('booking.tableHeader.brand'), key: 'brand' },
+    { label: t('booking.tableHeader.seats'), key: 'seats' },
+    { label: t('booking.tableHeader.topSpeed'), key: 'topSpeed' },
+    { label: t('booking.tableHeader.plateNumber'), key: 'plateNumber' },
+    { label: t('booking.tableHeader.vin'), key: 'vin' },
+    { label: t('booking.tableHeader.fastChargeTime'), key: 'fastChargeTime' },
+    { label: t('booking.tableHeader.price'), key: 'price' },
+    { label: t('booking.tableHeader.duration'), key: 'duration' },
+    { label: t('booking.tableHeader.startDate'), key: 'startDate' },
+    { label: t('booking.tableHeader.endDate'), key: 'endDate' },
+    { label: t('booking.tableHeader.deliveryAddress'), key: 'deliveryAddress' },
+    { label: t('booking.tableHeader.returnAddress'), key: 'returnAddress' },
+    { label: t('booking.tableHeader.statusCsv'), key: 'status' },
+    { label: t('booking.tableHeader.parentId'), key: 'parentId' },
+    { label: t('booking.tableHeader.isExtend'), key: 'isExtend' },
+    { label: t('booking.tableHeader.location'), key: 'location' },
+    { label: t('booking.tableHeader.owner'), key: 'owner' },
+    { label: t('booking.tableHeader.reseller'), key: 'reseller' },
+    { label: t('booking.tableHeader.voucherId'), key: 'voucherId' },
+    { label: t('booking.tableHeader.voucherCode'), key: 'voucherCode' },
+    { label: t('booking.tableHeader.createdDate'), key: 'createdDate' },
+    { label: t('booking.tableHeader.updatedDate'), key: 'updatedDate' },
+    { label: t('booking.tableHeader.paymentStatus'), key: 'paymentStatus' },
+    { label: t('booking.tableHeader.paymentFailureMessage'), key: 'paymentFailure' },
+    { label: t('booking.tableHeader.paymentUpdatedDate'), key: 'paymentUpdated' },
+    { label: t('booking.tableHeader.deliveryDate'), key: 'deliveryDate' },
+    { label: t('booking.tableHeader.returnDate'), key: 'returnDate' },
+    { label: t('booking.tableHeader.isReplacement'), key: 'displayReplacement' },
+  ]
+}
+
+const createOption = (label: string, value: string): SelectOption => {
+  return {
+    label,
+    value,
+  }
+}
+
+export const getSearchOptions = (t: TFunction<Namespace>): SelectOption[] => {
+  return [
+    createOption(t('booking.search.detailId'), 'bookingDetailId'),
+    createOption(t('booking.search.customer'), 'customerId'),
+    createOption(t('booking.search.email'), 'email'),
+    createOption(t('booking.search.carId'), 'carId'),
+    createOption(t('booking.search.plateNumber'), 'plateNumber'),
+    createOption(t('booking.search.startDate'), 'startDate'),
+    createOption(t('booking.search.endDate'), 'endDate'),
+    createOption(t('booking.search.status'), 'statusList'),
+    createOption(t('booking.search.isExtend'), 'isExtend'),
+    createOption(t('booking.search.voucherId'), 'voucherId'),
+    createOption(t('booking.search.deliveryDate'), 'deliveryDate'),
+    createOption(t('booking.search.returnDate'), 'returnDate'),
+  ]
 }

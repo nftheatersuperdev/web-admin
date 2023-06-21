@@ -49,7 +49,11 @@ import DatePicker from 'components/DatePicker'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { searchCustomer } from 'services/web-bff/customer'
 import { UserInputRequest } from 'services/web-bff/user.type'
-import { CustomerFilterRequest, CustomerMeProps } from 'services/web-bff/customer.type'
+import {
+  CustomerFilterRequest,
+  CustomerInputRequest,
+  CustomerMeProps,
+} from 'services/web-bff/customer.type'
 import './pagination.css'
 
 dayjs.extend(dayjsUtc)
@@ -194,10 +198,10 @@ export default function CustomerProfile(): JSX.Element {
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
   const kycStatus = queryString.get('kycStatus')
-  const defaultFilter: CustomerFilterRequest = {
-    kycStatusEqual: kycStatus || null,
+  const defaultFilter: CustomerInputRequest = {
+    kycStatus: kycStatus?.toUpperCase() || null,
   } as UserInputRequest
-  const [customerFilter, setCustomerFilter] = useState<CustomerFilterRequest>({ ...defaultFilter })
+  const [customerFilter, setCustomerFilter] = useState<CustomerInputRequest>({ ...defaultFilter })
   const [filterSearchField, setFilterSearchField] = useState<string>('')
   const [filterSearchFieldError, setFilterSearchFieldError] = useState<string>('')
   const [showTextField, setShowTextField] = useState<boolean>(true)
@@ -249,10 +253,11 @@ export default function CustomerProfile(): JSX.Element {
       setShowSearchButton(true)
     }
   }
+
   const formik = useFormik({
     initialValues: {
       input: '',
-      searchType: '',
+      searchType: customerFilter.kycStatus ? 'kycStatus' : '',
     },
     enableReinitialize: true,
     onSubmit: (value) => {
@@ -291,6 +296,7 @@ export default function CustomerProfile(): JSX.Element {
     setShowKycStatusDropdown(false)
     setShowDatePicker(false)
     setShowSearchButton(true)
+    removeQueryParams()
     formik.setFieldValue('searchType', '')
     formik.handleSubmit()
   }
@@ -454,14 +460,28 @@ export default function CustomerProfile(): JSX.Element {
       setPageSize(userResponse.data.pagination.size)
       setPages(userResponse.data.pagination.totalPage)
     }
-  }, [userResponse, refetch])
+  }, [userResponse, refetch, isEnableFilterButton])
   /**
    * Managing the pagination variables that will send to the API.
    */
   useEffect(() => {
     refetch()
-  }, [customerFilter, pages, page, pageSize, refetch])
-
+    // Handle events get url parameters
+    if (kycStatus !== null) {
+      setShowKycStatusDropdown(true)
+      setShowTextField(false)
+      setIsEnableFilterButton(true)
+      setFilterSearchField(customerFilter.kycStatus ? customerFilter.kycStatus.toUpperCase() : '')
+    }
+  }, [customerFilter, pages, page, pageSize, refetch, kycStatus])
+  const removeQueryParams = () => {
+    if (queryString.has('kycStatus')) {
+      queryString.delete('kycStatus')
+      history.replace({
+        search: queryString.toString(),
+      })
+    }
+  }
   const handleOnSearchFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     const isValidEmailSearchField = validateKeywordTextWithSpecialChar(value)
@@ -725,13 +745,13 @@ export default function CustomerProfile(): JSX.Element {
                       ))}
                     </Select>
                   </FormControl>
-                  &nbsp;&nbsp;{userResponse?.data.pagination?.page || pages} {t('staffProfile.of')}
+                  &nbsp;&nbsp;{pages} {t('staffProfile.of')}
                   &nbsp;
-                  {userResponse?.data.pagination?.totalPage || pages}
+                  {pages}
                   <Pagination
-                    count={userResponse?.data.pagination?.totalPage || pages}
-                    page={userResponse?.data.pagination?.page || page}
-                    defaultPage={userResponse?.data.pagination?.page || page}
+                    count={pages}
+                    page={page}
+                    defaultPage={page}
                     variant="text"
                     shape="rounded"
                     onChange={(_event: React.ChangeEvent<unknown>, value: number) => {

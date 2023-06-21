@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SortDirection } from 'services/web-bff/general.type'
 import { CustomerGroup, UserGroup } from 'services/web-bff/user.type'
-import { PackagePrice } from 'services/web-bff/package-price.type'
+import { PackagePrice, PackagePriceBff } from 'services/web-bff/package-price.type'
 import { ResponseWithPagination } from 'services/web-bff/response.type'
 
 export interface Voucher {
@@ -14,12 +14,24 @@ export interface Voucher {
   isAllPackages: boolean
   userGroups: UserGroup[]
   customerGroups: UserGroup[]
-  packagePrices: PackagePrice[]
+  packagePrices: PackagePriceBff[]
   startAt: any
   endAt: any
   createdDate: any
   updatedDate: any
   quantity: number
+}
+
+export interface VoucherCSV {
+  id: string
+  code: string
+  discountPercent: number
+  quantity: number
+  limitPerUser: number
+  startDate: string
+  endDate: string
+  createdDate: string
+  updatedDate: string
 }
 
 export interface VoucherListQuery {

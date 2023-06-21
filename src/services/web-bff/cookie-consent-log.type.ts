@@ -8,6 +8,18 @@ export interface CookieConsentLogListProps {
   page?: number
 }
 
+export interface CookieConsentInputRequest {
+  ipAddress?: string
+  category?: string
+  isAccepted?: string
+}
+
+export interface CookieConsentLogListRequest {
+  data?: CookieConsentInputRequest
+  size?: number
+  page?: number
+}
+
 export interface CookieConsentLog {
   id: string
   sessionId: string
@@ -35,7 +47,5 @@ export type CookieConsentLogListResponse = {
 } & ResponseWithPagination
 
 export interface CookieConsentCategoryListResponse {
-  data: {
-    contents: ContentCategory[]
-  }
+  data: ContentCategory[]
 }

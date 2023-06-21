@@ -36,7 +36,22 @@ export const searchCustomerGroup = async ({
         size,
       },
     }
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch(() => {
+      return {
+        status: 'error',
+        data: {
+          customerGroups: [],
+          pagination: {
+            page,
+            size,
+            totalPage: 0,
+            totalRecords: 0,
+          },
+        },
+      }
+    })
   return response
 }
 

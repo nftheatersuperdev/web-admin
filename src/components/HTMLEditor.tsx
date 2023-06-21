@@ -15,6 +15,10 @@ interface HTMLEditorProp {
   handleOnEditChange: (value: string) => void
 }
 
+const TypographyGray = styled(Typography)`
+  color: rgba(0, 0, 0, 0.6);
+`
+
 export default function HTMLEditor({
   id,
   label,
@@ -34,7 +38,7 @@ export default function HTMLEditor({
 
   return (
     <MarginButtom>
-      <Typography variant="caption">{label}</Typography>
+      <TypographyGray variant="caption">{label}</TypographyGray>
       <Editor
         id={id}
         init={init}

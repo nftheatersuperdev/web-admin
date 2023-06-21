@@ -184,6 +184,9 @@ export interface SubscriptionCar {
   resellerServiceArea: ResellerServiceArea
   createdDate: string
   updatedDate: string
+  location?: string | ''
+  owner?: string | ''
+  reSeller?: string | ''
   [key: string]: any
 }
 

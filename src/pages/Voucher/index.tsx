@@ -1,337 +1,342 @@
-import { useHistory } from 'react-router-dom'
-import { useState, useEffect, Fragment } from 'react'
-import { Card, Button, IconButton, Tooltip } from '@material-ui/core'
-import {
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  Note as NoteIcon,
-  Check as CheckIcon,
-  NotInterested as NotInterestedIcon,
-} from '@material-ui/icons'
-import {
-  GridColDef,
-  GridFilterItem,
-  GridFilterModel,
-  GridPageChangeParams,
-  GridCellParams,
-  GridValueFormatterParams,
-} from '@material-ui/data-grid'
-import { ROLES } from 'auth/roles'
+import styled from 'styled-components'
+import { Button, Card, Grid, TableCell, TableRow, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import {
-  columnFormatDate,
-  getEqualFilterOperators,
-  getContainFilterOperators,
-  geEqualtDateOperators,
-  FieldComparisons,
-  FieldKeyOparators,
-  stripHtml,
-} from 'utils'
-import config from 'config'
 import { useQuery } from 'react-query'
+import { useEffect, useState } from 'react'
+import dayjs from 'dayjs'
+import { DEFAULT_DATE_FORMAT_BFF, validatePrivileges } from 'utils'
+import { CSVLink } from 'react-csv'
+import AddIcon from '@mui/icons-material/ControlPoint'
+import { Link, useHistory } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles'
 import { useAuth } from 'auth/AuthContext'
-import { getList } from 'services/web-bff/voucher'
-import { VoucherListQuery } from 'services/web-bff/voucher.type'
+import { ROUTE_PATHS } from 'routes'
 import { Page } from 'layout/LayoutRoute'
-import DataGridLocale from 'components/DataGridLocale'
-import PageToolbar from 'layout/PageToolbar'
-import { getVisibilityColumns, setVisibilityColumns, VisibilityColumns } from './utils'
+import Paginate from 'components/Paginate'
+import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import MultipleSearchField, { SearchField } from 'components/MultipleSearchField'
+import TableContainer, { TableColmun } from 'components/TableContainer'
+import TableRowNoData from 'components/TableRowNoData'
+import { getList } from 'services/web-bff/voucher'
+import { Voucher, VoucherCSV } from 'services/web-bff/voucher.type'
 
-export default function Voucher(): JSX.Element {
-  const defaultFilter: VoucherListQuery = {} as VoucherListQuery
-  const userRole = useAuth().getRole()
+const SearchWrapper = styled.div`
+  padding: 20px;
+`
+const SearchInputWrapper = styled.div`
+  margin-top: 20px;
+`
+const AlignRight = styled.div`
+  text-align: right;
+`
+const ActionButton = styled(Button)`
+  margin-top: 20px !important;
+  margin-left: 5px !important;
+  background-color: #333c4d !important;
+  height: 51px;
+
+  &:hover {
+    background-color: #1e3b80 !important;
+  }
+  &:disabled {
+    background-color: #dddddd !important;
+  }
+`
+const RowOverflow = styled.div`
+  width: 185px;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  textoverflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  padding: 0 18px;
+`
+const CSVLinkText = styled(CSVLink)`
+  color: #fff;
+  text-decoration: none;
+`
+
+const formatDate = (date: string): string => dayjs(date).format('DD MMM YYYY')
+const formatTime = (date: string): string => dayjs(date).format('HH:mm')
+
+export default function VoucherListPage(): JSX.Element {
   const history = useHistory()
   const { t } = useTranslation()
-  const [pageSize, setPageSize] = useState(config.tableRowsDefaultPageSize)
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const [voucherQuery, setVoucherQuery] = useState<VoucherListQuery>({ ...defaultFilter })
-  const isDisableToCreate = ROLES.PRODUCT_SUPPORT === userRole
+  const { getPrivileges } = useAuth()
+  const userPrivileges = getPrivileges()
 
-  const {
-    data: voucherData,
-    refetch,
-    isFetching,
-  } = useQuery('voucher-list', () =>
-    getList({
-      data: voucherQuery,
-      page: currentPageIndex + 1,
-      size: pageSize,
-    })
+  const useStyles = makeStyles({
+    noTextDecoration: {
+      textDecoration: 'none',
+    },
+  })
+  const classes = useStyles()
+  const pageTitle = t('voucherManagement.voucher.title')
+
+  const [page, setPage] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [filters, setFilters] = useState({})
+
+  const { data, isFetching, refetch } = useQuery(
+    'voucher-list',
+    () =>
+      getList({
+        data: filters,
+        page,
+        size: pageSize,
+      }),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
 
-  const equalOperators = getEqualFilterOperators(t)
-  const containOperators = getContainFilterOperators(t)
-  const dateEqualOperators = geEqualtDateOperators(t)
-  const visibilityColumns = getVisibilityColumns()
-
-  const handlePageSizeChange = (params: GridPageChangeParams) => {
-    setCurrentPageIndex(0)
-    setPageSize(params.pageSize)
-  }
-
-  const handleFilterChange = (params: GridFilterModel) => {
-    let keyValue = ''
-    setVoucherQuery({
-      ...params.items.reduce((filter, { columnField, operatorValue, value }: GridFilterItem) => {
-        if (value) {
-          switch (operatorValue) {
-            case FieldComparisons.equals:
-              keyValue = `${columnField}${FieldKeyOparators.equals}`
-              break
-            case FieldComparisons.contains:
-              keyValue = `${columnField}${FieldKeyOparators.contains}`
-              break
-          }
-          filter = { [keyValue]: value }
-        }
-        return filter
-      }, {} as VoucherListQuery),
-    })
-    // reset page
-    setCurrentPageIndex(0)
-  }
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const onColumnVisibilityChange = (params: any) => {
-    if (params.field === '__check__') {
-      return
-    }
-
-    const visibilityColumns = params.api.current
-      .getAllColumns()
-      .filter(({ field }: { field: string }) => field !== '__check__')
-      .reduce((columns: VisibilityColumns, column: { field: string; hide: boolean }) => {
-        columns[column.field] = !column.hide
-        return columns
-      }, {})
-
-    visibilityColumns[params.field] = params.isVisible
-
-    setVisibilityColumns(visibilityColumns)
-  }
-
   useEffect(() => {
     refetch()
-  }, [voucherQuery, refetch, currentPageIndex])
+  }, [filters, page, pageSize, refetch])
 
-  useEffect(() => {
-    refetch()
-  }, [pageSize, refetch])
-
-  const columns: GridColDef[] = [
+  const breadcrumbs: PageBreadcrumbs[] = [
     {
-      field: 'id',
-      headerName: t('voucher.id'),
-      description: t('voucher.id'),
-      hide: !visibilityColumns.id,
-      flex: 1,
-      sortable: false,
-      filterOperators: equalOperators,
+      text: t('voucherManagement.title'),
+      link: ROUTE_PATHS.ROOT,
     },
     {
-      field: 'code',
-      headerName: t('voucher.code'),
-      description: t('voucher.code'),
-      hide: !visibilityColumns.code,
-      flex: 1,
-      sortable: false,
-      filterOperators: containOperators,
-    },
-    {
-      field: 'descriptionEn',
-      headerName: t('voucher.description.en'),
-      description: t('voucher.description.en'),
-      hide: !visibilityColumns.descriptionEn,
-      flex: 1,
-      sortable: false,
-      filterOperators: containOperators,
-      valueFormatter: ({ value }: GridValueFormatterParams) =>
-        value ? stripHtml(value as string) : '-',
-    },
-    {
-      field: 'descriptionTh',
-      headerName: t('voucher.description.th'),
-      description: t('voucher.description.th'),
-      hide: !visibilityColumns.descriptionTh,
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      valueFormatter: ({ value }: GridValueFormatterParams) =>
-        value ? stripHtml(value as string) : '-',
-    },
-    {
-      field: 'discountPercent',
-      headerName: t('voucher.discountPercent'),
-      description: t('voucher.discountPercent'),
-      hide: !visibilityColumns.discountPercent,
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: 'quantity',
-      headerName: t('voucher.quantity'),
-      description: t('voucher.quantity'),
-      hide: !visibilityColumns.quantity,
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: 'limitPerUser',
-      headerName: t('voucher.limitPerUser'),
-      description: t('voucher.limitPerUser'),
-      hide: !visibilityColumns.limitPerUser,
-      flex: 1,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: 'startAt',
-      headerName: t('voucher.startAt'),
-      description: t('voucher.startAt'),
-      hide: !visibilityColumns.startAt,
-      flex: 1,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'endAt',
-      headerName: t('voucher.endAt'),
-      description: t('voucher.endAt'),
-      hide: !visibilityColumns.endAt,
-      flex: 1,
-      sortable: false,
-      filterOperators: dateEqualOperators,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'isAllPackages',
-      headerName: t('voucher.isAllPackages'),
-      description: t('voucher.isAllPackages'),
-      hide: !visibilityColumns.isAllPackages,
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: ({ row }: GridCellParams) =>
-        row.isAllPackages ? <CheckIcon fontSize="small" /> : <NotInterestedIcon fontSize="small" />,
-    },
-    {
-      field: 'createdDate',
-      headerName: t('voucher.createdAt'),
-      description: t('voucher.createdAt'),
-      hide: !visibilityColumns.createdDate,
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'updatedDate',
-      headerName: t('voucher.updatedAt'),
-      description: t('voucher.updatedAt'),
-      hide: !visibilityColumns.updatedDate,
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      valueFormatter: columnFormatDate,
-    },
-    {
-      field: 'actions',
-      headerName: t('car.actions'),
-      description: t('car.actions'),
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params: GridCellParams) => {
-        const code = params.row.code
-        return (
-          <Fragment>
-            <IconButton
-              size="small"
-              onClick={() => history.push(`/vouchers/${code}/edit`)}
-              disabled={isDisableToCreate}
-            >
-              <EditIcon />
-            </IconButton>
-            <Tooltip title={t('voucherEvents.tooltip.title')} arrow>
-              <IconButton
-                disabled
-                size="small"
-                onClick={() => history.push(`/vouchers/${params.id}/events?code=${code}`)}
-              >
-                <NoteIcon />
-              </IconButton>
-            </Tooltip>
-            <IconButton disabled size="small" aria-label="delete">
-              <DeleteIcon />
-            </IconButton>
-          </Fragment>
-        )
-      },
+      text: t('voucherManagement.voucher.breadcrumb'),
+      link: ROUTE_PATHS.VOUCHER,
     },
   ]
 
-  const rowCount = voucherData?.data.pagination.totalRecords
-  const rows =
-    voucherData?.data.vouchers.map((voucher) => {
-      return {
-        id: voucher.id,
-        code: voucher.code,
-        descriptionEn: voucher.descriptionEn,
-        descriptionTh: voucher.descriptionTh,
+  const searchFields: SearchField[] = [
+    {
+      type: 'textbox',
+      optionId: 'idEqual',
+      optionLabel: t('voucherManagement.voucher.detail.id'),
+      placeholder: t('voucherManagement.voucher.detail.idPlaceholder'),
+    },
+    {
+      type: 'textbox',
+      optionId: 'codeContain',
+      optionLabel: t('voucherManagement.voucher.detail.code'),
+      placeholder: t('voucherManagement.voucher.detail.codePlaceholder'),
+    },
+    {
+      type: 'textbox',
+      optionId: 'descriptionEnContain',
+      optionLabel: t('voucherManagement.voucher.detail.description'),
+      placeholder: t('voucherManagement.voucher.detail.descriptionPlaceholder'),
+    },
+    {
+      type: 'datepicker',
+      optionId: 'startAtEqual',
+      optionLabel: t('voucherManagement.voucher.detail.startAt'),
+    },
+    {
+      type: 'datepicker',
+      optionId: 'endAtEqual',
+      optionLabel: t('voucherManagement.voucher.detail.endAt'),
+    },
+  ]
+
+  const csvData: VoucherCSV[] = []
+  const csvHeaders = [
+    { label: t('voucherManagement.voucher.detail.id'), key: 'id' },
+    { label: t('voucherManagement.voucher.detail.code'), key: 'code' },
+    { label: t('voucherManagement.voucher.detail.discountPercent'), key: 'discountPercent' },
+    { label: t('voucherManagement.voucher.detail.quantity'), key: 'quantity' },
+    { label: t('voucherManagement.voucher.detail.limitPerUser'), key: 'limitPerUser' },
+    { label: t('voucherManagement.voucher.detail.startAt'), key: 'startDate' },
+    { label: t('voucherManagement.voucher.detail.endAt'), key: 'endDate' },
+    { label: t('voucherManagement.voucher.detail.createdDate'), key: 'createdDate' },
+    { label: t('voucherManagement.voucher.detail.updatedDate'), key: 'updatedDate' },
+  ]
+
+  const voucherCode = t('voucherManagement.voucher.detail.code')
+  const voucherDiscountPercent = t('voucherManagement.voucher.detail.discountPercent')
+  const voucherQuantity = t('voucherManagement.voucher.detail.quantity')
+  const voucherLimitPerUser = t('voucherManagement.voucher.detail.limitPerUser')
+  const voucherStartAt = t('voucherManagement.voucher.detail.startAt')
+  const voucherEndAt = t('voucherManagement.voucher.detail.endAt')
+  const voucherCreatedDate = t('voucherManagement.voucher.detail.createdDate')
+  const voucherUpdatedDate = t('voucherManagement.voucher.detail.updatedDate')
+
+  const tableColmuns: TableColmun[] = [
+    {
+      key: 'voucher_detail_code',
+      name: voucherCode,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_discountPercent',
+      name: voucherDiscountPercent,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_quantity',
+      name: voucherQuantity,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_limitPerUser',
+      name: voucherLimitPerUser,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_startAt',
+      name: voucherStartAt,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_endAt',
+      name: voucherEndAt,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_createdDate',
+      name: voucherCreatedDate,
+      hidden: false,
+    },
+    {
+      key: 'voucher_detail_updatedDate',
+      name: voucherUpdatedDate,
+      hidden: false,
+    },
+  ]
+
+  const rowData = (data?.data.vouchers &&
+    data?.data.vouchers.length >= 1 &&
+    data?.data.vouchers.map((voucher: Voucher) => {
+      const { id, code } = voucher
+
+      csvData.push({
+        id,
+        code,
         discountPercent: voucher.discountPercent,
         quantity: voucher.quantity,
         limitPerUser: voucher.limitPerUser,
-        isAllPackages: voucher.isAllPackages,
-        userGroups: voucher.userGroups,
-        packagePrices: voucher.packagePrices,
-        startAt: voucher.startAt,
-        endAt: voucher.endAt,
+        startDate: voucher.startAt,
+        endDate: voucher.endAt,
         createdDate: voucher.createdDate,
         updatedDate: voucher.updatedDate,
-      }
-    }) || []
+      })
+      return (
+        <TableRow
+          key={`table_row_${id}`}
+          component={Link}
+          to={
+            validatePrivileges(userPrivileges, 'PERM_VOUCHER_EDIT') ? `/vouchers/${code}/edit` : '#'
+          }
+          className={classes.noTextDecoration}
+        >
+          <TableCell key={`table_cell_code_${id}`}>
+            <RowOverflow>{voucher.code}</RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_discountPercent_${id}`}>
+            <RowOverflow>{voucher.discountPercent}</RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_quantity_${id}`}>
+            <RowOverflow>{voucher.quantity}</RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_limitPerUser_${id}`}>
+            <RowOverflow>{voucher.limitPerUser}</RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_startDate_${id}`}>
+            <RowOverflow>
+              {formatDate(voucher.startAt)}
+              <br />
+              {formatTime(voucher.startAt)}
+            </RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_endDate_${id}`}>
+            <RowOverflow>
+              {formatDate(voucher.endAt)}
+              <br />
+              {formatTime(voucher.endAt)}
+            </RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_createdDate_${id}`}>
+            <RowOverflow>
+              {formatDate(voucher.createdDate)}
+              <br />
+              {formatTime(voucher.createdDate)}
+            </RowOverflow>
+          </TableCell>
+          <TableCell key={`table_cell_updatedDate_${id}`}>
+            <RowOverflow>
+              {formatDate(voucher.updatedDate)}
+              <br />
+              {formatTime(voucher.updatedDate)}
+            </RowOverflow>
+          </TableCell>
+        </TableRow>
+      )
+    })) || <TableRowNoData colSpan={tableColmuns.length} />
 
   return (
     <Page>
-      <PageToolbar>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => history.push('/vouchers/create')}
-          disabled={isDisableToCreate}
-        >
-          {t('voucher.button.createNew')}
-        </Button>
-      </PageToolbar>
-
+      <PageTitle title={pageTitle} breadcrumbs={breadcrumbs} />
       <Card>
-        <DataGridLocale
-          className="sticky-header"
-          autoHeight
-          pagination
-          pageSize={pageSize}
-          page={currentPageIndex}
-          rowCount={rowCount}
-          paginationMode="server"
-          onPageSizeChange={handlePageSizeChange}
-          onPageChange={setCurrentPageIndex}
-          rows={rows}
-          columns={columns}
-          checkboxSelection
-          disableSelectionOnClick
-          filterMode="server"
-          onFilterModelChange={handleFilterChange}
-          onColumnVisibilityChange={onColumnVisibilityChange}
-          loading={isFetching}
-        />
+        <SearchWrapper>
+          <Typography id="voucher_title_table" variant="h6">
+            <strong>{pageTitle}</strong>
+          </Typography>
+          <Grid container spacing={1} justifyContent="flex-end">
+            <Grid item xs={12} sm={6} md={6}>
+              <SearchInputWrapper>
+                <MultipleSearchField
+                  id="voucher"
+                  spacing={1}
+                  fields={searchFields}
+                  dateFormat={DEFAULT_DATE_FORMAT_BFF}
+                  onClear={() => setFilters({})}
+                  onSubmit={(id, value) => {
+                    if (id && value) {
+                      setFilters({
+                        [id]: value,
+                      })
+                    }
+                  }}
+                />
+              </SearchInputWrapper>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3} />
+            <Grid item xs={12} sm={6} md={3}>
+              <AlignRight>
+                <ActionButton
+                  id="voucher_csv_button"
+                  variant="contained"
+                  size="large"
+                  disabled={!validatePrivileges(userPrivileges, 'PERM_VOUCHER_VIEW')}
+                >
+                  <CSVLinkText data={csvData} headers={csvHeaders} filename="voucher.csv">
+                    {t('button.export').toUpperCase()}
+                  </CSVLinkText>
+                </ActionButton>
+                <ActionButton
+                  id="voucher_create_button"
+                  variant="contained"
+                  size="large"
+                  endIcon={<AddIcon />}
+                  disabled={!validatePrivileges(userPrivileges, 'PERM_VOUCHER_CREATE')}
+                  onClick={() => history.push('/vouchers/create')}
+                >
+                  {t('button.create').toUpperCase()}
+                </ActionButton>
+              </AlignRight>
+            </Grid>
+          </Grid>
+        </SearchWrapper>
+        <TableContainer columns={tableColmuns} isFetching={isFetching} data={rowData} />
       </Card>
+
+      <Paginate
+        pagination={data?.data.pagination}
+        page={page}
+        pageSize={pageSize}
+        setPage={setPage}
+        setPageSize={setPageSize}
+        refetch={refetch}
+      />
     </Page>
   )
 }

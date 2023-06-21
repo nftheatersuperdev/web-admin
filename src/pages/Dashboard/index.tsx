@@ -188,7 +188,7 @@ export default function Dashboard(): JSX.Element {
               subTitle={t('dashboard.totalUsers.subTitle')}
               icon={<PeopleIcon />}
               iconColor="#5d4037"
-              detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
+              detailLink={<DetailLink pathname={ROUTE_PATHS.CUSTOMER_PROFILE} />}
             />
           ) : (
             ''
@@ -209,7 +209,7 @@ export default function Dashboard(): JSX.Element {
                   subTitle={t('dashboard.totalRequestedCases.subTitle')}
                   icon={<RequestedIcon />}
                   iconColor="#03a9f4"
-                  detailLink={<DetailLink pathname={ROUTE_PATHS.USER} />}
+                  detailLink={<DetailLink pathname={ROUTE_PATHS.CUSTOMER_PROFILE} />}
                 />
               </Grid>
 
@@ -222,7 +222,7 @@ export default function Dashboard(): JSX.Element {
                   iconColor="#4caf50"
                   detailLink={
                     <DetailLink
-                      pathname={ROUTE_PATHS.USER}
+                      pathname={ROUTE_PATHS.CUSTOMER_PROFILE}
                       search={qs.stringify({ kycStatus: 'verified' })}
                     />
                   }
@@ -238,7 +238,7 @@ export default function Dashboard(): JSX.Element {
                   iconColor="#d32f2f"
                   detailLink={
                     <DetailLink
-                      pathname={ROUTE_PATHS.USER}
+                      pathname={ROUTE_PATHS.CUSTOMER_PROFILE}
                       search={qs.stringify({ kycStatus: 'rejected' })}
                     />
                   }

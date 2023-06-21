@@ -158,11 +158,9 @@ export default function DocumentVersionEdit(): JSX.Element {
     if (language === 'th') {
       setContentThTemp(value)
       formik.setFieldValue('contentTh', value)
-      return true
     }
     setContentEnTemp(value)
     formik.setFieldValue('contentEn', value)
-    return true
   }
 
   const resetForm = () => {
