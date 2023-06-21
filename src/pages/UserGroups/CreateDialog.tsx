@@ -15,6 +15,9 @@ interface CreateDialogProps {
   onClose: (reload: boolean) => void
 }
 
+const InputWrapper = styled.div`
+  margin-top: 10px;
+`
 const ButtonSpace = styled(Button)`
   margin: 20px 10px 0 0 !important;
 `
@@ -79,21 +82,25 @@ export default function UserGroupCreateDialog({
 
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{t('userGroups.dialog.create.title')}</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        <InputWrapper>{t('userGroups.dialog.create.title')}</InputWrapper>
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label={t('userGroups.name')}
-              id="name"
-              name="name"
-              variant="outlined"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              helperText={t('validation.allowOnlyLettersAndNumbers')}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-            />
+            <InputWrapper>
+              <TextField
+                fullWidth
+                label={t('userGroups.name')}
+                id="name"
+                name="name"
+                variant="outlined"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                helperText={t('validation.allowOnlyLettersAndNumbers')}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+              />
+            </InputWrapper>
           </Grid>
         </Grid>
         <Box textAlign="left">
@@ -104,7 +111,7 @@ export default function UserGroupCreateDialog({
             variant="contained"
             size="large"
           >
-            {t('button.create')}
+            {t('button.create').toUpperCase()}
           </ButtonSpace>
           <ButtonSpace
             onClick={() => {
@@ -117,7 +124,7 @@ export default function UserGroupCreateDialog({
             size="large"
             disabled={isLoading}
           >
-            {t('button.cancel')}
+            {t('button.cancel').toUpperCase()}
           </ButtonSpace>
         </Box>
       </DialogContent>

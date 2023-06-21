@@ -245,7 +245,7 @@ export default function UserGroups(): JSX.Element {
                   disabled={!validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_VIEW')}
                 >
                   <CSVLinkText data={csvData} headers={csvHeaders} filename="user_group.csv">
-                    {t('button.export').toLocaleUpperCase()}
+                    {t('button.export').toUpperCase()}
                   </CSVLinkText>
                 </ActionButton>
                 <ActionButton
@@ -256,7 +256,7 @@ export default function UserGroups(): JSX.Element {
                   onClick={() => setIsOpenCreateDialog(() => true)}
                   disabled={!validatePrivileges(userPrivileges, 'PERM_CUSTOMER_GROUP_CREATE')}
                 >
-                  {t('button.create').toLocaleUpperCase()}
+                  {t('button.create').toUpperCase()}
                 </ActionButton>
               </AlignRight>
             </Grid>

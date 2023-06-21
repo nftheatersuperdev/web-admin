@@ -194,7 +194,7 @@ export default function Booking(): JSX.Element {
               size="large"
               disabled={isDisabledButton}
             >
-              {t('button.save')}
+              {t('button.save').toUpperCase()}
             </ButtonSpace>
             <Link to="/user-groups">
               <ButtonSpace
@@ -204,7 +204,7 @@ export default function Booking(): JSX.Element {
                 size="large"
                 disabled={isDisabledButton}
               >
-                {t('button.cancel')}
+                {t('button.cancel').toUpperCase()}
               </ButtonSpace>
             </Link>
           </Grid>

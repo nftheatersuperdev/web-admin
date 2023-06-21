@@ -1019,7 +1019,7 @@
     },
     "dialog": {
       "create": {
-        "title": "Create new user group",
+        "title": "Create New User Group",
         "success": "User group has been created",
         "error": "Something went wrong!"
       },

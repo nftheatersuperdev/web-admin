@@ -492,11 +492,11 @@ export default function VoucherCreateEditPage(): JSX.Element {
             loading={isLoading}
             disabled={!(formik.isValid && formik.dirty) || isLoading || isInactive}
           >
-            {t('button.save')}
+            {t('button.save').toUpperCase()}
           </ButtonSpace>
           <Link to="/vouchers">
             <ButtonSpace color="primary" variant="outlined" size="large">
-              {t('button.cancel')}
+              {t('button.cancel').toUpperCase()}
             </ButtonSpace>
           </Link>
         </Grid>

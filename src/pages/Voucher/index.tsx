@@ -309,7 +309,7 @@ export default function VoucherListPage(): JSX.Element {
                   disabled={!validatePrivileges(userPrivileges, 'PERM_VOUCHER_VIEW')}
                 >
                   <CSVLinkText data={csvData} headers={csvHeaders} filename="voucher.csv">
-                    {t('button.export').toLocaleUpperCase()}
+                    {t('button.export').toUpperCase()}
                   </CSVLinkText>
                 </ActionButton>
                 <ActionButton
@@ -320,7 +320,7 @@ export default function VoucherListPage(): JSX.Element {
                   disabled={!validatePrivileges(userPrivileges, 'PERM_VOUCHER_CREATE')}
                   onClick={() => history.push('/vouchers/create')}
                 >
-                  {t('button.create').toLocaleUpperCase()}
+                  {t('button.create').toUpperCase()}
                 </ActionButton>
               </AlignRight>
             </Grid>
