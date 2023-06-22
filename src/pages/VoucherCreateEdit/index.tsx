@@ -178,7 +178,7 @@ export default function VoucherCreateEditPage(): JSX.Element {
     enableReinitialize: true,
     validationSchema,
     initialValues,
-    onSubmit: (values, _actions) => {
+    onSubmit: async (values, _actions) => {
       setIsLoading(true)
 
       const packagePrices =
@@ -221,33 +221,44 @@ export default function VoucherCreateEditPage(): JSX.Element {
             successMessage: t('voucher.dialog.create.success'),
             errorMessage: t('voucher.dialog.create.error'),
           }
-      toast.promise(mutate.function(mutate.data), {
-        loading: t('toast.loading'),
-        success: () => {
-          formik.resetForm()
-          setIsLoading(false)
-          refetch()
-          if (!isEdit) {
-            history.push('/vouchers')
-          }
-          return mutate.successMessage
-        },
-        error: (error) => {
-          setIsLoading(false)
-          let errorMessage = mutate.errorMessage
-          let errorField = ''
-          if (error.message) {
-            // The voucher code is duplicated
-            if (error.message.includes('unique constraint')) {
-              errorField = 'code'
-              errorMessage = t('voucher.errors.duplicatedCode')
+      const voucherId = await mutate.function(mutate.data)
+      /**
+       * Known Issues: The packagePrices and customerGroups are not support when do creating a voucher.
+       * @TODO Must remove this workaround after the backend was fixed the issue.
+       */
+      toast.promise(
+        voucherService.updateBff({
+          id: voucherId,
+          ...requestBody,
+        }),
+        {
+          loading: t('toast.loading'),
+          success: () => {
+            formik.resetForm()
+            setIsLoading(false)
+            refetch()
+            if (!isEdit) {
+              history.push('/vouchers')
             }
-            formik.setFieldError(errorField, errorMessage)
+            return mutate.successMessage
+          },
+          error: (error) => {
+            setIsLoading(false)
+            let errorMessage = mutate.errorMessage
+            let errorField = ''
+            if (error.message) {
+              // The voucher code is duplicated
+              if (error.message.includes('unique constraint')) {
+                errorField = 'code'
+                errorMessage = t('voucher.errors.duplicatedCode')
+              }
+              formik.setFieldError(errorField, errorMessage)
+              return errorMessage
+            }
             return errorMessage
-          }
-          return errorMessage
-        },
-      })
+          },
+        }
+      )
     },
   })
 
