@@ -37,7 +37,7 @@ import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { ConsentInputRequest, ConsentLogListProps } from 'services/web-bff/consent-log.type'
 import { getConsentLogList } from 'services/web-bff/consent-log'
 import { getTypeList } from 'services/web-bff/document'
-import { SelectOption } from './utils'
+import { SelectOption } from 'components/SelectOption'
 
 const Wrapper = styled(Card)`
   padding: 15px;
