@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import {
   Button,
-  Card,
   Grid,
   InputAdornment,
   MenuItem,
@@ -9,7 +8,6 @@ import {
   TableCell,
   Table,
   TableContainer,
-  TableHead,
   TableRow,
   TextField,
   Typography,
@@ -20,7 +18,6 @@ import {
   Chip,
 } from '@mui/material'
 import { CloseOutlined, Search as SearchIcon } from '@mui/icons-material'
-import styled from 'styled-components'
 import { makeStyles } from '@mui/styles'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
@@ -38,48 +35,15 @@ import { ConsentInputRequest, ConsentLogListProps } from 'services/web-bff/conse
 import { getConsentLogList } from 'services/web-bff/consent-log'
 import { getTypeList } from 'services/web-bff/document'
 import { SelectOption } from 'components/SelectOption'
-
-const Wrapper = styled(Card)`
-  padding: 15px;
-  margin-top: 20px;
-`
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`
-const GridSearchSection = styled(Grid)`
-  padding-top: 20px !important;
-  align-items: left !important;
-  min-height: 100px !important;
-`
-const TextSmallLineClamp = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  width: 85px;
-  -line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-`
-const TextLineClamp = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  width: 125px;
-  -line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-`
-
-const DataWrapper = styled.div`
-  padding: 0 17px;
-`
-const TableHeaderColumn = styled.div`
-  border-left: 2px solid #e0e0e0;
-  font-weight: bold;
-  padding-left: 10px;
-`
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
+import {
+  DataWrapper,
+  TextSmallLineClamp,
+  TextLineClamp,
+  ContentSection,
+  GridSearchSection,
+  Wrapper,
+} from 'components/Styled'
 
 export default function ConsentsLog(): JSX.Element {
   const useStyles = makeStyles({
@@ -169,6 +133,32 @@ export default function ConsentsLog(): JSX.Element {
       staleTime: 5 * (60 * 1000),
     }
   )
+  const headerColumn: TableHeaderProps[] = [
+    {
+      text: t('consentLog.firstName'),
+    },
+    {
+      text: t('consentLog.lastName'),
+    },
+    {
+      text: t('consentLog.email'),
+    },
+    {
+      text: t('consentLog.phoneNumber'),
+    },
+    {
+      text: t('consentLog.documentNameEn'),
+    },
+    {
+      text: t('consentLog.documentVersion'),
+    },
+    {
+      text: t('consentLog.status'),
+    },
+    {
+      text: t('consentLog.updatedDate'),
+    },
+  ]
   const consent =
     (consentList &&
       consentList.data?.agreements.length > 0 &&
@@ -481,34 +471,7 @@ export default function ConsentsLog(): JSX.Element {
             </GridSearchSection>
             <TableContainer className={classes.table}>
               <Table id="consent_log___table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.firstName')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.lastName')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.email')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.phoneNumber')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.documentNameEn')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.documentVersion')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.status')}</TableHeaderColumn>
-                    </TableCell>
-                    <TableCell align="left">
-                      <TableHeaderColumn>{t('consentLog.updatedDate')}</TableHeaderColumn>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
+                <DataTableHeader headers={headerColumn} />
                 {isFetchingActivities ? (
                   <TableBody>
                     <TableRow>
