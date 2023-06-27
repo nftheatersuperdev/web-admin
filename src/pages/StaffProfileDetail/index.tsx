@@ -16,12 +16,16 @@ import { getRoles } from 'services/web-bff/admin-user-role'
 import { searchAdminUser, updateAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import { DisabledField, EnabledTextField } from 'components/Styled'
 import { AdminUsersProps } from 'services/web-bff/admin-user.type'
 import { Role } from 'services/web-bff/admin-user-role.type'
 import { getLocationList } from 'services/web-bff/location'
 import { LocationResponse } from 'services/web-bff/location.type'
-import { useStyles, DisabledField, EnabledTextField } from './styles'
-import { StaffProfileDetailEditParam } from './constant'
+import { useStyles } from './styles'
+
+interface StaffProfileDetailEditParam {
+  id: string
+}
 
 interface SelectOption {
   label: string

@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
 import {
-  Button,
   Card,
   Chip,
   CircularProgress,
@@ -31,14 +30,16 @@ import {
   validateIpAddress,
 } from 'utils'
 import { Page } from 'layout/LayoutRoute'
+import { DataWrapper, TextLineClamp, TextSmallLineClamp, SearchButton } from 'components/Styled'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
+import { SelectOption } from 'components/SelectOption'
 import {
   CookieConsentInputRequest,
   CookieConsentLogListProps,
 } from 'services/web-bff/cookie-consent-log.type'
 import { getCategories, getCookieConsentLogList } from 'services/web-bff/cookie-consent-log'
-import { SelectOption, getStatusList } from './utils'
+import { getStatusList } from './utils'
 
 const Wrapper = styled(Card)`
   padding: 15px;
@@ -52,39 +53,6 @@ const GridSearchSection = styled(Grid)`
   align-items: left !important;
   min-height: 100px !important;
 `
-const TextSmallLineClamp = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  width: 85px;
-  -line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-`
-const TextLineClamp = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  width: 125px;
-  -line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-`
-
-const SearchButton = styled(Button)`
-  font-weight: bold !important;
-  display: inline-flexbox;
-  box-shadow: none;
-  padding: 14px 12px !important;
-  width: 107px;
-`
-
-const DataWrapper = styled.div`
-  padding: 0 17px;
-`
-
 export default function CookieConsentLogPage(): JSX.Element {
   const useStyles = makeStyles({
     table: {
