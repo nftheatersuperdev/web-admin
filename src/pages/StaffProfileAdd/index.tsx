@@ -28,9 +28,10 @@ import { getRoles } from 'services/web-bff/admin-user-role'
 import { Role } from 'services/web-bff/admin-user-role.type'
 import { Page } from 'layout/LayoutRoute'
 import PageTitle from 'components/PageTitle'
+import { EnabledTextField } from 'components/Styled'
 import { getLocationList } from 'services/web-bff/location'
 import { LocationResponse } from 'services/web-bff/location.type'
-import { useStyles, EnabledTextField } from './styles'
+import { useStyles } from './styles'
 
 interface SelectOption {
   label: string

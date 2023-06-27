@@ -3,19 +3,15 @@ import { useQuery } from 'react-query'
 import { useHistory, useLocation } from 'react-router-dom'
 import {
   Typography,
-  Card,
   Grid,
   Button,
   TableContainer,
   Table,
   TableRow,
-  TableHead,
   TableCell,
   TableBody,
   Paper,
   MenuItem,
-  Select,
-  FormControl,
   Chip,
   TextField,
   CircularProgress,
@@ -31,7 +27,6 @@ import {
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
-  formatStringForInputText,
   validateKeywordTextWithSpecialChar,
   convertPhoneNumber,
   validateKeywordText,
@@ -39,10 +34,8 @@ import {
   validatePhoneNumberSearch,
 } from 'utils'
 import config from 'config'
-import Pagination from '@material-ui/lab/Pagination'
 import { useFormik } from 'formik'
 import { CSVLink } from 'react-csv'
-import styled from 'styled-components'
 import { CloseOutlined } from '@mui/icons-material'
 import { Page } from 'layout/LayoutRoute'
 import DatePicker from 'components/DatePicker'
@@ -54,48 +47,23 @@ import {
   CustomerInputRequest,
   CustomerMeProps,
 } from 'services/web-bff/customer.type'
-import './pagination.css'
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
+import {
+  ContentSection,
+  DataWrapper,
+  GridSearchSection,
+  TextLineClamp,
+  TextSmallLineClamp,
+  Wrapper,
+} from 'components/Styled'
+import Paginate from 'components/Paginate'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
 const initSelectedFromDate = dayjs().tz(config.timezone).startOf('day').toDate()
 
-const Wrapper = styled(Card)`
-  padding: 15px;
-  margin-top: 20px;
-`
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`
-const GridSearchSection = styled(Grid)`
-  padding-top: 20px !important;
-  align-items: left !important;
-  min-height: 100px !important;
-`
-
 export default function CustomerProfile(): JSX.Element {
   const useStyles = makeStyles({
-    headerTopic: {
-      padding: '8px 16px',
-    },
-    headerTopicText: {
-      fontSize: '20px',
-    },
-    searchBar: {
-      marginTop: '10px',
-      marginBottom: '10px',
-      display: 'flex',
-      alignItems: 'left',
-    },
-    filter: {
-      height: '90px',
-    },
-    pl16: {
-      paddingLeft: '16px',
-    },
-    pl17: {
-      paddingLeft: '17px',
-    },
     noUnderLine: {
       color: 'white',
       textDecoration: 'none',
@@ -105,26 +73,6 @@ export default function CustomerProfile(): JSX.Element {
     },
     hideObject: {
       display: 'none',
-    },
-    textBoldBorder: {
-      borderLeft: '2px solid #E0E0E0',
-      fontWeight: 'bold',
-    },
-    paginationContrainer: {
-      display: 'flex',
-      listStyleType: 'none',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '20px',
-      round: 'true',
-    },
-    width120: {
-      paddingLeft: '16px',
-      width: '120px',
-    },
-    inlineElement: {
-      display: 'inline-flex',
     },
     chipGreen: {
       backgroundColor: '#4CAF50',
@@ -170,13 +118,6 @@ export default function CustomerProfile(): JSX.Element {
       fontSize: '1.2em',
       fontWeight: 'bold',
       padding: '48px 0',
-    },
-    rightPanel: {
-      textAlign: 'right',
-      paddingRight: '16px',
-    },
-    breadcrumbText: {
-      color: '#000000DE',
     },
     paddingRightBtnClear: {
       marginLeft: '-40px',
@@ -381,63 +322,83 @@ export default function CustomerProfile(): JSX.Element {
             key={`customer-${user.id}`}
           >
             <TableCell>
-              <div className={classes.pl17}>{formatStringForInputText(user.firstName)}</div>
+              <DataWrapper>
+                <TextLineClamp>{user.firstName}</TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{formatStringForInputText(user.lastName)}</div>
+              <DataWrapper>
+                <TextLineClamp>{user.lastName}</TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{formatStringForInputText(user.email)}</div>
+              <DataWrapper>
+                <TextLineClamp>{user.email}</TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{convertPhoneNumber(user.phoneNumber)}</div>
+              <DataWrapper>
+                <TextSmallLineClamp>{convertPhoneNumber(user.phoneNumber)}</TextSmallLineClamp>
+              </DataWrapper>
+            </TableCell>
+            <TableCell width={50}>
+              <DataWrapper>
+                <TextSmallLineClamp>
+                  {!user.isActive ? (
+                    <Chip
+                      size="small"
+                      label={t('user.statuses.inactive')}
+                      className={classes.chipLightGrey}
+                    />
+                  ) : (
+                    <Chip
+                      size="small"
+                      label={t('user.statuses.active')}
+                      className={classes.chipGreen}
+                    />
+                  )}
+                </TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>
-                {!user.isActive ? (
-                  <Chip
-                    size="small"
-                    label={t('user.statuses.inactive')}
-                    className={classes.chipLightGrey}
-                  />
-                ) : (
-                  <Chip
-                    size="small"
-                    label={t('user.statuses.active')}
-                    className={classes.chipGreen}
-                  />
-                )}
-              </div>
+              <DataWrapper>
+                <TextSmallLineClamp>
+                  {user.kycStatus === null ? (
+                    user.kycStatus
+                  ) : user.kycStatus.toLowerCase() === 'rejected' ? (
+                    <Chip size="small" label={t('user.kyc.rejected')} className={classes.chipRed} />
+                  ) : user.kycStatus.toLowerCase() === 'verified' ? (
+                    <Chip
+                      size="small"
+                      label={t('user.kyc.verified')}
+                      className={classes.chipGreen}
+                    />
+                  ) : (
+                    <Chip size="small" label={t('user.kyc.pending')} className={classes.chipGrey} />
+                  )}
+                </TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>
-                {user.kycStatus === null ? (
-                  user.kycStatus
-                ) : user.kycStatus.toLowerCase() === 'rejected' ? (
-                  <Chip size="small" label={t('user.kyc.rejected')} className={classes.chipRed} />
-                ) : user.kycStatus.toLowerCase() === 'verified' ? (
-                  <Chip size="small" label={t('user.kyc.verified')} className={classes.chipGreen} />
-                ) : (
-                  <Chip size="small" label={t('user.kyc.pending')} className={classes.chipGrey} />
-                )}
-              </div>
+              <DataWrapper>
+                <TextLineClamp>
+                  {formaDateStringWithPattern(user.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                </TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>
-                {formaDateStringWithPattern(user.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className={classes.pl17}>
-                {formaDateStringWithPattern(user.updatedDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-              </div>
+              <DataWrapper>
+                <TextLineClamp>
+                  {formaDateStringWithPattern(user.updatedDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+                </TextLineClamp>
+              </DataWrapper>
             </TableCell>
           </TableRow>
         )
       })) ||
     []
   const isNoData = userData.length > 0
-  const generateDataToTable = () => {
+  const generateTableBody = () => {
     if (isNoData) {
       return <TableBody>{userData}</TableBody>
     }
@@ -517,6 +478,32 @@ export default function CustomerProfile(): JSX.Element {
       setIsEnableFilterButton(true)
     }
   }
+  const headerText: TableHeaderProps[] = [
+    {
+      text: t('user.firstName'),
+    },
+    {
+      text: t('user.lastName'),
+    },
+    {
+      text: t('user.email'),
+    },
+    {
+      text: t('user.phone'),
+    },
+    {
+      text: t('user.status'),
+    },
+    {
+      text: t('user.kyc.status'),
+    },
+    {
+      text: t('staffProfile.createdDate'),
+    },
+    {
+      text: t('user.updatedDate'),
+    },
+  ]
   return (
     <Page>
       <PageTitle title={t('sidebar.userManagement.customerProfile')} breadcrumbs={breadcrumbs} />
@@ -664,51 +651,7 @@ export default function CustomerProfile(): JSX.Element {
               <Grid item xs={12}>
                 <TableContainer component={Paper} className={classes.table}>
                   <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.firstName')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.lastName')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.email')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.phone')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.status')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.kyc.status')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('staffProfile.createdDate')}
-                          </div>
-                        </TableCell>
-                        <TableCell align="left">
-                          <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                            {t('user.updatedDate')}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-
+                    <DataTableHeader headers={headerText} />
                     {isFetchingActivities ? (
                       <TableBody>
                         <TableRow>
@@ -718,7 +661,7 @@ export default function CustomerProfile(): JSX.Element {
                         </TableRow>
                       </TableBody>
                     ) : (
-                      generateDataToTable()
+                      generateTableBody()
                     )}
                   </Table>
                 </TableContainer>
@@ -726,39 +669,14 @@ export default function CustomerProfile(): JSX.Element {
             </GridSearchSection>
             <GridSearchSection container>
               <Grid item xs={12}>
-                <div className={classes.paginationContrainer}>
-                  {t('table.rowPerPage')}:&nbsp;
-                  <FormControl className={classes.inlineElement}>
-                    <Select
-                      value={userResponse?.data.pagination?.size || pageSize}
-                      defaultValue={userResponse?.data.pagination?.size || pageSize}
-                      onChange={(event) => {
-                        setPage(1)
-                        setPages(event.target.value as number)
-                        setPageSize(event.target.value as number)
-                      }}
-                    >
-                      {config.tableRowsPerPageOptions?.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  &nbsp;&nbsp;{pages} {t('staffProfile.of')}
-                  &nbsp;
-                  {pages}
-                  <Pagination
-                    count={pages}
-                    page={page}
-                    defaultPage={page}
-                    variant="text"
-                    shape="rounded"
-                    onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                      setPage(value)
-                    }}
-                  />
-                </div>
+                <Paginate
+                  pagination={userResponse?.data.pagination}
+                  page={page}
+                  pageSize={pageSize}
+                  setPage={setPage}
+                  setPageSize={setPageSize}
+                  refetch={refetch}
+                />
               </Grid>
             </GridSearchSection>
           </Fragment>
