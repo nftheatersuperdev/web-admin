@@ -11,6 +11,7 @@ export const ROLES = Object.freeze({
   CENTRE_OPERATION: 'centre_operation',
   BRANCH_MANAGER: 'branch_manager',
   BRANCH_OFFICER: 'branch_officer',
+  DRIVER: 'driver',
 })
 
 export type Role =
@@ -24,6 +25,7 @@ export type Role =
   | typeof ROLES.CENTRE_OPERATION
   | typeof ROLES.BRANCH_MANAGER
   | typeof ROLES.BRANCH_OFFICER
+  | typeof ROLES.DRIVER
 
 export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boolean => {
   if (!allowedRoles || !allowedRoles.length) {
@@ -57,6 +59,8 @@ export const getAdminUserRoleLabel = (
       return t('role.branchManager')
     case ROLES.BRANCH_OFFICER:
       return t('role.branchOfficer')
+    case ROLES.DRIVER:
+      return t('role.driver')
     default:
       return role ? role.toLowerCase() : ''
   }
