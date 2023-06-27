@@ -3,7 +3,6 @@ import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router'
 import {
-  Card,
   Table,
   TableBody,
   TableCell,
@@ -13,53 +12,21 @@ import {
   CircularProgress,
   Grid,
 } from '@mui/material'
-import styled from 'styled-components'
 import { makeStyles } from '@mui/styles'
-// import { useStyles } from 'theme/theme-style'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
-// import { ContentSection, TableContainerWithNoBorder, Wrapper } from 'components/Styled'
 import { Page } from 'layout/LayoutRoute'
 import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
 import { getList } from 'services/web-bff/document'
+import {
+  DataWrapper,
+  TextLineClamp,
+  TextSmallLineClamp,
+  Wrapper,
+  ContentSection,
+  GridSearchSection,
+} from 'components/Styled'
 import Paginate from 'components/Paginate'
-
-const Wrapper = styled(Card)`
-  padding: 15px;
-  margin-top: 20px;
-`
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`
-const GridSearchSection = styled(Grid)`
-  padding-top: 20px !important;
-  align-items: left !important;
-  min-height: 100px !important;
-`
-const TextSmallLineClamp = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  width: 85px;
-  -line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-`
-const TextLineClamp = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  width: 125px;
-  -line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-`
-
-const DataWrapper = styled.div`
-  padding: 0 17px;
-`
 
 export default function NewDocuments(): JSX.Element {
   const useStyles = makeStyles({
@@ -82,7 +49,10 @@ export default function NewDocuments(): JSX.Element {
     data: documentList,
     refetch,
     isFetching: isFetchingDocument,
-  } = useQuery('documents', () => getList({ page, size }))
+  } = useQuery('documents', () => getList({ page, size }), {
+    cacheTime: 10 * (60 * 1000),
+    staleTime: 5 * (60 * 1000),
+  })
   const documents =
     (documentList &&
       documentList.documents.length > 0 &&
@@ -180,7 +150,7 @@ export default function NewDocuments(): JSX.Element {
     },
     {
       text: t('sidebar.documentsManagement.newDocument'),
-      link: '/consents-log',
+      link: '/new-documents',
     },
   ]
   return (

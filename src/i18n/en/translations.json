@@ -1179,7 +1179,8 @@
     },
     "statuses": {
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "schedule": "Schedule"
     },
     "overviewAndVersions": "Overview & Versions",
     "editDocument": "Edit Document",

@@ -1106,6 +1106,11 @@
         "addNewVersion": "เพิ่มเวอร์ชั่นใหม่"
       }
     },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "schedule": "Schedule"
+    },
     "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
     "editDocument": "แก้ไขเอกสาร",
     "addEdit": {

@@ -43,6 +43,12 @@ export const GridSearchSection = styled(Grid)`
   align-items: left !important;
   min-height: 100px !important;
 `
+export const GridTextField = styled(Grid)`
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 20px !important;
+`
+
 export const TextSmallLineClamp = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
