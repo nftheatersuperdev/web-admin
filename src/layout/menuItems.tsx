@@ -197,14 +197,22 @@ export function useMenuItems() {
             PRIVILEGES.PERM_AGREEMENT_DOCUMENT_VIEW,
             PRIVILEGES.PERM_DOCUMENT_CONTENT_VIEW,
           ],
-          // allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
+        },
+        {
+          id: 'left_menu__new_document',
+          href: ROUTE_PATHS.NEW_DOCUMENTS,
+          title: t('sidebar.documentsManagement.document'),
+          allowedPrivileges: [
+            PRIVILEGES.PERM_AGREEMENT_DOCUMENT_VIEW,
+            PRIVILEGES.PERM_DOCUMENT_CONTENT_VIEW,
+          ],
+          toggleKey: 'IS_ENABLED_DOCUMENTS_FEATURE',
         },
         {
           id: 'left_menu__consents_log',
           href: ROUTE_PATHS.CONSENTS_LOG,
           title: t('sidebar.documentsManagement.consentLog'),
           allowedPrivileges: [PRIVILEGES.PERM_COOKIE_CONSENT_VIEW],
-          toggleKey: 'IS_ENABLED_CONSENT_LOG_FEATURE',
         },
         {
           id: 'left_menu__cookie_log',

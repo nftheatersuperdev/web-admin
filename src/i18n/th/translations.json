@@ -86,6 +86,7 @@
     "documentsManagement": {
       "title": "การจัดการเอกสาร",
       "document": "เอกสาร",
+      "newDocument": "เอกสาร",
       "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
       "deleteLog": "ประวัติการลบบัญชีลูกค้า",
       "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้"
@@ -117,6 +118,7 @@
     "documents": "เอกสาร",
     "consentLog": "บันทึกกิจกรรมการขอความยินยอม",
     "userDeleteLog": "ประวัติการลบบัญชีลูกค้า",
+    "deleteAccountLog": "ประวัติการลบบัญชีลูกค้า",
     "cookieConsentLog": "บันทึกความยินยอมสำหรับคุกกี้",
     "adminUsers": "ผู้ใช้งานระบบหลังบ้าน",
     "account": "บัญชีผู้ใช้",
@@ -1103,6 +1105,60 @@
       "buttons": {
         "addNewVersion": "เพิ่มเวอร์ชั่นใหม่"
       }
+    },
+    "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
+    "editDocument": "แก้ไขเอกสาร",
+    "addEdit": {
+      "titles": {
+        "add": "เพิ่มเวอร์ชั่นใหม่",
+        "edit": "แก้ไขเวอร์ชั่น {{version}}"
+      },
+      "effectiveDate": "วันที่มีผลบังคับใช้",
+      "revisionSummary": "สรุปการแก้ไข",
+      "titleEn": "หัวข้อภาษาอังกฤษ",
+      "titleTh": "หัวข้อภาษาไทย",
+      "contentEn": "เนื้อหา (EN)",
+      "contentTh": "เนื้อหา (TH)",
+      "helpers": {
+        "effectiveDateGreaterThanLastVersion": "สามารถเลือกวันที่มากกว่าเวอร์ชั่นล่าสุด (Today +1)"
+      }
+    },
+    "views": {
+      "title": "มุมมองของเวอร์ชั่น {{version}}"
+    },
+    "error": {
+      "effectiveDateLessThanToday": "กรุณาใส่วันที่เริ่มต้นที่มากกว่าเวลาปัจจุบัน",
+      "effectiveDateLessThanNextVersion": "กรุณาใส่วันที่เริ่มต้นที่น้อยกว่า {{nextEffectiveDate}}"
+    }
+  },
+  "newDocuments": {
+    "header": "จัดการเอกสาร",
+    "overview": {
+      "title": "ภาพรวม",
+      "id": "เอกสารไอดี",
+      "nameEN": "ชื่อเอกสาร (ภาษาอังกฤษ)",
+      "nameTH": "ชื่อเอกสาร (ภาษาไทย)",
+      "codeName": "รหัสเอกสาร",
+      "activeVersion": "เวอร์ชั่นที่เปิดใช้งาน",
+      "lastUpdated": "แก้ไขล่าสุด",
+      "action": "ดำเนินการ"
+    },
+    "versions": {
+      "title": "เวอร์ชั่นของเอกสาร",
+      "no": "ลำดับ",
+      "createdDate": "วันที่สร้าง",
+      "createdBy": "ผู้ที่สร้าง",
+      "version": "เวอร์ชั่น",
+      "status": "สถานะ",
+      "effectiveDate": "วันที่มีผลบังคับใช้",
+      "revisionSummary": "สรุปการแก้ไข",
+      "buttons": {
+        "addNewVersion": "เพิ่มเวอร์ชั่นใหม่"
+      }
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "overviewAndVersions": "ภาพรวมและเวอร์ชั่น",
     "editDocument": "แก้ไขเอกสาร",
