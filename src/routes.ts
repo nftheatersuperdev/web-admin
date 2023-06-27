@@ -368,7 +368,7 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   },
   {
     path: ROUTE_PATHS.NEW_DOCUMENT_VERSIONS,
-    component: lazy(() => import('./pages/DocumentVersions' /* webpackChunkName: "app" */)),
+    component: lazy(() => import('./pages/NewDocumentVersions' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {

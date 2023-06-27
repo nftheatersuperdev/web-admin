@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router'
 import {
   Card,
   Table,
@@ -73,6 +74,7 @@ export default function NewDocuments(): JSX.Element {
     },
   })
   const classes = useStyles()
+  const history = useHistory()
   const { t } = useTranslation()
   const [page, setPage] = useState<number>(1)
   const [size, setSize] = useState<number>(10)
@@ -87,7 +89,12 @@ export default function NewDocuments(): JSX.Element {
       documentList.documents.map((doc, index) => {
         // Build Table Body
         return (
-          <TableRow id={`documents__index-${index}`} key={doc.id}>
+          <TableRow
+            hover
+            onClick={() => history.push(`/new-documents/${doc.codeName}/versions`)}
+            id={`documents__index-${index}`}
+            key={doc.id}
+          >
             <TableCell id="documents__document_code_name">
               <DataWrapper>
                 <TextLineClamp>{doc.codeName}</TextLineClamp>
