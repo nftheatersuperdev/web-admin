@@ -117,19 +117,6 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     ],
   },
   {
-    path: ROUTE_PATHS.USER,
-    component: lazy(() => import('./pages/User' /* webpackChunkName: "app" */)),
-    allowedRoles: [
-      ROLES.SUPER_ADMIN,
-      ROLES.ADMIN,
-      ROLES.CUSTOMER_SUPPORT,
-      ROLES.OPERATION,
-      ROLES.MARKETING,
-      ROLES.PRODUCT_SUPPORT,
-      ROLES.CENTRE_OPERATION,
-    ],
-  },
-  {
     path: ROUTE_PATHS.USER_GROUP_DETAIL,
     component: lazy(() => import('./pages/UserGroupDetail' /* webpackChunkName: "app" */)),
     allowedRoles: [
@@ -364,17 +351,6 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {
-    path: ROUTE_PATHS.CONSENT_LOG,
-    component: lazy(() => import('./pages/ConsentLog' /* webpackChunkName: "app" */)),
-    allowedRoles: [
-      ROLES.SUPER_ADMIN,
-      ROLES.ADMIN,
-      ROLES.OPERATION,
-      ROLES.CUSTOMER_SUPPORT,
-      ROLES.MARKETING,
-    ],
-  },
-  {
     path: ROUTE_PATHS.CONSENTS_LOG,
     component: lazy(() => import('./pages/ConsentsLog' /* webpackChunkName: "app" */)),
     allowedRoles: [
@@ -406,11 +382,6 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     path: ROUTE_PATHS.ADDITIONAL_EXPENSE,
     component: lazy(() => import('./pages/AdditionalExpenses' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION],
-  },
-  {
-    path: ROUTE_PATHS.ADMIN_USERS,
-    component: lazy(() => import('./pages/AdminUsers' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.IT_ADMIN],
   },
   {
     path: ROUTE_PATHS.STAFF_PROFILES,
