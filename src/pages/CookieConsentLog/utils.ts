@@ -1,11 +1,5 @@
 import { TFunction, Namespace } from 'react-i18next'
-
-export interface SelectOption {
-  key: string
-  label: string
-  value: string
-  isDefault?: boolean
-}
+import { SelectOption } from 'components/SelectOption'
 
 export const getStatusList = (t: TFunction<Namespace>): SelectOption[] => {
   return [

@@ -6,15 +6,11 @@ import {
   Typography,
   Paper,
   Table,
-  TableHead,
   TableCell,
   TableRow,
-  Card,
-  FormControl,
   Button,
   Grid,
   MenuItem,
-  Select,
   TableBody,
   Chip,
   CircularProgress,
@@ -26,7 +22,6 @@ import config from 'config'
 import {
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   formaDateStringWithPattern,
-  formatStringForInputText,
   validateKeywordText,
   validateKeywordUUID,
 } from 'utils'
@@ -35,39 +30,25 @@ import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import { useFormik } from 'formik'
-import styled from 'styled-components'
-import Pagination from '@material-ui/lab/Pagination'
 import { getAdminUserRoleLabel, getRoleList } from 'auth/roles'
 import { searchAdminUser } from 'services/web-bff/admin-user'
 import { Page } from 'layout/LayoutRoute'
 import './pagination.css'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
+import {
+  Wrapper,
+  ContentSection,
+  GridSearchSection,
+  DataWrapper,
+  TextLineClamp,
+  TextSmallLineClamp,
+} from 'components/Styled'
 import { AdminUserByCriteria, AdminUsersProps } from 'services/web-bff/admin-user.type'
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
+import Paginate from 'components/Paginate'
 
-const Wrapper = styled(Card)`
-  padding: 15px;
-  margin-top: 20px;
-`
-const ContentSection = styled.div`
-  margin-bottom: 20px;
-`
-const GridSearchSection = styled(Grid)`
-  padding-top: 20px !important;
-  align-items: left !important;
-  min-height: 100px !important;
-`
 export default function StaffProfiles(): JSX.Element {
   const useStyles = makeStyles({
-    textBoldBorder: {
-      borderLeft: '2px solid #E0E0E0',
-      fontWeight: 'bold',
-    },
-    inlineElement: {
-      display: 'inline-flex',
-    },
-    searchTextField: {
-      width: '200px',
-    },
     chipGreen: {
       backgroundColor: '#4CAF50',
       color: 'white',
@@ -91,20 +72,8 @@ export default function StaffProfiles(): JSX.Element {
     hideObject: {
       display: 'none',
     },
-    headerTopic: {
-      padding: '8px 16px',
-    },
     table: {
       width: '100%',
-    },
-    paginationContrainer: {
-      display: 'flex',
-      listStyleType: 'none',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '20px',
-      round: 'true',
     },
     addButton: {
       fontWeight: 'bold',
@@ -123,14 +92,6 @@ export default function StaffProfiles(): JSX.Element {
       fontSize: '1.2em',
       fontWeight: 'bold',
       padding: '48px 0',
-    },
-    width120: {
-      paddingLeft: '16px',
-      width: '120px',
-    },
-    width145: {
-      paddingLeft: '16px',
-      width: '145px',
     },
     gridExport: {
       textAlign: 'right',
@@ -152,6 +113,32 @@ export default function StaffProfiles(): JSX.Element {
   const [userFilter, setUserFilter] = useState<AdminUserByCriteria>()
   const roleList = getRoleList(t)
   const timeoutIdRef = useRef<number | null>(null)
+  const headerText: TableHeaderProps[] = [
+    {
+      text: t('staffProfile.firstName'),
+    },
+    {
+      text: t('staffProfile.lastName'),
+    },
+    {
+      text: t('user.email'),
+    },
+    {
+      text: t('user.role'),
+    },
+    {
+      text: t('staffProfile.location'),
+    },
+    {
+      text: t('user.status'),
+    },
+    {
+      text: t('staffProfile.createdDate'),
+    },
+    {
+      text: t('user.updatedDate'),
+    },
+  ]
   const {
     data: adminUsersData,
     refetch,
@@ -241,20 +228,26 @@ export default function StaffProfiles(): JSX.Element {
             key={`admin-user-${adminUserData.id}`}
           >
             <TableCell>
-              <div className={classes.pl17}>
-                {formatStringForInputText(adminUserData.firstName)}
-              </div>
+              <DataWrapper>
+                <TextLineClamp>{adminUserData.firstName}</TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{formatStringForInputText(adminUserData.lastName)}</div>
+              <DataWrapper>
+                <TextLineClamp>{adminUserData.lastName}</TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>{formatStringForInputText(adminUserData.email)}</div>
+              <DataWrapper>
+                <TextLineClamp>{adminUserData.email}</TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>
-                {getAdminUserRoleLabel(adminUserData.role.toLowerCase(), t)}
-              </div>
+              <DataWrapper>
+                <TextSmallLineClamp>
+                  {getAdminUserRoleLabel(adminUserData.role.toLowerCase(), t)}
+                </TextSmallLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
               <div className={classes.pl17}>
@@ -268,30 +261,32 @@ export default function StaffProfiles(): JSX.Element {
                 ))}
               </div>
             </TableCell>
-            <TableCell>
-              <div className={classes.pl17}>
-                {!adminUserData.isActive ? (
-                  <Chip size="small" label={t('user.disabled')} className={classes.chipRed} />
-                ) : (
-                  <Chip size="small" label={t('user.enabled')} className={classes.chipGreen} />
-                )}
-              </div>
+            <TableCell width={50}>
+              {!adminUserData.isActive ? (
+                <Chip size="small" label={t('user.disabled')} className={classes.chipRed} />
+              ) : (
+                <Chip size="small" label={t('user.enabled')} className={classes.chipGreen} />
+              )}
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>
-                {formaDateStringWithPattern(
-                  adminUserData.createdDate,
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
-              </div>
+              <DataWrapper>
+                <TextLineClamp>
+                  {formaDateStringWithPattern(
+                    adminUserData.createdDate,
+                    DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                  )}
+                </TextLineClamp>
+              </DataWrapper>
             </TableCell>
             <TableCell>
-              <div className={classes.pl17}>
-                {formaDateStringWithPattern(
-                  adminUserData.updatedDate,
-                  DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                )}
-              </div>
+              <DataWrapper>
+                <TextLineClamp>
+                  {formaDateStringWithPattern(
+                    adminUserData.updatedDate,
+                    DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                  )}
+                </TextLineClamp>
+              </DataWrapper>
             </TableCell>
           </TableRow>
         )
@@ -421,7 +416,6 @@ export default function StaffProfiles(): JSX.Element {
             </Grid>
             <Grid item xs={9} sm={3}>
               <TextField
-                // className={formik.values.searchType === 'role' ? classes.hideObject : ' '}
                 className={classes.hideObject}
                 id="staff_profile__search_input"
                 name="searchVal"
@@ -494,51 +488,7 @@ export default function StaffProfiles(): JSX.Element {
             <Grid item xs={12}>
               <TableContainer component={Paper} className={classes.table}>
                 <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                          {t('staffProfile.firstName')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                          {t('staffProfile.lastName')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                          {t('user.email')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width145].join(' ')}>
-                          {t('user.role')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width145].join(' ')}>
-                          {t('staffProfile.location')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                          {t('user.status')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                          {t('staffProfile.createdDate')}
-                        </div>
-                      </TableCell>
-                      <TableCell align="left">
-                        <div className={[classes.textBoldBorder, classes.width120].join(' ')}>
-                          {t('user.updatedDate')}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-
+                  <DataTableHeader headers={headerText} />
                   {isFetchingActivities ? (
                     <TableBody>
                       <TableRow>
@@ -556,38 +506,14 @@ export default function StaffProfiles(): JSX.Element {
           </GridSearchSection>
           <GridSearchSection container>
             <Grid item xs={12}>
-              <div className={classes.paginationContrainer}>
-                {t('table.rowPerPage')}:&nbsp;
-                <FormControl className={classes.inlineElement}>
-                  <Select
-                    value={adminUsersData?.data.pagination?.size || pageSize}
-                    defaultValue={adminUsersData?.data.pagination?.size || pageSize}
-                    onChange={(event) => {
-                      setPage(1)
-                      setPageSize(event.target.value as number)
-                    }}
-                  >
-                    {config.tableRowsPerPageOptions?.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                &nbsp;&nbsp;{adminUsersData?.data.pagination?.page || pages} {t('staffProfile.of')}
-                &nbsp;
-                {adminUsersData?.data.pagination?.totalPage || pages}
-                <Pagination
-                  count={adminUsersData?.data.pagination?.totalPage || pages}
-                  page={adminUsersData?.data.pagination?.page || page}
-                  defaultPage={adminUsersData?.data.pagination?.page || page}
-                  variant="text"
-                  shape="rounded"
-                  onChange={(_event: React.ChangeEvent<unknown>, value: number) => {
-                    setPage(value)
-                  }}
-                />
-              </div>
+              <Paginate
+                pagination={adminUsersData?.data.pagination}
+                page={page}
+                pageSize={pageSize}
+                setPage={setPage}
+                setPageSize={setPageSize}
+                refetch={refetch}
+              />
             </Grid>
           </GridSearchSection>
         </Fragment>

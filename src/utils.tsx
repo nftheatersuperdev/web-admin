@@ -345,37 +345,6 @@ export const getDateFilterOperators = (t: TFunction<Namespace>): GridFilterOpera
     },
     InputComponent: GridFilterDatePicker,
   },
-]
-
-export const getDateFilterMoreOperators = (t: TFunction<Namespace>): GridFilterOperator[] => [
-  {
-    label: t('filter.equals'),
-    value: FieldComparisons.onDay,
-    getApplyFilterFn: (filterItem: GridFilterItem) => {
-      if (!filterItem.value) {
-        return null
-      }
-
-      return ({ value }: GridCellParams): boolean => {
-        return filterItem.value === value
-      }
-    },
-    InputComponent: GridFilterDatePicker,
-  },
-  {
-    label: t('filter.notEquals'),
-    value: FieldComparisons.notOnDay,
-    getApplyFilterFn: (filterItem: GridFilterItem) => {
-      if (!filterItem.value) {
-        return null
-      }
-
-      return ({ value }: GridCellParams): boolean => {
-        return filterItem.value !== value
-      }
-    },
-    InputComponent: GridFilterDatePicker,
-  },
   {
     label: t('filter.greaterThan'),
     value: FieldComparisons.greaterThan,
