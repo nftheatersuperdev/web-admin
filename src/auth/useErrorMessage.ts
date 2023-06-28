@@ -48,6 +48,9 @@ function useErrorMessage(): ErrorMessage {
       case ERROR_CODES.PERMISSION_NOT_ALLOWED:
         return t('authentication.error.permissionNotAllowed')
 
+      case ERROR_CODES.USER_ACCESS_DENIED:
+        return t('authentication.error.accessDenied')
+
       default:
         return t('authentication.error.unknownError')
     }
