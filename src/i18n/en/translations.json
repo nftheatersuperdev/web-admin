@@ -184,7 +184,8 @@
       "authenticationFailed": "Login failed",
       "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support",
-      "passwordCondition": "Password must contain at least 8 characters, one uppercase, one number and one special character"
+      "passwordCondition": "Password must contain at least 8 characters, one uppercase, one number and one special character",
+      "accessDenied": "User cannot access"
     }
   },
   "login": {
@@ -858,7 +859,8 @@
     "itAdmin": "IT Administrator",
     "centreOperation": "Centre Operation",
     "branchManager": "Branch Manager",
-    "branchOfficer": "Branch Officer"
+    "branchOfficer": "Branch Officer",
+    "driver": "Driver"
   },
   "account": {
     "updatePassword": "Update password",
