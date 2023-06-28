@@ -48,8 +48,8 @@ export default function NewDocumentVersions(): JSX.Element {
       color: 'white',
       borderRadius: '64px',
     },
-    chipRed: {
-      backgroundColor: '#F44336',
+    chipBlue: {
+      backgroundColor: '#2196F3',
       color: 'white',
       borderRadius: '64px',
     },
@@ -118,7 +118,7 @@ export default function NewDocumentVersions(): JSX.Element {
     return status.toLowerCase() === 'inactive' ? (
       <Chip size="small" label={t('newDocuments.statuses.inactive')} className={classes.chipGrey} />
     ) : (
-      <Chip size="small" label={t('newDocuments.statuses.schedule')} className={classes.chipRed} />
+      <Chip size="small" label={t('newDocuments.statuses.schedule')} className={classes.chipBlue} />
     )
   }
   let docOverview = defaultDocumentOverview
