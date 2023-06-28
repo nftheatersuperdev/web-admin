@@ -246,7 +246,9 @@ export default function LeadManagementDetail() {
 
   const isColumnChip: string[] = ['interesting', 'timeline']
   const isRoleCanExport: boolean =
-    currentUserRole === ROLES.SUPER_ADMIN || currentUserRole === ROLES.OPERATION
+    currentUserRole === ROLES.SUPER_ADMIN ||
+    currentUserRole === ROLES.OPERATION ||
+    currentUserRole === ROLES.OWN_OPERATION
 
   const fileName = `Lead Form ${myParam.leadName}.csv`
 

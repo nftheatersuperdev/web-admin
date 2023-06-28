@@ -434,12 +434,12 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.LEAD_MANAGEMENT,
     component: lazy(() => import('./pages/LeadManagement' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION, ROLES.OWN_OPERATION],
   },
   {
     path: ROUTE_PATHS.LEAD_MANAGEMENT_DETAIL,
     component: lazy(() => import('./pages/LeadManagementDetail' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION, ROLES.OWN_OPERATION],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

@@ -242,7 +242,7 @@ export function useMenuItems() {
       title: t('sidebar.leadManagement'),
       href: ROUTE_PATHS.LEAD_MANAGEMENT,
       icon: Folder,
-      allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION],
+      allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION, ROLES.OWN_OPERATION],
     },
   ] as unknown as SidebarItemsType[]
 
