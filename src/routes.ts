@@ -1,5 +1,6 @@
 import { lazy } from 'react'
 import { ROLES } from 'auth/roles'
+import { PRIVILEGES } from 'auth/privileges'
 import { LayoutRouteProps } from './layout/LayoutRoute'
 
 export const ROUTE_PATHS = Object.freeze({
@@ -434,12 +435,18 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.LEAD_MANAGEMENT,
     component: lazy(() => import('./pages/LeadManagement' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION, ROLES.OWN_OPERATION],
+    allowedPrivilege: [
+      PRIVILEGES.PERM_LEAD_MANAGEMENT_VIEW,
+      PRIVILEGES.PERM_LEAD_MANAGEMENT_EXPORT,
+    ],
   },
   {
     path: ROUTE_PATHS.LEAD_MANAGEMENT_DETAIL,
     component: lazy(() => import('./pages/LeadManagementDetail' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.OPERATION, ROLES.OWN_OPERATION],
+    allowedPrivilege: [
+      PRIVILEGES.PERM_LEAD_MANAGEMENT_VIEW,
+      PRIVILEGES.PERM_LEAD_MANAGEMENT_EXPORT,
+    ],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

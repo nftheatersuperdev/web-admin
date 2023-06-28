@@ -49,7 +49,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useLocation, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { useAuth } from 'auth/AuthContext'
-import { ROLES } from 'auth/roles'
+import { PRIVILEGES, hasAllowedPrivilege } from 'auth/privileges'
 import { Page } from 'layout/LayoutRoute'
 import PageTitleWithoutLine from 'components/PageTitleWithoutLine'
 import {
@@ -230,8 +230,9 @@ export default function LeadManagementDetail() {
   const classes = useStyles()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
-  const { getRole } = useAuth()
+  const { getRole, getPrivileges } = useAuth()
   const currentUserRole = getRole()
+  const currentPrivileges = getPrivileges()
 
   const [filterStartDate, setFilterStartDate] = useState<Dayjs | null>(null)
   const [filterEndDate, setFilterEndDate] = useState<Dayjs | null>(null)
@@ -245,10 +246,9 @@ export default function LeadManagementDetail() {
   const myParam: LeadManagementDetailStateParams = location.state as LeadManagementDetailStateParams
 
   const isColumnChip: string[] = ['interesting', 'timeline']
-  const isRoleCanExport: boolean =
-    currentUserRole === ROLES.SUPER_ADMIN ||
-    currentUserRole === ROLES.OPERATION ||
-    currentUserRole === ROLES.OWN_OPERATION
+  const isRoleCanExport: boolean = hasAllowedPrivilege(currentPrivileges, [
+    PRIVILEGES.PERM_LEAD_MANAGEMENT_EXPORT,
+  ])
 
   const fileName = `Lead Form ${myParam.leadName}.csv`
 
