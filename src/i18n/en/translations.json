@@ -185,7 +185,7 @@
       "permissionNotAllowed": "Permission not allowed",
       "unknownError": "An unknown authentication error occurred, Please contact operation support",
       "passwordCondition": "Password must contain at least 8 characters, one uppercase, one number and one special character",
-      "canNotAccess": "User cannot access"
+      "accessDenied": "User cannot access"
     }
   },
   "login": {

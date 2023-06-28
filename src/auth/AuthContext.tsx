@@ -176,7 +176,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       setPrivileges(userProfile.privileges)
       setResellerServiceAreas(userProfile.resellerServiceAreas)
     } catch (error: any) {
-      const errMessage = error.code || error.message.toLowerCase()
+      const errMessage = error.code || error.response.data.message.toLowerCase()
       const message = errorMessage(errMessage as string)
       throw new Error(message)
     }
