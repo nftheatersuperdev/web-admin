@@ -202,10 +202,7 @@ export function useMenuItems() {
           id: 'left_menu__new_document',
           href: ROUTE_PATHS.NEW_DOCUMENTS,
           title: t('sidebar.documentsManagement.document'),
-          allowedPrivileges: [
-            PRIVILEGES.PERM_AGREEMENT_DOCUMENT_VIEW,
-            PRIVILEGES.PERM_DOCUMENT_CONTENT_VIEW,
-          ],
+          allowedPrivileges: [PRIVILEGES.PERM_DOCUMENT_CONTENT_VIEW],
           toggleKey: 'IS_ENABLED_DOCUMENTS_FEATURE',
         },
         {

@@ -74,12 +74,125 @@ export default function NewDocumentVersions(): JSX.Element {
     data: documents,
     isFetching: isFetchingDocumentVersion,
     refetch,
-  } = useQuery('documents', () => getVersionList({ code: documentCode, page: page + 1, size }), {
-    cacheTime: 10 * (60 * 1000),
-    staleTime: 5 * (60 * 1000),
-  })
-  const breadcrumbName =
-    i18n.language === 'th' ? documents?.versions[0].nameTh : documents?.versions[0].nameEn
+  } = useQuery(
+    'document-version',
+    () => getVersionList({ code: documentCode, page: page + 1, size }),
+    {
+      cacheTime: 10 * (60 * 1000),
+      staleTime: 5 * (60 * 1000),
+    }
+  )
+  const headerColumn: TableHeaderProps[] = [
+    {
+      text: t('newDocuments.versions.no'),
+    },
+    {
+      text: t('newDocuments.versions.version'),
+    },
+    {
+      text: t('newDocuments.versions.status'),
+    },
+    {
+      text: t('newDocuments.versions.effectiveDate'),
+    },
+    {
+      text: t('newDocuments.versions.revisionSummary'),
+    },
+    {
+      text: t('newDocuments.versions.createdDate'),
+    },
+    {
+      text: t('newDocuments.versions.createdBy'),
+    },
+  ]
+  const showChipStatus = (status: string) => {
+    if (status.toLowerCase() === 'active') {
+      return (
+        <Chip
+          size="small"
+          label={t('newDocuments.statuses.active')}
+          className={classes.chipGreen}
+        />
+      )
+    }
+    return status.toLowerCase() === 'inactive' ? (
+      <Chip size="small" label={t('newDocuments.statuses.inactive')} className={classes.chipGrey} />
+    ) : (
+      <Chip size="small" label={t('newDocuments.statuses.schedule')} className={classes.chipRed} />
+    )
+  }
+  let docOverview = defaultDocumentOverview
+  const docVer =
+    documents?.versions.map((ver, index) => {
+      docOverview = {
+        id: ver.id,
+        codeName: ver.codeName,
+        nameEn: ver.nameEn,
+        nameTh: ver.nameTh,
+        contentEn: ver.contentEn,
+        contentTh: ver.contentTh,
+        version: ver.version.toString(),
+      }
+      // Build Table Body
+      return (
+        <TableRow
+          hover
+          onClick={() => history.push(`/new-documents/${ver.codeName}/versions`)}
+          id={`documents__index-${index}`}
+          key={ver.id}
+        >
+          <TableCell id="documents_version__no">
+            <DataWrapper>
+              <TextSmallLineClamp>{index + 1}</TextSmallLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="documents_version__version">
+            <DataWrapper>
+              <TextSmallLineClamp>{ver.version}</TextSmallLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="documents_version__status">
+            <DataWrapper>
+              <TextLineClamp>
+                {ver.status === null ? ver.status : showChipStatus(ver.status)}
+              </TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="documents_version__effectiveDate">
+            <DataWrapper>
+              <TextLineClamp>
+                {formaDateStringWithPattern(ver.effectiveDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="documents_version__revisionSummary">
+            <DataWrapper>
+              <TextLineClamp>{ver.remark}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="documents_version__createdDate">
+            <DataWrapper>
+              <TextLineClamp>
+                {formaDateStringWithPattern(ver.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="documents_version__createdBy">
+            <DataWrapper>
+              <TextLineClamp>{ver.createdBy}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+        </TableRow>
+      )
+    }) || []
+
+  const breadcrumbName = () => {
+    if (isFetchingDocumentVersion) {
+      return documentCode
+    }
+    return i18n.language === 'th' ? docOverview.nameTh : docOverview.nameEn
+  }
+  const documentOverview = isFetchingDocumentVersion ? defaultDocumentOverview : docOverview
   const breadcrumbs: PageBreadcrumbs[] = [
     {
       text: t('sidebar.documentsManagement.title'),
@@ -90,91 +203,10 @@ export default function NewDocumentVersions(): JSX.Element {
       link: '/new-documents',
     },
     {
-      text: breadcrumbName || documentCode,
+      text: breadcrumbName(),
       link: '',
     },
   ]
-  const documentOverview = documents?.versions[0] || defaultDocumentOverview
-  const docVer =
-    (documents &&
-      documents.versions.length > 0 &&
-      documents.versions.map((ver, index) => {
-        // Build Table Body
-        return (
-          <TableRow
-            hover
-            onClick={() => history.push(`/new-documents/${ver.codeName}/versions`)}
-            id={`documents__index-${index}`}
-            key={ver.id}
-          >
-            <TableCell id="documents_version__no">
-              <DataWrapper>
-                <TextSmallLineClamp>{index + 1}</TextSmallLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="documents_version__version">
-              <DataWrapper>
-                <TextSmallLineClamp>{ver.version}</TextSmallLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="documents_version__status">
-              <DataWrapper>
-                <TextLineClamp>
-                  {ver.status === null ? (
-                    ver.status
-                  ) : ver.status.toLowerCase() === 'active' ? (
-                    <Chip
-                      size="small"
-                      label={t('newDocuments.statuses.active')}
-                      className={classes.chipGreen}
-                    />
-                  ) : ver.status.toLowerCase() === 'inactive' ? (
-                    <Chip
-                      size="small"
-                      label={t('newDocuments.statuses.inactive')}
-                      className={classes.chipGrey}
-                    />
-                  ) : (
-                    <Chip
-                      size="small"
-                      label={t('newDocuments.statuses.schedule')}
-                      className={classes.chipRed}
-                    />
-                  )}
-                </TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="documents_version__effectiveDate">
-              <DataWrapper>
-                <TextLineClamp>
-                  {formaDateStringWithPattern(
-                    ver.effectiveDate,
-                    DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                  )}
-                </TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="documents_version__revisionSummary">
-              <DataWrapper>
-                <TextLineClamp>{ver.remark}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="documents_version__createdDate">
-              <DataWrapper>
-                <TextLineClamp>
-                  {formaDateStringWithPattern(ver.createdDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-                </TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="documents_version__createdBy">
-              <DataWrapper>
-                <TextLineClamp>{ver.createdBy}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-          </TableRow>
-        )
-      })) ||
-    []
   /**
    * Init pagination depends on data from the API.
    */
@@ -205,29 +237,6 @@ export default function NewDocumentVersions(): JSX.Element {
       </TableBody>
     )
   }
-  const headerColumn: TableHeaderProps[] = [
-    {
-      text: t('newDocuments.versions.no'),
-    },
-    {
-      text: t('newDocuments.versions.version'),
-    },
-    {
-      text: t('newDocuments.versions.status'),
-    },
-    {
-      text: t('newDocuments.versions.effectiveDate'),
-    },
-    {
-      text: t('newDocuments.versions.revisionSummary'),
-    },
-    {
-      text: t('newDocuments.versions.createdDate'),
-    },
-    {
-      text: t('newDocuments.versions.createdBy'),
-    },
-  ]
   return (
     <Page>
       <PageTitle title={t('sidebar.documentsManagement.newDocument')} breadcrumbs={breadcrumbs} />
