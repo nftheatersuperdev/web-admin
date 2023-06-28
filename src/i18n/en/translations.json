@@ -1189,7 +1189,7 @@
     "addEdit": {
       "titles": {
         "add": "Add New Version",
-        "edit": "Edit Version {{version}}."
+        "edit": "Edit - {{docName}}"
       },
       "effectiveDate": "Effective Date & Time",
       "revisionSummary": "Revision summary",
@@ -1202,8 +1202,9 @@
       }
     },
     "views": {
-      "title": "View {{version}}"
+      "title": "View only - {{docName}}"
     },
+    "detail": "{{docName}} Detail",
     "error": {
       "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time.",
       "effectiveDateLessThanNextVersion": "Please enter an effective date-time that is less than {{nextEffectiveDate}}."

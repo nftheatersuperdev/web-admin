@@ -15,6 +15,7 @@ import { useHistory, useParams } from 'react-router'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
 import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from 'utils'
+import { DocumentVersionsParams, defaultDocumentOverview } from 'utils/document'
 import { getVersionList } from 'services/web-bff/document'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { Page } from 'layout/LayoutRoute'
@@ -30,7 +31,6 @@ import {
   Wrapper,
 } from 'components/Styled'
 import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
-import { DocumentVersionsParams, defaultDocumentOverview } from './utils'
 
 export default function NewDocumentVersions(): JSX.Element {
   const useStyles = makeStyles({
@@ -137,7 +137,9 @@ export default function NewDocumentVersions(): JSX.Element {
       return (
         <TableRow
           hover
-          onClick={() => history.push(`/new-documents/${ver.codeName}/versions`)}
+          onClick={() =>
+            history.push(`/new-documents/${ver.codeName}/versions/${ver.version}/edit`)
+          }
           id={`documents__index-${index}`}
           key={ver.id}
         >
@@ -186,7 +188,7 @@ export default function NewDocumentVersions(): JSX.Element {
       )
     }) || []
 
-  const breadcrumbName = () => {
+  const getBreadcrumbName = () => {
     if (isFetchingDocumentVersion) {
       return documentCode
     }
@@ -203,7 +205,7 @@ export default function NewDocumentVersions(): JSX.Element {
       link: '/new-documents',
     },
     {
-      text: breadcrumbName(),
+      text: getBreadcrumbName(),
       link: '',
     },
   ]
