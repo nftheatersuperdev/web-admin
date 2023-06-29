@@ -12,6 +12,7 @@ export const ROLES = Object.freeze({
   BRANCH_MANAGER: 'branch_manager',
   BRANCH_OFFICER: 'branch_officer',
   DRIVER: 'driver',
+  OWN_OPERATION: 'own_operation',
 })
 
 export type Role =
@@ -26,6 +27,7 @@ export type Role =
   | typeof ROLES.BRANCH_MANAGER
   | typeof ROLES.BRANCH_OFFICER
   | typeof ROLES.DRIVER
+  | typeof ROLES.OWN_OPERATION
 
 export const hasAllowedRole = (role?: string | null, allowedRoles?: Role[]): boolean => {
   if (!allowedRoles || !allowedRoles.length) {
@@ -61,6 +63,8 @@ export const getAdminUserRoleLabel = (
       return t('role.branchOfficer')
     case ROLES.DRIVER:
       return t('role.driver')
+    case ROLES.OWN_OPERATION:
+      return t('role.ownOperation')
     default:
       return role ? role.toLowerCase() : ''
   }
@@ -119,6 +123,11 @@ export const getRoleList = (t: TFunction<Namespace>): SelectOption[] => {
       key: ROLES.BRANCH_OFFICER,
       value: ROLES.BRANCH_OFFICER,
       name: t('role.branchOfficer'),
+    },
+    {
+      key: ROLES.OWN_OPERATION,
+      value: ROLES.OWN_OPERATION,
+      name: t('role.ownOperation'),
     },
   ]
 }

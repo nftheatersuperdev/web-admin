@@ -856,7 +856,8 @@
     "centreOperation": "Centre Operation",
     "branchManager": "ผู้จัดการสาขา",
     "branchOfficer": "ผู้จัดการ",
-    "driver": "Driver"
+    "driver": "Driver",
+    "ownOperation": "Owner Operation"
   },
   "account": {
     "updatePassword": "แก้ไขรหัสผ่าน",
