@@ -80,54 +80,36 @@ export const getBookingStatusOnlyUsedInBackendOptions = (
   },
 ]
 
-export const columnFormatBookingStatus = (status: string, t: TFunction<Namespace>): ChipProps => {
+export const columnFormatBookingStatus = (status: string, t: TFunction<Namespace>): string => {
   if (!status) {
-    return {
-      label: '-',
-    }
+    return '-'
   }
 
   const enforceStatus = status.toLocaleLowerCase().replaceAll(' ', '_')
   switch (enforceStatus) {
     case BookingStatus.RESERVED:
-      return {
-        label: t('booking.status.reserved'),
-      }
+      return t('booking.status.reserved')
 
     case BookingStatus.ACCEPTED:
-      return {
-        label: t('booking.status.accepted'),
-      }
+      return t('booking.status.accepted')
 
     case BookingStatus.DELIVERED:
-      return {
-        label: t('booking.status.delivered'),
-      }
+      return t('booking.status.delivered')
 
     case BookingStatus.CANCELLED:
-      return {
-        label: t('booking.status.cancelled'),
-      }
+      return t('booking.status.cancelled')
 
     case BookingStatus.UPCOMING_CANCELLED:
-      return {
-        label: t('booking.status.upcoming_cancelled'),
-      }
+      return t('booking.status.upcoming_cancelled')
 
     case BookingStatus.REFUSED:
-      return {
-        label: t('booking.status.refused'),
-      }
+      return t('booking.status.refused')
 
     case BookingStatus.COMPLETED:
-      return {
-        label: t('booking.status.completed'),
-      }
+      return t('booking.status.completed')
 
     default:
-      return {
-        label: '-',
-      }
+      return '-'
   }
 }
 
@@ -325,7 +307,7 @@ export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): Bo
     newBook.endDate = defaultVal(formatDate(newBook.endDate, DEFAULT_DATETIME_FORMAT), '-')
     newBook.createdDate = defaultVal(formatDate(newBook.createdDate, DEFAULT_DATETIME_FORMAT), '-')
     newBook.updatedDate = defaultVal(formatDate(newBook.updatedDate, DEFAULT_DATETIME_FORMAT), '-')
-    newBook.status = columnFormatBookingStatus(newBook.status, t).label
+    newBook.status = columnFormatBookingStatus(newBook.status, t)
 
     if (newBook.carActivities.length > 0) {
       newBook.carActivities.forEach((ac) => {
