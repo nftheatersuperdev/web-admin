@@ -421,6 +421,7 @@ export default function Booking(): JSX.Element {
 
   const renderSearchInputField = () => (
     <SearchInputField
+      id="booking_search_input"
       value={searchValue}
       handleChange={onSearchChange}
       handleKeyDown={(event: KeyboardEvent<HTMLInputElement>) => onEnterSearch(event)}

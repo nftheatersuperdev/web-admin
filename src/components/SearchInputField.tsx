@@ -4,6 +4,7 @@ import { Search as SearchIcon } from '@mui/icons-material'
 import { SelectOption } from 'utils'
 
 interface SearchInputFieldProps {
+  id: string
   value: string
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void
   handleKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void
@@ -12,6 +13,7 @@ interface SearchInputFieldProps {
 }
 
 export default function SearchInputField({
+  id,
   value,
   handleChange,
   handleKeyDown,
@@ -20,7 +22,7 @@ export default function SearchInputField({
 }: SearchInputFieldProps): JSX.Element {
   return (
     <TextField
-      id="booking_search_input"
+      id={id}
       type="text"
       variant="outlined"
       fullWidth
