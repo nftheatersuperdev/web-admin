@@ -68,20 +68,13 @@ export default function NewDocumentVersions(): JSX.Element {
   const history = useHistory()
   const { documentCode } = useParams<DocumentVersionsParams>()
   const { t, i18n } = useTranslation()
-  const [page, setPage] = useState<number>(0)
+  const [page, setPage] = useState<number>(1)
   const [size, setSize] = useState<number>(10)
   const {
     data: documents,
     isFetching: isFetchingDocumentVersion,
     refetch,
-  } = useQuery(
-    'document-version',
-    () => getVersionList({ code: documentCode, page: page + 1, size }),
-    {
-      cacheTime: 10 * (60 * 1000),
-      staleTime: 5 * (60 * 1000),
-    }
-  )
+  } = useQuery('document-version', () => getVersionList({ code: documentCode, page, size }))
   const headerColumn: TableHeaderProps[] = [
     {
       text: t('newDocuments.versions.no'),
@@ -124,14 +117,16 @@ export default function NewDocumentVersions(): JSX.Element {
   let docOverview = defaultDocumentOverview
   const docVer =
     documents?.versions.map((ver, index) => {
-      docOverview = {
-        id: ver.id,
-        codeName: ver.codeName,
-        nameEn: ver.nameEn,
-        nameTh: ver.nameTh,
-        contentEn: ver.contentEn,
-        contentTh: ver.contentTh,
-        version: ver.version.toString(),
+      if (ver.status.toLowerCase() === 'active') {
+        docOverview = {
+          id: ver.id,
+          codeName: ver.codeName,
+          nameEn: ver.nameEn,
+          nameTh: ver.nameTh,
+          contentEn: ver.contentEn,
+          contentTh: ver.contentTh,
+          version: ver.version.toString(),
+        }
       }
       // Build Table Body
       return (
