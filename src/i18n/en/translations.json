@@ -744,7 +744,10 @@
       "purpose": "Purpose",
       "status": "Status",
       "statusMessage": "Status Message",
-      "updatedDate": "Update Date"
+      "updatedDate": "Update Date",
+      "success": "Success",
+      "fail": "Fail",
+      "pending": "Pending"
     }
   },
   "newSubcription": {

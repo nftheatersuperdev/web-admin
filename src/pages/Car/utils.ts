@@ -1,13 +1,9 @@
 import { TFunction, Namespace } from 'react-i18next'
 import ls from 'localstorage-slim'
+import { SelectOption } from 'utils'
 import { CarOwnerResponse } from 'services/web-bff/car-owner.type'
 import { ReSellerResponse } from 'services/web-bff/re-seller-area.type'
 import { LocationResponse } from 'services/web-bff/location.type'
-
-export interface SelectOption {
-  label: string
-  value: string
-}
 
 const STORAGE_KEYS = {
   VISIBILITY_COLUMNS: 'evme:car:visibility_columns',

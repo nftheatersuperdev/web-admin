@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TFunction, Namespace } from 'react-i18next'
-import { formatDate, DEFAULT_DATETIME_FORMAT } from 'utils'
+import { SelectOption, formatDate, DEFAULT_DATETIME_FORMAT } from 'utils'
+import { ClassNameMap } from '@mui/material'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
 import {
   BookingCarActivity,
@@ -8,6 +8,7 @@ import {
   BookingRental,
   SubscriptionCar,
 } from 'services/web-bff/booking.type'
+import { TableHeaderProps } from 'components/DataTableHeader'
 
 export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: string): string[] => {
   const results: string[] = []
@@ -18,11 +19,6 @@ export const getListFromQueryParam = (queryString: URLSearchParams, valueKey: st
   })
 
   return results
-}
-
-export interface SelectOption {
-  label: string
-  value: string
 }
 
 export const CarStatus = {
@@ -43,6 +39,12 @@ export const BookingStatus = {
   UPCOMING_CANCELLED: 'upcoming_cancelled',
   REFUSED: 'refused',
   COMPLETED: 'completed',
+}
+
+export const BookingPaymentStatus = {
+  SUCCESS: 'success',
+  FAIL: 'fail',
+  PENDING: 'pending',
 }
 
 export const getBookingStatusOnlyUsedInBackendOptions = (
@@ -156,6 +158,7 @@ export interface BookingList extends BookingObject {
   cars: SubscriptionCar
   carActivities: BookingCarActivity[]
   payments: BookingPayment[]
+  // eslint-disable-next-line
   [key: string]: any
 }
 
@@ -249,9 +252,9 @@ export const getBookingList = (
       booking.voucherCode = defaultVal(detail.rentDetail?.voucherCode, '-')
       booking.createdDate = defaultVal(detail.rentDetail?.createdDate, '-')
       booking.updatedDate = defaultVal(detail.rentDetail?.updatedDate, '-')
-      booking.paymentStatus = defaultVal('-', '-')
-      booking.paymentFailure = defaultVal('-', '-')
-      booking.paymentUpdated = defaultVal('-', '-')
+      booking.paymentStatus = defaultVal(detail.payments[0]?.status, '-')
+      booking.paymentFailure = defaultVal(detail.payments[0]?.statusMessage, '-')
+      booking.paymentUpdated = defaultVal(detail.payments[0]?.updatedDate, '-')
       booking.deliveryDate = defaultVal('-', '-')
       booking.returnDate = defaultVal('-', '-')
       booking.isReplacement = defaultVal(detail.isReplacement, false)
@@ -378,6 +381,7 @@ export const getCsvData = (bookings: BookingList[], t: TFunction<Namespace>): Bo
   return csvData
 }
 
+// eslint-disable-next-line
 export const getHeaderCsvFile = (t: TFunction<Namespace>): any[] => {
   return [
     { label: t('booking.tableHeader.detailId'), key: 'detailId' },
@@ -441,4 +445,74 @@ export const getSearchOptions = (t: TFunction<Namespace>): SelectOption[] => {
     createOption(t('booking.search.deliveryDate'), 'deliveryDate'),
     createOption(t('booking.search.returnDate'), 'returnDate'),
   ]
+}
+
+export const getHeaderTable = (classes: string, t: TFunction<Namespace>): TableHeaderProps[] => {
+  const headers = [
+    t('booking.tableHeader.firstName'),
+    t('booking.tableHeader.lastName'),
+    t('booking.tableHeader.email'),
+    t('booking.tableHeader.phone'),
+    t('booking.tableHeader.location'),
+    t('booking.tableHeader.brand'),
+    t('booking.tableHeader.model'),
+    t('booking.tableHeader.plateNumber'),
+    t('booking.tableHeader.duration'),
+    t('booking.tableHeader.status'),
+    t('booking.tableHeader.startDate'),
+    t('booking.tableHeader.endDate'),
+    t('booking.tableHeader.paymentStatus'),
+    t('booking.tableHeader.paymentUpdatedDate'),
+  ]
+
+  return headers.map((header) => {
+    return {
+      text: header,
+      style: classes,
+    }
+  })
+}
+
+export const columnFormatBookingPaymentStatus = (
+  status: string,
+  classes: ClassNameMap,
+  t: TFunction<Namespace>
+): ChipProps => {
+  if (!status) {
+    return {
+      label: '-',
+    }
+  }
+
+  const enforceStatus = status.toLocaleLowerCase().replaceAll(' ', '_')
+  switch (enforceStatus) {
+    case BookingPaymentStatus.SUCCESS:
+      return {
+        label: t('booking.payment.success'),
+        color: classes.chipBgGreen,
+      }
+
+    case BookingPaymentStatus.FAIL:
+      return {
+        label: t('booking.payment.fail'),
+        color: classes.chipBgRed,
+      }
+
+    case BookingPaymentStatus.PENDING:
+      return {
+        label: t('booking.payment.pending'),
+        color: classes.chipBgGray,
+      }
+
+    default:
+      return {
+        label: '-',
+        color: classes.chipBgGray,
+      }
+  }
+}
+
+export interface ChipProps {
+  label: string
+  color?: string
 }
