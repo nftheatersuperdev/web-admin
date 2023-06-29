@@ -862,7 +862,8 @@
     "centreOperation": "Centre Operation",
     "branchManager": "Branch Manager",
     "branchOfficer": "Branch Officer",
-    "driver": "Driver"
+    "driver": "Driver",
+    "ownOperation": "Owner Operation"
   },
   "account": {
     "updatePassword": "Update password",
