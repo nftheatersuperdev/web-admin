@@ -718,3 +718,8 @@ export function validatePrivileges(
   }
   return userPrivileges.includes(requiredPrivillage)
 }
+
+export interface SelectOption {
+  label: string
+  value: string
+}

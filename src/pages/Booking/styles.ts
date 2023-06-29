@@ -41,6 +41,18 @@ export const useStyles = makeStyles({
     height: '24px',
     borderRadius: '64px',
   },
+  chipBgGreen: {
+    color: '#fff',
+    backgroundColor: '#4CAF50',
+    height: '24px',
+    borderRadius: '64px',
+  },
+  chipBgRed: {
+    color: '#fff',
+    backgroundColor: '#F44336',
+    height: '24px',
+    borderRadius: '64px',
+  },
   csvlink: {
     color: '#fff',
     textDecoration: 'none',
