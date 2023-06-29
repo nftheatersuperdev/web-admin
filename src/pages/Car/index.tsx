@@ -29,7 +29,7 @@ import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from 'auth/AuthContext'
 import { CSVLink } from 'react-csv'
-import { formatDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
+import { SelectOption, formatDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT } from 'utils'
 import config from 'config'
 import { Page } from 'layout/LayoutRoute'
 import { getList } from 'services/web-bff/car'
@@ -45,7 +45,6 @@ import {
   getOwnerOptions,
   columnFormatCarStatus,
   CarStatus,
-  SelectOption,
   CarList,
   Keypress,
   CarCsv,

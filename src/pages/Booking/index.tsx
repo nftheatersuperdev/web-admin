@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useEffect, useState, KeyboardEvent, ChangeEvent } from 'react'
+import { useEffect, useState, KeyboardEvent, ChangeEvent, SyntheticEvent } from 'react'
 import { useQuery } from 'react-query'
 import { useLocation, useHistory } from 'react-router-dom'
 import {
@@ -11,7 +11,6 @@ import {
   Button,
   TableContainer,
   Table,
-  TableHead,
   TableRow,
   TableCell,
   TableBody,
@@ -21,10 +20,7 @@ import {
   Select,
   MenuItem,
   Pagination,
-  InputAdornment,
-  IconButton,
 } from '@mui/material'
-import { Search as SearchIcon } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
@@ -32,6 +28,7 @@ import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { CSVLink } from 'react-csv'
 import {
+  SelectOption,
   formatDate,
   DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
   DEFAULT_DATE_FORMAT_MONTH_TEXT,
@@ -47,6 +44,9 @@ import {
 } from 'services/web-bff/booking.type'
 import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import LocationSwitcher, { allLocationId } from 'components/LocationSwitcher'
+import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
+import SearchAutocomplete from 'components/SearchAutocomplete'
+import SearchInputField from 'components/SearchInputField'
 import { ResellerServiceArea } from 'services/web-bff/car.type'
 import { useStyles, SearchDatePicker } from './styles'
 import {
@@ -56,12 +56,13 @@ import {
   BookingObject,
   BookingList,
   columnFormatBookingStatus,
-  SelectOption,
+  columnFormatBookingPaymentStatus,
   Keypress,
   FilterSearch,
   getCsvData,
   getHeaderCsvFile,
   getSearchOptions,
+  getHeaderTable,
 } from './utils'
 
 export default function Booking(): JSX.Element {
@@ -292,123 +293,8 @@ export default function Booking(): JSX.Element {
   const csvData: BookingObject[] = getCsvData(bookings, t)
 
   // == table ==
-  const columnHead = [
-    {
-      colName: t('booking.tableHeader.firstName'),
-    },
-    {
-      colName: t('booking.tableHeader.lastName'),
-    },
-    {
-      colName: t('booking.tableHeader.email'),
-    },
-    {
-      colName: t('booking.tableHeader.phone'),
-    },
-    {
-      colName: t('booking.tableHeader.location'),
-    },
-    {
-      colName: t('booking.tableHeader.brand'),
-    },
-    {
-      colName: t('booking.tableHeader.model'),
-    },
-    {
-      colName: t('booking.tableHeader.plateNumber'),
-    },
-    {
-      colName: t('booking.tableHeader.duration'),
-    },
-    {
-      colName: t('booking.tableHeader.status'),
-    },
-    {
-      colName: t('booking.tableHeader.startDate'),
-    },
-    {
-      colName: t('booking.tableHeader.endDate'),
-    },
-  ]
-  const columnRow = [
-    {
-      field: 'firstName',
-      render: (value: string) => {
-        return <div className={classes.rowOverflowSmall}>{value}</div>
-      },
-    },
-    {
-      field: 'lastName',
-      render: (value: string) => {
-        return <div className={classes.rowOverflowSmall}>{value}</div>
-      },
-    },
-    {
-      field: 'email',
-      render: (value: string) => {
-        return <div className={classes.rowOverflowSmall}>{value}</div>
-      },
-    },
-    {
-      field: 'phone',
-      render: (value: string) => {
-        return <div className={classes.rowOverflow}>{value}</div>
-      },
-    },
-    {
-      field: 'location',
-      render: (value: string) => {
-        return <div className={classes.rowOverflow}>{value}</div>
-      },
-    },
-    {
-      field: 'brand',
-      render: (value: string) => {
-        return <div className={classes.rowOverflow}>{value}</div>
-      },
-    },
-    {
-      field: 'model',
-      render: (value: string) => {
-        return <div className={classes.rowOverflow}>{value}</div>
-      },
-    },
-    {
-      field: 'plateNumber',
-      render: (value: string) => {
-        return <div className={classes.rowOverflow}>{value}</div>
-      },
-    },
-    {
-      field: 'duration',
-    },
-    {
-      field: 'status',
-      render: (status: string) => {
-        return <Chip label={columnFormatBookingStatus(status, t)} className={classes.chipBgGray} />
-      },
-    },
-    {
-      field: 'startDate',
-      render: (date: string) => {
-        return (
-          <div className={classes.rowOverflow}>
-            {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-          </div>
-        )
-      },
-    },
-    {
-      field: 'endDate',
-      render: (date: string) => {
-        return (
-          <div className={classes.rowOverflow}>
-            {formatDate(date, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
-          </div>
-        )
-      },
-    },
-  ]
+  const headerText: TableHeaderProps[] = getHeaderTable(classes.columnHeader, t)
+
   const rowData = (bookings &&
     bookings.length > 0 &&
     bookings.map((booking: BookingList) => {
@@ -424,18 +310,93 @@ export default function Booking(): JSX.Element {
           }
           className={classes.textDecoration}
         >
-          {columnRow.map((col) => (
-            <TableCell key={col.field}>
-              <div className={classes.paddingLeftCell}>
-                {col.render ? col.render(booking[col.field]) : <div>{booking[col.field]}</div>}
+          <TableCell key="firstName">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.firstName}</div>
+            </div>
+          </TableCell>
+          <TableCell key="lastName">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.lastName}</div>
+            </div>
+          </TableCell>
+          <TableCell key="email">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.email}</div>
+            </div>
+          </TableCell>
+          <TableCell key="phone">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.phone}</div>
+            </div>
+          </TableCell>
+          <TableCell key="location">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.location}</div>
+            </div>
+          </TableCell>
+          <TableCell key="brand">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.brand}</div>
+            </div>
+          </TableCell>
+          <TableCell key="model">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.model}</div>
+            </div>
+          </TableCell>
+          <TableCell key="plateNumber">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>{booking.plateNumber}</div>
+            </div>
+          </TableCell>
+          <TableCell key="duration">
+            <div className={classes.paddingLeftCell}>{booking.duration}</div>
+          </TableCell>
+          <TableCell key="status">
+            <div className={classes.paddingLeftCell}>
+              <Chip
+                label={columnFormatBookingStatus(booking.status, t)}
+                className={classes.chipBgGray}
+              />
+            </div>
+          </TableCell>
+          <TableCell key="startDate">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>
+                {formatDate(booking.startDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
               </div>
-            </TableCell>
-          ))}
+            </div>
+          </TableCell>
+          <TableCell key="endDate">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>
+                {formatDate(booking.endDate, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </div>
+            </div>
+          </TableCell>
+          <TableCell key="paymentStatus">
+            <div className={classes.paddingLeftCell}>
+              <Chip
+                label={columnFormatBookingPaymentStatus(booking.paymentStatus, classes, t).label}
+                className={
+                  columnFormatBookingPaymentStatus(booking.paymentStatus, classes, t).color
+                }
+              />
+            </div>
+          </TableCell>
+          <TableCell key="paymentUpdated">
+            <div className={classes.paddingLeftCell}>
+              <div className={classes.rowOverflow}>
+                {formatDate(booking.paymentUpdated, DEFAULT_DATETIME_FORMAT_MONTH_TEXT)}
+              </div>
+            </div>
+          </TableCell>
         </TableRow>
       )
     })) || (
     <TableRow>
-      <TableCell colSpan={columnHead.length} align="center">
+      <TableCell colSpan={headerText.length} align="center">
         {t('booking.noData')}
       </TableCell>
     </TableRow>
@@ -446,17 +407,12 @@ export default function Booking(): JSX.Element {
   }, [page, pageSize, filter, refetch])
 
   const renderSearchStatus = () => (
-    <Autocomplete
-      autoHighlight
+    <SearchAutocomplete
       id="status_select_list"
-      options={statusOptions}
-      getOptionLabel={(option) => option.label}
-      renderInput={(params) => {
-        return <TextField {...params} label={t('booking.selectStatus')} variant="outlined" />
-      }}
-      isOptionEqualToValue={(option, value) => option.value === value.value || value.value === ''}
-      value={selectedOptionValue || null}
-      onChange={(event, item) => {
+      statusOptions={statusOptions}
+      textLabel={t('booking.selectStatus')}
+      value={selectedOptionValue}
+      handleChange={(event: SyntheticEvent<Element, Event>, item: SelectOption | null) => {
         setSelectedOptionValue(item)
         onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
       }}
@@ -464,46 +420,22 @@ export default function Booking(): JSX.Element {
   )
 
   const renderSearchInputField = () => (
-    <TextField
-      id="booking_search_input"
-      type="text"
-      variant="outlined"
-      fullWidth
-      value={searchValue || ''}
-      onChange={onSearchChange}
-      onKeyDown={(event) => onEnterSearch(event as KeyboardEvent<HTMLInputElement>)}
-      disabled={!selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''}
-      placeholder={t('booking.enterSearch')}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <IconButton>
-              <SearchIcon
-                color={
-                  !selectedSearch || selectedSearch?.value === 'all' || selectedSearch?.value === ''
-                    ? 'disabled'
-                    : 'action'
-                }
-              />
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
+    <SearchInputField
+      value={searchValue}
+      handleChange={onSearchChange}
+      handleKeyDown={(event: KeyboardEvent<HTMLInputElement>) => onEnterSearch(event)}
+      selectedSearch={selectedSearch}
+      textLabel={t('booking.enterSearch')}
     />
   )
 
   const renderSearchIsExtend = () => (
-    <Autocomplete
-      autoHighlight
+    <SearchAutocomplete
       id="isextend_select_list"
-      options={isExtendOptions}
-      getOptionLabel={(option) => option.label}
-      renderInput={(params) => {
-        return <TextField {...params} label={t('booking.selectIsExtend')} variant="outlined" />
-      }}
-      isOptionEqualToValue={(option, value) => option.value === value.value || value.value === ''}
-      value={selectedOptionValue || null}
-      onChange={(event, item) => {
+      statusOptions={isExtendOptions}
+      textLabel={t('booking.selectIsExtend')}
+      value={selectedOptionValue}
+      handleChange={(event: SyntheticEvent<Element, Event>, item: SelectOption | null) => {
         setSelectedOptionValue(item)
         onSearchChange(event as ChangeEvent<HTMLInputElement>, item?.value, true)
       }}
@@ -629,19 +561,11 @@ export default function Booking(): JSX.Element {
 
         <TableContainer className={classes.table}>
           <Table>
-            <TableHead>
-              <TableRow>
-                {columnHead.map((col) => (
-                  <TableCell key={col.colName}>
-                    <div className={classes.columnHeader}>{col.colName}</div>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+            <DataTableHeader headers={headerText} />
             {isFetching ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={columnHead.length} align="center">
+                  <TableCell colSpan={headerText.length} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
