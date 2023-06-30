@@ -246,6 +246,7 @@ export interface CarListFilterRequest {
   ownerProfileId?: string
   ownerProfileType?: string
   resellerServiceAreaId?: string | null
+  resellerId?: string | null
 }
 
 export interface CarListFilterRequestProps {
