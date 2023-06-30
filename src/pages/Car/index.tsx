@@ -163,7 +163,7 @@ export default function Car(): JSX.Element {
     },
     {
       label: t('car.reseller'),
-      value: 'resellerServiceAreaId',
+      value: 'resellerId',
     },
   ]
   const [searchValue, setSearchValue] = useState<string>('')
@@ -281,6 +281,9 @@ export default function Car(): JSX.Element {
         if (searchType === 'ownerProfileId') {
           const owner = ownerData?.owners.find((o) => o.id === valueSearch)
           filterSearch.ownerProfileType = owner ? owner.profileType : 'BUSINESS'
+        }
+        if (searchType === 'resellerId') {
+          filterSearch.resellerId = searchInput
         }
       }
       if (searchLocation) {
@@ -569,7 +572,7 @@ export default function Car(): JSX.Element {
     if (selectedSearch?.value === 'ownerProfileId') {
       return renderSearchOwner()
     }
-    if (selectedSearch?.value === 'resellerServiceAreaId') {
+    if (selectedSearch?.value === 'resellerId') {
       return renderSearchReseller()
     }
 
