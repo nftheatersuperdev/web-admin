@@ -746,7 +746,7 @@
       "statusMessage": "Status Message",
       "updatedDate": "Update Date",
       "success": "Success",
-      "fail": "Fail",
+      "failed": "Failed",
       "pending": "Pending"
     }
   },
