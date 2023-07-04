@@ -224,7 +224,7 @@ export default function VoucherCreateEditPage(): JSX.Element {
       const voucherId = await mutate.function(mutate.data)
       /**
        * Known Issues: The packagePrices and customerGroups are not support when do creating a voucher.
-       * @TODO Must remove this workaround after the backend was fixed the issue.
+       * Must remove this workaround after the backend was fixed the issue.
        */
       toast.promise(
         voucherService.updateBff({

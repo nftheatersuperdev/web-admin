@@ -64,7 +64,7 @@ export const getVersionList = async ({
     `/v1/document-contents/${code}/versions`,
     {
       params: {
-        pageIndex: page,
+        page,
         size,
       },
     }

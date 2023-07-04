@@ -89,6 +89,7 @@
     "documentsManagement": {
       "title": "Document Management",
       "document": "Documents",
+      "newDocument": "Document",
       "consentLog": "Consent Log",
       "deleteLog": "Delete Log",
       "cookieConsentLog": "Cookie Consent Log"
@@ -120,6 +121,7 @@
     "documents": "Documents",
     "consentLog": "Consent Log",
     "userDeleteLog": "Delete Log",
+    "deleteAccountLog": "Delete Account Log",
     "cookieConsentLog": "Cookie Consent Log",
     "adminUsers": "Admin Users",
     "account": "Account",
@@ -1151,6 +1153,62 @@
     "views": {
       "title": "View {{version}}"
     },
+    "error": {
+      "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time.",
+      "effectiveDateLessThanNextVersion": "Please enter an effective date-time that is less than {{nextEffectiveDate}}."
+    }
+  },
+  "newDocuments": {
+    "header": "Document",
+    "overview": {
+      "title": "Overview",
+      "id": "Document ID",
+      "nameEN": "Document Name (EN)",
+      "nameTH": "Document Name (TH)",
+      "codeName": "Document Code Name",
+      "activeVersion": "Active Version",
+      "lastUpdated": "Updated Date",
+      "action": "Action"
+    },
+    "versions": {
+      "title": "Document Versions",
+      "no": "No",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "version": "Version",
+      "status": "Status",
+      "effectiveDate": "Effective Date",
+      "revisionSummary": "Revision Summary",
+      "buttons": {
+        "addNewVersion": "Add New Version"
+      }
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "schedule": "Schedule"
+    },
+    "overviewAndVersions": "Overview & Versions",
+    "editDocument": "Edit Document",
+    "addEdit": {
+      "titles": {
+        "add": "Add New Version",
+        "edit": "Edit - {{docName}}"
+      },
+      "effectiveDate": "Effective Date & Time",
+      "revisionSummary": "Revision summary",
+      "titleEn": "Title English",
+      "titleTh": "Title Thai",
+      "contentEn": "Content (EN)",
+      "contentTh": "Content (TH)",
+      "helpers": {
+        "effectiveDateGreaterThanLastVersion": "Can select the date that is greater than the last version. (Today +1)"
+      }
+    },
+    "views": {
+      "title": "View only - {{docName}}"
+    },
+    "detail": "{{docName}} Detail",
     "error": {
       "effectiveDateLessThanToday": "Please enter an effective date-time that is greater than the current time.",
       "effectiveDateLessThanNextVersion": "Please enter an effective date-time that is less than {{nextEffectiveDate}}."

@@ -37,9 +37,13 @@ export const ROUTE_PATHS = Object.freeze({
   DOCUMENT_VERSIONS: '/documents/:documentCode/versions',
   DOCUMENT_VERSION_VIEW: '/documents/:documentCode/versions/:version',
   DOCUMENT_VERSION_EDIT: '/documents/:documentCode/versions/:version/edit',
+  NEW_DOCUMENTS: '/new-documents',
+  NEW_DOCUMENT_VERSIONS: '/new-documents/:documentCode/versions',
+  NEW_DOCUMENT_VERSION_EDIT: '/new-documents/:documentCode/versions/:version/edit',
   CONSENT_LOG: '/consent-log',
   CONSENTS_LOG: '/consents-log',
   USER_DELETE_LOG: '/user-delete-log',
+  DELETE_ACCOUNT_LOG: '/delete-account-log',
   COOKIE_CONSENT_LOG: '/cookie-consent-log',
   ADDITIONAL_EXPENSE: '/additional-expense',
   ADMIN_USERS: '/admin-users',
@@ -349,6 +353,22 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DOCUMENTS,
     component: lazy(() => import('./pages/Documents' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
+  },
+
+  {
+    path: ROUTE_PATHS.NEW_DOCUMENT_VERSION_EDIT,
+    component: lazy(() => import('./pages/NewDocumentVersionsEdit' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.NEW_DOCUMENT_VERSIONS,
+    component: lazy(() => import('./pages/NewDocumentVersions' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
+  },
+  {
+    path: ROUTE_PATHS.NEW_DOCUMENTS,
+    component: lazy(() => import('./pages/NewDocuments' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATION, ROLES.CENTRE_OPERATION],
   },
   {
