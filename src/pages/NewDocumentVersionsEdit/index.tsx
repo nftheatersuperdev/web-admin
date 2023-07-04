@@ -1,4 +1,5 @@
 import { InputAdornment, TextField, Typography } from '@mui/material'
+import { useState } from 'react'
 import { CalendarMonth } from '@mui/icons-material'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
@@ -10,12 +11,13 @@ import PageTitle, { PageBreadcrumbs } from 'components/PageTitle'
 import { Wrapper, ContentSection, GridSearchSection, GridTextField } from 'components/Styled'
 import { Page } from 'layout/LayoutRoute'
 import { getVersionDetail } from 'services/web-bff/document'
-import DateTimePicker from 'components/DateTimePicker'
 import HTMLEditor from 'components/HTMLEditor'
 
 export default function NewDocumentVersionsEdit(): JSX.Element {
   const { t, i18n } = useTranslation()
   const { documentCode, version } = useParams<DocumentVersionsEditParams>()
+  const [contentThTemp, setContentThTemp] = useState<string | undefined>()
+  const [contentEnTemp, setContentEnTemp] = useState<string | undefined>()
   const currentVersion = +version
   const { data: currentDocument, isFetching: isFetchingCurrentDoc } = useQuery(
     'document-current-version',
@@ -51,7 +53,12 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
       link: '/',
     },
   ]
-  const effectiveDate = dayjs(currentDocument?.effectiveDate) || dayjs()
+  const handleOnDescriptionChange = (value: string, language: string) => {
+    if (language === 'th') {
+      setContentThTemp(value)
+    }
+    setContentEnTemp(value)
+  }
   return (
     <Page>
       <PageTitle title={t('sidebar.documentsManagement.newDocument')} breadcrumbs={breadcrumbs} />
@@ -68,46 +75,31 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
           )}
           <GridSearchSection container spacing={1}>
             <GridTextField item xs={6} sm={6}>
-              {!isEdit ? (
-                <TextField
-                  fullWidth
-                  label={t('newDocuments.addEdit.effectiveDate')}
-                  id="document_detail_effectiveDate"
-                  name="effectiveDate"
-                  variant="outlined"
-                  value={
-                    currentDocument?.effectiveDate
-                      ? dayjs(currentDocument?.effectiveDate).format(
-                          DEFAULT_DATETIME_FORMAT_MONTH_TEXT
-                        )
-                      : '-'
-                  }
-                  InputLabelProps={{
-                    shrink: true,
-                    'aria-readonly': true,
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <CalendarMonth />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              ) : (
-                <DateTimePicker
-                  inputVariant="outlined"
-                  fullWidth
-                  id="document_detail_effectiveDate___input_date"
-                  disabled={isEdit}
-                  value={effectiveDate}
-                  format={DEFAULT_DATETIME_FORMAT_MONTH_TEXT}
-                  onChange={(date) => {
-                    console.log(date)
-                  }}
-                  label={t('newDocuments.addEdit.effectiveDate')}
-                />
-              )}
+              <TextField
+                fullWidth
+                label={t('newDocuments.addEdit.effectiveDate')}
+                id="document_detail_effectiveDate"
+                name="effectiveDate"
+                variant="outlined"
+                value={
+                  currentDocument?.effectiveDate
+                    ? dayjs(currentDocument?.effectiveDate).format(
+                        DEFAULT_DATETIME_FORMAT_MONTH_TEXT
+                      )
+                    : '-'
+                }
+                InputLabelProps={{
+                  shrink: true,
+                  'aria-readonly': true,
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <CalendarMonth />
+                    </InputAdornment>
+                  ),
+                }}
+              />
             </GridTextField>
 
             <GridTextField item xs={12} sm={12}>
@@ -133,8 +125,8 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
                 id="document_detail_contentTh"
                 disabled={!isEdit}
                 label={t('newDocuments.addEdit.contentTh')}
-                initialValue={currentDocument?.contentTh || '-'}
-                handleOnEditChange={(value: string) => console.log(value)}
+                initialValue={currentDocument?.contentTh || contentThTemp}
+                handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'th')}
               />
             </GridTextField>
             <GridTextField xs={12} sm={12}>
@@ -142,8 +134,8 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
                 id="document_detail_contentEn"
                 disabled={!isEdit}
                 label={t('newDocuments.addEdit.contentEn')}
-                initialValue={currentDocument?.contentEn || '-'}
-                handleOnEditChange={(value: string) => console.log(value)}
+                initialValue={currentDocument?.contentEn || contentEnTemp}
+                handleOnEditChange={(value: string) => handleOnDescriptionChange(value, 'en')}
               />
             </GridTextField>
           </GridSearchSection>
