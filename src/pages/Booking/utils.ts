@@ -43,7 +43,7 @@ export const BookingStatus = {
 
 export const BookingPaymentStatus = {
   SUCCESS: 'success',
-  FAIL: 'fail',
+  FAILED: 'failed',
   PENDING: 'pending',
 }
 
@@ -492,9 +492,9 @@ export const columnFormatBookingPaymentStatus = (
         color: classes.chipBgGreen,
       }
 
-    case BookingPaymentStatus.FAIL:
+    case BookingPaymentStatus.FAILED:
       return {
-        label: t('booking.payment.fail'),
+        label: t('booking.payment.failed'),
         color: classes.chipBgRed,
       }
 
