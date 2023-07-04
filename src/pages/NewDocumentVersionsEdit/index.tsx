@@ -58,7 +58,7 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
       <Wrapper>
         <ContentSection>
           {!isEdit ? (
-            <Typography variant="h6" component="h2">
+            <Typography id="document_detail_title" variant="h6" component="h2">
               {t('newDocuments.views.title', { docName })}
             </Typography>
           ) : (
@@ -72,7 +72,7 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
                 <TextField
                   fullWidth
                   label={t('newDocuments.addEdit.effectiveDate')}
-                  id="effectiveDate"
+                  id="document_detail_effectiveDate"
                   name="effectiveDate"
                   variant="outlined"
                   value={
@@ -98,6 +98,7 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
                 <DateTimePicker
                   inputVariant="outlined"
                   fullWidth
+                  id="document_detail_effectiveDate___input_date"
                   disabled={isEdit}
                   value={effectiveDate}
                   format={DEFAULT_DATETIME_FORMAT_MONTH_TEXT}
@@ -114,7 +115,7 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
                 fullWidth
                 disabled={!isEdit}
                 label={t('newDocuments.addEdit.revisionSummary')}
-                id="remark"
+                id="document_detail_remark"
                 name="remark"
                 variant="outlined"
                 value={currentDocument?.remark || '-'}
@@ -129,7 +130,7 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
             </GridTextField>
             <GridTextField xs={12} sm={12}>
               <HTMLEditor
-                id="document_version_contentTh___id"
+                id="document_detail_contentTh"
                 disabled={!isEdit}
                 label={t('newDocuments.addEdit.contentTh')}
                 initialValue={currentDocument?.contentTh || '-'}
@@ -138,7 +139,7 @@ export default function NewDocumentVersionsEdit(): JSX.Element {
             </GridTextField>
             <GridTextField xs={12} sm={12}>
               <HTMLEditor
-                id="document_version_contentEn___id"
+                id="document_detail_contentEn"
                 disabled={!isEdit}
                 label={t('newDocuments.addEdit.contentEn')}
                 initialValue={currentDocument?.contentEn || '-'}

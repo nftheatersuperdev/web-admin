@@ -1178,7 +1178,7 @@
       "version": "Version",
       "status": "Status",
       "effectiveDate": "Effective Date",
-      "revisionSummary": "Revision summary",
+      "revisionSummary": "Revision Summary",
       "buttons": {
         "addNewVersion": "Add New Version"
       }

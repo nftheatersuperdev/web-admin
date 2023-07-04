@@ -115,6 +115,7 @@ export default function NewDocumentVersions(): JSX.Element {
     )
   }
   let docOverview = defaultDocumentOverview
+  const startNo = (page - 1) * size
   const docVer =
     documents?.versions.map((ver, index) => {
       if (ver.status.toLowerCase() === 'active') {
@@ -140,7 +141,7 @@ export default function NewDocumentVersions(): JSX.Element {
         >
           <TableCell id="documents_version__no">
             <DataWrapper>
-              <TextSmallLineClamp>{index + 1}</TextSmallLineClamp>
+              <TextSmallLineClamp>{startNo + index + 1}</TextSmallLineClamp>
             </DataWrapper>
           </TableCell>
           <TableCell id="documents_version__version">
