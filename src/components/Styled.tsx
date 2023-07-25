@@ -53,7 +53,8 @@ export const TextSmallLineClamp = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   overflow-wrap: break-word;
-  width: 85px;
+  width: 80px;
+  padding-left: 15px;
   -line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -63,8 +64,18 @@ export const TextLineClamp = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   overflow-wrap: break-word;
-  width: 125px;
+  padding-left: 15px;
   -line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+`
+export const TextLineURLClamp = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  padding-left: 15px;
+  width: 200px;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   display: -webkit-box;
@@ -79,5 +90,8 @@ export const SearchButton = styled(Button)`
 `
 
 export const DataWrapper = styled.div`
-  padding: 0 17px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `

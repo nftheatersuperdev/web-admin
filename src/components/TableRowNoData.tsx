@@ -10,7 +10,7 @@ export default function TableRowNoData({ colSpan }: TableRowNoDataProps): JSX.El
   return (
     <TableRow>
       <TableCell colSpan={colSpan} align="center">
-        {t('noData')}
+        {t('warning.noData')}
       </TableCell>
     </TableRow>
   )

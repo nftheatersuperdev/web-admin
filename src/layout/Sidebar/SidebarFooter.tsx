@@ -53,7 +53,7 @@ const GearIcon = styled(Settings)`
 function SidebarFooter({ ...rest }): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
-  const { firebaseUser, signOut } = useAuth()
+  const { signOut } = useAuth()
   const { data: profile } = useQuery('user-profile', () => getAdminUserProfile())
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -87,9 +87,7 @@ function SidebarFooter({ ...rest }): JSX.Element {
               }}
               variant="dot"
             >
-              <Avatar sx={{ bgcolor: deepOrange[500] }}>
-                {firebaseUser?.email?.charAt(0).toLocaleUpperCase()}
-              </Avatar>
+              <Avatar sx={{ bgcolor: deepOrange[500] }} src="/logo-nftheater.png" />
             </FooterBadge>
           </Grid>
           <Grid item lg={6}>
@@ -98,7 +96,7 @@ function SidebarFooter({ ...rest }): JSX.Element {
                 ? `${profile.firstName} ${profile.lastName}`
                 : 'No Name'}
             </FooterText>
-            <FooterSubText variant="caption">{profile?.email || 'No Email'}</FooterSubText>
+            <FooterSubText variant="caption">{profile?.role || 'No Email'}</FooterSubText>
           </Grid>
           <Grid item lg={3}>
             <Box

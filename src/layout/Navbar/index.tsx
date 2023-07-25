@@ -60,7 +60,7 @@ function Navbar({ onSidebarToggle }: NavbarProps) {
             </NavLink>
           </Grid>
           <Grid item>
-            <VersionText>{t('version', { version })}</VersionText>
+            <VersionText>{t('header.version', { version })}</VersionText>
           </Grid>
           <Grid item>
             <NavbarLanguagesDropdown />

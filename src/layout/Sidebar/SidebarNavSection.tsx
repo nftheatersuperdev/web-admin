@@ -25,7 +25,6 @@ interface SidebarNavSectionProps {
 
 const SidebarNavSection: React.FC<SidebarNavSectionProps> = (props) => {
   const { title, pages, className, component: Component = 'nav', ...rest } = props
-
   return (
     <Component {...rest}>
       {title && <Title variant="subtitle2">{title}</Title>}

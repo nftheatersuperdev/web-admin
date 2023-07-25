@@ -4,7 +4,6 @@ import { useFormik } from 'formik'
 import { Box, Button, Container, IconButton, TextField, Typography } from '@material-ui/core'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-// import { ROUTE_PATHS } from 'routes'
 import { useAuth } from 'auth/AuthContext'
 import styled from 'styled-components'
 
@@ -46,8 +45,7 @@ export default function Login(): JSX.Element {
         loading: t('toast.loading'),
         success: () => {
           actions.setSubmitting(false)
-          // history.replace(ROUTE_PATHS.DASHBOARD)
-          history.replace('/')
+          history.replace('/dashboard')
           return t('authentication.success')
         },
         error: (err) => {

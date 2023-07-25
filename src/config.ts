@@ -1,15 +1,11 @@
-import { Options as SentryOptions } from '@sentry/types'
-
 interface Config {
   appName: string
   appVersion: string
   tableRowsDefaultPageSize: number
   tableRowsPerPageOptions: number[]
   isProductionEnvironment: boolean
-  sentry: SentryOptions
-  evme: string
-  evmeBff: string
-  evmeAdminBff: string
+  nftheater: string
+  nftheaterAPI: string
   firebaseRest: string
   firebaseRestKey: string
   googleMapsApiKey: string
@@ -23,13 +19,8 @@ const config: Config = {
   tableRowsDefaultPageSize: 10,
   tableRowsPerPageOptions: [5, 10, 20, 50],
   isProductionEnvironment: process.env.REACT_APP_ENVIRONMENT === 'production',
-  sentry: {
-    dsn: process.env.REACT_APP_SENTRY_DSN || '',
-    environment: process.env.REACT_APP_SENTRY_ENVIRONMENT || '',
-  },
-  evme: process.env.REACT_APP_EVME_API || '',
-  evmeBff: process.env.REACT_APP_EVME_BFF_API || '',
-  evmeAdminBff: process.env.REACT_APP_EVME_ADMIN_BFF_API || '',
+  nftheater: process.env.REACT_APP_NFTHEATER_API || '',
+  nftheaterAPI: process.env.REACT_APP_NFTHEATER_API || '',
   googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
   firebaseRest: process.env.REACT_APP_FIREBASE_REST_API || '',
   firebaseRestKey: process.env.REACT_APP_FIREBASE_REST_KEY || '',

@@ -200,7 +200,13 @@ export default function MultipleSearchField({
           options={searchOptions}
           getOptionLabel={(option) => option.label}
           renderInput={(params) => {
-            return <TextField {...params} label={t('booking.selectSearch')} variant="outlined" />
+            return (
+              <TextField
+                {...params}
+                label={t('search.initPlaceholderInputField')}
+                variant="outlined"
+              />
+            )
           }}
           isOptionEqualToValue={(option, value) =>
             option.value === value.value || value.value === ''
@@ -229,7 +235,7 @@ export default function MultipleSearchField({
           disabled={isDisabledSearchButton}
           onClick={handleOnSubmit}
         >
-          {t('carAvailability.searchBtn').toUpperCase()}
+          {t('button.search').toUpperCase()}
         </SearchSubmitButton>
       </Grid>
     </Grid>

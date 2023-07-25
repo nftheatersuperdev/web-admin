@@ -25,7 +25,7 @@ export const searchAdminUser = async ({
 }
 
 export const getAdminUserProfile = async (): Promise<AdminUser> => {
-  const response: AdminUserProfileResponse = await AdminBffAPI.get('/v1/admin-users/profiles').then(
+  const response: AdminUserProfileResponse = await AdminBffAPI.get('/v1/admin-user/profile').then(
     (response) => response.data.data
   )
 

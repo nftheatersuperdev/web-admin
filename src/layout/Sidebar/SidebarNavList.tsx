@@ -2,7 +2,6 @@ import { ReactElement, Fragment } from 'react'
 import { useLocation } from 'react-router-dom'
 import { hasAllowedRole } from 'auth/roles'
 import { useAuth } from 'auth/AuthContext'
-import { hasAllowedPrivilege } from 'auth/privileges'
 import { SidebarItemsType } from './types'
 import reduceChildRoutes from './reduceChildRoutes'
 
@@ -13,22 +12,18 @@ interface SidebarNavListProps {
 
 function SidebarNavList({ pages, depth }: SidebarNavListProps): ReactElement {
   const router = useLocation()
-  const { getRole, getPrivileges, getRemoteConfig } = useAuth()
+  const { getRole, getRemoteConfig } = useAuth()
   const currentRoute = router.pathname
   const currentUserRole = getRole()
-  const currentUserPrivileges = getPrivileges()
   const filteredPages = pages.filter((page) => {
     const isValidRole = page.allowedRoles && hasAllowedRole(currentUserRole, page.allowedRoles)
-    const isValidPrivilege =
-      page.allowedPrivileges && hasAllowedPrivilege(currentUserPrivileges, page.allowedPrivileges)
-
     if (page.toggleKey) {
       const toggle = getRemoteConfig(page.toggleKey)
       if (toggle && !toggle.asBoolean()) {
         return false
       }
     }
-    if (isValidPrivilege || isValidRole) {
+    if (isValidRole) {
       return page
     }
     return false

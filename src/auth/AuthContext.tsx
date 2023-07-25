@@ -4,22 +4,17 @@ import ls from 'localstorage-slim'
 import firebase from 'firebase/app'
 import { useTranslation } from 'react-i18next'
 import { getAdminUserProfile } from 'services/web-bff/admin-user'
-import { ResellerServiceArea } from 'services/web-bff/admin-user.type'
 import { Firebase } from './firebase'
 import useErrorMessage from './useErrorMessage'
 import { Role, getAdminUserRoleLabel } from './roles'
 
 export const STORAGE_KEYS = {
-  ROLE: 'evme:user_role',
-  TOKEN: 'evme:user_token',
-  ID: 'evme:user_id',
-  RESELLER_SERVICE_AREA: 'evme:user_reseller_service_area',
-  LOCATION: 'evme:user_location',
+  ROLE: 'nftheater:user_role',
+  TOKEN: 'nftheater:user_token',
+  ID: 'nftheater:user_id',
 }
 
 type Text = string | null | undefined
-type ArrayText = string[] | null | undefined
-type ResellerServices = ResellerServiceArea[] | null | undefined
 
 interface AuthProviderProps {
   fbase: Firebase
@@ -44,11 +39,6 @@ interface AuthProps {
   setUserId: (id: string) => void
   getUserId: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
-  setPrivileges: (privilege: string[]) => void
-  getPrivileges: () => ArrayText
-  setResellerServiceAreas: (areas: ResellerServiceArea[]) => void
-  getResellerServiceAreas: () => ResellerServices
-  getResellerServiceAreaWithSort: () => ResellerServices
 }
 
 const Auth = createContext<AuthProps>({
@@ -66,17 +56,12 @@ const Auth = createContext<AuthProps>({
   setUserId: (_id: string) => undefined,
   getUserId: () => undefined,
   getRemoteConfig: (_key: string) => undefined,
-  setPrivileges: (_privilege: string[]) => undefined,
-  getPrivileges: () => undefined,
-  setResellerServiceAreas: (_areas: ResellerServiceArea[]) => undefined,
-  getResellerServiceAreas: () => undefined,
-  getResellerServiceAreaWithSort: () => undefined,
 })
 
 export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Element {
   const [firebaseUser, setFirebaseUser] = useState<firebase.User | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const errorMessage = useErrorMessage()
 
@@ -118,38 +103,6 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     return ls.get<Text>(STORAGE_KEYS.ROLE, { encrypt: true })
   }
 
-  const setPrivileges = (privilege: string[]) => {
-    ls.set<string[]>('PRIVILEGES', privilege, { encrypt: true })
-  }
-
-  const getPrivileges = (): ArrayText => {
-    return ls.get<ArrayText>('PRIVILEGES', { encrypt: true })
-  }
-
-  const setResellerServiceAreas = (areas: ResellerServiceArea[]) => {
-    ls.set<ResellerServiceArea[]>(STORAGE_KEYS.RESELLER_SERVICE_AREA, areas)
-  }
-
-  const getResellerServiceAreas = (): ResellerServices => {
-    return ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
-  }
-
-  const getResellerServiceAreaWithSort = (): ResellerServices => {
-    const resellerStorage = ls.get<ResellerServices>(STORAGE_KEYS.RESELLER_SERVICE_AREA)
-    const sortedAreas = resellerStorage?.sort((a, b) => {
-      const areaA = a[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
-      const areaB = b[i18n.language === 'th' ? 'areaNameTh' : 'areaNameEn']
-      if (areaA < areaB) {
-        return -1
-      }
-      if (areaA < areaB) {
-        return 1
-      }
-      return 0
-    })
-    return sortedAreas
-  }
-
   const getRoleDisplayName = (): string => {
     const role = getRole()
     return getAdminUserRoleLabel(role, t)
@@ -173,8 +126,6 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
 
       setUserId(user.uid)
       setRole(userProfile.role.toLocaleLowerCase())
-      setPrivileges(userProfile.privileges)
-      setResellerServiceAreas(userProfile.resellerServiceAreas)
     } catch (error: any) {
       const errMessage = error.code || error.response.data.message.toLowerCase()
       const message = errorMessage(errMessage as string)
@@ -226,11 +177,6 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         setUserId,
         getUserId,
         getRemoteConfig,
-        setPrivileges,
-        getPrivileges,
-        setResellerServiceAreas,
-        getResellerServiceAreas,
-        getResellerServiceAreaWithSort,
       }}
     >
       {children}

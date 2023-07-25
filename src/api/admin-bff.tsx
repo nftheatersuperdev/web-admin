@@ -9,7 +9,7 @@ import { fetchIpAddress } from 'components/GetIpAddress'
 import { version } from '../../package.json'
 
 export const AdminBffAPI = axios.create({
-  baseURL: config.evmeAdminBff,
+  baseURL: config.nftheaterAPI,
 })
 
 AdminBffAPI.interceptors.request.use(

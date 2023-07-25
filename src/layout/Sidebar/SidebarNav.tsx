@@ -37,7 +37,6 @@ function SidebarNav({ items }: SidebarNavProps): ReactElement {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('md'))
   const ScrollbarComponent = (matches ? PerfectScrollbar : Scrollbar) as ElementType
-
   return (
     <ScrollbarComponent>
       <List disablePadding>

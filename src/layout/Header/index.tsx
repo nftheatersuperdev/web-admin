@@ -45,7 +45,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
           <img src={process.env.PUBLIC_URL + '/logo.png'} alt={t('header.aria.logo')} />
         </Box>
 
-        <Box pl={1}>{t('version', { version })}</Box>
+        <Box pl={1}>{t('header.version', { version })}</Box>
 
         <IconButton
           color="inherit"

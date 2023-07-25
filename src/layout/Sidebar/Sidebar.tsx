@@ -20,13 +20,13 @@ const Brand = styled(ListItemButton)<{
   to?: string
 }>`
   padding: 20px 0 0 15px !important;
-  background: #233044 !important;
+  background: #444243 !important;
   ${({ theme }) => theme.breakpoints.down('sm')} {
     display: none !important;
   }
 
   img {
-    height: 32px !important;
+    height: 75px !important;
   }
 `
 
@@ -53,7 +53,7 @@ function Sidebar({ items, ...rest }: SidebarProps): JSX.Element {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Drawer variant="permanent" {...rest}>
       <Brand component={NavLink as unknown} to="/">
-        <img src={process.env.PUBLIC_URL + '/logo-full.png'} alt={t('header.aria.logo')} />
+        <img src={process.env.PUBLIC_URL + '/logo-nftheater.png'} alt={t('header.aria.logo')} />
       </Brand>
       <SidebarNav items={items} />
       <Footer />

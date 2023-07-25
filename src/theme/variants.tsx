@@ -49,17 +49,17 @@ const defaultVariant = {
   },
   sidebar: {
     color: grey[200],
-    background: '#233044',
+    background: '#444243',
     header: {
       color: grey[200],
-      background: '#233044',
+      background: '#444243',
       brand: {
         color: customBlue[500],
       },
     },
     footer: {
       color: grey[200],
-      background: '#1E2A38',
+      background: '#444243',
       online: {
         background: green[500],
       },
@@ -81,7 +81,7 @@ const darkVariant = merge(defaultVariant, {
     },
     background: {
       default: '#1B2635',
-      paper: '#233044',
+      paper: '#444243',
     },
     text: {
       primary: 'rgba(255, 255, 255, 0.95)',
@@ -97,7 +97,7 @@ const darkVariant = merge(defaultVariant, {
   },
   footer: {
     color: grey[300],
-    background: '#233044',
+    background: '#444243',
   },
 })
 

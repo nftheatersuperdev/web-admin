@@ -69,7 +69,7 @@ export default function Paginate({
         </FormControlInline>
       </FormWrapper>
       <TextWrapper>
-        {pagination.page} {t('booking.of')} {pagination.totalPage}
+        {pagination.page} {t('pagination.of')} {pagination.totalPage}
       </TextWrapper>
       <Pagination
         count={pagination.totalPage}
