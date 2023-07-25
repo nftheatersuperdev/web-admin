@@ -8,7 +8,7 @@
     "npm": ">=7"
   },
   "scripts": {
-    "start": "PORT=5002 react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start --openssl-legacy-provider ",
     "build": "react-scripts build",
     "build:stats": "npm run build -- --stats && webpack-bundle-analyzer ./build/bundle-stats.json",
     "test": "react-scripts test",
@@ -74,7 +74,7 @@
     "react-perfect-scrollbar": "~1.5.8",
     "react-query": "~3.16.0",
     "react-router-dom": "~5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.0",
     "save-dev": "~0.0.1-security",
     "styled-components": "~5.3.9",
     "web-vitals": "^1.0.1",
