@@ -6,7 +6,7 @@ import { Grid, AppBar as MuiAppBar, IconButton as MuiIconButton, Toolbar } from 
 import { NavLink } from 'react-router-dom'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
-import { version } from '../../../package.json'
+import packageInfo from '../../../package.json'
 import NavbarUserDropdown from './NavbarUserDropdown'
 import NavbarLanguagesDropdown from './NavbarLanguagesDropdown'
 
@@ -60,7 +60,7 @@ function Navbar({ onSidebarToggle }: NavbarProps) {
             </NavLink>
           </Grid>
           <Grid item>
-            <VersionText>{t('header.version', { version })}</VersionText>
+            <VersionText>{t('header.version', packageInfo.version)}</VersionText>
           </Grid>
           <Grid item>
             <NavbarLanguagesDropdown />

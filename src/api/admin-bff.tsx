@@ -6,7 +6,7 @@ import ls from 'localstorage-slim'
 import { browserName } from 'react-device-detect'
 import { STORAGE_KEYS } from 'auth/AuthContext'
 import { fetchIpAddress } from 'components/GetIpAddress'
-import { version } from '../../package.json'
+import packageInfo from '../../package.json'
 
 export const AdminBffAPI = axios.create({
   baseURL: config.nftheaterAPI,
@@ -25,7 +25,7 @@ AdminBffAPI.interceptors.request.use(
     const timestamp = Math.floor(+new Date() / 1000)
     config.headers.timestamp = timestamp
     config.headers.user_agent = browserName
-    config.headers.application_version = version
+    config.headers.application_version = packageInfo.version
     return config
   },
   (err) => {
