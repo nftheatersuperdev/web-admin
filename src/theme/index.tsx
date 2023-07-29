@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable prettier/prettier */
 import '@mui/lab/themeAugmentation'
 import { createTheme as createMuiTheme } from '@mui/material/styles'
 import variants from './variants'

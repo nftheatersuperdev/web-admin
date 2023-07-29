@@ -218,7 +218,6 @@ export default function NetflixAccount(): JSX.Element {
   /**
    * Init pagination depends on data from the API.
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   useEffect(() => {}, [netflix, refetch])
   /**
    * Managing the pagination variables that will send to the API.

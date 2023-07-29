@@ -109,7 +109,6 @@ export const FieldKeyOparators = {
   is: 'is',
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const nowLowerUpper = () => {
   return {
     lower: dayjs().startOf('day').format(),

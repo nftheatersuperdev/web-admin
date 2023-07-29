@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactElement, createContext, useContext, useState, useEffect, Fragment } from 'react'
 import ls from 'localstorage-slim'
 import firebase from 'firebase/app'

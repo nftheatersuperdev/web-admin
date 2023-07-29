@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useTranslation } from 'react-i18next'
 import { ROUTE_PATHS } from 'routes'
 import { Dashboard, PeopleAlt, AccountBalance, Tune } from '@mui/icons-material'

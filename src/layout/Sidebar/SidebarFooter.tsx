@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react'
 import styled from 'styled-components'
 import { Link, useHistory } from 'react-router-dom'
