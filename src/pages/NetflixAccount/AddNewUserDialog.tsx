@@ -293,7 +293,6 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   noOptionsText="ไม่พบข้อมูลลูกค้า"
                   renderInput={(params) => (
                     <TextField
-                      // eslint-disable-next-line react/jsx-props-no-spreading
                       {...params}
                       label={t('customer.title')}
                       variant="outlined"

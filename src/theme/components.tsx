@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const components = {
   MuiButtonBase: {
     defaultProps: {

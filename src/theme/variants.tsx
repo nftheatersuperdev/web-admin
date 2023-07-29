@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import merge from 'deepmerge'
 import { green, grey, indigo, red } from '@mui/material/colors'
 import { THEMES } from 'theme-constants'

@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import { useEffect, useState } from 'react'
 import {
   Button,

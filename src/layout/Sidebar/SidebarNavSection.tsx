@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/function-component-definition */
 import React from 'react'
 import styled from 'styled-components'
 import { Typography } from '@mui/material'

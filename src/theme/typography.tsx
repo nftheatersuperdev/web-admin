@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { TypographyOptions } from '@mui/material/styles/createTypography'
 
 const typography: TypographyOptions = {

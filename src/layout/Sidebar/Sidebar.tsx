@@ -50,7 +50,6 @@ function Sidebar({ items, ...rest }: SidebarProps): JSX.Element {
   const { t } = useTranslation()
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
     <Drawer variant="permanent" {...rest}>
       <Brand component={NavLink as unknown} to="/">
         <img src={process.env.PUBLIC_URL + '/logo-nftheater.png'} alt={t('header.aria.logo')} />

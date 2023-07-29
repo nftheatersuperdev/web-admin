@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Shadows } from '@mui/material/styles/shadows'
 
 function createShadow() {

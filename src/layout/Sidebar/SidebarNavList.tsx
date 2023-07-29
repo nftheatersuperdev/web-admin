@@ -34,7 +34,6 @@ function SidebarNavList({ pages, depth }: SidebarNavListProps): ReactElement {
     [] as JSX.Element[]
   )
 
-  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <Fragment>{childRoutes}</Fragment>
 }
 

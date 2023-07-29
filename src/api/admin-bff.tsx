@@ -1,5 +1,3 @@
-/* eslint-disable import/no-relative-parent-imports */
-/* eslint-disable no-restricted-imports */
 import config from 'config'
 import axios from 'axios'
 import ls from 'localstorage-slim'

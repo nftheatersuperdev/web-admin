@@ -24,7 +24,6 @@ export default function SearchAutocomplete({
       options={statusOptions}
       getOptionLabel={(option) => option.label}
       renderInput={(params) => {
-        /* eslint-disable-next-line react/jsx-props-no-spreading */
         return <TextField {...params} label={textLabel} variant="outlined" />
       }}
       isOptionEqualToValue={(option, value) => option.value === value.value || value.value === ''}

@@ -208,7 +208,6 @@ export const validateKeywordText = (value: string): boolean => {
 }
 
 export const validateKeywordTextWithSpecialChar = (value: string): boolean => {
-  // eslint-disable-next-line
   const keywordRule = /^[a-zA-Z0-9_@.+-\/]{2,}$/g // Add validate special character
   return keywordRule.test(value)
 }

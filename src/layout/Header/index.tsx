@@ -1,5 +1,3 @@
-/* eslint-disable import/no-relative-parent-imports */
-/* eslint-disable no-restricted-imports */
 import styled from 'styled-components'
 import { AppBar as MuiAppBar, IconButton, Button, Hidden, Toolbar, Box } from '@material-ui/core'
 import { Menu as MenuIcon } from '@material-ui/icons'

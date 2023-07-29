@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { useState, ChangeEvent, useRef } from 'react'
 import { Autocomplete, Grid, TextField, InputAdornment, IconButton, Button } from '@mui/material'
 import { Search as SearchIcon } from '@mui/icons-material'

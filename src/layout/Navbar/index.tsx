@@ -1,5 +1,3 @@
-/* eslint-disable import/no-relative-parent-imports */
-/* eslint-disable no-restricted-imports */
 import styled from 'styled-components'
 import { withTheme } from '@emotion/react'
 import { Grid, AppBar as MuiAppBar, IconButton as MuiIconButton, Toolbar } from '@mui/material'

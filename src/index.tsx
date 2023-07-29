@@ -18,10 +18,8 @@ import './i18n'
 const queryClient = new QueryClient()
 
 if (config.isProductionEnvironment) {
-  // eslint-disable-next-line
   console.info('[Application] Running in production mode.')
 } else {
-  // eslint-disable-next-line
   console.info('[Application] Running in development mode.')
 }
 

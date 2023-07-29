@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import {
@@ -300,7 +299,6 @@ export default function Netflix(): JSX.Element {
               noOptionsText="ไม่พบข้อมูลลูกค้า"
               renderInput={(params) => (
                 <TextField
-                  // eslint-disable-next-line react/jsx-props-no-spreading
                   {...params}
                   label={t('netflix.customer')}
                   variant="outlined"

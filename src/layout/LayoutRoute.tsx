@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { ComponentType, useState } from 'react'
 import { Route, Redirect, RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'

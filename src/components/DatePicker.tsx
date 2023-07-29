@@ -19,7 +19,6 @@ export default function DatePicker(props: KeyboardDatePickerProps): JSX.Element 
   return (
     <MuiPickersUtilsProvider utils={DayjsUtils} locale={locales[i18n.language]}>
       <KeyboardDatePicker
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
         invalidDateMessage={t('datetimePicker.invalidDateMessage')}
         invalidLabel={t('datetimePicker.invalidLabel')}

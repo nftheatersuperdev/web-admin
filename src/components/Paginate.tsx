@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 import config from 'config'
 import styled from 'styled-components'
 import { FormControl, Select, MenuItem, Pagination } from '@mui/material'
