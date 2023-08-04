@@ -13,6 +13,8 @@ export const ROUTE_PATHS = Object.freeze({
   CUSTOMER: '/customers',
   NETFLIX: '/netflixes',
   NETFLIX_ACCOUNT: '/netflix/:id',
+  YOUTUBE: '/youtubes',
+  YOUTUBE_ACCOUNT: '/youtube/:id',
   SETTING_CONFIGS: '/setting-configs',
   SETTING_CONFIG_EDIT: '/setting-config/:id',
   SETTING_CONFIG_ADD: '/setting-config/add',

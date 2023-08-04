@@ -63,15 +63,15 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const formikCreateUser = useFormik({
     initialValues: {
       extendDay: 0,
-      customerName: '',
-      email: '',
-      phoneNumber: '',
+      // customerName: '',
+      // email: '',
+      // phoneNumber: '',
       lineId: '',
       lineUrl: '',
     },
     validationSchema: Yup.object().shape({
       extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
-      customerName: Yup.string().max(255).required('กรุณาระบุชื่อลูกค้า'),
+      // customerName: Yup.string().max(255).required('กรุณาระบุชื่อลูกค้า'),
       lineId: Yup.string().max(255).required('กรุณาระบุ Line Id'),
       lineUrl: Yup.string().max(255).required('กรุณาระบุ Line URL'),
     }),
@@ -79,9 +79,6 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     onSubmit: (values) => {
       toast.promise(
         createCustomer({
-          customerName: values.customerName,
-          email: values.email,
-          phoneNumber: values.phoneNumber,
           lineId: values.lineId,
           lineUrl: values.lineUrl,
         } as CreateCustomerRequest),
@@ -91,10 +88,10 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             formikLinkUser.setFieldValue('userId', res.data.userId)
             formikCreateUser.resetForm()
             formikLinkUser.handleSubmit()
-            return 'สร้างลูกค้า ' + values.customerName + ' สำเร็จ'
+            return 'สร้างลูกค้า ' + values.lineId + ' สำเร็จ'
           },
           error: () => {
-            return 'สร้างลูกค้า ' + values.customerName + ' ไม่สำเร็จ'
+            return 'สร้างลูกค้า ' + values.lineId + ' ไม่สำเร็จ'
           },
         }
       )
@@ -165,7 +162,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
         <form onSubmit={formikCreateUser.handleSubmit}>
           <DialogContent>
             <Grid container spacing={1}>
-              <GridTextField item xs={12} sm={12}>
+              {/* <GridTextField item xs={12} sm={12}>
                 <TextField
                   type="text"
                   id="customer_add__customer_name"
@@ -210,7 +207,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   }
                   InputLabelProps={{ shrink: true }}
                 />
-              </GridTextField>
+              </GridTextField> */}
               <GridTextField item xs={12} sm={12}>
                 <TextField
                   type="text"

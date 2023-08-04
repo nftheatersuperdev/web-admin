@@ -35,7 +35,8 @@ dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
 
 const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').add(7, 'day').toDate()
-
+// 98874.34
+// 
 export default function AddNewNetflixDialog(props: AddNewNetflixDialogProps): JSX.Element {
   const useStyles = makeStyles({
     datePickerFromTo: {
@@ -58,14 +59,13 @@ export default function AddNewNetflixDialog(props: AddNewNetflixDialogProps): JS
     validationSchema: Yup.object().shape({
       changeDate: Yup.string()
         .max(255)
-        .matches(/^[1-12/0-12]/, 'กรุณาระบุวันสลับให้ตรงรูปแบบเช่น 29/09')
+        .matches(/^[1-31/0-12]/, 'กรุณาระบุวันสลับให้ตรงรูปแบบเช่น 29/09')
         .required('กรุณาระบุวันสลับ'),
       password: Yup.string().max(255).required('กรุณาระบุรหัสผ่าน'),
       email: Yup.string().email('อีเมลล์ไม่ถูกต้อง').max(255).required('กรุณาระบุอีเมลล์'),
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(values)
       toast.promise(createNetflixAccount(values as CreateNetflixAccountRequest), {
         loading: t('toast.loading'),
         success: (res: CreateNetflixAccountResponseAPI) => {

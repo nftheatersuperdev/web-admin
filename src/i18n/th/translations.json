@@ -28,6 +28,9 @@
     "netflixAccount": {
       "title": "บัญชี Netflix"
     },
+    "youtubeAccount": {
+      "title": "บัญชี Youtube"
+    },
     "settingConfig": "การตั้งค่าระบบ"
   },
   "button": {
@@ -35,7 +38,7 @@
     "signIn": "เข้าสู่ระบบ",
     "signOut": "ออกจากระบบ",
     "create": "สร้าง",
-    "update": "แก้ไข",
+    "update": "อัพเดตข้อมูล",
     "delete": "ลบ",
     "cancel": "ยกเลิก",
     "close": "ปิด",
@@ -54,7 +57,8 @@
     "upload": "อัพโหลดรูปภาพ",
     "addAdditional": "เพิ่มจอเสริม",
     "extendUser": "ต่ออายุ",
-    "disabled": "ปิดการใช้งานชั่วคราว"
+    "disabled": "ปิดการใช้งานชั่วคราว",
+    "transfer":"ย้ายข้อมูล"
   },
   "datetimePicker": {
     "invalidDateMessage": "รูปแบบวันที่ไม่ถูกต้อง",
@@ -219,10 +223,14 @@
     "additionalAccount": "บริการเสริม",
     "user": "ลูกค้า",
     "customer": "ชื่อลูกค้า",
-    "addScreen": "เพิ่มจอเสริม",
+    "addScreen": "เพิ่มหน้าจอเสริม",
     "addUser": "เพิ่มลูกค้า",
+    "transferUser": "ย้ายลูกค้า",
+    "fromAccount": "จากบัญชี",
+    "toAccount": "ไปยังบัญชี",
     "extendUser": "ต่ออายุลูกค้า",
-    "addNetflix": "สร้างบัญชี Netflix"
+    "addNetflix": "สร้างบัญชี Netflix",
+    "editScreen": "อัพเดตหน้าจอเสริม"
   },
   "customer": {
     "title": "ลูกค้า",
@@ -230,7 +238,7 @@
     "customerName":"ชื่อลูกค้า",
     "email":"อีเมลล์",
     "phoneNumber":"เบอร์โทรศัพท์",
-    "lineId":"Line Id",
+    "lineId":"ชื่อ Line",
     "lineUrl":"Line URL"
   },
   "settingConfig": {

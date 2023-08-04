@@ -1,5 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import * as Sentry from '@sentry/browser'
+import { Integrations } from '@sentry/tracing'
 import { StylesProvider, CssBaseline } from '@material-ui/core'
 import { AuthProvider } from 'auth/AuthContext'
 import { Firebase } from 'auth/firebase'
@@ -18,8 +20,20 @@ import './i18n'
 const queryClient = new QueryClient()
 
 if (config.isProductionEnvironment) {
+  // eslint-disable-next-line
   console.info('[Application] Running in production mode.')
+  Sentry.init({
+    dsn: config.sentry.dsn,
+    release: `${config.appName}@${config.appVersion}`,
+    integrations: [new Integrations.BrowserTracing()],
+    environment: config.sentry.environment,
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+  })
 } else {
+  // eslint-disable-next-line
   console.info('[Application] Running in development mode.')
 }
 

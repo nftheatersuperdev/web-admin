@@ -52,7 +52,7 @@ function Sidebar({ items, ...rest }: SidebarProps): JSX.Element {
   return (
     <Drawer variant="permanent" {...rest}>
       <Brand component={NavLink as unknown} to="/">
-        <img src={process.env.PUBLIC_URL + '/logo-nftheater.png'} alt={t('header.aria.logo')} />
+        <img src={'/logo-nftheater.png'} alt={t('header.aria.logo')} />
       </Brand>
       <SidebarNav items={items} />
       <Footer />

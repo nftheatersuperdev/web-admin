@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { AppBar as MuiAppBar, IconButton, Button, Hidden, Toolbar, Box } from '@material-ui/core'
 import { Menu as MenuIcon } from '@material-ui/icons'
 import { useTranslation } from 'react-i18next'
-import packageInfo from '../../../package.json'
 import LoggedInUser from './LoggedInUser'
 
 const AppBar = styled(MuiAppBar)`
@@ -43,7 +42,7 @@ function Header({ onSidebarToggle }: HeaderProps): JSX.Element {
           <img src={process.env.PUBLIC_URL + '/logo.png'} alt={t('header.aria.logo')} />
         </Box>
 
-        <Box pl={1}>{t('header.version', packageInfo.version)}</Box>
+        <Box pl={1}>เวอร์ชั่น 1.0.0</Box>
 
         <IconButton
           color="inherit"

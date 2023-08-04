@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { ROUTE_PATHS } from 'routes'
-import { Dashboard, PeopleAlt, AccountBalance, Tune } from '@mui/icons-material'
+import { Dashboard, PeopleAlt, AccountBalance, Tune, YouTube } from '@mui/icons-material'
 import { ROLES } from 'auth/roles'
 import { SidebarItemsType } from './Sidebar/types'
 
@@ -29,6 +29,13 @@ export function useMenuItems() {
       icon: AccountBalance,
       allowedRoles: [ROLES.SUPER_ADMIN],
     },
+    {
+      id: 'left_menu__youtube_account',
+      title: t('sidebar.youtubeAccount.title'),
+      href: ROUTE_PATHS.NETFLIX,
+      icon: YouTube,
+      allowedRoles: [ROLES.SUPER_ADMIN],
+    },   
     {
       id: 'left_menu__setting_config',
       title: t('sidebar.settingConfig'),

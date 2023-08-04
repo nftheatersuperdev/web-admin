@@ -251,7 +251,7 @@ export default function Netflix(): JSX.Element {
       )
     })) || (
     <TableRow>
-      <TableCell colSpan={5}>
+      <TableCell colSpan={6}>
         <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
       </TableCell>
     </TableRow>

@@ -28,6 +28,9 @@
     "netflixAccount": {
       "title": "Netflix Account"
     },
+    "youtubeAccount": {
+      "title": "Youtube Account"
+    },
     "settingConfig": "Configuration"
   },
   "button": {
@@ -54,7 +57,8 @@
     "upload": "Upload",
     "addAdditional": "Add Additional",
     "extendUser": "Extend",
-    "disabled": "Disabled"
+    "disabled": "Disabled",
+    "transfer":"Transfer"
   },
   "datetimePicker": {
     "invalidDateMessage": "Invalid Date Format",
@@ -221,8 +225,12 @@
     "customer": "Customer Name",
     "addScreen": "Add Screen",
     "addUser": "Add User",
+    "transferUser": "Move User",
+    "fromAccount": "From Account",
+    "toAccount": "To Account",
     "extendUser": "Extend User",
-    "addNetflix": "Add new Netflix account"
+    "addNetflix": "Add new Netflix account",
+    "editScreen": "Edit Screen"
   },
   "customer": {
     "title": "Customer",
@@ -230,7 +238,7 @@
     "customerName":"Customer Name",
     "email":"Email",
     "phoneNumber":"Phone Number",
-    "lineId":"Line Id",
+    "lineId":"Line Name",
     "lineUrl":"Line URL"
   },
   "settingConfig": {

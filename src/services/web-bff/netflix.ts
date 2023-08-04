@@ -1,5 +1,8 @@
 import { AdminBffAPI } from 'api/admin-bff'
 import {
+  AvailableAdditionResponse,
+  CreateAdditionAccountRequest,
+  CreateAdditionAccountResponse,
   CreateNetflixAccountRequest,
   CreateNetflixAccountResponseAPI,
   NetflixAccountListRequest,
@@ -8,6 +11,8 @@ import {
   NetflixAccountResponse,
   UpdateLinkUserNetflixRequest,
   UpdateLinkUserNetflixResponse,
+  UpdateNetflixAccountRequest,
+  UpdateNetflixAccountResponse,
 } from './netflix.type'
 
 export const getNetflixAccountList = async ({
@@ -64,7 +69,7 @@ export const deleteUserFromNetflixAccount = async (
   return true
 }
 
-export const updateNetflixAccount = async (
+export const updateNetflixAccountStatus = async (
   accountId: string,
   status: boolean
 ): Promise<boolean> => {
@@ -72,4 +77,62 @@ export const updateNetflixAccount = async (
     (response) => response.data
   )
   return true
+}
+
+export const unlinkAdditionalAccounts = async (
+  accountId: string,
+  additionalId: string
+): Promise<boolean> => {
+  await AdminBffAPI.delete(`/v1/netflix/${accountId}/additional/${additionalId}`).then(
+    (response) => response.data
+  )
+  return true
+}
+
+export const deleteUserFromAdditionalAccount = async (
+  userId: string,
+  additionalId: string,
+  accountId: string
+): Promise<boolean> => {
+  await AdminBffAPI.delete(`/v1/netflix/${accountId}/additional/${additionalId}/user/${userId}`).then(
+    (response) => response.data
+  )
+  return true
+}
+
+export const getAvailableAdditionalAccounts = async (): Promise<AvailableAdditionResponse['data']> => {
+  const response: AvailableAdditionResponse = await AdminBffAPI.get(`/v1/netflix/additional/available`).then((response) => response.data)
+  return response.data
+}
+
+export const linkAdditionalAccounts = async (
+  accountId: string,
+  additionalId: string
+): Promise<boolean> => {
+  await AdminBffAPI.patch(`/v1/netflix/${accountId}/additional/${additionalId}`).then(
+    (response) => response.data
+  )
+  return true
+}
+
+export const createAndLinkAdditionalAccounts = async (
+  data: CreateAdditionAccountRequest,
+  accountId: string
+): Promise<CreateAdditionAccountResponse['data']> => {
+  const response: CreateAdditionAccountResponse = await AdminBffAPI.post(
+    `/v1/netflix/${accountId}/additional`,
+    data
+  ).then((response) => response.data)
+  return response.data
+}
+
+export const updateNetflixAccount = async (
+  data: UpdateNetflixAccountRequest,
+  accountId: string
+): Promise<UpdateNetflixAccountResponse['data']> => {
+  const response: UpdateNetflixAccountResponse = await AdminBffAPI.patch(
+    `/v1/netflix/${accountId}`,
+    data
+  ).then((response) => response.data)
+  return response.data
 }
