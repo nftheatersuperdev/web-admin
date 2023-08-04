@@ -33,6 +33,10 @@ export interface AvailableAdditionResponse extends Response {
   data: AvailableAddition[]
 }
 
+export interface AllNetflixAccount extends Response {
+  data: NetflixAccounts[]
+}
+
 export interface Netflix {
   accountId: string
   accountName: string
@@ -107,6 +111,11 @@ export interface AvailableAddition {
   email: string
 }
 
+export interface NetflixAccounts {
+  accountId: string
+  accountName: string
+}
+
 export interface UpdateNetflixAccountRequest {
   changeDate: string
   email?: string
@@ -117,4 +126,8 @@ export interface UpdateNetflixAccountResponse {
   data: {
     id: string
   }
+}
+
+export interface UpdateAdditionalAccountRequest {
+  password: string
 }

@@ -17,7 +17,11 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import toast from 'react-hot-toast'
 import { GridTextField } from 'components/Styled'
-import { createAndLinkAdditionalAccounts, getAvailableAdditionalAccounts, linkAdditionalAccounts } from 'services/web-bff/netflix'
+import {
+  createAndLinkAdditionalAccounts,
+  getAvailableAdditionalAccounts,
+  linkAdditionalAccounts,
+} from 'services/web-bff/netflix'
 import { AvailableAddition, CreateAdditionAccountRequest } from 'services/web-bff/netflix.type'
 
 interface AddNewAdditionalScreenDialogProps {
@@ -42,7 +46,9 @@ export default function AddNewAdditionalScreenDialog(
   const { open, accountId, accountName, onClose } = props
   const { t } = useTranslation()
   const [isCreateNewAdditional, setIsCreateNewAdditional] = useState<boolean>(false)
-  const { data: additionalOptionList } = useQuery('additional-option', () => getAvailableAdditionalAccounts())
+  const { data: additionalOptionList } = useQuery('additional-option', () =>
+    getAvailableAdditionalAccounts()
+  )
   const additionalOptions = additionalOptionList || []
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
@@ -50,7 +56,7 @@ export default function AddNewAdditionalScreenDialog(
   })
   const formikCreateAdditional = useFormik({
     initialValues: {
-      accountId: accountId,
+      accountId,
       email: '',
       password: '',
     },
@@ -73,7 +79,7 @@ export default function AddNewAdditionalScreenDialog(
           success: () => {
             formikCreateAdditional.resetForm()
             onClose()
-            return 'เพิ่มบัญชีเสริม ' + values.email+ ' สำเร็จ'
+            return 'เพิ่มบัญชีเสริม ' + values.email + ' สำเร็จ'
           },
           error: () => {
             return 'เพิ่มบัญชีเสริมไม่สำเร็จ'
@@ -84,7 +90,7 @@ export default function AddNewAdditionalScreenDialog(
   })
   const formikAddAdditional = useFormik({
     initialValues: {
-      accountId: accountId,
+      accountId,
       additionalId: '',
     },
     validationSchema: Yup.object().shape({
@@ -92,26 +98,23 @@ export default function AddNewAdditionalScreenDialog(
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
-      toast.promise(
-        linkAdditionalAccounts(values.accountId, values.additionalId),
-        {
-          loading: t('toast.loading'),
-          success: () => {
-            formikAddAdditional.resetForm()          
-            onClose()
-            return 'เพิ่มบัญชีเสริม ' + values.additionalId + ' สำเร็จ'
-          },
-          error: () => {
-            return 'เพิ่มบัญชีเสริม ' + values.additionalId + ' ไม่สำเร็จ'
-          },
-        }
-      )
+      toast.promise(linkAdditionalAccounts(values.accountId, values.additionalId), {
+        loading: t('toast.loading'),
+        success: () => {
+          formikAddAdditional.resetForm()
+          onClose()
+          return 'เพิ่มบัญชีเสริม ' + values.additionalId + ' สำเร็จ'
+        },
+        error: () => {
+          return 'เพิ่มบัญชีเสริม ' + values.additionalId + ' ไม่สำเร็จ'
+        },
+      })
     },
   })
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
-      <Grid container spacing={1}>
+        <Grid container spacing={1}>
           <Grid item xs={6} sm={6}>
             {t('netflix.addScreen')}
           </Grid>
@@ -159,9 +162,15 @@ export default function AddNewAdditionalScreenDialog(
                   fullWidth
                   variant="outlined"
                   value={formikCreateAdditional.values.email}
-                  error={Boolean(formikCreateAdditional.touched.email && formikCreateAdditional.errors.email)}
-                  helperText={formikCreateAdditional.touched.email && formikCreateAdditional.errors.email}
-                  onChange={({ target }) => formikCreateAdditional.setFieldValue('email', target.value)}
+                  error={Boolean(
+                    formikCreateAdditional.touched.email && formikCreateAdditional.errors.email
+                  )}
+                  helperText={
+                    formikCreateAdditional.touched.email && formikCreateAdditional.errors.email
+                  }
+                  onChange={({ target }) =>
+                    formikCreateAdditional.setFieldValue('email', target.value)
+                  }
                   InputLabelProps={{ shrink: true }}
                 />
               </GridTextField>
@@ -175,9 +184,17 @@ export default function AddNewAdditionalScreenDialog(
                   fullWidth
                   variant="outlined"
                   value={formikCreateAdditional.values.password}
-                  error={Boolean(formikCreateAdditional.touched.password && formikCreateAdditional.errors.password)}
-                  helperText={formikCreateAdditional.touched.password && formikCreateAdditional.errors.password}
-                  onChange={({ target }) => formikCreateAdditional.setFieldValue('password', target.value)}
+                  error={Boolean(
+                    formikCreateAdditional.touched.password &&
+                      formikCreateAdditional.errors.password
+                  )}
+                  helperText={
+                    formikCreateAdditional.touched.password &&
+                    formikCreateAdditional.errors.password
+                  }
+                  onChange={({ target }) =>
+                    formikCreateAdditional.setFieldValue('password', target.value)
+                  }
                   InputLabelProps={{ shrink: true }}
                 />
               </GridTextField>
@@ -225,12 +242,20 @@ export default function AddNewAdditionalScreenDialog(
                       label="อีเมลล์"
                       variant="outlined"
                       placeholder="สามารถค้นหาด้วยอีเมลล์"
-                      error={Boolean(formikAddAdditional.touched.additionalId && formikAddAdditional.errors.additionalId)}
-                      helperText={formikAddAdditional.touched.additionalId && formikAddAdditional.errors.additionalId}
+                      error={Boolean(
+                        formikAddAdditional.touched.additionalId &&
+                          formikAddAdditional.errors.additionalId
+                      )}
+                      helperText={
+                        formikAddAdditional.touched.additionalId &&
+                        formikAddAdditional.errors.additionalId
+                      }
                       InputLabelProps={{ shrink: true }}
                     />
                   )}
-                  onChange={(_event, value) => formikAddAdditional.setFieldValue('additionalId', value?.additionalId)}
+                  onChange={(_event, value) =>
+                    formikAddAdditional.setFieldValue('additionalId', value?.additionalId)
+                  }
                 />
               </GridTextField>
             </Grid>

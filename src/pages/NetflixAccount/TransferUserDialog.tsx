@@ -1,42 +1,66 @@
-import { Button, Card, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, MenuItem, TextField } from "@mui/material"
+import {
+  Button,
+  Card,
+  CardHeader,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  TextField,
+} from '@mui/material'
 // import { GridTextField } from "components/Styled"
 import { AccountBalance, AccountCircle as UserIcon, Forward } from '@mui/icons-material'
 import { makeStyles } from '@mui/styles'
-import { useTranslation } from "react-i18next"
+import { useQuery } from 'react-query'
+import { useTranslation } from 'react-i18next'
+import { backgrounds } from 'polished'
+import { getAllNetflixAccounts } from 'services/web-bff/netflix'
 
 interface TransferUserProps {
-    open: boolean
-    userIds: Array<string>
-    accountId: string
-    accountName: string
-    onClose: () => void
+  open: boolean
+  userIds: string[]
+  accountId: string
+  accountName: string
+  onClose: () => void
 }
 
 export default function TransferUserDialog(props: TransferUserProps): JSX.Element {
   const useStyles = makeStyles({
     fromAccountCard: {
-        backgroundColor: '#fefde0',
-        padding: '10px 10px 0px 10px',
-        height: '270px',
-        width: '200px',
+      backgroundColor: '#fefde0',
+      padding: '10px 10px 0px 10px',
+      height: '270px',
+      width: '200px',
     },
     toAccountCard: {
-        backgroundColor: '#fefde0',
-        padding: '10px 10px 0px 10px',
-        height: '270px',
-        width: '200px',
+      backgroundColor: '#fefde0',
+      padding: '10px 10px 0px 10px',
+      height: '270px',
+      width: '200px',
     },
   })
   const classes = useStyles()
   const { open, userIds, accountId, accountName, onClose } = props
   console.log(accountId)
+  const { data: allNetflixAccounts } = useQuery('all-netflix-accounts', () =>
+    getAllNetflixAccounts()
+  )
+  console.log(allNetflixAccounts)
   const { t } = useTranslation()
   const fromAccount = (
     <Card className={classes.fromAccountCard}>
       <CardHeader
         sx={{ px: 2, py: 1 }}
         title={t('netflix.fromAccount') + ' ' + accountName}
-        avatar={ <AccountBalance />} 
+        avatar={<AccountBalance />}
       />
       <Divider />
       <List
@@ -48,21 +72,18 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
         dense
         component="div"
         role="list"
-       >
-         {userIds.map((userId: string) => {
-            return (
-              <ListItem
-                key={userId}
-                role="listitem"
-              >
-                <ListItemIcon>
-                  <UserIcon />
-                </ListItemIcon>
-                <ListItemText id={userId} primary={`${userId}`} />
-              </ListItem>
-            )
-         })}
-       </List>
+      >
+        {userIds.map((userId: string) => {
+          return (
+            <ListItem key={userId} role="listitem">
+              <ListItemIcon>
+                <UserIcon />
+              </ListItemIcon>
+              <ListItemText id={userId} primary={`${userId}`} />
+            </ListItem>
+          )
+        })}
+      </List>
     </Card>
   )
   const toAccount = (
@@ -70,19 +91,17 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
       <CardHeader
         sx={{ px: 2, py: 1 }}
         title={t('netflix.toAccount')}
-        avatar={ <AccountBalance />} 
+        avatar={<AccountBalance />}
       />
       <Divider />
       <br />
-      <TextField
-        fullWidth
-        select
-        >
-            <MenuItem value={10}>NF-1</MenuItem>
-            <MenuItem value={20}>NF-2</MenuItem>
-            <MenuItem value={30}>NF-3</MenuItem>
-        </TextField>
-
+      <TextField fullWidth select style={{ backgroundColor: 'white' }}>
+        {allNetflixAccounts?.map((account) => (
+          <MenuItem key={account.accountId} value={account.accountId}>
+            {account.accountName}
+          </MenuItem>
+        ))}
+      </TextField>
     </Card>
   )
   return (
@@ -95,23 +114,23 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
         </Grid>
       </DialogTitle>
       <form>
-      <DialogContent>
-        <Grid container spacing={2} justifyContent="center" alignItems="center">
-          <Grid item>{fromAccount}</Grid>
+        <DialogContent>
+          <Grid container spacing={2} justifyContent="center" alignItems="center">
+            <Grid item>{fromAccount}</Grid>
             <Grid item>
-                <Grid container direction="column" alignItems="center">
-                    <IconButton disabled>
-                    <Forward />
-                    </IconButton>
-                </Grid>
-                </Grid>
+              <Grid container direction="column" alignItems="center">
+                <IconButton disabled>
+                  <Forward />
+                </IconButton>
+              </Grid>
+            </Grid>
             <Grid item>{toAccount}</Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-            onClose()
+              onClose()
             }}
             color="primary"
           >

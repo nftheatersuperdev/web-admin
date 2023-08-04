@@ -1,5 +1,6 @@
 import { AdminBffAPI } from 'api/admin-bff'
 import {
+  AllNetflixAccount,
   AvailableAdditionResponse,
   CreateAdditionAccountRequest,
   CreateAdditionAccountResponse,
@@ -9,6 +10,7 @@ import {
   NetflixAccountListResponse,
   NetflixAccountRequest,
   NetflixAccountResponse,
+  UpdateAdditionalAccountRequest,
   UpdateLinkUserNetflixRequest,
   UpdateLinkUserNetflixResponse,
   UpdateNetflixAccountRequest,
@@ -94,14 +96,18 @@ export const deleteUserFromAdditionalAccount = async (
   additionalId: string,
   accountId: string
 ): Promise<boolean> => {
-  await AdminBffAPI.delete(`/v1/netflix/${accountId}/additional/${additionalId}/user/${userId}`).then(
-    (response) => response.data
-  )
+  await AdminBffAPI.delete(
+    `/v1/netflix/${accountId}/additional/${additionalId}/user/${userId}`
+  ).then((response) => response.data)
   return true
 }
 
-export const getAvailableAdditionalAccounts = async (): Promise<AvailableAdditionResponse['data']> => {
-  const response: AvailableAdditionResponse = await AdminBffAPI.get(`/v1/netflix/additional/available`).then((response) => response.data)
+export const getAvailableAdditionalAccounts = async (): Promise<
+  AvailableAdditionResponse['data']
+> => {
+  const response: AvailableAdditionResponse = await AdminBffAPI.get(
+    `/v1/netflix/additional/available`
+  ).then((response) => response.data)
   return response.data
 }
 
@@ -132,6 +138,25 @@ export const updateNetflixAccount = async (
 ): Promise<UpdateNetflixAccountResponse['data']> => {
   const response: UpdateNetflixAccountResponse = await AdminBffAPI.patch(
     `/v1/netflix/${accountId}`,
+    data
+  ).then((response) => response.data)
+  return response.data
+}
+
+export const getAllNetflixAccounts = async (): Promise<AllNetflixAccount['data']> => {
+  const response: AllNetflixAccount = await AdminBffAPI.get(`/v1/netflixes`).then(
+    (response) => response.data
+  )
+  return response.data
+}
+
+export const updateAdditionalAccount = async (
+  data: UpdateAdditionalAccountRequest,
+  accountId: string,
+  additionalId: string
+): Promise<UpdateNetflixAccountResponse['data']> => {
+  const response: UpdateNetflixAccountResponse = await AdminBffAPI.patch(
+    `/v1/netflix/${accountId}/additional/${additionalId}/edit`,
     data
   ).then((response) => response.data)
   return response.data

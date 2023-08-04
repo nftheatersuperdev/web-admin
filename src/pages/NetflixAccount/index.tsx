@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import { ChangeEvent, useEffect, useState } from 'react'
 import {
   Button,
@@ -34,11 +35,17 @@ import config from 'config'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
-import { formaDateStringWithPattern, DEFAULT_DATETIME_FORMAT_MONTH_TEXT, DEFAULT_CHANGE_DATE_FORMAT, formatDateStringWithPattern } from 'utils'
+import {
+  formaDateStringWithPattern,
+  DEFAULT_DATETIME_FORMAT_MONTH_TEXT,
+  DEFAULT_CHANGE_DATE_FORMAT,
+  formatDateStringWithPattern,
+} from 'utils'
 import { copyText } from 'utils/copyContent'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import toast from 'react-hot-toast'
+import styled from 'styled-components'
 import PageTitle from 'components/PageTitle'
 import DatePicker from 'components/DatePicker'
 import {
@@ -62,14 +69,12 @@ import {
 } from 'services/web-bff/netflix'
 import Tooltips from 'components/Tooltips'
 import ConfirmDialog from 'components/ConfirmDialog'
+import CheckBoxComponent from 'components/CheckBoxComponent'
 import AddNewUserDialog from './AddNewUserDialog'
 import AddNewScreenDialog from './AddNewAdditionalScreenDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import EditAdditionalScreenDialog from './EditAdditionalScreenDialog'
-import styled from 'styled-components'
-import CheckBoxComponent from 'components/CheckBoxComponent'
 import TransferUserDialog from './TransferUserDialog'
-
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -148,10 +153,9 @@ export default function NetflixAccount(): JSX.Element {
     useState<boolean>(false)
   const [visibleUpdateConfirmationDialog, setVisibleUpdateConfirmationDialog] =
     useState<boolean>(false)
-  const [isEditAdditionalScreenDialogOpen, setIsEditAdditionalScreenDialogOpen] = 
+  const [isEditAdditionalScreenDialogOpen, setIsEditAdditionalScreenDialogOpen] =
     useState<boolean>(false)
-  const [isTransferUserDialogOpen, setIsTransferUserDialogOpen] =
-    useState<boolean>(false)
+  const [isTransferUserDialogOpen, setIsTransferUserDialogOpen] = useState<boolean>(false)
   const [isUpdateAccount, setIsUpdateAccount] = useState<boolean>(false)
   const [userIdParam, setUserIdParam] = useState<string>('')
   const [customerNameParam, setCustomerNameParam] = useState<string>('')
@@ -165,7 +169,10 @@ export default function NetflixAccount(): JSX.Element {
   const [checkedAllUsers, setCheckedAllUsers] = useState<boolean>(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const { data: netflix, refetch } = useQuery('netflix-account', () => getNetflixAccount({ id }))
-  const initSelectedChangeDate = dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
+  const initSelectedChangeDate =
+    netflix !== undefined
+      ? dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
+      : dayjs().tz(config.timezone).startOf('day').toDate()
   const [selectedChangeDate, setSelectedChangeDate] = useState<Date>(initSelectedChangeDate)
   const headerAdditionalColumn: TableHeaderProps[] = [
     {
@@ -187,7 +194,7 @@ export default function NetflixAccount(): JSX.Element {
   const formikUpdateAccount = useFormik({
     initialValues: {
       accountId: id,
-      changeDate:  formatDateStringWithPattern(
+      changeDate: formatDateStringWithPattern(
         selectedChangeDate?.toString(),
         DEFAULT_CHANGE_DATE_FORMAT
       ),
@@ -207,7 +214,7 @@ export default function NetflixAccount(): JSX.Element {
         updateNetflixAccount(
           {
             changeDate: values.changeDate,
-            password: values.password
+            password: values.password,
           } as UpdateNetflixAccountRequest,
           values.accountId
         ),
@@ -224,7 +231,7 @@ export default function NetflixAccount(): JSX.Element {
       )
     },
   })
-  
+
   const handleOnCloseDeleteConfirmationDialog = (userId: string, accountId: string) => {
     setVisibleDeleteConfirmationDialog(false)
     toast.promise(
@@ -242,7 +249,11 @@ export default function NetflixAccount(): JSX.Element {
       }
     )
   }
-  const handleOnCloseDeleteAddConfirmationDialog = (userId: string, additionalId: string, accountId: string) => {
+  const handleOnCloseDeleteAddConfirmationDialog = (
+    userId: string,
+    additionalId: string,
+    accountId: string
+  ) => {
     setVisibleDeleteAddConfirmationDialog(false)
     toast.promise(
       deleteUserFromAdditionalAccount(userId, additionalId, accountId),
@@ -254,7 +265,7 @@ export default function NetflixAccount(): JSX.Element {
         },
         error: 'ทำรายการไม่สำเร็จ',
       },
-      { duration: 5000}
+      { duration: 5000 }
     )
   }
   const handleOnCloseDiableConfirmationDialog = (accountId: string, status: boolean) => {
@@ -284,7 +295,7 @@ export default function NetflixAccount(): JSX.Element {
         },
         error: 'ทำรายการไม่สำเร็จ',
       },
-      { duration: 5000}
+      { duration: 5000 }
     )
   }
   const copyContent = (email: string, password: string) => {
@@ -327,7 +338,13 @@ export default function NetflixAccount(): JSX.Element {
   const handleUpdateAccount = () => {
     setVisibleUpdateConfirmationDialog(true)
   }
-  const handleEditAddition = (additionalId: string, email: string, password: string) => {
+  const handleEditAddition = (
+    accountId: string,
+    additionalId: string,
+    email: string,
+    password: string
+  ) => {
+    setAccountIdParam(accountId)
     setAdditionalAccountIdParam(additionalId)
     setEmailParam(email)
     setPasswordParam(password)
@@ -335,18 +352,18 @@ export default function NetflixAccount(): JSX.Element {
   }
   const handleSelectAllUser = () => {
     setCheckedAllUsers(!checkedAllUsers)
-    if(netflix != undefined){
-      setSelectedUsers(netflix.data.users.map(user => user.user.userId))
+    if (netflix !== undefined) {
+      setSelectedUsers(netflix.data.users.map((user) => user.user.userId))
     }
     if (checkedAllUsers) {
       setSelectedUsers([])
     }
   }
   const handleSelectUser = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {id, checked} = event.target
+    const { id, checked } = event.target
     setSelectedUsers([...selectedUsers, id])
-    if(!checked) {
-      setSelectedUsers(selectedUsers.filter(user => user !== id))
+    if (!checked) {
+      setSelectedUsers(selectedUsers.filter((user) => user !== id))
     }
   }
   const handleTransferUser = (accountId: string, accountName: string) => {
@@ -357,8 +374,7 @@ export default function NetflixAccount(): JSX.Element {
   /**
    * Init pagination depends on data from the API.
    */
-  useEffect(() => {
-  }, [netflix, refetch])
+  useEffect(() => {}, [netflix, refetch])
   /**
    * Managing the pagination variables that will send to the API.
    */
@@ -416,8 +432,12 @@ export default function NetflixAccount(): JSX.Element {
                   )
                   setIsUpdateAccount(true)
                 }}
-                error={Boolean(formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate)}
-                helperText={formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate}
+                error={Boolean(
+                  formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
+                )}
+                helperText={
+                  formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
+                }
               />
             </GridTextField>
             <GridTextField item xs={6} sm={6}>
@@ -452,9 +472,16 @@ export default function NetflixAccount(): JSX.Element {
                 }}
                 InputLabelProps={{ shrink: true }}
                 value={formikUpdateAccount.values.password}
-                error={Boolean(formikUpdateAccount.touched.password && formikUpdateAccount.errors.password)}
-                helperText={formikUpdateAccount.touched.password && formikUpdateAccount.errors.password}
-                onChange={({ target }) => {setIsUpdateAccount(true); formikUpdateAccount.setFieldValue('password', target.value)}}
+                error={Boolean(
+                  formikUpdateAccount.touched.password && formikUpdateAccount.errors.password
+                )}
+                helperText={
+                  formikUpdateAccount.touched.password && formikUpdateAccount.errors.password
+                }
+                onChange={({ target }) => {
+                  setIsUpdateAccount(true)
+                  formikUpdateAccount.setFieldValue('password', target.value)
+                }}
               />
             </GridTextField>
             <GridTextField item xs={6} sm={6}>
@@ -597,17 +624,42 @@ export default function NetflixAccount(): JSX.Element {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="ลบลูกค้า">
-                          <IconButton disabled={add.user === null} onClick={() => handleDeleteAdditionalUser(`${add.user.userId}`, `${add.additionalId}`, `${netflix.data.accountId}`)} >
+                          <IconButton
+                            disabled={add.user === null}
+                            onClick={() =>
+                              handleDeleteAdditionalUser(
+                                `${add.user.userId}`,
+                                `${add.additionalId}`,
+                                `${netflix.data.accountId}`
+                              )
+                            }
+                          >
                             <PersonRemove />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="แก้ไขบัญชี">
-                          <IconButton onClick={() => handleEditAddition(`${add.additionalId}`, `${add.email}`, `${add.password}`)}>
+                          <IconButton
+                            onClick={() =>
+                              handleEditAddition(
+                                `${netflix.data.accountId}`,
+                                `${add.additionalId}`,
+                                `${add.email}`,
+                                `${add.password}`
+                              )
+                            }
+                          >
                             <EditIcon />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="นำบัญชีเสริมออก">
-                          <IconButton onClick={() => handleUnlinkAdditional(`${netflix.data.accountId}`,`${add.additionalId}`)}>
+                          <IconButton
+                            onClick={() =>
+                              handleUnlinkAdditional(
+                                `${netflix.data.accountId}`,
+                                `${add.additionalId}`
+                              )
+                            }
+                          >
                             <LinkOffIcon />
                           </IconButton>
                         </Tooltip>
@@ -642,7 +694,9 @@ export default function NetflixAccount(): JSX.Element {
                 className={classes.addButton}
                 endIcon={<SwapHoriz />}
                 variant="contained"
-                onClick={() => handleTransferUser(`${netflix?.data.accountId}`, `${netflix?.data.accountName}`)}
+                onClick={() =>
+                  handleTransferUser(`${netflix?.data.accountId}`, `${netflix?.data.accountName}`)
+                }
               >
                 {t('netflix.transferUser')}
               </Button>
@@ -705,13 +759,15 @@ export default function NetflixAccount(): JSX.Element {
                 netflix.data.users.map((user) => {
                   return (
                     <TableRow hover>
-                      <TableCell align="center" >
+                      <TableCell align="center">
                         <CheckBoxComponent
                           key={user.user.userId}
                           type="checkbox"
                           name={user.user.userId}
                           id={user.user.userId}
-                          handleClick={(event: ChangeEvent<HTMLInputElement>) => handleSelectUser(event)}
+                          handleClick={(event: ChangeEvent<HTMLInputElement>) =>
+                            handleSelectUser(event)
+                          }
                           isChecked={selectedUsers.includes(`${user.user.userId}`)}
                         />
                       </TableCell>
@@ -750,7 +806,10 @@ export default function NetflixAccount(): JSX.Element {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="ลบลูกค้า">
-                          <IconButton disabled={user.accountType === 'ADDITIONAL'} onClick={() => handleDeleteUser(`${user.user.userId}`)}>
+                          <IconButton
+                            disabled={user.accountType === 'ADDITIONAL'}
+                            onClick={() => handleDeleteUser(`${user.user.userId}`)}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </Tooltip>
@@ -793,34 +852,50 @@ export default function NetflixAccount(): JSX.Element {
         open={isAddNewUserDialogOpen}
         accountId={id}
         accountType="OTHER"
-        onClose={() => {refetch(); setIsAddNewUserDialogOpen(false)}}
+        onClose={() => {
+          refetch()
+          setIsAddNewUserDialogOpen(false)
+        }}
       />
       <AddNewScreenDialog
         open={isAddNewScreenDialogOpen}
         accountId={accountIdParam}
         accountName={accountParam}
-        onClose={() => {refetch(); setIsAddNewScreenDialogOpen(false)}}
+        onClose={() => {
+          refetch()
+          setIsAddNewScreenDialogOpen(false)
+        }}
       />
       <ExtendUserDialog
         open={isExtendUserDialogOpen}
         userId={userIdParam}
         customerName={customerNameParam}
         lineId={lineIdParam}
-        onClose={() => {refetch(); setIsExtendUserDialogOpen(false)}}
+        onClose={() => {
+          refetch()
+          setIsExtendUserDialogOpen(false)
+        }}
       />
       <EditAdditionalScreenDialog
         open={isEditAdditionalScreenDialogOpen}
+        accountId={accountIdParam}
         additionalId={additionalAccountIdParam}
         email={emailParam}
         password={passwordParam}
-        onClose={() => {refetch(); setIsEditAdditionalScreenDialogOpen(false)}}
+        onClose={() => {
+          refetch()
+          setIsEditAdditionalScreenDialogOpen(false)
+        }}
       />
       <TransferUserDialog
         open={isTransferUserDialogOpen}
         userIds={selectedUsers}
         accountId={accountIdParam}
         accountName={accountParam}
-        onClose={() => {refetch(); setIsTransferUserDialogOpen(false)}}
+        onClose={() => {
+          refetch()
+          setIsTransferUserDialogOpen(false)
+        }}
       />
       <ConfirmDialog
         open={visibleDeleteConfirmationDialog}
@@ -837,7 +912,13 @@ export default function NetflixAccount(): JSX.Element {
         message="คุณแน่ใจหรือว่าต้องการลบลูกค้าออกจากบัญชีนี้"
         confirmText={t('button.confirm')}
         cancelText={t('button.cancel')}
-        onConfirm={() => handleOnCloseDeleteAddConfirmationDialog(`${userIdParam}`, `${additionalAccountIdParam}`, `${accountIdParam}`)}
+        onConfirm={() =>
+          handleOnCloseDeleteAddConfirmationDialog(
+            `${userIdParam}`,
+            `${additionalAccountIdParam}`,
+            `${accountIdParam}`
+          )
+        }
         onCancel={() => setVisibleDeleteAddConfirmationDialog(false)}
       />
       <ConfirmDialog
@@ -855,7 +936,9 @@ export default function NetflixAccount(): JSX.Element {
         message="คุณแน่ใจหรือว่าต้องการนำบัญชีเสริมออกจากบัญชีนี้"
         confirmText={t('button.confirm')}
         cancelText={t('button.cancel')}
-        onConfirm={() => handleOnCloseUnlinkConfirmationDialog(`${accountIdParam}`, `${additionalAccountIdParam}`)}
+        onConfirm={() =>
+          handleOnCloseUnlinkConfirmationDialog(`${accountIdParam}`, `${additionalAccountIdParam}`)
+        }
         onCancel={() => setVisibleDeleteAddConfirmationDialog(false)}
       />
       <ConfirmDialog
