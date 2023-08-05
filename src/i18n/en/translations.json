@@ -57,7 +57,8 @@
     "upload": "Upload",
     "addAdditional": "Add Additional",
     "extendUser": "Extend",
-    "disabled": "Disabled",
+    "disabled": "Disable",
+    "enabled": "Enable",
     "transfer":"Transfer"
   },
   "datetimePicker": {
@@ -200,6 +201,13 @@
     "branchOfficer": "Branch Officer",
     "driver": "Driver",
     "ownOperation": "Owner Operation"
+  },
+  "youtube": {
+    "title": "Youtube",
+    "searchPanel": "Search Youtube Account",
+    "mainInfo": {
+      "title": "Youtube Account Details"
+    }
   },
   "netflix": {
     "title": "Netflix",

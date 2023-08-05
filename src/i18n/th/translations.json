@@ -58,6 +58,7 @@
     "addAdditional": "เพิ่มจอเสริม",
     "extendUser": "ต่ออายุ",
     "disabled": "ปิดการใช้งานชั่วคราว",
+    "enabled": "เปิดการใช้งาน",
     "transfer":"ย้ายข้อมูล"
   },
   "datetimePicker": {
@@ -200,6 +201,13 @@
     "branchOfficer": "ผู้จัดการ",
     "driver": "Driver",
     "ownOperation": "Owner Operation"
+  },
+  "youtube": {
+    "title": "Youtube",
+    "searchPanel": "ค้นหาบัญชี Youtube",
+    "mainInfo": {
+      "title": "รายละเอียดบัญชี Youtube"
+    }
   },
   "netflix": {
     "title": "Netflix",

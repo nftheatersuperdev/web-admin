@@ -32,10 +32,10 @@ export function useMenuItems() {
     {
       id: 'left_menu__youtube_account',
       title: t('sidebar.youtubeAccount.title'),
-      href: ROUTE_PATHS.NETFLIX,
+      href: ROUTE_PATHS.YOUTUBE,
       icon: YouTube,
       allowedRoles: [ROLES.SUPER_ADMIN],
-    },   
+    },
     {
       id: 'left_menu__setting_config',
       title: t('sidebar.settingConfig'),

@@ -47,6 +47,16 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     allowedRoles: [ROLES.SUPER_ADMIN],
   },
   {
+    path: ROUTE_PATHS.YOUTUBE,
+    component: lazy(() => import('./pages/Youtube' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN],
+  },
+  {
+    path: ROUTE_PATHS.YOUTUBE_ACCOUNT,
+    component: lazy(() => import('./pages/YoutubeAccount' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN],
+  },
+  {
     path: ROUTE_PATHS.FORBIDDEN,
     isPublic: true,
     component: lazy(() => import('./pages/Error/Forbidden' /* webpackChunkName: "app" */)),

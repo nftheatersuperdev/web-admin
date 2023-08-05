@@ -24,6 +24,7 @@ import {
   LinkOff as LinkOffIcon,
   PersonAdd,
   DisabledByDefault as DisableIcon,
+  CheckBox as EnableIcon,
   SwapHoriz,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/ControlPoint'
@@ -146,6 +147,8 @@ export default function NetflixAccount(): JSX.Element {
   const [visibleDeleteConfirmationDialog, setVisibleDeleteConfirmationDialog] =
     useState<boolean>(false)
   const [visibleDisableConfirmationDialog, setVisibleDisableConfirmationDialog] =
+    useState<boolean>(false)
+    const [visibleEnableConfirmationDialog, setVisibleEnableConfirmationDialog] =
     useState<boolean>(false)
   const [visibleDeleteAddConfirmationDialog, setVisibleDeleteAddConfirmationDialog] =
     useState<boolean>(false)
@@ -288,6 +291,21 @@ export default function NetflixAccount(): JSX.Element {
       { duration: 5000 }
     )
   }
+  const handleOnCloseEnableConfirmationDialog = (accountId: string, status: boolean) => {
+    setVisibleEnableConfirmationDialog(false)
+    toast.promise(
+      updateNetflixAccountStatus(accountId, status),
+      {
+        loading: t('toast.loading'),
+        success: () => {
+          refetch()
+          return 'ทำรายการสำเร็จ'
+        },
+        error: 'ทำรายการไม่สำเร็จ',
+      },
+      { duration: 5000 }
+    )
+  }
   const handleOnCloseUnlinkConfirmationDialog = (accountId: string, additionalId: string) => {
     setVisibleUnlinkConfirmationDialog(false)
     toast.promise(
@@ -339,6 +357,10 @@ export default function NetflixAccount(): JSX.Element {
   const handleDisableAccount = (id: string) => {
     setAccountIdParam(id)
     setVisibleDisableConfirmationDialog(true)
+  }
+  const handleEnableAccount = (id: string) => {
+    setAccountIdParam(id)
+    setVisibleEnableConfirmationDialog(true)
   }
   const handleUpdateAccount = () => {
     setVisibleUpdateConfirmationDialog(true)
@@ -402,15 +424,27 @@ export default function NetflixAccount(): JSX.Element {
               </Typography>
             </GridTextField>
             <GridTextField item xs={3} sm={3} className={classes.alignRight}>
-              <Button
-                id="netflix_detail__disable_btn"
-                className={classes.disableButton}
-                endIcon={<DisableIcon />}
-                variant="contained"
-                onClick={() => handleDisableAccount(`${netflix?.data.accountId}`)}
-              >
-                {t('button.disabled')}
-              </Button>
+              {netflix?.data.isActive ? (
+                <Button
+                  id="netflix_detail__disable_btn"
+                  className={classes.disableButton}
+                  endIcon={<DisableIcon />}
+                  variant="contained"
+                  onClick={() => handleDisableAccount(`${netflix?.data.accountId}`)}
+                >
+                  {t('button.disabled')}
+                </Button>
+              ) : (
+                <Button
+                  id="netflix_detail__enable_btn"
+                  className={classes.disableButton}
+                  endIcon={<EnableIcon />}
+                  variant="contained"
+                  onClick={() => handleEnableAccount(`${netflix?.data.accountId}`)}
+                >
+                  {t('button.enabled')}
+                </Button>
+              )}
             </GridTextField>
             <GridTextField item xs={6} sm={6}>
               <TextField
@@ -938,6 +972,15 @@ export default function NetflixAccount(): JSX.Element {
         cancelText={t('button.cancel')}
         onConfirm={() => handleOnCloseDiableConfirmationDialog(`${accountIdParam}`, false)}
         onCancel={() => setVisibleDisableConfirmationDialog(false)}
+      />
+      <ConfirmDialog
+        open={visibleEnableConfirmationDialog}
+        title="เปิดการใช้งานบัญชี Netflix"
+        message="คุณแน่ใจหรือว่าต้องการเปิดการใช้งานบัญชีนี้"
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => handleOnCloseEnableConfirmationDialog(`${accountIdParam}`, true)}
+        onCancel={() => setVisibleEnableConfirmationDialog(false)}
       />
       <ConfirmDialog
         open={visibleUnlinkConfirmationDialog}
