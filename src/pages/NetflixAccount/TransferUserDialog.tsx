@@ -21,8 +21,9 @@ import { AccountBalance, AccountCircle as UserIcon, Forward } from '@mui/icons-m
 import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
 import { useTranslation } from 'react-i18next'
-import { backgrounds } from 'polished'
+import { useState } from 'react'
 import { getAllNetflixAccounts } from 'services/web-bff/netflix'
+import ConfirmDialog from 'components/ConfirmDialog'
 
 interface TransferUserProps {
   open: boolean
@@ -50,11 +51,30 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
   const classes = useStyles()
   const { open, userIds, accountId, accountName, onClose } = props
   console.log(accountId)
-  const { data: allNetflixAccounts } = useQuery('all-netflix-accounts', () =>
-    getAllNetflixAccounts()
+  const { data: allNetflixAccounts } = useQuery(
+    'all-netflix-accounts',
+    () => getAllNetflixAccounts(),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
-  console.log(allNetflixAccounts)
   const { t } = useTranslation()
+  const [confirmMessage, setConfirmMessage] = useState<string>()
+  const [isUpdate, setIsUpdate] = useState<boolean>(false)
+  const [visibleUpdateConfirmationDialog, setVisibleUpdateConfirmationDialog] =
+    useState<boolean>(false)
+  const handleAccountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    const toAccountName = allNetflixAccounts?.filter((account) => account.accountId === value)[0]
+      .accountName
+    setIsUpdate(true)
+    setConfirmMessage(
+      `คุณแน่ใจหรือว่าต้องการย้ายข้อมูลลูกค้าจากบัญชี ` +
+        accountName +
+        ` ไปยังบัญชี ` +
+        toAccountName
+    )
+  }
   const fromAccount = (
     <Card className={classes.fromAccountCard}>
       <CardHeader
@@ -95,12 +115,21 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
       />
       <Divider />
       <br />
-      <TextField fullWidth select style={{ backgroundColor: 'white' }}>
-        {allNetflixAccounts?.map((account) => (
-          <MenuItem key={account.accountId} value={account.accountId}>
-            {account.accountName}
-          </MenuItem>
-        ))}
+      <TextField
+        fullWidth
+        select
+        style={{ backgroundColor: 'white' }}
+        onChange={handleAccountChange}
+      >
+        {allNetflixAccounts?.map((account) => {
+          if (account.accountId !== accountId) {
+            return (
+              <MenuItem key={account.accountId} value={account.accountId}>
+                {account.accountName}
+              </MenuItem>
+            )
+          }
+        })}
       </TextField>
     </Card>
   )
@@ -136,11 +165,25 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
           >
             {t('button.cancel')}
           </Button>
-          <Button color="primary" variant="contained" type="submit">
+          <Button
+            color="primary"
+            disabled={!isUpdate}
+            variant="contained"
+            onClick={() => setVisibleUpdateConfirmationDialog(true)}
+          >
             {t('button.transfer')}
           </Button>
         </DialogActions>
       </form>
+      <ConfirmDialog
+        open={visibleUpdateConfirmationDialog}
+        title="ย้ายลูกค้า Netflix"
+        message={confirmMessage}
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => formikTransfer.handleSubmit()}
+        onCancel={() => setVisibleUpdateConfirmationDialog(false)}
+      />
     </Dialog>
   )
 }

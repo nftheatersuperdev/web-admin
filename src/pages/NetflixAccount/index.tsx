@@ -168,11 +168,16 @@ export default function NetflixAccount(): JSX.Element {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [checkedAllUsers, setCheckedAllUsers] = useState<boolean>(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
-  const { data: netflix, refetch } = useQuery('netflix-account', () => getNetflixAccount({ id }))
-  const initSelectedChangeDate =
-    netflix !== undefined
-      ? dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
-      : dayjs().tz(config.timezone).startOf('day').toDate()
+  const { data: netflix, refetch } = useQuery('netflix-account', () => getNetflixAccount({ id }), {
+    refetchOnWindowFocus: false,
+  })
+  const initSelectedChangeDate = dayjs(netflix?.data.changeDate, 'DD/MM')
+    .tz(config.timezone)
+    .startOf('day')
+    .toDate()
+  // netflix !== undefined
+  //   ? dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
+  //   : dayjs().tz(config.timezone).startOf('day').toDate()
   const [selectedChangeDate, setSelectedChangeDate] = useState<Date>(initSelectedChangeDate)
   const headerAdditionalColumn: TableHeaderProps[] = [
     {
@@ -374,7 +379,11 @@ export default function NetflixAccount(): JSX.Element {
   /**
    * Init pagination depends on data from the API.
    */
-  useEffect(() => {}, [netflix, refetch])
+  useEffect(() => {
+    setSelectedChangeDate(
+      dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
+    )
+  }, [netflix, refetch])
   /**
    * Managing the pagination variables that will send to the API.
    */

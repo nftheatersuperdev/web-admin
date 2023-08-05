@@ -52,7 +52,9 @@ function SidebarFooter({ ...rest }): JSX.Element {
   const { t } = useTranslation()
   const history = useHistory()
   const { signOut } = useAuth()
-  const { data: profile } = useQuery('user-profile', () => getAdminUserProfile())
+  const { data: profile } = useQuery('user-profile', () => getAdminUserProfile(), {
+    refetchOnWindowFocus: false,
+  })
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)

@@ -46,8 +46,12 @@ export default function AddNewAdditionalScreenDialog(
   const { open, accountId, accountName, onClose } = props
   const { t } = useTranslation()
   const [isCreateNewAdditional, setIsCreateNewAdditional] = useState<boolean>(false)
-  const { data: additionalOptionList } = useQuery('additional-option', () =>
-    getAvailableAdditionalAccounts()
+  const { data: additionalOptionList } = useQuery(
+    'additional-option',
+    () => getAvailableAdditionalAccounts(),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
   const additionalOptions = additionalOptionList || []
   const filterOptions = createFilterOptions({

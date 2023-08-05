@@ -111,7 +111,9 @@ export default function Netflix(): JSX.Element {
   const [netflixAccountFilter, setNetflixAccountFilter] = useState<NetflixAccountListInputRequest>({
     ...defaultFilter,
   })
-  const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList())
+  const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList(), {
+    refetchOnWindowFocus: false,
+  })
   const customerOptions = customerOptionList || []
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
@@ -129,7 +131,10 @@ export default function Netflix(): JSX.Element {
         page: 1,
         size: pageSize,
       } as NetflixAccountListRequest),
-    { cacheTime: 10 * (60 * 1000), staleTime: 5 * (60 * 1000) }
+    { cacheTime: 10 * (60 * 1000), staleTime: 5 * (60 * 1000) },
+    {
+      refetchOnWindowFocus: false,
+    }
   )
   const formik = useFormik({
     initialValues: {
