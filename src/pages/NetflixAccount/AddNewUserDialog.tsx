@@ -17,6 +17,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
+import { getNFPackageOptions, getAccountTypeOptions } from 'constant/PackageOption'
 import { GridTextField } from 'components/Styled'
 import { getCustomerOptionList, createCustomer } from 'services/web-bff/customer'
 import {
@@ -26,7 +27,6 @@ import {
 } from 'services/web-bff/customer.type'
 import { linkUserToNetflixAccount } from 'services/web-bff/netflix'
 import { UpdateLinkUserNetflixRequest } from 'services/web-bff/netflix.type'
-import { getNFPackageOptions } from './PackageOption'
 
 interface AddNewUserDialogProps {
   open: boolean
@@ -51,15 +51,11 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList())
   const customerOptions = customerOptionList || []
   const netflixPackageOption = getNFPackageOptions()
+  const accountTypeOption = getAccountTypeOptions()
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
     stringify: (option: CustomerOption) => option.filterLabel,
   })
-  const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    formikLinkUser.setFieldValue('extendDay', value)
-    formikCreateUser.setFieldValue('extendDay', value)
-  }
   const formikCreateUser = useFormik({
     initialValues: {
       extendDay: 0,
@@ -68,6 +64,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       // phoneNumber: '',
       lineId: '',
       lineUrl: '',
+      type: accountType,
     },
     validationSchema: Yup.object().shape({
       extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
@@ -90,8 +87,8 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             formikLinkUser.handleSubmit()
             return 'สร้างลูกค้า ' + values.lineId + ' สำเร็จ'
           },
-          error: () => {
-            return 'สร้างลูกค้า ' + values.lineId + ' ไม่สำเร็จ'
+          error: (err) => {
+            return 'สร้างลูกค้า ' + values.lineId + ' ไม่สำเร็จ เนื่องจาก ' + err.data.message
           },
         }
       )
@@ -102,7 +99,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       userId: '',
       extendDay: 0,
       accountId,
-      accountType,
+      type: accountType,
     },
     validationSchema: Yup.object().shape({
       userId: Yup.string().max(255).required('กรุณาเลือกลูกค้า'),
@@ -115,7 +112,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           {
             userId: values.userId,
             extendDay: values.extendDay,
-            accountType: values.accountType,
+            accountType: values.type,
           } as UpdateLinkUserNetflixRequest,
           accountId
         ),
@@ -126,13 +123,18 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             onClose()
             return 'เพิ่มลูกค้า ' + values.userId + ' สำเร็จ'
           },
-          error: () => {
-            return 'เพิ่มลูกค้า ' + values.userId + ' ไม่สำเร็จ'
+          error: (err) => {
+            return 'เพิ่มลูกค้า ' + values.userId + ' ไม่สำเร็จ เนื่องจาก ' + err.data.message
           },
         }
       )
     },
   })
+  const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formikLinkUser.setFieldValue('extendDay', value)
+    formikCreateUser.setFieldValue('extendDay', value)
+  }
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">
@@ -242,6 +244,29 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                 <TextField
                   fullWidth
                   select
+                  label="ประเภทอุปกรณ์"
+                  onChange={(event) => {
+                    const value = event.target.value
+                    formikLinkUser.setFieldValue('type', value)
+                    formikCreateUser.setFieldValue('type', value)
+                  }}
+                  value={formikCreateUser.values.type}
+                  placeholder="กรุณาประเภทอุปกรณ์"
+                  error={Boolean(formikCreateUser.touched.type && formikCreateUser.errors.type)}
+                  helperText={formikCreateUser.touched.type && formikCreateUser.errors.type}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  {accountTypeOption?.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </GridTextField>
+              <GridTextField item xs={12}>
+                <TextField
+                  fullWidth
+                  select
                   label="แพ็คเก็ต/ราคา"
                   onChange={handlePackageChange}
                   placeholder="กรุณาเลือกแพ็คเก็ต/ราคา"
@@ -301,6 +326,29 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   )}
                   onChange={(_event, value) => formikLinkUser.setFieldValue('userId', value?.value)}
                 />
+              </GridTextField>
+              <GridTextField item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="ประเภทอุปกรณ์"
+                  onChange={(event) => {
+                    const value = event.target.value
+                    formikLinkUser.setFieldValue('type', value)
+                    formikCreateUser.setFieldValue('type', value)
+                  }}
+                  value={formikLinkUser.values.type}
+                  placeholder="กรุณาประเภทอุปกรณ์"
+                  error={Boolean(formikLinkUser.touched.type && formikLinkUser.errors.type)}
+                  helperText={formikLinkUser.touched.type && formikLinkUser.errors.type}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  {accountTypeOption?.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </GridTextField>
               <GridTextField item xs={12}>
                 <TextField

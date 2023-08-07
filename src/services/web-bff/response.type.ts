@@ -8,6 +8,7 @@ export interface Pagination {
 export interface Response {
   status: 'success' | 'error'
   data: unknown
+  message: string
 }
 
 export interface ResponseWithPagination extends Response {

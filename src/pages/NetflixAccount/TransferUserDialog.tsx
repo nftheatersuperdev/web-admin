@@ -20,10 +20,15 @@ import {
 import { AccountBalance, AccountCircle as UserIcon, Forward } from '@mui/icons-material'
 import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { getAllNetflixAccounts } from 'services/web-bff/netflix'
+import { getAllNetflixAccounts, transferUsers } from 'services/web-bff/netflix'
 import ConfirmDialog from 'components/ConfirmDialog'
+import { TransferUsersRequest } from 'services/web-bff/netflix.type'
+import { CommonResponse } from 'services/web-bff/response.type'
 
 interface TransferUserProps {
   open: boolean
@@ -50,7 +55,6 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
   })
   const classes = useStyles()
   const { open, userIds, accountId, accountName, onClose } = props
-  console.log(accountId)
   const { data: allNetflixAccounts } = useQuery(
     'all-netflix-accounts',
     () => getAllNetflixAccounts(),
@@ -67,6 +71,7 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
     const { value } = event.target
     const toAccountName = allNetflixAccounts?.filter((account) => account.accountId === value)[0]
       .accountName
+    formikTransfer.setFieldValue('toAccountId', value)
     setIsUpdate(true)
     setConfirmMessage(
       `คุณแน่ใจหรือว่าต้องการย้ายข้อมูลลูกค้าจากบัญชี ` +
@@ -75,6 +80,39 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
         toAccountName
     )
   }
+  const formikTransfer = useFormik({
+    initialValues: {
+      fromAccountId: accountId,
+      userIds,
+      toAccountId: '',
+    },
+    validationSchema: Yup.object().shape({
+      fromAccountId: Yup.string().max(255).required('กรุณาเลือกบัญชีที่ต้องการย้าย'),
+    }),
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      toast.promise(
+        transferUsers(
+          {
+            fromAccountId: values.fromAccountId,
+            userIds: values.userIds,
+          } as TransferUsersRequest,
+          values.toAccountId
+        ),
+        {
+          loading: t('toast.loading'),
+          success: () => {
+            onClose()
+            return 'ย้ายลูกค้าสำเร็จ'
+          },
+          error: (err) => {
+            onClose()
+            return 'ย้ายลูกค้าไม่สำเร็จ เนื่องจาก ' + err.data.message
+          },
+        }
+      )
+    },
+  })
   const fromAccount = (
     <Card className={classes.fromAccountCard}>
       <CardHeader
@@ -119,6 +157,9 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
         fullWidth
         select
         style={{ backgroundColor: 'white' }}
+        value={formikTransfer.values.toAccountId}
+        error={Boolean(formikTransfer.touched.toAccountId && formikTransfer.errors.toAccountId)}
+        helperText={formikTransfer.touched.toAccountId && formikTransfer.errors.toAccountId}
         onChange={handleAccountChange}
       >
         {allNetflixAccounts?.map((account) => {

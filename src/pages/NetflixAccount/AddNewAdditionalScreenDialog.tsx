@@ -85,8 +85,8 @@ export default function AddNewAdditionalScreenDialog(
             onClose()
             return 'เพิ่มบัญชีเสริม ' + values.email + ' สำเร็จ'
           },
-          error: () => {
-            return 'เพิ่มบัญชีเสริมไม่สำเร็จ'
+          error: (err) => {
+            return 'เพิ่มบัญชีเสริมไม่สำเร็จ เนื่องจาก' + err.data.message
           },
         }
       )
@@ -109,8 +109,10 @@ export default function AddNewAdditionalScreenDialog(
           onClose()
           return 'เพิ่มบัญชีเสริม ' + values.additionalId + ' สำเร็จ'
         },
-        error: () => {
-          return 'เพิ่มบัญชีเสริม ' + values.additionalId + ' ไม่สำเร็จ'
+        error: (err) => {
+          return (
+            'เพิ่มบัญชีเสริม ' + values.additionalId + ' ไม่สำเร็จ เนื่องจาก' + err.data.message
+          )
         },
       })
     },

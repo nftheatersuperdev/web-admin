@@ -22,3 +22,18 @@ export const getNFPackageOptions = (): SelectOption[] => [
     label: 'NF ต่ออายุ 1 ปี 1059 บาท',
   },
 ]
+
+export const getAccountTypeOptions = (): SelectOption[] => [
+  {
+    value: 'TV',
+    label: 'ทีวี',
+  },
+  {
+    value: 'ADDITIONAL',
+    label: 'จอเสริม',
+  },
+  {
+    value: 'OTHER',
+    label: 'อุปกรณ์อื่นๆ',
+  },
+]

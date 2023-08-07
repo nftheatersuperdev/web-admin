@@ -73,8 +73,8 @@ export default function AddNewNetflixDialog(props: AddNewNetflixDialogProps): JS
           onClose()
           return 'สร้างบัญชี ' + res.data.accountName + ' สำเร็จ'
         },
-        error: () => {
-          return 'สร้างบัญชีไม่สำเร็จ'
+        error: (err) => {
+          return 'สร้างบัญชีไม่สำเร็จ เนื่องจาก' + err.data.message
         },
       })
     },

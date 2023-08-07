@@ -11,10 +11,10 @@ import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import toast from 'react-hot-toast'
+import { getNFPackageOptions } from 'constant/PackageOption'
 import { DisabledField, GridSearchSection, GridTextField } from 'components/Styled'
 import { ExtendDayCustomerRequest } from 'services/web-bff/customer.type'
 import { extendCustomerExpiredDay } from 'services/web-bff/customer'
-import { getNFPackageOptions } from './PackageOption'
 
 interface ExtendUserDialogProps {
   open: boolean

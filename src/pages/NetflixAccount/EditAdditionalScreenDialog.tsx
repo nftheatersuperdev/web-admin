@@ -30,7 +30,6 @@ interface EditAdditionalScreenProps {
 export default function EditAdditionalScreenDialog(props: EditAdditionalScreenProps): JSX.Element {
   const { t } = useTranslation()
   const { open, accountId, additionalId, email, password, onClose } = props
-  console.log(accountId + ' ' + additionalId + '')
   const formik = useFormik({
     initialValues: {
       accountId,
@@ -55,8 +54,8 @@ export default function EditAdditionalScreenDialog(props: EditAdditionalScreenPr
             onClose()
             return 'อัพเดตข้อมูลสำเร็จ'
           },
-          error: () => {
-            return 'อัพเดตข้อมูลไม่สำเร็จ'
+          error: (err) => {
+            return 'อัพเดตข้อมูลไม่สำเร็จ เนื่องจาก' + err.data.message
           },
         }
       )

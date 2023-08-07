@@ -131,3 +131,8 @@ export interface UpdateNetflixAccountResponse {
 export interface UpdateAdditionalAccountRequest {
   password: string
 }
+
+export interface TransferUsersRequest {
+  fromAccountId: string
+  userIds: string[]
+}

@@ -10,6 +10,7 @@ import {
   NetflixAccountListResponse,
   NetflixAccountRequest,
   NetflixAccountResponse,
+  TransferUsersRequest,
   UpdateAdditionalAccountRequest,
   UpdateLinkUserNetflixRequest,
   UpdateLinkUserNetflixResponse,
@@ -65,9 +66,14 @@ export const deleteUserFromNetflixAccount = async (
   userId: string,
   accountId: string
 ): Promise<boolean> => {
-  await AdminBffAPI.delete(`/v1/netflix/${accountId}/user/${userId}`).then(
-    (response) => response.data
-  )
+  await AdminBffAPI.delete(`/v1/netflix/${accountId}/user/${userId}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return true
 }
 
@@ -75,9 +81,14 @@ export const updateNetflixAccountStatus = async (
   accountId: string,
   status: boolean
 ): Promise<boolean> => {
-  await AdminBffAPI.patch(`/v1/netflix/${accountId}/status/${status}`).then(
-    (response) => response.data
-  )
+  await AdminBffAPI.patch(`/v1/netflix/${accountId}/status/${status}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return true
 }
 
@@ -85,9 +96,14 @@ export const unlinkAdditionalAccounts = async (
   accountId: string,
   additionalId: string
 ): Promise<boolean> => {
-  await AdminBffAPI.delete(`/v1/netflix/${accountId}/additional/${additionalId}`).then(
-    (response) => response.data
-  )
+  await AdminBffAPI.delete(`/v1/netflix/${accountId}/additional/${additionalId}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return true
 }
 
@@ -96,9 +112,14 @@ export const deleteUserFromAdditionalAccount = async (
   additionalId: string,
   accountId: string
 ): Promise<boolean> => {
-  await AdminBffAPI.delete(
-    `/v1/netflix/${accountId}/additional/${additionalId}/user/${userId}`
-  ).then((response) => response.data)
+  await AdminBffAPI.delete(`/v1/netflix/${accountId}/additional/${additionalId}/user/${userId}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return true
 }
 
@@ -115,9 +136,14 @@ export const linkAdditionalAccounts = async (
   accountId: string,
   additionalId: string
 ): Promise<boolean> => {
-  await AdminBffAPI.patch(`/v1/netflix/${accountId}/additional/${additionalId}`).then(
-    (response) => response.data
-  )
+  await AdminBffAPI.patch(`/v1/netflix/${accountId}/additional/${additionalId}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return true
 }
 
@@ -160,4 +186,19 @@ export const updateAdditionalAccount = async (
     data
   ).then((response) => response.data)
   return response.data
+}
+
+export const transferUsers = async (
+  data: TransferUsersRequest,
+  accountId: string
+): Promise<boolean> => {
+  await AdminBffAPI.post(`/v1/netflix/${accountId}/user/transfer`, data)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return true
 }
