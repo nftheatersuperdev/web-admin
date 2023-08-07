@@ -35,8 +35,7 @@ dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
 
 const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').add(7, 'day').toDate()
-// 98874.34
-// 
+
 export default function AddNewNetflixDialog(props: AddNewNetflixDialogProps): JSX.Element {
   const useStyles = makeStyles({
     datePickerFromTo: {

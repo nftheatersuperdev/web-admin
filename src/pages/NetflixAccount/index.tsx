@@ -148,7 +148,7 @@ export default function NetflixAccount(): JSX.Element {
     useState<boolean>(false)
   const [visibleDisableConfirmationDialog, setVisibleDisableConfirmationDialog] =
     useState<boolean>(false)
-    const [visibleEnableConfirmationDialog, setVisibleEnableConfirmationDialog] =
+  const [visibleEnableConfirmationDialog, setVisibleEnableConfirmationDialog] =
     useState<boolean>(false)
   const [visibleDeleteAddConfirmationDialog, setVisibleDeleteAddConfirmationDialog] =
     useState<boolean>(false)
@@ -178,9 +178,7 @@ export default function NetflixAccount(): JSX.Element {
     .tz(config.timezone)
     .startOf('day')
     .toDate()
-  // netflix !== undefined
-  //   ? dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
-  //   : dayjs().tz(config.timezone).startOf('day').toDate()
+
   const [selectedChangeDate, setSelectedChangeDate] = useState<Date>(initSelectedChangeDate)
   const headerAdditionalColumn: TableHeaderProps[] = [
     {
