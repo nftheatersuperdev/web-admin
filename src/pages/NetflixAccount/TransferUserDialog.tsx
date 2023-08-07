@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react/forbid-component-props */
 import {
   Button,
   Card,
@@ -28,7 +30,6 @@ import { useState } from 'react'
 import { getAllNetflixAccounts, transferUsers } from 'services/web-bff/netflix'
 import ConfirmDialog from 'components/ConfirmDialog'
 import { TransferUsersRequest } from 'services/web-bff/netflix.type'
-import { CommonResponse } from 'services/web-bff/response.type'
 
 interface TransferUserProps {
   open: boolean
