@@ -78,3 +78,7 @@ export interface CreateCustomerResponse {
 export interface CreateCustomerResponseAPI extends Response {
   data: CreateCustomerResponse
 }
+
+export interface UpdateCustomerRequest {
+  customerStatus: string
+}

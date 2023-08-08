@@ -415,6 +415,7 @@ export default function Netflix(): JSX.Element {
         open={isAddNewUserDialogOpen}
         accountId={accountIdParam}
         accountType={accountTypeParam}
+        isLocked={true}
         onClose={() => setIsAddNewUserDialogOpen(false)}
       />
       <AddNewNetflixDialog

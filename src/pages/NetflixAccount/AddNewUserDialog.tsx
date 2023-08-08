@@ -33,6 +33,7 @@ interface AddNewUserDialogProps {
   open: boolean
   accountId: string
   accountType?: string
+  isLocked?: boolean
   onClose: () => void
 }
 
@@ -46,9 +47,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     },
   })
   const classes = useStyles()
-  const { open, accountId, accountType, onClose } = props
+  const { open, accountId, accountType, isLocked, onClose } = props
   const { t } = useTranslation()
-  const [isCreateNewCustomer, setIsCreateNewCustomer] = useState<boolean>(false)
+  const [isCreateNewCustomer, setIsCreateNewCustomer] = useState<boolean>(true)
   const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList())
   const customerOptions = customerOptionList || []
   const netflixPackageOption = getNFPackageOptions()
@@ -60,16 +61,12 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const formikCreateUser = useFormik({
     initialValues: {
       extendDay: 0,
-      // customerName: '',
-      // email: '',
-      // phoneNumber: '',
       lineId: '',
       lineUrl: '',
       type: accountType,
     },
     validationSchema: Yup.object().shape({
       extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
-      // customerName: Yup.string().max(255).required('กรุณาระบุชื่อลูกค้า'),
       lineId: Yup.string().max(255).required('กรุณาระบุ Line Id'),
       lineUrl: Yup.string().max(255).required('กรุณาระบุ Line URL'),
     }),
@@ -251,6 +248,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                     formikLinkUser.setFieldValue('type', value)
                     formikCreateUser.setFieldValue('type', value)
                   }}
+                  disabled={isLocked}
                   value={formikCreateUser.values.type}
                   placeholder="กรุณาประเภทอุปกรณ์"
                   error={Boolean(formikCreateUser.touched.type && formikCreateUser.errors.type)}
@@ -338,6 +336,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                     formikLinkUser.setFieldValue('type', value)
                     formikCreateUser.setFieldValue('type', value)
                   }}
+                  disabled={isLocked}
                   value={formikLinkUser.values.type}
                   placeholder="กรุณาประเภทอุปกรณ์"
                   error={Boolean(formikLinkUser.touched.type && formikLinkUser.errors.type)}

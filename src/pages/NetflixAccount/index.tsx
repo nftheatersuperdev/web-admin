@@ -71,11 +71,13 @@ import {
 import Tooltips from 'components/Tooltips'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CheckBoxComponent from 'components/CheckBoxComponent'
+import { getNextStatus, updateCustomer } from 'services/web-bff/customer'
 import AddNewUserDialog from './AddNewUserDialog'
 import AddNewScreenDialog from './AddNewAdditionalScreenDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import EditAdditionalScreenDialog from './EditAdditionalScreenDialog'
 import TransferUserDialog from './TransferUserDialog'
+import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -156,6 +158,7 @@ export default function NetflixAccount(): JSX.Element {
     useState<boolean>(false)
   const [visibleUpdateConfirmationDialog, setVisibleUpdateConfirmationDialog] =
     useState<boolean>(false)
+  const [visibleChangeStatusDialog, setVisibleChangeStatusDialog] = useState<boolean>(false)
   const [isEditAdditionalScreenDialogOpen, setIsEditAdditionalScreenDialogOpen] =
     useState<boolean>(false)
   const [isTransferUserDialogOpen, setIsTransferUserDialogOpen] = useState<boolean>(false)
@@ -168,7 +171,10 @@ export default function NetflixAccount(): JSX.Element {
   const [passwordParam, setPasswordParam] = useState<string>('')
   const [accountParam, setAccountParam] = useState<string>('')
   const [lineIdParam, setLineIdParam] = useState<string>('')
+  const [statusParam, setStatusParam] = useState<string>('')
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+  const [changeStatusTitle, setChangeStatusTitle] = useState<string>('')
+  const [changeStatusMsg, setChangeStatusMsg] = useState<string>('')
   const [checkedAllUsers, setCheckedAllUsers] = useState<boolean>(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const { data: netflix, refetch } = useQuery('netflix-account', () => getNetflixAccount({ id }), {
@@ -335,6 +341,34 @@ export default function NetflixAccount(): JSX.Element {
   const handleDeleteUser = (id: string) => {
     setUserIdParam(id)
     setVisibleDeleteConfirmationDialog(true)
+  }
+  const handleChangeCustomerStatus = async (userId: string, status: string) => {
+    setUserIdParam(userId)
+    setChangeStatusTitle('อัพเดตสถานะลูกค้า ' + userId)
+    const nextStatus = await getNextStatus(status)
+    setChangeStatusMsg(
+      `คุณต้องการอัพเดตสถานะลูกค้าจาก '` + status + `' เป็นสถานะ '` + nextStatus + `'`
+    )
+    setStatusParam(nextStatus)
+    setVisibleChangeStatusDialog(true)
+  }
+  const handleOnCloseChangeStatusDialog = (userId: string, nextStatus: string) => {
+    console.log(userId + '----' + nextStatus)
+    toast.promise(
+      updateCustomer({ customerStatus: nextStatus } as UpdateCustomerRequest, userId),
+      {
+        loading: t('toast.loading'),
+        success: () => {
+          refetch()
+          setVisibleChangeStatusDialog(false)
+          return 'อัพเดตสถานะลูกค้าสำเร็จ'
+        },
+        error: (err) => {
+          return 'อัพเดตสถานะลูกค้าไม่สำเร็จ เนื่องจาก ' + err.data.message
+        },
+      },
+      { duration: 5000 }
+    )
   }
   const handleDeleteAdditionalUser = (userId: string, additionalId: string, accountId: string) => {
     setAccountIdParam(accountId)
@@ -856,8 +890,12 @@ export default function NetflixAccount(): JSX.Element {
                         </Tooltip>
                         <Tooltip title="ปรับสถานะ">
                           <IconButton
-                            disabled={user.accountType === 'ADDITIONAL'}
-                            onClick={() => handleDeleteUser(`${user.user.userId}`)}
+                            onClick={() =>
+                              handleChangeCustomerStatus(
+                                `${user.user.userId}`,
+                                `${user.user.customerStatus}`
+                              )
+                            }
                           >
                             <EditIcon />
                           </IconButton>
@@ -901,6 +939,7 @@ export default function NetflixAccount(): JSX.Element {
         open={isAddNewUserDialogOpen}
         accountId={id}
         accountType="OTHER"
+        isLocked={false}
         onClose={() => {
           refetch()
           setIsAddNewUserDialogOpen(false)
@@ -945,6 +984,15 @@ export default function NetflixAccount(): JSX.Element {
           refetch()
           setIsTransferUserDialogOpen(false)
         }}
+      />
+      <ConfirmDialog
+        open={visibleChangeStatusDialog}
+        title={changeStatusTitle}
+        message={changeStatusMsg}
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => handleOnCloseChangeStatusDialog(`${userIdParam}`, `${statusParam}`)}
+        onCancel={() => setVisibleChangeStatusDialog(false)}
       />
       <ConfirmDialog
         open={visibleDeleteConfirmationDialog}

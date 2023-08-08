@@ -8,6 +8,7 @@ import {
   CustomerRequest,
   CustomerResponse,
   ExtendDayCustomerRequest,
+  UpdateCustomerRequest,
 } from './customer.type'
 
 export const getCustomerList = async ({
@@ -57,5 +58,32 @@ export const createCustomer = async (
   const response: CreateCustomerResponseAPI = await AdminBffAPI.post('/v1/customer', data).then(
     (response) => response.data
   )
+  return response
+}
+
+export const getNextStatus = async (status: string): Promise<string> => {
+  const response = await AdminBffAPI.get(`/v1/customer/status/${status}/next`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return response.data
+}
+
+export const updateCustomer = async (
+  data: UpdateCustomerRequest,
+  userId: string
+): Promise<CustomerResponse> => {
+  const response: CustomerResponse = await AdminBffAPI.patch(`/v1/customer/${userId}`, data)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return response
 }
