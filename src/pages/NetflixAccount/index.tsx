@@ -840,7 +840,7 @@ export default function NetflixAccount(): JSX.Element {
                         <TextLineClamp>{user.user?.dayLeft}</TextLineClamp>
                       </TableCell>
                       <TableCell align="center" className={classes.width110}>
-                        <TextLineClamp>{user.accountStatus}</TextLineClamp>
+                        <TextLineClamp>{user.user?.customerStatus}</TextLineClamp>
                       </TableCell>
                       <TableCell align="center" className={classes.width110}>
                         <TextLineClamp>{user.addedBy}</TextLineClamp>
@@ -852,6 +852,14 @@ export default function NetflixAccount(): JSX.Element {
                             onClick={() => handleDeleteUser(`${user.user.userId}`)}
                           >
                             <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="ปรับสถานะ">
+                          <IconButton
+                            disabled={user.accountType === 'ADDITIONAL'}
+                            onClick={() => handleDeleteUser(`${user.user.userId}`)}
+                          >
+                            <EditIcon />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="ต่ออายุ">

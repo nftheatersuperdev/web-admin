@@ -44,10 +44,14 @@ export const getNetflixAccount = async ({
 export const createNetflixAccount = async (
   data: CreateNetflixAccountRequest
 ): Promise<CreateNetflixAccountResponseAPI> => {
-  const response: CreateNetflixAccountResponseAPI = await AdminBffAPI.post(
-    `/v1/netflix`,
-    data
-  ).then((response) => response.data)
+  const response: CreateNetflixAccountResponseAPI = await AdminBffAPI.post(`/v1/netflix`, data)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return response
 }
 
@@ -58,7 +62,14 @@ export const linkUserToNetflixAccount = async (
   const response: UpdateLinkUserNetflixResponse = await AdminBffAPI.patch(
     `/v1/netflix/${accountId}/user`,
     data
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return response
 }
 
@@ -154,7 +165,14 @@ export const createAndLinkAdditionalAccounts = async (
   const response: CreateAdditionAccountResponse = await AdminBffAPI.post(
     `/v1/netflix/${accountId}/additional`,
     data
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return response.data
 }
 
@@ -165,7 +183,14 @@ export const updateNetflixAccount = async (
   const response: UpdateNetflixAccountResponse = await AdminBffAPI.patch(
     `/v1/netflix/${accountId}`,
     data
-  ).then((response) => response.data)
+  )
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
   return response.data
 }
 
