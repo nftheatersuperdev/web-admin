@@ -353,7 +353,6 @@ export default function NetflixAccount(): JSX.Element {
     setVisibleChangeStatusDialog(true)
   }
   const handleOnCloseChangeStatusDialog = (userId: string, nextStatus: string) => {
-    console.log(userId + '----' + nextStatus)
     toast.promise(
       updateCustomer({ customerStatus: nextStatus } as UpdateCustomerRequest, userId),
       {
