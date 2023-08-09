@@ -17,7 +17,7 @@ import {
   createFilterOptions,
 } from '@mui/material'
 import { Edit as EditIcon, ContentCopy } from '@mui/icons-material'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { copyText } from 'utils/copyContent'
 import { makeStyles } from '@mui/styles'
 import { useEffect, useState } from 'react'
@@ -94,6 +94,8 @@ export default function Netflix(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
+  const searchParams = useLocation().search
+  const queryString = new URLSearchParams(searchParams)
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [isAddNewAccountDialogOpen, setIsAddNewAccountDialogOpen] = useState(false)
   const [page, setPage] = useState<number>(1)

@@ -72,12 +72,12 @@ import Tooltips from 'components/Tooltips'
 import ConfirmDialog from 'components/ConfirmDialog'
 import CheckBoxComponent from 'components/CheckBoxComponent'
 import { getNextStatus, updateCustomer } from 'services/web-bff/customer'
+import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
 import AddNewUserDialog from './AddNewUserDialog'
 import AddNewScreenDialog from './AddNewAdditionalScreenDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import EditAdditionalScreenDialog from './EditAdditionalScreenDialog'
 import TransferUserDialog from './TransferUserDialog'
-import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)

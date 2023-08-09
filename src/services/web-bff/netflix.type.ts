@@ -8,10 +8,10 @@ export interface NetflixAccountListRequest {
 }
 
 export interface NetflixAccountListInputRequest {
-  changeDate?: string
-  userId?: string
-  accountName?: string
-  isActive?: boolean
+  changeDate: string
+  userId: string
+  accountName: string
+  isActive: boolean
 }
 
 export interface NetflixAccountRequest {
