@@ -12,6 +12,7 @@ export interface NetflixAccountListInputRequest {
   userId: string
   accountName: string
   isActive: boolean
+  customerStatus: [string]
 }
 
 export interface NetflixAccountRequest {
@@ -135,4 +136,42 @@ export interface UpdateAdditionalAccountRequest {
 export interface TransferUsersRequest {
   fromAccountId: string
   userIds: string[]
+}
+
+export interface NetflixChangeDateInfo {
+  changeDateToday: string
+  countToday: number
+  changeDateTomorrow: string
+  countTomorrow: number
+  changeDateDayPlusTwo: string
+  countDayPlusTwo: number
+  changeDateDayPlusThree: string
+  countDayPlusThree: number
+  totalAccount: number
+}
+
+export interface NetflixCustomerInfo {
+  countWaitingExpired: number
+  countWaitingAsk2Status: number
+  countWaitingAsk1Status: number
+  countWaitingAskStatus: number
+  totalCustomer: number
+  totalActiveCustomer: number
+}
+
+export interface NetflixDeviceInfo {
+  availableTV: number
+  totalTV: number
+  availableAdditional: number
+  totalAdditional: number
+  availableOther: number
+  totalOther: number
+}
+
+export interface NetflixDashboard {
+  data: {
+    changeDateInfo: NetflixChangeDateInfo
+    customerInfo: NetflixCustomerInfo
+    deviceInfo: NetflixDeviceInfo
+  }
 }

@@ -268,6 +268,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   select
                   label="แพ็คเก็ต/ราคา"
                   onChange={handlePackageChange}
+                  value={formikCreateUser.values.extendDay}
                   placeholder="กรุณาเลือกแพ็คเก็ต/ราคา"
                   error={Boolean(
                     formikCreateUser.touched.extendDay && formikCreateUser.errors.extendDay
@@ -354,8 +355,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                 <TextField
                   fullWidth
                   select
-                  label="แพ็คเก็ต/ราคา"
+                  label="แพ็คเก็ต/ราคาx"
                   onChange={handlePackageChange}
+                  value={formikLinkUser.values.extendDay}
                   placeholder="กรุณาเลือกแพ็คเก็ต/ราคา"
                   error={Boolean(
                     formikLinkUser.touched.extendDay && formikLinkUser.errors.extendDay

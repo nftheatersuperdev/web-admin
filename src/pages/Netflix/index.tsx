@@ -2,10 +2,13 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import {
   Autocomplete,
+  Button,
+  Checkbox,
   Chip,
   CircularProgress,
   Grid,
   IconButton,
+  InputAdornment,
   MenuItem,
   Table,
   TableBody,
@@ -16,13 +19,18 @@ import {
   Typography,
   createFilterOptions,
 } from '@mui/material'
-import { Edit as EditIcon, ContentCopy } from '@mui/icons-material'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import {
+  Edit as EditIcon,
+  ContentCopy,
+  CheckBox,
+  CheckBoxOutlineBlank,
+  CloseOutlined,
+} from '@mui/icons-material'
+import { useHistory, useLocation } from 'react-router-dom'
 import { copyText } from 'utils/copyContent'
 import { makeStyles } from '@mui/styles'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import config from 'config'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
@@ -31,10 +39,8 @@ import { useFormik } from 'formik'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
-  ContentSection,
   DataWrapper,
   GridSearchSection,
-  SearchButton,
   TextLineClamp,
   TextSmallLineClamp,
   Wrapper,
@@ -60,7 +66,10 @@ const AlignRight = styled.div`
   text-align: right;
 `
 
-const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').toDate()
+interface SelectOption {
+  label: string
+  value: string
+}
 
 export default function Netflix(): JSX.Element {
   const useStyles = makeStyles({
@@ -76,7 +85,6 @@ export default function Netflix(): JSX.Element {
       padding: '48px 0',
     },
     paddingRightBtnClear: {
-      marginLeft: '-40px',
       cursor: 'pointer',
       padding: '4px 4px',
     },
@@ -90,25 +98,36 @@ export default function Netflix(): JSX.Element {
       color: 'white',
       borderRadius: '64px',
     },
+    chipBgPrimary: {
+      backgroundColor: '#4584FF',
+      color: 'white',
+      borderRadius: '64px',
+      padding: '4px',
+      margin: '2px',
+    },
   })
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
+  const queryChangeDate = queryString.get('changeDate')
+  const queryCustStatus = queryString.get('customerStatus')
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [isAddNewAccountDialogOpen, setIsAddNewAccountDialogOpen] = useState(false)
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [selectedChangeDate, setSelectedChangeDate] = useState(initSelectedChangeDate)
+  const [selectedChangeDate, setSelectedChangeDate] = useState<Date>()
   const [accountIdParam, setAccountIdParam] = useState<string>('')
   const [accountTypeParam, setAccountTypeParam] = useState<string>('')
+  const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: NetflixAccountListInputRequest = {
-    changeDate: '-',
+    changeDate: queryChangeDate || '-',
     userId: '',
     accountName: '',
     isActive: true,
+    customerStatus: queryCustStatus !== null ? [queryCustStatus] : [],
   }
   const [netflixAccountFilter, setNetflixAccountFilter] = useState<NetflixAccountListInputRequest>({
     ...defaultFilter,
@@ -147,6 +166,7 @@ export default function Netflix(): JSX.Element {
       ),
       accountName: '',
       isActive: true,
+      customerStatus: [],
     },
     enableReinitialize: true,
     onSubmit: (value) => {
@@ -155,6 +175,36 @@ export default function Netflix(): JSX.Element {
       setPage(1)
     },
   })
+  const handleSetDate = () => {
+    if (queryChangeDate !== null) {
+      const year = new Date().getFullYear()
+      const [day, month] = queryChangeDate.split('/')
+      setSelectedChangeDate(new Date(+year, +month - 1, +day))
+    }
+  }
+  const customerStatusOptions = [
+    { value: 'กำลังใช้งาน', label: 'กำลังใช้งาน' },
+    { value: 'รอ-เรียกเก็บ', label: 'รอ-เรียกเก็บ' },
+    { value: 'รอ-ทวงซ้ำ 1', label: 'รอ-ทวงซ้ำ 1' },
+    { value: 'รอ-ทวงซ้ำ 2', label: 'รอ-ทวงซ้ำ 2' },
+    { value: 'รอ-หมดอายุ', label: 'รอ-หมดอายุ' },
+    { value: 'หมดอายุ', label: 'หมดอายุ' },
+  ]
+  const icon = <CheckBoxOutlineBlank fontSize="small" />
+  const checkedIcon = (
+    <CheckBox className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
+  )
+  const handleAutocompleteChange = (valuesSelect: SelectOption[]) => {
+    console.log(JSON.stringify(valuesSelect))
+    setSelectCustStatus(valuesSelect)
+    setFieldInFormik(valuesSelect)
+  }
+  const setFieldInFormik = (valuesSelect: SelectOption[]) => {
+    const dataFormikCustStatus = valuesSelect.map((item) => {
+      return item.value
+    })
+    formik.setFieldValue('customerStatus', dataFormikCustStatus)
+  }
   const headerText: TableHeaderProps[] = [
     {
       text: 'จำนวน User',
@@ -193,8 +243,9 @@ export default function Netflix(): JSX.Element {
         // Build Table Body
         <TableRow hover id={`netflix_account__index-${netflix.accountId}`} key={netflix.accountId}>
           <TableCell id="netflix_account_slot__id">
-            {netflix.users.map((user) => (
+            {netflix.users.map((user, i) => (
               <Tooltips
+                key={i}
                 type={`${user.accountType}`}
                 color={`${user.color}`}
                 subTitle={`${user.accountStatus}`}
@@ -278,6 +329,14 @@ export default function Netflix(): JSX.Element {
    */
   useEffect(() => {
     refetch()
+    if (queryCustStatus !== null) {
+      setSelectCustStatus([{ value: queryCustStatus, label: queryCustStatus }])
+    }
+    if (queryChangeDate !== null) {
+      handleSetDate()
+    } else {
+      setSelectedChangeDate(new Date())
+    }
   }, [
     netflixAccountFilter,
     pages,
@@ -292,11 +351,32 @@ export default function Netflix(): JSX.Element {
     <Page>
       <PageTitle title={t('sidebar.netflixAccount.title')} />
       <Wrapper>
-        <ContentSection>
-          <Typography variant="h6" component="h2">
-            {t('netflix.searchPanel')}
-          </Typography>
-        </ContentSection>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={9}>
+            <Typography variant="h6" component="h2">
+              {t('netflix.searchPanel')}
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <AlignRight>
+              <Button
+                id="netflix_account__search_btn"
+                variant="contained"
+                onClick={() => formik.handleSubmit()}
+              >
+                {t('button.search')}
+              </Button>
+              &nbsp;
+              <Button
+                id="netflix_account__add_btn"
+                variant="contained"
+                onClick={() => setIsAddNewAccountDialogOpen(true)}
+              >
+                สร้างบัญชีใหม่
+              </Button>
+            </AlignRight>
+          </Grid>
+        </Grid>
         <GridSearchSection container spacing={1}>
           <Grid item xs={12} sm={3}>
             <Autocomplete
@@ -309,7 +389,7 @@ export default function Netflix(): JSX.Element {
                   {...params}
                   label={t('netflix.customer')}
                   variant="outlined"
-                  placeholder="สามารถค้นหาด้วยชื่อ,อีเมลล์,ไลน์ไอดี"
+                  placeholder="ค้นหาด้วยรหัสลูกค้า,ไลน์ไอดี,อีเมลล์"
                   InputLabelProps={{ shrink: true }}
                 />
               )}
@@ -319,7 +399,7 @@ export default function Netflix(): JSX.Element {
           <Grid item xs={12} sm={2} className={classes.datePickerFromTo}>
             <DatePicker
               label="วันสลับ"
-              id="netflix_account__search_input"
+              id="netflix_account_list__change_date_input"
               name="selectedChangeDate"
               format={DEFAULT_CHANGE_DATE_FORMAT}
               value={selectedChangeDate}
@@ -337,22 +417,38 @@ export default function Netflix(): JSX.Element {
             <TextField
               type="text"
               name="accountName"
-              placeholder="กรุณาระบุชื่อบัญชีที่ต้องการค้นหา"
-              id="netflix_add_account_name"
+              placeholder="ระบุชื่อบัญชีที่ต้องการค้นหา"
+              id="netflix_account_list__account_name_input"
               label={t('netflix.mainInfo.accountName')}
               fullWidth
               value={formik.values.accountName}
               onChange={({ target }) => formik.setFieldValue('accountName', target.value)}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {formik.values.accountName !== '' ? (
+                      <CloseOutlined
+                        className={classes.paddingRightBtnClear}
+                        onClick={() => {
+                          formik.setFieldValue('accountName', '')
+                        }}
+                      />
+                    ) : (
+                      ''
+                    )}
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={2}>
             <TextField
               select
               name="accountStatus"
-              placeholder="กรุณาเลือกสถานะบัญชี"
-              id="netflix_add_account_name"
+              placeholder="เลือกสถานะบัญชี"
+              id="netflix_account_list__account_status_input"
               label={t('netflix.mainInfo.accountStatus')}
               fullWidth
               variant="outlined"
@@ -365,23 +461,45 @@ export default function Netflix(): JSX.Element {
             </TextField>
           </Grid>
           <Grid item xs={12} sm={3}>
-            <AlignRight>
-              <SearchButton
-                id="netflix_account__search_btn"
-                variant="contained"
-                onClick={() => formik.handleSubmit()}
-              >
-                {t('button.search')}
-              </SearchButton>
-              &nbsp;
-              <SearchButton
-                id="netflix_account__add_btn"
-                variant="contained"
-                onClick={() => setIsAddNewAccountDialogOpen(true)}
-              >
-                สร้างบัญชีใหม่
-              </SearchButton>
-            </AlignRight>
+            <Autocomplete
+              fullWidth
+              multiple
+              limitTags={1}
+              id="netflix_account_list__customer_status_input"
+              options={customerStatusOptions}
+              disableCloseOnSelect
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) => option.value === value.value}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
+                  {option.label}
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="สถานะลูกค้า"
+                  placeholder="เลือกสถานะลูกค้า"
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    size="small"
+                    label={option.label}
+                    {...getTagProps({ index })}
+                    key={index}
+                    className={classes.chipBgPrimary}
+                  />
+                ))
+              }
+              value={selectCustStatus || []}
+              onChange={(_event, value) => {
+                handleAutocompleteChange(value)
+              }}
+            />
           </Grid>
         </GridSearchSection>
         <TableContainer>

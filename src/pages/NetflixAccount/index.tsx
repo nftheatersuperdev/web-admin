@@ -12,6 +12,8 @@ import {
   Tooltip,
   Typography,
   TableHead,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material'
 import {
   Visibility,
@@ -177,7 +179,15 @@ export default function NetflixAccount(): JSX.Element {
   const [changeStatusMsg, setChangeStatusMsg] = useState<string>('')
   const [checkedAllUsers, setCheckedAllUsers] = useState<boolean>(false)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
-  const { data: netflix, refetch } = useQuery('netflix-account', () => getNetflixAccount({ id }), {
+  const [openLoading, setOpenLoading] = useState(true)
+  const handleCloseLoading = () => {
+    setOpenLoading(false)
+  }
+  const {
+    data: netflix,
+    refetch,
+    isFetching,
+  } = useQuery('netflix-account', () => getNetflixAccount({ id }), {
     refetchOnWindowFocus: false,
   })
   const initSelectedChangeDate = dayjs(netflix?.data.changeDate, 'DD/MM')
@@ -445,6 +455,17 @@ export default function NetflixAccount(): JSX.Element {
   }, [refetch])
   return (
     <Page>
+      {isFetching ? (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={openLoading}
+          onClick={handleCloseLoading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : (
+        ''
+      )}
       <PageTitle title={t('sidebar.netflixAccount.title')} />
       <Wrapper>
         <form onSubmit={formikUpdateAccount.handleSubmit}>
@@ -889,12 +910,14 @@ export default function NetflixAccount(): JSX.Element {
                         </Tooltip>
                         <Tooltip title="ปรับสถานะ">
                           <IconButton
-                            onClick={() =>
+                            disabled={user.user.customerStatus === 'กำลังใช้งาน'}
+                            onClick={() => {
+                              setOpenLoading(true)
                               handleChangeCustomerStatus(
                                 `${user.user.userId}`,
                                 `${user.user.customerStatus}`
                               )
-                            }
+                            }}
                           >
                             <EditIcon />
                           </IconButton>

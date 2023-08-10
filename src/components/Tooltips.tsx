@@ -1,8 +1,4 @@
-import {
-  AccountCircle as UserIcon,
-  Tv as TvIcon,
-  AddToQueue as AdditionalScreenIcon,
-} from '@mui/icons-material'
+import { Tv as TvIcon, AddToQueue as AdditionalScreenIcon, PhoneIphone } from '@mui/icons-material'
 import { Tooltip, IconButton } from '@mui/material'
 
 interface TooltipOptions {
@@ -32,7 +28,7 @@ export default function Tooltips({ type, color, subTitle, onClick }: TooltipOpti
   return (
     <Tooltip title={subTitle}>
       <IconButton onClick={onClick}>
-        <UserIcon htmlColor={color} />
+        <PhoneIphone htmlColor={color} />
       </IconButton>
     </Tooltip>
   )

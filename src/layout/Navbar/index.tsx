@@ -1,9 +1,11 @@
+/* eslint-disable import/no-relative-parent-imports */
+/* eslint-disable no-restricted-imports */
 import styled from 'styled-components'
 import { withTheme } from '@emotion/react'
 import { Grid, AppBar as MuiAppBar, IconButton as MuiIconButton, Toolbar } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 import { Menu as MenuIcon } from '@mui/icons-material'
-import { useTranslation } from 'react-i18next'
+import { version } from '../../../package.json'
 import NavbarUserDropdown from './NavbarUserDropdown'
 import NavbarLanguagesDropdown from './NavbarLanguagesDropdown'
 
@@ -31,7 +33,6 @@ interface NavbarProps {
 }
 
 function Navbar({ onSidebarToggle }: NavbarProps) {
-  const { t } = useTranslation()
 
   return (
     <AppBar position="sticky" elevation={0}>
@@ -49,15 +50,11 @@ function Navbar({ onSidebarToggle }: NavbarProps) {
           </Grid>
           <Grid item xs>
             <NavLink to="/">
-              <LogoImage
-                src={'/logo-full-dark.png'}
-                alt="logo"
-                height={32}
-              />
+              <LogoImage src="/logo-full-dark.png" alt="logo" height={32} />
             </NavLink>
           </Grid>
           <Grid item>
-            <VersionText>{t('header.version', '1.0.0')}</VersionText>
+            <VersionText>เวอร์ชั่น {version}</VersionText>
           </Grid>
           <Grid item>
             <NavbarLanguagesDropdown />
