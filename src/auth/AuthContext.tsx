@@ -11,6 +11,7 @@ export const STORAGE_KEYS = {
   ROLE: 'nftheater:user_role',
   TOKEN: 'nftheater:user_token',
   ID: 'nftheater:user_id',
+  ACCOUNT: 'nftheater:account',
 }
 
 type Text = string | null | undefined
@@ -37,6 +38,8 @@ interface AuthProps {
   getRoleDisplayName: () => string
   setUserId: (id: string) => void
   getUserId: () => Text
+  setAccount: (account: string) => void
+  getAccount: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
 }
 
@@ -54,6 +57,8 @@ const Auth = createContext<AuthProps>({
   getRoleDisplayName: () => '',
   setUserId: (_id: string) => undefined,
   getUserId: () => undefined,
+  setAccount: (_id: string) => undefined,
+  getAccount: () => undefined,
   getRemoteConfig: (_key: string) => undefined,
 })
 
@@ -95,11 +100,19 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
   }
 
   const setRole = (role: string | Role) => {
-    ls.set<string>(STORAGE_KEYS.ROLE, role, { encrypt: true })
+    ls.set<string>(STORAGE_KEYS.ROLE, role)
   }
 
   const getRole = (): Text => {
-    return ls.get<Text>(STORAGE_KEYS.ROLE, { encrypt: true })
+    return ls.get<Text>(STORAGE_KEYS.ROLE)
+  }
+
+  const setAccount = (account: string) => {
+    ls.set<string>(STORAGE_KEYS.ACCOUNT, account)
+  }
+
+  const getAccount = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.ACCOUNT)
   }
 
   const getRoleDisplayName = (): string => {
@@ -122,10 +135,12 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       setToken(token || '')
 
       const userProfile = await getAdminUserProfile()
-
+      console.log(JSON.stringify(userProfile))
       setUserId(user.uid)
-      setRole(userProfile.role.toLocaleLowerCase())
+      setRole(userProfile.role)
+      setAccount(userProfile.account)
     } catch (error: any) {
+      console.error(error)
       const errMessage = error.code || error.response.data.message.toLowerCase()
       const message = errorMessage(errMessage as string)
       throw new Error(message)
@@ -175,6 +190,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getRoleDisplayName,
         setUserId,
         getUserId,
+        setAccount,
+        getAccount,
         getRemoteConfig,
       }}
     >

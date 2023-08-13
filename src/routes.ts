@@ -34,27 +34,44 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
   {
     path: ROUTE_PATHS.DASHBOARD,
     component: lazy(() => import('./pages/Dashboard' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN],
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.NETFLIX_ADMIN,
+      ROLES.NETFLIX_AUTHOR,
+      ROLES.YOUTUBE_ADMIN,
+      ROLES.YOUTUBE_AUTHOR,
+    ],
+  },
+  {
+    path: ROUTE_PATHS.CUSTOMER,
+    component: lazy(() => import('./pages/Customer' /* webpackChunkName: "app" */)),
+    allowedRoles: [
+      ROLES.SUPER_ADMIN,
+      ROLES.NETFLIX_ADMIN,
+      ROLES.NETFLIX_AUTHOR,
+      ROLES.YOUTUBE_ADMIN,
+      ROLES.YOUTUBE_AUTHOR,
+    ],
   },
   {
     path: ROUTE_PATHS.NETFLIX,
     component: lazy(() => import('./pages/Netflix' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.NETFLIX_ADMIN, ROLES.NETFLIX_AUTHOR],
   },
   {
     path: ROUTE_PATHS.NETFLIX_ACCOUNT,
     component: lazy(() => import('./pages/NetflixAccount' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.NETFLIX_ADMIN, ROLES.NETFLIX_AUTHOR],
   },
   {
     path: ROUTE_PATHS.YOUTUBE,
     component: lazy(() => import('./pages/Youtube' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.YOUTUBE_ADMIN, ROLES.YOUTUBE_AUTHOR],
   },
   {
     path: ROUTE_PATHS.YOUTUBE_ACCOUNT,
     component: lazy(() => import('./pages/YoutubeAccount' /* webpackChunkName: "app" */)),
-    allowedRoles: [ROLES.SUPER_ADMIN],
+    allowedRoles: [ROLES.SUPER_ADMIN, ROLES.YOUTUBE_ADMIN, ROLES.YOUTUBE_AUTHOR],
   },
   {
     path: ROUTE_PATHS.FORBIDDEN,

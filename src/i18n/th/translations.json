@@ -190,17 +190,10 @@
   },
   "role": {
     "superAdmin": "ผู้ดูแลระบบระดับสูง",
-    "admin": "ผู้ดูแลระบบ",
-    "customerSupport": "ฝ่ายบริการลูกค้า",
-    "operation": "ฝ่ายปฏิบัติการ",
-    "marketing": "ฝ่ายการตลาด",
-    "productSupport": "ฝ่ายบริการสินค้า",
-    "itAdmin": "ผู้ดูแลและจัดการฝ่ายไอที",
-    "centreOperation": "Centre Operation",
-    "branchManager": "ผู้จัดการสาขา",
-    "branchOfficer": "ผู้จัดการ",
-    "driver": "Driver",
-    "ownOperation": "Owner Operation"
+    "netflixAdmin": "แอดมิน Netflix",
+    "netflixAuthor": "หัวหน้าแอดมิน Netflix",
+    "youtubeAdmin": "แอดมิน Youtube",
+    "youtubeAuthor": "หัวหน้าแอดมิน Youtube"  
   },
   "youtube": {
     "title": "Youtube",

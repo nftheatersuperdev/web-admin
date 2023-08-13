@@ -190,17 +190,10 @@
   },
   "role": {
     "superAdmin": "Super Administrator",
-    "admin": "Administrator",
-    "customerSupport": "Customer Support",
-    "operation": "Operation",
-    "marketing": "Marketing",
-    "productSupport": "Product Support",
-    "itAdmin": "IT Administrator",
-    "centreOperation": "Centre Operation",
-    "branchManager": "Branch Manager",
-    "branchOfficer": "Branch Officer",
-    "driver": "Driver",
-    "ownOperation": "Owner Operation"
+    "netflixAdmin": "Netflix Administrator",
+    "netflixAuthor": "Netflix Authorizer",
+    "youtubeAdmin": "Youtube Administrator",
+    "youtubeAuthor": "Youtube Authorizer"  
   },
   "youtube": {
     "title": "Youtube",

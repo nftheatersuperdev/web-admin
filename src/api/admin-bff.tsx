@@ -13,6 +13,8 @@ export const AdminBffAPI = axios.create({
 AdminBffAPI.interceptors.request.use(
   async (config) => {
     const token = ls.get<string | null | undefined>(STORAGE_KEYS.TOKEN)
+    const account = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT)
+    console.log(account)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -24,6 +26,7 @@ AdminBffAPI.interceptors.request.use(
     config.headers.timestamp = timestamp
     config.headers.user_agent = browserName
     config.headers.application_version = packageInfo.version
+    config.headers.module = account
     return config
   },
   (err) => {

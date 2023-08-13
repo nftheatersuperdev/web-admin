@@ -27,6 +27,7 @@ export interface AdminUser {
   lastName: string
   role: AdminUserRole
   privileges: string[]
+  account: string
   resellerServiceAreas: ResellerServiceArea[]
   isActive: false
   createdDate: string

@@ -36,6 +36,7 @@ import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_CHANGE_DATE_FORMAT, formatDateStringWithPattern } from 'utils'
 import { useFormik } from 'formik'
+import toast from 'react-hot-toast'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
@@ -195,7 +196,6 @@ export default function Netflix(): JSX.Element {
     <CheckBox className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
   )
   const handleAutocompleteChange = (valuesSelect: SelectOption[]) => {
-    console.log(JSON.stringify(valuesSelect))
     setSelectCustStatus(valuesSelect)
     setFieldInFormik(valuesSelect)
   }
@@ -230,6 +230,8 @@ export default function Netflix(): JSX.Element {
       setAccountIdParam(accountId)
       setAccountTypeParam(type)
       setIsAddNewUserDialogOpen(true)
+    } else if (status === 'ยังไม่เปิดจอเสริม') {
+      toast.error('ไม่สามารถทำรายการได้ เนื่องจากยังไม่เปิดจอเสริม')
     }
   }
   const copyContent = (email: string, password: string) => {
