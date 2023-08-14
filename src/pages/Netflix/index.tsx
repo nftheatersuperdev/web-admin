@@ -153,7 +153,6 @@ export default function Netflix(): JSX.Element {
         page: 1,
         size: pageSize,
       } as NetflixAccountListRequest),
-    { cacheTime: 10 * (60 * 1000), staleTime: 5 * (60 * 1000) },
     {
       refetchOnWindowFocus: false,
     }

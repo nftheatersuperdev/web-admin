@@ -8,10 +8,10 @@ export interface CustomerListRequest {
 
 export interface CustomerListInputRequest {
   userId?: string
-  customerName?: string
   email?: string
-  phoneNumber?: string
   lineId?: string
+  account?: string
+  status?: string
 }
 
 export interface CustomerRequest {
@@ -55,6 +55,7 @@ export interface Customer {
   createdBy: string
   updatedDate: string
   updatedBy: string
+  account: string
 }
 
 export interface ExtendDayCustomerRequest {

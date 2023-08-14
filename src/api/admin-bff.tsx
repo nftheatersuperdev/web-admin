@@ -14,7 +14,6 @@ AdminBffAPI.interceptors.request.use(
   async (config) => {
     const token = ls.get<string | null | undefined>(STORAGE_KEYS.TOKEN)
     const account = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT)
-    console.log(account)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

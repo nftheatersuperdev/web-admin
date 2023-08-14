@@ -235,12 +235,14 @@
   },
   "customer": {
     "title": "ลูกค้า",
+    "userId": "รหัสลูกค้า",
     "searchPanel": "ค้นหาลูกค้า",
     "customerName":"ชื่อลูกค้า",
     "email":"อีเมลล์",
     "phoneNumber":"เบอร์โทรศัพท์",
     "lineId":"ชื่อ Line",
-    "lineUrl":"Line URL"
+    "lineUrl":"Line URL",
+    "account": "บัญชี"
   },
   "settingConfig": {
     "searchPanel": "ค้นหาการตั้งค่า"

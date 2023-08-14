@@ -235,12 +235,14 @@
   },
   "customer": {
     "title": "Customer",
+    "userId": "User ID",
     "searchPanel": "Search Customer",
     "customerName":"Customer Name",
     "email":"Email",
     "phoneNumber":"Phone Number",
     "lineId":"Line Name",
-    "lineUrl":"Line URL"
+    "lineUrl":"Line URL",
+    "account": "Account"
   },
   "settingConfig": {
     "searchPanel": "Search Configuration"
