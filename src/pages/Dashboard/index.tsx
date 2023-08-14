@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Backdrop, CircularProgress, Grid, Typography } from '@mui/material'
+import { Backdrop, CircularProgress, Grid, Tab, Tabs, Typography } from '@mui/material'
 import {
   CalendarMonth,
   SentimentDissatisfiedRounded,
@@ -9,12 +9,16 @@ import {
   Smartphone,
   Tv,
   AddToQueue as AdditionalScreenIcon,
+  AccountBalance,
+  YouTube,
 } from '@mui/icons-material'
 import { makeStyles } from '@mui/styles'
 import { useState } from 'react'
 import { ROUTE_PATHS } from 'routes'
 import qs from 'qs'
 import { useQuery } from 'react-query'
+import { STORAGE_KEYS } from 'auth/AuthContext'
+import ls from 'localstorage-slim'
 import PageTitle from 'components/PageTitle'
 import { ContentSection, Wrapper } from 'components/Styled'
 import { Page } from 'layout/LayoutRoute'
@@ -33,6 +37,8 @@ export default function Dashboard(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const [open, setOpen] = useState(true)
+  const [valueTab, setValueTab] = useState(0)
+  const moduleAccount = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT) || 'ALL'
   const { data: dashboardResponse, isFetching } = useQuery(
     'dashboard-netflix',
     () => getNetflixDashboard(),
@@ -42,6 +48,9 @@ export default function Dashboard(): JSX.Element {
   )
   const handleClose = () => {
     setOpen(false)
+  }
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValueTab(newValue)
   }
   const dashboard = dashboardResponse?.data
   return (
@@ -58,6 +67,21 @@ export default function Dashboard(): JSX.Element {
         ''
       )}
       <PageTitle title="ภาพรวม" />
+      <Tabs value={valueTab} onChange={handleTabChange} aria-label="icon tabs account">
+        <Tab
+          label="Netflix"
+          icon={<AccountBalance />}
+          aria-label="netflix"
+          disabled={moduleAccount === 'YOUTUBE'}
+        />
+        <Tab
+          label="Youtube"
+          icon={<YouTube />}
+          aria-label="youtube"
+          disabled={moduleAccount === 'NETFLIX'}
+        />
+      </Tabs>
+      {/* <TabPanel value="netflix"> */}
       <Wrapper>
         <ContentSection>
           <Grid container spacing={3}>
@@ -344,6 +368,7 @@ export default function Dashboard(): JSX.Element {
           </Grid>
         </ContentSection>
       </Wrapper>
+      {/* </TabPanel> */}
     </Page>
   )
 }

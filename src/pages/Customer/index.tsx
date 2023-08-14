@@ -73,14 +73,20 @@ export default function Customer(): JSX.Element {
       padding: '4px',
       margin: '2px',
     },
+    noResultMessage: {
+      textAlign: 'center',
+      fontSize: '1.2em',
+      fontWeight: 'bold',
+      padding: '48px 0',
+    },
   })
   const classes = useStyles()
   const { t } = useTranslation()
-  const [open, setOpen] = useState(true)
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const moduleAccount = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT)
+  console.log(moduleAccount)
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: CustomerListInputRequest = {
     userId: '',
@@ -89,6 +95,7 @@ export default function Customer(): JSX.Element {
     account: moduleAccount,
     status: [],
   }
+  console.log(defaultFilter)
   const [customerFilter, setCustomerFilter] = useState<CustomerListInputRequest>({
     ...defaultFilter,
   })
@@ -149,46 +156,50 @@ export default function Customer(): JSX.Element {
     { value: 'รอ-หมดอายุ', label: 'รอ-หมดอายุ' },
     { value: 'หมดอายุ', label: 'หมดอายุ' },
   ]
-  const customers =
-    (customerList &&
-      customerList.data.customer.length > 0 &&
-      customerList.data.customer.map((cust) => {
-        return (
-          <TableRow hover id={`customer__index-${cust.userId}`} key={cust.userId}>
-            <TableCell id="customer__user_id">
-              <DataWrapper>
-                <TextLineClamp>{cust.userId}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="customer__line_id">
-              <DataWrapper>
-                <TextLineClamp>{cust.lineId}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="customer__email">
-              <DataWrapper>
-                <TextLineClamp>{cust.email}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="customer__status">
-              <DataWrapper>
-                <TextLineClamp>{cust.customerStatus}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="customer__account">
-              <DataWrapper>
-                <TextLineClamp>{cust.account}</TextLineClamp>
-              </DataWrapper>
-            </TableCell>
-            <TableCell id="customer__actions">
-              <DataWrapper>
-                <TextLineClamp />
-              </DataWrapper>
-            </TableCell>
-          </TableRow>
-        )
-      })) ||
-    []
+  const customers = (customerList &&
+    customerList.data.customer.length > 0 &&
+    customerList.data.customer.map((cust) => {
+      return (
+        <TableRow hover id={`customer__index-${cust.userId}`} key={cust.userId}>
+          <TableCell id="customer__user_id">
+            <DataWrapper>
+              <TextLineClamp>{cust.userId}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="customer__line_id">
+            <DataWrapper>
+              <TextLineClamp>{cust.lineId}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="customer__email">
+            <DataWrapper>
+              <TextLineClamp>{cust.email}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="customer__status">
+            <DataWrapper>
+              <TextLineClamp>{cust.customerStatus}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="customer__account">
+            <DataWrapper>
+              <TextLineClamp>{cust.account}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="customer__actions">
+            <DataWrapper>
+              <TextLineClamp />
+            </DataWrapper>
+          </TableCell>
+        </TableRow>
+      )
+    })) || (
+    <TableRow>
+      <TableCell colSpan={6}>
+        <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
+      </TableCell>
+    </TableRow>
+  )
   /**
    * Init pagination depends on data from the API.
    */
