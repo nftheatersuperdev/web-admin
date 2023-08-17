@@ -199,8 +199,30 @@
     "title": "Youtube",
     "searchPanel": "ค้นหาบัญชี Youtube",
     "mainInfo": {
-      "title": "รายละเอียดบัญชี Youtube"
-    }
+      "title": "รายละเอียดบัญชี Youtube",
+      "accountName": "ชื่อบัญชี",
+      "changeDate": "วันสลับ",
+      "email":"อีเมล",
+      "password": "รหัสผ่าน",
+      "accountStatus": "สถานะบัญชี",
+      "createdDate": "วัน-เวลาที่สร้าง",
+      "updatedDate": "วัน-เวลาที่ปรับปรุงล่าสุด",
+      "createdBy": "สร้างโดย",
+      "updatedBy": "ปรับปรุงล่าสุดโดย"
+    },
+    "statuses": {
+      "active": "กำลังใช้งานอยู่",
+      "inactive": "ปิดการใช้งานชั่วคราว",
+      "appeal": "อุทธรณ์",
+      "renew": "สร้างใหม่-รอยกเลิก"
+    },
+    "customer": "ชื่อลูกค้า",
+    "addUser": "เพิ่มลูกค้า",
+    "transferUser": "ย้ายลูกค้า",
+    "fromAccount": "จากบัญชี",
+    "toAccount": "ไปยังบัญชี",
+    "extendUser": "ต่ออายุลูกค้า",
+    "addYoutube": "สร้างบัญชี Youtube"
   },
   "netflix": {
     "title": "Netflix",

@@ -199,8 +199,30 @@
     "title": "Youtube",
     "searchPanel": "Search Youtube Account",
     "mainInfo": {
-      "title": "Youtube Account Details"
-    }
+      "title": "Youtube Account Details",
+      "accountName": "Account Name",
+      "changeDate": "Change Date",
+      "email":"E-Mail",
+      "password": "Password",
+      "accountStatus": "Account Status",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "createdBy": "Created By",
+      "updatedBy": "Updated By"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "appeal": "Appeal",
+      "renew": "Re-new"
+    },
+    "customer": "Customer Name",
+    "addUser": "Add User",
+    "transferUser": "Move User",
+    "fromAccount": "From Account",
+    "toAccount": "To Account",
+    "extendUser": "Extend User",
+    "addYoutube": "Add new Youtube account"
   },
   "netflix": {
     "title": "Netflix",

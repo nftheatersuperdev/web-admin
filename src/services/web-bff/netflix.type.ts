@@ -175,3 +175,14 @@ export interface NetflixDashboard {
     deviceInfo: NetflixDeviceInfo
   }
 }
+
+export interface NetflixPackage {
+  packageName: string
+  packageDay: number
+  packagePrice: number
+  packageType: string
+}
+
+export interface GetNetflixPackageResponse {
+  data: NetflixPackage[]
+}

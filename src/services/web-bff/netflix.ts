@@ -6,6 +6,8 @@ import {
   CreateAdditionAccountResponse,
   CreateNetflixAccountRequest,
   CreateNetflixAccountResponseAPI,
+  GetNetflixPackage,
+  GetNetflixPackageResponse,
   NetflixAccountListRequest,
   NetflixAccountListResponse,
   NetflixAccountRequest,
@@ -226,4 +228,9 @@ export const transferUsers = async (
       throw error
     })
   return true
+}
+
+export const getNetflixPackage = async (): Promise<GetNetflixPackageResponse> => {
+  const response = await AdminBffAPI.get(`/v1/netflix/package`).then((response) => response.data)
+  return response.data
 }

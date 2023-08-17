@@ -1,4 +1,9 @@
-import { Tv as TvIcon, AddToQueue as AdditionalScreenIcon, PhoneIphone } from '@mui/icons-material'
+import {
+  Tv as TvIcon,
+  AddToQueue as AdditionalScreenIcon,
+  PhoneIphone,
+  AccountBox,
+} from '@mui/icons-material'
 import { Tooltip, IconButton } from '@mui/material'
 
 interface TooltipOptions {
@@ -21,6 +26,22 @@ export default function Tooltips({ type, color, subTitle, onClick }: TooltipOpti
       <Tooltip title={subTitle}>
         <IconButton onClick={onClick}>
           <AdditionalScreenIcon htmlColor={color} />
+        </IconButton>
+      </Tooltip>
+    )
+  } else if (type === 'ADMIN') {
+    return (
+      <Tooltip title={subTitle}>
+        <IconButton onClick={onClick}>
+          <AccountBox htmlColor={color} />
+        </IconButton>
+      </Tooltip>
+    )
+  } else if (type === 'USER') {
+    return (
+      <Tooltip title={subTitle}>
+        <IconButton onClick={onClick}>
+          <AccountBox htmlColor={color} />
         </IconButton>
       </Tooltip>
     )

@@ -11,10 +11,11 @@ import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import toast from 'react-hot-toast'
-import { getNFPackageOptions } from 'constant/PackageOption'
+import { useQuery } from 'react-query'
 import { DisabledField, GridSearchSection, GridTextField } from 'components/Styled'
 import { ExtendDayCustomerRequest } from 'services/web-bff/customer.type'
 import { extendCustomerExpiredDay } from 'services/web-bff/customer'
+import { getNetflixPackage } from 'services/web-bff/netflix'
 
 interface ExtendUserDialogProps {
   open: boolean
@@ -27,7 +28,7 @@ interface ExtendUserDialogProps {
 export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Element {
   const { open, userId, customerName, lineId, onClose } = props
   const { t } = useTranslation()
-  const netflixPackageOption = getNFPackageOptions()
+  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage())
   const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     formik.setFieldValue('extendDay', value)
@@ -98,9 +99,9 @@ export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Elem
                 error={Boolean(formik.touched.extendDay && formik.errors.extendDay)}
                 helperText={formik.touched.extendDay && formik.errors.extendDay}
               >
-                {netflixPackageOption?.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                {netflixPackageOption.data?.map((option) => (
+                  <MenuItem key={option.packageDay} value={option.packageDay}>
+                    {option.packageName + ' ' + option.packagePrice + ' บาท'}
                   </MenuItem>
                 ))}
               </TextField>
