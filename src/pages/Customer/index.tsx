@@ -1,6 +1,5 @@
 import {
   Autocomplete,
-  Backdrop,
   Button,
   Checkbox,
   Chip,
@@ -16,6 +15,8 @@ import {
   TableRow,
   TextField,
   Typography,
+  IconButton,
+  Tooltip,
 } from '@mui/material'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +24,12 @@ import { makeStyles } from '@mui/styles'
 import { useEffect, useState } from 'react'
 import ls from 'localstorage-slim'
 import { useQuery } from 'react-query'
-import { CheckBox, CheckBoxOutlineBlank, CloseOutlined } from '@mui/icons-material'
+import {
+  CheckBox,
+  CheckBoxOutlineBlank,
+  CloseOutlined,
+  AddCircleOutline as ExtendIcon,
+} from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { STORAGE_KEYS } from 'auth/AuthContext'
 import { DataWrapper, GridSearchSection, TextLineClamp, Wrapper } from 'components/Styled'
@@ -32,6 +38,7 @@ import { Page } from 'layout/LayoutRoute'
 import { getCustomerList } from 'services/web-bff/customer'
 import { CustomerListInputRequest, CustomerListRequest } from 'services/web-bff/customer.type'
 import Paginate from 'components/Paginate'
+import ExtendUserDialog from './ExtendUserDialog'
 
 const AlignRight = styled.div`
   text-align: right;
@@ -85,8 +92,11 @@ export default function Customer(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
+  const [userIdParam, setUserIdParam] = useState<string>('')
+  const [lineIdParam, setLineIdParam] = useState<string>('')
+  const [accountParam, setAccountParam] = useState<string>('')
+  const [isExtendUserDialogOpen, setIsExtendUserDialogOpen] = useState(false)
   const moduleAccount = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT)
-  console.log(moduleAccount)
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: CustomerListInputRequest = {
     userId: '',
@@ -95,7 +105,12 @@ export default function Customer(): JSX.Element {
     account: moduleAccount,
     status: [],
   }
-  console.log(defaultFilter)
+  const handleExtendUser = (userId: string, lineId: string, account: string) => {
+    setUserIdParam(userId)
+    setLineIdParam(lineId)
+    setAccountParam(account)
+    setIsExtendUserDialogOpen(true)
+  }
   const [customerFilter, setCustomerFilter] = useState<CustomerListInputRequest>({
     ...defaultFilter,
   })
@@ -121,19 +136,15 @@ export default function Customer(): JSX.Element {
       email: '',
       lineId: '',
       account: moduleAccount,
-      status: '',
+      status: [],
     },
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(JSON.stringify(values))
       const updateObj = { ...values } as CustomerListInputRequest
       setCustomerFilter(updateObj)
       setPage(1)
     },
   })
-  const handleClose = () => {
-    setOpen(false)
-  }
   const icon = <CheckBoxOutlineBlank fontSize="small" />
   const checkedIcon = (
     <CheckBox className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
@@ -181,15 +192,26 @@ export default function Customer(): JSX.Element {
               <TextLineClamp>{cust.customerStatus}</TextLineClamp>
             </DataWrapper>
           </TableCell>
+          <TableCell id="customer__dayLeft">
+            <DataWrapper>
+              <TextLineClamp>{cust.dayLeft}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
           <TableCell id="customer__account">
             <DataWrapper>
               <TextLineClamp>{cust.account}</TextLineClamp>
             </DataWrapper>
           </TableCell>
           <TableCell id="customer__actions">
-            <DataWrapper>
-              <TextLineClamp />
-            </DataWrapper>
+            <Tooltip title="ต่ออายุ">
+              <IconButton
+                onClick={() =>
+                  handleExtendUser(`${cust.userId}`, `${cust.lineId}`, `${cust.account}`)
+                }
+              >
+                <ExtendIcon />
+              </IconButton>
+            </Tooltip>
           </TableCell>
         </TableRow>
       )
@@ -418,6 +440,9 @@ export default function Customer(): JSX.Element {
                 <TableCell align="center" key="สถานะลูกค้า">
                   <TableHeaderColumn>สถานะลูกค้า</TableHeaderColumn>
                 </TableCell>
+                <TableCell align="center" key="จำนวนวัน">
+                  <TableHeaderColumn>จำนวนวัน</TableHeaderColumn>
+                </TableCell>
                 <TableCell align="center" key="บัญชี">
                   <TableHeaderColumn>บัญชี</TableHeaderColumn>
                 </TableCell>
@@ -429,7 +454,7 @@ export default function Customer(): JSX.Element {
             {isFetching ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
@@ -452,6 +477,16 @@ export default function Customer(): JSX.Element {
           </Grid>
         </GridSearchSection>
       </Wrapper>
+      <ExtendUserDialog
+        open={isExtendUserDialogOpen}
+        userId={userIdParam}
+        account={accountParam}
+        lineId={lineIdParam}
+        onClose={() => {
+          refetch()
+          setIsExtendUserDialogOpen(false)
+        }}
+      />
     </Page>
   )
 }

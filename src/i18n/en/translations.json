@@ -264,7 +264,8 @@
     "phoneNumber":"Phone Number",
     "lineId":"Line Name",
     "lineUrl":"Line URL",
-    "account": "Account"
+    "account": "Account",
+    "extendDays": "Extend Day"
   },
   "settingConfig": {
     "searchPanel": "Search Configuration"

@@ -3,6 +3,8 @@ import {
   CreateYoutubeAccountRequest,
   CreateYoutubeAccountResponse,
   GetYoutubePackageResponse,
+  UpdateLinkUserYoutubeRequest,
+  UpdateLinkUserYoutubeResponse,
   YoutubeAccountListRequest,
   YoutubeAccountListResponse,
 } from './youtube.type'
@@ -36,9 +38,26 @@ export const getYoutubeAccountList = async ({
 }
 
 export const getYoutubePackageByType = async (type: string): Promise<GetYoutubePackageResponse> => {
-  console.log(type)
   const response = await AdminBffAPI.get(`/v1/youtube/package/${type}`).then(
     (response) => response.data
   )
   return response.data
+}
+
+export const linkUserToYoutubeAccount = async (
+  data: UpdateLinkUserYoutubeRequest,
+  accountId: string
+): Promise<UpdateLinkUserYoutubeResponse> => {
+  const response: UpdateLinkUserYoutubeResponse = await AdminBffAPI.patch(
+    `/v1/youtube/${accountId}/user`,
+    data
+  )
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return response
 }

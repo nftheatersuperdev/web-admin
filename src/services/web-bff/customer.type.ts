@@ -68,6 +68,7 @@ export interface CreateCustomerRequest {
   phoneNumber: string | null
   lineId: string
   lineUrl: string
+  account: string
 }
 
 export interface CreateCustomerResponse {

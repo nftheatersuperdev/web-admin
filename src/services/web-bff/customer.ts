@@ -34,10 +34,12 @@ export const getCustomerDetails = async ({
   return response
 }
 
-export const getCustomerOptionList = async (): Promise<CustomerOptionList['data']> => {
-  const response: CustomerOptionList = await AdminBffAPI.get('/v1/customer/list').then(
-    (response) => response.data
-  )
+export const getCustomerOptionList = async (
+  account: string
+): Promise<CustomerOptionList['data']> => {
+  const response: CustomerOptionList = await AdminBffAPI.get(
+    `/v1/customer/account/${account}`
+  ).then((response) => response.data)
   return response.data
 }
 

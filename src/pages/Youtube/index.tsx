@@ -7,6 +7,7 @@ import {
   CircularProgress,
   Grid,
   IconButton,
+  InputAdornment,
   MenuItem,
   Table,
   TableBody,
@@ -18,15 +19,22 @@ import {
   Typography,
   createFilterOptions,
 } from '@mui/material'
-import { Edit as EditIcon, ContentCopy, CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
+import {
+  Edit as EditIcon,
+  ContentCopy,
+  CheckBox,
+  CheckBoxOutlineBlank,
+  CloseOutlined,
+} from '@mui/icons-material'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
-import { DEFAULT_CHANGE_DATE_FORMAT } from 'utils'
+import { DEFAULT_CHANGE_DATE_FORMAT, formatDateStringWithPattern } from 'utils'
 import { useEffect, useState } from 'react'
 import { copyText } from 'utils/copyContent'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
+import { useFormik } from 'formik'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
@@ -102,6 +110,11 @@ export default function Youtube(): JSX.Element {
   const classes = useStyles()
   const { t } = useTranslation()
   const history = useHistory()
+  const searchParams = useLocation().search
+  const queryString = new URLSearchParams(searchParams)
+  const queryChangeDate = queryString.get('changeDate')
+  const queryCustStatus = queryString.get('customerStatus')
+  const queryAcctStatus = queryString.get('accountStatus')
   const [isAddNewAccountDialogOpen, setIsAddNewAccountDialogOpen] = useState(false)
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
@@ -110,19 +123,24 @@ export default function Youtube(): JSX.Element {
   const [selectedChangeDate, setSelectedChangeDate] = useState<Date>()
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
+  const [selectAcctStatus, setSelectAcctStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: YoutubeAccountListInputRequest = {
-    changeDate: '-',
+    changeDate: queryChangeDate || '-',
     userId: '',
     accountName: '',
-    accountStatus: '',
-    customerStatus: [],
+    accountStatus: queryAcctStatus !== null ? [queryAcctStatus] : [],
+    customerStatus: queryCustStatus !== null ? [queryCustStatus] : [],
   }
   const [youtubeAccountFilter, setYoutubeAccountFilter] = useState<YoutubeAccountListInputRequest>({
     ...defaultFilter,
   })
-  const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList(), {
-    refetchOnWindowFocus: false,
-  })
+  const { data: customerOptionList } = useQuery(
+    'customer-option',
+    () => getCustomerOptionList('YOUTUBE'),
+    {
+      refetchOnWindowFocus: false,
+    }
+  )
   const customerOptions = customerOptionList || []
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
@@ -144,6 +162,30 @@ export default function Youtube(): JSX.Element {
       refetchOnWindowFocus: false,
     }
   )
+  const formik = useFormik({
+    initialValues: {
+      userId: '',
+      changeDate: formatDateStringWithPattern(
+        selectedChangeDate?.toString(),
+        DEFAULT_CHANGE_DATE_FORMAT
+      ),
+      accountName: '',
+      accountStatus: [],
+      customerStatus: [],
+    },
+    enableReinitialize: true,
+    onSubmit: (value) => {
+      const updateObj = { ...value } as YoutubeAccountListInputRequest
+      setYoutubeAccountFilter(updateObj)
+      setPage(1)
+    },
+  })
+  const accountStatusOptions = [
+    { value: 'กำลังใช้งานอยู่', label: 'กำลังใช้งานอยู่' },
+    { value: 'ปิดการใช้งานชั่วคราว', label: 'ปิดการใช้งานชั่วคราว' },
+    { value: 'อุทธรณ์', label: 'อุทธรณ์' },
+    { value: 'สร้างใหม่-รอยกเลิก', label: 'สร้างใหม่-รอยกเลิก' },
+  ]
   const customerStatusOptions = [
     { value: 'กำลังใช้งาน', label: 'กำลังใช้งาน' },
     { value: 'รอ-เรียกเก็บ', label: 'รอ-เรียกเก็บ' },
@@ -156,15 +198,26 @@ export default function Youtube(): JSX.Element {
   const checkedIcon = (
     <CheckBox className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
   )
-  const handleAutocompleteChange = (valuesSelect: SelectOption[]) => {
-    setSelectCustStatus(valuesSelect)
-    setFieldInFormik(valuesSelect)
+  const handleAutocompleteChange = (field: string, valuesSelect: SelectOption[]) => {
+    if (field === 'customerStatus') {
+      setSelectCustStatus(valuesSelect)
+    } else if (field === 'accountStatus') {
+      setSelectAcctStatus(valuesSelect)
+    }
+    setFieldInFormik(field, valuesSelect)
   }
-  const setFieldInFormik = (valuesSelect: SelectOption[]) => {
+  const handleSetDate = () => {
+    if (queryChangeDate !== null) {
+      const year = new Date().getFullYear()
+      const [day, month] = queryChangeDate.split('/')
+      setSelectedChangeDate(new Date(+year, +month - 1, +day))
+    }
+  }
+  const setFieldInFormik = (field: string, valuesSelect: SelectOption[]) => {
     const dataFormikCustStatus = valuesSelect.map((item) => {
       return item.value
     })
-    // formik.setFieldValue('customerStatus', dataFormikCustStatus)
+    formik.setFieldValue(field, dataFormikCustStatus)
   }
   const getChipStatus = (status: string) => {
     return <Chip size="small" label={status} className={classes.chipGreen} />
@@ -250,21 +303,42 @@ export default function Youtube(): JSX.Element {
    */
   useEffect(() => {
     refetch()
-  }, [youtubeAccountFilter, pages, page, pageSize, refetch])
+    if (queryCustStatus !== null) {
+      setSelectCustStatus([{ value: queryCustStatus, label: queryCustStatus }])
+    }
+    if (queryAcctStatus !== null) {
+      setSelectAcctStatus([{ value: queryAcctStatus, label: queryAcctStatus }])
+    }
+    if (queryChangeDate !== null) {
+      handleSetDate()
+    } else {
+      setSelectedChangeDate(new Date())
+    }
+  }, [
+    youtubeAccountFilter,
+    pages,
+    page,
+    pageSize,
+    refetch,
+    isAddNewUserDialogOpen,
+    isAddNewAccountDialogOpen,
+  ])
   return (
     <Page>
       <PageTitle title={t('sidebar.youtubeAccount.title')} />
       <Wrapper>
-        <ContentSection>
-          <Typography variant="h6" component="h2">
-            {t('youtube.searchPanel')}
-          </Typography>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={9}>
+            <Typography variant="h6" component="h2">
+              {t('youtube.searchPanel')}
+            </Typography>
+          </Grid>
           <Grid item xs={12} sm={3}>
             <AlignRight>
               <Button
                 id="youtube_account__search_btn"
                 variant="contained"
-                // onClick={() => formik.handleSubmit()}
+                onClick={() => formik.handleSubmit()}
               >
                 {t('button.search')}
               </Button>
@@ -278,153 +352,208 @@ export default function Youtube(): JSX.Element {
               </Button>
             </AlignRight>
           </Grid>
-          <GridSearchSection container spacing={1}>
-            <Grid item xs={12} sm={3}>
-              <Autocomplete
-                options={customerOptions}
-                getOptionLabel={(option) => (option ? option.label : '')}
-                filterOptions={filterOptions}
-                noOptionsText="ไม่พบข้อมูลลูกค้า"
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label={t('youtube.customer')}
-                    variant="outlined"
-                    placeholder="ค้นหาด้วยรหัสลูกค้า,ไลน์ไอดี,อีเมลล์"
-                    InputLabelProps={{ shrink: true }}
+        </Grid>
+        <GridSearchSection container spacing={1}>
+          <Grid item xs={12} sm={4}>
+            <Autocomplete
+              options={customerOptions}
+              getOptionLabel={(option) => (option ? option.label : '')}
+              filterOptions={filterOptions}
+              noOptionsText="ไม่พบข้อมูลลูกค้า"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t('youtube.customer')}
+                  variant="outlined"
+                  placeholder="ค้นหาด้วยรหัสลูกค้า,ไลน์ไอดี,อีเมลล์"
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+              // onChange={(_event, value) => formik.setFieldValue('userId', value?.value)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              type="text"
+              name="accountName"
+              placeholder="ระบุชื่อบัญชีที่ต้องการค้นหา"
+              id="youtube_account_list__account_name_input"
+              label={t('youtube.mainInfo.accountName')}
+              fullWidth
+              value={formik.values.accountName}
+              onChange={({ target }) => formik.setFieldValue('accountName', target.value)}
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {formik.values.accountName !== '' ? (
+                      <CloseOutlined
+                        className={classes.paddingRightBtnClear}
+                        onClick={() => {
+                          formik.setFieldValue('accountName', '')
+                        }}
+                      />
+                    ) : (
+                      ''
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Autocomplete
+              fullWidth
+              multiple
+              limitTags={1}
+              id="youtube_account_list__account_status_input"
+              options={accountStatusOptions}
+              disableCloseOnSelect
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) => option.value === value.value}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
+                  {option.label}
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="สถานะบัญชี"
+                  placeholder="เลือกสถานะบัญชี"
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    size="small"
+                    label={option.label}
+                    {...getTagProps({ index })}
+                    key={index}
+                    className={classes.chipBgPrimary}
                   />
-                )}
-                // onChange={(_event, value) => formik.setFieldValue('userId', value?.value)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={2} className={classes.datePickerFromTo}>
-              <DatePicker
-                label="วันสลับ"
-                id="youtube_account_list__change_date_input"
-                name="selectedChangeDate"
-                format={DEFAULT_CHANGE_DATE_FORMAT}
-                value={selectedChangeDate}
-                inputVariant="outlined"
-                // onChange={(date) => {
-                //   date && setSelectedChangeDate(date.toDate())
-                //   formik.setFieldValue(
-                //     'changeDate',
-                //     formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
-                //   )
-                // }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <TextField
-                select
-                name="accountStatus"
-                placeholder="เลือกสถานะบัญชี"
-                id="youtube_account_list__account_status_input"
-                label={t('youtube.mainInfo.accountStatus')}
-                fullWidth
-                variant="outlined"
-                // value={formik.values.isActive}
-                // onChange={({ target }) => formik.setFieldValue('isActive', target.value)}
-                InputLabelProps={{ shrink: true }}
-              >
-                <MenuItem value="active">{t('youtube.statuses.active')}</MenuItem>
-                <MenuItem value="inactive">{t('youtube.statuses.inactive')}</MenuItem>
-                <MenuItem value="appeal">{t('youtube.statuses.appeal')}</MenuItem>
-                <MenuItem value="renew">{t('youtube.statuses.renew')}</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Autocomplete
-                fullWidth
-                multiple
-                limitTags={1}
-                id="youtube_account_list__customer_status_input"
-                options={customerStatusOptions}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option.label}
-                isOptionEqualToValue={(option, value) => option.value === value.value}
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
-                    {option.label}
-                  </li>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="สถานะลูกค้า"
-                    placeholder="เลือกสถานะลูกค้า"
-                    InputLabelProps={{ shrink: true }}
+                ))
+              }
+              value={selectAcctStatus || []}
+              onChange={(_event, value) => {
+                handleAutocompleteChange('accountStatus', value)
+              }}
+            />
+          </Grid>
+        </GridSearchSection>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={4}>
+            <Autocomplete
+              fullWidth
+              multiple
+              limitTags={1}
+              id="youtube_account_list__customer_status_input"
+              options={customerStatusOptions}
+              disableCloseOnSelect
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) => option.value === value.value}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox icon={icon} checkedIcon={checkedIcon} checked={selected} />
+                  {option.label}
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="สถานะลูกค้า"
+                  placeholder="เลือกสถานะลูกค้า"
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    size="small"
+                    label={option.label}
+                    {...getTagProps({ index })}
+                    key={index}
+                    className={classes.chipBgPrimary}
                   />
-                )}
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip
-                      size="small"
-                      label={option.label}
-                      {...getTagProps({ index })}
-                      key={index}
-                      className={classes.chipBgPrimary}
-                    />
-                  ))
-                }
-                value={selectCustStatus || []}
-                onChange={(_event, value) => {
-                  handleAutocompleteChange(value)
-                }}
-              />
-            </Grid>
-          </GridSearchSection>
-          <TableContainer>
-            <Table id="youtube_account_list___table">
-              <TableHead>
+                ))
+              }
+              value={selectCustStatus || []}
+              onChange={(_event, value) => {
+                handleAutocompleteChange('customerStatus', value)
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
+            <DatePicker
+              label="วันสลับ"
+              id="youtube_account_list__change_date_input"
+              name="selectedChangeDate"
+              format={DEFAULT_CHANGE_DATE_FORMAT}
+              value={selectedChangeDate}
+              inputVariant="outlined"
+              onChange={(date) => {
+                date && setSelectedChangeDate(date.toDate())
+                formik.setFieldValue(
+                  'changeDate',
+                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                )
+              }}
+            />
+          </Grid>
+        </Grid>
+        <br />
+        <TableContainer>
+          <Table id="youtube_account_list___table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">
+                  <TableHeaderColumn>จำนวน User</TableHeaderColumn>
+                </TableCell>
+                <TableCell align="center">
+                  <TableHeaderColumn>ชื่อบัญชี</TableHeaderColumn>
+                </TableCell>
+                <TableCell align="center">
+                  <TableHeaderColumn>วันสลับ</TableHeaderColumn>
+                </TableCell>
+                <TableCell align="center">
+                  <TableHeaderColumn>อีเมลล์</TableHeaderColumn>
+                </TableCell>
+                <TableCell align="center">
+                  <TableHeaderColumn>สถานะบัญชี</TableHeaderColumn>
+                </TableCell>
+                <TableCell align="center">
+                  <TableHeaderColumn>จัดการบัญชี</TableHeaderColumn>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            {isFetchingAccountList ? (
+              <TableBody>
                 <TableRow>
-                  <TableCell align="center">
-                    <TableHeaderColumn>จำนวน User</TableHeaderColumn>
-                  </TableCell>
-                  <TableCell align="center">
-                    <TableHeaderColumn>ชื่อบัญชี</TableHeaderColumn>
-                  </TableCell>
-                  <TableCell align="center">
-                    <TableHeaderColumn>วันสลับ</TableHeaderColumn>
-                  </TableCell>
-                  <TableCell align="center">
-                    <TableHeaderColumn>อีเมลล์</TableHeaderColumn>
-                  </TableCell>
-                  <TableCell align="center">
-                    <TableHeaderColumn>สถานะบัญชี</TableHeaderColumn>
-                  </TableCell>
-                  <TableCell align="center">
-                    <TableHeaderColumn>จัดการบัญชี</TableHeaderColumn>
+                  <TableCell colSpan={6} align="center">
+                    <CircularProgress />
                   </TableCell>
                 </TableRow>
-              </TableHead>
-              {isFetchingAccountList ? (
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      <CircularProgress />
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              ) : (
-                <TableBody>{youtubeAccount}</TableBody>
-              )}
-            </Table>
-          </TableContainer>
-          <GridSearchSection container>
-            <Grid item xs={12}>
-              <Paginate
-                pagination={youtubeAccountList?.data.pagination}
-                page={page}
-                pageSize={pageSize}
-                setPage={setPage}
-                setPageSize={setPageSize}
-                refetch={refetch}
-              />
-            </Grid>
-          </GridSearchSection>
-        </ContentSection>
+              </TableBody>
+            ) : (
+              <TableBody>{youtubeAccount}</TableBody>
+            )}
+          </Table>
+        </TableContainer>
+        <GridSearchSection container>
+          <Grid item xs={12}>
+            <Paginate
+              pagination={youtubeAccountList?.data.pagination}
+              page={page}
+              pageSize={pageSize}
+              setPage={setPage}
+              setPageSize={setPageSize}
+              refetch={refetch}
+            />
+          </Grid>
+        </GridSearchSection>
       </Wrapper>
       <AddNewYoutubeDialog
         open={isAddNewAccountDialogOpen}

@@ -133,9 +133,13 @@ export default function Netflix(): JSX.Element {
   const [netflixAccountFilter, setNetflixAccountFilter] = useState<NetflixAccountListInputRequest>({
     ...defaultFilter,
   })
-  const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList(), {
-    refetchOnWindowFocus: false,
-  })
+  const { data: customerOptionList } = useQuery(
+    'customer-option',
+    () => getCustomerOptionList('NETFLIX'),
+    {
+      refetchOnWindowFocus: false,
+    }
+  )
   const customerOptions = customerOptionList || []
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
@@ -379,7 +383,7 @@ export default function Netflix(): JSX.Element {
           </Grid>
         </Grid>
         <GridSearchSection container spacing={1}>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={4}>
             <Autocomplete
               options={customerOptions}
               getOptionLabel={(option) => (option ? option.label : '')}
@@ -397,24 +401,7 @@ export default function Netflix(): JSX.Element {
               onChange={(_event, value) => formik.setFieldValue('userId', value?.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={2} className={classes.datePickerFromTo}>
-            <DatePicker
-              label="วันสลับ"
-              id="netflix_account_list__change_date_input"
-              name="selectedChangeDate"
-              format={DEFAULT_CHANGE_DATE_FORMAT}
-              value={selectedChangeDate}
-              inputVariant="outlined"
-              onChange={(date) => {
-                date && setSelectedChangeDate(date.toDate())
-                formik.setFieldValue(
-                  'changeDate',
-                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={4}>
             <TextField
               type="text"
               name="accountName"
@@ -444,7 +431,7 @@ export default function Netflix(): JSX.Element {
               }}
             />
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={4}>
             <TextField
               select
               name="accountStatus"
@@ -461,7 +448,9 @@ export default function Netflix(): JSX.Element {
               <MenuItem value="false">{t('netflix.statuses.inactive')}</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={3}>
+        </GridSearchSection>
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={4}>
             <Autocomplete
               fullWidth
               multiple
@@ -502,7 +491,25 @@ export default function Netflix(): JSX.Element {
               }}
             />
           </Grid>
-        </GridSearchSection>
+          <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
+            <DatePicker
+              label="วันสลับ"
+              id="netflix_account_list__change_date_input"
+              name="selectedChangeDate"
+              format={DEFAULT_CHANGE_DATE_FORMAT}
+              value={selectedChangeDate}
+              inputVariant="outlined"
+              onChange={(date) => {
+                date && setSelectedChangeDate(date.toDate())
+                formik.setFieldValue(
+                  'changeDate',
+                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                )
+              }}
+            />
+          </Grid>
+        </Grid>
+        <br />
         <TableContainer>
           <Table id="netflix_account_list___table">
             <DataTableHeader headers={headerText} />

@@ -17,6 +17,7 @@ import { useQuery } from 'react-query'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { GridTextField } from 'components/Styled'
 import { getCustomerOptionList, createCustomer } from 'services/web-bff/customer'
 import {
@@ -24,7 +25,8 @@ import {
   CreateCustomerResponseAPI,
   CustomerOption,
 } from 'services/web-bff/customer.type'
-import { getYoutubePackageByType } from 'services/web-bff/youtube'
+import { getYoutubePackageByType, linkUserToYoutubeAccount } from 'services/web-bff/youtube'
+import { UpdateLinkUserYoutubeRequest } from 'services/web-bff/youtube.type'
 
 interface AddNewUserDialogProps {
   open: boolean
@@ -45,7 +47,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const { open, accountId, onClose } = props
   const { t } = useTranslation()
   const [isCreateNewCustomer, setIsCreateNewCustomer] = useState<boolean>(true)
-  const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList())
+  const { data: customerOptionList } = useQuery('customer-option', () =>
+    getCustomerOptionList('YOUTUBE')
+  )
   const customerOptions = customerOptionList || []
   const youtubeNewPackageOption = useQuery('youtube-new-package', () =>
     getYoutubePackageByType('NEW')
@@ -72,7 +76,26 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(JSON.stringify(values))
+      toast.promise(
+        createCustomer({
+          lineId: values.lineId,
+          lineUrl: values.lineUrl,
+          email: values.email,
+          account: 'YOUTUBE',
+        } as CreateCustomerRequest),
+        {
+          loading: t('toast.loading'),
+          success: (res: CreateCustomerResponseAPI) => {
+            formikLinkUser.setFieldValue('userId', res.data.userId)
+            formikCreateUser.resetForm()
+            formikLinkUser.handleSubmit()
+            return 'สร้างลูกค้า ' + values.lineId + ' สำเร็จ'
+          },
+          error: (err) => {
+            return 'สร้างลูกค้า ' + values.lineId + ' ไม่สำเร็จ เนื่องจาก ' + err.data.message
+          },
+        }
+      )
     },
   })
   const formikLinkUser = useFormik({
@@ -87,7 +110,26 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(JSON.stringify(values))
+      toast.promise(
+        linkUserToYoutubeAccount(
+          {
+            userId: values.userId,
+            extendDay: values.extendDay,
+          } as UpdateLinkUserYoutubeRequest,
+          accountId
+        ),
+        {
+          loading: t('toast.loading'),
+          success: () => {
+            formikLinkUser.resetForm()
+            onClose()
+            return 'เพิ่มลูกค้า ' + values.userId + ' สำเร็จ'
+          },
+          error: (err) => {
+            return 'เพิ่มลูกค้า ' + values.userId + ' ไม่สำเร็จ เนื่องจาก ' + err.data.message
+          },
+        }
+      )
     },
   })
   const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {

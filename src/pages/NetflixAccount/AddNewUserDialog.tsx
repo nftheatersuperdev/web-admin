@@ -50,7 +50,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const { open, accountId, accountType, isLocked, onClose } = props
   const { t } = useTranslation()
   const [isCreateNewCustomer, setIsCreateNewCustomer] = useState<boolean>(true)
-  const { data: customerOptionList } = useQuery('customer-option', () => getCustomerOptionList())
+  const { data: customerOptionList } = useQuery('customer-option', () =>
+    getCustomerOptionList('NETFLIX')
+  )
   const customerOptions = customerOptionList || []
   const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage())
   const accountTypeOption = getAccountTypeOptions()
@@ -76,6 +78,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
         createCustomer({
           lineId: values.lineId,
           lineUrl: values.lineUrl,
+          account: 'NETFLIX',
         } as CreateCustomerRequest),
         {
           loading: t('toast.loading'),

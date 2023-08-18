@@ -25,7 +25,7 @@ export interface YoutubeAccountListInputRequest {
   changeDate: string
   userId: string
   accountName: string
-  accountStatus: string
+  accountStatus: []
   customerStatus: []
 }
 
@@ -73,4 +73,13 @@ export interface YoutubePackage {
 
 export interface GetYoutubePackageResponse {
   data: YoutubePackage[]
+}
+
+export interface UpdateLinkUserYoutubeRequest {
+  userId: string
+  extendDay: number
+}
+
+export interface UpdateLinkUserYoutubeResponse {
+  id: string
 }
