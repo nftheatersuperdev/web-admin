@@ -1,6 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { ROUTE_PATHS } from 'routes'
-import { Dashboard, PeopleAlt, AccountBalance, Tune, YouTube } from '@mui/icons-material'
+import {
+  Dashboard,
+  PeopleAlt,
+  AccountBalance,
+  Tune,
+  YouTube,
+  AdminPanelSettings,
+} from '@mui/icons-material'
 import { ROLES } from 'auth/roles'
 import { SidebarItemsType } from './Sidebar/types'
 
@@ -20,6 +27,13 @@ export function useMenuItems() {
         ROLES.YOUTUBE_ADMIN,
         ROLES.YOUTUBE_AUTHOR,
       ],
+    },
+    {
+      id: 'left_menu__admin',
+      title: t('sidebar.adminManagement.title'),
+      href: ROUTE_PATHS.ADMIN,
+      icon: AdminPanelSettings,
+      allowedRoles: [ROLES.SUPER_ADMIN],
     },
     {
       id: 'left_menu__user',

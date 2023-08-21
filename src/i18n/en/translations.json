@@ -25,6 +25,9 @@
       "userGroup": "User Group",
       "adminUsers": "Admin Users"
     },
+    "adminManagement": {
+      "title": "Admin Management"
+    },
     "netflixAccount": {
       "title": "Netflix Account"
     },
@@ -222,7 +225,8 @@
     "fromAccount": "From Account",
     "toAccount": "To Account",
     "extendUser": "Extend User",
-    "addYoutube": "Add new Youtube account"
+    "addYoutube": "Add new Youtube account",
+    "user": "Youtube User"
   },
   "netflix": {
     "title": "Netflix",

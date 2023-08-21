@@ -226,6 +226,10 @@ export default function Youtube(): JSX.Element {
     const text = email.concat(' ').concat(password)
     copyText(text)
   }
+  const handleAccountNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('accountName', value)
+  }
   const handleClickIcon = (type: string, accountId: string) => {
     setAccountIdParam(accountId)
     setIsAddNewUserDialogOpen(true)
@@ -311,6 +315,8 @@ export default function Youtube(): JSX.Element {
     }
     if (queryChangeDate !== null) {
       handleSetDate()
+    } else if (selectedChangeDate !== null) {
+      setSelectedChangeDate(selectedChangeDate)
     } else {
       setSelectedChangeDate(new Date())
     }
@@ -381,7 +387,7 @@ export default function Youtube(): JSX.Element {
               label={t('youtube.mainInfo.accountName')}
               fullWidth
               value={formik.values.accountName}
-              onChange={({ target }) => formik.setFieldValue('accountName', target.value)}
+              onChange={handleAccountNameChange}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               InputProps={{

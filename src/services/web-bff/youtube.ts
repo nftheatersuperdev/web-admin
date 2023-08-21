@@ -7,6 +7,8 @@ import {
   UpdateLinkUserYoutubeResponse,
   YoutubeAccountListRequest,
   YoutubeAccountListResponse,
+  YoutubeAccountRequest,
+  YoutubeAccountResponse,
 } from './youtube.type'
 
 export const createYoutubeAccount = async (
@@ -34,6 +36,15 @@ export const getYoutubeAccountList = async ({
       size,
     },
   }).then((response) => response.data)
+  return response
+}
+
+export const getYoutubeAccount = async ({
+  id,
+}: YoutubeAccountRequest): Promise<YoutubeAccountResponse> => {
+  const response: YoutubeAccountResponse = await AdminBffAPI.get(`/v1/youtube/${id}`).then(
+    (response) => response.data
+  )
   return response
 }
 

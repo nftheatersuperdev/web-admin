@@ -18,6 +18,8 @@ export const ROUTE_PATHS = Object.freeze({
   SETTING_CONFIGS: '/setting-configs',
   SETTING_CONFIG_EDIT: '/setting-config/:id',
   SETTING_CONFIG_ADD: '/setting-config/add',
+  ADMIN: '/admins',
+  ADMIN_EDIT: '/admin/:id',
 })
 
 export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([

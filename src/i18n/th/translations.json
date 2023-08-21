@@ -25,6 +25,9 @@
       "userGroup": "กลุ่มผู้ใช้งาน",
       "adminUsers": "ผู้ใช้งานระบบหลังบ้าน"
     },
+    "adminManagement": {
+      "title": "การจัดการแอดมิน"
+    },
     "netflixAccount": {
       "title": "บัญชี Netflix"
     },
@@ -222,7 +225,8 @@
     "fromAccount": "จากบัญชี",
     "toAccount": "ไปยังบัญชี",
     "extendUser": "ต่ออายุลูกค้า",
-    "addYoutube": "สร้างบัญชี Youtube"
+    "addYoutube": "สร้างบัญชี Youtube",
+    "user": "ลูกค้า"
   },
   "netflix": {
     "title": "Netflix",

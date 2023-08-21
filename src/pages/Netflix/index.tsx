@@ -31,12 +31,14 @@ import { copyText } from 'utils/copyContent'
 import { makeStyles } from '@mui/styles'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
+import config from 'config'
 import dayjs from 'dayjs'
 import dayjsUtc from 'dayjs/plugin/utc'
 import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_CHANGE_DATE_FORMAT, formatDateStringWithPattern } from 'utils'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
@@ -62,6 +64,8 @@ import AddNewNetflixDialog from './AddNewNetflixDialog'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
+
+const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').toDate()
 
 const AlignRight = styled.div`
   text-align: right;
@@ -119,7 +123,7 @@ export default function Netflix(): JSX.Element {
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [selectedChangeDate, setSelectedChangeDate] = useState<Date>()
+  const [selectedChangeDate, setSelectedChangeDate] = useState(initSelectedChangeDate)
   const [accountIdParam, setAccountIdParam] = useState<string>('')
   const [accountTypeParam, setAccountTypeParam] = useState<string>('')
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
@@ -172,7 +176,7 @@ export default function Netflix(): JSX.Element {
       isActive: true,
       customerStatus: [],
     },
-    enableReinitialize: true,
+    enableReinitialize: false,
     onSubmit: (value) => {
       const updateObj = { ...value } as NetflixAccountListInputRequest
       setNetflixAccountFilter(updateObj)
@@ -236,6 +240,10 @@ export default function Netflix(): JSX.Element {
     } else if (status === 'ยังไม่เปิดจอเสริม') {
       toast.error('ไม่สามารถทำรายการได้ เนื่องจากยังไม่เปิดจอเสริม')
     }
+  }
+  const handleAccountNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('accountName', value)
   }
   const copyContent = (email: string, password: string) => {
     const text = email.concat(' ').concat(password)
@@ -339,6 +347,8 @@ export default function Netflix(): JSX.Element {
     }
     if (queryChangeDate !== null) {
       handleSetDate()
+    } else if (selectedChangeDate !== null) {
+      setSelectedChangeDate(selectedChangeDate)
     } else {
       setSelectedChangeDate(new Date())
     }
@@ -403,6 +413,7 @@ export default function Netflix(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
+              disabled={isFetchingAccountList}
               type="text"
               name="accountName"
               placeholder="ระบุชื่อบัญชีที่ต้องการค้นหา"
@@ -410,7 +421,7 @@ export default function Netflix(): JSX.Element {
               label={t('netflix.mainInfo.accountName')}
               fullWidth
               value={formik.values.accountName}
-              onChange={({ target }) => formik.setFieldValue('accountName', target.value)}
+              onChange={handleAccountNameChange}
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               InputProps={{
@@ -433,6 +444,7 @@ export default function Netflix(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
+              disabled={isFetchingAccountList}
               select
               name="accountStatus"
               placeholder="เลือกสถานะบัญชี"
@@ -452,6 +464,7 @@ export default function Netflix(): JSX.Element {
         <Grid container spacing={1}>
           <Grid item xs={12} sm={4}>
             <Autocomplete
+              disabled={isFetchingAccountList}
               fullWidth
               multiple
               limitTags={1}
@@ -493,6 +506,7 @@ export default function Netflix(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
             <DatePicker
+              disabled={isFetchingAccountList}
               label="วันสลับ"
               id="netflix_account_list__change_date_input"
               name="selectedChangeDate"

@@ -1,5 +1,5 @@
-import { Customer } from "./customer.type"
-import { Pagination } from "./response.type"
+import { Customer } from './customer.type'
+import { Pagination } from './response.type'
 
 export interface CreateYoutubeAccountRequest {
   accountName: string
@@ -13,6 +13,14 @@ export interface CreateYoutubeAccountResponse {
     id: string
     accountName: string
   }
+}
+
+export interface YoutubeAccountRequest {
+  id: string
+}
+
+export interface YoutubeAccountResponse {
+  data: Youtube
 }
 
 export interface YoutubeAccountListRequest {

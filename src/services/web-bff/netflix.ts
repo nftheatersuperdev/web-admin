@@ -6,7 +6,6 @@ import {
   CreateAdditionAccountResponse,
   CreateNetflixAccountRequest,
   CreateNetflixAccountResponseAPI,
-  GetNetflixPackage,
   GetNetflixPackageResponse,
   NetflixAccountListRequest,
   NetflixAccountListResponse,
