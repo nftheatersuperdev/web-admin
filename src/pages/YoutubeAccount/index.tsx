@@ -43,6 +43,7 @@ import {
 } from 'utils'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
+import toast from 'react-hot-toast'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
@@ -54,10 +55,20 @@ import {
   Wrapper,
 } from 'components/Styled'
 import { Page } from 'layout/LayoutRoute'
-import { getYoutubeAccount } from 'services/web-bff/youtube'
-import { YoutubeAccountRequest } from 'services/web-bff/youtube.type'
+import {
+  deleteUserFromYoutubeAccount,
+  getYoutubeAccount,
+  updateYoutubeAccount,
+  updateYoutubeAccountStatus,
+} from 'services/web-bff/youtube'
+import { UpdateYoutubeAccountRequest, YoutubeAccountRequest } from 'services/web-bff/youtube.type'
 import CheckBoxComponent from 'components/CheckBoxComponent'
 import Tooltips from 'components/Tooltips'
+import ConfirmDialog from 'components/ConfirmDialog'
+import { getNextStatus, updateCustomer } from 'services/web-bff/customer'
+import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
+import AddNewUserDialog from './AddNewUserDialog'
+import ExtendUserDialog from './ExtendUserDialog'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -126,7 +137,23 @@ export default function YoutubeAccount(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [checkedAllUsers, setCheckedAllUsers] = useState<boolean>(false)
+  const [changeStatusTitle, setChangeStatusTitle] = useState<string>('')
+  const [changeStatusMsg, setChangeStatusMsg] = useState<string>('')
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
+  const [isExtendUserDialogOpen, setIsExtendUserDialogOpen] = useState(false)
+  const [visibleDeleteConfirmationDialog, setVisibleDeleteConfirmationDialog] =
+    useState<boolean>(false)
+  const [visibleDisableConfirmationDialog, setVisibleDisableConfirmationDialog] =
+    useState<boolean>(false)
+  const [visibleEnableConfirmationDialog, setVisibleEnableConfirmationDialog] =
+    useState<boolean>(false)
+  const [visibleUpdateConfirmationDialog, setVisibleUpdateConfirmationDialog] =
+    useState<boolean>(false)
+  const [visibleChangeStatusDialog, setVisibleChangeStatusDialog] = useState<boolean>(false)
+  const [accountIdParam, setAccountIdParam] = useState<string>('')
+  const [userIdParam, setUserIdParam] = useState<string>('')
+  const [lineIdParam, setLineIdParam] = useState<string>('')
+  const [statusParam, setStatusParam] = useState<string>('')
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const handleCloseLoading = () => {
     setOpenLoading(false)
@@ -161,20 +188,129 @@ export default function YoutubeAccount(): JSX.Element {
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(JSON.stringify(values))
+      toast.promise(
+        updateYoutubeAccount(
+          {
+            changeDate: values.changeDate,
+            password: values.password,
+          } as UpdateYoutubeAccountRequest,
+          values.accountId
+        ),
+        {
+          loading: t('toast.loading'),
+          success: () => {
+            refetch()
+            setVisibleUpdateConfirmationDialog(false)
+            return 'อัพเดตข้อมูลสำเร็จ'
+          },
+          error: () => {
+            setVisibleUpdateConfirmationDialog(false)
+            return 'อัพเดตข้อมูลไม่สำเร็จ'
+          },
+        }
+      )
     },
   })
+  const handleOnCloseChangeStatusDialog = (userId: string, nextStatus: string) => {
+    toast.promise(
+      updateCustomer({ customerStatus: nextStatus } as UpdateCustomerRequest, userId),
+      {
+        loading: t('toast.loading'),
+        success: () => {
+          refetch()
+          setVisibleChangeStatusDialog(false)
+          return 'อัพเดตสถานะลูกค้าสำเร็จ'
+        },
+        error: (err) => {
+          return 'อัพเดตสถานะลูกค้าไม่สำเร็จ เนื่องจาก ' + err.data.message
+        },
+      },
+      { duration: 5000 }
+    )
+  }
   const handleDeleteUser = (id: string) => {
-    console.log('Delete user ' + id)
+    setUserIdParam(id)
+    setVisibleDeleteConfirmationDialog(true)
+  }
+  const handleOnCloseDeleteConfirmationDialog = (userId: string, accountId: string) => {
+    toast.promise(
+      deleteUserFromYoutubeAccount(userId, accountId),
+      {
+        loading: t('toast.loading'),
+        success: () => {
+          refetch()
+          setVisibleDeleteConfirmationDialog(false)
+          return 'ลบลูกค้าสำเร็จ'
+        },
+        error: () => {
+          setVisibleDeleteConfirmationDialog(false)
+          return 'ลบลูกค้าไม่สำเร็จ'
+        },
+      },
+      {
+        duration: 5000,
+      }
+    )
   }
   const handleTransferUser = (accountId: string, accountName: string) => {
-    console.log('Transfer user' + accountId + ' to ' + accountName)
+    setAccountIdParam(accountId)
+    setAccountParam(accountName)
+    setIsTransferUserDialogOpen(true)
   }
-  const handleExtendUser = (userId: string, customerName: string, lineId: string) => {
-    console.log('Extend user' + lineId + ' to ' + customerName + ' ' + userId)
+  const handleExtendUser = (userId: string, lineId: string) => {
+    setUserIdParam(userId)
+    setLineIdParam(lineId)
+    setIsExtendUserDialogOpen(true)
   }
   const handleChangeCustomerStatus = async (userId: string, status: string) => {
-    console.log('Change customer status' + userId + ' ' + status)
+    setUserIdParam(userId)
+    setChangeStatusTitle('อัพเดตสถานะลูกค้า ' + userId)
+    const nextStatus = await getNextStatus(status)
+    setChangeStatusMsg(
+      `คุณต้องการอัพเดตสถานะลูกค้าจาก '` + status + `' เป็นสถานะ '` + nextStatus + `'`
+    )
+    setStatusParam(nextStatus)
+    setVisibleChangeStatusDialog(true)
+  }
+  const handleAddUser = (accountId: string) => {
+    setAccountIdParam(accountId)
+    setIsAddNewUserDialogOpen(true)
+  }
+  const handleEnableAccount = (accountId: string) => {
+    setAccountIdParam(accountId)
+    setStatusParam('กำลังใช้งานอยู่')
+    setVisibleEnableConfirmationDialog(true)
+  }
+  const handleDisableAccount = (accountId: string) => {
+    setAccountIdParam(accountId)
+    setStatusParam('ปิดการใช้งานชั่วคราว')
+    setVisibleDisableConfirmationDialog(true)
+  }
+  const handleOnCloseUpdateAccountStatusConfirmationDialog = (
+    accountId: string,
+    status: string
+  ) => {
+    toast.promise(
+      updateYoutubeAccountStatus(accountId, status),
+      {
+        loading: t('toast.loading'),
+        success: () => {
+          refetch()
+          setVisibleEnableConfirmationDialog(false)
+          setVisibleDisableConfirmationDialog(false)
+          return 'ทำรายการสำเร็จ'
+        },
+        error: (err) => {
+          setVisibleEnableConfirmationDialog(false)
+          setVisibleDisableConfirmationDialog(false)
+          return err.data.message
+        },
+      },
+      { duration: 5000 }
+    )
+  }
+  const handleUpdateAccount = () => {
+    setVisibleUpdateConfirmationDialog(true)
   }
   const handleSelectUser = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target
@@ -237,7 +373,7 @@ export default function YoutubeAccount(): JSX.Element {
                 className={classes.disableButton}
                 endIcon={<EnableIcon />}
                 variant="contained"
-                onClick={() => console.log('xx')}
+                onClick={() => handleEnableAccount(`${youtube.data.accountId}`)}
               >
                 {t('button.enabled')}
               </Button>
@@ -247,7 +383,7 @@ export default function YoutubeAccount(): JSX.Element {
                 className={classes.disableButton}
                 endIcon={<DisableIcon />}
                 variant="contained"
-                onClick={() => console.log('yy')}
+                onClick={() => handleDisableAccount(`${youtube?.data.accountId}`)}
               >
                 {t('button.disabled')}
               </Button>
@@ -438,11 +574,11 @@ export default function YoutubeAccount(): JSX.Element {
               &nbsp;
               <Button
                 id="youtube_detail__add_btn"
-                disabled={youtube?.data.users.length === 7}
+                disabled={youtube?.data.users.length === 5}
                 className={classes.addButton}
                 endIcon={<PersonAdd />}
                 variant="contained"
-                onClick={() => setIsAddNewUserDialogOpen(true)}
+                onClick={() => handleAddUser(`${youtube?.data.accountId}`)}
               >
                 {t('youtube.addUser')}
               </Button>
@@ -541,10 +677,7 @@ export default function YoutubeAccount(): JSX.Element {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="ลบลูกค้า">
-                          <IconButton
-                            disabled={user.accountType === 'ADDITIONAL'}
-                            onClick={() => handleDeleteUser(`${user.user.userId}`)}
-                          >
+                          <IconButton onClick={() => handleDeleteUser(`${user.user.userId}`)}>
                             <DeleteIcon />
                           </IconButton>
                         </Tooltip>
@@ -565,11 +698,7 @@ export default function YoutubeAccount(): JSX.Element {
                         <Tooltip title="ต่ออายุ">
                           <IconButton
                             onClick={() =>
-                              handleExtendUser(
-                                `${user.user.userId}`,
-                                `${user.user.customerName}`,
-                                `${user.user.lineId}`
-                              )
+                              handleExtendUser(`${user.user.userId}`, `${user.user.lineId}`)
                             }
                           >
                             <ExtendIcon />
@@ -591,6 +720,72 @@ export default function YoutubeAccount(): JSX.Element {
           </Table>
         </TableContainer>
       </Wrapper>
+      <ConfirmDialog
+        open={visibleChangeStatusDialog}
+        title={changeStatusTitle}
+        message={changeStatusMsg}
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => handleOnCloseChangeStatusDialog(`${userIdParam}`, `${statusParam}`)}
+        onCancel={() => setVisibleChangeStatusDialog(false)}
+      />
+      <ConfirmDialog
+        open={visibleDeleteConfirmationDialog}
+        title="ลบลูกค้าออกจากบัญชีนี้"
+        message="คุณแน่ใจหรือว่าต้องการลูกค้าออกจากบัญชีนี้"
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => handleOnCloseDeleteConfirmationDialog(`${userIdParam}`, `${id}`)}
+        onCancel={() => setVisibleDeleteConfirmationDialog(false)}
+      />
+      <ConfirmDialog
+        open={visibleDisableConfirmationDialog}
+        title="ปิดบัญชี Youtube ชั่วคราว"
+        message="คุณแน่ใจหรือว่าต้องการปิดบัญชีนี้ชั่วคราว"
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() =>
+          handleOnCloseUpdateAccountStatusConfirmationDialog(`${accountIdParam}`, `${statusParam}`)
+        }
+        onCancel={() => setVisibleDisableConfirmationDialog(false)}
+      />
+      <ConfirmDialog
+        open={visibleEnableConfirmationDialog}
+        title="เปิดการใช้งานบัญชี Youtube"
+        message="คุณแน่ใจหรือว่าต้องการเปิดการใช้งานบัญชีนี้"
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() =>
+          handleOnCloseUpdateAccountStatusConfirmationDialog(`${accountIdParam}`, `${statusParam}`)
+        }
+        onCancel={() => setVisibleEnableConfirmationDialog(false)}
+      />
+      <ConfirmDialog
+        open={visibleUpdateConfirmationDialog}
+        title="อัพเดตบัญชี Youtube"
+        message="คุณแน่ใจหรือว่าต้องการอัพเดตบัญชี Youtube นี้"
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => formikUpdateAccount.handleSubmit()}
+        onCancel={() => setVisibleUpdateConfirmationDialog(false)}
+      />
+      <AddNewUserDialog
+        open={isAddNewUserDialogOpen}
+        accountId={accountIdParam}
+        onClose={() => {
+          setIsAddNewUserDialogOpen(false)
+          refetch()
+        }}
+      />
+      <ExtendUserDialog
+        open={isExtendUserDialogOpen}
+        userId={userIdParam}
+        lineId={lineIdParam}
+        onClose={() => {
+          refetch()
+          setIsExtendUserDialogOpen(false)
+        }}
+      />
     </Page>
   )
 }

@@ -198,6 +198,23 @@
     "youtubeAdmin": "แอดมิน Youtube",
     "youtubeAuthor": "หัวหน้าแอดมิน Youtube"  
   },
+  "adminUser": {
+    "title": "แอดมิน",
+    "searchPanel": "ค้นหาแอดมิน",
+    "AddAdmin": "สร้างแอดมินใหม่",
+    "mainInfo": {
+      "title": "รายละเอียดผู้ใช้งานแอดมิน",
+      "firebaseId": "Firebase ID",
+      "name": "ชื่อแอดมิน",
+      "email":"อีเมลล์",
+      "password": "รหัสผ่าน",
+      "role": "ระดับผู้ใช้งาน",
+      "createdDate": "วัน-เวลาที่สร้าง",
+      "updatedDate": "วัน-เวลาที่ปรับปรุงล่าสุด",
+      "createdBy": "สร้างโดย",
+      "updatedBy": "ปรับปรุงล่าสุดโดย"
+    }
+  },
   "youtube": {
     "title": "Youtube",
     "searchPanel": "ค้นหาบัญชี Youtube",

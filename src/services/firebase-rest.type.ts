@@ -22,8 +22,6 @@ export interface CreateNewUserProps {
   accessToken: string
   email: string
   password: string
-  firstname: string
-  lastname: string
+  name: string
   role: string
-  resellerServiceAreaIds: string[]
 }

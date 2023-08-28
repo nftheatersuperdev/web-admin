@@ -425,6 +425,7 @@ export default function Netflix(): JSX.Element {
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               InputProps={{
+                startAdornment: <InputAdornment position="start">NF-</InputAdornment>,
                 endAdornment: (
                   <InputAdornment position="end">
                     {formik.values.accountName !== '' ? (

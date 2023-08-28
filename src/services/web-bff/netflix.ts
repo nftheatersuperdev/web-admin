@@ -229,7 +229,9 @@ export const transferUsers = async (
   return true
 }
 
-export const getNetflixPackage = async (): Promise<GetNetflixPackageResponse> => {
-  const response = await AdminBffAPI.get(`/v1/netflix/package`).then((response) => response.data)
+export const getNetflixPackage = async (device: string): Promise<GetNetflixPackageResponse> => {
+  const response = await AdminBffAPI.get(`/v1/netflix/package/${device}`).then(
+    (response) => response.data
+  )
   return response.data
 }

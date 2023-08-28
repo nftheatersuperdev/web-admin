@@ -54,7 +54,8 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     getCustomerOptionList('NETFLIX')
   )
   const customerOptions = customerOptionList || []
-  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage())
+  const device = accountType === 'OTHER' ? 'OTHER' : 'TV'
+  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage(device))
   const accountTypeOption = getAccountTypeOptions()
   const filterOptions = createFilterOptions({
     matchFrom: 'any',

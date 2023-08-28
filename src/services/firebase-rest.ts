@@ -12,7 +12,7 @@ const instance = axios.create({
 })
 
 export const createNewUser = async (props: CreateNewUserProps): Promise<boolean> => {
-  const { accessToken, email, password, firstname, lastname, role, resellerServiceAreaIds } = props
+  const { accessToken, email, password, name, role } = props
   let idToken = ''
 
   try {
@@ -29,10 +29,8 @@ export const createNewUser = async (props: CreateNewUserProps): Promise<boolean>
     await createNewAdminUser({
       accessToken,
       firebaseToken: idToken,
-      firstname,
-      lastname,
+      name,
       role,
-      resellerServiceAreaIds,
     })
 
     return true

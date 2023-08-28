@@ -15,22 +15,21 @@ import { useQuery } from 'react-query'
 import { DisabledField, GridSearchSection, GridTextField } from 'components/Styled'
 import { ExtendDayCustomerRequest } from 'services/web-bff/customer.type'
 import { extendCustomerExpiredDay } from 'services/web-bff/customer'
-import { getNetflixPackage } from 'services/web-bff/netflix'
+import { getYoutubePackageByType } from 'services/web-bff/youtube'
 
 interface ExtendUserDialogProps {
   open: boolean
   userId: string
-  customerName: string
   lineId: string
-  accountType: string
   onClose: () => void
 }
 
 export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Element {
-  const { open, userId, customerName, lineId, accountType, onClose } = props
+  const { open, userId, lineId, onClose } = props
   const { t } = useTranslation()
-  const device = accountType === 'OTHER' ? 'OTHER' : 'TV'
-  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage(device))
+  const youtubePackageOption = useQuery('youtube-package-option', () =>
+    getYoutubePackageByType('EXTEND')
+  )
   const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     formik.setFieldValue('extendDay', value)
@@ -75,20 +74,11 @@ export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Elem
             <GridTextField item xs={12}>
               <DisabledField
                 type="text"
-                id="extend_user_dialog_user_name"
-                label="ชื่อลูกค้า"
-                fullWidth
-                variant="outlined"
-                value={customerName}
-              />
-            </GridTextField>
-            <GridTextField item xs={12}>
-              <DisabledField
-                type="text"
                 id="extend_user_dialog_line_id"
                 label="Line Id"
                 fullWidth
                 variant="outlined"
+                InputLabelProps={{ shrink: true }}
                 value={lineId}
               />
             </GridTextField>
@@ -101,7 +91,7 @@ export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Elem
                 error={Boolean(formik.touched.extendDay && formik.errors.extendDay)}
                 helperText={formik.touched.extendDay && formik.errors.extendDay}
               >
-                {netflixPackageOption.data?.map((option) => (
+                {youtubePackageOption.data?.map((option) => (
                   <MenuItem key={option.packageDay} value={option.packageDay}>
                     {option.packageName + ' ' + option.packagePrice + ' บาท'}
                   </MenuItem>

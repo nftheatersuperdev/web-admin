@@ -174,6 +174,7 @@ export default function NetflixAccount(): JSX.Element {
   const [accountParam, setAccountParam] = useState<string>('')
   const [lineIdParam, setLineIdParam] = useState<string>('')
   const [statusParam, setStatusParam] = useState<string>('')
+  const [accountTypeParam, setAccountTypeParam] = useState<string>('')
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [changeStatusTitle, setChangeStatusTitle] = useState<string>('')
   const [changeStatusMsg, setChangeStatusMsg] = useState<string>('')
@@ -342,10 +343,16 @@ export default function NetflixAccount(): JSX.Element {
   const openInNewTab = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer')
   }
-  const handleExtendUser = (userId: string, customerName: string, lineId: string) => {
+  const handleExtendUser = (
+    userId: string,
+    customerName: string,
+    lineId: string,
+    device: string
+  ) => {
     setUserIdParam(userId)
     setCustomerNameParam(customerName)
     setLineIdParam(lineId)
+    setAccountTypeParam(device)
     setIsExtendUserDialogOpen(true)
   }
   const handleDeleteUser = (id: string) => {
@@ -928,7 +935,8 @@ export default function NetflixAccount(): JSX.Element {
                               handleExtendUser(
                                 `${user.user.userId}`,
                                 `${user.user.customerName}`,
-                                `${user.user.lineId}`
+                                `${user.user.lineId}`,
+                                `${user.accountType}`
                               )
                             }
                           >
@@ -981,6 +989,7 @@ export default function NetflixAccount(): JSX.Element {
         userId={userIdParam}
         customerName={customerNameParam}
         lineId={lineIdParam}
+        accountType={accountTypeParam}
         onClose={() => {
           refetch()
           setIsExtendUserDialogOpen(false)

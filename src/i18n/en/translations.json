@@ -198,6 +198,23 @@
     "youtubeAdmin": "Youtube Administrator",
     "youtubeAuthor": "Youtube Authorizer"  
   },
+  "adminUser": {
+    "title": "Administrator",
+    "searchPanel": "Search Admin User",
+    "AddAdmin": "Add new Admin",
+    "mainInfo": {
+      "title": "Admin User Details",
+      "firebaseId": "Firebase ID",
+      "name": "Admin Name",
+      "email":"E-Mail",
+      "password": "Password",
+      "role": "Role",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "createdBy": "Created By",
+      "updatedBy": "Updated By"
+    }
+  },
   "youtube": {
     "title": "Youtube",
     "searchPanel": "Search Youtube Account",

@@ -23,12 +23,9 @@ export interface AdminUser {
   id: string
   firebaseId: string
   email: string
-  firstName: string
-  lastName: string
-  role: AdminUserRole
-  privileges: string[]
+  adminName: string
+  role: string
   account: string
-  resellerServiceAreas: ResellerServiceArea[]
   isActive: false
   createdDate: string
   updatedDate: string
@@ -38,12 +35,11 @@ export interface AdminUserById {
 }
 
 export interface AdminUserByCriteria {
-  id?: string
-  firstname?: string
-  lastname?: string
+  adminName?: string
   email?: string
-  role?: AdminUserRole
-  accountStatus?: boolean
+  module?: string
+  role?: string
+  isActive?: boolean
 }
 
 export interface GetAdminUsersProps {
@@ -74,10 +70,8 @@ export interface AdminUsersProps {
 export interface CreateNewAdminUserProps {
   accessToken: string
   firebaseToken: string
-  firstname: string
-  lastname: string
+  name: string
   role: string
-  resellerServiceAreaIds: string[]
 }
 
 export interface AdminUsersResponse extends Response {

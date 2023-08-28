@@ -27,14 +27,16 @@ interface ExtendUserDialogProps {
   userId: string
   lineId: string
   account: string
+  accountType: string
   onClose: () => void
 }
 
 export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Element {
-  const { open, userId, lineId, account, onClose } = props
+  const { open, userId, lineId, account, accountType, onClose } = props
   const { t } = useTranslation()
   const [showPackage, setShowPackage] = useState(false)
-  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage(), {
+  const device = accountType === 'OTHER' ? 'OTHER' : 'TV'
+  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage(device), {
     enabled: account === 'NETFLIX',
   })
   const youtubePackageOption = useQuery(

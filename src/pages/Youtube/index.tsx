@@ -38,7 +38,6 @@ import { useFormik } from 'formik'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
-  ContentSection,
   DataWrapper,
   GridSearchSection,
   TextLineClamp,
@@ -362,6 +361,7 @@ export default function Youtube(): JSX.Element {
         <GridSearchSection container spacing={1}>
           <Grid item xs={12} sm={4}>
             <Autocomplete
+              disabled={isFetchingAccountList}
               options={customerOptions}
               getOptionLabel={(option) => (option ? option.label : '')}
               filterOptions={filterOptions}
@@ -380,6 +380,7 @@ export default function Youtube(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
+              disabled={isFetchingAccountList}
               type="text"
               name="accountName"
               placeholder="ระบุชื่อบัญชีที่ต้องการค้นหา"
@@ -391,6 +392,7 @@ export default function Youtube(): JSX.Element {
               variant="outlined"
               InputLabelProps={{ shrink: true }}
               InputProps={{
+                startAdornment: <InputAdornment position="start">YT-</InputAdornment>,
                 endAdornment: (
                   <InputAdornment position="end">
                     {formik.values.accountName !== '' ? (
@@ -410,6 +412,7 @@ export default function Youtube(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4}>
             <Autocomplete
+              disabled={isFetchingAccountList}
               fullWidth
               multiple
               limitTags={1}
@@ -453,6 +456,7 @@ export default function Youtube(): JSX.Element {
         <Grid container spacing={1}>
           <Grid item xs={12} sm={4}>
             <Autocomplete
+              disabled={isFetchingAccountList}
               fullWidth
               multiple
               limitTags={1}
@@ -494,6 +498,7 @@ export default function Youtube(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
             <DatePicker
+              disabled={isFetchingAccountList}
               label="วันสลับ"
               id="youtube_account_list__change_date_input"
               name="selectedChangeDate"

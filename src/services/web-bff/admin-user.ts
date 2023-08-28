@@ -52,19 +52,15 @@ export const getAdminUsers = async (page = 1, size = 10): Promise<AdminUsersResp
 export const createNewAdminUser = async ({
   accessToken,
   firebaseToken,
-  firstname,
-  lastname,
+  name,
   role,
-  resellerServiceAreaIds,
 }: CreateNewAdminUserProps): Promise<AdminUser> => {
   const response: AdminUserProfileResponse = await AdminBffAPI.post(
     '/v1/admin-users',
     {
       firebaseToken,
-      firstName: firstname,
-      lastName: lastname,
+      adminName: name,
       role,
-      resellerServiceAreaIds,
     },
     {
       headers: {

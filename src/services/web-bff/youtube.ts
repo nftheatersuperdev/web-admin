@@ -5,6 +5,7 @@ import {
   GetYoutubePackageResponse,
   UpdateLinkUserYoutubeRequest,
   UpdateLinkUserYoutubeResponse,
+  UpdateYoutubeAccountRequest,
   YoutubeAccountListRequest,
   YoutubeAccountListResponse,
   YoutubeAccountRequest,
@@ -71,4 +72,49 @@ export const linkUserToYoutubeAccount = async (
       throw error
     })
   return response
+}
+
+export const updateYoutubeAccountStatus = async (
+  accountId: string,
+  status: string
+): Promise<boolean> => {
+  await AdminBffAPI.patch(`v1/youtube/${accountId}/status/${status}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return true
+}
+
+export const updateYoutubeAccount = async (
+  data: UpdateYoutubeAccountRequest,
+  accountId: string
+): Promise<YoutubeAccountResponse> => {
+  const response = await AdminBffAPI.patch(`/v1/youtube/${accountId}`, data)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return response.data
+}
+
+export const deleteUserFromYoutubeAccount = async (
+  userId: string,
+  accountId: string
+): Promise<boolean> => {
+  await AdminBffAPI.delete(`/v1/youtube/${accountId}/user/${userId}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return true
 }

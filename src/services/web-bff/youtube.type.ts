@@ -15,6 +15,11 @@ export interface CreateYoutubeAccountResponse {
   }
 }
 
+export interface UpdateYoutubeAccountRequest {
+  changeDate: string
+  password: string
+}
+
 export interface YoutubeAccountRequest {
   id: string
 }
