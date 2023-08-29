@@ -24,7 +24,13 @@ import { DEFAULT_DATETIME_FORMAT_MONTH_TEXT, formaDateStringWithPattern } from '
 import { CloseOutlined } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { STORAGE_KEYS } from 'auth/AuthContext'
-import { DataWrapper, EnabledTextField, GridSearchSection, TextLineClamp, Wrapper } from 'components/Styled'
+import {
+  DataWrapper,
+  EnabledTextField,
+  GridSearchSection,
+  TextLineClamp,
+  Wrapper,
+} from 'components/Styled'
 import PageTitle from 'components/PageTitle'
 import { Page } from 'layout/LayoutRoute'
 import { searchAdminUser } from 'services/web-bff/admin-user'
@@ -105,7 +111,7 @@ export default function AdminUser(): JSX.Element {
     () =>
       searchAdminUser({
         data: adminFilter,
-        page: 1,
+        page,
         size: pageSize,
       } as AdminUsersProps),
     {

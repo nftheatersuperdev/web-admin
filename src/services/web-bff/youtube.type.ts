@@ -96,3 +96,31 @@ export interface UpdateLinkUserYoutubeRequest {
 export interface UpdateLinkUserYoutubeResponse {
   id: string
 }
+
+export interface YoutubeChangeDateInfo {
+  changeDateToday: string
+  countToday: number
+  changeDateTomorrow: string
+  countTomorrow: number
+  changeDateDayPlusTwo: string
+  countDayPlusTwo: number
+  changeDateDayPlusThree: string
+  countDayPlusThree: number
+  totalAccount: number
+}
+
+export interface YoutubeCustomerInfo {
+  countWaitingExpired: number
+  countWaitingAsk2Status: number
+  countWaitingAsk1Status: number
+  countWaitingAskStatus: number
+  totalCustomer: number
+  totalActiveCustomer: number
+}
+
+export interface YoutubeDashboard {
+  data: {
+    changeDateInfo: YoutubeChangeDateInfo
+    customerInfo: YoutubeCustomerInfo
+  }
+}

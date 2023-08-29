@@ -50,7 +50,7 @@ function Navbar({ onSidebarToggle }: NavbarProps) {
           </Grid>
           <Grid item xs>
             <NavLink to="/">
-              <LogoImage src="/logo-full-dark.png" alt="logo" height={32} />
+              <LogoImage src="/logo-nftheater.png" alt="logo" height={32} />
             </NavLink>
           </Grid>
           <Grid item>

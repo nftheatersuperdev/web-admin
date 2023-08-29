@@ -23,7 +23,7 @@ import PageTitle from 'components/PageTitle'
 import { ContentSection, Wrapper } from 'components/Styled'
 import { Page } from 'layout/LayoutRoute'
 import { CardStatus, DetailLink } from 'components/CardStatus'
-import { getNetflixDashboard } from 'services/web-bff/dashboard'
+import { getNetflixDashboard, getYoutubeDashboard } from 'services/web-bff/dashboard'
 import TabPane from 'components/TabPane'
 import Tabs from 'components/Tabs'
 
@@ -40,7 +40,7 @@ export default function Dashboard(): JSX.Element {
   const { t } = useTranslation()
   const [open, setOpen] = useState(true)
   const moduleAccount = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT) || 'ALL'
-  const { data: dashboardResponse, isFetching } = useQuery(
+  const { data: netflixDashboardResponse, isFetching: isNetflixFetching } = useQuery(
     'dashboard-netflix',
     () => getNetflixDashboard(),
     {
@@ -48,13 +48,22 @@ export default function Dashboard(): JSX.Element {
       enabled: moduleAccount !== 'YOUTUBE',
     }
   )
+  const { data: youtubeDashboardResponse, isFetching: isYoutubeFetching } = useQuery(
+    'dashboard-youtube',
+    () => getYoutubeDashboard(),
+    {
+      refetchOnWindowFocus: false,
+      enabled: moduleAccount !== 'NETFLIX',
+    }
+  )
   const handleClose = () => {
     setOpen(false)
   }
-  const dashboard = dashboardResponse?.data
+  const netflixDashboard = netflixDashboardResponse?.data
+  const youtubeDashboard = youtubeDashboardResponse?.data
   return (
     <Page>
-      {isFetching ? (
+      {isNetflixFetching || isYoutubeFetching ? (
         <Backdrop
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={open}
@@ -79,7 +88,7 @@ export default function Dashboard(): JSX.Element {
                 <Grid item sm={6} xs={12} className={classes.alignRight}>
                   <Typography variant="h4" component="h4" className={classes.marginTop}>
                     {'จำนวนบัญชีที่กำลังใช้งานทั้งหมด ' +
-                      dashboard?.changeDateInfo.totalAccount +
+                      netflixDashboard?.changeDateInfo.totalAccount +
                       ' บัญชี'}
                   </Typography>
                 </Grid>
@@ -88,11 +97,11 @@ export default function Dashboard(): JSX.Element {
               <Grid container spacing={3}>
                 <Grid item sm={3} xs={12}>
                   <CardStatus
-                    title={'วันนี้ ' + dashboard?.changeDateInfo.changeDateToday}
+                    title={'วันนี้ ' + netflixDashboard?.changeDateInfo.changeDateToday}
                     value={
-                      dashboard?.changeDateInfo.countToday +
+                      netflixDashboard?.changeDateInfo.countToday +
                       '/' +
-                      dashboard?.changeDateInfo.totalAccount +
+                      netflixDashboard?.changeDateInfo.totalAccount +
                       ' บัญชี'
                     }
                     subTitle=""
@@ -103,7 +112,7 @@ export default function Dashboard(): JSX.Element {
                       <DetailLink
                         pathname={ROUTE_PATHS.NETFLIX}
                         search={qs.stringify({
-                          changeDate: `${dashboard?.changeDateInfo.changeDateToday}`,
+                          changeDate: `${netflixDashboard?.changeDateInfo.changeDateToday}`,
                           isActive: true,
                         })}
                       />
@@ -112,11 +121,11 @@ export default function Dashboard(): JSX.Element {
                 </Grid>
                 <Grid item sm={3} xs={12}>
                   <CardStatus
-                    title={'วันพรุ่งนี้ ' + dashboard?.changeDateInfo.changeDateTomorrow}
+                    title={'วันพรุ่งนี้ ' + netflixDashboard?.changeDateInfo.changeDateTomorrow}
                     value={
-                      dashboard?.changeDateInfo.countTomorrow +
+                      netflixDashboard?.changeDateInfo.countTomorrow +
                       '/' +
-                      dashboard?.changeDateInfo.totalAccount +
+                      netflixDashboard?.changeDateInfo.totalAccount +
                       ' บัญชี'
                     }
                     subTitle=""
@@ -127,7 +136,7 @@ export default function Dashboard(): JSX.Element {
                       <DetailLink
                         pathname={ROUTE_PATHS.NETFLIX}
                         search={qs.stringify({
-                          changeDate: `${dashboard?.changeDateInfo.changeDateTomorrow}`,
+                          changeDate: `${netflixDashboard?.changeDateInfo.changeDateTomorrow}`,
                           isActive: true,
                         })}
                       />
@@ -136,11 +145,11 @@ export default function Dashboard(): JSX.Element {
                 </Grid>
                 <Grid item sm={3} xs={12}>
                   <CardStatus
-                    title={'วันที่ ' + dashboard?.changeDateInfo.changeDateDayPlusTwo}
+                    title={'วันที่ ' + netflixDashboard?.changeDateInfo.changeDateDayPlusTwo}
                     value={
-                      dashboard?.changeDateInfo.countDayPlusTwo +
+                      netflixDashboard?.changeDateInfo.countDayPlusTwo +
                       '/' +
-                      dashboard?.changeDateInfo.totalAccount +
+                      netflixDashboard?.changeDateInfo.totalAccount +
                       ' บัญชี'
                     }
                     subTitle=""
@@ -151,7 +160,7 @@ export default function Dashboard(): JSX.Element {
                       <DetailLink
                         pathname={ROUTE_PATHS.NETFLIX}
                         search={qs.stringify({
-                          changeDate: `${dashboard?.changeDateInfo.changeDateDayPlusTwo}`,
+                          changeDate: `${netflixDashboard?.changeDateInfo.changeDateDayPlusTwo}`,
                           isActive: true,
                         })}
                       />
@@ -160,11 +169,11 @@ export default function Dashboard(): JSX.Element {
                 </Grid>
                 <Grid item sm={3} xs={12}>
                   <CardStatus
-                    title={'วันที่ ' + dashboard?.changeDateInfo.changeDateDayPlusThree}
+                    title={'วันที่ ' + netflixDashboard?.changeDateInfo.changeDateDayPlusThree}
                     value={
-                      dashboard?.changeDateInfo.countDayPlusThree +
+                      netflixDashboard?.changeDateInfo.countDayPlusThree +
                       '/' +
-                      dashboard?.changeDateInfo.totalAccount +
+                      netflixDashboard?.changeDateInfo.totalAccount +
                       ' บัญชี'
                     }
                     subTitle=""
@@ -175,7 +184,7 @@ export default function Dashboard(): JSX.Element {
                       <DetailLink
                         pathname={ROUTE_PATHS.NETFLIX}
                         search={qs.stringify({
-                          changeDate: `${dashboard?.changeDateInfo.changeDateDayPlusThree}`,
+                          changeDate: `${netflixDashboard?.changeDateInfo.changeDateDayPlusThree}`,
                           isActive: true,
                         })}
                       />
@@ -196,7 +205,7 @@ export default function Dashboard(): JSX.Element {
                 <Grid item sm={6} xs={12} className={classes.alignRight}>
                   <Typography variant="h4" component="h4" className={classes.marginTop}>
                     {'จำนวนลูกค้าที่กำลังใช้งานทั้งหมด ' +
-                      dashboard?.customerInfo.totalActiveCustomer +
+                      netflixDashboard?.customerInfo.totalActiveCustomer +
                       ' คน'}
                   </Typography>
                 </Grid>
@@ -207,9 +216,9 @@ export default function Dashboard(): JSX.Element {
                   <CardStatus
                     title="รอ-หมดอายุ"
                     value={
-                      dashboard?.customerInfo.countWaitingExpired +
+                      netflixDashboard?.customerInfo.countWaitingExpired +
                       '/' +
-                      dashboard?.customerInfo.totalCustomer +
+                      netflixDashboard?.customerInfo.totalCustomer +
                       ' คน'
                     }
                     subTitle=""
@@ -228,9 +237,9 @@ export default function Dashboard(): JSX.Element {
                   <CardStatus
                     title="รอ-ทวงซ้ำ 2"
                     value={
-                      dashboard?.customerInfo.countWaitingAsk2Status +
+                      netflixDashboard?.customerInfo.countWaitingAsk2Status +
                       '/' +
-                      dashboard?.customerInfo.totalCustomer +
+                      netflixDashboard?.customerInfo.totalCustomer +
                       ' คน'
                     }
                     subTitle=""
@@ -249,9 +258,9 @@ export default function Dashboard(): JSX.Element {
                   <CardStatus
                     title="รอ-ทวงซ้ำ 1"
                     value={
-                      dashboard?.customerInfo.countWaitingAsk1Status +
+                      netflixDashboard?.customerInfo.countWaitingAsk1Status +
                       '/' +
-                      dashboard?.customerInfo.totalCustomer +
+                      netflixDashboard?.customerInfo.totalCustomer +
                       ' คน'
                     }
                     subTitle=""
@@ -270,9 +279,9 @@ export default function Dashboard(): JSX.Element {
                   <CardStatus
                     title="รอ-เรียกเก็บ"
                     value={
-                      dashboard?.customerInfo.countWaitingAskStatus +
+                      netflixDashboard?.customerInfo.countWaitingAskStatus +
                       '/' +
-                      dashboard?.customerInfo.totalCustomer +
+                      netflixDashboard?.customerInfo.totalCustomer +
                       ' คน'
                     }
                     subTitle=""
@@ -300,7 +309,11 @@ export default function Dashboard(): JSX.Element {
                 <Grid item sm={4} xs={12}>
                   <CardStatus
                     title="ทีวี"
-                    value={dashboard?.deviceInfo.availableTV + '/' + dashboard?.deviceInfo.totalTV}
+                    value={
+                      netflixDashboard?.deviceInfo.availableTV +
+                      '/' +
+                      netflixDashboard?.deviceInfo.totalTV
+                    }
                     subTitle=""
                     icon={<Tv />}
                     iconColor="#008000"
@@ -317,9 +330,9 @@ export default function Dashboard(): JSX.Element {
                   <CardStatus
                     title="จอเสริม"
                     value={
-                      dashboard?.deviceInfo.availableAdditional +
+                      netflixDashboard?.deviceInfo.availableAdditional +
                       '/' +
-                      dashboard?.deviceInfo.totalAdditional
+                      netflixDashboard?.deviceInfo.totalAdditional
                     }
                     subTitle=""
                     icon={<AdditionalScreenIcon />}
@@ -337,7 +350,9 @@ export default function Dashboard(): JSX.Element {
                   <CardStatus
                     title="อุปกรณ์อื่นๆ"
                     value={
-                      dashboard?.deviceInfo.availableOther + '/' + dashboard?.deviceInfo.totalOther
+                      netflixDashboard?.deviceInfo.availableOther +
+                      '/' +
+                      netflixDashboard?.deviceInfo.totalOther
                     }
                     subTitle=""
                     icon={<Smartphone />}
@@ -355,7 +370,121 @@ export default function Dashboard(): JSX.Element {
             </ContentSection>
           </Wrapper>
         </TabPane>
-        <TabPane title="Youtube" hideTab={moduleAccount === 'NETFLIX'} />
+        <TabPane title="Youtube" hideTab={moduleAccount === 'NETFLIX'}>
+          <Wrapper>
+            <ContentSection>
+              <Grid container spacing={3}>
+                <Grid item sm={6} xs={12}>
+                  <Typography variant="h1" component="h1">
+                    {t('netflix.mainInfo.changeDate')}
+                  </Typography>
+                </Grid>
+                <Grid item sm={6} xs={12} className={classes.alignRight}>
+                  <Typography variant="h4" component="h4" className={classes.marginTop}>
+                    {'จำนวนบัญชีที่กำลังใช้งานทั้งหมด ' +
+                      youtubeDashboard?.changeDateInfo.totalAccount +
+                      ' บัญชี'}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <br />
+              <Grid container spacing={3}>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title={'วันนี้ ' + youtubeDashboard?.changeDateInfo.changeDateToday}
+                    value={
+                      youtubeDashboard?.changeDateInfo.countToday +
+                      '/' +
+                      youtubeDashboard?.changeDateInfo.totalAccount +
+                      ' บัญชี'
+                    }
+                    subTitle=""
+                    icon={<CalendarMonth />}
+                    iconColor="red"
+                    bgColor="red"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({
+                          changeDate: `${youtubeDashboard?.changeDateInfo.changeDateToday}`,
+                        })}
+                      />
+                    }
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title={'วันพรุ่งนี้ ' + youtubeDashboard?.changeDateInfo.changeDateTomorrow}
+                    value={
+                      youtubeDashboard?.changeDateInfo.countTomorrow +
+                      '/' +
+                      youtubeDashboard?.changeDateInfo.totalAccount +
+                      ' บัญชี'
+                    }
+                    subTitle=""
+                    icon={<CalendarMonth />}
+                    iconColor="#FFC100"
+                    bgColor="yellow"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({
+                          changeDate: `${youtubeDashboard?.changeDateInfo.changeDateTomorrow}`,
+                        })}
+                      />
+                    }
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title={'วันที่ ' + youtubeDashboard?.changeDateInfo.changeDateDayPlusTwo}
+                    value={
+                      youtubeDashboard?.changeDateInfo.countDayPlusTwo +
+                      '/' +
+                      youtubeDashboard?.changeDateInfo.totalAccount +
+                      ' บัญชี'
+                    }
+                    subTitle=""
+                    icon={<CalendarMonth />}
+                    iconColor="#008000"
+                    bgColor="green"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({
+                          changeDate: `${youtubeDashboard?.changeDateInfo.changeDateDayPlusTwo}`,
+                        })}
+                      />
+                    }
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title={'วันที่ ' + youtubeDashboard?.changeDateInfo.changeDateDayPlusThree}
+                    value={
+                      youtubeDashboard?.changeDateInfo.countDayPlusThree +
+                      '/' +
+                      youtubeDashboard?.changeDateInfo.totalAccount +
+                      ' บัญชี'
+                    }
+                    subTitle=""
+                    icon={<CalendarMonth />}
+                    iconColor="#000D80"
+                    bgColor="blue"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({
+                          changeDate: `${youtubeDashboard?.changeDateInfo.changeDateDayPlusThree}`,
+                        })}
+                      />
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </ContentSection>
+          </Wrapper>
+        </TabPane>
       </Tabs>
     </Page>
   )

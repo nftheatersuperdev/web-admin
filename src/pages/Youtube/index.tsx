@@ -154,7 +154,7 @@ export default function Youtube(): JSX.Element {
     () =>
       getYoutubeAccountList({
         data: youtubeAccountFilter,
-        page: 1,
+        page,
         size: pageSize,
       } as YoutubeAccountListRequest),
     {
@@ -205,13 +205,6 @@ export default function Youtube(): JSX.Element {
     }
     setFieldInFormik(field, valuesSelect)
   }
-  const handleSetDate = () => {
-    if (queryChangeDate !== null) {
-      const year = new Date().getFullYear()
-      const [day, month] = queryChangeDate.split('/')
-      setSelectedChangeDate(new Date(+year, +month - 1, +day))
-    }
-  }
   const setFieldInFormik = (field: string, valuesSelect: SelectOption[]) => {
     const dataFormikCustStatus = valuesSelect.map((item) => {
       return item.value
@@ -232,6 +225,10 @@ export default function Youtube(): JSX.Element {
   const handleClickIcon = (type: string, accountId: string) => {
     setAccountIdParam(accountId)
     setIsAddNewUserDialogOpen(true)
+  }
+  const allEmail: string[] = []
+  const copyAllEmail = () => {
+    copyText(allEmail.toString())
   }
   const youtubeAccount = (youtubeAccountList &&
     youtubeAccountList.data.youtube.length > 0 &&
@@ -306,6 +303,8 @@ export default function Youtube(): JSX.Element {
    */
   useEffect(() => {
     refetch()
+  }, [youtubeAccountFilter, pages, page, pageSize, refetch])
+  useEffect(() => {
     if (queryCustStatus !== null) {
       setSelectCustStatus([{ value: queryCustStatus, label: queryCustStatus }])
     }
@@ -313,32 +312,26 @@ export default function Youtube(): JSX.Element {
       setSelectAcctStatus([{ value: queryAcctStatus, label: queryAcctStatus }])
     }
     if (queryChangeDate !== null) {
-      handleSetDate()
+      const year = new Date().getFullYear()
+      const [day, month] = queryChangeDate.split('/')
+      setSelectedChangeDate(new Date(+year, +month - 1, +day))
     } else if (selectedChangeDate !== null) {
       setSelectedChangeDate(selectedChangeDate)
     } else {
       setSelectedChangeDate(new Date())
     }
-  }, [
-    youtubeAccountFilter,
-    pages,
-    page,
-    pageSize,
-    refetch,
-    isAddNewUserDialogOpen,
-    isAddNewAccountDialogOpen,
-  ])
+  }, [queryCustStatus, queryAcctStatus, queryChangeDate, selectedChangeDate])
   return (
     <Page>
       <PageTitle title={t('sidebar.youtubeAccount.title')} />
       <Wrapper>
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="h6" component="h2">
               {t('youtube.searchPanel')}
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={6}>
             <AlignRight>
               <Button
                 id="youtube_account__search_btn"
@@ -354,6 +347,15 @@ export default function Youtube(): JSX.Element {
                 onClick={() => setIsAddNewAccountDialogOpen(true)}
               >
                 สร้างบัญชีใหม่
+              </Button>
+              &nbsp;
+              <Button
+                id="netflix_account__search_btn"
+                variant="contained"
+                disabled={isFetchingAccountList && allEmail.length === 0}
+                onClick={() => copyAllEmail()}
+              >
+                คัดลอก Email ทั้งหมด
               </Button>
             </AlignRight>
           </Grid>

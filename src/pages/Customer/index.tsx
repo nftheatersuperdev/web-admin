@@ -123,7 +123,7 @@ export default function Customer(): JSX.Element {
     () =>
       getCustomerList({
         data: customerFilter,
-        page: 1,
+        page,
         size: pageSize,
       } as CustomerListRequest),
     {

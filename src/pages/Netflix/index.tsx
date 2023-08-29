@@ -38,7 +38,6 @@ import dayjsTimezone from 'dayjs/plugin/timezone'
 import { DEFAULT_CHANGE_DATE_FORMAT, formatDateStringWithPattern } from 'utils'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import DatePicker from 'components/DatePicker'
 import PageTitle from 'components/PageTitle'
 import {
@@ -158,7 +157,7 @@ export default function Netflix(): JSX.Element {
     () =>
       getNetflixAccountList({
         data: netflixAccountFilter,
-        page: 1,
+        page,
         size: pageSize,
       } as NetflixAccountListRequest),
     {
@@ -183,13 +182,6 @@ export default function Netflix(): JSX.Element {
       setPage(1)
     },
   })
-  const handleSetDate = () => {
-    if (queryChangeDate !== null) {
-      const year = new Date().getFullYear()
-      const [day, month] = queryChangeDate.split('/')
-      setSelectedChangeDate(new Date(+year, +month - 1, +day))
-    }
-  }
   const customerStatusOptions = [
     { value: 'กำลังใช้งาน', label: 'กำลังใช้งาน' },
     { value: 'รอ-เรียกเก็บ', label: 'รอ-เรียกเก็บ' },
@@ -249,9 +241,15 @@ export default function Netflix(): JSX.Element {
     const text = email.concat(' ').concat(password)
     copyText(text)
   }
+  const allEmail: string[] = []
+  const copyAllEmail = () => {
+    copyText(allEmail.toString())
+  }
   const netflixAccount = (netflixAccountList &&
     netflixAccountList.data.netflix.length > 0 &&
     netflixAccountList.data.netflix.map((netflix) => {
+      // Build all email
+      allEmail.push(netflix.email)
       return (
         // Build Table Body
         <TableRow hover id={`netflix_account__index-${netflix.accountId}`} key={netflix.accountId}>
@@ -342,37 +340,32 @@ export default function Netflix(): JSX.Element {
    */
   useEffect(() => {
     refetch()
+  }, [netflixAccountFilter, pages, page, pageSize, refetch])
+  useEffect(() => {
     if (queryCustStatus !== null) {
       setSelectCustStatus([{ value: queryCustStatus, label: queryCustStatus }])
     }
     if (queryChangeDate !== null) {
-      handleSetDate()
+      const year = new Date().getFullYear()
+      const [day, month] = queryChangeDate.split('/')
+      setSelectedChangeDate(new Date(+year, +month - 1, +day))
     } else if (selectedChangeDate !== null) {
       setSelectedChangeDate(selectedChangeDate)
     } else {
       setSelectedChangeDate(new Date())
     }
-  }, [
-    netflixAccountFilter,
-    pages,
-    page,
-    pageSize,
-    refetch,
-    isAddNewUserDialogOpen,
-    isAddNewAccountDialogOpen,
-  ])
-
+  }, [queryCustStatus, queryChangeDate, selectedChangeDate, refetch])
   return (
     <Page>
       <PageTitle title={t('sidebar.netflixAccount.title')} />
       <Wrapper>
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="h6" component="h2">
               {t('netflix.searchPanel')}
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={6}>
             <AlignRight>
               <Button
                 id="netflix_account__search_btn"
@@ -388,6 +381,15 @@ export default function Netflix(): JSX.Element {
                 onClick={() => setIsAddNewAccountDialogOpen(true)}
               >
                 สร้างบัญชีใหม่
+              </Button>
+              &nbsp;
+              <Button
+                id="netflix_account__search_btn"
+                variant="contained"
+                disabled={isFetchingAccountList && allEmail.length === 0}
+                onClick={() => copyAllEmail()}
+              >
+                คัดลอก Email ทั้งหมด
               </Button>
             </AlignRight>
           </Grid>
