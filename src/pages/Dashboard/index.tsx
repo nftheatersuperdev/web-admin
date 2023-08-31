@@ -9,8 +9,6 @@ import {
   Smartphone,
   Tv,
   AddToQueue as AdditionalScreenIcon,
-  AccountBalance,
-  YouTube,
 } from '@mui/icons-material'
 import { makeStyles } from '@mui/styles'
 import { useState } from 'react'
@@ -477,6 +475,111 @@ export default function Dashboard(): JSX.Element {
                         search={qs.stringify({
                           changeDate: `${youtubeDashboard?.changeDateInfo.changeDateDayPlusThree}`,
                         })}
+                      />
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </ContentSection>
+          </Wrapper>
+          <Wrapper>
+            <ContentSection>
+              <Grid container spacing={3}>
+                <Grid item sm={6} xs={12}>
+                  <Typography variant="h1" component="h1">
+                    {t('youtube.user')}
+                  </Typography>
+                </Grid>
+                <Grid item sm={6} xs={12} className={classes.alignRight}>
+                  <Typography variant="h4" component="h4" className={classes.marginTop}>
+                    {'จำนวนลูกค้าที่กำลังใช้งานทั้งหมด ' +
+                      youtubeDashboard?.customerInfo.totalActiveCustomer +
+                      ' คน'}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <br />
+              <Grid container spacing={3}>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title="รอ-หมดอายุ"
+                    value={
+                      youtubeDashboard?.customerInfo.countWaitingExpired +
+                      '/' +
+                      youtubeDashboard?.customerInfo.totalCustomer +
+                      ' คน'
+                    }
+                    subTitle=""
+                    icon={<SentimentVeryDissatisfied />}
+                    iconColor="red"
+                    bgColor="red"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({ customerStatus: 'รอ-หมดอายุ', isActive: true })}
+                      />
+                    }
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title="รอ-ทวงซ้ำ 2"
+                    value={
+                      youtubeDashboard?.customerInfo.countWaitingAsk2Status +
+                      '/' +
+                      youtubeDashboard?.customerInfo.totalCustomer +
+                      ' คน'
+                    }
+                    subTitle=""
+                    icon={<SentimentNeutral />}
+                    iconColor="#FFC100"
+                    bgColor="yellow"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({ customerStatus: 'รอ-ทวงซ้ำ 2', isActive: true })}
+                      />
+                    }
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title="รอ-ทวงซ้ำ 1"
+                    value={
+                      youtubeDashboard?.customerInfo.countWaitingAsk1Status +
+                      '/' +
+                      youtubeDashboard?.customerInfo.totalCustomer +
+                      ' คน'
+                    }
+                    subTitle=""
+                    icon={<SentimentDissatisfiedRounded />}
+                    iconColor="#008000"
+                    bgColor="green"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({ customerStatus: 'รอ-ทวงซ้ำ 1', isActive: true })}
+                      />
+                    }
+                  />
+                </Grid>
+                <Grid item sm={3} xs={12}>
+                  <CardStatus
+                    title="รอ-เรียกเก็บ"
+                    value={
+                      youtubeDashboard?.customerInfo.countWaitingAskStatus +
+                      '/' +
+                      youtubeDashboard?.customerInfo.totalCustomer +
+                      ' คน'
+                    }
+                    subTitle=""
+                    icon={<SentimentSatisfied />}
+                    iconColor="#000d80"
+                    bgColor="blue"
+                    detailLink={
+                      <DetailLink
+                        pathname={ROUTE_PATHS.YOUTUBE}
+                        search={qs.stringify({ customerStatus: 'รอ-เรียกเก็บ', isActive: true })}
                       />
                     }
                   />

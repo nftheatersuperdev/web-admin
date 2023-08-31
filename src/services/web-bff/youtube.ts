@@ -1,8 +1,10 @@
 import { AdminBffAPI } from 'api/admin-bff'
 import {
+  AllYoutubeAccount,
   CreateYoutubeAccountRequest,
   CreateYoutubeAccountResponse,
   GetYoutubePackageResponse,
+  TransferUsersRequest,
   UpdateLinkUserYoutubeRequest,
   UpdateLinkUserYoutubeResponse,
   UpdateYoutubeAccountRequest,
@@ -117,4 +119,26 @@ export const deleteUserFromYoutubeAccount = async (
       throw error
     })
   return true
+}
+
+export const transferUsers = async (
+  data: TransferUsersRequest,
+  accountId: string
+): Promise<boolean> => {
+  await AdminBffAPI.post(`/v1/youtube/${accountId}/user/transfer`, data)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return true
+}
+
+export const getAllYoutubeAccounts = async (): Promise<AllYoutubeAccount['data']> => {
+  const response: AllYoutubeAccount = await AdminBffAPI.get(`/v1/youtubes`).then(
+    (response) => response.data
+  )
+  return response.data
 }

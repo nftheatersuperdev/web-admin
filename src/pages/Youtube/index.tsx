@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Autocomplete,
@@ -127,7 +128,7 @@ export default function Youtube(): JSX.Element {
     changeDate: queryChangeDate || '-',
     userId: '',
     accountName: '',
-    accountStatus: queryAcctStatus !== null ? [queryAcctStatus] : [],
+    accountStatus: queryAcctStatus !== null ? [queryAcctStatus] : ['กำลังใช้งานอยู่'],
     customerStatus: queryCustStatus !== null ? [queryCustStatus] : [],
   }
   const [youtubeAccountFilter, setYoutubeAccountFilter] = useState<YoutubeAccountListInputRequest>({
@@ -169,7 +170,7 @@ export default function Youtube(): JSX.Element {
         DEFAULT_CHANGE_DATE_FORMAT
       ),
       accountName: '',
-      accountStatus: [],
+      accountStatus: ['กำลังใช้งานอยู่'],
       customerStatus: [],
     },
     enableReinitialize: true,

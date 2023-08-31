@@ -69,6 +69,7 @@ import { getNextStatus, updateCustomer } from 'services/web-bff/customer'
 import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
 import AddNewUserDialog from './AddNewUserDialog'
 import ExtendUserDialog from './ExtendUserDialog'
+import TransferUserDialog from './TransferUserDialog'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -141,6 +142,7 @@ export default function YoutubeAccount(): JSX.Element {
   const [changeStatusMsg, setChangeStatusMsg] = useState<string>('')
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [isExtendUserDialogOpen, setIsExtendUserDialogOpen] = useState(false)
+  const [isTransferUserDialogOpen, setIsTransferUserDialogOpen] = useState<boolean>(false)
   const [visibleDeleteConfirmationDialog, setVisibleDeleteConfirmationDialog] =
     useState<boolean>(false)
   const [visibleDisableConfirmationDialog, setVisibleDisableConfirmationDialog] =
@@ -154,6 +156,7 @@ export default function YoutubeAccount(): JSX.Element {
   const [userIdParam, setUserIdParam] = useState<string>('')
   const [lineIdParam, setLineIdParam] = useState<string>('')
   const [statusParam, setStatusParam] = useState<string>('')
+  const [accountParam, setAccountParam] = useState<string>('')
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const handleCloseLoading = () => {
     setOpenLoading(false)
@@ -784,6 +787,16 @@ export default function YoutubeAccount(): JSX.Element {
         onClose={() => {
           refetch()
           setIsExtendUserDialogOpen(false)
+        }}
+      />
+      <TransferUserDialog
+        open={isTransferUserDialogOpen}
+        userIds={selectedUsers}
+        accountId={accountIdParam}
+        accountName={accountParam}
+        onClose={() => {
+          refetch()
+          setIsTransferUserDialogOpen(false)
         }}
       />
     </Page>

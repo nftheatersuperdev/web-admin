@@ -354,7 +354,7 @@ export default function Netflix(): JSX.Element {
     } else {
       setSelectedChangeDate(new Date())
     }
-  }, [queryCustStatus, queryChangeDate, selectedChangeDate, refetch])
+  }, [queryCustStatus, queryChangeDate, selectedChangeDate])
   return (
     <Page>
       <PageTitle title={t('sidebar.netflixAccount.title')} />

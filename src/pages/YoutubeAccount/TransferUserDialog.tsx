@@ -18,7 +18,6 @@ import {
   MenuItem,
   TextField,
 } from '@mui/material'
-// import { GridTextField } from "components/Styled"
 import { AccountBalance, AccountCircle as UserIcon, Forward } from '@mui/icons-material'
 import { makeStyles } from '@mui/styles'
 import { useQuery } from 'react-query'
@@ -27,9 +26,9 @@ import * as Yup from 'yup'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { getAllNetflixAccounts, transferUsers } from 'services/web-bff/netflix'
+import { getAllYoutubeAccounts, transferUsers } from 'services/web-bff/youtube'
 import ConfirmDialog from 'components/ConfirmDialog'
-import { TransferUsersRequest } from 'services/web-bff/netflix.type'
+import { TransferUsersRequest } from 'services/web-bff/youtube.type'
 
 interface TransferUserProps {
   open: boolean
@@ -57,8 +56,8 @@ export default function TransferUserDialog(props: TransferUserProps): JSX.Elemen
   const classes = useStyles()
   const { open, userIds, accountId, accountName, onClose } = props
   const { data: allNetflixAccounts } = useQuery(
-    'all-netflix-accounts',
-    () => getAllNetflixAccounts(),
+    'all-youtube-accounts',
+    () => getAllYoutubeAccounts(),
     {
       refetchOnWindowFocus: false,
     }

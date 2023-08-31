@@ -124,3 +124,17 @@ export interface YoutubeDashboard {
     customerInfo: YoutubeCustomerInfo
   }
 }
+
+export interface TransferUsersRequest {
+  fromAccountId: string
+  userIds: string[]
+}
+
+export interface YoutubeAccounts {
+  accountId: string
+  accountName: string
+}
+
+export interface AllYoutubeAccount extends Response {
+  data: YoutubeAccounts[]
+}
