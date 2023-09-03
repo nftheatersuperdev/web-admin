@@ -1,5 +1,10 @@
+[[redirects]]
+  from = "/*"
+  to = "https://nf-api-a1ac277083cb.herokuapp.com/nftheater-api/"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
 [[headers]]
-  # Define which paths this specific [[headers]] block will cover.
   for = "/*"
-    [headers.values]
+  [headers.values]
     Access-Control-Allow-Origin = "*"

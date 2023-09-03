@@ -23,6 +23,7 @@ AdminBffAPI.interceptors.request.use(
     config.headers.user_agent = browserName
     config.headers.application_version = packageInfo.version
     config.headers.module = account
+
     return config
   },
   (err) => {
