@@ -54,8 +54,12 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     getCustomerOptionList('NETFLIX')
   )
   const customerOptions = customerOptionList || []
-  const device = accountType === 'OTHER' ? 'OTHER' : 'TV'
-  const netflixPackageOption = useQuery('netflix-package-option', () => getNetflixPackage(device))
+  const netflixTVPackageOption = useQuery('netflix-tv-package', () => getNetflixPackage('TV'))
+  const netflixOtherPackageOption = useQuery('netflix-other-package', () =>
+    getNetflixPackage('OTHER')
+  )
+  const tvPackageOptions = netflixTVPackageOption || []
+  const otherPackageOptions = netflixOtherPackageOption || []
   const accountTypeOption = getAccountTypeOptions()
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
@@ -282,11 +286,17 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   }
                   InputLabelProps={{ shrink: true }}
                 >
-                  {netflixPackageOption.data?.map((option) => (
-                    <MenuItem key={option.packageDay} value={option.packageDay}>
-                      {option.packageName + ' ' + option.packagePrice + ' บาท'}
-                    </MenuItem>
-                  ))}
+                  {accountType === 'TV'
+                    ? tvPackageOptions.data?.map((option) => (
+                        <MenuItem key={option.packageDay} value={option.packageDay}>
+                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
+                        </MenuItem>
+                      ))
+                    : otherPackageOptions.data?.map((option) => (
+                        <MenuItem key={option.packageDay} value={option.packageDay}>
+                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
+                        </MenuItem>
+                      ))}
                 </TextField>
               </GridTextField>
             </Grid>
@@ -359,7 +369,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                 <TextField
                   fullWidth
                   select
-                  label="แพ็คเก็ต/ราคาx"
+                  label="แพ็คเก็ต/ราคา"
                   onChange={handlePackageChange}
                   value={formikLinkUser.values.extendDay}
                   placeholder="กรุณาเลือกแพ็คเก็ต/ราคา"
@@ -369,11 +379,17 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   helperText={formikLinkUser.touched.extendDay && formikLinkUser.errors.extendDay}
                   InputLabelProps={{ shrink: true }}
                 >
-                  {netflixPackageOption?.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
+                  {accountType === 'TV'
+                    ? tvPackageOptions.data?.map((option) => (
+                        <MenuItem key={option.packageDay} value={option.packageDay}>
+                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
+                        </MenuItem>
+                      ))
+                    : otherPackageOptions.data?.map((option) => (
+                        <MenuItem key={option.packageDay} value={option.packageDay}>
+                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
+                        </MenuItem>
+                      ))}
                 </TextField>
               </GridTextField>
             </Grid>
