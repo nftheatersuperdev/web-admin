@@ -6,6 +6,10 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
   Grid,
   IconButton,
   InputAdornment,
@@ -68,6 +72,9 @@ const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').toDate
 
 const AlignRight = styled.div`
   text-align: right;
+`
+const CheckBoxGroupLabel = styled(FormLabel)`
+  font-size: 12px;
 `
 
 interface SelectOption {
@@ -524,6 +531,52 @@ export default function Netflix(): JSX.Element {
                 )
               }}
             />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormControl component="fieldset">
+              <CheckBoxGroupLabel>เลือกเฉพาะอุปกรณ์ที่ว่าง</CheckBoxGroupLabel>
+              <FormGroup aria-label="position" row>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      key="TV"
+                      onChange={formik.handleChange}
+                      name="chargers"
+                      color="primary"
+                      value="TV"
+                    />
+                  }
+                  label="ทีวี"
+                  key="TV"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      key="ADDITIONAL"
+                      onChange={formik.handleChange}
+                      name="chargers"
+                      color="primary"
+                      value="ADDITIONAL"
+                    />
+                  }
+                  label="จอเสริม"
+                  key="ADDITIONAL"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      key="OTHER"
+                      onChange={formik.handleChange}
+                      name="chargers"
+                      color="primary"
+                      value="OTHER"
+                    />
+                  }
+                  label="อุปกรณ์อื่นๆ"
+                  key="OTHER"
+                />
+              </FormGroup>
+            </FormControl>
           </Grid>
         </Grid>
         <br />
