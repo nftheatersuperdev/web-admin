@@ -13,6 +13,9 @@ export interface NetflixAccountListInputRequest {
   accountName: string
   isActive: boolean
   customerStatus: [string]
+  filterTVAvailable: boolean
+  filterOtherAvailable: boolean
+  filterAdditionalAvailable: boolean
 }
 
 export interface NetflixAccountRequest {

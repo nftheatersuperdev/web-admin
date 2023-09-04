@@ -139,6 +139,9 @@ export default function Netflix(): JSX.Element {
     accountName: '',
     isActive: true,
     customerStatus: queryCustStatus !== null ? [queryCustStatus] : [],
+    filterTVAvailable: true,
+    filterOtherAvailable: true,
+    filterAdditionalAvailable: true,
   }
   const [netflixAccountFilter, setNetflixAccountFilter] = useState<NetflixAccountListInputRequest>({
     ...defaultFilter,
@@ -181,6 +184,9 @@ export default function Netflix(): JSX.Element {
       accountName: '',
       isActive: true,
       customerStatus: [],
+      filterTVAvailable: true,
+      filterOtherAvailable: true,
+      filterAdditionalAvailable: true,
     },
     enableReinitialize: false,
     onSubmit: (value) => {
@@ -534,16 +540,19 @@ export default function Netflix(): JSX.Element {
           </Grid>
           <Grid item xs={12} sm={4}>
             <FormControl component="fieldset">
-              <CheckBoxGroupLabel>เลือกเฉพาะอุปกรณ์ที่ว่าง</CheckBoxGroupLabel>
+              <CheckBoxGroupLabel>เลือกกรองอุปกรณ์ที่ว่าง</CheckBoxGroupLabel>
               <FormGroup aria-label="position" row>
                 <FormControlLabel
                   control={
                     <Checkbox
                       key="TV"
-                      onChange={formik.handleChange}
-                      name="chargers"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        formik.setFieldValue('filterTVAvailable', event.target.checked)
+                      }}
+                      name="filterDevice"
                       color="primary"
-                      value="TV"
+                      value={formik.values.filterTVAvailable}
+                      checked={formik.values.filterTVAvailable}
                     />
                   }
                   label="ทีวี"
@@ -553,10 +562,13 @@ export default function Netflix(): JSX.Element {
                   control={
                     <Checkbox
                       key="ADDITIONAL"
-                      onChange={formik.handleChange}
-                      name="chargers"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        formik.setFieldValue('filterAdditionalAvailable', event.target.checked)
+                      }}
+                      name="filterDevice"
                       color="primary"
-                      value="ADDITIONAL"
+                      value={formik.values.filterAdditionalAvailable}
+                      checked={formik.values.filterAdditionalAvailable}
                     />
                   }
                   label="จอเสริม"
@@ -566,10 +578,13 @@ export default function Netflix(): JSX.Element {
                   control={
                     <Checkbox
                       key="OTHER"
-                      onChange={formik.handleChange}
-                      name="chargers"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        formik.setFieldValue('filterOtherAvailable', event.target.checked)
+                      }}
+                      name="filterDevice"
                       color="primary"
-                      value="OTHER"
+                      value={formik.values.filterOtherAvailable}
+                      checked={formik.values.filterOtherAvailable}
                     />
                   }
                   label="อุปกรณ์อื่นๆ"
