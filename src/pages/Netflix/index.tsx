@@ -6,6 +6,10 @@ import {
   Checkbox,
   Chip,
   CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
   Grid,
   IconButton,
   InputAdornment,
@@ -70,6 +74,10 @@ const AlignRight = styled.div`
   text-align: right;
 `
 
+const CheckBoxGroupLabel = styled(FormLabel)`
+  font-size: 12px;
+`
+
 interface SelectOption {
   label: string
   value: string
@@ -132,6 +140,9 @@ export default function Netflix(): JSX.Element {
     accountName: '',
     isActive: true,
     customerStatus: queryCustStatus !== null ? [queryCustStatus] : [],
+    filterTVAvailable: true,
+    filterOtherAvailable: true,
+    filterAdditionalAvailable: true,
   }
   const [netflixAccountFilter, setNetflixAccountFilter] = useState<NetflixAccountListInputRequest>({
     ...defaultFilter,
@@ -174,6 +185,9 @@ export default function Netflix(): JSX.Element {
       accountName: '',
       isActive: true,
       customerStatus: [],
+      filterTVAvailable: true,
+      filterOtherAvailable: true,
+      filterAdditionalAvailable: true,
     },
     enableReinitialize: false,
     onSubmit: (value) => {
@@ -524,6 +538,61 @@ export default function Netflix(): JSX.Element {
                 )
               }}
             />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormControl component="fieldset">
+              <CheckBoxGroupLabel>เลือกกรองอุปกรณ์ที่ว่าง</CheckBoxGroupLabel>
+              <FormGroup aria-label="position" row>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      key="TV"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        formik.setFieldValue('filterTVAvailable', event.target.checked)
+                      }}
+                      name="filterDevice"
+                      color="primary"
+                      value={formik.values.filterTVAvailable}
+                      checked={formik.values.filterTVAvailable}
+                    />
+                  }
+                  label="ทีวี"
+                  key="TV"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      key="ADDITIONAL"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        formik.setFieldValue('filterAdditionalAvailable', event.target.checked)
+                      }}
+                      name="filterDevice"
+                      color="primary"
+                      value={formik.values.filterAdditionalAvailable}
+                      checked={formik.values.filterAdditionalAvailable}
+                    />
+                  }
+                  label="จอเสริม"
+                  key="ADDITIONAL"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      key="OTHER"
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        formik.setFieldValue('filterOtherAvailable', event.target.checked)
+                      }}
+                      name="filterDevice"
+                      color="primary"
+                      value={formik.values.filterOtherAvailable}
+                      checked={formik.values.filterOtherAvailable}
+                    />
+                  }
+                  label="อุปกรณ์อื่นๆ"
+                  key="OTHER"
+                />
+              </FormGroup>
+            </FormControl>
           </Grid>
         </Grid>
         <br />
