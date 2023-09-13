@@ -78,6 +78,7 @@ export interface YoutubeUser {
 }
 
 export interface YoutubePackage {
+  packageId: string
   packageName: string
   packageDay: number
   packagePrice: number
@@ -90,7 +91,7 @@ export interface GetYoutubePackageResponse {
 
 export interface UpdateLinkUserYoutubeRequest {
   userId: string
-  extendDay: number
+  packageId: string
 }
 
 export interface UpdateLinkUserYoutubeResponse {

@@ -102,7 +102,7 @@ export interface CreateNetflixAccountResponseAPI {
 
 export interface UpdateLinkUserNetflixRequest {
   userId: string
-  extendDay: number
+  packageId: string
   accountType: string
 }
 
@@ -180,6 +180,7 @@ export interface NetflixDashboard {
 }
 
 export interface NetflixPackage {
+  packageId: string
   packageName: string
   packageDay: number
   packagePrice: number
