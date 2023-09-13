@@ -63,13 +63,13 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   })
   const formikCreateUser = useFormik({
     initialValues: {
-      extendDay: 0,
+      packageId: 0,
       lineId: '',
       lineUrl: '',
       email: '',
     },
     validationSchema: Yup.object().shape({
-      extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
+      packageId: Yup.string().required('กรุณาเลือกแพ็คเกจการต่ออายุ'),
       email: Yup.string().email().required('กรุณาระบุ Email'),
       lineId: Yup.string().max(255).required('กรุณาระบุ Line Id'),
       lineUrl: Yup.string().max(255).required('กรุณาระบุ Line URL'),
@@ -101,12 +101,12 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const formikLinkUser = useFormik({
     initialValues: {
       userId: '',
-      extendDay: 0,
+      packageId: 0,
       accountId,
     },
     validationSchema: Yup.object().shape({
       userId: Yup.string().max(255).required('กรุณาเลือกลูกค้า'),
-      extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
+      packageId: Yup.string().required('กรุณาเลือกแพ็คเกจการต่ออายุ'),
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -114,7 +114,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
         linkUserToYoutubeAccount(
           {
             userId: values.userId,
-            extendDay: values.extendDay,
+            packageId: values.packageId,
           } as UpdateLinkUserYoutubeRequest,
           accountId
         ),
@@ -134,8 +134,8 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   })
   const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    formikLinkUser.setFieldValue('extendDay', value)
-    formikCreateUser.setFieldValue('extendDay', value)
+    formikLinkUser.setFieldValue('packageId', value)
+    formikCreateUser.setFieldValue('packageId', value)
   }
   return (
     <Dialog open={open} fullWidth aria-labelledby="form-dialog-title">
@@ -216,18 +216,18 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   select
                   label="แพ็คเก็ต/ราคา"
                   onChange={handlePackageChange}
-                  value={formikCreateUser.values.extendDay}
+                  value={formikCreateUser.values.packageId}
                   placeholder="กรุณาเลือกแพ็คเก็ต/ราคา"
                   error={Boolean(
-                    formikCreateUser.touched.extendDay && formikCreateUser.errors.extendDay
+                    formikCreateUser.touched.packageId && formikCreateUser.errors.packageId
                   )}
                   helperText={
-                    formikCreateUser.touched.extendDay && formikCreateUser.errors.extendDay
+                    formikCreateUser.touched.packageId && formikCreateUser.errors.packageId
                   }
                   InputLabelProps={{ shrink: true }}
                 >
                   {youtubeNewPackageOption.data?.map((option) => (
-                    <MenuItem key={option.packageDay} value={option.packageDay}>
+                    <MenuItem key={option.packageDay} value={option.packageId}>
                       {option.packageName + ' ' + option.packagePrice + ' บาท'}
                     </MenuItem>
                   ))}
@@ -281,16 +281,16 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   select
                   label="แพ็คเก็ต/ราคาx"
                   onChange={handlePackageChange}
-                  value={formikLinkUser.values.extendDay}
+                  value={formikLinkUser.values.packageId}
                   placeholder="กรุณาเลือกแพ็คเก็ต/ราคา"
                   error={Boolean(
-                    formikLinkUser.touched.extendDay && formikLinkUser.errors.extendDay
+                    formikLinkUser.touched.packageId && formikLinkUser.errors.packageId
                   )}
-                  helperText={formikLinkUser.touched.extendDay && formikLinkUser.errors.extendDay}
+                  helperText={formikLinkUser.touched.packageId && formikLinkUser.errors.packageId}
                   InputLabelProps={{ shrink: true }}
                 >
                   {youtubeExtendPackageOption.data?.map((option) => (
-                    <MenuItem key={option.packageDay} value={option.packageDay}>
+                    <MenuItem key={option.packageDay} value={option.packageId}>
                       {option.packageName + ' ' + option.packagePrice + ' บาท'}
                     </MenuItem>
                   ))}
