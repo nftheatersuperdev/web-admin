@@ -10,10 +10,17 @@ interface TooltipOptions {
   type: string
   color: string
   subTitle?: string
+  display?: boolean
   onClick?: () => void
 }
-export default function Tooltips({ type, color, subTitle, onClick }: TooltipOptions): JSX.Element {
-  if (type === 'TV') {
+export default function Tooltips({
+  type,
+  color,
+  subTitle,
+  display,
+  onClick,
+}: TooltipOptions): JSX.Element {
+  if (type === 'TV' && display) {
     return (
       <Tooltip title={subTitle}>
         <IconButton onClick={onClick}>
@@ -21,7 +28,7 @@ export default function Tooltips({ type, color, subTitle, onClick }: TooltipOpti
         </IconButton>
       </Tooltip>
     )
-  } else if (type === 'ADDITIONAL') {
+  } else if (type === 'ADDITIONAL' && display) {
     return (
       <Tooltip title={subTitle}>
         <IconButton onClick={onClick}>
@@ -45,12 +52,14 @@ export default function Tooltips({ type, color, subTitle, onClick }: TooltipOpti
         </IconButton>
       </Tooltip>
     )
+  } else if (display) {
+    return (
+      <Tooltip title={subTitle}>
+        <IconButton onClick={onClick}>
+          <PhoneIphone htmlColor={color} />
+        </IconButton>
+      </Tooltip>
+    )
   }
-  return (
-    <Tooltip title={subTitle}>
-      <IconButton onClick={onClick}>
-        <PhoneIphone htmlColor={color} />
-      </IconButton>
-    </Tooltip>
-  )
+  return ''
 }

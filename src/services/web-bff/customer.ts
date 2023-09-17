@@ -8,6 +8,7 @@ import {
   CustomerRequest,
   CustomerResponse,
   ExtendDayCustomerRequest,
+  IsDuplicateUrlResponse,
   UpdateCustomerRequest,
 } from './customer.type'
 
@@ -87,5 +88,14 @@ export const updateCustomer = async (
       }
       throw error
     })
+  return response
+}
+
+export const isUrlDeplicate = async (url: string): Promise<IsDuplicateUrlResponse> => {
+  const response: IsDuplicateUrlResponse = await AdminBffAPI.post(
+    `/v1/customer/line-url/isduplicate`,
+    { url }
+  ).then((response) => response.data)
+
   return response
 }

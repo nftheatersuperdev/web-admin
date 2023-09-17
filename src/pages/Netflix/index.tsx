@@ -84,6 +84,9 @@ interface SelectOption {
 
 export default function Netflix(): JSX.Element {
   const useStyles = makeStyles({
+    hideObject: {
+      display: 'none',
+    },
     datePickerFromTo: {
       '&& .MuiOutlinedInput-input': {
         padding: '16.5px 14px',
@@ -256,13 +259,26 @@ export default function Netflix(): JSX.Element {
   }
   const allEmail: string[] = []
   const copyAllEmail = () => {
-    copyText(allEmail.toString())
+    copyText(allEmail.toString().replaceAll(',', ''))
+  }
+  const displayTooltip = (type: string) => {
+    if (type === 'TV' && formik.values.filterTVAvailable) {
+      return true
+    } else if (type === 'ADDITIONAL' && formik.values.filterAdditionalAvailable) {
+      return true
+    } else if (type === 'OTHER' && formik.values.filterOtherAvailable) {
+      return true
+    }
+    return false
   }
   const netflixAccount = (netflixAccountList &&
     netflixAccountList.data.netflix.length > 0 &&
     netflixAccountList.data.netflix.map((netflix) => {
       // Build all email
       allEmail.push(netflix.email)
+      allEmail.push('\n')
+      allEmail.push(netflix.password)
+      allEmail.push('\n')
       return (
         // Build Table Body
         <TableRow hover id={`netflix_account__index-${netflix.accountId}`} key={netflix.accountId}>
@@ -273,6 +289,7 @@ export default function Netflix(): JSX.Element {
                 type={`${user.accountType}`}
                 color={`${user.color}`}
                 subTitle={`${user.accountStatus}`}
+                display={displayTooltip(`${user.accountType}`)}
                 onClick={() =>
                   handleClickIcon(
                     `${user.accountType}`,
@@ -629,11 +646,17 @@ export default function Netflix(): JSX.Element {
         accountId={accountIdParam}
         accountType={accountTypeParam}
         isLocked={true}
-        onClose={() => setIsAddNewUserDialogOpen(false)}
+        onClose={() => {
+          refetch()
+          setIsAddNewUserDialogOpen(false)
+        }}
       />
       <AddNewNetflixDialog
         open={isAddNewAccountDialogOpen}
-        onClose={() => setIsAddNewAccountDialogOpen(false)}
+        onClose={() => {
+          refetch()
+          setIsAddNewAccountDialogOpen(false)
+        }}
       />
     </Page>
   )

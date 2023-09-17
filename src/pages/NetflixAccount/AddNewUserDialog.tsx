@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import {
   Autocomplete,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -8,7 +9,9 @@ import {
   DialogTitle,
   Grid,
   MenuItem,
+  Modal,
   TextField,
+  Typography,
   createFilterOptions,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
@@ -20,7 +23,7 @@ import toast from 'react-hot-toast'
 import { useState } from 'react'
 import { getAccountTypeOptions } from 'constant/PackageOption'
 import { GridTextField } from 'components/Styled'
-import { getCustomerOptionList, createCustomer } from 'services/web-bff/customer'
+import { getCustomerOptionList, createCustomer, isUrlDeplicate } from 'services/web-bff/customer'
 import {
   CreateCustomerRequest,
   CreateCustomerResponseAPI,
@@ -37,6 +40,18 @@ interface AddNewUserDialogProps {
   onClose: () => void
 }
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
+
 export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Element {
   const useStyles = makeStyles({
     createCustomerButton: {
@@ -45,11 +60,37 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     hideObject: {
       display: 'none',
     },
+    alignRight: {
+      textAlign: 'right',
+    },
   })
   const classes = useStyles()
   const { open, accountId, accountType, isLocked, onClose } = props
   const { t } = useTranslation()
   const [isCreateNewCustomer, setIsCreateNewCustomer] = useState<boolean>(true)
+  const [openAlertModal, setOpenAlertModal] = useState(false)
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+  const [packageName, setPackageName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [isDup, setIsDup] = useState(false)
+  const checkUrlDuplicate = async (url: string) => {
+    const isDup = isUrlDeplicate(url)
+    const val = (await isDup).data
+    setIsDup(val)
+  }
+  const handleCloseModal = () => {
+    setOpenAlertModal(false)
+  }
+  const handleCloseConfirmModal = () => {
+    setOpenConfirmModal(false)
+  }
+  const handleCreate = () => {
+    if (isDup) {
+      setOpenAlertModal(true)
+    } else {
+      formikCreateUser.handleSubmit()
+    }
+  }
   const { data: customerOptionList } = useQuery('customer-option', () =>
     getCustomerOptionList('NETFLIX')
   )
@@ -91,7 +132,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           success: (res: CreateCustomerResponseAPI) => {
             formikLinkUser.setFieldValue('userId', res.data.userId)
             formikCreateUser.resetForm()
-            formikLinkUser.handleSubmit()
+            //formikLinkUser.handleSubmit()
+            setPassword(res.data.password)
+            setOpenConfirmModal(true)
             return 'สร้างลูกค้า ' + values.lineId + ' สำเร็จ'
           },
           error: (err) => {
@@ -128,6 +171,8 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           loading: t('toast.loading'),
           success: () => {
             formikLinkUser.resetForm()
+            handleCloseConfirmModal()
+            handleCloseModal()
             onClose()
             return 'เพิ่มลูกค้า ' + values.userId + ' สำเร็จ'
           },
@@ -140,6 +185,13 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   })
   const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
+    if (accountType === 'OTHER') {
+      const p = otherPackageOptions.data?.find((pk) => pk.packageId === value)
+      setPackageName(p.packageName + ' ' + p.packagePrice + ' บาท')
+    } else {
+      const p = tvPackageOptions.data?.find((pk) => pk.packageId === value)
+      setPackageName(p.packageName + ' ' + p.packagePrice + ' บาท')
+    }
     formikLinkUser.setFieldValue('packageId', value)
     formikCreateUser.setFieldValue('packageId', value)
   }
@@ -245,6 +297,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   )}
                   helperText={formikCreateUser.touched.lineUrl && formikCreateUser.errors.lineUrl}
                   onChange={({ target }) => formikCreateUser.setFieldValue('lineUrl', target.value)}
+                  onBlur={({ target }) => checkUrlDuplicate(target.value)}
                   InputLabelProps={{ shrink: true }}
                 />
               </GridTextField>
@@ -313,7 +366,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             >
               {t('button.cancel')}
             </Button>
-            <Button color="primary" variant="contained" type="submit">
+            <Button color="primary" variant="contained" onClick={handleCreate}>
               {t('button.create')}
             </Button>
           </DialogActions>
@@ -400,6 +453,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             <Button
               onClick={() => {
                 formikLinkUser.resetForm()
+                handleCloseConfirmModal()
                 onClose()
               }}
               color="primary"
@@ -412,6 +466,68 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           </DialogActions>
         </form>
       )}
+      <Modal
+        open={openAlertModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            แจ้งเตือน URL ซ้ำ
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            เนื่องจาก URL {formikCreateUser.values.lineUrl} มีอยู่ในระบบแล้ว คุณต้องการสร้างซ้ำหรือไม่?
+          </Typography>
+          <br />
+          <div className={classes.alignRight}>
+            <Button color="primary" variant="contained" onClick={handleCloseModal}>
+              {t('button.cancel')}
+            </Button>&nbsp;&nbsp;
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => formikCreateUser.handleSubmit()}
+            >
+              {t('button.create')}
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={openConfirmModal}
+        onClose={handleCloseConfirmModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            สมัครลูกค้าใหม่สำเร็จ
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            รหัสลูกค้า : {formikLinkUser.values.userId}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            รหัสผ่าน : {password}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            แพ็คเกจที่สมัคร : {packageName}
+          </Typography>
+          <br />
+          <div className={classes.alignRight}>
+            <Button color="primary" variant="contained" onClick={handleCloseModal}>
+              {t('button.cancel')}
+            </Button>&nbsp;&nbsp;
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => formikLinkUser.handleSubmit()}
+            >
+              สมัคร
+            </Button>
+          </div>
+        </Box>
+      </Modal>
     </Dialog>
   )
 }

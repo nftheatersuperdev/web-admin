@@ -571,12 +571,18 @@ export default function Youtube(): JSX.Element {
       </Wrapper>
       <AddNewYoutubeDialog
         open={isAddNewAccountDialogOpen}
-        onClose={() => setIsAddNewAccountDialogOpen(false)}
+        onClose={() => {
+          refetch()
+          setIsAddNewAccountDialogOpen(false)
+        }}
       />
       <AddNewUserDialog
         open={isAddNewUserDialogOpen}
         accountId={accountIdParam}
-        onClose={() => setIsAddNewUserDialogOpen(false)}
+        onClose={() => {
+          refetch()
+          setIsAddNewUserDialogOpen(false)
+        }}
       />
     </Page>
   )
