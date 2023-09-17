@@ -84,3 +84,7 @@ export interface CreateCustomerResponseAPI extends Response {
 export interface UpdateCustomerRequest {
   customerStatus: string
 }
+
+export interface IsDuplicateUrlResponse {
+  data: boolean
+}

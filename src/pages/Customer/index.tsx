@@ -17,6 +17,7 @@ import {
   Typography,
   IconButton,
   Tooltip,
+  Backdrop,
 } from '@mui/material'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -28,10 +29,12 @@ import {
   CheckBox,
   CheckBoxOutlineBlank,
   CloseOutlined,
+  ContentCopy,
   AddCircleOutline as ExtendIcon,
 } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { STORAGE_KEYS } from 'auth/AuthContext'
+import { copyText } from 'utils/copyContent'
 import { DataWrapper, GridSearchSection, TextLineClamp, Wrapper } from 'components/Styled'
 import PageTitle from 'components/PageTitle'
 import { Page } from 'layout/LayoutRoute'
@@ -39,6 +42,7 @@ import { getCustomerList } from 'services/web-bff/customer'
 import { CustomerListInputRequest, CustomerListRequest } from 'services/web-bff/customer.type'
 import Paginate from 'components/Paginate'
 import ExtendUserDialog from './ExtendUserDialog'
+import AddNewUserDialog from './AddNewUserDialog'
 
 const AlignRight = styled.div`
   text-align: right;
@@ -95,6 +99,7 @@ export default function Customer(): JSX.Element {
   const [userIdParam, setUserIdParam] = useState<string>('')
   const [lineIdParam, setLineIdParam] = useState<string>('')
   const [accountParam, setAccountParam] = useState<string>('')
+  const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [isExtendUserDialogOpen, setIsExtendUserDialogOpen] = useState(false)
   const moduleAccount = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT)
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
@@ -145,6 +150,10 @@ export default function Customer(): JSX.Element {
       setPage(1)
     },
   })
+  const copyContent = (email: string, password: string) => {
+    const text = email.concat(' ').concat(password)
+    copyText(text)
+  }
   const icon = <CheckBoxOutlineBlank fontSize="small" />
   const checkedIcon = (
     <CheckBox className="MuiCheckbox-icon MuiCheckbox-iconChecked" fontSize="small" />
@@ -174,7 +183,17 @@ export default function Customer(): JSX.Element {
         <TableRow hover id={`customer__index-${cust.userId}`} key={cust.userId}>
           <TableCell id="customer__user_id">
             <DataWrapper>
-              <TextLineClamp>{cust.userId}</TextLineClamp>
+              <TextLineClamp>
+                {cust.userId}&nbsp;&nbsp;
+                <IconButton onClick={() => copyContent(`${cust.userId}`, `${cust.password}`)}>
+                  <ContentCopy />
+                </IconButton>
+              </TextLineClamp>
+            </DataWrapper>
+          </TableCell>
+          <TableCell id="customer__password">
+            <DataWrapper>
+              <TextLineClamp>{cust.password}</TextLineClamp>
             </DataWrapper>
           </TableCell>
           <TableCell id="customer__line_id">
@@ -240,17 +259,6 @@ export default function Customer(): JSX.Element {
   }, [customerFilter, pages, page, pageSize, refetch])
   return (
     <Page>
-      {/* {isFetching ? (
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-          onClick={handleClose}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : (
-        ''
-      )} */}
       <PageTitle title={t('customer.title')} />
       <Wrapper>
         <Grid container spacing={1}>
@@ -269,7 +277,11 @@ export default function Customer(): JSX.Element {
                 {t('button.search')}
               </Button>
               &nbsp;
-              <Button id="netflix_account__add_btn" variant="contained">
+              <Button
+                id="netflix_account__add_btn"
+                variant="contained"
+                onClick={() => setIsAddNewUserDialogOpen(true)}
+              >
                 สร้างลูกค้าใหม่
               </Button>
             </AlignRight>
@@ -431,6 +443,9 @@ export default function Customer(): JSX.Element {
                 <TableCell align="center" key="รหัสลูกค้า">
                   <TableHeaderColumn>รหัสลูกค้า</TableHeaderColumn>
                 </TableCell>
+                <TableCell align="center" key="รหัสผ่าน">
+                  <TableHeaderColumn>รหัสผ่าน</TableHeaderColumn>
+                </TableCell>
                 <TableCell align="center" key="lineId">
                   <TableHeaderColumn>Line Id</TableHeaderColumn>
                 </TableCell>
@@ -482,9 +497,17 @@ export default function Customer(): JSX.Element {
         userId={userIdParam}
         account={accountParam}
         lineId={lineIdParam}
+        accountType=""
         onClose={() => {
           refetch()
           setIsExtendUserDialogOpen(false)
+        }}
+      />
+      <AddNewUserDialog
+        open={isAddNewUserDialogOpen}
+        onClose={() => {
+          refetch()
+          setIsAddNewUserDialogOpen(false)
         }}
       />
     </Page>
