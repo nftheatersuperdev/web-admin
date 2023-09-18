@@ -261,12 +261,16 @@ export default function Netflix(): JSX.Element {
   const copyAllEmail = () => {
     copyText(allEmail.toString().replaceAll(',', ''))
   }
-  const displayTooltip = (type: string) => {
-    if (type === 'TV' && formik.values.filterTVAvailable) {
+  const displayTooltip = (type: string, status: string) => {
+    if (type === 'TV' && formik.values.filterTVAvailable && status === 'ว่าง') {
       return true
-    } else if (type === 'ADDITIONAL' && formik.values.filterAdditionalAvailable) {
+    } else if (
+      type === 'ADDITIONAL' &&
+      formik.values.filterAdditionalAvailable &&
+      status === 'ว่าง'
+    ) {
       return true
-    } else if (type === 'OTHER' && formik.values.filterOtherAvailable) {
+    } else if (type === 'OTHER' && formik.values.filterOtherAvailable && status === 'ว่าง') {
       return true
     }
     return false
@@ -289,7 +293,7 @@ export default function Netflix(): JSX.Element {
                 type={`${user.accountType}`}
                 color={`${user.color}`}
                 subTitle={`${user.accountStatus}`}
-                display={displayTooltip(`${user.accountType}`)}
+                display={displayTooltip(`${user.accountType}`, `${user.accountStatus}`)}
                 onClick={() =>
                   handleClickIcon(
                     `${user.accountType}`,

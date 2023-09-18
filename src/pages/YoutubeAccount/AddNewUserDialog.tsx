@@ -16,6 +16,7 @@ import {
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -30,6 +31,7 @@ import {
 } from 'services/web-bff/customer.type'
 import { getYoutubePackageByType, linkUserToYoutubeAccount } from 'services/web-bff/youtube'
 import { UpdateLinkUserYoutubeRequest } from 'services/web-bff/youtube.type'
+import { copyText } from 'utils/copyContent'
 
 interface AddNewUserDialogProps {
   open: boolean
@@ -48,6 +50,14 @@ const style = {
   boxShadow: 24,
   p: 4,
 }
+
+export const TextSmallLineClamp = styled.div`
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow-wrap: break-word;
+`
 
 export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Element {
   const useStyles = makeStyles({
@@ -79,6 +89,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     setOpenAlertModal(false)
   }
   const handleCloseConfirmModal = () => {
+    setOpenAlertModal(false)
     setOpenConfirmModal(false)
   }
   const handleCreate = () => {
@@ -102,6 +113,16 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     matchFrom: 'any',
     stringify: (option: CustomerOption) => option.filterLabel,
   })
+  const copyCustomerContent = () => {
+    const text =
+      'รหัสลูกค้า : ' +
+      formikLinkUser.values.userId +
+      '\nรหัสผ่าน​ : ' +
+      password +
+      '\nแพ็คเกจที่สมัคร : ' +
+      packageName
+    copyText(text)
+  }
   const formikCreateUser = useFormik({
     initialValues: {
       packageId: 0,
@@ -373,8 +394,12 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             แจ้งเตือน URL ซ้ำ
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            เนื่องจาก URL {formikCreateUser.values.lineUrl} มีอยู่ในระบบแล้ว คุณต้องการสร้างซ้ำหรือไม่?
+            <TextSmallLineClamp>
+              เนื่องจาก URL {formikCreateUser.values.lineUrl} มีอยู่ในระบบแล้ว
+              คุณต้องการสร้างซ้ำหรือไม่?
+            </TextSmallLineClamp>
           </Typography>
+          <br />
           <br />
           <div className={classes.alignRight}>
             <Button color="primary" variant="contained" onClick={handleCloseModal}>
@@ -411,6 +436,10 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           </Typography>
           <br />
           <div className={classes.alignRight}>
+            <Button color="primary" variant="contained" onClick={copyCustomerContent}>
+              คัดลอกข้อมูล
+            </Button>
+            &nbsp;&nbsp;
             <Button color="primary" variant="contained" onClick={handleCloseConfirmModal}>
               {t('button.cancel')}
             </Button>&nbsp;&nbsp;

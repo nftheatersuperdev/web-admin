@@ -99,3 +99,15 @@ export const isUrlDeplicate = async (url: string): Promise<IsDuplicateUrlRespons
 
   return response
 }
+
+export const deleteCustomer = async (userId: string): Promise<boolean> => {
+  await AdminBffAPI.delete(`/v1/customer/${userId}`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return true
+}

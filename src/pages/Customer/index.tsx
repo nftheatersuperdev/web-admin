@@ -17,7 +17,6 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  Backdrop,
 } from '@mui/material'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -30,17 +29,20 @@ import {
   CheckBoxOutlineBlank,
   CloseOutlined,
   ContentCopy,
+  DeleteForever,
   AddCircleOutline as ExtendIcon,
 } from '@mui/icons-material'
 import { useFormik } from 'formik'
 import { STORAGE_KEYS } from 'auth/AuthContext'
 import { copyText } from 'utils/copyContent'
+import toast from 'react-hot-toast'
 import { DataWrapper, GridSearchSection, TextLineClamp, Wrapper } from 'components/Styled'
 import PageTitle from 'components/PageTitle'
 import { Page } from 'layout/LayoutRoute'
-import { getCustomerList } from 'services/web-bff/customer'
+import { deleteCustomer, getCustomerList } from 'services/web-bff/customer'
 import { CustomerListInputRequest, CustomerListRequest } from 'services/web-bff/customer.type'
 import Paginate from 'components/Paginate'
+import ConfirmDialog from 'components/ConfirmDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import AddNewUserDialog from './AddNewUserDialog'
 
@@ -90,6 +92,9 @@ export default function Customer(): JSX.Element {
       fontWeight: 'bold',
       padding: '48px 0',
     },
+    center: {
+      textAlign: 'center',
+    },
   })
   const classes = useStyles()
   const { t } = useTranslation()
@@ -99,8 +104,10 @@ export default function Customer(): JSX.Element {
   const [userIdParam, setUserIdParam] = useState<string>('')
   const [lineIdParam, setLineIdParam] = useState<string>('')
   const [accountParam, setAccountParam] = useState<string>('')
+  const [confirmMessage, setConfirmMessage] = useState<string>('')
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [isExtendUserDialogOpen, setIsExtendUserDialogOpen] = useState(false)
+  const [visibleDeleteConfirmationDialog, setVisibleDeleteConfirmationDialog] = useState(false)
   const moduleAccount = ls.get<string | null | undefined>(STORAGE_KEYS.ACCOUNT)
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: CustomerListInputRequest = {
@@ -150,6 +157,32 @@ export default function Customer(): JSX.Element {
       setPage(1)
     },
   })
+  const handleDeleteCustomer = (id: string, lineId: string) => {
+    setUserIdParam(id)
+    setConfirmMessage(
+      'คุณแน่ใจหรือว่าต้องการลูกค้า ' +
+        lineId +
+        ' ออกจากระบบ ** หากทำรายการแล้วไม่สามารถยกเลิกได้ **'
+    )
+    setVisibleDeleteConfirmationDialog(true)
+  }
+  const handleOnCloseDeleteConfirmationDialog = (userId: string) => {
+    setVisibleDeleteConfirmationDialog(false)
+    toast.promise(
+      deleteCustomer(userId),
+      {
+        loading: t('toast.loading'),
+        success: () => {
+          refetch()
+          return 'ลบลูกค้าสำเร็จ'
+        },
+        error: 'ลบลูกค้าไม่สำเร็จ',
+      },
+      {
+        duration: 5000,
+      }
+    )
+  }
   const copyContent = (email: string, password: string) => {
     const text = email.concat(' ').concat(password)
     copyText(text)
@@ -221,7 +254,7 @@ export default function Customer(): JSX.Element {
               <TextLineClamp>{cust.account}</TextLineClamp>
             </DataWrapper>
           </TableCell>
-          <TableCell id="customer__actions">
+          <TableCell id="customer__actions" className={classes.center}>
             <Tooltip title="ต่ออายุ">
               <IconButton
                 onClick={() =>
@@ -229,6 +262,11 @@ export default function Customer(): JSX.Element {
                 }
               >
                 <ExtendIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="ลบลูกค้าออกจากระบบ">
+              <IconButton onClick={() => handleDeleteCustomer(`${cust.userId}`, `${cust.lineId}`)}>
+                <DeleteForever />
               </IconButton>
             </Tooltip>
           </TableCell>
@@ -469,7 +507,7 @@ export default function Customer(): JSX.Element {
             {isFetching ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={7} align="center">
+                  <TableCell colSpan={8} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
@@ -492,6 +530,15 @@ export default function Customer(): JSX.Element {
           </Grid>
         </GridSearchSection>
       </Wrapper>
+      <ConfirmDialog
+        open={visibleDeleteConfirmationDialog}
+        title="ลบลูกค้าออกจากระบบ"
+        message={confirmMessage}
+        confirmText={t('button.confirm')}
+        cancelText={t('button.cancel')}
+        onConfirm={() => handleOnCloseDeleteConfirmationDialog(`${userIdParam}`)}
+        onCancel={() => setVisibleDeleteConfirmationDialog(false)}
+      />
       <ExtendUserDialog
         open={isExtendUserDialogOpen}
         userId={userIdParam}
