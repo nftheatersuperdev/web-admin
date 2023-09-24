@@ -61,7 +61,7 @@ export default function SettingConfig(): JSX.Element {
           <TableRow id={`config-${index}`} key={config.configId}>
             <TableCell>
               <DataWrapper>
-                <TextLineClamp>{index}</TextLineClamp>
+                <TextLineClamp>{index+1}</TextLineClamp>
               </DataWrapper>
             </TableCell>
             <TableCell>

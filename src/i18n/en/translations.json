@@ -34,7 +34,8 @@
     "youtubeAccount": {
       "title": "Youtube Account"
     },
-    "settingConfig": "Configuration"
+    "settingConfig": "Configuration",
+    "reward": "Reward"
   },
   "button": {
     "add": "Add",
