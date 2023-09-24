@@ -34,7 +34,8 @@
     "youtubeAccount": {
       "title": "บัญชี Youtube"
     },
-    "settingConfig": "การตั้งค่าระบบ"
+    "settingConfig": "การตั้งค่าระบบ",
+    "reward": "รางวัล"
   },
   "button": {
     "add": "เพิ่ม",

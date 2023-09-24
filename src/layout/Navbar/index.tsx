@@ -56,6 +56,9 @@ function Navbar({ onSidebarToggle }: NavbarProps) {
           <Grid item>
             <VersionText>เวอร์ชั่น {version}</VersionText>
           </Grid>
+          <Grid item>
+            <NavbarLanguagesDropdown />
+          </Grid>
         </Grid>
       </Toolbar>
     </AppBar>

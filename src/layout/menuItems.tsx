@@ -7,6 +7,7 @@ import {
   Tune,
   YouTube,
   AdminPanelSettings,
+  EmojiEvents,
 } from '@mui/icons-material'
 import { ROLES } from 'auth/roles'
 import { SidebarItemsType } from './Sidebar/types'
@@ -63,6 +64,13 @@ export function useMenuItems() {
       icon: YouTube,
       allowedRoles: [ROLES.SUPER_ADMIN, ROLES.YOUTUBE_ADMIN, ROLES.YOUTUBE_AUTHOR],
       allowedPrivileges: ['ALL', 'YOUTUBE'],
+    },
+    {
+      id: 'left_menu__reward',
+      title: t('sidebar.reward'),
+      href: ROUTE_PATHS.REWARD,
+      icon: EmojiEvents,
+      allowedRoles: [ROLES.SUPER_ADMIN],
     },
     {
       id: 'left_menu__setting_config',
