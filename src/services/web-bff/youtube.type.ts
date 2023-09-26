@@ -36,6 +36,7 @@ export interface YoutubeAccountListRequest {
 
 export interface YoutubeAccountListInputRequest {
   changeDate: string
+  billDate: string
   userId: string
   accountName: string
   accountStatus: []
@@ -57,6 +58,7 @@ export interface Youtube {
   accountId: string
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
   accountStatus: string

@@ -9,7 +9,6 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -113,6 +112,7 @@ export default function Youtube(): JSX.Element {
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
   const queryChangeDate = queryString.get('changeDate')
+  const queryBillDate = queryString.get('billDate')
   const queryCustStatus = queryString.get('customerStatus')
   const queryAcctStatus = queryString.get('accountStatus')
   const [isAddNewAccountDialogOpen, setIsAddNewAccountDialogOpen] = useState(false)
@@ -121,11 +121,13 @@ export default function Youtube(): JSX.Element {
   const [pageSize, setPageSize] = useState<number>(10)
   const [accountIdParam, setAccountIdParam] = useState<string>('')
   const [selectedChangeDate, setSelectedChangeDate] = useState<Date>()
+  const [selectedBillDate, setSelectedBillDate] = useState<Date>()
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const [selectAcctStatus, setSelectAcctStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: YoutubeAccountListInputRequest = {
     changeDate: queryChangeDate || '-',
+    billDate: queryBillDate || '-',
     userId: '',
     accountName: '',
     accountStatus: queryAcctStatus !== null ? [queryAcctStatus] : ['กำลังใช้งานอยู่'],
@@ -167,6 +169,10 @@ export default function Youtube(): JSX.Element {
       userId: '',
       changeDate: formatDateStringWithPattern(
         selectedChangeDate?.toString(),
+        DEFAULT_CHANGE_DATE_FORMAT
+      ),
+      billDate: formatDateStringWithPattern(
+        selectedBillDate?.toString(),
         DEFAULT_CHANGE_DATE_FORMAT
       ),
       accountName: '',
@@ -253,6 +259,11 @@ export default function Youtube(): JSX.Element {
               <TextLineClamp>{youtube.accountName}</TextLineClamp>
             </DataWrapper>
           </TableCell>
+          <TableCell id="youtube_account_bill_date__id" align="center">
+            <DataWrapper>
+              <TextSmallLineClamp>{youtube.billDate}</TextSmallLineClamp>
+            </DataWrapper>
+          </TableCell>
           <TableCell id="youtube_account_change_date__id" align="center">
             <DataWrapper>
               <TextSmallLineClamp>{youtube.changeDate}</TextSmallLineClamp>
@@ -284,7 +295,7 @@ export default function Youtube(): JSX.Element {
       )
     })) || (
     <TableRow>
-      <TableCell colSpan={6}>
+      <TableCell colSpan={7}>
         <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
       </TableCell>
     </TableRow>
@@ -321,7 +332,23 @@ export default function Youtube(): JSX.Element {
     } else {
       setSelectedChangeDate(new Date())
     }
-  }, [queryCustStatus, queryAcctStatus, queryChangeDate, selectedChangeDate])
+    if (queryBillDate !== null) {
+      const year = new Date().getFullYear()
+      const [day, month] = queryBillDate.split('/')
+      setSelectedBillDate(new Date(+year, +month - 1, +day))
+    } else if (selectedBillDate !== null) {
+      setSelectedBillDate(selectedBillDate)
+    } else {
+      setSelectedBillDate(new Date())
+    }
+  }, [
+    queryCustStatus,
+    queryAcctStatus,
+    queryChangeDate,
+    selectedChangeDate,
+    queryBillDate,
+    selectedBillDate,
+  ])
   return (
     <Page>
       <PageTitle title={t('sidebar.youtubeAccount.title')} />
@@ -517,6 +544,24 @@ export default function Youtube(): JSX.Element {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
+            <DatePicker
+              disabled={isFetchingAccountList}
+              label="รอบบิล"
+              id="youtube_account_list__bill_date_input"
+              name="selectedBilleDate"
+              format={DEFAULT_CHANGE_DATE_FORMAT}
+              value={selectedBillDate}
+              inputVariant="outlined"
+              onChange={(date) => {
+                date && setSelectedBillDate(date.toDate())
+                formik.setFieldValue(
+                  'billDate',
+                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                )
+              }}
+            />
+          </Grid>
         </Grid>
         <br />
         <TableContainer>
@@ -528,6 +573,9 @@ export default function Youtube(): JSX.Element {
                 </TableCell>
                 <TableCell align="center">
                   <TableHeaderColumn>ชื่อบัญชี</TableHeaderColumn>
+                </TableCell>
+                <TableCell align="center">
+                  <TableHeaderColumn>รอบบิล</TableHeaderColumn>
                 </TableCell>
                 <TableCell align="center">
                   <TableHeaderColumn>วันสลับ</TableHeaderColumn>
@@ -546,7 +594,7 @@ export default function Youtube(): JSX.Element {
             {isFetchingAccountList ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>

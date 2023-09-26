@@ -68,7 +68,7 @@ import AddNewNetflixDialog from './AddNewNetflixDialog'
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
 
-const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').toDate()
+const initDate = dayjs().tz(config.timezone).startOf('day').toDate()
 
 const AlignRight = styled.div`
   text-align: right;
@@ -127,18 +127,21 @@ export default function Netflix(): JSX.Element {
   const searchParams = useLocation().search
   const queryString = new URLSearchParams(searchParams)
   const queryChangeDate = queryString.get('changeDate')
+  const queryBillDate = queryString.get('billDate')
   const queryCustStatus = queryString.get('customerStatus')
   const [isAddNewUserDialogOpen, setIsAddNewUserDialogOpen] = useState(false)
   const [isAddNewAccountDialogOpen, setIsAddNewAccountDialogOpen] = useState(false)
   const [page, setPage] = useState<number>(1)
   const [pages, setPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [selectedChangeDate, setSelectedChangeDate] = useState(initSelectedChangeDate)
+  const [selectedChangeDate, setSelectedChangeDate] = useState(initDate)
+  const [selectedBillDate, setSelectedBillDate] = useState(initDate)
   const [accountIdParam, setAccountIdParam] = useState<string>('')
   const [accountTypeParam, setAccountTypeParam] = useState<string>('')
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: NetflixAccountListInputRequest = {
     changeDate: queryChangeDate || '-',
+    billDate: queryBillDate || '-',
     userId: '',
     accountName: '',
     isActive: true,
@@ -185,6 +188,10 @@ export default function Netflix(): JSX.Element {
         selectedChangeDate?.toString(),
         DEFAULT_CHANGE_DATE_FORMAT
       ),
+      billDate: formatDateStringWithPattern(
+        selectedBillDate?.toString(),
+        DEFAULT_CHANGE_DATE_FORMAT
+      ),
       accountName: '',
       isActive: true,
       customerStatus: [],
@@ -227,6 +234,9 @@ export default function Netflix(): JSX.Element {
     },
     {
       text: 'ชื่อบัญชี',
+    },
+    {
+      text: 'รอบบิล',
     },
     {
       text: 'วันสลับ',
@@ -310,6 +320,11 @@ export default function Netflix(): JSX.Element {
               <TextLineClamp>{netflix.accountName}</TextLineClamp>
             </DataWrapper>
           </TableCell>
+          <TableCell id="netflix_bill_date__id">
+            <DataWrapper>
+              <TextLineClamp>{netflix.billDate}</TextLineClamp>
+            </DataWrapper>
+          </TableCell>
           <TableCell id="netflix_account_change_date__id" align="center">
             <DataWrapper>
               <TextSmallLineClamp>{netflix.changeDate}</TextSmallLineClamp>
@@ -355,7 +370,7 @@ export default function Netflix(): JSX.Element {
       )
     })) || (
     <TableRow>
-      <TableCell colSpan={6}>
+      <TableCell colSpan={7}>
         <div className={classes.noResultMessage}>{t('warning.noResultList')}</div>
       </TableCell>
     </TableRow>
@@ -389,7 +404,16 @@ export default function Netflix(): JSX.Element {
     } else {
       setSelectedChangeDate(new Date())
     }
-  }, [queryCustStatus, queryChangeDate, selectedChangeDate])
+    if (queryBillDate !== null) {
+      const year = new Date().getFullYear()
+      const [day, month] = queryBillDate.split('/')
+      setSelectedBillDate(new Date(+year, +month - 1, +day))
+    } else if (selectedBillDate !== null) {
+      setSelectedBillDate(selectedBillDate)
+    } else {
+      setSelectedBillDate(new Date())
+    }
+  }, [queryCustStatus, queryChangeDate, selectedChangeDate, queryBillDate, selectedBillDate])
   return (
     <Page>
       <PageTitle title={t('sidebar.netflixAccount.title')} />
@@ -499,7 +523,7 @@ export default function Netflix(): JSX.Element {
             </TextField>
           </Grid>
         </GridSearchSection>
-        <Grid container spacing={1}>
+        <GridSearchSection container spacing={1}>
           <Grid item xs={12} sm={4}>
             <Autocomplete
               disabled={isFetchingAccountList}
@@ -560,6 +584,26 @@ export default function Netflix(): JSX.Element {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
+            <DatePicker
+              disabled={isFetchingAccountList}
+              label="รอบบิล"
+              id="netflix_account_list__bill_date_input"
+              name="selectedBillDate"
+              format={DEFAULT_CHANGE_DATE_FORMAT}
+              value={selectedBillDate}
+              inputVariant="outlined"
+              onChange={(date) => {
+                date && setSelectedBillDate(date.toDate())
+                formik.setFieldValue(
+                  'billDate',
+                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                )
+              }}
+            />
+          </Grid>
+        </GridSearchSection>
+        <Grid container spacing={1}>
           <Grid item xs={12} sm={4}>
             <FormControl component="fieldset">
               <CheckBoxGroupLabel>เลือกกรองอุปกรณ์ที่ว่าง</CheckBoxGroupLabel>
@@ -623,7 +667,7 @@ export default function Netflix(): JSX.Element {
             {isFetchingAccountList ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
+                  <TableCell colSpan={7} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
