@@ -4,6 +4,7 @@ import { Pagination } from './response.type'
 export interface CreateYoutubeAccountRequest {
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
 }

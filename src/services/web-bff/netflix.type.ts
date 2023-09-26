@@ -78,6 +78,7 @@ export interface NetflixUser {
 export interface CreateNetflixAccountRequest {
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
 }
