@@ -22,6 +22,7 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { copyText } from 'utils/copyContent'
 import { GridTextField } from 'components/Styled'
 import { getCustomerOptionList, createCustomer, isUrlDeplicate } from 'services/web-bff/customer'
 import {
@@ -31,7 +32,6 @@ import {
 } from 'services/web-bff/customer.type'
 import { getYoutubePackageByType, linkUserToYoutubeAccount } from 'services/web-bff/youtube'
 import { UpdateLinkUserYoutubeRequest } from 'services/web-bff/youtube.type'
-import { copyText } from 'utils/copyContent'
 
 interface AddNewUserDialogProps {
   open: boolean
@@ -120,7 +120,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       '\nรหัสผ่าน​ : ' +
       password +
       '\nแพ็คเกจที่สมัคร : ' +
-      packageName
+      packageName +
+      '\nนำรหัสลูกค้า-รหัสผ่าน เข้าระบบที่เว็บไซต์ด้านล่างได้เลยนะครับ' +
+      '\nhttps://frolicking-moonbeam-84198d.netlify.app'
     copyText(text)
   }
   const formikCreateUser = useFormik({
@@ -404,7 +406,8 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           <div className={classes.alignRight}>
             <Button color="primary" variant="contained" onClick={handleCloseModal}>
               {t('button.cancel')}
-            </Button>&nbsp;&nbsp;
+            </Button>
+            &nbsp;&nbsp;
             <Button
               color="primary"
               variant="contained"
@@ -434,6 +437,12 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             แพ็คเกจที่สมัคร : {packageName}
           </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            นำรหัสลูกค้า-รหัสผ่าน เข้าระบบที่เว็บไซต์ด้านล่างได้เลยนะครับ
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            https://frolicking-moonbeam-84198d.netlify.app
+          </Typography>
           <br />
           <div className={classes.alignRight}>
             <Button color="primary" variant="contained" onClick={copyCustomerContent}>
@@ -442,7 +451,8 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             &nbsp;&nbsp;
             <Button color="primary" variant="contained" onClick={handleCloseConfirmModal}>
               {t('button.cancel')}
-            </Button>&nbsp;&nbsp;
+            </Button>
+            &nbsp;&nbsp;
             <Button
               color="primary"
               variant="contained"

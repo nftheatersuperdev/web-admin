@@ -70,6 +70,7 @@ import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
 import AddNewUserDialog from './AddNewUserDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import TransferUserDialog from './TransferUserDialog'
+import ConfirmDeleteDialog from 'components/ConfirmDeleteDialog'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -732,9 +733,10 @@ export default function YoutubeAccount(): JSX.Element {
         onConfirm={() => handleOnCloseChangeStatusDialog(`${userIdParam}`, `${statusParam}`)}
         onCancel={() => setVisibleChangeStatusDialog(false)}
       />
-      <ConfirmDialog
+      <ConfirmDeleteDialog
         open={visibleDeleteConfirmationDialog}
-        title="ลบลูกค้าออกจากบัญชีนี้"
+        title="ออกจากบัญชี"
+        titleBold="ลบลูกค้า"
         message="คุณแน่ใจหรือว่าต้องการลูกค้าออกจากบัญชีนี้"
         confirmText={t('button.confirm')}
         cancelText={t('button.cancel')}
