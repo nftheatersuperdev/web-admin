@@ -44,7 +44,7 @@ export default function EditAdditionalScreenDialog(props: EditAdditionalScreenPr
     onSubmit: (values) => {
       toast.promise(
         updateAdditionalAccount(
-          { password: values.password } as UpdateAdditionalAccountRequest,
+          { email: values.email, password: values.password } as UpdateAdditionalAccountRequest,
           accountId,
           additionalId
         ),
@@ -79,13 +79,18 @@ export default function EditAdditionalScreenDialog(props: EditAdditionalScreenPr
             <GridTextField item xs={12} sm={12}>
               <TextField
                 type="text"
-                disabled
                 name="email"
                 id="netflix_additional_edit_email"
                 label={t('netflix.mainInfo.email')}
                 fullWidth
                 variant="outlined"
-                value={email}
+                value={formik.values.email}
+                error={Boolean(formik.touched.password && formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+                onChange={({ target }) => {
+                  setIsChanged(true)
+                  formik.setFieldValue('email', target.value)
+                }}
               />
             </GridTextField>
             <GridTextField item xs={12} sm={12}>

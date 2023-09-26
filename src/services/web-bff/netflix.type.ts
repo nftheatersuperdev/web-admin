@@ -133,6 +133,7 @@ export interface UpdateNetflixAccountResponse {
 }
 
 export interface UpdateAdditionalAccountRequest {
+  email: string
   password: string
 }
 

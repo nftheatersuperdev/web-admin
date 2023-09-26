@@ -8,6 +8,7 @@ interface DataTableProps {
 export interface TableHeaderProps {
   text: string
   style?: string
+  align?: string
 }
 
 const TableHeaderColumn = styled.div`
@@ -23,7 +24,7 @@ export default function DataTableHeader({ headers }: DataTableProps): JSX.Elemen
         <TableRow>
           {headers.map((header) => {
             return (
-              <TableCell align="center" key={header.text}>
+              <TableCell align={header.align || 'center'} key={header.text}>
                 <TableHeaderColumn className={header?.style}>{header.text}</TableHeaderColumn>
               </TableCell>
             )

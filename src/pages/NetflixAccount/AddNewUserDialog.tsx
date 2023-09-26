@@ -109,7 +109,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       '\nรหัสผ่าน​ : ' +
       password +
       '\nแพ็คเกจที่สมัคร : ' +
-      packageName
+      packageName +
+      '\nนำรหัสลูกค้า-รหัสผ่าน เข้าระบบที่เว็บไซต์ด้านล่างได้เลยนะครับ' +
+      '\nhttps://frolicking-moonbeam-84198d.netlify.app'
     copyText(text)
   }
   const { data: customerOptionList } = useQuery('customer-option', () =>
@@ -538,6 +540,12 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             แพ็คเกจที่สมัคร : {packageName}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            นำรหัสลูกค้า-รหัสผ่าน เข้าระบบที่เว็บไซต์ด้านล่างได้เลยนะครับ
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            https://frolicking-moonbeam-84198d.netlify.app
           </Typography>
           <br />
           <div className={classes.alignRight}>

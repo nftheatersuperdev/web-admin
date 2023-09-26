@@ -80,6 +80,7 @@ import AddNewScreenDialog from './AddNewAdditionalScreenDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import EditAdditionalScreenDialog from './EditAdditionalScreenDialog'
 import TransferUserDialog from './TransferUserDialog'
+import ConfirmDeleteDialog from 'components/ConfirmDeleteDialog'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -130,6 +131,9 @@ export default function NetflixAccount(): JSX.Element {
       fontSize: '1.2em',
       fontWeight: 'bold',
       padding: '48px 0',
+    },
+    deleteTitle: {
+      color: 'red',
     },
     width100: {
       width: '100%',
@@ -708,7 +712,7 @@ export default function NetflixAccount(): JSX.Element {
                       <TableCell align="center">
                         <TextLineClamp>{index + 1}</TextLineClamp>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TextLineClamp>
                           {add.email} &nbsp;&nbsp;
                           <IconButton
@@ -718,10 +722,10 @@ export default function NetflixAccount(): JSX.Element {
                           </IconButton>
                         </TextLineClamp>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TextLineClamp>{add.user?.userId}</TextLineClamp>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TextLineClamp>{add.user?.lineId}</TextLineClamp>
                       </TableCell>
                       <TableCell align="center">
@@ -878,6 +882,7 @@ export default function NetflixAccount(): JSX.Element {
                           type={`${user.accountType}`}
                           color={`${user.color}`}
                           subTitle={`${user.accountStatus}`}
+                          display={true}
                         />
                       </TableCell>
                       <TableCell>
@@ -1025,18 +1030,20 @@ export default function NetflixAccount(): JSX.Element {
         onConfirm={() => handleOnCloseChangeStatusDialog(`${userIdParam}`, `${statusParam}`)}
         onCancel={() => setVisibleChangeStatusDialog(false)}
       />
-      <ConfirmDialog
+      <ConfirmDeleteDialog
         open={visibleDeleteConfirmationDialog}
-        title="ลบลูกค้าออกจากบัญชีนี้"
+        title="ออกจากบัญชี"
+        titleBold="ลบลูกค้า"
         message="คุณแน่ใจหรือว่าต้องการลูกค้าออกจากบัญชีนี้"
         confirmText={t('button.confirm')}
         cancelText={t('button.cancel')}
         onConfirm={() => handleOnCloseDeleteConfirmationDialog(`${userIdParam}`, `${id}`)}
         onCancel={() => setVisibleDeleteConfirmationDialog(false)}
       />
-      <ConfirmDialog
+      <ConfirmDeleteDialog
         open={visibleDeleteAddConfirmationDialog}
-        title="ลบลูกค้าออกจากบัญชีนี้"
+        title="ออกจากบัญชี"
+        titleBold="ลบลูกค้า"
         message="คุณแน่ใจหรือว่าต้องการลบลูกค้าออกจากบัญชีนี้"
         confirmText={t('button.confirm')}
         cancelText={t('button.cancel')}
