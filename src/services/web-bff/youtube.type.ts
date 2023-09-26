@@ -18,6 +18,7 @@ export interface CreateYoutubeAccountResponse {
 
 export interface UpdateYoutubeAccountRequest {
   changeDate: string
+  billDate: string
   password: string
 }
 

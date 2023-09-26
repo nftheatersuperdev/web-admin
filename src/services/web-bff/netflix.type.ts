@@ -125,6 +125,7 @@ export interface NetflixAccounts {
 
 export interface UpdateNetflixAccountRequest {
   changeDate: string
+  billDate: string
   email?: string
   password: string
 }
