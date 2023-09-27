@@ -181,6 +181,7 @@ export interface NetflixDashboard {
     changeDateInfo: NetflixChangeDateInfo
     customerInfo: NetflixCustomerInfo
     deviceInfo: NetflixDeviceInfo
+    todayTransaction: number
   }
 }
 

@@ -599,6 +599,30 @@ export default function NetflixAccount(): JSX.Element {
             <GridTextField item xs={6} sm={6} className={classes.datePickerFromTo}>
               <DatePicker
                 className={classes.width100}
+                label="รอบบิล"
+                name="selectedBillDate"
+                format={DEFAULT_CHANGE_DATE_FORMAT}
+                value={selectedBillDate}
+                inputVariant="outlined"
+                onChange={(date) => {
+                  date && setSelectedBillDate(date.toDate())
+                  formikUpdateAccount.setFieldValue(
+                    'billDate',
+                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                  )
+                  setIsUpdateAccount(true)
+                }}
+                error={Boolean(
+                  formikUpdateAccount.touched.billDate && formikUpdateAccount.errors.billDate
+                )}
+                helperText={
+                  formikUpdateAccount.touched.billDate && formikUpdateAccount.errors.billDate
+                }
+              />
+            </GridTextField>
+            <GridTextField item xs={6} sm={6} className={classes.datePickerFromTo}>
+              <DatePicker
+                className={classes.width100}
                 label={t('netflix.mainInfo.changeDate')}
                 id="netflix_account__search_input"
                 name="selectedChangeDate"
@@ -618,30 +642,6 @@ export default function NetflixAccount(): JSX.Element {
                 )}
                 helperText={
                   formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
-                }
-              />
-            </GridTextField>
-            <GridTextField item xs={6} sm={6} className={classes.datePickerFromTo}>
-              <DatePicker
-                className={classes.width100}
-                label="รอบบิล"
-                name="selectedBillDate"
-                format={DEFAULT_CHANGE_DATE_FORMAT}
-                value={selectedBillDate}
-                inputVariant="outlined"
-                onChange={(date) => {
-                  date && setSelectedBillDate(date.toDate())
-                  formikUpdateAccount.setFieldValue(
-                    'billDate',
-                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
-                  )
-                  setIsUpdateAccount(true)
-                }}
-                error={Boolean(
-                  formikUpdateAccount.touched.billDate && formikUpdateAccount.errors.billDate
-                )}
-                helperText={
-                  formikUpdateAccount.touched.billDate && formikUpdateAccount.errors.billDate
                 }
               />
             </GridTextField>

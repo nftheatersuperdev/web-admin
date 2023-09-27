@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react'
+/* eslint-disable jsx-a11y/alt-text */
+import { useCallback } from 'react'
 import { Tab } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import { AccountBalance, YouTube } from '@mui/icons-material'
 import styles from './tab.module.css'
 
 export interface Props {
@@ -17,6 +17,9 @@ function TabTitle(props: Props): JSX.Element {
     hideObject: {
       display: 'none',
     },
+    icon: {
+      width: '45px',
+    },
   })
   const classes = useStyles()
   const { title, setSelectedTab, index, isActive, hideTab } = props
@@ -30,7 +33,13 @@ function TabTitle(props: Props): JSX.Element {
         label={title}
         onClick={handleOnClick}
         className={hideTab ? classes.hideObject : ''}
-        icon={title === 'Netflix' ? <AccountBalance /> : <YouTube />}
+        icon={
+          title === 'Netflix' ? (
+            <img className={classes.icon} src="/logo-netflix.png" />
+          ) : (
+            <img className={classes.icon} src="/logo-youtube.png" />
+          )
+        }
         aria-label="youtube"
         // disabled={moduleAccount === 'NETFLIX'}
       />

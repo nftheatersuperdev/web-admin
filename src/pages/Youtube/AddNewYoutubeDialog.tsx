@@ -138,6 +138,27 @@ export default function AddNewYoutubeDialog(props: AddNewYoutubeDialogProps): JS
             <GridTextField item xs={12} sm={12} className={classes.datePickerFromTo}>
               <DatePicker
                 disablePast
+                label="รอบบิล"
+                name="selectedBillDate"
+                format={DEFAULT_CHANGE_DATE_FORMAT}
+                value={selectedBillDate}
+                inputVariant="outlined"
+                placeholder="กรุณาระบุรอบบิลในตรงรูปแบบที่กำหนดเช่น 29/09"
+                InputLabelProps={{ shrink: true }}
+                error={Boolean(formik.touched.billDate && formik.errors.billDate)}
+                helperText={formik.touched.billDate && formik.errors.billDate}
+                onChange={(date) => {
+                  date && setSelectedBillDate(date.toDate())
+                  formik.setFieldValue(
+                    'billDate',
+                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                  )
+                }}
+              />
+            </GridTextField>
+            <GridTextField item xs={12} sm={12} className={classes.datePickerFromTo}>
+              <DatePicker
+                disablePast
                 label="วันสลับ"
                 id="youtube_account__search_input"
                 name="selectedChangeDate"
@@ -152,27 +173,6 @@ export default function AddNewYoutubeDialog(props: AddNewYoutubeDialogProps): JS
                   date && setSelectedChangeDate(date.toDate())
                   formik.setFieldValue(
                     'changeDate',
-                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
-                  )
-                }}
-              />
-            </GridTextField>
-            <GridTextField item xs={12} sm={12} className={classes.datePickerFromTo}>
-              <DatePicker
-                disablePast
-                label="รอบบิล"
-                name="selectedBillDate"
-                format={DEFAULT_CHANGE_DATE_FORMAT}
-                value={selectedBillDate}
-                inputVariant="outlined"
-                placeholder="กรุณาระบุรอบบิลในตรงรูปแบบที่กำหนดเช่น 29/09"
-                InputLabelProps={{ shrink: true }}
-                error={Boolean(formik.touched.billDate && formik.errors.billDate)}
-                helperText={formik.touched.billDate && formik.errors.billDate}
-                onChange={(date) => {
-                  date && setSelectedBillDate(date.toDate())
-                  formik.setFieldValue(
-                    'billDate',
                     formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
                   )
                 }}

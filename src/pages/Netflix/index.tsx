@@ -569,24 +569,6 @@ export default function Netflix(): JSX.Element {
           <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
             <DatePicker
               disabled={isFetchingAccountList}
-              label="วันสลับ"
-              id="netflix_account_list__change_date_input"
-              name="selectedChangeDate"
-              format={DEFAULT_CHANGE_DATE_FORMAT}
-              value={selectedChangeDate}
-              inputVariant="outlined"
-              onChange={(date) => {
-                date && setSelectedChangeDate(date.toDate())
-                formik.setFieldValue(
-                  'changeDate',
-                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
-                )
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
-            <DatePicker
-              disabled={isFetchingAccountList}
               label="รอบบิล"
               id="netflix_account_list__bill_date_input"
               name="selectedBillDate"
@@ -597,6 +579,24 @@ export default function Netflix(): JSX.Element {
                 date && setSelectedBillDate(date.toDate())
                 formik.setFieldValue(
                   'billDate',
+                  formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                )
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
+            <DatePicker
+              disabled={isFetchingAccountList}
+              label="วันสลับ"
+              id="netflix_account_list__change_date_input"
+              name="selectedChangeDate"
+              format={DEFAULT_CHANGE_DATE_FORMAT}
+              value={selectedChangeDate}
+              inputVariant="outlined"
+              onChange={(date) => {
+                date && setSelectedChangeDate(date.toDate())
+                formik.setFieldValue(
+                  'changeDate',
                   formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
                 )
               }}

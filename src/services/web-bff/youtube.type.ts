@@ -127,6 +127,7 @@ export interface YoutubeDashboard {
   data: {
     changeDateInfo: YoutubeChangeDateInfo
     customerInfo: YoutubeCustomerInfo
+    todayTransition: number
   }
 }
 
