@@ -34,7 +34,7 @@ interface AddNewYoutubeDialogProps {
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
 
-const initSelectedChangeDate = dayjs().tz(config.timezone).startOf('day').add(7, 'day').toDate()
+const initDate = dayjs().tz(config.timezone).startOf('day').add(7, 'day').toDate()
 
 export default function AddNewYoutubeDialog(props: AddNewYoutubeDialogProps): JSX.Element {
   const useStyles = makeStyles({
@@ -48,10 +48,12 @@ export default function AddNewYoutubeDialog(props: AddNewYoutubeDialogProps): JS
   const classes = useStyles()
   const { open, onClose } = props
   const { t } = useTranslation()
-  const [selectedChangeDate, setSelectedChangeDate] = useState(initSelectedChangeDate)
+  const [selectedChangeDate, setSelectedChangeDate] = useState(initDate)
+  const [selectedBillDate, setSelectedBillDate] = useState(initDate)
   const formik = useFormik({
     initialValues: {
       changeDate: '',
+      billDate: '',
       email: '',
       password: '',
     },
@@ -60,6 +62,10 @@ export default function AddNewYoutubeDialog(props: AddNewYoutubeDialogProps): JS
         .max(255)
         .matches(/^[1-31/0-12]/, 'กรุณาระบุวันสลับให้ตรงรูปแบบเช่น 29/09')
         .required('กรุณาระบุวันสลับ'),
+      billDate: Yup.string()
+        .max(255)
+        .matches(/^[1-31/0-12]/, 'กรุณาระบุรอบบิลให้ตรงรูปแบบเช่น 29/09')
+        .required('กรุณาระบุรอบบิล'),
       password: Yup.string().max(255).required('กรุณาระบุรหัสผ่าน'),
       email: Yup.string().email('อีเมลล์ไม่ถูกต้อง').max(255).required('กรุณาระบุอีเมลล์'),
     }),
@@ -127,6 +133,27 @@ export default function AddNewYoutubeDialog(props: AddNewYoutubeDialogProps): JS
                 helperText={formik.touched.password && formik.errors.password}
                 onChange={({ target }) => formik.setFieldValue('password', target.value)}
                 InputLabelProps={{ shrink: true }}
+              />
+            </GridTextField>
+            <GridTextField item xs={12} sm={12} className={classes.datePickerFromTo}>
+              <DatePicker
+                disablePast
+                label="รอบบิล"
+                name="selectedBillDate"
+                format={DEFAULT_CHANGE_DATE_FORMAT}
+                value={selectedBillDate}
+                inputVariant="outlined"
+                placeholder="กรุณาระบุรอบบิลในตรงรูปแบบที่กำหนดเช่น 29/09"
+                InputLabelProps={{ shrink: true }}
+                error={Boolean(formik.touched.billDate && formik.errors.billDate)}
+                helperText={formik.touched.billDate && formik.errors.billDate}
+                onChange={(date) => {
+                  date && setSelectedBillDate(date.toDate())
+                  formik.setFieldValue(
+                    'billDate',
+                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                  )
+                }}
               />
             </GridTextField>
             <GridTextField item xs={12} sm={12} className={classes.datePickerFromTo}>

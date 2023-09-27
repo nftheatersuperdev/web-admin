@@ -4,6 +4,7 @@ import { Pagination } from './response.type'
 export interface CreateYoutubeAccountRequest {
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
 }
@@ -17,6 +18,7 @@ export interface CreateYoutubeAccountResponse {
 
 export interface UpdateYoutubeAccountRequest {
   changeDate: string
+  billDate: string
   password: string
 }
 
@@ -36,6 +38,7 @@ export interface YoutubeAccountListRequest {
 
 export interface YoutubeAccountListInputRequest {
   changeDate: string
+  billDate: string
   userId: string
   accountName: string
   accountStatus: []
@@ -57,6 +60,7 @@ export interface Youtube {
   accountId: string
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
   accountStatus: string
@@ -123,6 +127,7 @@ export interface YoutubeDashboard {
   data: {
     changeDateInfo: YoutubeChangeDateInfo
     customerInfo: YoutubeCustomerInfo
+    todayTransition: number
   }
 }
 

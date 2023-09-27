@@ -75,12 +75,12 @@ import ConfirmDialog from 'components/ConfirmDialog'
 import CheckBoxComponent from 'components/CheckBoxComponent'
 import { getNextStatus, updateCustomer } from 'services/web-bff/customer'
 import { UpdateCustomerRequest } from 'services/web-bff/customer.type'
+import ConfirmDeleteDialog from 'components/ConfirmDeleteDialog'
 import AddNewUserDialog from './AddNewUserDialog'
 import AddNewScreenDialog from './AddNewAdditionalScreenDialog'
 import ExtendUserDialog from './ExtendUserDialog'
 import EditAdditionalScreenDialog from './EditAdditionalScreenDialog'
 import TransferUserDialog from './TransferUserDialog'
-import ConfirmDeleteDialog from 'components/ConfirmDeleteDialog'
 
 dayjs.extend(dayjsUtc)
 dayjs.extend(dayjsTimezone)
@@ -199,8 +199,12 @@ export default function NetflixAccount(): JSX.Element {
     .tz(config.timezone)
     .startOf('day')
     .toDate()
-
+  const initSelectedBillDate = dayjs(netflix?.data.billDate, 'DD/MM')
+    .tz(config.timezone)
+    .startOf('day')
+    .toDate()
   const [selectedChangeDate, setSelectedChangeDate] = useState<Date>(initSelectedChangeDate)
+  const [selectedBillDate, setSelectedBillDate] = useState<Date>(initSelectedBillDate)
   const headerAdditionalColumn: TableHeaderProps[] = [
     {
       text: 'ลำดับ',
@@ -225,6 +229,10 @@ export default function NetflixAccount(): JSX.Element {
         selectedChangeDate?.toString(),
         DEFAULT_CHANGE_DATE_FORMAT
       ),
+      billDate: formatDateStringWithPattern(
+        selectedBillDate?.toString(),
+        DEFAULT_CHANGE_DATE_FORMAT
+      ),
       password: netflix?.data.password,
     },
     validationSchema: Yup.object().shape({
@@ -232,6 +240,10 @@ export default function NetflixAccount(): JSX.Element {
         .max(255)
         .matches(/^[1-31/0-12]/, 'กรุณาระบุวันสลับให้ตรงรูปแบบเช่น 29/09')
         .required('กรุณาระบุวันสลับ'),
+      billDate: Yup.string()
+        .max(255)
+        .matches(/^[1-31/0-12]/, 'กรุณาระบุรอบบิลให้ตรงรูปแบบเช่น 29/09')
+        .required('กรุณาระบุรอบบิล'),
       password: Yup.string().max(255).required('กรุณาระบุรหัสผ่าน'),
     }),
     enableReinitialize: true,
@@ -242,6 +254,7 @@ export default function NetflixAccount(): JSX.Element {
           {
             changeDate: values.changeDate,
             password: values.password,
+            billDate: values.billDate,
           } as UpdateNetflixAccountRequest,
           values.accountId
         ),
@@ -457,6 +470,9 @@ export default function NetflixAccount(): JSX.Element {
     setSelectedChangeDate(
       dayjs(netflix?.data.changeDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
     )
+    setSelectedBillDate(
+      dayjs(netflix?.data.billDate, 'DD/MM').tz(config.timezone).startOf('day').toDate()
+    )
   }, [netflix, refetch])
   /**
    * Managing the pagination variables that will send to the API.
@@ -521,29 +537,19 @@ export default function NetflixAccount(): JSX.Element {
                 InputLabelProps={{ shrink: true }}
               />
             </GridTextField>
-            <GridTextField item xs={6} sm={6} className={classes.datePickerFromTo}>
-              <DatePicker
-                className={classes.width100}
-                label={t('netflix.mainInfo.changeDate')}
-                id="netflix_account__search_input"
-                name="selectedChangeDate"
-                format={DEFAULT_CHANGE_DATE_FORMAT}
-                value={selectedChangeDate}
-                inputVariant="outlined"
-                onChange={(date) => {
-                  date && setSelectedChangeDate(date.toDate())
-                  formikUpdateAccount.setFieldValue(
-                    'changeDate',
-                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
-                  )
-                  setIsUpdateAccount(true)
-                }}
-                error={Boolean(
-                  formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
-                )}
-                helperText={
-                  formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
+            <GridTextField item xs={6} sm={6}>
+              <TextField
+                id="netflix_detail_account_status"
+                label={t('netflix.mainInfo.accountStatus')}
+                fullWidth
+                disabled
+                variant="outlined"
+                value={
+                  netflix?.data.isActive
+                    ? t('netflix.statuses.active')
+                    : t('netflix.statuses.inactive')
                 }
+                InputLabelProps={{ shrink: true }}
               />
             </GridTextField>
             <GridTextField item xs={6} sm={6}>
@@ -590,22 +596,55 @@ export default function NetflixAccount(): JSX.Element {
                 }}
               />
             </GridTextField>
-            <GridTextField item xs={6} sm={6}>
-              <TextField
-                id="netflix_detail_account_status"
-                label={t('netflix.mainInfo.accountStatus')}
-                fullWidth
-                disabled
-                variant="outlined"
-                value={
-                  netflix?.data.isActive
-                    ? t('netflix.statuses.active')
-                    : t('netflix.statuses.inactive')
+            <GridTextField item xs={6} sm={6} className={classes.datePickerFromTo}>
+              <DatePicker
+                className={classes.width100}
+                label="รอบบิล"
+                name="selectedBillDate"
+                format={DEFAULT_CHANGE_DATE_FORMAT}
+                value={selectedBillDate}
+                inputVariant="outlined"
+                onChange={(date) => {
+                  date && setSelectedBillDate(date.toDate())
+                  formikUpdateAccount.setFieldValue(
+                    'billDate',
+                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                  )
+                  setIsUpdateAccount(true)
+                }}
+                error={Boolean(
+                  formikUpdateAccount.touched.billDate && formikUpdateAccount.errors.billDate
+                )}
+                helperText={
+                  formikUpdateAccount.touched.billDate && formikUpdateAccount.errors.billDate
                 }
-                InputLabelProps={{ shrink: true }}
               />
             </GridTextField>
-            <GridTextField item xs={6} sm={6} />
+            <GridTextField item xs={6} sm={6} className={classes.datePickerFromTo}>
+              <DatePicker
+                className={classes.width100}
+                label={t('netflix.mainInfo.changeDate')}
+                id="netflix_account__search_input"
+                name="selectedChangeDate"
+                format={DEFAULT_CHANGE_DATE_FORMAT}
+                value={selectedChangeDate}
+                inputVariant="outlined"
+                onChange={(date) => {
+                  date && setSelectedChangeDate(date.toDate())
+                  formikUpdateAccount.setFieldValue(
+                    'changeDate',
+                    formatDateStringWithPattern(date?.toString(), DEFAULT_CHANGE_DATE_FORMAT)
+                  )
+                  setIsUpdateAccount(true)
+                }}
+                error={Boolean(
+                  formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
+                )}
+                helperText={
+                  formikUpdateAccount.touched.changeDate && formikUpdateAccount.errors.changeDate
+                }
+              />
+            </GridTextField>
             <GridTextField item xs={6} sm={6}>
               <TextField
                 type="text"

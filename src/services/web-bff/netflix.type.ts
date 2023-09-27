@@ -9,6 +9,7 @@ export interface NetflixAccountListRequest {
 
 export interface NetflixAccountListInputRequest {
   changeDate: string
+  billDate: string
   userId: string
   accountName: string
   isActive: boolean
@@ -45,6 +46,7 @@ export interface Netflix {
   accountId: string
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
   isActive: boolean
@@ -76,6 +78,7 @@ export interface NetflixUser {
 export interface CreateNetflixAccountRequest {
   accountName: string
   changeDate: string
+  billDate: string
   email: string
   password: string
 }
@@ -122,6 +125,7 @@ export interface NetflixAccounts {
 
 export interface UpdateNetflixAccountRequest {
   changeDate: string
+  billDate: string
   email?: string
   password: string
 }
@@ -177,6 +181,7 @@ export interface NetflixDashboard {
     changeDateInfo: NetflixChangeDateInfo
     customerInfo: NetflixCustomerInfo
     deviceInfo: NetflixDeviceInfo
+    todayTransaction: number
   }
 }
 
