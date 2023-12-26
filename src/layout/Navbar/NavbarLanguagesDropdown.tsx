@@ -36,7 +36,8 @@ const languageOptions: LanguageOptionsType = {
 function NavbarLanguagesDropdown(): JSX.Element {
   const { i18n } = useTranslation()
   const handleLanguage = () => {
-    return ['en-US', 'en'].includes(i18n.language) ? 'th' : 'en'
+    // return ['en-US', 'en'].includes(i18n.language) ? 'th' : 'en'
+    return 'en'
   }
   const ln = handleLanguage()
   const selectedLanguage = languageOptions[ln]
@@ -45,13 +46,12 @@ function NavbarLanguagesDropdown(): JSX.Element {
     const newLang = handleLanguage()
     await i18n.changeLanguage(newLang)
   }
-  return (
-    <Tooltip title="Languages">
-      <IconButton onClick={handleLanguageChange} color="inherit" size="large">
-        <Flag src={selectedLanguage.icon} alt={selectedLanguage.name} />
-      </IconButton>
-    </Tooltip>
-  )
+  return <div />
+  // <Tooltip title="Languages">
+  //   <IconButton onClick={handleLanguageChange} color="inherit" size="large">
+  //     <Flag src={selectedLanguage.icon} alt={selectedLanguage.name} />
+  //   </IconButton>
+  // </Tooltip>
 }
 
 export default NavbarLanguagesDropdown
