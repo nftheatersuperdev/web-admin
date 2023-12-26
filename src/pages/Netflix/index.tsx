@@ -73,7 +73,6 @@ const initDate = dayjs().tz(config.timezone).startOf('day').toDate()
 const AlignRight = styled.div`
   text-align: right;
 `
-
 const CheckBoxGroupLabel = styled(FormLabel)`
   font-size: 12px;
 `
