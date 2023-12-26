@@ -28,6 +28,7 @@ import {
   DisabledByDefault as DisableIcon,
   CheckBox as EnableIcon,
   SwapHoriz,
+  Verified,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
@@ -927,8 +928,13 @@ export default function NetflixAccount(): JSX.Element {
                       <TableCell>
                         <TextLineClamp>{user.user?.userId}</TextLineClamp>
                       </TableCell>
-                      <TableCell>
-                        <TextLineClamp>{user.user?.lineId}</TextLineClamp>
+                      <TableCell style={{ padding: '0px' }}>
+                        <TextLineClamp>
+                          {user.user?.lineId}
+                          <IconButton style={{ color: 'green' }} >
+                            <Verified />
+                          </IconButton>
+                        </TextLineClamp>
                       </TableCell>
                       <TableCell>
                         <DataWrapper>
