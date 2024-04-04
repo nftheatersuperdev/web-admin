@@ -1,4 +1,6 @@
 import { AdminBffAPI } from 'api/admin-bff'
+import { AxiosResponse } from 'axios'
+import { response } from 'msw'
 import {
   CreateCustomerRequest,
   CreateCustomerResponseAPI,
@@ -8,7 +10,9 @@ import {
   CustomerRequest,
   CustomerResponse,
   ExtendDayCustomerRequest,
+  GetRegisteredUsers,
   IsDuplicateUrlResponse,
+  RegisteredUsers,
   UpdateCustomerRequest,
 } from './customer.type'
 
@@ -110,4 +114,16 @@ export const deleteCustomer = async (userId: string): Promise<boolean> => {
       throw error
     })
   return true
+}
+
+export const getAllRegisteredUsers = async (): Promise<RegisteredUsers[]> => {
+  const response = await AdminBffAPI.get(`/v1/event/register/members`)
+    .then((response) => response.data)
+    .catch((error) => {
+      if (error.response) {
+        throw error.response
+      }
+      throw error
+    })
+  return response.data
 }

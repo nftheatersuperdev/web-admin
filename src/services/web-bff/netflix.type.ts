@@ -12,6 +12,7 @@ export interface NetflixAccountListInputRequest {
   billDate: string
   userId: string
   accountName: string
+  accountEmail: string
   isActive: boolean
   customerStatus: [string]
   filterTVAvailable: boolean

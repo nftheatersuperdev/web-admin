@@ -122,7 +122,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       '\nแพ็คเกจที่สมัคร : ' +
       packageName +
       '\nนำรหัสลูกค้า-รหัสผ่าน เข้าระบบที่เว็บไซต์ด้านล่างได้เลยนะครับ' +
-      '\nhttps://frolicking-moonbeam-84198d.netlify.app'
+      '\nhttps://nftheaterth.com/login'
     copyText(text)
   }
   const formikCreateUser = useFormik({
@@ -441,7 +441,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             นำรหัสลูกค้า-รหัสผ่าน เข้าระบบที่เว็บไซต์ด้านล่างได้เลยนะครับ
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            https://frolicking-moonbeam-84198d.netlify.app
+            https://nftheaterth.com/login
           </Typography>
           <br />
           <div className={classes.alignRight}>

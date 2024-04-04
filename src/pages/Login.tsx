@@ -83,14 +83,6 @@ export default function Login(): JSX.Element {
                 {t('login.subTitle')}
               </Typography>
             </Box>
-
-            <IconButton
-              color="inherit"
-              onClick={handleLanguageChange}
-              aria-label={t('header.aria.changeLanguage')}
-            >
-              {i18n.language === 'th' ? '🇹🇭' : '🇺🇸'}
-            </IconButton>
           </LoginHeader>
 
           <TextField

@@ -33,14 +33,15 @@ import {
   AddCircleOutline as ExtendIcon,
 } from '@mui/icons-material'
 import { useFormik } from 'formik'
+import { CSVLink } from 'react-csv'
 import { STORAGE_KEYS } from 'auth/AuthContext'
 import { copyText } from 'utils/copyContent'
 import toast from 'react-hot-toast'
 import { DataWrapper, GridSearchSection, TextLineClamp, Wrapper } from 'components/Styled'
 import PageTitle from 'components/PageTitle'
 import { Page } from 'layout/LayoutRoute'
-import { deleteCustomer, getCustomerList } from 'services/web-bff/customer'
-import { CustomerListInputRequest, CustomerListRequest } from 'services/web-bff/customer.type'
+import { deleteCustomer, getAllRegisteredUsers, getCustomerList } from 'services/web-bff/customer'
+import { CustomerListInputRequest, CustomerListRequest, monthTH } from 'services/web-bff/customer.type'
 import Paginate from 'components/Paginate'
 import ConfirmDialog from 'components/ConfirmDialog'
 import ExtendUserDialog from './ExtendUserDialog'
@@ -53,6 +54,11 @@ const TableHeaderColumn = styled.div`
   border-left: 2px solid #e0e0e0;
   font-weight: bold;
   padding-left: 10px;
+`
+const ExportCSVLink = styled(CSVLink)`
+  color: white !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
 `
 
 interface SelectOption {
@@ -126,6 +132,10 @@ export default function Customer(): JSX.Element {
   const [customerFilter, setCustomerFilter] = useState<CustomerListInputRequest>({
     ...defaultFilter,
   })
+  const csvHeaders = [
+    { label: 'รหัสลูกค้า', key: 'userId' },
+    { label: 'ชื่อ Facebook', key: 'facebookName' },
+  ]
   const {
     data: customerList,
     refetch,
@@ -142,6 +152,20 @@ export default function Customer(): JSX.Element {
       refetchOnWindowFocus: false,
     }
   )
+  const { data: registerMember, refetch: registerRefetch } = useQuery(
+    'register-member',
+    () => getAllRegisteredUsers(),
+    {
+      refetchOnWindowFocus: false,
+    }
+  )
+  const getFileName = () => {
+    const today = new Date()
+    const month = monthTH[today.getMonth()]
+    const year = today.getFullYear()
+    return 'รายชื่อผู้ร่วมกิจกรรมประจำเดือน' + month + ' ' + year
+  }
+  const csvData = registerMember || []
   const formik = useFormik({
     initialValues: {
       userId: '',
@@ -294,21 +318,22 @@ export default function Customer(): JSX.Element {
    */
   useEffect(() => {
     refetch()
+    registerRefetch()
   }, [customerFilter, pages, page, pageSize, refetch])
   return (
     <Page>
       <PageTitle title={t('customer.title')} />
       <Wrapper>
         <Grid container spacing={1}>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={8}>
             <Typography variant="h6" component="h2">
               {t('customer.searchPanel')}
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={4}>
             <AlignRight>
               <Button
-                id="netflix_account__search_btn"
+                id="customer_search_btn"
                 variant="contained"
                 onClick={() => formik.handleSubmit()}
               >
@@ -316,12 +341,25 @@ export default function Customer(): JSX.Element {
               </Button>
               &nbsp;
               <Button
-                id="netflix_account__add_btn"
+                id="customer__add_btn"
                 variant="contained"
                 onClick={() => setIsAddNewUserDialogOpen(true)}
               >
                 สร้างลูกค้าใหม่
               </Button>
+              &nbsp;
+              <Button id="customer__export_btn" variant="contained">
+                <ExportCSVLink data={csvData} headers={csvHeaders} filename={getFileName()}>
+                  ดาวน์โหลดผู้ร่วมกิจกรรม
+                </ExportCSVLink>
+              </Button>
+              {/* <Button
+                id="netflix_account__add_btn"
+                variant="contained"
+                onClick={() => getCsvData()}
+              >
+                สร้างลูกค้าใหม่
+              </Button> */}
             </AlignRight>
           </Grid>
         </Grid>

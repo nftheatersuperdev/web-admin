@@ -88,3 +88,27 @@ export interface UpdateCustomerRequest {
 export interface IsDuplicateUrlResponse {
   data: boolean
 }
+
+export interface GetRegisteredUsers {
+  data: RegisteredUsers[]
+}
+
+export interface RegisteredUsers {
+  userId: string
+  facebookName: string
+}
+
+export const monthTH: string[] = [
+  'มกราคม',
+  'กุมภาพันธ์',
+  'มีนาคม',
+  'เมษายน',
+  'พฤษภาคม',
+  'มิถุนายน',
+  'กรกฏาคม',
+  'สิงหาคม',
+  'กันยายน',
+  'ตุลาคม',
+  'พฤศจิกายน',
+  'ธันวาคม',
+]

@@ -143,6 +143,7 @@ export default function Netflix(): JSX.Element {
     billDate: queryBillDate || '-',
     userId: '',
     accountName: '',
+    accountEmail: '',
     isActive: true,
     customerStatus: queryCustStatus !== null ? [queryCustStatus] : [],
     filterTVAvailable: true,
@@ -192,6 +193,7 @@ export default function Netflix(): JSX.Element {
         DEFAULT_CHANGE_DATE_FORMAT
       ),
       accountName: '',
+      accountEmail: '',
       isActive: true,
       customerStatus: [],
       filterTVAvailable: true,
@@ -263,6 +265,10 @@ export default function Netflix(): JSX.Element {
     const { value } = event.target
     formik.setFieldValue('accountName', value)
   }
+  const handleAccountEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+    formik.setFieldValue('accountEmail', value)
+  }
   const copyContent = (email: string, password: string) => {
     const text = email.concat(' ').concat(password)
     copyText(text)
@@ -272,18 +278,17 @@ export default function Netflix(): JSX.Element {
     copyText(allEmail.toString().replaceAll(',', ''))
   }
   const displayTooltip = (type: string, status: string) => {
-    if (type === 'TV' && formik.values.filterTVAvailable && status === 'ว่าง') {
+    if (type === 'TV') {
       return true
     } else if (
       type === 'ADDITIONAL' &&
       formik.values.filterAdditionalAvailable &&
-      status === 'ว่าง'
+      (status === 'ว่าง' || status === 'ยังไม่เปิดจอเสริม')
     ) {
       return true
-    } else if (type === 'OTHER' && formik.values.filterOtherAvailable && status === 'ว่าง') {
+    } else if (type === 'OTHER' && formik.values.filterOtherAvailable) {
       return true
     }
-    return false
   }
   const netflixAccount = (netflixAccountList &&
     netflixAccountList.data.netflix.length > 0 &&
@@ -565,6 +570,23 @@ export default function Netflix(): JSX.Element {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              disabled={isFetchingAccountList}
+              type="text"
+              name="accountEmail"
+              placeholder="ระบุอีเมลล์บัญชีที่ต้องการค้นหา"
+              id="netflix_account_list__email_account_input"
+              label="อีเมลล์บ้าน"
+              fullWidth
+              value={formik.values.accountEmail}
+              onChange={handleAccountEmailChange}
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+        </GridSearchSection>
+        <GridSearchSection container spacing={1}>
           <Grid item xs={12} sm={4} className={classes.datePickerFromTo}>
             <DatePicker
               disabled={isFetchingAccountList}
@@ -607,7 +629,7 @@ export default function Netflix(): JSX.Element {
             <FormControl component="fieldset">
               <CheckBoxGroupLabel>เลือกกรองอุปกรณ์ที่ว่าง</CheckBoxGroupLabel>
               <FormGroup aria-label="position" row>
-                <FormControlLabel
+                {/* <FormControlLabel
                   control={
                     <Checkbox
                       key="TV"
@@ -622,7 +644,7 @@ export default function Netflix(): JSX.Element {
                   }
                   label="ทีวี"
                   key="TV"
-                />
+                /> */}
                 <FormControlLabel
                   control={
                     <Checkbox
