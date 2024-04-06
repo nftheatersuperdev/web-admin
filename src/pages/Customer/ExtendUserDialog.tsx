@@ -60,7 +60,7 @@ export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Elem
       extendDay: 0,
     },
     validationSchema: Yup.object().shape({
-      extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
+      extendDay: Yup.number().integer(),
     }),
     enableReinitialize: true,
     onSubmit: (values) => {
@@ -144,7 +144,7 @@ export default function ExtendUserDialog(props: ExtendUserDialogProps): JSX.Elem
                 </TextField>
               ) : (
                 <TextField
-                  type="text"
+                  type="number"
                   name="extendDay"
                   placeholder="ระบุวันที่ต้องการต่ออายุ"
                   id="extend_customer__day_input"
