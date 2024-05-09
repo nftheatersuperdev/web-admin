@@ -108,6 +108,7 @@ export interface UpdateLinkUserNetflixRequest {
   userId: string
   packageId: string
   accountType: string
+  extendDay: number
 }
 
 export interface UpdateLinkUserNetflixResponse {

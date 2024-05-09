@@ -8,6 +8,7 @@ import {
   YouTube,
   AdminPanelSettings,
   EmojiEvents,
+  LocalAtm,
 } from '@mui/icons-material'
 import { ROLES } from 'auth/roles'
 import { SidebarItemsType } from './Sidebar/types'
@@ -64,6 +65,13 @@ export function useMenuItems() {
       icon: YouTube,
       allowedRoles: [ROLES.SUPER_ADMIN, ROLES.YOUTUBE_ADMIN, ROLES.YOUTUBE_AUTHOR],
       allowedPrivileges: ['ALL', 'YOUTUBE'],
+    },
+    {
+      id: 'left_menu__setting_package',
+      title: 'แพ็คเก็ต',
+      href: ROUTE_PATHS.PACKAGES,
+      icon: LocalAtm,
+      allowedRoles: [ROLES.SUPER_ADMIN],
     },
     {
       id: 'left_menu__reward',

@@ -1,6 +1,6 @@
 {
   "name": "nftheater-admin",
-  "version": "0.0.8@27-09-2023",
+  "version": "1.0.1@05-04-2024",
   "private": true,
   "engines": {
     "node": ">=16",

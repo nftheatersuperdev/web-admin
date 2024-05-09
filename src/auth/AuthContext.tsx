@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
   TOKEN: 'nftheater:user_token',
   ID: 'nftheater:user_id',
   ACCOUNT: 'nftheater:account',
+  USERNAME: 'nftheater:username',
 }
 
 type Text = string | null | undefined
@@ -40,6 +41,8 @@ interface AuthProps {
   getUserId: () => Text
   setAccount: (account: string) => void
   getAccount: () => Text
+  setUsername: (username: string) => void
+  getUsername: () => Text
   getRemoteConfig: (key: string) => firebase.remoteConfig.Value | undefined
 }
 
@@ -59,6 +62,8 @@ const Auth = createContext<AuthProps>({
   getUserId: () => undefined,
   setAccount: (_id: string) => undefined,
   getAccount: () => undefined,
+  setUsername: (_id: string) => undefined,
+  getUsername: () => undefined,
   getRemoteConfig: (_key: string) => undefined,
 })
 
@@ -115,6 +120,14 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
     return ls.get<Text>(STORAGE_KEYS.ACCOUNT)
   }
 
+  const setUsername = (username: string) => {
+    ls.set<string>(STORAGE_KEYS.USERNAME, username)
+  }
+
+  const getUsername = (): Text => {
+    return ls.get<Text>(STORAGE_KEYS.USERNAME)
+  }
+
   const getRoleDisplayName = (): string => {
     const role = getRole()
     return getAdminUserRoleLabel(role, t)
@@ -139,6 +152,7 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
       setUserId(user.uid)
       setRole(userProfile.role)
       setAccount(userProfile.account)
+      setUsername(userProfile.adminName)
     } catch (error: any) {
       console.error(error)
       const errMessage = error.code || error.response.data.message.toLowerCase()
@@ -192,6 +206,8 @@ export function AuthProvider({ fbase, children }: AuthProviderProps): JSX.Elemen
         getUserId,
         setAccount,
         getAccount,
+        setUsername,
+        getUsername,
         getRemoteConfig,
       }}
     >

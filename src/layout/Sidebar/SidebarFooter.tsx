@@ -92,11 +92,8 @@ function SidebarFooter({ ...rest }): JSX.Element {
           </Grid>
           <Grid item lg={6}>
             <FooterText variant="body2">
-              {profile?.firstName && profile?.lastName
-                ? `${profile.firstName} ${profile.lastName}`
-                : 'No Name'}
+              {profile?.adminName ? `${profile.adminName}` : 'No Name'}
             </FooterText>
-            <FooterSubText variant="caption">{profile?.role || 'No Email'}</FooterSubText>
           </Grid>
           <Grid item lg={3}>
             <Box

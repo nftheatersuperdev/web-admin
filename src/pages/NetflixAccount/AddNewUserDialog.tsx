@@ -7,9 +7,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   Grid,
   MenuItem,
   Modal,
+  Radio,
+  RadioGroup,
   TextField,
   Typography,
   createFilterOptions,
@@ -83,6 +86,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const [packageName, setPackageName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isDup, setIsDup] = useState(false)
+  const [selectedAccountType, setSelectedAccountType] = useState<string>(accountType || '')
   const checkUrlDuplicate = async (url: string) => {
     const isDup = isUrlDeplicate(url)
     const val = (await isDup).data
@@ -137,7 +141,6 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       type: accountType,
     },
     validationSchema: Yup.object().shape({
-      // extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
       packageId: Yup.string().required('กรุณาเลือกแพ็คเกจการต่ออายุ'),
       lineId: Yup.string().max(255).required('กรุณาระบุ Line Id'),
       lineUrl: Yup.string().max(255).required('กรุณาระบุ Line URL'),
@@ -173,10 +176,11 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       packageId: '',
       accountId,
       type: accountType,
+      extendDay: 0,
     },
     validationSchema: Yup.object().shape({
       userId: Yup.string().max(255).required('กรุณาเลือกลูกค้า'),
-      // extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
+      extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
       packageId: Yup.string().required('กรุณาเลือกแพ็คเกจการต่ออายุ'),
     }),
     enableReinitialize: true,
@@ -187,6 +191,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             userId: values.userId,
             packageId: values.packageId,
             accountType: values.type,
+            extendDay: values.extendDay,
           } as UpdateLinkUserNetflixRequest,
           accountId
         ),
@@ -211,9 +216,11 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     if (accountType === 'OTHER') {
       const p = otherPackageOptions.data?.find((pk) => pk.packageId === value)
       setPackageName(p.packageName + ' ' + p.packagePrice + ' บาท')
+      formikLinkUser.setFieldValue('extendDay', p.packageDay)
     } else {
       const p = tvPackageOptions.data?.find((pk) => pk.packageId === value)
       setPackageName(p.packageName + ' ' + p.packagePrice + ' บาท')
+      formikLinkUser.setFieldValue('extendDay', p.packageDay)
     }
     formikLinkUser.setFieldValue('packageId', value)
     formikCreateUser.setFieldValue('packageId', value)
@@ -333,6 +340,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                     const value = event.target.value
                     formikLinkUser.setFieldValue('type', value)
                     formikCreateUser.setFieldValue('type', value)
+                    setSelectedAccountType(value)
                   }}
                   disabled={isLocked}
                   value={formikCreateUser.values.type}
@@ -364,7 +372,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   }
                   InputLabelProps={{ shrink: true }}
                 >
-                  {accountType === 'TV' || accountType === 'ADDITIONAL'
+                  {selectedAccountType === 'TV' || selectedAccountType === 'ADDITIONAL'
                     ? tvPackageOptions.data?.map((option) => (
                         <MenuItem key={option.packageDay} value={option.packageId}>
                           {option.packageName + ' ' + option.packagePrice + ' บาท'}
@@ -377,12 +385,26 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                       ))}
                 </TextField>
               </GridTextField>
+              <GridTextField item xs={12} sm={12}>
+                <TextField
+                  type="number"
+                  name="extendDay"
+                  placeholder="ระบุวันที่ต้องการต่ออายุ"
+                  id="extend_customer__day_input"
+                  label={t('customer.extendDays')}
+                  fullWidth
+                  value={formikLinkUser.values.extendDay}
+                  onChange={({ target }) => formikLinkUser.setFieldValue('extendDay', target.value)}
+                  variant="outlined"
+                />
+              </GridTextField>
             </Grid>
           </DialogContent>
           <DialogActions>
             <Button
               onClick={() => {
                 formikCreateUser.resetForm()
+                formikLinkUser.resetForm()
                 onClose()
               }}
               color="primary"
@@ -428,6 +450,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                     const value = event.target.value
                     formikLinkUser.setFieldValue('type', value)
                     formikCreateUser.setFieldValue('type', value)
+                    setSelectedAccountType(value)
                   }}
                   disabled={isLocked}
                   value={formikLinkUser.values.type}
@@ -457,7 +480,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   helperText={formikLinkUser.touched.packageId && formikLinkUser.errors.packageId}
                   InputLabelProps={{ shrink: true }}
                 >
-                  {accountType === 'TV'
+                  {selectedAccountType === 'TV' || selectedAccountType === 'ADDITIONAL'
                     ? tvPackageOptions.data?.map((option) => (
                         <MenuItem key={option.packageDay} value={option.packageId}>
                           {option.packageName + ' ' + option.packagePrice + ' บาท'}
@@ -469,6 +492,19 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                         </MenuItem>
                       ))}
                 </TextField>
+              </GridTextField>
+              <GridTextField item xs={12} sm={12}>
+                <TextField
+                  type="number"
+                  name="extendDay"
+                  placeholder="ระบุวันที่ต้องการต่ออายุ"
+                  id="extend_customer__day_input"
+                  label={t('customer.extendDays')}
+                  fullWidth
+                  value={formikLinkUser.values.extendDay}
+                  onChange={({ target }) => formikLinkUser.setFieldValue('extendDay', target.value)}
+                  variant="outlined"
+                />
               </GridTextField>
             </Grid>
           </DialogContent>

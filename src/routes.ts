@@ -18,6 +18,9 @@ export const ROUTE_PATHS = Object.freeze({
   SETTING_CONFIGS: '/setting-configs',
   SETTING_CONFIG_EDIT: '/setting-config/:id',
   SETTING_CONFIG_ADD: '/setting-config/add',
+  PACKAGES: '/packages',
+  PACKAGE_DETAIL: '/packages/:id',
+  PACKAGE_EDIT: '/packages/edit/:id',
   REWARD: '/rewards',
   ADMIN: '/admins',
   ADMIN_EDIT: '/admin/:id',
@@ -102,7 +105,11 @@ export const routes: Readonly<LayoutRouteProps[]> = Object.freeze([
     component: lazy(() => import('./pages/SettingConfig' /* webpackChunkName: "app" */)),
     allowedRoles: [ROLES.SUPER_ADMIN],
   },
-
+  {
+    path: ROUTE_PATHS.PACKAGES,
+    component: lazy(() => import('./pages/Packages' /* webpackChunkName: "app" */)),
+    allowedRoles: [ROLES.SUPER_ADMIN],
+  },
   {
     path: ROUTE_PATHS.NOT_FOUND,
     isPublic: true,
