@@ -29,6 +29,8 @@ import {
   CheckBox as EnableIcon,
   SwapHoriz,
   Verified,
+  Tv,
+  PhoneIphone,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/ControlPoint'
 import { useTranslation } from 'react-i18next'
@@ -62,11 +64,12 @@ import {
 } from 'components/Styled'
 import { Page } from 'layout/LayoutRoute'
 import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
-import { NetflixAccountRequest, UpdateNetflixAccountRequest } from 'services/web-bff/netflix.type'
+import { GetNetflixPackageResponse, NetflixAccountRequest, UpdateNetflixAccountRequest } from 'services/web-bff/netflix.type'
 import {
   deleteUserFromAdditionalAccount,
   deleteUserFromNetflixAccount,
   getNetflixAccount,
+  getNetflixPackage,
   unlinkAdditionalAccounts,
   updateNetflixAccount,
   updateNetflixAccountStatus,
@@ -104,7 +107,16 @@ export default function NetflixAccount(): JSX.Element {
       padding: '14px 12px',
       color: '#fff',
       backgroundColor: '#424E63',
-      width: '120px',
+      width: '130px',
+    },
+    addMobileButton: {
+      fontWeight: 'bold',
+      display: 'inline-flexbox',
+      boxShadow: 'none',
+      padding: '14px 12px',
+      color: '#fff',
+      backgroundColor: '#424E63',
+      width: '160px',
     },
     disableButton: {
       fontWeight: 'bold',
@@ -184,6 +196,14 @@ export default function NetflixAccount(): JSX.Element {
   const [changeStatusTitle, setChangeStatusTitle] = useState<string>('')
   const [changeStatusMsg, setChangeStatusMsg] = useState<string>('')
   const [checkedAllUsers, setCheckedAllUsers] = useState<boolean>(false)
+  const [isLocked, setIsLocked] = useState<boolean>(false)
+  const [packageParam, setPackageParam] = useState<GetNetflixPackageResponse>()
+  const netflixTVPackageOption = useQuery('netflix-tv-package', () => getNetflixPackage('TV'))
+  const netflixOtherPackageOption = useQuery('netflix-other-package', () =>
+    getNetflixPackage('OTHER')
+  )
+  const tvPackageOptions = netflixTVPackageOption || []
+  const otherPackageOptions = netflixOtherPackageOption || []
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const [openLoading, setOpenLoading] = useState(true)
   const handleCloseLoading = () => {
@@ -403,6 +423,19 @@ export default function NetflixAccount(): JSX.Element {
       },
       { duration: 5000 }
     )
+  }
+  const handleAddNewUser = (accountType: string, additionnalId: string) => {
+    setAccountTypeParam(accountType)
+    if (accountType === 'OTHER') {
+      setPackageParam(otherPackageOptions.data)
+    } else if (accountType === 'ADDITIONAL') {
+      setAdditionalAccountIdParam(additionnalId)
+      setPackageParam(tvPackageOptions.data)
+    } else {
+      setPackageParam(tvPackageOptions.data)
+    }
+    setIsLocked(true)
+    setIsAddNewUserDialogOpen(true)
   }
   const handleDeleteAdditionalUser = (userId: string, additionalId: string, accountId: string) => {
     setAccountIdParam(accountId)
@@ -769,6 +802,14 @@ export default function NetflixAccount(): JSX.Element {
                         <TextLineClamp>{add.user?.lineId}</TextLineClamp>
                       </TableCell>
                       <TableCell align="center">
+                        <Tooltip title="เพิ่มลูกค้า">
+                          <IconButton
+                            disabled={add.user !== null}
+                            onClick={() => handleAddNewUser('ADDITIONAL', `${add.additionalId}`)}
+                          >
+                            <PersonAdd />
+                          </IconButton>
+                        </Tooltip>
                         <Tooltip title="ลบลูกค้า">
                           <IconButton
                             disabled={add.user === null}
@@ -827,12 +868,12 @@ export default function NetflixAccount(): JSX.Element {
       </Wrapper>
       <Wrapper>
         <GridSearchSection container spacing={1}>
-          <GridTextField item xs={9} sm={9}>
+          <GridTextField item xs={6} sm={6}>
             <Typography variant="h6" component="h2">
               {t('netflix.user')}
             </Typography>
           </GridTextField>
-          <GridTextField item xs={3} sm={3} className={classes.alignRight}>
+          <GridTextField item xs={6} sm={6} className={classes.alignRight}>
             <AlignRight>
               <Button
                 id="netflix_detail__add_btn"
@@ -846,16 +887,27 @@ export default function NetflixAccount(): JSX.Element {
               >
                 {t('netflix.transferUser')}
               </Button>
-              &nbsp;
+              &nbsp;&nbsp;
               <Button
                 id="netflix_detail__add_btn"
                 disabled={netflix?.data.users.length === 7}
                 className={classes.addButton}
-                endIcon={<PersonAdd />}
+                endIcon={<Tv />}
                 variant="contained"
-                onClick={() => setIsAddNewUserDialogOpen(true)}
+                onClick={() => handleAddNewUser('TV', '')}
               >
-                {t('netflix.addUser')}
+                เพิ่มลูกค้าจอทีวี
+              </Button>
+              &nbsp;&nbsp;
+              <Button
+                id="netflix_detail__add_btn"
+                disabled={netflix?.data.users.length === 7}
+                className={classes.addMobileButton}
+                endIcon={<PhoneIphone />}
+                variant="contained"
+                onClick={() => handleAddNewUser('OTHER', '')}
+              >
+                เพิ่มลูกค้าอุปกรณ์อื่น
               </Button>
             </AlignRight>
           </GridTextField>
@@ -1018,8 +1070,10 @@ export default function NetflixAccount(): JSX.Element {
       <AddNewUserDialog
         open={isAddNewUserDialogOpen}
         accountId={id}
-        accountType="OTHER"
-        isLocked={false}
+        accountType={accountTypeParam}
+        packageOptions={packageParam}
+        additionalId={additionalAccountIdParam}
+        isLocked={isLocked}
         onClose={() => {
           refetch()
           setIsAddNewUserDialogOpen(false)

@@ -55,10 +55,11 @@ import { Page } from 'layout/LayoutRoute'
 import DataTableHeader, { TableHeaderProps } from 'components/DataTableHeader'
 import Tooltips from 'components/Tooltips'
 import {
+  GetNetflixPackageResponse,
   NetflixAccountListInputRequest,
   NetflixAccountListRequest,
 } from 'services/web-bff/netflix.type'
-import { getNetflixAccountList } from 'services/web-bff/netflix'
+import { getNetflixAccountList, getNetflixPackage } from 'services/web-bff/netflix'
 import AddNewUserDialog from 'pages/NetflixAccount/AddNewUserDialog'
 import { getCustomerOptionList } from 'services/web-bff/customer'
 import { CustomerOption } from 'services/web-bff/customer.type'
@@ -135,8 +136,9 @@ export default function Netflix(): JSX.Element {
   const [pageSize, setPageSize] = useState<number>(10)
   const [selectedChangeDate, setSelectedChangeDate] = useState(initDate)
   const [selectedBillDate, setSelectedBillDate] = useState(initDate)
-  const [accountIdParam, setAccountIdParam] = useState<string>('')
-  const [accountTypeParam, setAccountTypeParam] = useState<string>('')
+  const [accountIdParam, setAccountIdParam] = useState('')
+  const [accountTypeParam, setAccountTypeParam] = useState('')
+  const [packageParam, setPackageParam] = useState<GetNetflixPackageResponse>()
   const [selectCustStatus, setSelectCustStatus] = useState<{ value: string; label: string }[]>([])
   const defaultFilter: NetflixAccountListInputRequest = {
     changeDate: queryChangeDate || '-',
@@ -161,6 +163,12 @@ export default function Netflix(): JSX.Element {
     }
   )
   const customerOptions = customerOptionList || []
+  const netflixTVPackageOption = useQuery('netflix-tv-package', () => getNetflixPackage('TV'))
+  const netflixOtherPackageOption = useQuery('netflix-other-package', () =>
+    getNetflixPackage('OTHER')
+  )
+  const tvPackageOptions = netflixTVPackageOption || []
+  const otherPackageOptions = netflixOtherPackageOption || []
   const filterOptions = createFilterOptions({
     matchFrom: 'any',
     stringify: (option: CustomerOption) => option.filterLabel,
@@ -253,9 +261,15 @@ export default function Netflix(): JSX.Element {
     },
   ]
   const handleClickIcon = (type: string, status: string, accountId: string) => {
+    console.log(`handleClickIcon : ` + status + ` : ` + accountId + ` : ` + type)
     if (status === 'ว่าง') {
       setAccountIdParam(accountId)
       setAccountTypeParam(type)
+      if (type === 'OTHER') {
+        setPackageParam(otherPackageOptions.data)
+      } else {
+        setPackageParam(tvPackageOptions.data)
+      }
       setIsAddNewUserDialogOpen(true)
     } else if (status === 'ยังไม่เปิดจอเสริม') {
       toast.error('ไม่สามารถทำรายการได้ เนื่องจากยังไม่เปิดจอเสริม')
@@ -715,6 +729,7 @@ export default function Netflix(): JSX.Element {
         open={isAddNewUserDialogOpen}
         accountId={accountIdParam}
         accountType={accountTypeParam}
+        packageOptions={packageParam}
         isLocked={true}
         onClose={() => {
           refetch()

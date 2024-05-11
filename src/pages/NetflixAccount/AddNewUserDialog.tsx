@@ -7,12 +7,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
   Grid,
   MenuItem,
   Modal,
-  Radio,
-  RadioGroup,
   TextField,
   Typography,
   createFilterOptions,
@@ -35,12 +32,17 @@ import {
   CustomerOption,
 } from 'services/web-bff/customer.type'
 import { getNetflixPackage, linkUserToNetflixAccount } from 'services/web-bff/netflix'
-import { UpdateLinkUserNetflixRequest } from 'services/web-bff/netflix.type'
+import {
+  GetNetflixPackageResponse,
+  UpdateLinkUserNetflixRequest,
+} from 'services/web-bff/netflix.type'
 
 interface AddNewUserDialogProps {
   open: boolean
   accountId: string
   accountType?: string
+  packageOptions?: GetNetflixPackageResponse
+  additionalId: string
   isLocked?: boolean
   onClose: () => void
 }
@@ -78,7 +80,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
     },
   })
   const classes = useStyles()
-  const { open, accountId, accountType, isLocked, onClose } = props
+  const { open, accountId, accountType, packageOptions, additionalId, isLocked, onClose } = props
   const { t } = useTranslation()
   const [isCreateNewCustomer, setIsCreateNewCustomer] = useState<boolean>(true)
   const [openAlertModal, setOpenAlertModal] = useState(false)
@@ -87,6 +89,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
   const [password, setPassword] = useState<string>('')
   const [isDup, setIsDup] = useState(false)
   const [selectedAccountType, setSelectedAccountType] = useState<string>(accountType || '')
+
   const checkUrlDuplicate = async (url: string) => {
     const isDup = isUrlDeplicate(url)
     const val = (await isDup).data
@@ -177,10 +180,11 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       accountId,
       type: accountType,
       extendDay: 0,
+      additionalId,
     },
     validationSchema: Yup.object().shape({
       userId: Yup.string().max(255).required('กรุณาเลือกลูกค้า'),
-      extendDay: Yup.number().integer().min(1, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
+      extendDay: Yup.number().integer().min(0, 'กรุณาเลือกแพ็คเกจการต่ออายุ'),
       packageId: Yup.string().required('กรุณาเลือกแพ็คเกจการต่ออายุ'),
     }),
     enableReinitialize: true,
@@ -192,6 +196,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
             packageId: values.packageId,
             accountType: values.type,
             extendDay: values.extendDay,
+            additionalId: values.additionalId,
           } as UpdateLinkUserNetflixRequest,
           accountId
         ),
@@ -211,13 +216,20 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
       )
     },
   })
+  const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    formikLinkUser.setFieldValue('type', value)
+    formikCreateUser.setFieldValue('type', value)
+    setSelectedAccountType(value)
+  }
   const handlePackageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    if (accountType === 'OTHER') {
+    if (accountType === 'OTHER' || selectedAccountType === 'OTHER') {
       const p = otherPackageOptions.data?.find((pk) => pk.packageId === value)
       setPackageName(p.packageName + ' ' + p.packagePrice + ' บาท')
       formikLinkUser.setFieldValue('extendDay', p.packageDay)
-    } else {
+    }
+    if (accountType === 'ADDITIONAL' || accountType === 'TV') {
       const p = tvPackageOptions.data?.find((pk) => pk.packageId === value)
       setPackageName(p.packageName + ' ' + p.packagePrice + ' บาท')
       formikLinkUser.setFieldValue('extendDay', p.packageDay)
@@ -336,12 +348,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   fullWidth
                   select
                   label="ประเภทอุปกรณ์"
-                  onChange={(event) => {
-                    const value = event.target.value
-                    formikLinkUser.setFieldValue('type', value)
-                    formikCreateUser.setFieldValue('type', value)
-                    setSelectedAccountType(value)
-                  }}
+                  onChange={handleTypeChange}
                   disabled={isLocked}
                   value={formikCreateUser.values.type}
                   placeholder="กรุณาประเภทอุปกรณ์"
@@ -372,17 +379,11 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   }
                   InputLabelProps={{ shrink: true }}
                 >
-                  {selectedAccountType === 'TV' || selectedAccountType === 'ADDITIONAL'
-                    ? tvPackageOptions.data?.map((option) => (
-                        <MenuItem key={option.packageDay} value={option.packageId}>
-                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
-                        </MenuItem>
-                      ))
-                    : otherPackageOptions.data?.map((option) => (
-                        <MenuItem key={option.packageDay} value={option.packageId}>
-                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
-                        </MenuItem>
-                      ))}
+                  {packageOptions?.map((option) => (
+                    <MenuItem key={option.packageDay} value={option.packageId}>
+                      {option.packageName + ' ' + option.packagePrice + ' บาท'}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </GridTextField>
               <GridTextField item xs={12} sm={12}>
@@ -452,6 +453,9 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                     formikCreateUser.setFieldValue('type', value)
                     setSelectedAccountType(value)
                   }}
+                  SelectProps={{
+                    native: false,
+                  }}
                   disabled={isLocked}
                   value={formikLinkUser.values.type}
                   placeholder="กรุณาประเภทอุปกรณ์"
@@ -459,7 +463,7 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   helperText={formikLinkUser.touched.type && formikLinkUser.errors.type}
                   InputLabelProps={{ shrink: true }}
                 >
-                  {accountTypeOption?.map((option) => (
+                  {accountTypeOption.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
@@ -480,17 +484,11 @@ export default function AddNewUserDialog(props: AddNewUserDialogProps): JSX.Elem
                   helperText={formikLinkUser.touched.packageId && formikLinkUser.errors.packageId}
                   InputLabelProps={{ shrink: true }}
                 >
-                  {selectedAccountType === 'TV' || selectedAccountType === 'ADDITIONAL'
-                    ? tvPackageOptions.data?.map((option) => (
-                        <MenuItem key={option.packageDay} value={option.packageId}>
-                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
-                        </MenuItem>
-                      ))
-                    : otherPackageOptions.data?.map((option) => (
-                        <MenuItem key={option.packageDay} value={option.packageId}>
-                          {option.packageName + ' ' + option.packagePrice + ' บาท'}
-                        </MenuItem>
-                      ))}
+                  {packageOptions?.map((option) => (
+                    <MenuItem key={option.packageDay} value={option.packageId}>
+                      {option.packageName + ' ' + option.packagePrice + ' บาท'}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </GridTextField>
               <GridTextField item xs={12} sm={12}>
