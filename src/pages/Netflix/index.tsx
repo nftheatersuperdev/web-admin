@@ -296,8 +296,8 @@ export default function Netflix(): JSX.Element {
       return true
     } else if (
       type === 'ADDITIONAL' &&
-      formik.values.filterAdditionalAvailable &&
-      (status === 'ว่าง' || status === 'ยังไม่เปิดจอเสริม')
+      formik.values.filterAdditionalAvailable
+      // && (status === 'ว่าง' || status === 'ยังไม่เปิดจอเสริม')
     ) {
       return true
     } else if (type === 'OTHER' && formik.values.filterOtherAvailable) {
